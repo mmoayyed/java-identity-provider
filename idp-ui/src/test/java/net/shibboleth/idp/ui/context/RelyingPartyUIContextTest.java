@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.ui.context;
 
+import java.util.Arrays;
+
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -38,9 +40,10 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
 
     private RelyingPartyUIContext getContext() {
         RelyingPartyUIContext result = new RelyingPartyUIContext();
-        //result.setRPAttributeConsumingService(theACS);
+        result.setRPAttributeConsumingService(theACS);
         result.setRPEntityDescriptor(theEntity);
         result.setRPSPSSODescriptor(theSPSSO);
+        result.setBrowserLanguages(Arrays.asList("en", "fr"));
         return result;
     }
 
@@ -50,7 +53,7 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         theACS = theSPSSO.getDefaultAttributeConsumingService();
         Assert.assertNotNull(theEntity);
         Assert.assertNotNull(theSPSSO);
-        Assert.assertNull(theACS);
+        Assert.assertNotNull(theACS);
     }
 
     @Test public void givenName() {
@@ -61,5 +64,48 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(ctx.getGivenName("other", "fallback"), "fallback");
         Assert.assertEquals(ctx.getGivenName("support", null), "GNsupport");
         Assert.assertEquals(ctx.getGivenName("technical", null), "GNtechnical");
-}
+    }
+
+    @Test public void surName() {
+        RelyingPartyUIContext ctx = getContext();
+
+        Assert.assertEquals(ctx.getSurName("administrative", null), "Admin");
+        Assert.assertEquals(ctx.getSurName("other", null), "OTHER");
+        Assert.assertEquals(ctx.getSurName("billing", "Bond, James Bond"), "Bond, James Bond");
+    }
+
+    @Test public void email() {
+        RelyingPartyUIContext ctx = getContext();
+
+        Assert.assertEquals(ctx.getEmail("administrative", null), "mailto:administrative@example.org");
+        Assert.assertEquals(ctx.getEmail("other", "http://example.org/"), "http://example.org/");
+        Assert.assertEquals(ctx.getEmail("support", "http://example.org/DangerWillRoberts"),
+                "http://example.org/DangerWillRoberts");
+    }
+
+    @Test public void organizationXX() {
+        RelyingPartyUIContext ctx = getContext();
+
+        Assert.assertEquals(ctx.getOrganizationDisplayName("DefODN"), "The Shibboleth Consortium");
+        Assert.assertEquals(ctx.getOrganizationName("DefODN"), "DefODN");
+        Assert.assertEquals(ctx.getOrganizationURL("DefOURL"), "DefOURL");
+    }
+
+    @Test public void service() {
+        RelyingPartyUIContext ctx = getContext();
+
+        Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "le Service Name");
+        Assert.assertEquals(ctx.getServiceDescription("DefaultServiceName"), "The ServiceDescription");
+
+        ctx = new RelyingPartyUIContext();
+        ctx.setRPEntityDescriptor((EntityDescriptor)unmarshallElement("/net/shibboleth/idp/ui/example-metadata2.xml"));
+        ctx.setBrowserLanguages(Arrays.asList("en", "fr"));
+        Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "sp.example.org");
+        
+        ctx = new RelyingPartyUIContext();
+        ctx.setRPEntityDescriptor((EntityDescriptor)unmarshallElement("/net/shibboleth/idp/ui/example-metadata3.xml"));
+        ctx.setBrowserLanguages(Arrays.asList("en", "fr"));
+        Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "urn:sp.example.org");
+
+    }
 }

@@ -168,7 +168,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
         
         rpUIContext.setRPEntityDescriptor(entityDescriptor);
         rpUIContext.setRPSPSSODescriptor(spSSODescriptor);
-        rpUIContext.getRPUInfo(getRPUInfo());
+        rpUIContext.setRPUInfo(getRPUInfo());
         rpUIContext.setBrowserLanguages(getBrowserLanguages());
     }
 }

@@ -19,11 +19,13 @@ package net.shibboleth.idp.ui.context;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -38,6 +40,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.OrganizationDisplayName;
 import org.opensaml.saml.saml2.metadata.OrganizationName;
+import org.opensaml.saml.saml2.metadata.OrganizationURL;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.ServiceDescription;
 import org.opensaml.saml.saml2.metadata.ServiceName;
@@ -72,7 +75,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @return Returns the entity.
      */
-    @Nullable public EntityDescriptor getRPEntityDescriptor() {
+    @Nullable protected EntityDescriptor getRPEntityDescriptor() {
         return rpEntityDescriptor;
     }
 
@@ -90,7 +93,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @return Returns the SPSSODescriptor.
      */
-    @Nullable public SPSSODescriptor getRPSPSSODescriptor() {
+    @Nullable protected SPSSODescriptor getRPSPSSODescriptor() {
         return rpSPSSODescriptor;
     }
 
@@ -108,7 +111,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @return Returns the SPSSODescriptor.
      */
-    @Nullable public AttributeConsumingService getRPAttributeConsumingService() {
+    @Nullable protected AttributeConsumingService getRPAttributeConsumingService() {
         return rpAttributeConsumingService;
     }
 
@@ -117,7 +120,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @return the value or null if there is none.
      */
-    @Nullable public UIInfo getRPUInfo() {
+    @Nullable protected UIInfo getRPUInfo() {
         return rpUIInfo;
     }
 
@@ -126,7 +129,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @param what the value to set.
      */
-    public void getRPUInfo(@Nullable final UIInfo what) {
+    public void setRPUInfo(@Nullable final UIInfo what) {
         rpUIInfo = what;
     }
 
@@ -154,8 +157,64 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @return the languages.
      */
-    @Nonnull public List<String> getBrowserLanguages() {
+    @Nonnull protected List<String> getBrowserLanguages() {
         return browserLanguages;
+    }
+
+    /**
+     * Check to see whether a supplied URL is acceptable, returning the default if it isn't.
+     * 
+     * @param url the url to look at
+     * @param acceptableSchemes the schemes to test against
+     * @param defaultValue what to return if the test fails
+     * @return the input or the default as appropriate.
+     */
+    @Nullable private String policeURL(@Nullable final String url,
+            @Nonnull @NotEmpty final List<String> acceptableSchemes, @Nullable final String defaultValue) {
+        if (null == url) {
+            log.trace("Empty Value - returning '{}", defaultValue);
+            return defaultValue;
+        }
+
+        try {
+            final String scheme = new URI(url).getScheme();
+
+            for (final String acceptableScheme : acceptableSchemes) {
+                if (acceptableScheme.equals(scheme)) {
+                    log.debug("Acceptable Scheme '{}', returning value '{}'", acceptableScheme, url);
+                    return url;
+                }
+            }
+
+            log.warn("The logo URL '{}' contained an invalid scheme (expected '{}'), returning default of '{}'", url,
+                    acceptableSchemes, defaultValue);
+            return defaultValue;
+        } catch (URISyntaxException e) {
+            log.warn("The logo URL '{}' contained was not a URL, returning default of '{}'", url, defaultValue);
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Police a url found for a logo.
+     * 
+     * @param url the url to look at
+     * @param defaultValue what to return if the test fails
+     * @return the input or the default as appropriate
+     */
+    protected String policyURLLogo(@Nullable final String url, @Nullable final String defaultValue) {
+        return policeURL(url, Arrays.asList("http", "https", "data"), defaultValue);
+    }
+
+    /**
+     * Police a url found for non logo data.
+     * 
+     * @param url the url to look at
+     * @param defaultValue what to return if the test fails
+     * @return the input or the default as appropriate
+     */
+    protected String policyURLNonLogo(@Nullable final String url, @Nullable final String defaultValue) {
+        return policeURL(url, Arrays.asList("http", "https", "mailto"), defaultValue);
     }
 
     /**
@@ -168,20 +227,14 @@ public class RelyingPartyUIContext extends BaseContext {
 
         if (getRPUInfo() != null) {
             for (final DisplayName name : getRPUInfo().getDisplayNames()) {
-                if (log.isDebugEnabled()) {
-                    log.trace("Found name in UIInfo, language=" + name.getXMLLang());
-                }
+                log.trace("Found name in UIInfo, language '{}'", name.getXMLLang());
                 if (name.getXMLLang().equals(lang)) {
-                    if (log.isDebugEnabled()) {
-                        log.trace("returning name from UIInfo " + name.getValue());
-                    }
+                    log.debug("Language match, Returning name from UIInfo '{}'", name.getValue());
                     return name.getValue();
                 }
             }
-            if (log.isDebugEnabled()) {
-                log.trace("No name in MDUI for " + lang);
-            }
         }
+        log.trace("No name in UIINFO for '{}'", lang);
         return null;
     }
 
@@ -198,16 +251,13 @@ public class RelyingPartyUIContext extends BaseContext {
         }
 
         for (ServiceName name : getRPAttributeConsumingService().getNames()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Found name in AttributeConsumingService, language=" + name.getXMLLang());
-            }
+            log.trace("Found name in AttributeConsumingService, language '{}'", name.getXMLLang());
             if (name.getXMLLang().equals(lang)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("returning name from AttributeConsumingService " + name.getValue());
-                }
+                log.debug("Returning name from AttributeConsumingService '{}", name.getValue());
                 return name.getValue();
             }
         }
+        log.trace("No name found in AttributeConsumingService for '{}'", lang);
         return null;
     }
 
@@ -219,7 +269,7 @@ public class RelyingPartyUIContext extends BaseContext {
     @Nullable protected String getNameFromEntityId() {
 
         if (null == getRPEntityDescriptor()) {
-            log.debug("No relying party, nothing to display");
+            log.trace("No relying party, no Name");
             return null;
         }
         final String spName = getRPEntityDescriptor().getEntityID();
@@ -229,14 +279,14 @@ public class RelyingPartyUIContext extends BaseContext {
             final String scheme = entityId.getScheme();
 
             if ("http".equals(scheme) || "https".equals(scheme)) {
-                log.trace("found matching schema, returning name of {}", entityId.getHost());
+                log.debug("found matching schema, returning name of '{}'", entityId.getHost());
                 return entityId.getHost();
             }
-            log.trace("Not a standard schema returning name of {}", spName);
+            log.debug("Not a usual schema returning name of '{}'", spName);
 
             return spName;
         } catch (URISyntaxException e) {
-            log.trace("Not a URI returning name of {}", spName);
+            log.debug("Not a URI returning name of '{}'", spName);
             return spName;
         }
     }
@@ -253,20 +303,13 @@ public class RelyingPartyUIContext extends BaseContext {
             return null;
         }
         for (final Description desc : getRPUInfo().getDescriptions()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Found description in UIInfo, language=" + desc.getXMLLang());
-            }
+            log.trace("Found description in UIInfo, language '{}'", desc.getXMLLang());
             if (desc.getXMLLang().equals(lang)) {
-                //
-                // Found it
-                //
-                if (log.isDebugEnabled()) {
-                    log.debug("returning description from UIInfo " + desc.getValue());
-                }
+                log.trace("Found language match, returning description from UIInfo '{}'", desc.getValue());
                 return desc.getValue();
             }
         }
-        log.trace("No matching description in UIInfo");
+        log.debug("No matching description in UIInfo");
         return null;
     }
 
@@ -284,7 +327,7 @@ public class RelyingPartyUIContext extends BaseContext {
         for (final ServiceDescription desc : getRPAttributeConsumingService().getDescriptions()) {
             log.trace("Found name in AttributeConsumingService, language=" + desc.getXMLLang());
             if (desc.getXMLLang().equals(lang)) {
-                log.trace("returning name from AttributeConsumingService " + desc.getValue());
+                log.debug("returning name from AttributeConsumingService " + desc.getValue());
                 return desc.getValue();
             }
         }
@@ -303,7 +346,7 @@ public class RelyingPartyUIContext extends BaseContext {
             return getRPSPSSODescriptor().getOrganization();
         }
         if (null != getRPEntityDescriptor() && null != getRPEntityDescriptor().getOrganization()) {
-            return getRPSPSSODescriptor().getOrganization();
+            return getRPEntityDescriptor().getOrganization();
         }
         return null;
     }
@@ -335,8 +378,10 @@ public class RelyingPartyUIContext extends BaseContext {
             return ContactPersonTypeEnumeration.SUPPORT;
         }
     }
-    
-    /** Lookup the specified type of Contact in the RP metadata.
+
+    /**
+     * Lookup the specified type of Contact in the RP metadata.
+     * 
      * @param contactType what type to look up.
      * @return the {@link ContactPerson} or null.
      */
@@ -365,14 +410,14 @@ public class RelyingPartyUIContext extends BaseContext {
      * @return the name
      */
     @Nullable public String getServiceName(@Nullable final String defaultValue) {
-        String result;
 
         if (getRPEntityDescriptor() == null) {
-            log.debug("No relying party, nothing to display");
+            log.debug("No relying party, no name, returning '{}'", defaultValue);
             return defaultValue;
         }
 
         for (final String lang : getBrowserLanguages()) {
+            String result;
             result = getNameFromUIInfo(lang);
             if (result != null) {
                 return result;
@@ -388,7 +433,34 @@ public class RelyingPartyUIContext extends BaseContext {
     }
 
     /**
-     * look for the &lt;OrganizationDisplayName&gt;.
+     * Get the service Description.
+     * 
+     * @param defaultValue what to provide if this is an anonymous lookup
+     * @return the name
+     */
+    @Nullable public String getServiceDescription(@Nullable final String defaultValue) {
+
+        if (getRPEntityDescriptor() == null) {
+            log.debug("No relying party, no description, returning '{}'", defaultValue);
+            return defaultValue;
+        }
+
+        for (final String lang : getBrowserLanguages()) {
+            for (final ServiceDescription desc : getRPAttributeConsumingService().getDescriptions()) {
+                log.trace("Found description in AttributeConsumingService, language '{}'", desc.getXMLLang());
+                if (desc.getXMLLang().equals(lang)) {
+                    log.debug("Language match, returning description from AttributeConsumingService '{}'",
+                            desc.getValue());
+                    return desc.getValue();
+                }
+            }
+        }
+        log.debug("No description matching the languages found, returning '{}'", defaultValue);
+        return getNameFromEntityId();
+    }
+
+    /**
+     * Look for the &lt;OrganizationDisplayName&gt;.
      * 
      * @param defaultValue what to provide if the lookup fails
      * @return An appropriate string or the default
@@ -419,7 +491,7 @@ public class RelyingPartyUIContext extends BaseContext {
     }
 
     /**
-     * look for the &lt;OrganizationName&gt;.
+     * Look for the &lt;OrganizationName&gt;.
      * 
      * @param defaultValue what to provide if the lookup fails
      * @return An appropriate string or the default
@@ -448,52 +520,84 @@ public class RelyingPartyUIContext extends BaseContext {
         log.debug("No relevant OrganizationName in Organization, returning {}", defaultValue);
         return defaultValue;
     }
-    
+
+    /**
+     * * Look for the &lt;OrganizationURL&gt;.
+     * 
+     * @param defaultValue what to provide if the lookup fails
+     * @return An appropriate string or the default
+     */
+    public String getOrganizationURL(String defaultValue) {
+        final Organization org = getOrganization();
+        if (null == org || null == org.getURLs() || org.getURLs().isEmpty()) {
+            log.debug("No Organization, OrganizationURL or urls, returning {}", defaultValue);
+            return defaultValue;
+        }
+        for (final String lang : getBrowserLanguages()) {
+
+            for (final OrganizationURL url : org.getURLs()) {
+                if (url.getXMLLang() == null) {
+                    continue;
+                } else {
+                    log.trace("Found OrganizationURL in Organization, language={}", url.getXMLLang());
+                }
+
+                if (url.getXMLLang().equals(lang)) {
+                    log.debug("returning OrganizationURL from Organization, {}", url.getValue());
+                    return policyURLNonLogo(url.getValue(), defaultValue);
+                }
+            }
+        }
+        log.debug("No relevant OrganizationURL in Organization, returning {}", defaultValue);
+        return defaultValue;
+    }
+
     /**
      * look for the &lt;ContactPerson&gt; and within that the SurName.
      * 
-     * @param contactType the type of contact to look for 
+     * @param contactType the type of contact to look for
      * @param defaultValue what to provide if the lookup fails
      * @return An appropriate string or the default
      */
     @Nullable public String getSurName(@Nullable String contactType, @Nullable final String defaultValue) {
-   
+
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getSurName()) {
             return defaultValue;
         }
-        return contact.getSurName().getName();  
-    }
-    
-    /**
-     * look for the &lt;ContactPerson&gt; and within that the GivenName.
-     * 
-     * @param contactType the type of contact to look for 
-     * @param defaultValue what to provide if the lookup fails
-     * @return An appropriate string or the default
-     */
-    @Nullable public String getGivenName(@Nullable String contactType, @Nullable final String defaultValue) {
-   
-        final ContactPerson contact = getContactPerson(getContactType(contactType));
-        if (null == contact || null == contact.getGivenName()) {
-            return defaultValue;
-        }
-        return contact.getGivenName().getName();  
+        return contact.getSurName().getName();
     }
 
     /**
      * look for the &lt;ContactPerson&gt; and within that the GivenName.
      * 
-     * @param contactType the type of contact to look for 
+     * @param contactType the type of contact to look for
+     * @param defaultValue what to provide if the lookup fails
+     * @return An appropriate string or the default
+     */
+    @Nullable public String getGivenName(@Nullable String contactType, @Nullable final String defaultValue) {
+
+        final ContactPerson contact = getContactPerson(getContactType(contactType));
+        if (null == contact || null == contact.getGivenName()) {
+            return defaultValue;
+        }
+        return contact.getGivenName().getName();
+    }
+
+    /**
+     * look for the &lt;ContactPerson&gt; and within that the GivenName.
+     * 
+     * @param contactType the type of contact to look for
      * @param defaultValue what to provide if the lookup fails
      * @return An appropriate string or the default
      */
     @Nullable public String getEmail(@Nullable String contactType, @Nullable final String defaultValue) {
-   
+
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getEmailAddresses() || contact.getEmailAddresses().isEmpty()) {
             return defaultValue;
         }
-        return contact.getEmailAddresses().get(0).getAddress();
+        return policyURLNonLogo(contact.getEmailAddresses().get(0).getAddress(), defaultValue);
     }
+
 }
