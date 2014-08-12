@@ -107,7 +107,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * null keys, and null values.
      * 
      * @param inputMap the input map.
-     * @return the unmodifable, non null-containing output.
+     * @return the unmodifiable, non null-containing output.
      */
     @Nonnull @NonnullElements @Unmodifiable private Map<Locale, String> checkedNamesFrom(
             @Nullable @NullableElements final Map<Locale, String> inputMap) {
