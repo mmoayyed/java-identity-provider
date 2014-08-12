@@ -13,6 +13,7 @@
     
     <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
         p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
+        p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="true" />
         
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">

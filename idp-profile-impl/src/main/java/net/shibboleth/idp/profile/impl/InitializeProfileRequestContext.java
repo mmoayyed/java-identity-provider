@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action that creates a new {@link ProfileRequestContext} and binds it to the current conversation under the
- * {@link ProfileRequestContext#BINDING_KEY} key, and sets the profile ID, if provided.
+ * {@link ProfileRequestContext#BINDING_KEY} key, and sets the profile and logging IDs, if provided.
  * 
  * <p>This is a native SWF action in order to access conversation scope.</p>
  * 
@@ -46,6 +46,9 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
 
     /** The profile ID to initialize the context to. */
     @Nullable private String profileId;
+
+    /** The logging ID to initialize the context to. */
+    @Nullable private String loggingId;
     
     /** Whether this is a browser-based profile request. */
     private boolean browserProfile;
@@ -59,6 +62,17 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         profileId = StringSupport.trimOrNull(id);
+    }
+
+    /**
+     * Set the logging ID to populate into the context.
+     * 
+     * @param id    logging ID to populate into the context
+     */
+    public void setLoggingId(@Nullable final String id) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        loggingId = StringSupport.trimOrNull(id);
     }
     
     /**
@@ -83,6 +97,10 @@ public final class InitializeProfileRequestContext extends AbstractProfileAction
         final ProfileRequestContext prc = new ProfileRequestContext();
         if (profileId != null) {
             prc.setProfileId(profileId);
+        }
+        
+        if (loggingId != null) {
+            prc.setLoggingId(loggingId);
         }
         
         prc.setBrowserProfile(browserProfile);
