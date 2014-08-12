@@ -60,13 +60,13 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSPSessionSerializer.class);
 
-    /** Milliseconds to substract from record expiration to establish session expiration value. */
+    /** Milliseconds to subtract from record expiration to establish session expiration value. */
     @Duration @NonNegative private final long expirationOffset;
     
     /**
      * Constructor.
      * 
-     * @param offset milliseconds to substract from record expiration to establish session expiration value
+     * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
     protected AbstractSPSessionSerializer(@Duration @NonNegative final long offset) {
         expirationOffset = Constraint.isGreaterThanOrEqual(0, offset, "Offset must be greater than or equal to zero");
@@ -105,16 +105,16 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
         }
 
         try {
-            JsonReader reader = Json.createReader(new StringReader(value));
-            JsonStructure st = reader.read();
+            final JsonReader reader = Json.createReader(new StringReader(value));
+            final JsonStructure st = reader.read();
             if (!(st instanceof JsonObject)) {
                 throw new IOException("Found invalid data structure while parsing SPSession");
             }
-            JsonObject obj = (JsonObject) st;
+            final JsonObject obj = (JsonObject) st;
             
-            String serviceId = obj.getString(SERVICE_ID_FIELD);
-            long creation = obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact();
-            String flowId = obj.getString(FLOW_ID_FIELD);
+            final String serviceId = obj.getString(SERVICE_ID_FIELD);
+            final long creation = obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact();
+            final String flowId = obj.getString(FLOW_ID_FIELD);
 
             return doDeserialize(obj, serviceId, flowId, creation, expiration - expirationOffset);
             
