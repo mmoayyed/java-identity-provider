@@ -69,7 +69,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
     /**
      * Constructor.
      * 
-     * @param offset milliseconds to substract from record expiration to establish session expiration value
+     * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
     public SAML2SPSessionSerializer(@Duration @NonNegative long offset) {
         super(offset);
@@ -109,11 +109,11 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
             @Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
             @Duration @Positive final long creation, @Duration @Positive final long expiration) throws IOException {
         
-        String rawNameID = obj.getString(NAMEID_FIELD);
-        String sessionIndex = obj.getString(SESSION_INDEX_FIELD);
+        final String rawNameID = obj.getString(NAMEID_FIELD);
+        final String sessionIndex = obj.getString(SESSION_INDEX_FIELD);
         
         try {
-            XMLObject nameID = XMLObjectSupport.unmarshallFromReader(parserPool, new StringReader(rawNameID));
+            final XMLObject nameID = XMLObjectSupport.unmarshallFromReader(parserPool, new StringReader(rawNameID));
             if (nameID instanceof NameID) {
                 return new SAML2SPSession(id, flowId, creation, expiration, (NameID) nameID, sessionIndex);
             } else {
