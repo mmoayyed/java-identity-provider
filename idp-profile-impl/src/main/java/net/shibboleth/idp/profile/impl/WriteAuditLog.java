@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -28,6 +29,8 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
@@ -40,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 /**
@@ -98,6 +102,15 @@ public class WriteAuditLog extends AbstractProfileAction {
     }
     
     /**
+     * Get the list of formatting tokens for log entries.
+     * 
+     * @return list of formatting tokens
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getFormat() {
+        return ImmutableList.copyOf(format);
+    }
+    
+    /**
      * Set the formatting string to use.
      * 
      * <p>A formatting string consists of tokens prefixed by '%' separated by any non-alphanumeric or whitespace.
@@ -125,7 +138,6 @@ public class WriteAuditLog extends AbstractProfileAction {
                     field.setLength(0);
                     inToken = false;
                 }
-                
             } else if (ch == '%') {
                 if (field.length() > 0) {
                     format.add(field.toString());
@@ -166,16 +178,34 @@ public class WriteAuditLog extends AbstractProfileAction {
 
         for (final String token : format) {
             if (token.startsWith("%")) {
-                final Collection<String> values = auditCtx.getFieldValues(token.substring(1));
-                for (final String val : values) {
-                    entry.append(val).append(',');
+                if (token.length() == 1 || token.charAt(1) == '%') {
+                    entry.append('%');
+                } else {
+                    final Iterator<String> iter = auditCtx.getFieldValues(token.substring(1)).iterator();
+                    while (iter.hasNext()) {
+                        entry.append(iter.next());
+                        if (iter.hasNext()) {
+                            entry.append(',');
+                        }
+                    }
                 }
             } else {
                 entry.append(token);
             }
         }
         
+        filter(entry);
+        
         LoggerFactory.getLogger(categoryBase + profileRequestContext.getLoggingId()).info(entry.toString());
+    }
+    
+    /**
+     * Optional override to filter the outgoing log message, does nothing by default.
+     * 
+     * @param entry log entry
+     */
+    protected void filter(@Nonnull final StringBuilder entry) {
+        
     }
     
 }
