@@ -32,10 +32,12 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
+import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.common.Extensions;
+import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
@@ -70,6 +72,9 @@ public class SetRPUIInformation extends AbstractProfileAction {
 
     /** The RPUI context - we always create this in {@link #doPreExecute(ProfileRequestContext)}. */
     private RelyingPartyUIContext rpUIContext;
+
+    /** The ACS context. */
+    private AttributeConsumingService acsDesriptor;
 
     /**
      * Get the mechanism to go from the {@link ProfileRequestContext} to the {@link SAMLMetadataContext}.
@@ -157,6 +162,11 @@ public class SetRPUIInformation extends AbstractProfileAction {
         if (roleDescriptor instanceof SPSSODescriptor) {
             spSSODescriptor = (SPSSODescriptor) roleDescriptor;
         }
+        final AttributeConsumingServiceContext acsCtx =
+                metadataContext.getSubcontext(AttributeConsumingServiceContext.class);
+        if (null != acsCtx) {
+            acsDesriptor = acsCtx.getAttributeConsumingService();
+        }
 
         return super.doPreExecute(profileRequestContext);
     }    
@@ -168,6 +178,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
         
         rpUIContext.setRPEntityDescriptor(entityDescriptor);
         rpUIContext.setRPSPSSODescriptor(spSSODescriptor);
+        rpUIContext.setRPAttributeConsumingService(acsDesriptor);
         rpUIContext.setRPUInfo(getRPUInfo());
         rpUIContext.setBrowserLanguages(getBrowserLanguages());
     }

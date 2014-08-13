@@ -440,23 +440,18 @@ public class RelyingPartyUIContext extends BaseContext {
      */
     @Nullable public String getServiceDescription(@Nullable final String defaultValue) {
 
-        if (getRPEntityDescriptor() == null) {
-            log.debug("No relying party, no description, returning '{}'", defaultValue);
-            return defaultValue;
-        }
-
         for (final String lang : getBrowserLanguages()) {
-            for (final ServiceDescription desc : getRPAttributeConsumingService().getDescriptions()) {
-                log.trace("Found description in AttributeConsumingService, language '{}'", desc.getXMLLang());
-                if (desc.getXMLLang().equals(lang)) {
-                    log.debug("Language match, returning description from AttributeConsumingService '{}'",
-                            desc.getValue());
-                    return desc.getValue();
-                }
+            String value = getDescriptionFromUIInfo(lang);
+            if (null != value) {
+                return value;
+            }
+            value = getDescriptionFromAttributeConsumingService(lang);
+            if (null != value) {
+                return value;
             }
         }
         log.debug("No description matching the languages found, returning '{}'", defaultValue);
-        return getNameFromEntityId();
+        return defaultValue;
     }
 
     /**
