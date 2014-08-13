@@ -18,6 +18,7 @@
 package net.shibboleth.idp.ui.context;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
@@ -78,19 +79,19 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         Assert.assertNotNull(theEntities[0]);
         Assert.assertNotNull(theSPSSOs[0]);
         Assert.assertNotNull(theACSs[0]);
-        
+
         theEntities[1] = unmarshallElement("/net/shibboleth/idp/ui/example-metadata2.xml");
         Assert.assertNotNull(theEntities[1]);
         theSPSSOs[1] = null;
         theACSs[1] = null;
         theUiInfos[1] = null;
-        
+
         theEntities[2] = unmarshallElement("/net/shibboleth/idp/ui/example-metadata3.xml");
         Assert.assertNotNull(theEntities[2]);
         theSPSSOs[2] = null;
         theACSs[2] = null;
         theUiInfos[2] = null;
-        
+
         theEntities[3] = theEntities[0];
         theSPSSOs[3] = theSPSSOs[0];
         theACSs[3] = theACSs[0];
@@ -144,11 +145,10 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         ctx = getContext(2);
         Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "urn:sp.example.org");
 
-    
         ctx = getContext(3);
         Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "le Service Name");
         Assert.assertEquals(ctx.getServiceDescription("DefaultServiceName"), "The ServiceDescription");
-}
+    }
 
     @Test public void urls() {
         RelyingPartyUIContext ctx = getContext();
@@ -160,4 +160,16 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(ctx.getInformationURL("DefaultInformationURL"), "DefaultInformationURL");
         Assert.assertEquals(ctx.getPrivacyStatementURL("DefaultPrivacyStatementURL"), "DefaultPrivacyStatementURL");
     }
+
+    @Test public void logo() {
+        RelyingPartyUIContext ctx = getContext();
+        
+        Assert.assertNull(ctx.getLogo(66, 1, 100, 10000));
+        Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.png");
+        
+        ctx.setBrowserLanguages(Collections.singletonList("de"));
+        Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.pngde");
+
+    }
+
 }

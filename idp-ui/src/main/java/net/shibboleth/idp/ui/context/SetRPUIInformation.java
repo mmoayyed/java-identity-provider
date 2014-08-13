@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -134,7 +135,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @return the two letter language
      */
-    @Nonnull protected List<String> getBrowserLanguages() {
+    @Nonnull @NonnullElements protected List<String> getBrowserLanguages() {
 
         final Enumeration<Locale> locales = getHttpServletRequest().getLocales();
 
@@ -142,7 +143,9 @@ public class SetRPUIInformation extends AbstractProfileAction {
 
         while (locales.hasMoreElements()) {
             final Locale locale = locales.nextElement();
-            languages.add(locale.getLanguage());
+            if (null != locale.getLanguage()) {
+                languages.add(locale.getLanguage());
+            }
         }
         return languages;
     }

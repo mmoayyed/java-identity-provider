@@ -16,6 +16,7 @@
 				<mdui:InformationURL xml:lang="en">https://www.example.org</mdui:InformationURL>
 				<mdui:PrivacyStatementURL xml:lang="en">https://www.example.org/privacy</mdui:PrivacyStatementURL>
 				<mdui:Logo height="65" width="150">https://shibboleth.net/images/shibboleth.png</mdui:Logo>
+                <mdui:Logo height="65" width="150" xml:lang="de">https://shibboleth.net/images/shibboleth.pngde</mdui:Logo>
 			</mdui:UIInfo>
 		</Extensions>
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01" Location="https://example.org/sp/ACS" index="6"/>

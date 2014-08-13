@@ -25,6 +25,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -33,6 +34,7 @@ import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
 import org.opensaml.saml.ext.saml2mdui.InformationURL;
+import org.opensaml.saml.ext.saml2mdui.Logo;
 import org.opensaml.saml.ext.saml2mdui.PrivacyStatementURL;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
@@ -70,7 +72,7 @@ public class RelyingPartyUIContext extends BaseContext {
     @Nullable private UIInfo rpUIInfo;
 
     /** The languages that this browser wants to know about. */
-    @Nonnull private List<String> browserLanguages;
+    @Nonnull @NonnullElements private List<String> browserLanguages;
 
     /**
      * Get the {@link EntityDescriptor}.
@@ -150,8 +152,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @param languages the languages to set.
      */
-    public void setBrowserLanguages(@Nonnull final List<String> languages) {
-        browserLanguages = Constraint.isNotNull(languages, "Language List mustr be non null");
+    public void setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
+        browserLanguages = Constraint.isNotNull(languages, "Language List must be non null");
     }
 
     /**
@@ -159,7 +161,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @return the languages.
      */
-    @Nonnull protected List<String> getBrowserLanguages() {
+    @Nonnull @NonnullElements protected List<String> getBrowserLanguages() {
         return browserLanguages;
     }
 
@@ -201,11 +203,10 @@ public class RelyingPartyUIContext extends BaseContext {
      * Police a url found for a logo.
      * 
      * @param url the url to look at
-     * @param defaultValue what to return if the test fails
      * @return the input or the default as appropriate
      */
-    protected String policyURLLogo(@Nullable final String url, @Nullable final String defaultValue) {
-        return policeURL(url, Arrays.asList("http", "https", "data"), defaultValue);
+    protected String policeURLLogo(@Nullable final String url) {
+        return policeURL(url, Arrays.asList("http", "https", "data"), null);
     }
 
     /**
@@ -215,7 +216,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param defaultValue what to return if the test fails
      * @return the input or the default as appropriate
      */
-    protected String policyURLNonLogo(@Nullable final String url, @Nullable final String defaultValue) {
+    protected String policeURLNonLogo(@Nullable final String url, @Nullable final String defaultValue) {
         return policeURL(url, Arrays.asList("http", "https", "mailto"), defaultValue);
     }
 
@@ -541,7 +542,7 @@ public class RelyingPartyUIContext extends BaseContext {
 
                 if (url.getXMLLang().equals(lang)) {
                     log.debug("returning OrganizationURL from Organization, {}", url.getValue());
-                    return policyURLNonLogo(url.getValue(), defaultValue);
+                    return policeURLNonLogo(url.getValue(), defaultValue);
                 }
             }
         }
@@ -594,7 +595,7 @@ public class RelyingPartyUIContext extends BaseContext {
         if (null == contact || null == contact.getEmailAddresses() || contact.getEmailAddresses().isEmpty()) {
             return defaultValue;
         }
-        return policyURLNonLogo(contact.getEmailAddresses().get(0).getAddress(), defaultValue);
+        return policeURLNonLogo(contact.getEmailAddresses().get(0).getAddress(), defaultValue);
     }
 
     /**
@@ -603,7 +604,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param defaultValue what to return if we cannot find it
      * @return the value or the default value
      */
-    public String getInformationURL(String defaultValue) {
+    @Nullable public String getInformationURL(String defaultValue) {
 
         if (null == getRPUInfo() || null == rpUIInfo.getInformationURLs() || rpUIInfo.getInformationURLs().isEmpty()) {
             log.debug("No UIInfo or InformationURLs returning {}", defaultValue);
@@ -619,7 +620,7 @@ public class RelyingPartyUIContext extends BaseContext {
 
                 if (url.getXMLLang().equals(lang)) {
                     log.debug("returning InformationURL, {}", url.getValue());
-                    return policyURLNonLogo(url.getValue(), defaultValue);
+                    return policeURLNonLogo(url.getValue(), defaultValue);
                 }
             }
         }
@@ -633,7 +634,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param defaultValue what to return if we cannot find it
      * @return the value or the default value
      */
-    public String getPrivacyStatementURL(String defaultValue) {
+    @Nullable public String getPrivacyStatementURL(String defaultValue) {
         if (null == getRPUInfo() || null == rpUIInfo.getPrivacyStatementURLs()
                 || rpUIInfo.getPrivacyStatementURLs().isEmpty()) {
             log.debug("No UIInfo or PrivacyStatementURLs returning {}", defaultValue);
@@ -649,7 +650,7 @@ public class RelyingPartyUIContext extends BaseContext {
 
                 if (url.getXMLLang().equals(lang)) {
                     log.debug("returning PrivacyStatementURL, {}", url.getValue());
-                    return policyURLNonLogo(url.getValue(), defaultValue);
+                    return policeURLNonLogo(url.getValue(), defaultValue);
                 }
             }
         }
@@ -657,4 +658,154 @@ public class RelyingPartyUIContext extends BaseContext {
         return defaultValue;
     }
 
+    /**
+     * Does the logo fit the supplied parameters?
+     * 
+     * @param logo the logo
+     * @param minWidth min Width
+     * @param minHeight min Height
+     * @param maxWidth max Width
+     * @param maxHeight max Height
+     * @return whether it fits
+     */
+    private boolean logoFits(Logo logo, int minWidth, int minHeight, int maxWidth, int maxHeight) {
+        return logo.getHeight() <= maxHeight && logo.getHeight() >= minHeight && logo.getWidth() <= maxWidth
+                && logo.getWidth() >= minWidth;
+    }
+
+    /**
+     * Get the Logo of the given language which fits the size.
+     * 
+     * @param lang the language
+     * @param minWidth the minimum width to allow.
+     * @param minHeight the minimum height to allow.
+     * @param maxWidth the maximum width to allow.
+     * @param maxHeight the maximum height to allow.
+     * @return an appropriate logo URL or null.
+     */
+    @Nullable private String getLogoByLanguage(@Nonnull String lang, int minWidth, int minHeight, int maxWidth,
+            int maxHeight) {
+        for (Logo logo : rpUIInfo.getLogos()) {
+            if (null == logo.getXMLLang()) {
+                continue;
+            }
+            log.trace("Found logo in UIInfo, '{}' ({} x {})", logo.getXMLLang(), logo.getWidth(), logo.getHeight());
+            if (!logo.getXMLLang().equals(lang)) {
+                log.trace("Language mismatch against '{}'");
+                continue;
+            }
+            if (!logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
+                log.trace("Size Mismatch");
+                continue;
+            }
+            log.debug("Returning logo from UIInfo, '{}' ({} x {}) : {", logo.getXMLLang(), logo.getWidth(),
+                    logo.getHeight(), logo.getURL());
+            return logo.getURL();
+        }
+        return null;
+    }
+
+    /**
+     * Get the Logo of the given language which fits the size.
+     * 
+     * @param minWidth the minimum width to allow.
+     * @param minHeight the minimum height to allow.
+     * @param maxWidth the maximum width to allow.
+     * @param maxHeight the maximum height to allow.
+     * @return an appropriate logo URL or null.
+     */
+    @Nullable private String getLogoNoLanguage(int minWidth, int minHeight, int maxWidth, int maxHeight) {
+        for (Logo logo : rpUIInfo.getLogos()) {
+            if (null != logo.getXMLLang()) {
+                continue;
+            }
+            log.trace("Found logo in UIInfo, ({} x {})", logo.getWidth(), logo.getHeight());
+            if (!logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
+                log.trace("Size Mismatch");
+                continue;
+            }
+            log.debug("Returning logo from UIInfo, ({} x {}) : {", logo.getWidth(), logo.getHeight(), logo.getURL());
+            return logo.getURL();
+        }
+        return null;
+    }
+
+    /**
+     * Get the Logo (or null). We apply the languages and the supplied lengths.
+     * 
+     * @param minWidth the minimum width to allow.
+     * @param minHeight the minimum height to allow.
+     * @param maxWidth the maximum width to allow.
+     * @param maxHeight the maximum height to allow.
+     * @return an appropriate logo URL or null.
+     */
+    @Nullable public String getLogo(int minWidth, int minHeight, int maxWidth, int maxHeight) {
+        if (null == getRPUInfo() || null == rpUIInfo.getLogos() || rpUIInfo.getLogos().isEmpty()) {
+            log.debug("No UIInfo or logos returning null");
+            return null;
+        }
+
+        for (final String lang : getBrowserLanguages()) {
+            final String result = getLogoByLanguage(lang, minWidth, minHeight, maxWidth, maxHeight);
+            if (null != result) {
+                return policeURLLogo(result);
+            }
+        }
+        final String result = getLogoNoLanguage(minWidth, minHeight, maxWidth, maxHeight);
+        if (null != result) {
+            return policeURLLogo(result);
+        }
+        return null;
+    }
+
+    /**
+     * Get the Logo (or null). We apply the languages and the supplied lengths.
+     * 
+     * @param minWidth the minimum width to allow.
+     * @param minHeight the minimum height to allow.
+     * @param maxWidth the maximum width to allow.
+     * @param maxHeight the maximum height to allow.
+     * @return an appropriate logo URL or null.
+     */
+    @Nullable public String getLogo(String minWidth, String minHeight, String maxWidth, String maxHeight) {
+
+        int minW;
+        try {
+            minW = Integer.parseInt(minWidth);
+        } catch (NumberFormatException ex) {
+            minW = Integer.MIN_VALUE;
+        }
+
+        int minH;
+        try {
+            minH = Integer.parseInt(minHeight);
+        } catch (NumberFormatException ex) {
+            minH = Integer.MIN_VALUE;
+        }
+
+        int maxW;
+        try {
+            maxW = Integer.parseInt(maxWidth);
+        } catch (NumberFormatException ex) {
+            maxW = Integer.MAX_VALUE;
+        }
+
+        int maxH;
+        try {
+            maxH = Integer.parseInt(maxHeight);
+        } catch (NumberFormatException ex) {
+            maxH = Integer.MAX_VALUE;
+        }
+
+        return getLogo(minW, minH, maxW, maxH);
+    }
+
+    /**
+     * Get the Logo (or null). We apply the languages. Any size works.
+     * 
+     * @return an appropriate logo URL or null.
+     */
+    @Nullable public String getLogo() {
+        return getLogo(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+    }
 }

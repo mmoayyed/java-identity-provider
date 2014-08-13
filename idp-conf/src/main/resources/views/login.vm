@@ -81,8 +81,11 @@
               //      https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage
               //
               //    Example:
-              $rpUIContext.getLogo();
             -->
+            #set ($logo = $rpUIContext.getLogo())
+            #if ($logo)
+                <img src= "$encoder.encodeForHTMLAttribute($logo)" alt="logo for $rpUIContext.getServiceName("")"/>
+            #end
 			$rpUIContext.getServiceDescription("")
 			          
 
