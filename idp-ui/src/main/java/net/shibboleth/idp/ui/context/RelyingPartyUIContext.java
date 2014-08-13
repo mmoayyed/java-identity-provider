@@ -32,6 +32,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
+import org.opensaml.saml.ext.saml2mdui.InformationURL;
+import org.opensaml.saml.ext.saml2mdui.PrivacyStatementURL;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
@@ -554,7 +556,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param defaultValue what to provide if the lookup fails
      * @return An appropriate string or the default
      */
-    @Nullable public String getSurName(@Nullable String contactType, @Nullable final String defaultValue) {
+    @Nullable public String getContactSurName(@Nullable String contactType, @Nullable final String defaultValue) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getSurName()) {
@@ -570,7 +572,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param defaultValue what to provide if the lookup fails
      * @return An appropriate string or the default
      */
-    @Nullable public String getGivenName(@Nullable String contactType, @Nullable final String defaultValue) {
+    @Nullable public String getContactGivenName(@Nullable String contactType, @Nullable final String defaultValue) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getGivenName()) {
@@ -580,19 +582,79 @@ public class RelyingPartyUIContext extends BaseContext {
     }
 
     /**
-     * look for the &lt;ContactPerson&gt; and within that the GivenName.
+     * look for the &lt;ContactPerson&gt; and within that the Email.
      * 
      * @param contactType the type of contact to look for
      * @param defaultValue what to provide if the lookup fails
      * @return An appropriate string or the default
      */
-    @Nullable public String getEmail(@Nullable String contactType, @Nullable final String defaultValue) {
+    @Nullable public String getContactEmail(@Nullable String contactType, @Nullable final String defaultValue) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getEmailAddresses() || contact.getEmailAddresses().isEmpty()) {
             return defaultValue;
         }
         return policyURLNonLogo(contact.getEmailAddresses().get(0).getAddress(), defaultValue);
+    }
+
+    /**
+     * Get the &lt;mdui:InformationURL&gt;.
+     * 
+     * @param defaultValue what to return if we cannot find it
+     * @return the value or the default value
+     */
+    public String getInformationURL(String defaultValue) {
+
+        if (null == getRPUInfo() || null == rpUIInfo.getInformationURLs() || rpUIInfo.getInformationURLs().isEmpty()) {
+            log.debug("No UIInfo or InformationURLs returning {}", defaultValue);
+            return defaultValue;
+        }
+        for (final String lang : getBrowserLanguages()) {
+            for (final InformationURL url : rpUIInfo.getInformationURLs()) {
+                if (url.getXMLLang() == null) {
+                    continue;
+                } else {
+                    log.trace("Found InformationURL, language={}", url.getXMLLang());
+                }
+
+                if (url.getXMLLang().equals(lang)) {
+                    log.debug("returning InformationURL, {}", url.getValue());
+                    return policyURLNonLogo(url.getValue(), defaultValue);
+                }
+            }
+        }
+        log.debug("No relevant InformationURL with language match, returning {}", defaultValue);
+        return defaultValue;
+    }
+
+    /**
+     * Get the &lt;mdui:PrivacyStatementURL&gt;.
+     * 
+     * @param defaultValue what to return if we cannot find it
+     * @return the value or the default value
+     */
+    public String getPrivacyStatementURL(String defaultValue) {
+        if (null == getRPUInfo() || null == rpUIInfo.getPrivacyStatementURLs()
+                || rpUIInfo.getPrivacyStatementURLs().isEmpty()) {
+            log.debug("No UIInfo or PrivacyStatementURLs returning {}", defaultValue);
+            return defaultValue;
+        }
+        for (final String lang : getBrowserLanguages()) {
+            for (final PrivacyStatementURL url : rpUIInfo.getPrivacyStatementURLs()) {
+                if (url.getXMLLang() == null) {
+                    continue;
+                } else {
+                    log.trace("Found PrivacyStatementURL, language={}", url.getXMLLang());
+                }
+
+                if (url.getXMLLang().equals(lang)) {
+                    log.debug("returning PrivacyStatementURL, {}", url.getValue());
+                    return policyURLNonLogo(url.getValue(), defaultValue);
+                }
+            }
+        }
+        log.debug("No relevant PrivacyStatementURLs with language match, returning {}", defaultValue);
+        return defaultValue;
     }
 
 }
