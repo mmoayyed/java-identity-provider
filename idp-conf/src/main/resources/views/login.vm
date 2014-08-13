@@ -44,7 +44,7 @@
               #end
 
               <legend>
-                 Log in to $rpUIContext.getServiceName("Anonymous Service");
+                 Log in to $rpUIContext.getServiceName()
               </legend>
 
               <section>
@@ -78,17 +78,19 @@
               //    added SP information.
               //
               //    Documentation: 
-              //      https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage
+              //      https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage  TODO
               //
               //    Example:
             -->
             #set ($logo = $rpUIContext.getLogo())
             #if ($logo)
-                <img src= "$encoder.encodeForHTMLAttribute($logo)" alt="logo for $rpUIContext.getServiceName("")"/>
+                <img src= "$encoder.encodeForHTMLAttribute($logo)" alt="logo for $rpUIContext.getServiceName()"/>
             #end
-			$rpUIContext.getServiceDescription("")
-			          
-
+            #set ($desc = $rpUIContext.getServiceDescription())
+            #if ($desc)
+              $desc
+            #end
+            
           </div>
           <div class="column two">
             <ul class="list list-help">

@@ -101,64 +101,63 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
     @Test public void givenName() {
         RelyingPartyUIContext ctx = getContext();
 
-        Assert.assertEquals(ctx.getContactGivenName("administrative", null), "GNadministrative");
-        Assert.assertEquals(ctx.getContactGivenName("billing", null), "GNbilling");
-        Assert.assertEquals(ctx.getContactGivenName("other", "fallback"), "fallback");
-        Assert.assertEquals(ctx.getContactGivenName("support", null), "GNsupport");
-        Assert.assertEquals(ctx.getContactGivenName("technical", null), "GNtechnical");
+        Assert.assertEquals(ctx.getContactGivenName("administrative"), "GNadministrative");
+        Assert.assertEquals(ctx.getContactGivenName("billing"), "GNbilling");
+        Assert.assertEquals(ctx.getContactGivenName("other" ), null);
+        Assert.assertEquals(ctx.getContactGivenName("support"), "GNsupport");
+        Assert.assertEquals(ctx.getContactGivenName("technical"), "GNtechnical");
     }
 
     @Test public void surName() {
         RelyingPartyUIContext ctx = getContext();
 
-        Assert.assertEquals(ctx.getContactSurName("administrative", null), "Admin");
-        Assert.assertEquals(ctx.getContactSurName("other", null), "OTHER");
-        Assert.assertEquals(ctx.getContactSurName("billing", "Bond, James Bond"), "Bond, James Bond");
+        Assert.assertEquals(ctx.getContactSurName("administrative"), "Admin");
+        Assert.assertEquals(ctx.getContactSurName("other"), "OTHER");
+        Assert.assertNull(ctx.getContactSurName("billing"));
     }
 
     @Test public void email() {
         RelyingPartyUIContext ctx = getContext();
 
-        Assert.assertEquals(ctx.getContactEmail("administrative", null), "mailto:administrative@example.org");
-        Assert.assertEquals(ctx.getContactEmail("other", "http://example.org/"), "http://example.org/");
-        Assert.assertEquals(ctx.getContactEmail("support", "http://example.org/DangerWillRoberts"),
-                "http://example.org/DangerWillRoberts");
+        Assert.assertEquals(ctx.getContactEmail("administrative"), "mailto:administrative@example.org");
+        Assert.assertEquals(ctx.getContactEmail("other") , null);
+        Assert.assertEquals(ctx.getContactEmail("support"), null);
     }
 
     @Test public void organizationXX() {
         RelyingPartyUIContext ctx = getContext();
 
-        Assert.assertEquals(ctx.getOrganizationDisplayName("DefODN"), "The Shibboleth Consortium");
-        Assert.assertEquals(ctx.getOrganizationName("DefODN"), "DefODN");
-        Assert.assertEquals(ctx.getOrganizationURL("DefOURL"), "DefOURL");
+        Assert.assertEquals(ctx.getOrganizationDisplayName(), "The Shibboleth Consortium");
+        Assert.assertEquals(ctx.getOrganizationName(), null);
+        Assert.assertEquals(ctx.getOrganizationURL(), null);
     }
 
     @Test public void service() {
         RelyingPartyUIContext ctx = getContext();
 
-        Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "TEST SP (display Name)");
-        Assert.assertEquals(ctx.getServiceDescription("DefaultServiceName"), "TEST SP (description)");
+        Assert.assertEquals(ctx.getServiceName(), "TEST SP (display Name)");
+        Assert.assertEquals(ctx.getServiceDescription(), "TEST SP (description)");
 
         ctx = getContext(1);
-        Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "sp.example.org");
+        Assert.assertEquals(ctx.getServiceName(), "sp.example.org");
 
         ctx = getContext(2);
-        Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "urn:sp.example.org");
+        Assert.assertEquals(ctx.getServiceName(), "urn:sp.example.org");
 
         ctx = getContext(3);
-        Assert.assertEquals(ctx.getServiceName("DefaultServiceName"), "le Service Name");
-        Assert.assertEquals(ctx.getServiceDescription("DefaultServiceName"), "The ServiceDescription");
+        Assert.assertEquals(ctx.getServiceName(), "le Service Name");
+        Assert.assertEquals(ctx.getServiceDescription(), "The ServiceDescription");
     }
 
     @Test public void urls() {
         RelyingPartyUIContext ctx = getContext();
 
-        Assert.assertEquals(ctx.getInformationURL("DefaultInformationURL"), "https://www.example.org");
-        Assert.assertEquals(ctx.getPrivacyStatementURL("DefaultPrivacyStatementURL"), "https://www.example.org/privacy");
+        Assert.assertEquals(ctx.getInformationURL(), "https://www.example.org");
+        Assert.assertEquals(ctx.getPrivacyStatementURL(), "https://www.example.org/privacy");
 
         ctx = getContext(3);
-        Assert.assertEquals(ctx.getInformationURL("DefaultInformationURL"), "DefaultInformationURL");
-        Assert.assertEquals(ctx.getPrivacyStatementURL("DefaultPrivacyStatementURL"), "DefaultPrivacyStatementURL");
+        Assert.assertEquals(ctx.getInformationURL(),null);
+        Assert.assertEquals(ctx.getPrivacyStatementURL(), null);
     }
 
     @Test public void logo() {

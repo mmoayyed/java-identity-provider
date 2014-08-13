@@ -170,14 +170,13 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @param url the url to look at
      * @param acceptableSchemes the schemes to test against
-     * @param defaultValue what to return if the test fails
-     * @return the input or the default as appropriate.
+     * @return the input or null as appropriate.
      */
     @Nullable private String policeURL(@Nullable final String url,
-            @Nonnull @NotEmpty final List<String> acceptableSchemes, @Nullable final String defaultValue) {
+            @Nonnull @NotEmpty final List<String> acceptableSchemes) {
         if (null == url) {
-            log.trace("Empty Value - returning '{}", defaultValue);
-            return defaultValue;
+            log.trace("Empty Value - returning null");
+            return null;
         }
 
         try {
@@ -190,12 +189,12 @@ public class RelyingPartyUIContext extends BaseContext {
                 }
             }
 
-            log.warn("The logo URL '{}' contained an invalid scheme (expected '{}'), returning default of '{}'", url,
-                    acceptableSchemes, defaultValue);
-            return defaultValue;
+            log.warn("The logo URL '{}' contained an invalid scheme (expected '{}'), returning null", url,
+                    acceptableSchemes);
+            return null;
         } catch (URISyntaxException e) {
-            log.warn("The logo URL '{}' contained was not a URL, returning default of '{}'", url, defaultValue);
-            return defaultValue;
+            log.warn("The logo URL '{}' contained was not a URL, returning null", url);
+            return null;
         }
     }
 
@@ -206,18 +205,17 @@ public class RelyingPartyUIContext extends BaseContext {
      * @return the input or the default as appropriate
      */
     protected String policeURLLogo(@Nullable final String url) {
-        return policeURL(url, Arrays.asList("http", "https", "data"), null);
+        return policeURL(url, Arrays.asList("http", "https", "data"));
     }
 
     /**
      * Police a url found for non logo data.
      * 
      * @param url the url to look at
-     * @param defaultValue what to return if the test fails
      * @return the input or the default as appropriate
      */
-    protected String policeURLNonLogo(@Nullable final String url, @Nullable final String defaultValue) {
-        return policeURL(url, Arrays.asList("http", "https", "mailto"), defaultValue);
+    protected String policeURLNonLogo(@Nullable final String url) {
+        return policeURL(url, Arrays.asList("http", "https", "mailto"));
     }
 
     /**
@@ -409,14 +407,13 @@ public class RelyingPartyUIContext extends BaseContext {
     /**
      * Get the service name.
      * 
-     * @param defaultValue what to provide if this is an anonymous lookup
-     * @return the name
+     * @return the name or null if there wasn't one 
      */
-    @Nullable public String getServiceName(@Nullable final String defaultValue) {
+    @Nullable public String getServiceName() {
 
         if (getRPEntityDescriptor() == null) {
-            log.debug("No relying party, no name, returning '{}'", defaultValue);
-            return defaultValue;
+            log.debug("No relying party, no name, returning null");
+            return null;
         }
 
         for (final String lang : getBrowserLanguages()) {
@@ -438,10 +435,9 @@ public class RelyingPartyUIContext extends BaseContext {
     /**
      * Get the service Description.
      * 
-     * @param defaultValue what to provide if this is an anonymous lookup
-     * @return the name
+     * @return the description or null if there wasn't one 
      */
-    @Nullable public String getServiceDescription(@Nullable final String defaultValue) {
+    @Nullable public String getServiceDescription() {
 
         for (final String lang : getBrowserLanguages()) {
             String value = getDescriptionFromUIInfo(lang);
@@ -453,21 +449,20 @@ public class RelyingPartyUIContext extends BaseContext {
                 return value;
             }
         }
-        log.debug("No description matching the languages found, returning '{}'", defaultValue);
-        return defaultValue;
+        log.debug("No description matching the languages found, returning null");
+        return null;
     }
 
     /**
      * Look for the &lt;OrganizationDisplayName&gt;.
      * 
-     * @param defaultValue what to provide if the lookup fails
-     * @return An appropriate string or the default
+     * @return An appropriate string or null
      */
-    @Nullable public String getOrganizationDisplayName(@Nullable final String defaultValue) {
+    @Nullable public String getOrganizationDisplayName() {
         final Organization org = getOrganization();
         if (null == org || null == org.getDisplayNames() || org.getDisplayNames().isEmpty()) {
-            log.debug("No Organization, OrganizationDisplayName or names, returning {}", defaultValue);
-            return defaultValue;
+            log.debug("No Organization, OrganizationDisplayName or names, returning null");
+            return null;
         }
         for (final String lang : getBrowserLanguages()) {
 
@@ -484,21 +479,20 @@ public class RelyingPartyUIContext extends BaseContext {
                 }
             }
         }
-        log.debug("No relevant OrganizationDisplayName in Organization, returning {}", defaultValue);
-        return defaultValue;
+        log.debug("No relevant OrganizationDisplayName in Organization, returning null");
+        return null;
     }
 
     /**
      * Look for the &lt;OrganizationName&gt;.
      * 
-     * @param defaultValue what to provide if the lookup fails
-     * @return An appropriate string or the default
+     * @return An appropriate string or null
      */
-    @Nullable public String getOrganizationName(@Nullable final String defaultValue) {
+    @Nullable public String getOrganizationName() {
         final Organization org = getOrganization();
         if (null == org || null == org.getOrganizationNames() || org.getOrganizationNames().isEmpty()) {
-            log.debug("No Organization, OrganizationName or names, returning {}", defaultValue);
-            return defaultValue;
+            log.debug("No Organization, OrganizationName or names, returning null");
+            return null;
         }
         for (final String lang : getBrowserLanguages()) {
 
@@ -515,21 +509,20 @@ public class RelyingPartyUIContext extends BaseContext {
                 }
             }
         }
-        log.debug("No relevant OrganizationName in Organization, returning {}", defaultValue);
-        return defaultValue;
+        log.debug("No relevant OrganizationName in Organization, returning null");
+        return null;
     }
 
     /**
      * * Look for the &lt;OrganizationURL&gt;.
      * 
-     * @param defaultValue what to provide if the lookup fails
-     * @return An appropriate string or the default
+     * @return An appropriate string or the null
      */
-    public String getOrganizationURL(String defaultValue) {
+    public String getOrganizationURL() {
         final Organization org = getOrganization();
         if (null == org || null == org.getURLs() || org.getURLs().isEmpty()) {
-            log.debug("No Organization, OrganizationURL or urls, returning {}", defaultValue);
-            return defaultValue;
+            log.debug("No Organization, OrganizationURL or urls, returning null");
+            return null;
         }
         for (final String lang : getBrowserLanguages()) {
 
@@ -542,26 +535,25 @@ public class RelyingPartyUIContext extends BaseContext {
 
                 if (url.getXMLLang().equals(lang)) {
                     log.debug("returning OrganizationURL from Organization, {}", url.getValue());
-                    return policeURLNonLogo(url.getValue(), defaultValue);
+                    return policeURLNonLogo(url.getValue());
                 }
             }
         }
-        log.debug("No relevant OrganizationURL in Organization, returning {}", defaultValue);
-        return defaultValue;
+        log.debug("No relevant OrganizationURL in Organization, returning null");
+        return null;
     }
 
     /**
      * look for the &lt;ContactPerson&gt; and within that the SurName.
      * 
      * @param contactType the type of contact to look for
-     * @param defaultValue what to provide if the lookup fails
-     * @return An appropriate string or the default
+     * @return An appropriate string or null
      */
-    @Nullable public String getContactSurName(@Nullable String contactType, @Nullable final String defaultValue) {
+    @Nullable public String getContactSurName(@Nullable String contactType) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getSurName()) {
-            return defaultValue;
+            return null;
         }
         return contact.getSurName().getName();
     }
@@ -570,14 +562,13 @@ public class RelyingPartyUIContext extends BaseContext {
      * look for the &lt;ContactPerson&gt; and within that the GivenName.
      * 
      * @param contactType the type of contact to look for
-     * @param defaultValue what to provide if the lookup fails
-     * @return An appropriate string or the default
+     * @return An appropriate string or null
      */
-    @Nullable public String getContactGivenName(@Nullable String contactType, @Nullable final String defaultValue) {
+    @Nullable public String getContactGivenName(@Nullable String contactType) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getGivenName()) {
-            return defaultValue;
+            return null;
         }
         return contact.getGivenName().getName();
     }
@@ -586,29 +577,27 @@ public class RelyingPartyUIContext extends BaseContext {
      * look for the &lt;ContactPerson&gt; and within that the Email.
      * 
      * @param contactType the type of contact to look for
-     * @param defaultValue what to provide if the lookup fails
-     * @return An appropriate string or the default
+     * @return An appropriate string or null
      */
-    @Nullable public String getContactEmail(@Nullable String contactType, @Nullable final String defaultValue) {
+    @Nullable public String getContactEmail(@Nullable String contactType) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getEmailAddresses() || contact.getEmailAddresses().isEmpty()) {
-            return defaultValue;
+            return null;
         }
-        return policeURLNonLogo(contact.getEmailAddresses().get(0).getAddress(), defaultValue);
+        return policeURLNonLogo(contact.getEmailAddresses().get(0).getAddress());
     }
 
     /**
      * Get the &lt;mdui:InformationURL&gt;.
      * 
-     * @param defaultValue what to return if we cannot find it
      * @return the value or the default value
      */
-    @Nullable public String getInformationURL(String defaultValue) {
+    @Nullable public String getInformationURL() {
 
         if (null == getRPUInfo() || null == rpUIInfo.getInformationURLs() || rpUIInfo.getInformationURLs().isEmpty()) {
-            log.debug("No UIInfo or InformationURLs returning {}", defaultValue);
-            return defaultValue;
+            log.debug("No UIInfo or InformationURLs returning null");
+            return null;
         }
         for (final String lang : getBrowserLanguages()) {
             for (final InformationURL url : rpUIInfo.getInformationURLs()) {
@@ -620,25 +609,24 @@ public class RelyingPartyUIContext extends BaseContext {
 
                 if (url.getXMLLang().equals(lang)) {
                     log.debug("returning InformationURL, {}", url.getValue());
-                    return policeURLNonLogo(url.getValue(), defaultValue);
+                    return policeURLNonLogo(url.getValue());
                 }
             }
         }
-        log.debug("No relevant InformationURL with language match, returning {}", defaultValue);
-        return defaultValue;
+        log.debug("No relevant InformationURL with language match, returning null");
+        return null;
     }
 
     /**
      * Get the &lt;mdui:PrivacyStatementURL&gt;.
      * 
-     * @param defaultValue what to return if we cannot find it
-     * @return the value or the default value
+     * @return the value or null
      */
-    @Nullable public String getPrivacyStatementURL(String defaultValue) {
+    @Nullable public String getPrivacyStatementURL() {
         if (null == getRPUInfo() || null == rpUIInfo.getPrivacyStatementURLs()
                 || rpUIInfo.getPrivacyStatementURLs().isEmpty()) {
-            log.debug("No UIInfo or PrivacyStatementURLs returning {}", defaultValue);
-            return defaultValue;
+            log.debug("No UIInfo or PrivacyStatementURLs returning null");
+            return null;
         }
         for (final String lang : getBrowserLanguages()) {
             for (final PrivacyStatementURL url : rpUIInfo.getPrivacyStatementURLs()) {
@@ -650,12 +638,12 @@ public class RelyingPartyUIContext extends BaseContext {
 
                 if (url.getXMLLang().equals(lang)) {
                     log.debug("returning PrivacyStatementURL, {}", url.getValue());
-                    return policeURLNonLogo(url.getValue(), defaultValue);
+                    return policeURLNonLogo(url.getValue());
                 }
             }
         }
-        log.debug("No relevant PrivacyStatementURLs with language match, returning {}", defaultValue);
-        return defaultValue;
+        log.debug("No relevant PrivacyStatementURLs with language match, returning null");
+        return null;
     }
 
     /**
