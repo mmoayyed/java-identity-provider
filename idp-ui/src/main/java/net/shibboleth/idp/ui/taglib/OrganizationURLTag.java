@@ -24,8 +24,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.opensaml.saml.saml2.metadata.Organization;
-import org.opensaml.saml.saml2.metadata.OrganizationURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,29 +54,10 @@ public class OrganizationURLTag extends ServiceTagSupport {
      * @return null or an appropriate string
      */
     @Nullable private String getOrganizationURL() {
-        final Organization org = getSPOrganization();
-        if (org != null && org.getURLs() != null) {
-            for (final String lang : getBrowserLanguages()) {
-
-                for (final OrganizationURL orgURL : org.getURLs()) {
-                    if (orgURL.getXMLLang() == null) {
-                        continue;
-                    } else {
-                        log.debug("Found OrganizationURL in Organization, language={}", orgURL.getXMLLang());
-                    }
-                    
-                    if (orgURL.getXMLLang().equals(lang)) {
-                        //
-                        // Found it
-                        //
-                        log.debug("returning OrganizationURL from Organization, {}", orgURL.getValue());
-                        return orgURL.getValue();
-                    }
-                }
-            }
-            log.debug("No relevant OrganizationURL in Organization");
+        if (getRelyingPartyUIContext() == null) {
+            return null;
         }
-        return null;
+        return getRelyingPartyUIContext().getOrganizationURL();
     }
 
     /** {@inheritDoc} */
@@ -99,7 +78,7 @@ public class OrganizationURLTag extends ServiceTagSupport {
                 pageContext.getOut().print(buildHyperLink(orgURL, linkText));
             }
         } catch (IOException e) {
-            log.warn("Error generating OrganizationURL");
+            log.warn("Error generating OrganizationURL", e);
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

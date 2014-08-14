@@ -26,8 +26,6 @@ import javax.servlet.jsp.tagext.BodyContent;
 
 import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
 
-import org.opensaml.saml.saml2.metadata.Organization;
-import org.opensaml.saml.saml2.metadata.OrganizationDisplayName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,31 +44,10 @@ public class OrganizationDisplayNameTag extends ServiceTagSupport {
      * @return null or an appropriate string
      */
     @Nullable private String getOrganizationDisplayName() {
-        final Organization org = getSPOrganization();
-        if (org != null && org.getDisplayNames() != null) {
-            for (final String lang : getBrowserLanguages()) {
-
-                for (final OrganizationDisplayName name : org.getDisplayNames()) {
-                    if (name.getXMLLang() == null) {
-                        continue;
-                    } else {
-                        log.debug("Found OrganizationDisplayName in Organization, language={}",
-                                name.getXMLLang());
-                    }
-                    
-                    if (name.getXMLLang().equals(lang)) {
-                        //
-                        // Found it
-                        //
-                        log.debug("returning OrganizationDisplayName from Organization, {}",
-                                name.getValue());
-                        return name.getValue();
-                    }
-                }
-            }
-            log.debug("No relevant OrganizationDisplayName in Organization");
+        if (getRelyingPartyUIContext() == null) {
+            return null;
         }
-        return null;
+        return getRelyingPartyUIContext().getOrganizationDisplayName();
     }
 
     /** {@inheritDoc} */
@@ -91,7 +68,7 @@ public class OrganizationDisplayNameTag extends ServiceTagSupport {
                 pageContext.getOut().print(HTMLEncoder.encodeForHTML(name));
             }
         } catch (IOException e) {
-            log.warn("Error generating OrganizationDisplayName");
+            log.warn("Error generating OrganizationDisplayName", e);
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

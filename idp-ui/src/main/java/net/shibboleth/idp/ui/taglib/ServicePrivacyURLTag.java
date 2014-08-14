@@ -18,14 +18,12 @@
 package net.shibboleth.idp.ui.taglib;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.opensaml.saml.ext.saml2mdui.PrivacyStatementURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +44,7 @@ public class ServicePrivacyURLTag extends ServiceTagSupport {
      * 
      * @param text the link text to put in
      */
-    public void setLinkText(@Nullable String text) {
+    public void setLinkText(@Nullable final String text) {
         linkText = text;
     }
 
@@ -56,31 +54,10 @@ public class ServicePrivacyURLTag extends ServiceTagSupport {
      * @return null or an appropriate string.
      */
     @Nullable private String getPrivacyURLFromUIIinfo() {
-        if (getSPUIInfo() != null && getSPUIInfo().getPrivacyStatementURLs() != null) {
-
-            final List<String> languages = getBrowserLanguages();
-            for (final String lang : languages) {
-
-                for (final PrivacyStatementURL privacyURL : getSPUIInfo().getPrivacyStatementURLs()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Found PrivacyStatementURL in UIInfo, language=" + privacyURL.getXMLLang());
-                    }
-                    if (privacyURL.getXMLLang().equals(lang)) {
-                        //
-                        // Found it
-                        //
-                        if (log.isDebugEnabled()) {
-                            log.debug("returning URL from UIInfo " + privacyURL.getValue());
-                        }
-                        return privacyURL.getValue();
-                    }
-                }
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("No relevant PrivacyStatementURL in UIInfo");
-            }
+        if (getRelyingPartyUIContext() == null) {
+            return null;
         }
-        return null;
+        return getRelyingPartyUIContext().getPrivacyStatementURL();
     }
 
     @Override public int doEndTag() throws JspException {
@@ -100,7 +77,7 @@ public class ServicePrivacyURLTag extends ServiceTagSupport {
                 pageContext.getOut().print(buildHyperLink(privacyURL, linkText));
             }
         } catch (IOException e) {
-            log.warn("Error generating PrivacyStatementURL");
+            log.warn("Error generating PrivacyStatementURL", e);
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

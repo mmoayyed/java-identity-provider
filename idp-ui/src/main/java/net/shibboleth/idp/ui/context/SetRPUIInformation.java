@@ -100,7 +100,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @return Returns the strategy.
      */
-    public Function<ProfileRequestContext, RelyingPartyUIContext> gsetRPUIContextCreateStrategy() {
+    public Function<ProfileRequestContext, RelyingPartyUIContext> getRPUIContextCreateStrategy() {
         return rpUIContextCreateStrategy;
     }
 

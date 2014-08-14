@@ -20,7 +20,6 @@ package net.shibboleth.idp.ui.taglib;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.servlet.jsp.JspException;
@@ -29,7 +28,6 @@ import javax.servlet.jsp.tagext.BodyContent;
 
 import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
 
-import org.opensaml.saml.ext.saml2mdui.Logo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,78 +107,17 @@ public class ServiceLogoTag extends ServiceTagSupport {
     }
 
     /**
-     * Whether the provided logo fits inside the constraints.
-     * 
-     * @param logo the logo
-     * @return whether it fits the provided max and mins
-     */
-    private boolean logoFits(Logo logo) {
-        return logo.getHeight() <= maxHeight && logo.getHeight() >= minHeight && logo.getWidth() <= maxWidth
-                && logo.getWidth() >= minWidth;
-    }
-
-    /**
-     * get an appropriate logo by lanaguage from the UIInfo.
-     * 
-     * @param logos what to look through
-     * @return an appropriate logo.
-     */
-    @Nullable private String getLogoFromUIInfo(final List<Logo> logos) {
-        for (final String lang : getBrowserLanguages()) {
-            // By language first
-            for (final Logo logo : logos) {
-                if (null == logo.getXMLLang()) {
-                    continue;
-                }
-                log.debug("Found logo in UIInfo, language=" + logo.getXMLLang() + " width=" + logo.getWidth()
-                        + " height=" + logo.getHeight());
-                if (!logo.getXMLLang().equals(lang)) {
-                    log.debug("Language mismatch against " + lang);
-                    continue;
-                }
-                if (!logo.getXMLLang().equals(lang) || !logoFits(logo)) {
-                    log.debug("Size Mismatch");
-                    continue;
-                }
-                // Found it
-                log.debug("returning logo from UIInfo " + logo.getURL());
-                return logo.getURL();
-            }
-        }
-        // Then by no language
-        for (final Logo logo : getSPUIInfo().getLogos()) {
-            if (null != logo.getXMLLang()) {
-                continue;
-            }
-            log.debug("Found logo in UIInfo, width=" + logo.getWidth() + " height=" + logo.getHeight());
-            if (logoFits(logo)) {
-                // null language and it fits
-                log.debug("returning logo from UIInfo " + logo.getURL());
-                return logo.getURL();
-            }
-            log.debug("Mismatch for size");
-        }
-        return null;
-    }
-
-    /**
      * Get an appropriate Logo from UIInfo.
      * 
      * @return the URL for a logo
      * 
      */
     @Nullable private String getLogoFromUIInfo() {
-
-        if (getSPUIInfo() != null && getSPUIInfo().getLogos() != null) {
-
-            final String result = getLogoFromUIInfo(getSPUIInfo().getLogos());
-
-            if (null != result) {
-                return result;
-            }
-            log.debug("No appropriate logo in UIInfo");
+        if (getRelyingPartyUIContext() == null) {
+            return null;
         }
-        return null;
+        return getRelyingPartyUIContext().getLogo(minWidth, minHeight, maxWidth, maxHeight);
+  
     }
 
     /**
@@ -226,14 +163,14 @@ public class ServiceLogoTag extends ServiceTagSupport {
             final String scheme = theUrl.getScheme();
 
             if (!"http".equals(scheme) && !"https".equals(scheme) && !"data".equals(scheme)) {
-                log.warn("The logo URL " + url + " contained an invalid scheme (expected http:, https: or data:)");
+                log.warn("The logo URL '{}' contained an invalid scheme (expected http:, https: or data:)", url);
                 return null;
             }
         } catch (URISyntaxException e) {
             //
             // Could not encode
             //
-            log.warn("The logo URL " + url + " was not a URL " + e.toString());
+            log.warn("The logo URL '{}' was not a URL ", url, e);
             return null;
         }
 
@@ -273,7 +210,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
                 pageContext.getOut().print(result);
             }
         } catch (IOException e) {
-            log.warn("Error generating Logo");
+            log.warn("Error generating Logo", e);
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

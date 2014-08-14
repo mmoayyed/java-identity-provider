@@ -386,7 +386,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param contactType what type to look up.
      * @return the {@link ContactPerson} or null.
      */
-    @Nullable protected ContactPerson getContactPerson(ContactPersonTypeEnumeration contactType) {
+    @Nullable public ContactPerson getContactPerson(ContactPersonTypeEnumeration contactType) {
         if (null == getRPEntityDescriptor()) {
             return null;
         }

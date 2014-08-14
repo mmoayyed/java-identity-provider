@@ -26,8 +26,6 @@ import javax.servlet.jsp.tagext.BodyContent;
 
 import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
 
-import org.opensaml.saml.saml2.metadata.Organization;
-import org.opensaml.saml.saml2.metadata.OrganizationName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,27 +44,10 @@ public class OrganizationNameTag extends ServiceTagSupport {
      * @return null or an appropriate string
      */
     @Nullable private String getOrganizationName() {
-        final Organization org = getSPOrganization();
-        if (org != null && org.getOrganizationNames() != null) {
-            for (final String lang : getBrowserLanguages()) {
-
-                for (final OrganizationName name : org.getOrganizationNames()) {
-                    if (name.getXMLLang() == null) {
-                        continue;
-                    } else {
-                        log.debug("Found OrganizationName in Organization, language={}", name.getXMLLang());
-                    }
-                    
-                    if (name.getXMLLang().equals(lang)) {
-                        // Found it
-                        log.debug("returning OrganizationName from Organization, {}", name.getValue());
-                        return name.getValue();
-                    }
-                }
-            }
-            log.debug("No relevant OrganizationName in Organization");
+        if (getRelyingPartyUIContext() == null) {
+            return null;
         }
-        return null;
+        return getRelyingPartyUIContext().getOrganizationName();
     }
 
     /** {@inheritDoc} */
@@ -87,7 +68,7 @@ public class OrganizationNameTag extends ServiceTagSupport {
                 pageContext.getOut().print(HTMLEncoder.encodeForHTML(name));
             }
         } catch (IOException e) {
-            log.warn("Error generating OrganizationName");
+            log.warn("Error generating OrganizationName", e);
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

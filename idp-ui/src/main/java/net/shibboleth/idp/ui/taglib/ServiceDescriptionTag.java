@@ -18,21 +18,13 @@
 package net.shibboleth.idp.ui.taglib;
 
 import java.io.IOException;
-import java.util.List;
 
-import javax.annotation.Nullable;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
 import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
 
-import org.opensaml.saml.ext.saml2mdui.Description;
-import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.ServiceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,103 +40,14 @@ public class ServiceDescriptionTag extends ServiceTagSupport {
     /** Class logger. */
     private static Logger log = LoggerFactory.getLogger(ServiceDescriptionTag.class);
 
-    /**
-     * look at &lt;UIInfo&gt; if there and if so look for appropriate description.
-     * 
-     * @param lang - which language to look up
-     * @return null or an appropriate description
-     */
-    @Nullable private String getDescriptionFromUIInfo(String lang) {
-        if (getSPUIInfo() != null && getSPUIInfo().getDescriptions() != null) {
-
-            for (final Description desc : getSPUIInfo().getDescriptions()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Found description in UIInfo, language=" + desc.getXMLLang());
-                }
-                if (desc.getXMLLang().equals(lang)) {
-                    //
-                    // Found it
-                    //
-                    if (log.isDebugEnabled()) {
-                        log.debug("returning description from UIInfo " + desc.getValue());
-                    }
-                    return desc.getValue();
-                }
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("No valid description in UIInfo");
-            }
-        }
-        return null;
-    }
-
-    /**
-     * look for an &ltAttributeConsumeService&gt and if its there look for an appropriate description.
-     * 
-     * @param lang - which language to look up
-     * @return null or an appropriate description
-     */
-    @Nullable private String getDescriptionFromAttributeConsumingService(String lang) {
-        AttributeConsumingService acs = null;
-        final EntityDescriptor sp = getSPEntityDescriptor();
-
-        if (null == sp) {
-            log.debug("No relying party, nothing to display");
-            return null;
-        }
-
-        final List<RoleDescriptor> roles = sp.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-        if (!roles.isEmpty()) {
-            SPSSODescriptor spssod = (SPSSODescriptor) roles.get(0);
-            acs = spssod.getDefaultAttributeConsumingService();
-        }
-        if (acs != null) {
-            for (final ServiceDescription desc : acs.getDescriptions()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Found name in AttributeConsumingService, language=" + desc.getXMLLang());
-                }
-                if (desc.getXMLLang().equals(lang)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("returning name from AttributeConsumingService "
-                                + desc.getValue());
-                    }
-                    return desc.getValue();
-                }
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("No description in AttributeConsumingService");
-            }
-        }
-        return null;
-    }
 
     /** {@inheritDoc} */
     @Override public int doEndTag() throws JspException {
 
         String result = null;
-
-        //
-        // For all languages
-        //
-        for (final String lang : getBrowserLanguages()) {
-
-            //
-            // UIInfoirst
-            //
-            result = getDescriptionFromUIInfo(lang);
-            if (null != result) {
-                break;
-            }
-
-            //
-            // Then AttributeCOnsumingService
-            //
-            result = getDescriptionFromAttributeConsumingService(lang);
-            if (null != result) {
-                break;
-            }
+        if (getRelyingPartyUIContext() != null) {
+            result = getRelyingPartyUIContext().getServiceDescription();
         }
-
         try {
             if (null == result) {
                 final BodyContent bc = getBodyContent();
@@ -159,7 +62,7 @@ public class ServiceDescriptionTag extends ServiceTagSupport {
                 pageContext.getOut().print(result);
             }
         } catch (IOException e) {
-            log.warn("Error generating Description");
+            log.warn("Error generating Description", e);
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

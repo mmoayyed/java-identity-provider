@@ -30,7 +30,6 @@ import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
 import org.opensaml.saml.saml2.metadata.ContactPersonTypeEnumeration;
 import org.opensaml.saml.saml2.metadata.EmailAddress;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.GivenName;
 import org.opensaml.saml.saml2.metadata.SurName;
 import org.slf4j.Logger;
@@ -94,25 +93,13 @@ public class ServiceContactTag extends ServiceTagSupport {
      * @return either a hyperlink or a raw string, or null
      */
     @Nullable private String buildURL(@Nullable String email, @Nullable String name) {
-        //
         // We have emailAdress or null and a non empty fullName.
-        //
         if (null != email) {
-            //
             // Nonempty email. Construct an href
-            //
-            if (log.isDebugEnabled()) {
-                log.debug("constructing hyperlink from name \"" + name + "\" and email " + email);
-            }
+            log.debug("constructing hyperlink from name '{}' and email '{}'", name, email);
             return buildHyperLink(email, name);
         } else {
-
-            //
-            // No mail, no href
-            //
-            if (log.isDebugEnabled()) {
-                log.debug("no email found, using name \"" + name + "\" with no hyperlink");
-            }
+            log.debug("no email found, using name '{}' with no hyperlink", name);
 
             if (null == name) {
                 return name;
@@ -120,7 +107,6 @@ public class ServiceContactTag extends ServiceTagSupport {
                 return HTMLEncoder.encodeForHTML(name);
             }
         }
-
     }
 
     /**
@@ -129,13 +115,10 @@ public class ServiceContactTag extends ServiceTagSupport {
      * @param contact who we are interested in.
      * @return either an hyperlink or straight text or null
      */
-    @Nullable private String getStringFromContact(ContactPerson contact) {
+    @Nullable private String getStringFromContact(final ContactPerson contact) {
         final List<EmailAddress> emails = contact.getEmailAddresses();
         String emailAddress = null;
 
-        //
-        // grab email - of there is one
-        //
         if (emails != null && !emails.isEmpty()) {
             emailAddress = emails.get(0).getAddress();
         }
@@ -143,9 +126,6 @@ public class ServiceContactTag extends ServiceTagSupport {
         if (null != contactName) {
             return buildURL(emailAddress, contactName);
         }
-        //
-        // Otherwise we build it from whats in the metadata
-        //
         final SurName surName = contact.getSurName();
         final GivenName givenName = contact.getGivenName();
         final StringBuilder fullName = new StringBuilder();
@@ -157,14 +137,10 @@ public class ServiceContactTag extends ServiceTagSupport {
         }
         if (0 == fullName.length()) {
             if (null == emails) {
-                //
-                // No name, no email, nothing we can do
-                //
+                log.debug("No name and no email");
                 return null;
             }
-            if (log.isDebugEnabled()) {
-                log.debug("no names found, using email address as text");
-            }
+            log.debug("no names found, using email address as text");
             fullName.append(emailAddress);
         }
         return buildURL(emailAddress, fullName.toString());
@@ -177,29 +153,21 @@ public class ServiceContactTag extends ServiceTagSupport {
      */
     @Nullable protected String getContactFromEntity() {
 
-        final EntityDescriptor sp = getSPEntityDescriptor();
-        if (null == sp) {
-            log.debug("No relying party, nothing to display");
+        if (getRelyingPartyUIContext() == null) {
             return null;
         }
+        final ContactPerson contact = getRelyingPartyUIContext().getContactPerson(contactType);
+        if (null == contact) {
+            return null;
+        }
+        return getStringFromContact(contact);
 
-        final List<ContactPerson> contacts = sp.getContactPersons();
-        if (null == contacts) {
-            return null;
-        }
-        for (final ContactPerson contact : contacts) {
-            if (contactType == contact.getType()) {
-                return getStringFromContact(contact);
-            }
-        }
-        return null;
     }
 
     /** {@inheritDoc} */
     @Override public int doEndTag() throws JspException {
 
-        String result;
-        result = getContactFromEntity();
+        final String result = getContactFromEntity();
 
         try {
             if (null == result) {

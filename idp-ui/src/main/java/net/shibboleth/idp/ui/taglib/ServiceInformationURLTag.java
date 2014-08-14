@@ -24,7 +24,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
 
-import org.opensaml.saml.ext.saml2mdui.InformationURL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,29 +54,10 @@ public class ServiceInformationURLTag extends ServiceTagSupport {
      * @return null or an appropriate string.
      */
     @Nullable private String getInformationURLFromUIIinfo() {
-        if (getSPUIInfo() != null && getSPUIInfo().getInformationURLs() != null) {
-            for (final String lang : getBrowserLanguages()) {
-
-                for (final InformationURL infoURL : getSPUIInfo().getInformationURLs()) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Found InformationURL in UIInfo, language=" + infoURL.getXMLLang());
-                    }
-                    if (infoURL.getXMLLang().equals(lang)) {
-                        //
-                        // Found it
-                        //
-                        if (log.isDebugEnabled()) {
-                            log.debug("returning URL from UIInfo " + infoURL.getValue());
-                        }
-                        return infoURL.getValue();
-                    }
-                }
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("No relevant InformationURL in UIInfo");
-            }
+        if (getRelyingPartyUIContext() == null) {
+            return null;
         }
-        return null;
+        return getRelyingPartyUIContext().getInformationURL();
     }
 
     /** {@inheritDoc} */
@@ -98,7 +78,7 @@ public class ServiceInformationURLTag extends ServiceTagSupport {
                 pageContext.getOut().print(buildHyperLink(infoURL, linkText));
             }
         } catch (IOException e) {
-            log.warn("Error generating InformationURL");
+            log.warn("Error generating InformationURL", e);
             throw new JspException("EndTag", e);
         }
         return super.doEndTag();

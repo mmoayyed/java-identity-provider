@@ -19,33 +19,18 @@ package net.shibboleth.idp.ui.taglib;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
+import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
-import net.shibboleth.utilities.java.support.collection.LazyList;
 
-import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
-import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
-import org.opensaml.saml.ext.saml2mdui.DisplayName;
-import org.opensaml.saml.ext.saml2mdui.UIInfo;
-import org.opensaml.saml.saml2.common.Extensions;
-import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.Organization;
-import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.ServiceName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,10 +50,10 @@ public class ServiceTagSupport extends BodyTagSupport {
     /** Class logger. */
     private static Logger log = LoggerFactory.getLogger(ServiceTagSupport.class);
 
-    /** Strategy function for access to {@link SAMLMetadataContext} for input to resolver. */
-    @Nonnull private static Function<ProfileRequestContext, SAMLMetadataContext> metadataContextLookupStrategy =
-            Functions.compose(new ChildContextLookup<>(SAMLMetadataContext.class), Functions.compose(
-                    new ChildContextLookup<>(SAMLPeerEntityContext.class), new OutboundMessageContextLookup()));
+    /** Strategy function for access to {@link RelyingPartyUIContext} for input to resolver. */
+    @Nonnull private static Function<ProfileRequestContext, RelyingPartyUIContext> uiContextLookupStrategy = Functions
+            .compose(new ChildContextLookup<AuthenticationContext, RelyingPartyUIContext>(RelyingPartyUIContext.class),
+                    new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(AuthenticationContext.class));
 
     /** Bean storage. class reference */
     @Nullable private String cssClass;
@@ -79,12 +64,15 @@ public class ServiceTagSupport extends BodyTagSupport {
     /** Bean storage. style reference */
     @Nullable private String cssStyle;
 
+    /** Cached RelyingPartyUIContext. */
+    @Nullable private RelyingPartyUIContext relyingPartyUIContext;
+
     /**
      * Set the Css class to use.
      * 
      * @param value what to set
      */
-    public void setCssClass(@Nullable String value) {
+    public void setCssClass(@Nullable final String value) {
         cssClass = value;
     }
 
@@ -93,7 +81,7 @@ public class ServiceTagSupport extends BodyTagSupport {
      * 
      * @param value what to set
      */
-    public void setCssId(@Nullable String value) {
+    public void setCssId(@Nullable final String value) {
         cssId = value;
     }
 
@@ -102,7 +90,7 @@ public class ServiceTagSupport extends BodyTagSupport {
      * 
      * @param value what to set
      */
-    public void setCssStyle(@Nullable String value) {
+    public void setCssStyle(@Nullable final String value) {
         cssStyle = value;
     }
 
@@ -111,7 +99,7 @@ public class ServiceTagSupport extends BodyTagSupport {
      * 
      * @param sb the {@link StringBuilder} to add to.
      */
-    protected void addClassAndId(@Nonnull StringBuilder sb) {
+    protected void addClassAndId(@Nonnull final StringBuilder sb) {
         if (cssClass != null) {
             sb.append(" class=\"").append(cssClass).append('"');
         }
@@ -130,7 +118,7 @@ public class ServiceTagSupport extends BodyTagSupport {
      * @param text what to embed
      * @return the hyperlink.
      */
-    @Nonnull protected String buildHyperLink(@Nonnull String url, @Nonnull String text) {
+    @Nonnull protected String buildHyperLink(@Nonnull final String url, @Nonnull final String text) {
         final String encodedUrl;
 
         try {
@@ -138,7 +126,7 @@ public class ServiceTagSupport extends BodyTagSupport {
             final String scheme = theUrl.getScheme();
 
             if (!"http".equals(scheme) && !"https".equals(scheme) && !"mailto".equals(scheme)) {
-                log.warn("The URL " + url + " contained an invalid scheme");
+                log.warn("The URL '{}' contained an invalid scheme.", url);
                 return "";
             }
             encodedUrl = HTMLEncoder.encodeForHTMLAttribute(url);
@@ -146,11 +134,11 @@ public class ServiceTagSupport extends BodyTagSupport {
             //
             // It wasn't an URI.
             //
-            log.warn("The URL " + url + " was invalid: " + e.toString());
+            log.warn("The URL '{}' was invalid: ", url, e);
             return "";
         }
 
-        StringBuilder sb = new StringBuilder("<a href=\"");
+        final StringBuilder sb = new StringBuilder("<a href=\"");
         sb.append(encodedUrl).append('"');
         addClassAndId(sb);
         sb.append(">").append(HTMLEncoder.encodeForHTML(text)).append("</a>");
@@ -158,11 +146,15 @@ public class ServiceTagSupport extends BodyTagSupport {
     }
 
     /**
-     * Get the {@link EntityDescriptor} of the relying party.
+     * Get the {@link RelyingPartyUIContext} for the request. We cache this if it exists (the usual case).
      * 
-     * @return the SPs EntityDescriptor
+     * @return the context
      */
-    @Nullable protected EntityDescriptor getSPEntityDescriptor() {
+    @Nullable protected RelyingPartyUIContext getRelyingPartyUIContext() {
+
+        if (null != relyingPartyUIContext) {
+            return relyingPartyUIContext;
+        }
 
         final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
 
@@ -171,179 +163,8 @@ public class ServiceTagSupport extends BodyTagSupport {
         }
 
         final ProfileRequestContext pc = (ProfileRequestContext) request.getAttribute("profileRequestContext");
-        final SAMLMetadataContext metadata = metadataContextLookupStrategy.apply(pc);
-        if (null == metadata) {
-            return null;
-        }
-        return metadata.getEntityDescriptor();
-    }
-
-    /**
-     * Traverse the SP's EntityDescriptor and pick out the {@link UIInfo}.
-     * 
-     * @return the first UIInfo for the SP.
-     */
-    @Nullable protected UIInfo getSPUIInfo() {
-        final EntityDescriptor spEntity = getSPEntityDescriptor();
-
-        if (null == spEntity) {
-            //
-            // all done
-            //
-            return null;
-        }
-
-        for (final RoleDescriptor role : spEntity.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME)) {
-            final Extensions exts = role.getExtensions();
-            if (exts != null) {
-                for (XMLObject object : exts.getOrderedChildren()) {
-                    if (object instanceof UIInfo) {
-                        return (UIInfo) object;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Traverse the SP's EntityDescriptor and pick out the {@link Organization}.
-     * 
-     * @return the {@link Organization} for the SP
-     */
-    @Nullable protected Organization getSPOrganization() {
-        final EntityDescriptor spEntity = getSPEntityDescriptor();
-        if (null == spEntity) {
-            //
-            // all done
-            //
-            return null;
-        }
-
-        for (final RoleDescriptor role : spEntity.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME)) {
-            if (role.getOrganization() != null) {
-                return role.getOrganization();
-            }
-        }
-
-        return spEntity.getOrganization();
-    }
-
-    /**
-     * Pluck the languages from the browser.
-     * 
-     * @return the two letter language
-     */
-    @Nonnull protected List<String> getBrowserLanguages() {
-        final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-
-        final Enumeration<Locale> locales = request.getLocales();
-
-        final List<String> languages = new LazyList<>();
-
-        while (locales.hasMoreElements()) {
-            final Locale locale = locales.nextElement();
-            languages.add(locale.getLanguage());
-        }
-        return languages;
-    }
-
-    /**
-     * If the entityId can look like a host return that, otherwise the entityId in full.
-     * 
-     * @return either the host or the entityId.
-     */
-    @Nullable private String getNameFromEntityId() {
-        final EntityDescriptor sp = getSPEntityDescriptor();
-
-        if (null == sp) {
-            log.debug("No relying party, nothing to display");
-            return null;
-        }
-
-        try {
-            final URI entityId = new URI(sp.getEntityID());
-            final String scheme = entityId.getScheme();
-
-            if ("http".equals(scheme) || "https".equals(scheme)) {
-                return entityId.getHost();
-            }
-        } catch (URISyntaxException e) {
-            //
-            // It wasn't an URI. return full entityId.
-            //
-            return sp.getEntityID();
-        }
-        //
-        // not a URL return full entityID
-        //
-        return sp.getEntityID();
-    }
-
-    /**
-     * look at &lt;UIinfo&gt;; if there and if so look for appropriate name.
-     * 
-     * @param lang - which language to look up
-     * @return null or an appropriate name
-     */
-    @Nullable private String getNameFromUIInfo(String lang) {
-
-        if (getSPUIInfo() != null) {
-            for (final DisplayName name : getSPUIInfo().getDisplayNames()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Found name in UIInfo, language=" + name.getXMLLang());
-                }
-                if (name.getXMLLang().equals(lang)) {
-                    //
-                    // Found it
-                    //
-                    if (log.isDebugEnabled()) {
-                        log.debug("returning name from UIInfo " + name.getValue());
-                    }
-                    return name.getValue();
-                }
-            }
-            if (log.isDebugEnabled()) {
-                log.debug("No name in MDUI for " + lang);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * look for an &ltAttributeConsumeService&gt and if its there look for an appropriate name.
-     * 
-     * @param lang - which language to look up
-     * @return null or an appropriate name
-     */
-    @Nullable private String getNameFromAttributeConsumingService(final String lang) {
-        final EntityDescriptor sp = getSPEntityDescriptor();
-        if (null == sp) {
-            log.warn("No relying party, nothing to display");
-            return null;
-        }
-
-        AttributeConsumingService acs = null;
-
-        final List<RoleDescriptor> roles = sp.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-        if (!roles.isEmpty()) {
-            SPSSODescriptor spssod = (SPSSODescriptor) roles.get(0);
-            acs = spssod.getDefaultAttributeConsumingService();
-        }
-        if (acs != null) {
-            for (ServiceName name : acs.getNames()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Found name in AttributeConsumingService, language=" + name.getXMLLang());
-                }
-                if (name.getXMLLang().equals(lang)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("returning name from AttributeConsumingService " + name.getValue());
-                    }
-                    return name.getValue();
-                }
-            }
-        }
-        return null;
+        relyingPartyUIContext = uiContextLookupStrategy.apply(pc);
+        return relyingPartyUIContext;
     }
 
     /**
@@ -352,40 +173,11 @@ public class ServiceTagSupport extends BodyTagSupport {
      * @return something sensible for display.
      */
     @Nullable protected String getServiceName() {
-        String result = null;
-        //
-        // First look for MDUI
-        //
-        if (getSPEntityDescriptor() == null) {
-            log.debug("No relying party, nothing to display");
+
+        if (getRelyingPartyUIContext() == null) {
             return null;
         }
-
-        //
-        // For each Language
-        //
-        final List<String> languages = getBrowserLanguages();
-        for (final String lang : languages) {
-            //
-            // Look at <UIInfo>
-            //
-            result = getNameFromUIInfo(lang);
-            if (result != null) {
-                return result;
-            }
-
-            //
-            // Otherwise <AttributeConsumingService>
-            //
-            result = getNameFromAttributeConsumingService(lang);
-            if (result != null) {
-                return result;
-            }
-        }
-        //
-        // Or look at the entityName
-        //
-        return getNameFromEntityId();
+        return getRelyingPartyUIContext().getServiceName();
     }
 
 }
