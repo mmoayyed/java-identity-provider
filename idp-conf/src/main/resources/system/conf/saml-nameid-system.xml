@@ -12,7 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
@@ -28,16 +29,16 @@
 
     <bean id="shibboleth.SAML2TransientGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.TransientSAML2NameIDGenerator"
-        p:transientIdGenerator-ref="${idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
+        p:transientIdGenerator-ref="%{idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
 
     <bean id="shibboleth.SAML2PersistentGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.PersistentSAML2NameIDGenerator"
-        p:attributeSourceIds="#{ { ${idp.persistentId.sourceAttribute:} } }"
-        p:persistentIdGenerator-ref="${idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}" />
+        p:attributeSourceIds="#{ { %{idp.persistentId.sourceAttribute:} } }"
+        p:persistentIdGenerator-ref="%{idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}" />
 
     <bean id="shibboleth.SAML1TransientGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.TransientSAML1NameIdentifierGenerator"
-        p:transientIdGenerator-ref="${idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
+        p:transientIdGenerator-ref="%{idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
 
     <!--
     These are strategy implementations for generating transient and persistent identifiers.
@@ -60,12 +61,12 @@
 
     <bean id="shibboleth.ComputedPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy"
-        p:salt="${idp.persistentId.salt:}" p:algorithm="${idp.persistentId.algorithm:SHA}" />
+        p:salt="%{idp.persistentId.salt:}" p:algorithm="%{idp.persistentId.algorithm:SHA}" />
 
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
-        p:computedIdStrategy="#{getObject('${idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}')}"
-        p:IDStore="#{getObject('${idp.persistentId.store:}')}" />
+        p:computedIdStrategy="#{getObject('%{idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}')}"
+        p:IDStore="#{getObject('%{idp.persistentId.store:}')}" />
     
     <!-- These two beans handle legacy support for NameID generation in the Attribute Resolver. -->
     <bean id="shibboleth.LegacySAML1NameIdentifierGenerator"
@@ -82,12 +83,12 @@
         <property name="SAML1NameIdentifierGenerator">
             <bean class="org.opensaml.saml.saml1.profile.impl.ChainingSAML1NameIdentifierGenerator"
                 p:generators-ref="shibboleth.SAML1NameIdentifierGenerators"
-                p:defaultGenerator="#{getObject('${idp.nameid.saml1.legacyGenerator:}')}" />    
+                p:defaultGenerator="#{getObject('%{idp.nameid.saml1.legacyGenerator:}')}" />    
         </property>
         <property name="SAML2NameIDGenerator">
             <bean class="org.opensaml.saml.saml2.profile.impl.ChainingSAML2NameIDGenerator"
                 p:generators-ref="shibboleth.SAML2NameIDGenerators"
-                p:defaultGenerator="#{getObject('${idp.nameid.saml2.legacyGenerator:}')}" />    
+                p:defaultGenerator="#{getObject('%{idp.nameid.saml2.legacyGenerator:}')}" />    
         </property>
     </bean>
         

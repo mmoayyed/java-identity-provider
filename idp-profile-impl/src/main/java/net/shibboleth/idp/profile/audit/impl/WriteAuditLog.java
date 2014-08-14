@@ -15,17 +15,18 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.impl;
+package net.shibboleth.idp.profile.audit.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -36,6 +37,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -53,12 +58,13 @@ import com.google.common.collect.Lists;
  */
 public class WriteAuditLog extends AbstractProfileAction {
 
+    /** Formatter used to convert timestamps to strings. */
+    private static DateTimeFormatter v2Formatter = ISODateTimeFormat.basicDateTimeNoMillis();
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(WriteAuditLog.class);
     
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
+    /** Strategy used to locate the {@link AuditContext} associated with a given {@link ProfileRequestContext}. */
     @Nonnull private Function<ProfileRequestContext,AuditContext> auditContextLookupStrategy;
     
     /** Base of category for log entries. */
@@ -69,6 +75,9 @@ public class WriteAuditLog extends AbstractProfileAction {
 
     /** The AuditContext to operate on. */
     @Nullable private AuditContext auditCtx;
+    
+    /** HttpServletRequest object. */
+    @Nullable private HttpServletRequest httpRequest;
     
     /** Constructor. */
     public WriteAuditLog() {
@@ -159,17 +168,17 @@ public class WriteAuditLog extends AbstractProfileAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
-        }
-        
-        auditCtx = auditContextLookupStrategy.apply(profileRequestContext);
-        if (auditCtx == null) {
-            log.debug("{} No audit context associated with this profile request, nothing to do", getLogPrefix());
+        } else if (format.isEmpty()) {
+            log.debug("No formatting for audit records supplied, nothing to do");
             return false;
         }
         
+        auditCtx = auditContextLookupStrategy.apply(profileRequestContext);
+        httpRequest = getHttpServletRequest();
         return true;
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -181,11 +190,26 @@ public class WriteAuditLog extends AbstractProfileAction {
                 if (token.length() == 1 || token.charAt(1) == '%') {
                     entry.append('%');
                 } else {
-                    final Iterator<String> iter = auditCtx.getFieldValues(token.substring(1)).iterator();
-                    while (iter.hasNext()) {
-                        entry.append(iter.next());
-                        if (iter.hasNext()) {
-                            entry.append(',');
+                    final String field = token.substring(1);
+                    if (IdPAuditFields.EVENT_TIME.equals(field)) {
+                        entry.append(new DateTime().toString(v2Formatter.withZone(DateTimeZone.UTC)));
+                    } else if (IdPAuditFields.PROFILE.equals(field)) {
+                        entry.append(profileRequestContext.getProfileId());
+                    } else if (IdPAuditFields.REMOTE_ADDR.equals(field) && httpRequest != null) {
+                        entry.append(httpRequest.getRemoteAddr());
+                    } else if (IdPAuditFields.URI.equals(field) && httpRequest != null) {
+                        entry.append(httpRequest.getRequestURI());
+                    } else if (IdPAuditFields.URL.equals(field) && httpRequest != null) {
+                        entry.append(httpRequest.getRequestURL());
+                    } else if (IdPAuditFields.USER_AGENT.equals(field) && httpRequest != null) {
+                        entry.append(httpRequest.getHeader("User-Agent"));
+                    } else if (auditCtx != null) {
+                        final Iterator<String> iter = auditCtx.getFieldValues(field).iterator();
+                        while (iter.hasNext()) {
+                            entry.append(iter.next());
+                            if (iter.hasNext()) {
+                                entry.append(',');
+                            }
                         }
                     }
                 }
@@ -198,6 +222,7 @@ public class WriteAuditLog extends AbstractProfileAction {
         
         LoggerFactory.getLogger(categoryBase + profileRequestContext.getLoggingId()).info(entry.toString());
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /**
      * Optional override to filter the outgoing log message, does nothing by default.

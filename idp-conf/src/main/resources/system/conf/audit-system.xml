@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+
+	default-init-method="initialize" default-destroy-method="destroy">
+    
+    <!--
+    The actual beans used are in user-space, but they inherit from the maps below. We have to use a
+    MapFactoryBean instead of util:map because merging isn't supported by the util:map schema.
+    -->
+    <import resource="../../conf/audit.xml"/>
+
+    <bean id="shibboleth.DefaultPostDecodeAuditExtractors"
+            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <!-- SAML Protocol-->
+                <entry key="p">
+                    <bean class="net.shibboleth.idp.profile.audit.impl.ConstantAuditExtractor">
+                        <constructor-arg>
+                            <list>
+                                <ref bean="shibboleth.MetadataLookup.Protocol" />
+                            </list>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!-- SAML Request Binding -->
+                <entry key="b">
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SAMLBindingAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.ChildLookup.SAMLBindingContext"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!-- SAML Request ID -->
+                <entry key="I">
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SAMLMessageIDAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.ChildLookupOrCreate.SAMLMessageInfoContext"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <!-- SAML Request IssueInstant -->
+                <entry key="D">
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SAMLMessageInstantAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.ChildLookupOrCreate.SAMLMessageInfoContext"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+        
+</beans>

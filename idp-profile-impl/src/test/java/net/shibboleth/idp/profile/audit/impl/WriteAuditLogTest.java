@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.impl;
+package net.shibboleth.idp.profile.audit.impl;
 
 import java.util.List;
 
@@ -30,6 +30,7 @@ import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -50,10 +51,19 @@ public class WriteAuditLogTest {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
+        final MockHttpServletRequest mock = new MockHttpServletRequest();
+        mock.setRemoteAddr("192.168.1.1");
+        mock.addHeader("User-Agent", "Mock");
+        mock.setServerName("idp.example.org");
+        mock.setServerPort(443);
+        mock.setScheme("https");
+        mock.setRequestURI("/path/to/foo");
+        
         action = new FilteringAction();
+        action.setHttpServletRequest(mock);
     }
     
-    @Test public void testNoContext() throws Exception {
+    @Test public void testNoRules() throws Exception {
         action.initialize();
         
         final Event event = action.execute(src);
@@ -94,11 +104,11 @@ public class WriteAuditLogTest {
     
     @Test public void testTwo() throws ComponentInitializationException {
         final AuditContext ac = prc.getSubcontext(AuditContext.class, true);
-        ac.getFieldValues("a").add("foo");
-        ac.getFieldValues("b").add("bar");
-        ac.getFieldValues("b").add("baz");
+        ac.getFieldValues("A").add("foo");
+        ac.getFieldValues("B").add("bar");
+        ac.getFieldValues("B").add("baz");
         
-        action.setFormat("%a %b");
+        action.setFormat("%A %B");
         action.initialize();
         
         final Event event = action.execute(src);
@@ -108,17 +118,27 @@ public class WriteAuditLogTest {
 
     @Test public void testMissing() throws ComponentInitializationException {
         final AuditContext ac = prc.getSubcontext(AuditContext.class, true);
-        ac.getFieldValues("a").add("foo");
-        ac.getFieldValues("b").add("bar");
-        ac.getFieldValues("b").add("baz");
+        ac.getFieldValues("A").add("foo");
+        ac.getFieldValues("B").add("bar");
+        ac.getFieldValues("B").add("baz");
         
-        action.setFormat("%a - %c|%b");
+        action.setFormat("%A - %C|%B");
         action.initialize();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(action.getResult(), "foo - |bar,baz");
     }
+    
+    @Test public void testServletRequest() throws ComponentInitializationException {
+        action.setFormat("%a %URL - %UA");
+        action.initialize();
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(action.getResult(), "192.168.1.1 https://idp.example.org/path/to/foo - Mock");
+    }
+
 
     /**
      * Subclass for testing purposes that grants access to the built log entry.

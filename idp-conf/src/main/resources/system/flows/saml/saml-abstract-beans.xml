@@ -20,6 +20,13 @@
 
     <!-- These are beans that are common to most or all SAML profile flows, regardless of version. -->
 
+    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
+    <import resource="../../conf/audit-system.xml" />
+
+    <bean id="PostDecodePopulateAuditContext"
+            class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+            p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors" />
+
     <bean id="CheckMessageVersion"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
@@ -242,6 +249,9 @@
         p:messageHandler="#{getObject('shibboleth.BindingSpecificMessageHandler')}" />
 
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
+
+    <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
     <bean id="LocalErrorPredicate"
             class="org.opensaml.saml.common.profile.logic.DefaultLocalErrorPredicate"

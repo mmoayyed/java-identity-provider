@@ -10,6 +10,8 @@
     <action-state id="DecodeMessage">
         <evaluate expression="DecodeMessage" />
 
+        <evaluate expression="PostDecodePopulateAuditContext" />
+
         <evaluate expression="CheckMessageVersion" />
         <evaluate expression="SAML1ArtifactRequestIssuer" />
         <evaluate expression="SAMLProtocolAndRole" />
@@ -134,11 +136,19 @@
         <transition to="error" />
     </action-state>
 
-    <end-state id="error" view="#{MapEventToView.apply(currentEvent)}" />
+    <end-state id="error" view="#{MapEventToView.apply(currentEvent)}">
+        <on-entry>
+            <evaluate expression="WriteAuditLog" />
+        </on-entry>
+    </end-state>
 
     <!-- Successful terminal state. -->
 
-    <end-state id="end" />
+    <end-state id="end">
+        <on-entry>
+            <evaluate expression="WriteAuditLog" />
+        </on-entry>
+    </end-state>
 
     <!--
     Default is to turn non-proceed events into an error, and initiate error handling sequence

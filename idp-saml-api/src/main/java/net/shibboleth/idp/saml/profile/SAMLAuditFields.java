@@ -53,15 +53,18 @@ public final class SAMLAuditFields {
     /** Request message ID field. */
     @Nonnull @NotEmpty public static final String REQUEST_ID = "I";
     
+    /** Request message IssueInstant field. */
+    @Nonnull @NotEmpty public static final String REQUEST_ISSUE_INSTANT = "D";
+
     /** InResponseTo field. */
     @Nonnull @NotEmpty public static final String IN_RESPONSE_TO = "II";
 
     /** Response message ID field. */
     @Nonnull @NotEmpty public static final String RESPONSE_ID = "III";
-    
-    /** Protocol message IssueInstant field. */
-    @Nonnull @NotEmpty public static final String PROTOCOL_ISSUE_INSTANT = "D";
 
+    /** Response message IssueInstant field. */
+    @Nonnull @NotEmpty public static final String RESPONSE_ISSUE_INSTANT = "DD";
+    
     /** Authentication timestamp field. */
     @Nonnull @NotEmpty public static final String AUTHN_INSTANT = "t";
 
