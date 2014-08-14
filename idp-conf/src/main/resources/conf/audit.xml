@@ -17,5 +17,12 @@
             </map>
         </property>
     </bean>
+
+    <bean id="shibboleth.PostLookupAuditExtractors" parent="shibboleth.DefaultPostLookupAuditExtractors">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
     
 </beans>

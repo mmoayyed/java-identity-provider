@@ -55,7 +55,6 @@
                         </constructor-arg>
                     </bean>
                 </entry>
-                <!-- SAML Request IssueInstant -->
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.REQUEST_ISSUE_INSTANT"/>
@@ -72,4 +71,26 @@
         </property>
     </bean>
         
+    <bean id="shibboleth.DefaultPostLookupAuditExtractors"
+            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SERVICE_PROVIDER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.ContextDataAuditExtractor"
+                        c:fn-ref="shibboleth.RelyingPartyIdLookup.Simple" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IDENTITY_PROVIDER"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.ContextDataAuditExtractor"
+                        c:fn-ref="shibboleth.ResponderIdLookup.Simple" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
 </beans>

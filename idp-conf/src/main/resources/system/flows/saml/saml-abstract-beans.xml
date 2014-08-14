@@ -78,7 +78,6 @@
             <bean class="org.opensaml.saml.common.binding.impl.SAMLAddAttributeConsumingServiceHandler" scope="prototype" />
         </constructor-arg>
     </bean>
-    
 
     <bean id="InitializeRelyingPartyContexFromSAMLPeer"
         class="net.shibboleth.idp.saml.profile.impl.InitializeRelyingPartyContextFromSAMLPeer" scope="prototype" />
@@ -86,6 +85,10 @@
     <bean id="SelectRelyingPartyConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+    
+    <bean id="PostLookupPopulateAuditContext"
+            class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+            p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors" />
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />

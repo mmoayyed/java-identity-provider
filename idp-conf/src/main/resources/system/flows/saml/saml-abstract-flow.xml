@@ -20,6 +20,9 @@
 
         <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
+
+        <evaluate expression="PostLookupPopulateAuditContext" />
+        
         <evaluate expression="SelectProfileConfiguration" />
 
         <evaluate expression="PopulateSignatureValidationParameters" />
