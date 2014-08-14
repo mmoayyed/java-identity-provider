@@ -19,8 +19,10 @@
             class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
         <property name="sourceMap">
             <map>
-                <!-- SAML Protocol-->
-                <entry key="p">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROTOCOL"/>
+                    </key>
                     <bean class="net.shibboleth.idp.profile.audit.impl.ConstantAuditExtractor">
                         <constructor-arg>
                             <list>
@@ -29,8 +31,10 @@
                         </constructor-arg>
                     </bean>
                 </entry>
-                <!-- SAML Request Binding -->
-                <entry key="b">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.REQUEST_BINDING"/>
+                    </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.SAMLBindingAuditExtractor">
                         <constructor-arg>
                             <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -39,8 +43,10 @@
                         </constructor-arg>
                     </bean>
                 </entry>
-                <!-- SAML Request ID -->
-                <entry key="I">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.REQUEST_ID"/>
+                    </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.SAMLMessageIDAuditExtractor">
                         <constructor-arg>
                             <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -50,7 +56,10 @@
                     </bean>
                 </entry>
                 <!-- SAML Request IssueInstant -->
-                <entry key="D">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.REQUEST_ISSUE_INSTANT"/>
+                    </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.SAMLMessageInstantAuditExtractor">
                         <constructor-arg>
                             <bean class="com.google.common.base.Functions" factory-method="compose"
