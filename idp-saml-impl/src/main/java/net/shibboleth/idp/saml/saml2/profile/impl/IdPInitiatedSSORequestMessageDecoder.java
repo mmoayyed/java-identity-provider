@@ -124,10 +124,6 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         final NameIDPolicy nip = nipBuilder.buildObject();
         nip.setAllowCreate(true);
         authnRequest.setNameIDPolicy(nip);
-        
-        // TODO see UnsolicitedSSODecoder in v2. Do we need to support adding a statically configured ProtocolBinding,
-        // and dynamically resolved ACS URL if not in the request? The latter we might not do in the decoder.
-        
         authnRequest.setAssertionConsumerServiceURL(ssoRequest.getAssertionConsumerServiceURL());
         authnRequest.setIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
         authnRequest.setVersion(SAMLVersion.VERSION_20);
