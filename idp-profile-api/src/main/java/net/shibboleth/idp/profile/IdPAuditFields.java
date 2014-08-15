@@ -29,8 +29,8 @@ public final class IdPAuditFields {
     /** Event timestamp field. */
     @Nonnull @NotEmpty public static final String EVENT_TIME = "T";
 
-    /** Exception type field. */
-    @Nonnull @NotEmpty public static final String EXCEPTION_TYPE = "E";
+    /** Event type field. */
+    @Nonnull @NotEmpty public static final String EVENT_TYPE = "e";
 
     /** URL field. */
     @Nonnull @NotEmpty public static final String URL = "URL";

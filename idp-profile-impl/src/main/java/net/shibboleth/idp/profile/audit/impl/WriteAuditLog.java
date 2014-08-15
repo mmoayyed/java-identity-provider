@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.profile.context.AuditContext;
+import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -42,9 +43,12 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -75,6 +79,9 @@ public class WriteAuditLog extends AbstractProfileAction {
 
     /** The AuditContext to operate on. */
     @Nullable private AuditContext auditCtx;
+
+    /** The Spring RequestContext to operate on. */
+    @Nullable private RequestContext requestContext;
     
     /** HttpServletRequest object. */
     @Nullable private HttpServletRequest httpRequest;
@@ -174,6 +181,10 @@ public class WriteAuditLog extends AbstractProfileAction {
         }
         
         auditCtx = auditContextLookupStrategy.apply(profileRequestContext);
+        final SpringRequestContext springContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
+        if (springContext != null) {
+            requestContext = springContext.getRequestContext();
+        }
         httpRequest = getHttpServletRequest();
         return true;
     }
@@ -193,6 +204,11 @@ public class WriteAuditLog extends AbstractProfileAction {
                     final String field = token.substring(1);
                     if (IdPAuditFields.EVENT_TIME.equals(field)) {
                         entry.append(new DateTime().toString(v2Formatter.withZone(DateTimeZone.UTC)));
+                    } else if (IdPAuditFields.EVENT_TYPE.equals(field) && requestContext != null) {
+                        final Event event = requestContext.getCurrentEvent();
+                        if (event != null && !event.getId().equals(EventIds.PROCEED_EVENT_ID)) {
+                            entry.append(event.getId());
+                        }
                     } else if (IdPAuditFields.PROFILE.equals(field)) {
                         entry.append(profileRequestContext.getProfileId());
                     } else if (IdPAuditFields.REMOTE_ADDR.equals(field) && httpRequest != null) {
