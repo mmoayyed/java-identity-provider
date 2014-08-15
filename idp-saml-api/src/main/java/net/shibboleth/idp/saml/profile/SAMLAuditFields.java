@@ -77,6 +77,15 @@ public final class SAMLAuditFields {
     /** Logout result field. */
     @Nonnull @NotEmpty public static final String LOGOUT_RESULT = "L";
 
+    /** Status code field. */
+    @Nonnull @NotEmpty public static final String STATUS_CODE = "S";
+
+    /** Sub-status code field. */
+    @Nonnull @NotEmpty public static final String SUBSTATUS_CODE = "SS";
+
+    /** Status message field. */
+    @Nonnull @NotEmpty public static final String STATUS_MESSAGE = "SM";
+
     /** Constructor. */
     private SAMLAuditFields() {
 

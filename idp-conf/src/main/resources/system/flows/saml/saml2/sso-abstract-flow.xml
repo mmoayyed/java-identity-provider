@@ -92,6 +92,8 @@
         <evaluate expression="SignAssertions" />
         <evaluate expression="EncryptAssertions" />
 
+        <evaluate expression="PostResponsePopulateAuditContext" />
+
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="ReturnToParentFlow" />
@@ -123,6 +125,7 @@
         <evaluate expression="AddResponseShell" />
         <evaluate expression="AddInResponseToToResponse" />
         <evaluate expression="AddStatusToResponse" />
+        <evaluate expression="PostResponsePopulateAuditContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CallErrorSubflow" />

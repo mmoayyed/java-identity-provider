@@ -77,6 +77,8 @@
         <evaluate expression="AddAudienceRestrictionToAssertions" />
         <evaluate expression="SignAssertions" />
 
+        <evaluate expression="PostResponsePopulateAuditContext" />
+
         <evaluate expression="UpdateSessionWithSPSession" />
         <evaluate expression="'proceed'" />
         
@@ -103,6 +105,7 @@
         <evaluate expression="AddResponseShell" />
         <evaluate expression="AddInResponseToToResponse" />
         <evaluate expression="AddStatusToResponse" />
+        <evaluate expression="PostResponsePopulateAuditContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CallErrorSubflow" />

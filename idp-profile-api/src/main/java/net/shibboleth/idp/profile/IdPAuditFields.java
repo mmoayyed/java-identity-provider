@@ -32,15 +32,6 @@ public final class IdPAuditFields {
     /** Exception type field. */
     @Nonnull @NotEmpty public static final String EXCEPTION_TYPE = "E";
 
-    /** Status code field. */
-    @Nonnull @NotEmpty public static final String STATUS_CODE = "S";
-
-    /** Sub-status code field. */
-    @Nonnull @NotEmpty public static final String SUBSTATUS_CODE = "SS";
-
-    /** Status message field. */
-    @Nonnull @NotEmpty public static final String STATUS_MESSAGE = "SM";
-
     /** URL field. */
     @Nonnull @NotEmpty public static final String URL = "URL";
 

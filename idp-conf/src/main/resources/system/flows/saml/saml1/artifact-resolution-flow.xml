@@ -22,6 +22,8 @@
         
         <evaluate expression="SignAssertions" />
         
+        <evaluate expression="PostResponsePopulateAuditContext" />
+
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="ReturnToParentFlow" />
@@ -37,6 +39,9 @@
         <evaluate expression="InitializeOutboundMessageContextForError" />
         <evaluate expression="AddResponseShell" />
         <evaluate expression="AddInResponseToToResponse" />
+        
+        <evaluate expression="PostResponsePopulateAuditContext" />
+        
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CallErrorSubflow" />

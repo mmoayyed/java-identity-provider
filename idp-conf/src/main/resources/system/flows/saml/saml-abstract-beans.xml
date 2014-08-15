@@ -24,8 +24,8 @@
     <import resource="../../conf/audit-system.xml" />
 
     <bean id="PostDecodePopulateAuditContext"
-            class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-            p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors" />
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors" />
 
     <bean id="CheckMessageVersion"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
@@ -87,8 +87,8 @@
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
     
     <bean id="PostLookupPopulateAuditContext"
-            class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-            p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors" />
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors" />
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
@@ -230,6 +230,10 @@
                 c:f-ref="shibboleth.ChildLookup.RelyingParty" />
         </property>
     </bean>
+
+    <bean id="PostResponsePopulateAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors" />
 
     <bean id="CheckForOutboundSubflow"
         class="net.shibboleth.idp.profile.impl.CheckForProfileSubflow" scope="prototype"
