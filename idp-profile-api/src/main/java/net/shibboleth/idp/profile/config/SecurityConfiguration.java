@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
+import org.opensaml.security.x509.X509CredentialValidationConfiguration;
 import org.opensaml.xmlsec.DecryptionConfiguration;
 import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
@@ -53,6 +54,9 @@ public class SecurityConfiguration {
 
     /** Configuration used when encrypting protocol message information. */
     @Nullable private EncryptionConfiguration encryptConfig;
+    
+    /** Configuration used when validating X509Credentials. */
+    @Nullable private X509CredentialValidationConfiguration x509Config;
 
     /**
      * Constructor.
@@ -165,5 +169,23 @@ public class SecurityConfiguration {
      */
     public void setEncryptionConfiguration(@Nullable final EncryptionConfiguration config) {
         encryptConfig = config;
+    }
+
+    /**
+     * Get the configuration used when validating X509Credentials.
+     * 
+     * @return configuration used when validating X509Credentials, or null
+     */
+    public X509CredentialValidationConfiguration getX509Config() {
+        return x509Config;
+    }
+
+    /**
+     * Set the configuration used when validating X509Credentials.
+     * 
+     * @param config configuration used when validating X509Credentials, or null
+     */
+    public void setX509Config(X509CredentialValidationConfiguration config) {
+        x509Config = config;
     }
 }
