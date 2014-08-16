@@ -93,6 +93,74 @@
         </property>
     </bean>
     
+    <bean id="shibboleth.DefaultPostAssertionAuditExtractors"
+            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.ASSERTION_ID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.AssertionIDAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.ASSERTION_ISSUE_INSTANT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.AssertionInstantAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.AUTHN_INSTANT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.AuthnInstantAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SESSION_INDEX"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SessionIndexAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.AUTHN_CONTEXT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.AuthnContextAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Outbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+        
     <bean id="shibboleth.DefaultPostResponseAuditExtractors"
             class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
         <property name="sourceMap">

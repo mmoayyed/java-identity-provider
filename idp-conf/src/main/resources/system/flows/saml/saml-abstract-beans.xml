@@ -231,6 +231,10 @@
         </property>
     </bean>
 
+    <bean id="PostAssertionPopulateAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors" />
+
     <bean id="PostResponsePopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors" />

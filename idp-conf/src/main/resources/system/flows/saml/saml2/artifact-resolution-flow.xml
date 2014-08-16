@@ -23,6 +23,10 @@
         <evaluate expression="EncryptNameIDs" />
         <evaluate expression="EncryptAttributes" />
         <evaluate expression="SignAssertions" />
+
+        <!-- Need access to unencrypted assertion(s). -->
+        <evaluate expression="PostAssertionPopulateAuditContext" />
+
         <evaluate expression="EncryptAssertions" />
         
         <evaluate expression="PostResponsePopulateAuditContext" />

@@ -29,6 +29,7 @@
         <evaluate expression="AddAudienceRestrictionToAssertions" />
         <evaluate expression="SignAssertions" />
         
+        <evaluate expression="PostAssertionPopulateAuditContext" />
         <evaluate expression="PostResponsePopulateAuditContext" />
 
         <evaluate expression="'proceed'" />

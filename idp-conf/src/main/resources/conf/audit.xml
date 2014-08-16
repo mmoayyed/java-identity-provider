@@ -25,6 +25,13 @@
         </property>
     </bean>
 
+    <bean id="shibboleth.PostAssertionAuditExtractors" parent="shibboleth.DefaultPostAssertionAuditExtractors">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
+
     <bean id="shibboleth.PostResponseAuditExtractors" parent="shibboleth.DefaultPostResponseAuditExtractors">
         <property name="sourceMap">
             <map merge="true">

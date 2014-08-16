@@ -84,7 +84,8 @@
         <evaluate expression="AddChannelBindingsToAssertions" />
         <evaluate expression="AddGeneratedKeyToAssertions" />
 
-        <!-- Needs access to unencrypted NameID and Assertion. -->
+        <!-- Need access to unencrypted NameID and Assertion. -->
+        <evaluate expression="PostAssertionPopulateAuditContext" />
         <evaluate expression="UpdateSessionWithSPSession" />
 
         <evaluate expression="EncryptNameIDs" />

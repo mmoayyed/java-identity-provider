@@ -27,6 +27,9 @@
         <evaluate expression="AddNotBeforeConditionToAssertions" />
         <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
         <evaluate expression="AddAudienceRestrictionToAssertions" />
+
+        <!-- Need access to unencrypted assertion(s). -->        
+        <evaluate expression="PostAssertionPopulateAuditContext" />
         
         <evaluate expression="EncryptNameIDs" />
         <evaluate expression="EncryptAttributes" />
