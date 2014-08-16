@@ -101,13 +101,7 @@
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.security.impl.SAMLMDClientCertAuthSecurityHandler" scope="prototype"
-                    p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-                    p:trustEngine-ref="shibboleth.X509TrustEngine">
-                <property name="certificateNameOptions">
-                    <bean class="org.opensaml.security.messaging.impl.CertificateNameOptions"
-                        p:evaluateSubjectCommonName="true" />
-                </property>
-            </bean>
+                    p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_AUTHN_ERROR" />
@@ -118,8 +112,7 @@
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
-            <bean class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" scope="prototype"
-                p:trustEngine-ref="shibboleth.SignatureTrustEngine" />
+            <bean class="org.opensaml.saml.common.binding.security.impl.SAMLProtocolMessageXMLSignatureSecurityHandler" scope="prototype" />
         </constructor-arg>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_AUTHN_ERROR" />
@@ -131,7 +124,6 @@
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPRedirectDeflateSignatureSecurityHandler" scope="prototype"
-                p:trustEngine-ref="shibboleth.SignatureTrustEngine"
                 p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         </constructor-arg>
         <property name="errorEvent">
@@ -144,7 +136,6 @@
             c:executionDirection="INBOUND">
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.saml2.binding.security.impl.SAML2HTTPPostSimpleSignSecurityHandler" scope="prototype"
-                p:trustEngine-ref="shibboleth.SignatureTrustEngine"
                 p:httpServletRequest-ref="shibboleth.HttpServletRequest"
                 p:parser-ref="shibboleth.ParserPool"
                 p:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
