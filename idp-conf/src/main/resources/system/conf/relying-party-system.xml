@@ -100,6 +100,11 @@
             <ref bean="%{idp.signing.config:shibboleth.SigningConfiguration.SHA256}" />
         </property>
         
+        <property name="signatureValidationConfiguration">
+            <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration" 
+                p:signatureTrustEngine-ref="shibboleth.SignatureTrustEngine" />
+        </property>
+        
         <property name="encryptionConfiguration">
             <bean class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration">
                 <property name="dataEncryptionAlgorithms">
