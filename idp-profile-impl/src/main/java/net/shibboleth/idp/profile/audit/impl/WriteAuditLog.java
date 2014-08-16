@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPAuditFields;
 import net.shibboleth.idp.profile.context.AuditContext;
-import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -58,7 +57,7 @@ import com.google.common.collect.Lists;
 /**
  * Action that produces an audit log entry based on an {@link AuditContext} and a formatting string. 
  * 
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#PROCEED_EVENT_ID}
  */
 public class WriteAuditLog extends AbstractProfileAction {
 
@@ -77,12 +76,12 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Sequence of formatting tokens and literals to output. */
     @Nonnull @NonnullElements private List<String> format;
 
+    /** The Spring RequestContext to operate on. */
+    @Nullable private RequestContext requestContext;
+
     /** The AuditContext to operate on. */
     @Nullable private AuditContext auditCtx;
 
-    /** The Spring RequestContext to operate on. */
-    @Nullable private RequestContext requestContext;
-    
     /** HttpServletRequest object. */
     @Nullable private HttpServletRequest httpRequest;
     
@@ -172,6 +171,14 @@ public class WriteAuditLog extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext) {
+        requestContext = springRequestContext;
+        return super.doExecute(springRequestContext, profileRequestContext);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -181,10 +188,6 @@ public class WriteAuditLog extends AbstractProfileAction {
         }
         
         auditCtx = auditContextLookupStrategy.apply(profileRequestContext);
-        final SpringRequestContext springContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
-        if (springContext != null) {
-            requestContext = springContext.getRequestContext();
-        }
         httpRequest = getHttpServletRequest();
         return true;
     }
@@ -202,9 +205,10 @@ public class WriteAuditLog extends AbstractProfileAction {
                     entry.append('%');
                 } else {
                     final String field = token.substring(1);
+                    
                     if (IdPAuditFields.EVENT_TIME.equals(field)) {
                         entry.append(new DateTime().toString(v2Formatter.withZone(DateTimeZone.UTC)));
-                    } else if (IdPAuditFields.EVENT_TYPE.equals(field) && requestContext != null) {
+                    } else if (IdPAuditFields.EVENT_TYPE.equals(field)) {
                         final Event event = requestContext.getCurrentEvent();
                         if (event != null && !event.getId().equals(EventIds.PROCEED_EVENT_ID)) {
                             entry.append(event.getId());
