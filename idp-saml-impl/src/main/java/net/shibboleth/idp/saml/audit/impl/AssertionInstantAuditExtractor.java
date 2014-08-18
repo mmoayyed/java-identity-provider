@@ -31,11 +31,10 @@ import org.opensaml.saml.saml2.core.ArtifactResponse;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
-import net.shibboleth.idp.profile.AuditExtractorFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link AuditExtractorFunction} that returns the IssueInstant attribute from the assertions in a response. */
-public class AssertionInstantAuditExtractor implements AuditExtractorFunction {
+/** {@link Function} that returns the IssueInstant attribute from the assertions in a response. */
+public class AssertionInstantAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;

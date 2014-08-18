@@ -32,11 +32,10 @@ import org.opensaml.saml.saml2.core.Response;
 
 import com.google.common.base.Function;
 
-import net.shibboleth.idp.profile.AuditExtractorFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link AuditExtractorFunction} that returns the first SessionIndex from an assertions in a response. */
-public class SessionIndexAuditExtractor implements AuditExtractorFunction {
+/** {@link Function} that returns the first SessionIndex from an assertions in a response. */
+public class SessionIndexAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;

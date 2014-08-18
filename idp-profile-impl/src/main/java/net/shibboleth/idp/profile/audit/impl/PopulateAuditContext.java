@@ -20,16 +20,18 @@ package net.shibboleth.idp.profile.audit.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.AuditExtractorFunction;
 import net.shibboleth.idp.profile.context.AuditContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -40,7 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Action that populates fields in an {@link AuditContext} using injected functions.
@@ -62,7 +66,10 @@ public class PopulateAuditContext extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext,AuditContext> auditContextCreationStrategy;
     
     /** Map of fields to extract and the corresponding extraction functions. */
-    @Nonnull @NonnullElements private Map<String,AuditExtractorFunction> fieldExtractors;
+    @Nonnull @NonnullElements private Map<String,Function<ProfileRequestContext,Object>> fieldExtractors;
+    
+    /** Fields being audited, to optimize extraction.. */
+    @Nonnull @NonnullElements private Set<String> fieldsToExtract;
     
     /** {@link AuditContext} to populate. */
     @Nullable private AuditContext auditCtx;
@@ -71,6 +78,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
     public PopulateAuditContext() {
         auditContextCreationStrategy = new ChildContextLookup<>(AuditContext.class, true);
         fieldExtractors = Collections.emptyMap();
+        fieldsToExtract = Collections.emptySet();
     }
 
     /**
@@ -91,16 +99,60 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * @param map   map from field name to extraction function
      */
     public void setFieldExtractors(
-            @Nonnull @NonnullElements final Map<String,AuditExtractorFunction> map) {
+            @Nonnull @NonnullElements final Map<String,Function<ProfileRequestContext,Object>> map) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Field extractor map cannot be null");
         
         fieldExtractors = Maps.newHashMapWithExpectedSize(map.size());
-        for (final Map.Entry<String,AuditExtractorFunction> entry : map.entrySet()) {
+        for (final Map.Entry<String,Function<ProfileRequestContext,Object>> entry : map.entrySet()) {
             final String field = StringSupport.trimOrNull(entry.getKey());
             if (entry.getValue() != null) {
                 fieldExtractors.put(field, entry.getValue());
             }
+        }
+    }
+    
+    /**
+     * Set the formatting string in use.
+     * 
+     * <p>A formatting string consists of tokens prefixed by '%' separated by any non-alphanumeric or whitespace.
+     * Tokens can contain any letter or number or a hypen. Anything other than a token, including whitespace, is
+     * a literal.</p>
+     * 
+     * <p>The string is parsed to determine what fields will eventually need to be audited, to skip extraction of
+     * unused fields.</p>
+     * 
+     * @param s formatting string
+     */
+    public void setFormat(@Nonnull @NotEmpty final String s) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        if (Strings.isNullOrEmpty(s)) {
+            throw new ConstraintViolationException("Formatting string cannot be null or empty");
+        }
+        
+        fieldsToExtract = Sets.newHashSetWithExpectedSize(10);
+        
+        int len = s.length();
+        boolean inToken = false;
+        StringBuilder field = new StringBuilder();
+        for (int pos = 0; pos < len; ++pos) {
+            char ch = s.charAt(pos);
+            if (inToken) {
+                if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
+                    fieldsToExtract.add(field.substring(1));
+                    field.setLength(0);
+                    inToken = false;
+                }
+            } else if (ch == '%') {
+                field.setLength(0);
+                inToken = true;
+            }
+            
+            field.append(ch);
+        }
+        
+        if (field.length() > 0 && inToken) {
+            fieldsToExtract.add(field.substring(1));
         }
     }
 
@@ -126,12 +178,25 @@ public class PopulateAuditContext extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        for (final Map.Entry<String,AuditExtractorFunction> entry : fieldExtractors.entrySet()) {
+        for (final Map.Entry<String,Function<ProfileRequestContext,Object>> entry : fieldExtractors.entrySet()) {
             
-            final Collection<String> values = entry.getValue().apply(profileRequestContext);
-            if (values != null && !values.isEmpty()) {
-                log.debug("{} Adding {} value(s) for field '{}'", getLogPrefix(), values.size(), entry.getKey());
-                auditCtx.getFieldValues(entry.getKey()).addAll(values);
+            if (!fieldsToExtract.isEmpty() && !fieldsToExtract.contains(entry.getKey())) {
+                log.debug("{} Skipping field '{}' not included in audit format", getLogPrefix(), entry.getKey());
+                continue;
+            }
+            
+            final Object values = entry.getValue().apply(profileRequestContext);
+            if (values != null) {
+                if (values instanceof Collection && !((Collection) values).isEmpty()) {
+                    log.debug("{} Adding {} value(s) for field '{}'", getLogPrefix(), ((Collection) values).size(),
+                            entry.getKey());
+                    for (final Object value : (Collection) values) {
+                        auditCtx.getFieldValues(entry.getKey()).add(value.toString());
+                    }
+                } else {
+                    log.debug("{} Adding 1 value for field '{}'", getLogPrefix(), entry.getKey());
+                    auditCtx.getFieldValues(entry.getKey()).add(values.toString());
+                }
             }
         }
     }

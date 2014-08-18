@@ -32,14 +32,13 @@ import org.opensaml.saml.saml2.core.AuthnStatement;
 
 import com.google.common.base.Function;
 
-import net.shibboleth.idp.profile.AuditExtractorFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * {@link AuditExtractorFunction} that returns the first AuthenticationMethod, AuthnContextCLassRef,
+ * {@link Function} that returns the first AuthenticationMethod, AuthnContextCLassRef,
  * or AuthnContextDeclRef from an assertions in a response.
  */
-public class AuthnContextAuditExtractor implements AuditExtractorFunction {
+public class AuthnContextAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;

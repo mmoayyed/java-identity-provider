@@ -30,12 +30,11 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.AuditExtractorFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link AuditExtractorFunction} that returns the attribute IDs from an {@link AttributeContext}. */
-public class AttributesAuditExtractor implements AuditExtractorFunction {
+/** {@link Function} that returns the attribute IDs from an {@link AttributeContext}. */
+public class AttributesAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
 
     /** Lookup strategy for AttributeContext to read from. */
     @Nonnull private final Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;

@@ -30,11 +30,10 @@ import org.opensaml.saml.saml2.core.StatusResponseType;
 
 import com.google.common.base.Function;
 
-import net.shibboleth.idp.profile.AuditExtractorFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link AuditExtractorFunction} that returns the StatusCode from a response. */
-public class StatusCodeAuditExtractor implements AuditExtractorFunction {
+/** {@link Function} that returns the StatusCode from a response. */
+public class StatusCodeAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;

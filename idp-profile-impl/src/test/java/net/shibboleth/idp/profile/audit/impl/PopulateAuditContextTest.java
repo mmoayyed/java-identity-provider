@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.idp.profile.AuditExtractorFunction;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
@@ -38,6 +37,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 /** {@link PopulateAuditContext} unit test. */
@@ -58,7 +58,7 @@ public class PopulateAuditContextTest {
     }
     
     @Test public void testSingle() throws Exception {
-        final Map<String,AuditExtractorFunction> map = Maps.newHashMap();
+        final Map<String,Function<ProfileRequestContext,Object>> map = Maps.newHashMap();
         map.put("a", new MockFunction(Collections.singletonList("foo")));
         
         action.setFieldExtractors(map);
@@ -75,7 +75,7 @@ public class PopulateAuditContextTest {
     }
 
     @Test public void testMultiple() throws Exception {
-        final Map<String,AuditExtractorFunction> map = Maps.newHashMap();
+        final Map<String,Function<ProfileRequestContext,Object>> map = Maps.newHashMap();
         map.put("a", new MockFunction(Collections.singletonList("foo")));
         map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
         
@@ -93,8 +93,28 @@ public class PopulateAuditContextTest {
         Assert.assertEquals(ac.getFieldValues("A").size(), 2);
         Assert.assertEquals(ac.getFieldValues("A").toArray(), new String[]{"bar", "baz"});
     }
+
+    @Test public void testSkipped() throws Exception {
+        final Map<String,Function<ProfileRequestContext,Object>> map = Maps.newHashMap();
+        map.put("a", new MockFunction(Collections.singletonList("foo")));
+        map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
+        
+        action.setFieldExtractors(map);
+        action.setFormat("%A - %b %%");
+        action.initialize();
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        final AuditContext ac = prc.getSubcontext(AuditContext.class);
+        Assert.assertNotNull(ac);
+        Assert.assertTrue(ac.getFieldValues("a").isEmpty());
+        Assert.assertTrue(ac.getFieldValues("b").isEmpty());
+        Assert.assertEquals(ac.getFieldValues("A").size(), 2);
+        Assert.assertEquals(ac.getFieldValues("A").toArray(), new String[]{"bar", "baz"});
+    }
     
-    private class MockFunction implements AuditExtractorFunction {
+    private class MockFunction implements Function<ProfileRequestContext,Object> {
         
         private Collection<String> result;
         

@@ -31,11 +31,10 @@ import org.opensaml.saml.saml2.core.StatusResponseType;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-import net.shibboleth.idp.profile.AuditExtractorFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link AuditExtractorFunction} that returns the lower-level StatusCode(s) from a response. */
-public class SubStatusCodeAuditExtractor implements AuditExtractorFunction {
+/** {@link Function} that returns the lower-level StatusCode(s) from a response. */
+public class SubStatusCodeAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;

@@ -25,7 +25,8 @@
 
     <bean id="PostDecodePopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors" />
+        p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
     <bean id="CheckMessageVersion"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
@@ -88,7 +89,8 @@
     
     <bean id="PostLookupPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors" />
+        p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
@@ -233,11 +235,13 @@
 
     <bean id="PostAssertionPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors" />
+        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
     <bean id="PostResponsePopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors" />
+        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
     <bean id="CheckForOutboundSubflow"
         class="net.shibboleth.idp.profile.impl.CheckForProfileSubflow" scope="prototype"
@@ -280,7 +284,8 @@
     <bean id="ErrorViewPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:activationCondition="%{idp.service.logging.auditLocalErrors:false}"
-        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors" />
+        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
     <bean id="WriteAuditLogForLocalError" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:activationCondition="%{idp.service.logging.auditLocalErrors:false}"
