@@ -22,8 +22,7 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 /**
- * This is the bases of all implementations of {@link PolicyRequirementRule} which do some sort of comparison.<br/>
- * <br/>
+ * Basis of all implementations of {@link PolicyRequirementRule} which do some sort of comparison.
  */
 
 public abstract class AbstractPolicyRule extends AbstractIdentifiableInitializableComponent implements
