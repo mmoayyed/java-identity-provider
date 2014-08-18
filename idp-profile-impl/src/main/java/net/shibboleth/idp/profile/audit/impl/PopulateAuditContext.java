@@ -191,7 +191,9 @@ public class PopulateAuditContext extends AbstractProfileAction {
                     log.debug("{} Adding {} value(s) for field '{}'", getLogPrefix(), ((Collection) values).size(),
                             entry.getKey());
                     for (final Object value : (Collection) values) {
-                        auditCtx.getFieldValues(entry.getKey()).add(value.toString());
+                        if (value != null) {
+                            auditCtx.getFieldValues(entry.getKey()).add(value.toString());
+                        }
                     }
                 } else {
                     log.debug("{} Adding 1 value for field '{}'", getLogPrefix(), entry.getKey());
