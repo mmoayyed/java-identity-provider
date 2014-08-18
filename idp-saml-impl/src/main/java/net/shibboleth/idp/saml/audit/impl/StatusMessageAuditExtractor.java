@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -33,7 +30,7 @@ import com.google.common.base.Function;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** {@link Function} that returns the StatusMessage from a response. */
-public class StatusMessageAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
+public class StatusMessageAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -49,27 +46,27 @@ public class StatusMessageAuditExtractor implements Function<ProfileRequestConte
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         final SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             if (response instanceof Response) {
                 final org.opensaml.saml.saml1.core.StatusMessage msg =
                         ((Response) response).getStatus() != null
                                 ? ((Response) response).getStatus().getStatusMessage() : null;
-                if (msg != null && msg.getMessage() != null) {
-                    return Collections.singletonList(msg.getMessage());
+                if (msg != null) {
+                    return msg.getMessage();
                 }
             } else if (response instanceof StatusResponseType) {
                 final org.opensaml.saml.saml2.core.StatusMessage msg =
                         ((StatusResponseType) response).getStatus() != null
                                 ? ((StatusResponseType) response).getStatus().getStatusMessage() : null;
-                if (msg != null && msg.getMessage() != null) {
-                    return Collections.singletonList(msg.getMessage());
+                if (msg != null) {
+                    return msg.getMessage();
                 }
             }
         }
         
-        return Collections.emptyList();
+        return null;
     }
 
 }

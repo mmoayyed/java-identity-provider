@@ -24,6 +24,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
@@ -34,7 +35,7 @@ import com.google.common.collect.Collections2;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** {@link Function} that returns the IssueInstant attribute from the assertions in a response. */
-public class AssertionInstantAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
+public class AssertionInstantAuditExtractor implements Function<ProfileRequestContext,Collection<DateTime>> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -50,7 +51,7 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public Collection<DateTime> apply(@Nullable final ProfileRequestContext input) {
         SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             
@@ -65,10 +66,9 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                         ((org.opensaml.saml.saml2.core.Response) response).getAssertions();
                 if (!assertions.isEmpty()) {
                     return Collections2.transform(assertions,
-                            new Function<org.opensaml.saml.saml2.core.Assertion,String>() {
-                                    public String apply(org.opensaml.saml.saml2.core.Assertion input) {
-                                        return input.getIssueInstant() != null ?
-                                                input.getIssueInstant().toString() : null;
+                            new Function<org.opensaml.saml.saml2.core.Assertion,DateTime>() {
+                                    public DateTime apply(org.opensaml.saml.saml2.core.Assertion input) {
+                                        return input.getIssueInstant();
                                     }
                                 });
                 }
@@ -79,10 +79,9 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                         ((org.opensaml.saml.saml1.core.Response) response).getAssertions();
                 if (!assertions.isEmpty()) {
                     return Collections2.transform(assertions,
-                            new Function<org.opensaml.saml.saml1.core.Assertion,String>() {
-                                    public String apply(org.opensaml.saml.saml1.core.Assertion input) {
-                                        return input.getIssueInstant() != null ?
-                                                input.getIssueInstant().toString() : null;
+                            new Function<org.opensaml.saml.saml1.core.Assertion,DateTime>() {
+                                    public DateTime apply(org.opensaml.saml.saml1.core.Assertion input) {
+                                        return input.getIssueInstant();
                                     }
                                 });
                 }

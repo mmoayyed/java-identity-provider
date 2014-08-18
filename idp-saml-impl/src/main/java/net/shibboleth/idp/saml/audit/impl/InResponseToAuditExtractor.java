@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -33,7 +30,7 @@ import com.google.common.base.Function;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** {@link Function} that returns the InResponseTo attribute from a response. */
-public class InResponseToAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
+public class InResponseToAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -49,17 +46,17 @@ public class InResponseToAuditExtractor implements Function<ProfileRequestContex
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         final SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             if (response instanceof ResponseAbstractType) {
-                return Collections.singletonList(((ResponseAbstractType) response).getInResponseTo());
+                return ((ResponseAbstractType) response).getInResponseTo();
             } else if (response instanceof StatusResponseType) {
-                return Collections.singletonList(((StatusResponseType) response).getInResponseTo());
+                return ((StatusResponseType) response).getInResponseTo();
             }
         }
         
-        return Collections.emptyList();
+        return null;
     }
 
 }

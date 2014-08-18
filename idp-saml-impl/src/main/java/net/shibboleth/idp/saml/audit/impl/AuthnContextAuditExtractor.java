@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -38,7 +35,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * {@link Function} that returns the first AuthenticationMethod, AuthnContextCLassRef,
  * or AuthnContextDeclRef from an assertions in a response.
  */
-public class AuthnContextAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
+public class AuthnContextAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -55,7 +52,7 @@ public class AuthnContextAuditExtractor implements Function<ProfileRequestContex
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             
@@ -72,11 +69,9 @@ public class AuthnContextAuditExtractor implements Function<ProfileRequestContex
                         if (statement.getAuthnContext() != null) {
                             final AuthnContext ac = statement.getAuthnContext();
                             if (ac.getAuthnContextClassRef() != null) {
-                                return Collections.singletonList(
-                                        ac.getAuthnContextClassRef().getAuthnContextClassRef());
+                                return ac.getAuthnContextClassRef().getAuthnContextClassRef();
                             } else if (ac.getAuthnContextDeclRef() != null) {
-                                return Collections.singletonList(
-                                        ac.getAuthnContextDeclRef().getAuthnContextDeclRef());
+                                return ac.getAuthnContextDeclRef().getAuthnContextDeclRef();
                             }
                         }
                     }
@@ -88,7 +83,7 @@ public class AuthnContextAuditExtractor implements Function<ProfileRequestContex
                         : ((org.opensaml.saml.saml1.core.Response) response).getAssertions()) {
                     for (final AuthenticationStatement statement : assertion.getAuthenticationStatements()) {
                         if (statement.getAuthenticationMethod() != null) {
-                            return Collections.singletonList(statement.getAuthenticationMethod());
+                            return statement.getAuthenticationMethod();
                         }
                     }
                 }
@@ -96,7 +91,7 @@ public class AuthnContextAuditExtractor implements Function<ProfileRequestContex
             }
         }
         
-        return Collections.emptyList();
+        return null;
     }
 // Checkstyle: CyclomaticComplexity ON
     

@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -35,7 +32,7 @@ import com.google.common.base.Function;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** {@link Function} that returns the first SessionIndex from an assertions in a response. */
-public class SessionIndexAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
+public class SessionIndexAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -51,7 +48,7 @@ public class SessionIndexAuditExtractor implements Function<ProfileRequestContex
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             
@@ -64,14 +61,14 @@ public class SessionIndexAuditExtractor implements Function<ProfileRequestContex
                 for (final Assertion assertion : ((Response) response).getAssertions()) {
                     for (final AuthnStatement statement : assertion.getAuthnStatements()) {
                         if (statement.getSessionIndex() != null) {
-                            return Collections.singletonList(statement.getSessionIndex());
+                            return statement.getSessionIndex();
                         }
                     }
                 }
             }
         }
         
-        return Collections.emptyList();
+        return null;
     }
     
 }

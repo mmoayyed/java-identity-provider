@@ -17,12 +17,10 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -34,7 +32,7 @@ import com.google.common.base.Function;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** {@link Function} that returns the first authentication timestamp from an assertions in a response. */
-public class AuthnInstantAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
+public class AuthnInstantAuditExtractor implements Function<ProfileRequestContext,DateTime> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -51,7 +49,7 @@ public class AuthnInstantAuditExtractor implements Function<ProfileRequestContex
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public DateTime apply(@Nullable final ProfileRequestContext input) {
         SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             
@@ -66,7 +64,7 @@ public class AuthnInstantAuditExtractor implements Function<ProfileRequestContex
                         : ((org.opensaml.saml.saml2.core.Response) response).getAssertions()) {
                     for (final AuthnStatement statement : assertion.getAuthnStatements()) {
                         if (statement.getAuthnInstant() != null) {
-                            return Collections.singletonList(statement.getAuthnInstant().toString());
+                            return statement.getAuthnInstant();
                         }
                     }
                 }
@@ -77,7 +75,7 @@ public class AuthnInstantAuditExtractor implements Function<ProfileRequestContex
                         : ((org.opensaml.saml.saml1.core.Response) response).getAssertions()) {
                     for (final AuthenticationStatement statement : assertion.getAuthenticationStatements()) {
                         if (statement.getAuthenticationInstant() != null) {
-                            return Collections.singletonList(statement.getAuthenticationInstant().toString());
+                            return statement.getAuthenticationInstant();
                         }
                     }
                 }
@@ -85,7 +83,7 @@ public class AuthnInstantAuditExtractor implements Function<ProfileRequestContex
             }
         }
         
-        return Collections.emptyList();
+        return null;
     }
 // Checkstyle: CyclomaticComplexity ON
     

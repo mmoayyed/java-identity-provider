@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -33,7 +30,7 @@ import com.google.common.base.Function;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /** {@link Function} that returns the StatusCode from a response. */
-public class StatusCodeAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
+public class StatusCodeAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for message to read from. */
     @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
@@ -49,7 +46,7 @@ public class StatusCodeAuditExtractor implements Function<ProfileRequestContext,
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         final SAMLObject response = responseLookupStrategy.apply(input);
         if (response != null) {
             if (response instanceof Response) {
@@ -57,19 +54,19 @@ public class StatusCodeAuditExtractor implements Function<ProfileRequestContext,
                         ((Response) response).getStatus() != null
                                 ? ((Response) response).getStatus().getStatusCode() : null;
                 if (sc != null && sc.getValue() != null) {
-                    return Collections.singletonList(sc.getValue().getLocalPart());
+                    return sc.getValue().getLocalPart();
                 }
             } else if (response instanceof StatusResponseType) {
                 final org.opensaml.saml.saml2.core.StatusCode sc =
                         ((StatusResponseType) response).getStatus() != null
                                 ? ((StatusResponseType) response).getStatus().getStatusCode() : null;
-                if (sc != null && sc.getValue() != null) {
-                    return Collections.singletonList(sc.getValue());
+                if (sc != null) {
+                    return sc.getValue();
                 }
             }
         }
         
-        return Collections.emptyList();
+        return null;
     }
 
 }
