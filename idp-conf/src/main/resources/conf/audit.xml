@@ -38,5 +38,12 @@
             </map>
         </property>
     </bean>
+
+    <bean id="shibboleth.ErrorViewAuditExtractors" parent="shibboleth.DefaultErrorViewAuditExtractors">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
     
 </beans>

@@ -129,7 +129,8 @@
     
     <end-state id="HandleErrorWithView" view="#{MapEventToView.apply(currentEvent)}">
         <on-entry>
-            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="ErrorViewPopulateAuditContext" />
+            <evaluate expression="WriteAuditLogForLocalError" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />

@@ -55,6 +55,9 @@
     <bean id="shibboleth.ChildLookup.AuthenticationContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.AuthenticationContext) }" />
+    <bean id="shibboleth.ChildLookup.SubjectContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.authn.context.SubjectContext) }" />
     <bean id="shibboleth.ChildLookup.SubjectCanonicalizationContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.authn.context.SubjectCanonicalizationContext) }" />

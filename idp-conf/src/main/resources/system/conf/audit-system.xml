@@ -79,14 +79,14 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SERVICE_PROVIDER"/>
                     </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.ContextDataAuditExtractor"
+                    <bean class="net.shibboleth.idp.profile.audit.impl.SingletonAuditExtractor"
                         c:fn-ref="shibboleth.RelyingPartyIdLookup.Simple" />
                 </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IDENTITY_PROVIDER"/>
                     </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.ContextDataAuditExtractor"
+                    <bean class="net.shibboleth.idp.profile.audit.impl.SingletonAuditExtractor"
                         c:fn-ref="shibboleth.ResponderIdLookup.Simple" />
                 </entry>
             </map>
@@ -165,6 +165,46 @@
             class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
         <property name="sourceMap">
             <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.SingletonAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose">
+                                <constructor-arg name="g">
+                                    <bean class="net.shibboleth.idp.profile.context.navigate.SubjectContextPrincipalLookupFunction" />
+                                </constructor-arg>
+                                <constructor-arg name="f">
+                                    <ref bean="shibboleth.ChildLookup.SubjectContext" />
+                                </constructor-arg>
+                            </bean>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.SESSION_ID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.SingletonAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose">
+                                <constructor-arg name="g">
+                                    <bean class="net.shibboleth.idp.profile.context.navigate.SessionContextIDLookupFunction" />
+                                </constructor-arg>
+                                <constructor-arg name="f">
+                                    <ref bean="shibboleth.ChildLookup.SessionContext" />
+                                </constructor-arg>
+                            </bean>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
+                </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.RESPONSE_BINDING"/>
@@ -248,6 +288,54 @@
                                 c:f-ref="shibboleth.MessageContextLookup.Outbound" />
                         </constructor-arg>
                     </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.DefaultErrorViewAuditExtractors"
+            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.SingletonAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose">
+                                <constructor-arg name="g">
+                                    <bean class="net.shibboleth.idp.profile.context.navigate.SubjectContextPrincipalLookupFunction" />
+                                </constructor-arg>
+                                <constructor-arg name="f">
+                                    <ref bean="shibboleth.ChildLookup.SubjectContext" />
+                                </constructor-arg>
+                            </bean>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.SESSION_ID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.SingletonAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose">
+                                <constructor-arg name="g">
+                                    <bean class="net.shibboleth.idp.profile.context.navigate.SessionContextIDLookupFunction" />
+                                </constructor-arg>
+                                <constructor-arg name="f">
+                                    <ref bean="shibboleth.ChildLookup.SessionContext" />
+                                </constructor-arg>
+                            </bean>
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
                 </entry>
             </map>
         </property>

@@ -74,9 +74,6 @@ public final class SAMLAuditFields {
     /** Authentication method/context/decl field. */
     @Nonnull @NotEmpty public static final String AUTHN_CONTEXT = "ac";
 
-    /** Logout result field. */
-    @Nonnull @NotEmpty public static final String LOGOUT_RESULT = "L";
-
     /** Status code field. */
     @Nonnull @NotEmpty public static final String STATUS_CODE = "S";
 

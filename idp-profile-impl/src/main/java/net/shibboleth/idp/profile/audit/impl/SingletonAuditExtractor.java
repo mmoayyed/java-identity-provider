@@ -23,33 +23,34 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Function;
 
 import net.shibboleth.idp.profile.AuditExtractorFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link AuditExtractorFunction} that returns the result of a {@link ContextDataLookupFunction}. */
-public class ContextDataAuditExtractor implements AuditExtractorFunction {
+/** {@link AuditExtractorFunction} that returns the result of a {@link Function} as a singleton. */
+public class SingletonAuditExtractor implements AuditExtractorFunction {
 
-    /** Constant values to return. */
-    @Nonnull private final ContextDataLookupFunction<ProfileRequestContext,String> contextDataLookupFunction;
+    /** Function to apply. */
+    @Nonnull private final Function<ProfileRequestContext,Object> singletonLookupFunction;
     
     /**
      * Constructor.
      *
      * @param fn lookup function
      */
-    public ContextDataAuditExtractor(@Nonnull final ContextDataLookupFunction<ProfileRequestContext,String> fn) {
-        contextDataLookupFunction = Constraint.isNotNull(fn, "ContextDataLookupFunction cannot be null");
+    public SingletonAuditExtractor(@Nonnull final Function<ProfileRequestContext,Object> fn) {
+        singletonLookupFunction = Constraint.isNotNull(fn, "Function cannot be null");
     }
 
     /** {@inheritDoc} */
     @Override
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
-        final String data = contextDataLookupFunction.apply(input);
+        final Object data = singletonLookupFunction.apply(input);
         if (data != null) {
-            return Collections.singletonList(data);
+            return Collections.singletonList(data.toString());
         } else {
             return Collections.emptyList();
         }
