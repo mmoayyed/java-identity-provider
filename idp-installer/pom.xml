@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>idp-installer</name>
+    <name>Shibboleth IdP :: Installer</name>
     <artifactId>idp-installer</artifactId>
     <packaging>jar</packaging>
 
