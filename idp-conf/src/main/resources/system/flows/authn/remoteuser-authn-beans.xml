@@ -17,6 +17,11 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <bean id="SetRPUIInformation"
+        class="net.shibboleth.idp.ui.context.SetRPUIInformation" scope="prototype"
+        p:activationCondition-ref="shibboleth.authn.RemoteUser.populateUIInfo"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"/>
+
     <bean id="ValidateExternalAuthentication"
             class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
             p:classifiedMessages-ref="shibboleth.authn.RemoteUser.ClassifiedMessageMap"

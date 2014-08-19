@@ -42,7 +42,8 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Constants supporting external authentication outside the webflow engine.
+ * Implementation of the {@link ExternalAuthentication} API that handles moving information in and out
+ * of request attributes.
  */
 public class ExternalAuthenticationImpl extends ExternalAuthentication {
 
@@ -75,16 +76,10 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
-    
-    /**
-     * Initialize a request for external authentication by seeking out the information stored in
-     * the servlet session and exposing it as request attributes.
-     * 
-     * @param request servlet request
-     * 
-     * @throws ExternalAuthenticationException if an error occurs
-     */
+
+    /** {@inheritDoc} */
     @SuppressWarnings("deprecation")
+    @Override
     protected void doStart(@Nonnull final HttpServletRequest request) throws ExternalAuthenticationException {
         final AuthenticationContext authnContext = profileRequestContext.getSubcontext(AuthenticationContext.class);
         if (authnContext == null) {
@@ -109,18 +104,9 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         }
     }
 
-    /**
-     * Complete a request for external authentication by seeking out the information stored in
-     * request attributes and transferring to the session's conversation state, and then transfer
-     * control back to the authentication web flow.
-     * 
-     * @param request servlet request
-     * @param response servlet response
-     * 
-     * @throws ExternalAuthenticationException if an error occurs
-     * @throws IOException if the redirect cannot be issued
-     */
  // Checkstyle: CyclomaticComplexity OFF
+    /** {@inheritDoc} */
+    @Override
     protected void doFinish(@Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response)
             throws ExternalAuthenticationException, IOException {
         final AuthenticationContext authnContext = profileRequestContext.getSubcontext(AuthenticationContext.class);

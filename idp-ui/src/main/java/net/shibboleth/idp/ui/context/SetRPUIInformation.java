@@ -64,7 +64,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
 
     /**
      * The {@link EntityDescriptor}. If we cannot find this we short cut the {@link #doExecute(ProfileRequestContext)}
-     * stage
+     * stage.
      */
     private EntityDescriptor entityDescriptor;
 
@@ -80,7 +80,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
     /**
      * Get the mechanism to go from the {@link ProfileRequestContext} to the {@link SAMLMetadataContext}.
      * 
-     * @return Returns the strategy.
+     * @return lookup strategy
      */
     public Function<ProfileRequestContext, SAMLMetadataContext> getMetadataContextLookupStrategy() {
         return metadataContextLookupStrategy;
@@ -98,7 +98,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
     /**
      * Get the mechanism to create/get the {@link RelyingPartyUIContext} from the {@link ProfileRequestContext}.
      * 
-     * @return Returns the strategy.
+     * @return lookup/creation strategy
      */
     public Function<ProfileRequestContext, RelyingPartyUIContext> getRPUIContextCreateStrategy() {
         return rpUIContextCreateStrategy;
@@ -177,7 +177,6 @@ public class SetRPUIInformation extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(ProfileRequestContext profileRequestContext) {
         super.doExecute(profileRequestContext);
-        
         
         rpUIContext.setRPEntityDescriptor(entityDescriptor);
         rpUIContext.setRPSPSSODescriptor(spSSODescriptor);
