@@ -44,6 +44,9 @@ public final class SAMLAuditFields {
     /** Name identifier field. */
     @Nonnull @NotEmpty public static final String NAMEID = "n";
 
+    /** Name identifier Format field. */
+    @Nonnull @NotEmpty public static final String NAMEID_FORMAT = "f";
+    
     /** Assertion ID field. */
     @Nonnull @NotEmpty public static final String ASSERTION_ID = "i";
 
