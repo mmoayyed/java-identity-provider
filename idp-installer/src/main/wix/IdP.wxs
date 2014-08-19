@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" Name="IdP" Language="1033" Version="1.0.0.0" Manufacturer="Microsoft" UpgradeCode="8d3bfb53-47ff-4cbc-9363-cbf9e46bedc4">
+	<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+	<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+	<MediaTemplate EmbedCab="yes"/>
+
+	<Feature Id="ProductFeature" Title="IdP" Level="1">
+	    <ComponentRef Id="ProductComponents" />
+	    <MergeRef Id="procrun"/>
+	</Feature>
+
+
+	<Directory Id='TARGETDIR' Name='SourceDir' >
+	    <Directory Id='ProgramFilesFolder' >
+		<Directory Id='INSTALLDIR' >
+		    <Component Guid="{47CABFAB-11BD-4B4D-8964-A758DB2C02D6}" Id="ProductComponents">
+			<File Name="TopBanner.bmp" KeyPath="yes" Source='$(var.ProjectDir)\TopBanner.bmp'/>
+		    </Component>
+		    <Merge Id="procrun" Language='1033' SourceFile='$(var.ProjectDir)\jetty.msm' DiskId='1'/>
+		</Directory>
+	    </Directory>
+        </Directory>
+
+	<WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\license.rtf" />
+	<WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\TopBanner.bmp" />
+	<WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\Dialog.bmp" />
+	<WixVariable Id="WixUICostingPopupOptOut" Value="1" />
+	
+	<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+	<UIRef Id='WixUI_InstallDir'/>
+    </Product>
+
+</Wix>

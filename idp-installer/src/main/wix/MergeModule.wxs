@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="Procrun" Language="1033" Version="1.0.0.0">
+		<Package Id="684b3207-0d64-43e6-9e6a-3acb8b7672d7" Manufacturer="Microsoft" InstallerVersion="200" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="JETTYROOT" Name="."/>
+		</Directory>
+	    <ComponentGroupRef Id="JettyGroup"/>
+	</Module>
+</Wix>
