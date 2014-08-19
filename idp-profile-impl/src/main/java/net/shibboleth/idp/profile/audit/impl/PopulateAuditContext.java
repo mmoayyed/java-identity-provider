@@ -203,16 +203,18 @@ public class PopulateAuditContext extends AbstractProfileAction {
             
             final Object values = entry.getValue().apply(profileRequestContext);
             if (values != null) {
-                if (values instanceof Collection && !((Collection) values).isEmpty()) {
-                    log.debug("{} Adding {} value(s) for field '{}'", getLogPrefix(), ((Collection) values).size(),
-                            entry.getKey());
-                    for (final Object value : (Collection) values) {
-                        if (value != null) {
-                            if (value instanceof DateTime) {
-                                auditCtx.getFieldValues(entry.getKey()).add(((DateTime) value).toString(
-                                        dateTimeFormat));
-                            } else {
-                                auditCtx.getFieldValues(entry.getKey()).add(value.toString());
+                if (values instanceof Collection) {
+                    if (!((Collection) values).isEmpty()) {
+                        log.debug("{} Adding {} value(s) for field '{}'", getLogPrefix(), ((Collection) values).size(),
+                                entry.getKey());
+                        for (final Object value : (Collection) values) {
+                            if (value != null) {
+                                if (value instanceof DateTime) {
+                                    auditCtx.getFieldValues(entry.getKey()).add(((DateTime) value).toString(
+                                            dateTimeFormat));
+                                } else {
+                                    auditCtx.getFieldValues(entry.getKey()).add(value.toString());
+                                }
                             }
                         }
                     }
