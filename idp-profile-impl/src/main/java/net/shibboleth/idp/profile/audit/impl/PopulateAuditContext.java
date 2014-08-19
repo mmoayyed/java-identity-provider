@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.joda.time.DateTime;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -70,6 +71,9 @@ public class PopulateAuditContext extends AbstractProfileAction {
     
     /** Fields being audited, to optimize extraction.. */
     @Nonnull @NonnullElements private Set<String> fieldsToExtract;
+    
+    /** Formatting string for {@link DateTime} fields. */
+    @Nullable private String dateTimeFormat;
     
     /** {@link AuditContext} to populate. */
     @Nullable private AuditContext auditCtx;
@@ -156,6 +160,17 @@ public class PopulateAuditContext extends AbstractProfileAction {
         }
     }
 
+    /**
+     * Set the {@link DateTime} formatting string to apply when extracting {@link DateTime}-valued fields.
+     * 
+     * @param format formatting string
+     */
+    public void setDateTimeFormat(@Nonnull @NotEmpty final String format) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        dateTimeFormat = StringSupport.trimOrNull(format);
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -174,6 +189,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
         return true;
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -192,15 +208,25 @@ public class PopulateAuditContext extends AbstractProfileAction {
                             entry.getKey());
                     for (final Object value : (Collection) values) {
                         if (value != null) {
-                            auditCtx.getFieldValues(entry.getKey()).add(value.toString());
+                            if (value instanceof DateTime) {
+                                auditCtx.getFieldValues(entry.getKey()).add(((DateTime) value).toString(
+                                        dateTimeFormat));
+                            } else {
+                                auditCtx.getFieldValues(entry.getKey()).add(value.toString());
+                            }
                         }
                     }
                 } else {
                     log.debug("{} Adding 1 value for field '{}'", getLogPrefix(), entry.getKey());
-                    auditCtx.getFieldValues(entry.getKey()).add(values.toString());
+                    if (values instanceof DateTime) {
+                        auditCtx.getFieldValues(entry.getKey()).add(((DateTime) values).toString(dateTimeFormat));
+                    } else {
+                        auditCtx.getFieldValues(entry.getKey()).add(values.toString());
+                    }
                 }
             }
         }
     }
+// Checkstyle: CyclomaticComplexity ON
     
 }
