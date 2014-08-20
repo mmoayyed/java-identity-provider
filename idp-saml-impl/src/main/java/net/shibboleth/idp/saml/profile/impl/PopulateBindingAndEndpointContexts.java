@@ -32,6 +32,7 @@ import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -58,7 +59,6 @@ import org.opensaml.saml.common.profile.SAMLEventIds;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EndpointCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
-import org.opensaml.saml.criterion.SignedRequestCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
@@ -140,6 +140,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     
     /** Optional metadata for use in endpoint derivation/validation. */
     @Nullable private SAMLMetadataContext mdContext;
+
+    /** Is the relying party "anonymous" in SAML terms? */
+    private boolean anonymous;
     
     /** Whether to bypass endpoint validation when message is signed. */
     private boolean skipValidationWhenSigned;
@@ -311,12 +314,18 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         if (profileRequestContext.getInboundMessageContext() != null) {
             inboundMessage = profileRequestContext.getInboundMessageContext().getMessage();
         }
         
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext != null) {
+            anonymous = rpContext.isAnonymous();
             if (rpContext.getProfileConfig() != null
                     && rpContext.getProfileConfig() instanceof SAMLProfileConfiguration) {
                 final SAMLProfileConfiguration profileConfiguration =
@@ -339,8 +348,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         }
         
         mdContext = metadataContextLookupStrategy.apply(profileRequestContext);
-
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
 
 // Checkstyle: CyclomaticComplexity|MethodLength OFF
@@ -364,23 +372,17 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             log.warn("{} No outbound bindings are eligible for use", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
             return;
-        } else {
-            log.trace("{} Eligible outbound bindings: {}", getLogPrefix(), bindings);
         }
         
-        // Build criteria for the resolver.
-        final CriteriaSet criteria = new CriteriaSet(new EndpointCriterion(buildTemplateEndpoint()),
-                new BindingCriterion(bindings));
+        log.trace("{} Candidate outbound bindings: {}", getLogPrefix(), bindings);
         
+        // Build criteria for the resolver.
+        final CriteriaSet criteria = new CriteriaSet(new BindingCriterion(bindings),
+                buildEndpointCriterion(bindings.get(0)));
         if (mdContext != null && mdContext.getRoleDescriptor() != null) {
             criteria.add(new RoleDescriptorCriterion(mdContext.getRoleDescriptor()));
         } else {
             log.debug("{} No metadata available for endpoint resolution", getLogPrefix());
-        }
-        
-        if (skipValidationWhenSigned && inboundMessage instanceof AuthnRequest
-                && ((AuthnRequest) inboundMessage).isSigned()) {
-            criteria.add(new SignedRequestCriterion());
         }
         
         // Attempt resolution.
@@ -481,11 +483,14 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     }
 
     /**
-     * Build a template Endpoint object to use as input criteria to the resolution process.
+     * Build a template Endpoint object to use as input criteria to the resolution process and wrap it in
+     * a criterion object.
      * 
-     * @return a template for the eventual Endpoint to resolve
+     * @param anonymousBinding default binding to use for an anonymous requester with no Binding specified
+     * 
+     * @return criterion to give to resolver
      */
-    @Nonnull private Endpoint buildTemplateEndpoint() {
+    @Nonnull private EndpointCriterion buildEndpointCriterion(@Nonnull @NotEmpty final String anonymousBinding) {
         final Endpoint endpoint = (Endpoint) endpointBuilder.buildObject(endpointType);
         
         if (inboundMessage instanceof IdPInitiatedSSORequest) {
@@ -501,8 +506,19 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                         ((AuthnRequest) inboundMessage).getAssertionConsumerServiceIndex());
             }
         }
-        
-        return endpoint;
+
+        if (anonymous) {
+            if (endpoint.getBinding() == null) {
+                endpoint.setBinding(anonymousBinding);
+                log.debug("{} Defaulting binding in \"anonymous\" request to {}", getLogPrefix(), anonymousBinding);
+            }
+            return new EndpointCriterion(endpoint, true);
+        } else if (skipValidationWhenSigned && inboundMessage instanceof AuthnRequest
+                && ((AuthnRequest) inboundMessage).isSigned()) {
+            return new EndpointCriterion(endpoint, true);
+        } else {
+            return new EndpointCriterion(endpoint, false);
+        }
     }
 
 }
