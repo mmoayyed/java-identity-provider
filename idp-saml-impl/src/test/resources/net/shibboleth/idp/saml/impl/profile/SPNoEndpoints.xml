@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<md:SPSSODescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" protocolSupportEnumeration="required"/>
+<md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" entityID="http://sp.example.org">
+    <md:SPSSODescriptor protocolSupportEnumeration="required"/>
+</md:EntityDescriptor>
