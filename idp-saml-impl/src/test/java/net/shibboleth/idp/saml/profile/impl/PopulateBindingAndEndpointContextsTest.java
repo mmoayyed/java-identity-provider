@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -48,8 +49,7 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.profile.SAMLEventIds;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -83,6 +83,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         rc = new RequestContextBuilder().setInboundMessage(request).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class, true).setRelayState(RELAY_STATE);
+        
+        // Set these up so the context will be seen as anonymous or not based on metadata in the outbound context.
+        prc.getSubcontext(RelyingPartyContext.class).setAnonymityLookupStrategy(new SAMLAnonymityLookupStrategy());
+        prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(
+                prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true));
         
         action = new PopulateBindingAndEndpointContexts();
         action.setEndpointResolver(new DefaultEndpointResolver());
@@ -133,15 +138,29 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     @Test
     public void testNoMetadata() {
         final Event event = action.execute(rc);
-        ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
+        Assert.assertNotNull(bindingCtx);
+        Assert.assertNotNull(bindingCtx.getBindingDescriptor());
+        Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
+        Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
+        
+        final SAMLEndpointContext epCtx = prc.getOutboundMessageContext().getSubcontext(
+                SAMLPeerEntityContext.class, false).getSubcontext(SAMLEndpointContext.class, false);
+        Assert.assertNotNull(epCtx);
+        Assert.assertNotNull(epCtx.getEndpoint());
+        Assert.assertEquals(epCtx.getEndpoint().getBinding(), SAMLConstants.SAML2_POST_BINDING_URI);
+        Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
     }
 
     /** An SP with no endpoints in metadata. */
     @Test
     public void testNoEndpoints() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPNoEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPNoEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
         
         final Event event = action.execute(rc);
@@ -151,9 +170,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** No endpoint with the location requested. */
     @Test
     public void testBadLocation() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
         
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(LOCATION);
@@ -165,9 +185,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** No endpoint at a location with the right binding requested. */
     @Test
     public void testBadBinding() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
 
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setProtocolBinding(SAMLConstants.SAML2_SOAP11_BINDING_URI);
@@ -179,9 +200,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** Endpoint matches but we don't support the binding. */
     @Test
     public void testUnsupportedBinding() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
         
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(LOCATION_ART);
@@ -194,9 +216,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** No endpoint with a requested index. */
     @Test
     public void testBadIndex() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
 
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceIndex(10);
@@ -234,9 +257,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** Requested location/binding are in metadata. */
     @Test
     public void testInMetadata() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
         
         final Event event = action.execute(rc);
@@ -259,9 +283,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** Requested index is in metadata. */
     @Test
     public void testIndexInMetadata() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
 
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceIndex(2);
@@ -288,9 +313,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** No endpoint with a requested index. */
     @Test
     public void testIndexUnsupportedBinding() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
 
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceIndex(3);
@@ -304,9 +330,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** Get the default endpoint. */
     @Test
     public void testDefault() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
 
         ((AuthnRequest) prc.getInboundMessageContext().getMessage()).setAssertionConsumerServiceURL(null);
@@ -332,9 +359,10 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     /** Test a SAML 1 request (use of SAML2 bindings here is just for simplicity in testing). */
     @Test
     public void testSAML1InMetadata() throws UnmarshallingException {
-        final RoleDescriptor role = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPWithEndpoints.xml");
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
-        mdCtx.setRoleDescriptor(role);
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
         prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
         
         final IdPInitiatedSSORequest saml1Request = new IdPInitiatedSSORequest("foo", LOCATION_POST, null, null);
@@ -357,13 +385,13 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         Assert.assertEquals(epCtx.getEndpoint().getLocation(), LOCATION_POST);
     }
     
-    @Nonnull private SPSSODescriptor loadMetadata(@Nonnull @NotEmpty final String path) throws UnmarshallingException {
+    @Nonnull private EntityDescriptor loadMetadata(@Nonnull @NotEmpty final String path) throws UnmarshallingException {
         
         try {
             final URL url = getClass().getResource(path);
             Document doc = parserPool.parse(new FileInputStream(new File(url.toURI())));
             final Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(doc.getDocumentElement());
-            return (SPSSODescriptor) unmarshaller.unmarshall(doc.getDocumentElement());
+            return (EntityDescriptor) unmarshaller.unmarshall(doc.getDocumentElement());
         } catch (FileNotFoundException | XMLParserException | URISyntaxException e) {
             throw new UnmarshallingException(e);
         }
