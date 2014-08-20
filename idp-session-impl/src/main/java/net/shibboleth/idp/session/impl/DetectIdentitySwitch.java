@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.session.SessionException;
@@ -47,22 +48,23 @@ import com.google.common.base.Function;
  * An authentication action that checks for a mismatch between an existing session's identity and
  * the result of a newly canonicalized subject (from a {@link SubjectCanonicalizationContext}).
  * 
- * <p>On a mismatch, it destroys a pre-existing session and clears {@link AuthenticationContext}
- * and {@link SessionContext} state such that no trace of its impact on the contexts remains.
+ * <p>On a mismatch it destroys a pre-existing session and clears {@link AuthenticationContext}
+ * and {@link SessionContext} state such that no trace of its impact on the contexts remains, and
+ * signals the event.</p>
  * 
- * <p>An error interacting with the session layer will result in an {@link EventIds#IO_ERROR}
- * event.</p>
+ * <p>An error interacting with the session layer will result in an {@link EventIds#IO_ERROR} event.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#IO_ERROR}
+ * @event {@link AuthnEventIds#IDENTITY_SWITCH}
  * @post If an identity switch is detected, SessionContext.getIdPSession() == null
  *  && AuthenticationContext.getActiveResults().isEmpty()
  */
-public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAction {
+public class DetectIdentitySwitch extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InvalidateSessionOnIdentitySwitch.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(DetectIdentitySwitch.class);
 
     /** SessionManager. */
     @NonnullAfterInit private SessionManager sessionManager;
@@ -80,7 +82,7 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     @Nullable private String newPrincipalName;
     
     /** Constructor. */
-    public InvalidateSessionOnIdentitySwitch() {
+    public DetectIdentitySwitch() {
         sessionContextLookupStrategy = new ChildContextLookup<>(SessionContext.class);
         c14nContextLookupStrategy = new ChildContextLookup<>(SubjectCanonicalizationContext.class);
     }
@@ -137,6 +139,10 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
         sessionCtx = sessionContextLookupStrategy.apply(profileRequestContext);
         if (sessionCtx == null || sessionCtx.getIdPSession() == null) {
             log.debug("{} No previous session found, nothing to do", getLogPrefix());
@@ -177,6 +183,8 @@ public class InvalidateSessionOnIdentitySwitch extends AbstractAuthenticationAct
         // Establish context state as if the original session didn't exist.
         sessionCtx.setIdPSession(null);
         authenticationContext.setActiveResults(Collections.<AuthenticationResult>emptyList());
+        
+        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.IDENTITY_SWITCH);
     }
 
 }

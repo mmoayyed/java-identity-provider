@@ -73,9 +73,13 @@
         class="net.shibboleth.idp.authn.impl.SelectAuthenticationFlow" scope="prototype"
         p:favorSSO="%{idp.authn.favorSSO:false}" />
     
-    <bean id="InvalidateSessionOnIdentitySwitch"
-        class="net.shibboleth.idp.session.impl.InvalidateSessionOnIdentitySwitch" scope="prototype"
+    <bean id="DetectIdentitySwitch"
+        class="net.shibboleth.idp.session.impl.DetectIdentitySwitch" scope="prototype"
         p:sessionManager-ref="shibboleth.SessionManager" />
+    
+    <bean id="IdentitySwitchIsError" class="java.lang.Boolean">
+        <constructor-arg value="%{idp.authn.identitySwitchIsError:false}" type="boolean" />
+    </bean>
     
     <bean id="FinalizeAuthentication"
         class="net.shibboleth.idp.authn.impl.FinalizeAuthentication" scope="prototype" />

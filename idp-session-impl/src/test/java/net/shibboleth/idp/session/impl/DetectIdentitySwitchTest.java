@@ -20,6 +20,7 @@ package net.shibboleth.idp.session.impl;
 import java.util.Collections;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
@@ -40,8 +41,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link InvalidateSessionOnIdentitySwitch} unit test. */
-public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTestCase {
+/** {@link DetectIdentitySwitch} unit test. */
+public class DetectIdentitySwitchTest extends SessionManagerBaseTestCase {
     
     private RequestContext src;
     
@@ -53,7 +54,7 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
     
     private SubjectCanonicalizationContext c14n;
     
-    private InvalidateSessionOnIdentitySwitch action;
+    private DetectIdentitySwitch action;
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
@@ -62,7 +63,7 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
         sc = prc.getSubcontext(SessionContext.class, true);
         c14n = prc.getSubcontext(SubjectCanonicalizationContext.class, true);
 
-        action = new InvalidateSessionOnIdentitySwitch();
+        action = new DetectIdentitySwitch();
         action.setSessionManager(sessionManager);
         action.initialize();
     }
@@ -107,7 +108,7 @@ public class InvalidateSessionOnIdentitySwitchTest extends SessionManagerBaseTes
         c14n.setPrincipalName("joe2");
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.IDENTITY_SWITCH);
         Assert.assertNull(sc.getIdPSession());
         Assert.assertEquals(ac.getActiveResults().size(), 0);
     }

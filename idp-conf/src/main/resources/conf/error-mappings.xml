@@ -23,6 +23,7 @@
     <!-- List of events to trap and handle with local views, without returning to SPs. -->
     <!--
     <util:list id="shibboleth.LocalEvents">
+        <value>IdentitySwitch</value>
         <value>NoPotentialFlow</value>
     </util:list>
     -->
@@ -47,6 +48,7 @@
         <entry key="NoCredentials" value-ref="shibboleth.SAML1Status.Requester" />
         <entry key="InvalidCredentials" value-ref="shibboleth.SAML1Status.Requester" />
         <entry key="AccountError" value-ref="shibboleth.SAML1Status.Requester" />
+        <entry key="IdentitySwitch" value-ref="shibboleth.SAML1Status.Requester" />
         <entry key="AuthenticationException" value-ref="shibboleth.SAML1Status.Requester" />
         
         <entry key="InvalidSubject" value-ref="shibboleth.SAML1Status.Requester" />
@@ -72,6 +74,7 @@
         <entry key="NoCredentials" value-ref="shibboleth.SAML2Status.AuthnFailed" />
         <entry key="InvalidCredentials" value-ref="shibboleth.SAML2Status.AuthnFailed" />
         <entry key="AccountError" value-ref="shibboleth.SAML2Status.AuthnFailed" />
+        <entry key="IdentitySwitch" value-ref="shibboleth.SAML2Status.AuthnFailed" />
         <entry key="AuthenticationException" value-ref="shibboleth.SAML2Status.AuthnFailed" />
         
         <entry key="InvalidSubject" value-ref="shibboleth.SAML2Status.UnknownPrincipal" />
