@@ -102,22 +102,27 @@
         
         <property name="signatureValidationConfiguration">
             <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration" 
-                p:signatureTrustEngine-ref="shibboleth.SignatureTrustEngine" />
+                p:signatureTrustEngine-ref="%{idp.trust.signatures:shibboleth.ChainingSignatureTrustEngine}" />
+        </property>
+
+        <property name="clientTLSValidationConfiguration">
+            <bean class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration"
+                p:x509TrustEngine-ref="%{idp.trust.certificates:shibboleth.ChainingX509TrustEngine}" />
         </property>
         
         <property name="encryptionConfiguration">
             <bean class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration">
                 <property name="dataEncryptionAlgorithms">
-                    <util:list>
+                    <list>
                         <util:constant
                             static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128" />
-                    </util:list>
+                    </list>
                 </property>
                 <property name="keyTransportEncryptionAlgorithms">
-                    <util:list>
+                    <list>
                         <util:constant
                             static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
-                    </util:list>
+                    </list>
                 </property>
             </bean>
         </property>
@@ -128,70 +133,110 @@
                 p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" />
         </property>
 
-        <property name="clientTLSValidationConfiguration">
-            <bean class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration"
-                p:x509TrustEngine-ref="shibboleth.X509TrustEngine" />
-        </property>
-
     </bean>
 
     <bean id="shibboleth.SigningConfiguration.SHA256" class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
             p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
         <property name="signatureAlgorithms">
-            <util:list>
+            <list>
                 <util:constant
                     static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256" />
                 <util:constant
                     static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA256" />
-            </util:list>
+            </list>
         </property>
         <property name="signatureReferenceDigestMethods">
-            <util:list>
+            <list>
                 <util:constant
                     static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA256" />
-            </util:list>
+            </list>
         </property>
     </bean>
 
     <bean id="shibboleth.SigningConfiguration.SHA1" class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
             p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
         <property name="signatureAlgorithms">
-            <util:list>
+            <list>
                 <util:constant
                     static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1" />
                 <util:constant
                     static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_SIGNATURE_ECDSA_SHA1" />
-            </util:list>
+            </list>
         </property>
         <property name="signatureReferenceDigestMethods">
-            <util:list>
+            <list>
                 <util:constant
                     static-field="org.opensaml.xmlsec.signature.support.SignatureConstants.ALGO_ID_DIGEST_SHA1" />
-            </util:list>
+            </list>
         </property>
+    </bean>
+
+    <bean id="shibboleth.MetadataPKIXValidationInformationResolver"
+        class="net.shibboleth.idp.saml.security.impl.MetadataPKIXValidationInformationResolver"
+        c:resolver-ref="shibboleth.RoleDescriptorResolver" />
+
+    <!-- Trust Engine options for message signature evaluation. -->
+        
+    <bean id="shibboleth.ExplicitKeySignatureTrustEngine"
+        class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine"
+        c:resolver-ref="shibboleth.MetadataCredentialResolver"
+        c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+
+    <bean id="shibboleth.PKIXSignatureTrustEngine"
+        class="org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine" 
+        c:resolver-ref="shibboleth.MetadataPKIXValidationInformationResolver"
+        c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+
+    <bean id="shibboleth.ChainingSignatureTrustEngine"
+            class="org.opensaml.xmlsec.signature.support.impl.ChainingSignatureTrustEngine">
+        <constructor-arg>
+            <list>
+                <ref bean="shibboleth.ExplicitKeySignatureTrustEngine" />
+                <ref bean="shibboleth.PKIXSignatureTrustEngine" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!-- Trust Engine options for X.509 certificate evaluation (e.g., TLS). -->
+
+    <bean id="shibboleth.ExplicitX509TrustEngine"
+        class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
+        c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+
+    <bean id="shibboleth.PKIXX509TrustEngine"
+        class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine"
+        c:resolver-ref="shibboleth.MetadataPKIXValidationInformationResolver" />
+
+    <bean id="shibboleth.ChainingX509TrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
+        <constructor-arg>
+            <list>
+                <ref bean="shibboleth.ExplicitX509TrustEngine" />
+                <ref bean="shibboleth.PKIXX509TrustEngine" />
+            </list>
+        </constructor-arg>
     </bean>
 
     <!-- Defines decryption keys, along with support for optimizing lookup based on KeyInfo hints. -->
     <bean id="defaultKeyEncryptionCredentialResolver" class="org.opensaml.xmlsec.keyinfo.impl.ChainingKeyInfoCredentialResolver">
         <constructor-arg>
-            <util:list>
+            <list>
                 <bean class="org.opensaml.xmlsec.keyinfo.impl.LocalKeyInfoCredentialResolver">
                     <constructor-arg name="localCredentialResolver">
                         <bean class="org.opensaml.xmlsec.keyinfo.impl.CollectionKeyInfoCredentialResolver"
                             c:credentials-ref="shibboleth.DefaultEncryptionCredentials" />
                     </constructor-arg>
                     <constructor-arg name="keyInfoProviders">
-                        <util:list>
+                        <list>
                             <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider" />
                             <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider" />
                             <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider" />
                             <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider" />
-                        </util:list>
+                        </list>
                     </constructor-arg>
                 </bean>
                 <bean class="org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver"
                     c:credentials-ref="shibboleth.DefaultEncryptionCredentials" />
-            </util:list>
+            </list>
         </constructor-arg>
     </bean>
     
@@ -199,12 +244,12 @@
     <bean id="defaultEncryptedKeyResolver" class="org.opensaml.xmlsec.encryption.support.ChainingEncryptedKeyResolver"
             c:recipient-ref="entityID">
         <constructor-arg name="encKeyResolvers">
-            <util:list>
+            <list>
                 <bean class="org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver" />
                 <bean class="org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver" />
                 <bean class="org.opensaml.xmlsec.encryption.support.SimpleRetrievalMethodEncryptedKeyResolver" />
                 <bean class="org.opensaml.xmlsec.encryption.support.SimpleKeyInfoReferenceEncryptedKeyResolver" />
-            </util:list>
+            </list>
         </constructor-arg>
     </bean>
 
