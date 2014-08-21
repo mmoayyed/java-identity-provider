@@ -129,7 +129,7 @@
         </property>
 
         <property name="clientTLSValidationConfiguration">
-            <bean class="org.opensaml.security.x509.tls.impl.BasicClientTLSCredentialValidationConfiguration"
+            <bean class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration"
                 p:x509TrustEngine-ref="shibboleth.X509TrustEngine" />
         </property>
 
