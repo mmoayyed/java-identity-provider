@@ -11,11 +11,9 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 	
-	<!-- The profile defaults. Firstly the artifact and InboundFlowId parameters 
-
-            TODO establish correct values for Logout InboundFlowId 
     
-     -->
+    
+	<!-- TODO establish correct values for Logout InboundFlowId -->
 
     <!--  SAML2 -->
     <bean id="shibboleth.SAML2.Artifact.InboundFlowId" class="java.lang.String"
@@ -56,5 +54,36 @@
         c:_0="%{idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML1.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/shibboleth-sso" />
-            
+
+    <bean id="shibboleth.MetadataPKIXValidationInformationResolver"
+        class="net.shibboleth.idp.saml.security.impl.MetadataPKIXValidationInformationResolver"
+        c:resolver-ref="shibboleth.RoleDescriptorResolver" />
+
+    <!-- Trust Engines -->
+
+    <bean id="shibboleth.SignatureTrustEngine"
+            class="org.opensaml.xmlsec.signature.support.impl.ChainingSignatureTrustEngine">
+        <constructor-arg>
+            <list>
+                <bean class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine"
+                    c:resolver-ref="shibboleth.MetadataCredentialResolver"
+                    c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+                <bean class="org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine" 
+                    c:resolver-ref="shibboleth.MetadataPKIXValidationInformationResolver"
+                    c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="shibboleth.X509TrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
+        <constructor-arg>
+            <list>
+                <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
+                    c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+                <bean class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine"
+                    c:resolver-ref="shibboleth.MetadataPKIXValidationInformationResolver" />
+            </list>
+        </constructor-arg>
+    </bean>
+    
 </beans>

@@ -23,12 +23,15 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration;
+import org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -67,6 +70,8 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
 
         builder.addPropertyValue("id", "RelyingPartyGroup["
                 + parserContext.getReaderContext().getResource().getFilename()+"]");
+        
+        seDefaultSecurityConfiguration(builder);
 
         // All the Relying Parties
         final List<BeanDefinition> relyingParties =
@@ -127,4 +132,29 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+    
+    /**
+     * Setup the default {@link SecurityConfiguration} for the resolver to establish default trust engines to use.
+     * 
+     * @param builder the builder for the resolver
+     */
+    private void seDefaultSecurityConfiguration(BeanDefinitionBuilder builder) {
+
+        final BeanDefinitionBuilder signatureValidationConfig =
+                BeanDefinitionBuilder.genericBeanDefinition(BasicSignatureValidationConfiguration.class);
+        signatureValidationConfig.addPropertyReference("signatureTrustEngine", "shibboleth.SignatureTrustEngine");
+
+        final BeanDefinitionBuilder tlsValidationConfig =
+                BeanDefinitionBuilder.genericBeanDefinition(BasicClientTLSValidationConfiguration.class);
+        tlsValidationConfig.addPropertyReference("x509TrustEngine", "shibboleth.X509TrustEngine");
+        
+        final BeanDefinitionBuilder configuration =
+                BeanDefinitionBuilder.genericBeanDefinition(SecurityConfiguration.class);
+        configuration.addPropertyValue("signatureValidationConfiguration",
+                signatureValidationConfig.getBeanDefinition());
+        configuration.addPropertyValue("clientTLSValidationConfiguration", tlsValidationConfig.getBeanDefinition());
+
+        builder.addPropertyValue("defaultSecurityConfiguration", configuration.getBeanDefinition());
+    }
+
 }

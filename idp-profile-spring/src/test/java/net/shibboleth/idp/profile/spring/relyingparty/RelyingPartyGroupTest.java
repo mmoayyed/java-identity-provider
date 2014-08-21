@@ -29,6 +29,7 @@ import java.util.Properties;
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -45,6 +46,8 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.security.trust.impl.ChainingTrustEngine;
+import org.opensaml.xmlsec.signature.support.impl.ChainingSignatureTrustEngine;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -206,19 +209,24 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         DefaultRelyingPartyConfigurationResolver resolver =
                 context.getBean(DefaultRelyingPartyConfigurationResolver.class);
 
-        Assert.assertNull(resolver.getDefaultSecurityConfiguration(ArtifactResolutionProfileConfiguration.PROFILE_ID));
-        Assert.assertNull(resolver.getDefaultSecurityConfiguration(AttributeQueryProfileConfiguration.PROFILE_ID));
-        Assert.assertNull(resolver.getDefaultSecurityConfiguration(BrowserSSOProfileConfiguration.PROFILE_ID));
+        final SecurityConfiguration config = resolver.getDefaultSecurityConfiguration(null);
+        Assert.assertNotNull(config);
+        Assert.assertTrue(config.getSignatureValidationConfiguration().getSignatureTrustEngine() instanceof ChainingSignatureTrustEngine);
+        Assert.assertTrue(config.getClientTLSValidationConfiguration().getX509TrustEngine() instanceof ChainingTrustEngine);
+        
+        Assert.assertSame(config, resolver.getDefaultSecurityConfiguration(ArtifactResolutionProfileConfiguration.PROFILE_ID));
+        Assert.assertSame(config, resolver.getDefaultSecurityConfiguration(AttributeQueryProfileConfiguration.PROFILE_ID));
+        Assert.assertSame(config, resolver.getDefaultSecurityConfiguration(BrowserSSOProfileConfiguration.PROFILE_ID));
 
-        Assert.assertNull(resolver
+        Assert.assertSame(config, resolver
                 .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration.PROFILE_ID));
-        Assert.assertNull(resolver
+        Assert.assertSame(config, resolver
                 .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration.PROFILE_ID));
-        Assert.assertNull(resolver
+        Assert.assertSame(config, resolver
                 .getDefaultSecurityConfiguration(net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.PROFILE_ID));
-        Assert.assertNull(resolver.getDefaultSecurityConfiguration(ECPProfileConfiguration.PROFILE_ID));
-        Assert.assertNull(resolver.getDefaultSecurityConfiguration(SSOSProfileConfiguration.PROFILE_ID));
+        Assert.assertSame(config, resolver.getDefaultSecurityConfiguration(ECPProfileConfiguration.PROFILE_ID));
+        Assert.assertSame(config, resolver.getDefaultSecurityConfiguration(SSOSProfileConfiguration.PROFILE_ID));
 
-        Assert.assertNull(resolver.getDefaultSecurityConfiguration("foobar"));
+        Assert.assertSame(config, resolver.getDefaultSecurityConfiguration("foobar"));
     }
 }

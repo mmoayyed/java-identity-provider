@@ -77,5 +77,52 @@
     <!--  for SSOS -->
     <bean id="jimmy" factory-method="alwaysTrue" class="com.google.common.base.Predicates"/>
 
+    <!-- Trust Engines -->
+    
+    <!-- These are hacked to use static resolvers to avoid a dependency on metadata, just so the tests load. -->
+
+    <bean id="shibboleth.KeyInfoCredentialResolver" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
+        factory-method="buildBasicInlineKeyInfoCredentialResolver" />
+
+    <bean id="shibboleth.StaticCredentialResolver" class="org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver">
+        <constructor-arg>
+            <bean class="org.opensaml.security.x509.BasicX509Credential">
+                <constructor-arg name="entityCertificate">
+                    <bean class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
+                        p:resource="classpath:net/shibboleth/idp/profile/spring/relyingparty/security/credential/cert.pem" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
+    <bean id="shibboleth.StaticPKIXValidationInformationResolver"
+            class="org.opensaml.security.x509.impl.StaticPKIXValidationInformationResolver"
+            c:info="#{null}" c:names="#{null}" />
+
+    <bean id="shibboleth.SignatureTrustEngine"
+            class="org.opensaml.xmlsec.signature.support.impl.ChainingSignatureTrustEngine">
+        <constructor-arg>
+            <list>
+                <bean class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine"
+                    c:resolver-ref="shibboleth.StaticCredentialResolver"
+                    c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+                <bean class="org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine" 
+                    c:resolver-ref="shibboleth.StaticPKIXValidationInformationResolver"
+                    c:keyInfoResolver-ref="shibboleth.KeyInfoCredentialResolver" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="shibboleth.X509TrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
+        <constructor-arg>
+            <list>
+                <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
+                    c:resolver-ref="shibboleth.StaticCredentialResolver" />
+                <bean class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine"
+                    c:resolver-ref="shibboleth.StaticPKIXValidationInformationResolver" />
+            </list>
+        </constructor-arg>
+    </bean>
+
 </beans>
                             
