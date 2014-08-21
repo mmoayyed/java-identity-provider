@@ -28,7 +28,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
 
-import org.opensaml.security.x509.X509CredentialValidationConfiguration;
+import org.opensaml.security.x509.tls.ClientTLSValidationConfiguration;
 import org.opensaml.xmlsec.DecryptionConfiguration;
 import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
@@ -55,8 +55,8 @@ public class SecurityConfiguration {
     /** Configuration used when encrypting protocol message information. */
     @Nullable private EncryptionConfiguration encryptConfig;
     
-    /** Configuration used when validating X509Credentials. */
-    @Nullable private X509CredentialValidationConfiguration x509Config;
+    /** Configuration used when validating client TLS X509Credentials. */
+    @Nullable private ClientTLSValidationConfiguration clientTLSConfig;
 
     /**
      * Constructor.
@@ -172,20 +172,20 @@ public class SecurityConfiguration {
     }
 
     /**
-     * Get the configuration used when validating X509Credentials.
+     * Get the configuration used when validating client TLS X509Credentials.
      * 
-     * @return configuration used when validating X509Credentials, or null
+     * @return configuration used when validating client TLS X509Credentials, or null
      */
-    public X509CredentialValidationConfiguration getX509Config() {
-        return x509Config;
+    public ClientTLSValidationConfiguration getClientTLSValidationConfiguration() {
+        return clientTLSConfig;
     }
 
     /**
-     * Set the configuration used when validating X509Credentials.
+     * Set the configuration used when validating client TLS X509Credentials.
      * 
-     * @param config configuration used when validating X509Credentials, or null
+     * @param config configuration used when validating client TLS X509Credentials, or null
      */
-    public void setX509Config(X509CredentialValidationConfiguration config) {
-        x509Config = config;
+    public void setClientTLSValidationConfiguration(ClientTLSValidationConfiguration config) {
+        clientTLSConfig = config;
     }
 }
