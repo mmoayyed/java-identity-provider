@@ -172,6 +172,8 @@
     <bean id="shibboleth.EncryptionParametersResolver"
         class="org.opensaml.saml.security.impl.SAMLMetadataEncryptionParametersResolver"
         c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+    <bean id="shibboleth.ClientTLSValidationParametersResolver"
+        class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationParametersResolver" />
 
     <bean id="shibboleth.RoleDescriptorResolver" class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
         c:mdResolver-ref="shibboleth.MetadataResolver" />

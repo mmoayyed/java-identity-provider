@@ -100,6 +100,11 @@
         p:configurationLookupStrategy-ref="shibboleth.SignatureValidationConfigurationLookup"
         p:signatureValidationParametersResolver-ref="shibboleth.SignatureValidationParametersResolver" />
 
+    <bean id="PopulateClientTLSValidationParameters"
+        class="org.opensaml.profile.action.impl.PopulateClientTLSValidationParameters" scope="prototype"
+        p:configurationLookupStrategy-ref="shibboleth.ClientTLSValidationConfigurationLookup"
+        p:clientTLSValidationParametersResolver-ref="shibboleth.ClientTLSValidationParametersResolver" />
+
     <bean id="CheckForInboundSubflow"
         class="net.shibboleth.idp.profile.impl.CheckForProfileSubflow" scope="prototype"
         p:direction="INBOUND" />

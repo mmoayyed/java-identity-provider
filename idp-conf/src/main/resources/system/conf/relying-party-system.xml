@@ -128,6 +128,11 @@
                 p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" />
         </property>
 
+        <property name="clientTLSValidationConfiguration">
+            <bean class="org.opensaml.security.x509.tls.impl.BasicClientTLSCredentialValidationConfiguration"
+                p:x509TrustEngine-ref="shibboleth.X509TrustEngine" />
+        </property>
+
     </bean>
 
     <bean id="shibboleth.SigningConfiguration.SHA256" class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"

@@ -26,6 +26,7 @@
         <evaluate expression="SelectProfileConfiguration" />
 
         <evaluate expression="PopulateSignatureValidationParameters" />
+        <evaluate expression="PopulateClientTLSValidationParameters" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CheckForInboundSubflow" />

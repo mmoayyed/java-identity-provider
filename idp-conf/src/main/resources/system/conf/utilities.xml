@@ -97,6 +97,9 @@
     <bean id="shibboleth.EncryptionConfigurationLookup"
         class="net.shibboleth.idp.profile.config.navigate.EncryptionConfigurationLookupFunction"
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
+    <bean id="shibboleth.ClientTLSValidationConfigurationLookup"
+        class="net.shibboleth.idp.profile.config.navigate.ClientTLSValidationConfigurationLookupFunction"
+        p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
     <util:list id="shibboleth.SAML1Status.VersionMismatch">
         <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.VERSION_MISMATCH" />
