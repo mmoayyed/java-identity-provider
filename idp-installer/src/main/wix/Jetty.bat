@@ -5,7 +5,11 @@ setlocal
 REM Preconditions
 
 if "%1%" == "" (
-  Echo "Extract <APACHE_COMMON_ZIP> <JETTY_DISTRO_ZIP>"
+  Echo JETTY [APACHE_COMMON_ZIP] [JETTY_DISTRO_ZIP]
+  goto done
+)
+if "%2%" == "" (
+  Echo JETTY [APACHE_COMMON_ZIP] [JETTY_DISTRO_ZIP]
   goto done
 )
 
@@ -51,7 +55,7 @@ if not exist "%JARCMD%" (
 
 REM Test and extract
 
-if not exist %1% (
+if not exist "%1%" (
    echo Error: Could not locate procrun zip %1%
    goto done
 )
@@ -69,7 +73,11 @@ if ERRORLEVEL 1 (
 
 mkdir procrun-extract
 cd procrun-extract
-"%JARCMD%" xf ..\%1 
+if exist "%1" (
+   "%JARCMD%" xf %1 
+) else (
+  "%JARCMD%" xf ..\%1 
+)
 cd ..
 
 if not exist procrun-extract\prunsrv.exe (
@@ -87,10 +95,21 @@ if not exist "%2".asc (
    goto done
 )
 
+gpg --verify %2.asc %2
+if ERRORLEVEL 1 (
+   echo Error: Signature check failed on %1%
+   goto done
+)
+
 
 mkdir jetty-extract
 cd jetty-extract
-"%JARCMD%" xf ..\%2
+
+if exist "%2" (
+  "%JARCMD%" xf %2
+) else (
+  "%JARCMD%" xf ..\%2
+)
 dir /s jsp.ini 1> nl:a 2> nl:b
 if ERRORLEVEL 1 (
   cd ..
@@ -99,17 +118,18 @@ if ERRORLEVEL 1 (
 )
 cd ..
 for /D %%X in (jetty-extract/*) do set jex=%%X
-"%WIX%/BIN/HEAT" dir jetty-extract\%Jex% -platform -gg -dr JETTYROOT -var var.jettySrc -cg JettyGroup -out jetty.wxs
+"%WIX%/BIN/HEAT"  dir jetty-extract\%Jex% -platform -gg -dr JETTYROOT -var var.jettySrc -cg JettyGroup -out jetty.wxs -nologo
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/CANDLE" -djettySrc=jetty-extract\%Jex% -dPlatform=x86 -arch x86 jetty.wxs MergeModule.wxs
+"%WIX%/BIN/CANDLE" -nologo -djettySrc=jetty-extract\%Jex% -dPlatform=x86 -arch x86 jetty.wxs MergeModule.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -out Jetty.msm jetty.wixobj mergemodule.wixobj
+"%WIX%/BIN/LIGHT" -nologo -out Jetty.msm jetty.wixobj mergemodule.wixobj
 if ERRORLEVEL 1 goto done
+
+dir Jetty.msm
 
 REM Tidy up in the Sucessful exit case
-   del jetty.wxs
    rd /q /s procrun-extract
    rd /q /s jetty-extract
    del *.wixobj *.wixpdb
