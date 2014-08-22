@@ -20,6 +20,7 @@ package net.shibboleth.idp.ui.context;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -73,6 +74,11 @@ public class RelyingPartyUIContext extends BaseContext {
 
     /** The languages that this browser wants to know about. */
     @Nonnull @NonnullElements private List<String> browserLanguages;
+    
+    /** Constructor. */
+    public RelyingPartyUIContext() {
+        browserLanguages = Collections.emptyList();
+    }
 
     /**
      * Get the {@link EntityDescriptor}.
@@ -86,10 +92,14 @@ public class RelyingPartyUIContext extends BaseContext {
     /**
      * Set the {@link EntityDescriptor}.
      * 
-     * @param what what to set.
+     * @param what what to set
+     * 
+     * @return this context
      */
-    public void setRPEntityDescriptor(@Nonnull final EntityDescriptor what) {
+    @Nonnull public RelyingPartyUIContext setRPEntityDescriptor(@Nonnull final EntityDescriptor what) {
         rpEntityDescriptor = Constraint.isNotNull(what, "Injected RP EntityDescriptor cannot be null");
+        
+        return this;
     }
 
     /**
@@ -104,10 +114,14 @@ public class RelyingPartyUIContext extends BaseContext {
     /**
      * Set the {@link SPSSODescriptor}.
      * 
-     * @param what what to set.
+     * @param what what to set
+     * 
+     * @return this context
      */
-    public void setRPSPSSODescriptor(@Nonnull final SPSSODescriptor what) {
+    @Nonnull public RelyingPartyUIContext setRPSPSSODescriptor(@Nonnull final SPSSODescriptor what) {
         rpSPSSODescriptor = Constraint.isNotNull(what, "Injected RP EntityDescriptor cannot be null");
+        
+        return this;
     }
 
     /**
@@ -131,29 +145,42 @@ public class RelyingPartyUIContext extends BaseContext {
     /**
      * Set the RP {@link UIInfo} associated with the request.
      * 
-     * @param what the value to set.
+     * @param what the value to set
+     * 
+     * @return this context
      */
-    public void setRPUInfo(@Nullable final UIInfo what) {
+    @Nonnull public RelyingPartyUIContext setRPUInfo(@Nullable final UIInfo what) {
         rpUIInfo = what;
+        
+        return this;
     }
 
     /**
      * Set the {@link AttributeConsumingService} for the request.
      * 
-     * @param what what to set.
+     * @param what what to set
+     * 
+     * @return this context
      */
-    public void setRPAttributeConsumingService(@Nonnull final AttributeConsumingService what) {
+    @Nonnull public RelyingPartyUIContext setRPAttributeConsumingService(
+            @Nonnull final AttributeConsumingService what) {
         rpAttributeConsumingService =
                 Constraint.isNotNull(what, "Injected RP AttributeConsumingService cannot be null");
+        
+        return this;
     }
 
     /**
      * Set the browser languages.
      * 
-     * @param languages the languages to set.
+     * @param languages the languages to set
+     * 
+     * @return this context
      */
-    public void setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
-        browserLanguages = Constraint.isNotNull(languages, "Language List must be non null");
+    @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
+        browserLanguages = Constraint.isNotNull(languages, "Language List cannot be null");
+        
+        return this;
     }
 
     /**
