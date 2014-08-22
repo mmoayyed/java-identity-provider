@@ -87,7 +87,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         final List<BeanDefinition> anonRps =
                 SpringSupport.parseCustomElements(configChildren.get(AnonymousRelyingPartyParser.ELEMENT_NAME),
                         parserContext);
-        builder.addPropertyValue("anonymousConfiguration", anonRps.get(0));
+        builder.addPropertyValue("unverifiedConfiguration", anonRps.get(0));
         
         // Metadata
 

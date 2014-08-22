@@ -25,16 +25,16 @@ import net.shibboleth.idp.profile.context.logic.AbstractRelyingPartyPredicate;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * Predicate to determine whether a profile request is anonymous.
+ * Predicate to determine whether a profile request is from a verified source.
  */
-public class AnonymousProfilePredicate extends AbstractRelyingPartyPredicate {
+public class VerifiedProfilePredicate extends AbstractRelyingPartyPredicate {
 
     /** {@inheritDoc} */
     @Override public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null) {
-                return rpc.isAnonymous();
+                return rpc.isVerified();
             }
         }
         

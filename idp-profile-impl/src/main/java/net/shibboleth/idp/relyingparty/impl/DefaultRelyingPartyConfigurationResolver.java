@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
-import net.shibboleth.idp.profile.logic.impl.AnonymousProfilePredicate;
+import net.shibboleth.idp.profile.logic.impl.VerifiedProfilePredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -63,9 +63,9 @@ import com.google.common.collect.Sets;
  * Note that this resolver does not permit more than one {@link RelyingPartyConfiguration} with the same ID.
  * </p>
  */
-public class DefaultRelyingPartyConfigurationResolver extends
-        AbstractServiceableComponent<RelyingPartyConfigurationResolver> implements RelyingPartyConfigurationResolver,
-        IdentifiableComponent {
+public class DefaultRelyingPartyConfigurationResolver
+        extends AbstractServiceableComponent<RelyingPartyConfigurationResolver>
+        implements RelyingPartyConfigurationResolver, IdentifiableComponent {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultRelyingPartyConfigurationResolver.class);
@@ -73,14 +73,14 @@ public class DefaultRelyingPartyConfigurationResolver extends
     /** Registered relying party configurations. */
     @Nonnull private List<RelyingPartyConfiguration> rpConfigurations;
 
-    /** Default relying party configurations, called if no other configuration matches. */
+    /** Unverified relying party configuration, used if the request is unverified. */
+    @Nullable private RelyingPartyConfiguration unverifiedConfiguration;
+
+    /** Default relying party configuration, used if no other verified configuration matches. */
     @NonnullAfterInit private RelyingPartyConfiguration defaultConfiguration;
 
-    /** Anonymous relying party configurations, called if the profile is Anonymous. */
-    @Nullable private RelyingPartyConfiguration anonymousConfiguration;
-
-    /** The predicate which decides if this context is "Anonymous". */
-    @NonnullAfterInit private Predicate<ProfileRequestContext> isAnonymousPredicate;
+    /** The predicate which decides if this request is "verified". */
+    @NonnullAfterInit private Predicate<ProfileRequestContext> verificationPredicate;
 
     /** The map from profile ID to {@link SecurityConfiguration}. */
     @Nonnull @NonnullElements private Map<String,SecurityConfiguration> securityConfigurationMap;
@@ -91,14 +91,14 @@ public class DefaultRelyingPartyConfigurationResolver extends
     /** Constructor. */
     public DefaultRelyingPartyConfigurationResolver() {
         rpConfigurations = Collections.emptyList();
-        isAnonymousPredicate = new AnonymousProfilePredicate();
+        verificationPredicate = new VerifiedProfilePredicate();
         securityConfigurationMap = Collections.emptyMap();
     }
 
     /**
-     * Get an unmodifiable list of registered relying party configurations.
+     * Get an unmodifiable list of verified relying party configurations.
      * 
-     * @return unmodifiable list of registered relying party configurations
+     * @return unmodifiable list of verified relying party configurations
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<RelyingPartyConfiguration>
             getRelyingPartyConfigurations() {
@@ -106,32 +106,30 @@ public class DefaultRelyingPartyConfigurationResolver extends
     }
 
     /**
-     * Set the registered relying party configurations.
+     * Set the verified relying party configurations.
      * 
-     * This property may not be changed after the resolver is initialized.
-     * 
-     * @param configs list of registered relying party configurations
+     * @param configs list of verified relying party configurations
      */
     public void setRelyingPartyConfigurations(@Nonnull @NonnullElements final List<RelyingPartyConfiguration> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(configs, "RelyingPartyConfiguration collection cannot be null");
+        Constraint.isNotNull(configs, "RelyingPartyConfiguration list cannot be null");
 
         rpConfigurations = Lists.newArrayList(Collections2.filter(configs, Predicates.notNull()));
     }
 
     /**
-     * Get the {@link RelyingPartyConfiguration} to use if no other configuration is acceptable.
+     * Get the {@link RelyingPartyConfiguration} to use if no other verified configuration is acceptable.
      * 
-     * @return Returns the defaultConfiguration.
+     * @return default verified configuration
      */
     @NonnullAfterInit public RelyingPartyConfiguration getDefaultConfiguration() {
         return defaultConfiguration;
     }
 
     /**
-     * Set the {@link RelyingPartyConfiguration} to use if no other configuration is acceptable.
+     * Set the {@link RelyingPartyConfiguration} to use if no other verified configuration is acceptable.
      * 
-     * @param configuration The defaultConfiguration to set.
+     * @param configuration default verified configuration
      */
     public void setDefaultConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -140,49 +138,49 @@ public class DefaultRelyingPartyConfigurationResolver extends
     }
 
     /**
-     * Get the {@link RelyingPartyConfiguration} to use if the configuration is found to be "anonymous" (via the call to
-     * the {@link #isAnonymousPredicate}.
+     * Get the {@link RelyingPartyConfiguration} to use if the configuration is found to be "unverified"
+     * (via the call to the {@link #verificationPredicate}.
      * 
-     * @return Returns the anonymousConfiguration.
+     * @return unverified configuration
      */
-    @NonnullAfterInit public RelyingPartyConfiguration getAnonymousConfiguration() {
-        return anonymousConfiguration;
+    @NonnullAfterInit public RelyingPartyConfiguration getUnverifiedConfiguration() {
+        return unverifiedConfiguration;
     }
 
     /**
-     * Set the {@link RelyingPartyConfiguration} to use if the configuration is found to be "anonymous" (via the call to
-     * the {@link #isAnonymousPredicate}.
+     * Set the {@link RelyingPartyConfiguration} to use if the configuration is found to be "unverified"
+     * (via the call to the {@link #verificationPredicate}.
      * 
-     * @param configuration The anonymousConfiguration to set.
+     * @param configuration unverified configuration
      */
-    public void setAnonymousConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
+    public void setUnverifiedConfiguration(@Nonnull final RelyingPartyConfiguration configuration) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        anonymousConfiguration = Constraint.isNotNull(configuration, "Anonymous RP configuration cannot be null");
+        unverifiedConfiguration = Constraint.isNotNull(configuration, "Unverified RP configuration cannot be null");
     }
 
     /**
-     * Get the definition of what an anonymous Profile is.
+     * Get the definition of what a verified request is.
      * 
-     * @return the Ppredicate
+     * @return predicate for determination whether request is verified
      */
-    @Nonnull public Predicate<ProfileRequestContext> isAnonymousPredicate() {
-        return isAnonymousPredicate;
+    @Nonnull public Predicate<ProfileRequestContext> getVerificationPredicate() {
+        return verificationPredicate;
     }
 
     /**
-     * Set the definition of what an anonymous Profile is.
+     * Set the definition of what a verified request is.
      * 
-     * @param predicate the predicate to set
+     * @param predicate predicate to set
      */
-    public void setIsAnonymousPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+    public void setVerificationPredicate(@Nonnull final Predicate<ProfileRequestContext> predicate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        isAnonymousPredicate = Constraint.isNotNull(predicate, "Anonymous profile predicate cannot be null");
+        verificationPredicate = Constraint.isNotNull(predicate, "Verification predicate cannot be null");
     }
 
     /**
-     * Get the map we use to look up default configuration.
+     * Get the map we use to look up default security configurations.
      * 
      * @return Returns the Map.
      */
@@ -245,11 +243,15 @@ public class DefaultRelyingPartyConfigurationResolver extends
             return Collections.emptyList();
         }
 
-        log.debug("Resolving relying party configurations");
-        if (isAnonymousPredicate.apply(context) && null != getAnonymousConfiguration()) {
-            log.debug("Profile Request is anonymous: returning configuration {} only", getAnonymousConfiguration()
-                    .getId());
-            return Collections.singleton(getAnonymousConfiguration());
+        log.debug("Resolving relying party configuration");
+        if (!verificationPredicate.apply(context)) {
+            if (getUnverifiedConfiguration() == null) {
+                log.warn("Profile request was unverified, but no such configuration is available");
+                return Collections.emptyList();
+            }
+            log.debug("Profile request is unverified, returning configuration {}",
+                    getUnverifiedConfiguration().getId());
+            return Collections.singleton(getUnverifiedConfiguration());
         }
 
         final ArrayList<RelyingPartyConfiguration> matches = Lists.newArrayList();
@@ -280,14 +282,19 @@ public class DefaultRelyingPartyConfigurationResolver extends
         if (context == null) {
             return null;
         }
-        if (isAnonymousPredicate.apply(context) && null != getAnonymousConfiguration()) {
-            log.debug("Profile Request is anonymous: returning configuration {} only", getAnonymousConfiguration()
-                    .getId());
-            return getAnonymousConfiguration();
+        
+        log.debug("Resolving relying party configuration");
+        if (!verificationPredicate.apply(context)) {
+            if (getUnverifiedConfiguration() == null) {
+                log.warn("Profile request was unverified, but no such configuration is available");
+                return null;
+            }
+            log.debug("Profile request is unverified, returning configuration {}",
+                    getUnverifiedConfiguration().getId());
+            return getUnverifiedConfiguration();
         }
 
-        log.debug("Resolving relying party configuration");
-        for (RelyingPartyConfiguration configuration : rpConfigurations) {
+        for (final RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable", configuration.getId());
             if (configuration.apply(context)) {
                 log.debug("Relying party configuration {} is applicable", configuration.getId());
@@ -318,4 +325,5 @@ public class DefaultRelyingPartyConfigurationResolver extends
     @Override @Nonnull public RelyingPartyConfigurationResolver getComponent() {
         return this;
     }
+    
 }

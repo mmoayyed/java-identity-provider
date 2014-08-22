@@ -85,7 +85,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class, true).setRelayState(RELAY_STATE);
         
         // Set these up so the context will be seen as anonymous or not based on metadata in the outbound context.
-        prc.getSubcontext(RelyingPartyContext.class).setAnonymityLookupStrategy(new SAMLAnonymityLookupStrategy());
+        prc.getSubcontext(RelyingPartyContext.class).setVerificationLookupStrategy(new SAMLVerificationLookupStrategy());
         prc.getSubcontext(RelyingPartyContext.class).setRelyingPartyIdContextTree(
                 prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true));
         

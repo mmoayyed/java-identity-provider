@@ -19,8 +19,6 @@ package net.shibboleth.idp.profile.spring.relyingparty;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.logic.impl.AnonymousProfilePredicate;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -40,7 +38,7 @@ public class AnonymousRelyingPartyParser extends AbstractRelyingPartyParser {
         super.doParse(element, parserContext, builder);
 
         builder.addPropertyValue("id", "AnonymousRelyingParty");
-        builder.addPropertyValue("activationCondition", new AnonymousProfilePredicate());
+        // We don't set an activationCondition property because the anonymous/unverified case is a special one.
     }
 
     /** {@inheritDoc} */

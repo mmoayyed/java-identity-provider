@@ -141,8 +141,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     /** Optional metadata for use in endpoint derivation/validation. */
     @Nullable private SAMLMetadataContext mdContext;
 
-    /** Is the relying party "anonymous" in SAML terms? */
-    private boolean anonymous;
+    /** Is the relying party "verified" in SAML terms? */
+    private boolean verified;
     
     /** Whether to bypass endpoint validation when message is signed. */
     private boolean skipValidationWhenSigned;
@@ -325,7 +325,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext != null) {
-            anonymous = rpContext.isAnonymous();
+            verified = rpContext.isVerified();
             if (rpContext.getProfileConfig() != null
                     && rpContext.getProfileConfig() instanceof SAMLProfileConfiguration) {
                 final SAMLProfileConfiguration profileConfiguration =
@@ -486,11 +486,11 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * Build a template Endpoint object to use as input criteria to the resolution process and wrap it in
      * a criterion object.
      * 
-     * @param anonymousBinding default binding to use for an anonymous requester with no Binding specified
+     * @param unverifiedBinding default binding to use for an unverified requester with no Binding specified
      * 
      * @return criterion to give to resolver
      */
-    @Nonnull private EndpointCriterion buildEndpointCriterion(@Nonnull @NotEmpty final String anonymousBinding) {
+    @Nonnull private EndpointCriterion buildEndpointCriterion(@Nonnull @NotEmpty final String unverifiedBinding) {
         final Endpoint endpoint = (Endpoint) endpointBuilder.buildObject(endpointType);
         
         if (inboundMessage instanceof IdPInitiatedSSORequest) {
@@ -507,10 +507,16 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             }
         }
 
-        if (anonymous) {
+        if (!verified) {
+            // This is a bit paradoxical, but for an unverified request, we actually "trust" the endpoint
+            // implicitly, because if we didn't, we'd have no way to validate it. We'd only get this far if
+            // the profile is explicitly enabled for anonymous use, and once you do that, there's no verification
+            // in practical terms because any SP can simply pretend to be any name it likes. In fact, the
+            // metadata you do have becomes the set of names the SP can't pretend to be since those names
+            // would lead to verification.
             if (endpoint.getBinding() == null) {
-                endpoint.setBinding(anonymousBinding);
-                log.debug("{} Defaulting binding in \"anonymous\" request to {}", getLogPrefix(), anonymousBinding);
+                endpoint.setBinding(unverifiedBinding);
+                log.debug("{} Defaulting binding in \"unverified\" request to {}", getLogPrefix(), unverifiedBinding);
             }
             return new EndpointCriterion(endpoint, true);
         } else if (skipValidationWhenSigned && inboundMessage instanceof AuthnRequest

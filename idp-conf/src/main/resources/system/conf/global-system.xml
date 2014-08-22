@@ -180,9 +180,6 @@
     resolver for encryption parameters above.
     -->
     
-    <bean id="shibboleth.RoleDescriptorResolver" class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
-        c:mdResolver-ref="shibboleth.MetadataResolver" />
-    
     <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver"
          p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"            
          p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">

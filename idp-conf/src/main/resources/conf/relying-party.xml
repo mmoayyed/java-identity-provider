@@ -19,10 +19,10 @@
     to enable specific default profile settings (as below), or create new beans inline to override defaults. 
     -->
     
-    <bean id="shibboleth.AnonymousRelyingParty" parent="RelyingParty">
+    <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <util:list>
-            <!-- <ref bean="SAML2.SSO" /> -->
+            <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
             </util:list>
         </property>
     </bean>

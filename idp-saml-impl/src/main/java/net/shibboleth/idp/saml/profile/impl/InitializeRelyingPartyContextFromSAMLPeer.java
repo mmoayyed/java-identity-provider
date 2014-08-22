@@ -55,9 +55,9 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
     @Nonnull private static final Function<RelyingPartyContext,String> RPID_LOOKUP
         = new SAMLRelyingPartyIdLookupStrategy();
 
-    /** The anonymity lookup function to inject. */
-    @Nonnull private static final Function<RelyingPartyContext,Boolean> ANON_LOOKUP
-        = new SAMLAnonymityLookupStrategy();
+    /** The verification lookup function to inject. */
+    @Nonnull private static final Function<RelyingPartyContext,Boolean> VERIFY_LOOKUP
+        = new SAMLVerificationLookupStrategy();
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeRelyingPartyContextFromSAMLPeer.class);
@@ -133,7 +133,7 @@ public class InitializeRelyingPartyContextFromSAMLPeer extends AbstractProfileAc
                 peerEntityCtx.getEntityId());
         rpContext.setRelyingPartyIdContextTree(peerEntityCtx);
         rpContext.setRelyingPartyIdLookupStrategy(RPID_LOOKUP);
-        rpContext.setAnonymityLookupStrategy(ANON_LOOKUP);
+        rpContext.setVerificationLookupStrategy(VERIFY_LOOKUP);
     }
     
 }

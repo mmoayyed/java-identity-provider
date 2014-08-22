@@ -28,11 +28,13 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 
 /**
- * A lookup strategy that returns true unless the {@link RelyingPartyContext} contains a reference
+ * A lookup strategy that returns true iff the {@link RelyingPartyContext} contains a reference
  * to a {@link SAMLPeerEntityContext} or {@link SAMLSelfEntityContext} that contains a
  * {@link SAMLMetadataContext} such that {@link SAMLMetadataContext#getEntityDescriptor()} is non-null.
+ * 
+ * <p>If no metadata exists, the context is treated as "unverified".</p>
  */
-public class SAMLAnonymityLookupStrategy implements ContextDataLookupFunction<RelyingPartyContext,Boolean> {
+public class SAMLVerificationLookupStrategy implements ContextDataLookupFunction<RelyingPartyContext,Boolean> {
 
     /** {@inheritDoc} */
     @Override
@@ -43,12 +45,12 @@ public class SAMLAnonymityLookupStrategy implements ContextDataLookupFunction<Re
             if (ctx instanceof SAMLPeerEntityContext || ctx instanceof SAMLSelfEntityContext) {
                 final SAMLMetadataContext mc = ctx.getSubcontext(SAMLMetadataContext.class);
                 if (mc != null) {
-                    return mc.getEntityDescriptor() == null;
+                    return mc.getEntityDescriptor() != null;
                 }
             }
         }
         
-        return true;
+        return false;
     }
 
 }

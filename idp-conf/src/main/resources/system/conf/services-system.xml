@@ -103,6 +103,10 @@
         class="net.shibboleth.idp.saml.metadata.impl.ReloadingRelyingPartyMetadataProvider"
         c:resolverService-ref="shibboleth.MetadataResolverService" />
         
+    <bean id="shibboleth.RoleDescriptorResolver"
+        class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+        c:mdResolver-ref="shibboleth.MetadataResolver" />   
+        
     <bean id="shibboleth.AccessControlService"
         class="net.shibboleth.utilities.java.support.security.DelegatingAccessControlService"
         c:acService-ref="shibboleth.ReloadableAccessControlService" />

@@ -123,7 +123,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
                 context.getBean(DefaultRelyingPartyConfigurationResolver.class);
         Assert.assertTrue(resolver.getRelyingPartyConfigurations().isEmpty());
 
-        RelyingPartyConfiguration anon = resolver.getAnonymousConfiguration();
+        RelyingPartyConfiguration anon = resolver.getUnverifiedConfiguration();
         Assert.assertFalse(anon.isDetailedErrors());
         Assert.assertTrue(anon.getProfileConfigurations().isEmpty());
 
@@ -194,7 +194,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(rp.getId(), "the id2");
         Assert.assertEquals(rp.getResponderId(), "IdP2");
 
-        rp = resolver.getAnonymousConfiguration();
+        rp = resolver.getUnverifiedConfiguration();
         Assert.assertEquals(rp.getResponderId(), "AnonIdP");
         Assert.assertEquals(rp.getId(), "AnonymousRelyingParty");
 

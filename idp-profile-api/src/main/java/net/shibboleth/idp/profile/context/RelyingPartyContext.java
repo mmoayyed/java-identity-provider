@@ -35,8 +35,8 @@ import com.google.common.base.Function;
  */
 public final class RelyingPartyContext extends BaseContext {
 
-    /** Optional flag indicating anonymity. */
-    @Nullable private Boolean anonymous; 
+    /** Optional flag indicating whether verification was done. */
+    @Nullable private Boolean verified; 
     
     /** The identifier for the relying party. */
     @Nullable private String relyingPartyId;
@@ -44,8 +44,8 @@ public final class RelyingPartyContext extends BaseContext {
     /** A pointer to a context tree containing identifying material for the relying party. */
     @Nullable private BaseContext relyingPartyIdContextTree;
 
-    /** A lookup strategy for deriving anonymity based on contained information. */
-    @Nullable private Function<RelyingPartyContext,Boolean> anonymityLookupStrategy;
+    /** A lookup strategy for deriving verification based on the context. */
+    @Nullable private Function<RelyingPartyContext,Boolean> verificationLookupStrategy;
 
     /** A lookup strategy for deriving a relying party ID based on contained information. */
     @Nullable private Function<RelyingPartyContext,String> relyingPartyIdLookupStrategy;
@@ -57,31 +57,31 @@ public final class RelyingPartyContext extends BaseContext {
     @Nullable private ProfileConfiguration profileConfiguration;
     
     /**
-     * Get whether the relying party is securely identified.
+     * Get whether the relying party was verified in some fashion.
      * 
-     * @return  true iff the relying party's identity was not securely established
+     * @return  true iff the relying party's identity was verified
      */
-    public boolean isAnonymous() {
-        if (anonymous != null) {
-            return anonymous;
-        } else if (anonymityLookupStrategy != null) {
-            final Boolean flag = anonymityLookupStrategy.apply(this);
+    public boolean isVerified() {
+        if (verified != null) {
+            return verified;
+        } else if (verificationLookupStrategy != null) {
+            final Boolean flag = verificationLookupStrategy.apply(this);
             if (flag != null) {
                 return flag;
             }
         }
-        return true;
+        return false;
     }
     
     /**
-     * Set whether the relying party is securely identified.
+     * Set whether the relying party was verified in some fashion.
      * 
-     * @param flag  explicit value for the anonymity setting
+     * @param flag  explicit value for the verified setting
      * 
      * @return this context
      */
-    @Nonnull public RelyingPartyContext setAnonymous(@Nullable final Boolean flag) {
-        anonymous = flag;
+    @Nonnull public RelyingPartyContext setVerified(@Nullable final Boolean flag) {
+        verified = flag;
         return this;
     }
 
@@ -140,24 +140,24 @@ public final class RelyingPartyContext extends BaseContext {
     }
     
     /**
-     * Get the lookup strategy for a non-explicit anonymity determination.
+     * Get the lookup strategy for a non-explicit verification determination.
      * 
      * @return lookup strategy
      */
-    @Nullable Function<RelyingPartyContext,Boolean> getAnonymityLookupStrategy() {
-        return anonymityLookupStrategy;
+    @Nullable Function<RelyingPartyContext,Boolean> getVerificationLookupStrategy() {
+        return verificationLookupStrategy;
     }
     
     /**
-     * Set the lookup strategy for a non-explicit anonymity determination.
+     * Set the lookup strategy for a non-explicit verification determination.
      * 
      * @param strategy  lookup strategy
      * 
      * @return this context
      */
-    @Nonnull public RelyingPartyContext setAnonymityLookupStrategy(
+    @Nonnull public RelyingPartyContext setVerificationLookupStrategy(
             @Nonnull final Function<RelyingPartyContext,Boolean> strategy) {
-        anonymityLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+        verificationLookupStrategy = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
         return this;
     }
     

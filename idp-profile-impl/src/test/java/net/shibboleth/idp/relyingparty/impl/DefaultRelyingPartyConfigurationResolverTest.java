@@ -75,7 +75,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
     
     @Test public void testDefault() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
-        requestContext.getSubcontext(RelyingPartyContext.class, true).setAnonymous(false);
+        requestContext.getSubcontext(RelyingPartyContext.class, true).setVerified(true);
 
         RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
@@ -91,7 +91,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
 
         DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
-        resolver.setAnonymousConfiguration(anonRP);
+        resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
         resolver.initialize();
         
@@ -108,7 +108,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
     
     @Test public void testAnon() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
-        requestContext.getSubcontext(RelyingPartyContext.class, true).setAnonymous(true);
+        requestContext.getSubcontext(RelyingPartyContext.class, true).setVerified(false);
         
         RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
@@ -125,8 +125,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
 
         DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
-        resolver.setIsAnonymousPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
-        resolver.setAnonymousConfiguration(anonRP);
+        resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
         resolver.initialize();
         
@@ -143,7 +142,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
 
     @Test public void testResolve() throws Exception {
         ProfileRequestContext requestContext = new ProfileRequestContext();
-        requestContext.getSubcontext(RelyingPartyContext.class, true).setAnonymous(false);
+        requestContext.getSubcontext(RelyingPartyContext.class, true).setVerified(true);
 
         RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
@@ -181,7 +180,7 @@ public class DefaultRelyingPartyConfigurationResolverTest {
         DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
-        resolver.setAnonymousConfiguration(anonRP);
+        resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
         resolver.initialize();
 
