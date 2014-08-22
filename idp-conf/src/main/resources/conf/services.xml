@@ -70,7 +70,7 @@
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>%{idp.home}/conf/relying-party-legacy.xml</value>
         <value>%{idp.home}/conf/property-placeholder.xml</value>
-        <value>%{idp.home}/system/conf/profile-defaults.xml</value>
+        <value>%{idp.home}/system/conf/legacy-relying-party-defaults.xml</value>
     </util:list>
     -->
 
