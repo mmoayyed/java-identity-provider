@@ -4,7 +4,7 @@
 ## Velocity context will contain the following properties
 ## flowExecutionUrl - the form action location
 ## flowRequestContext - the Spring Web Flow RequestContext
-## rpUIContext - the context with information from the metadata
+## rpUIContext - the context with SP UI information from the metadata
 ## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
@@ -43,9 +43,11 @@
                 </p>
               #end
 
-              <legend>
-                 Log in to $rpUIContext.getServiceName()
-              </legend>
+              #if ( $rpUIContext.getServiceName() )
+                <legend>
+                  Login to $encoder.encodeForHTML($rpUIContext.getServiceName())
+                </legend>
+              #end
 
               <section>
                 <Label for="username">Username</label>
