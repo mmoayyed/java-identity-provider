@@ -14,11 +14,8 @@
 	<Directory Id='TARGETDIR' Name='SourceDir' >
 	    <Directory Id='ProgramFilesFolder' >
 		<Directory Id='ShibFolder' Name='Shibboleth' >
-		    <Directory Id='IdPFolder' Name='IdP'>
-			<Directory Id='IDPROOT' >
-			    <Merge Id="procrun" Language='1033' SourceFile='$(var.ProjectDir)\jetty.msm' DiskId='1'/>
-			</Directory>
-		    </Directory>
+		    <Merge Id="procrun" Language='1033' SourceFile='$(var.ProjectDir)\jetty.msm' DiskId='1'/>
+		    <Directory Id='IdPFolder' Name='IdP'/>
 		</Directory>
 	    </Directory>
 	</Directory>
@@ -28,7 +25,7 @@
 	<WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\Dialog.bmp" />
 	<WixVariable Id="WixUICostingPopupOptOut" Value="1" />
 	
-	<Property Id="WIXUI_INSTALLDIR" Value="IDPROOT" />
+	<Property Id="WIXUI_INSTALLDIR" Value="ShibFolder" />
 	<UIRef Id='WixUI_InstallDir'/>
     </Product>
 

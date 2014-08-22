@@ -85,7 +85,7 @@ if ERRORLEVEL 1 (
 cd ..
 
 for /D %%X in (idp-extract/*) do set idpex=%%X
-"%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr IDPROOT -var var.idpSrc -cg IdPGroup -out idp_contents.wxs
+"%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr IdPFolder -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
 if ERRORLEVEL 1 goto done
 
 
