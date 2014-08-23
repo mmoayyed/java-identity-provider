@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
-<%@ page import="net.shibboleth.idp.authn.context.*" %>
 <%@ page import="org.opensaml.profile.context.ProfileRequestContext" %>
 <%@ page import="net.shibboleth.utilities.java.support.codec.HTMLEncoder" %>
 <%@ page import="net.shibboleth.idp.authn.context.AuthenticationContext" %>
 <%@ page import="net.shibboleth.idp.authn.context.AuthenticationErrorContext" %>
 <%@ page import="net.shibboleth.idp.authn.context.UsernamePasswordContext" %>
+<%@ page import="net.shibboleth.idp.ui.context.RelyingPartyUIContext" %>
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
 
 <%
@@ -15,6 +15,8 @@ String username = authenticationContext.getSubcontext(UsernamePasswordContext.cl
 if (username == null) {
 	username = "";
 }
+
+final boolean identifiedRP = ((RelyingPartyUIContext) request.getAttribute("rpUIContext")).getServiceName() != null;
 %>
 
 <html>
@@ -56,9 +58,11 @@ if (username == null) {
                 </section>
               <% }  %>
 
-              <legend>
-                Log in to <idpui:serviceName/>
-              </legend>
+              <% if (identifiedRP) { %>
+                <legend>
+                  Log in to <idpui:serviceName/>
+                </legend>
+              <% } %>
 
               <section>
                 <Label for="username">Username</label>
@@ -91,12 +95,13 @@ if (username == null) {
               //      https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage
               //
               //    Example:
-            %>
-                    <p>
-                      <idpui:serviceLogo>default</idpui:serviceLogo>
-                      <idpui:serviceDescription>SP description</idpui:serviceDescription>
-                    </p>
-              
+             %>
+             <% if (identifiedRP) { %>
+                 <p>
+                   <idpui:serviceLogo>default</idpui:serviceLogo>
+                   <idpui:serviceDescription>SP description</idpui:serviceDescription>
+                 </p>
+             <% } %>
 
           </div>
           <div class="column two">
