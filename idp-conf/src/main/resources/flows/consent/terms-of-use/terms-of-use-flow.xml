@@ -4,12 +4,66 @@
 
     <!-- Placeholder flow for terms-of-use consent. -->
 
+    <!-- This is the Terms Of Use consent subflow. It handles retrieval of an existing consent decision, set up of the TermsOfUseContext, 
+        and finalization of processing such as storing the consent decision, before returning control to the calling flow. -->
+
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
-    
-    <on-start>
+
+    <action-state id="SetupTermsOfUseConsentContext">
+        <!-- <evaluate expression="PopulateTermsOfUseConsentContext" /> -->
         <evaluate expression="'proceed'" />
-    </on-start>
+
+        <transition on="proceed" to="ReadTermsOfUseConsentDecisionFromStorageService" />
+    </action-state>
+
+    <action-state id="ReadTermsOfUseConsentDecisionFromStorageService">
+        <evaluate expression="'proceed'" />
+
+        <transition on="UNSPECIFIED" to="DisplayTermsOfUseConsentPage" />
+        <transition on="INAPPLICABLE" to="DisplayTermsOfUseConsentPage" />
+        <transition on="PRIOR" to="proceed" />
+        <transition on="ACCEPTED" to="proceed" />
+        <transition on="DECLINED" to="DisplayTermsOfUseConsentDeclinedPage" />
+
+        <transition on="proceed" to="DisplayTermsOfUseConsentPage" />
+    </action-state>
+
+    <view-state id="DisplayTermsOfUseConsentPage" view="consent/terms-of-use/terms-of-use">
+        <on-render>
+            <evaluate expression="T(net.shibboleth.idp.Version)" result="requestScope.Version" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-render>
+        <transition on="proceed" to="ExtractTermsOfUseConsentDecisionFromFormRequest" />
+    </view-state>
+
+    <view-state id="DisplayTermsOfUseConsentDeclinedPage" view="consent/terms-of-use/terms-of-use-declined">
+        <on-render>
+            <evaluate expression="T(net.shibboleth.idp.Version)" result="requestScope.Version" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-render>
+        <transition on="proceed" to="proceed" />
+    </view-state>
+
+    <action-state id="ExtractTermsOfUseConsentDecisionFromFormRequest">
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="HandleTermsOfUseConsentDecision" />
+    </action-state>
+
+    <action-state id="HandleTermsOfUseConsentDecision">
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="WriteTermsOfUseConsentDecisionToStorageService" />
+    </action-state>
+
+    <action-state id="WriteTermsOfUseConsentDecisionToStorageService">
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="proceed" />
+    </action-state>
 
     <end-state id="proceed" />
 
