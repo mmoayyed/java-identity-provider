@@ -92,7 +92,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 /**
  * Abstract flow test.
  */
-@ContextConfiguration(locations = {"/system/conf/global-system.xml", "/conf/global.xml", "/system/conf/mvc-beans.xml",
+@ContextConfiguration(locations = {"/system/conf/global-system.xml", "/system/conf/mvc-beans.xml",
         "/system/conf/webflow-config.xml", "/test/test-beans.xml"},
         initializers = IdPPropertiesApplicationContextInitializer.class, loader = PreferFileSystemContextLoader.class)
 @WebAppConfiguration

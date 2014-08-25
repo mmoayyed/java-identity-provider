@@ -53,4 +53,7 @@
             p:IDGenerator-ref="shibboleth.SessionIDGenerator"
             p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
 
+    <!-- The import is at the bottom to avoid a depends-on in a user-editable file. -->
+    <import resource="../../conf/session-manager.xml" />
+
 </beans>

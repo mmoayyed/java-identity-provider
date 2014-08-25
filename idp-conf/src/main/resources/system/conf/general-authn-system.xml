@@ -12,6 +12,9 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+	<import resource="../../conf/authn/authn-comparison.xml" />
+	<import resource="../../conf/authn/general-authn.xml" />
+
     <!-- Parent beans for custom principal types. -->
     
     <bean id="shibboleth.SAML2AuthnContextClassRef"

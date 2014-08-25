@@ -12,6 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <import resource="../../conf/c14n/subject-c14n.xml" />
+
     <bean id="shibboleth.PostLoginSubjectCanonicalizationFlow" abstract="true"
         class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor" />
 
@@ -62,10 +64,10 @@
         <property name="activationCondition">
             <bean class="com.google.common.base.Predicates" factory-method="and">
                 <constructor-arg>
-                    <util:list>
+                    <list>
                         <bean class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization.ActivationCondition" />
                         <ref bean="shibboleth.NameTransformPredicate" />
-                    </util:list>
+                    </list>
                 </constructor-arg>
             </bean>
         </property>
@@ -76,10 +78,10 @@
         <property name="activationCondition">
             <bean class="com.google.common.base.Predicates" factory-method="and">
                 <constructor-arg>
-                    <util:list>
+                    <list>
                         <bean class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization.ActivationCondition" />
                         <ref bean="shibboleth.NameTransformPredicate" />
-                    </util:list>
+                    </list>
                 </constructor-arg>
             </bean>
         </property>

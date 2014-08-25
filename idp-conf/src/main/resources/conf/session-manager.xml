@@ -9,16 +9,8 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
-    <import resource="error-mappings.xml" />
-    <import resource="services.xml" />
-    <import resource="c14n/subject-c14n.xml" />
-	<import resource="authn/authn-comparison.xml" />
-	<import resource="authn/general-authn.xml" />
-
-    <!-- Modify only to add extension types associated with non-built-in protocols. -->
+    <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
+    
     <bean id="shibboleth.SPSessionSerializerRegistry" parent="shibboleth.DefaultSPSessionSerializerRegistry">
         <property name="mappings">
             <map merge="true">

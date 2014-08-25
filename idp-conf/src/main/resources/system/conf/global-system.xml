@@ -35,8 +35,9 @@
             p:cacheSeconds="%{idp.errors.cacheSeconds:300}"
             p:basenames-ref="shibboleth.MessageSourceResources" />
 
+    <import resource="../../conf/error-mappings.xml" />
     <import resource="general-authn-system.xml" />
-    <import resource="session-manager.xml" />
+    <import resource="session-manager-system.xml" />
     <import resource="services-system.xml" />
     <import resource="saml-binding-config.xml" />
     <import resource="subject-c14n-system.xml" />
