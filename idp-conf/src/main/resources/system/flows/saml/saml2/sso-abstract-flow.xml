@@ -69,6 +69,13 @@
         <transition on="proceed" to="BuildResponse" />
     </subflow-state>
 
+    <!-- TODO Figure out where to wire in consent flow, here for the time being. 
+    <subflow-state id="Consent" subflow="consent">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="BuildResponse" />
+    </subflow-state>
+    -->
+
     <action-state id="BuildResponse">
         <evaluate expression="AddResponseShell" />
         <evaluate expression="AddInResponseToToResponse" />
