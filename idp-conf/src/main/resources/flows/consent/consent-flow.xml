@@ -1,0 +1,34 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <!-- Placeholder flow for consent. -->
+
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+
+    <decision-state id="CallTermsOfUseConsentFlow">
+        <!-- TODO criteria -->
+        <if test="true" then="TermsOfUseConsent" else="CallAttributeReleaseConsentFlow" />
+    </decision-state>
+
+    <subflow-state id="TermsOfUseConsent" subflow="consent/terms-of-use">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="CallAttributeReleaseConsentFlow" />
+    </subflow-state>
+
+    <decision-state id="CallAttributeReleaseConsentFlow">
+        <!-- TODO criteria -->
+        <if test="true" then="AttributeReleaseConsent" else="proceed" />
+    </decision-state>
+
+    <subflow-state id="AttributeReleaseConsent" subflow="consent/attribute-release">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="proceed" />
+    </subflow-state>
+    
+    <!-- TODO error handling, etc -->
+
+    <end-state id="proceed" />
+
+</flow>
