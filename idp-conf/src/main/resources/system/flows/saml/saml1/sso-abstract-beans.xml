@@ -61,10 +61,14 @@
         p:methods="#{ {'urn:oasis:names:tc:SAML:1.0:cm:bearer'} }" />
 
     <bean id="UpdateSessionWithSPSession"
-        class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
-        p:activationCondition="%{idp.session.enabled:true}"
-        p:sessionManager-ref="shibboleth.SessionManager"
-        p:sessionLifetime="%{idp.session.defaultSPlifetime:PT2H}" />
+            class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
+            p:activationCondition="%{idp.session.enabled:true}"
+            p:sessionManager-ref="shibboleth.SessionManager">
+        <property name="SPSessionCreationStrategy">
+            <bean class="net.shibboleth.idp.saml.session.impl.SAML1SPSessionCreationStrategy"
+                c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"/>
+        </property>
+    </bean>
 
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

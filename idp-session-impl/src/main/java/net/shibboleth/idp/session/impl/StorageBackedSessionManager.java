@@ -159,7 +159,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull private final StorageBackedIdPSessionSerializer serializer;
 
     /** Flows that could potentially be used to authenticate the user. */
-    @Nonnull @NonnullElements private final Map<String, AuthenticationFlowDescriptor> flowDescriptorMap;
+    @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> flowDescriptorMap;
 
     /** Mappings between a SPSession type and a serializer implementation. */
     @Nullable private SPSessionSerializerRegistry spSessionSerializerRegistry;
@@ -177,15 +177,6 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Get the servlet request to read from.
-     * 
-     * @return servlet request, or null
-     */
-    @Nullable HttpServletRequest getHttpServletRequest() {
-        return httpRequest;
-    }
-
-    /**
      * Set the servlet request to read from.
      * 
      * @param request servlet request
@@ -194,15 +185,6 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         httpRequest = request;
-    }
-
-    /**
-     * Get the servlet response to write to.
-     * 
-     * @return servlet response, or null
-     */
-    @Nullable HttpServletResponse getHttpServletResponse() {
-        return httpResponse;
     }
 
     /**
@@ -429,7 +411,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         Constraint.isNotNull(flows, "Flow collection cannot be null");
 
         flowDescriptorMap.clear();
-        for (AuthenticationFlowDescriptor desc : Iterables.filter(flows, Predicates.notNull())) {
+        for (final AuthenticationFlowDescriptor desc : Iterables.filter(flows, Predicates.notNull())) {
             flowDescriptorMap.put(desc.getId(), desc);
         }
     }
@@ -494,12 +476,12 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             }
         }
 
-        String sessionId = idGenerator.generateIdentifier(false);
+        final String sessionId = idGenerator.generateIdentifier(false);
         if (sessionId.length() > storageService.getCapabilities().getContextSize()) {
             throw new SessionException("Session IDs are too large for StorageService, check configuration");
         }
 
-        StorageBackedIdPSession newSession =
+        final StorageBackedIdPSession newSession =
                 new StorageBackedIdPSession(this, sessionId, principalName, System.currentTimeMillis());
         newSession.doBindToAddress(remoteAddr);
 
@@ -508,7 +490,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                     newSession.getCreationInstant() + sessionTimeout + sessionSlop)) {
                 throw new SessionException("A duplicate session ID was generated, unable to create session");
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Exception while storing new session for principal {}", principalName, e);
             if (!maskStorageFailure) {
                 throw new SessionException("Exception while storing new session", e);
@@ -532,7 +514,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         try {
             storageService.deleteContext(sessionId);
             log.debug("Destroyed session {}", sessionId);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Exception while destroying session {}", sessionId, e);
             throw new SessionException("Exception while destroying session", e);
         }
@@ -548,12 +530,12 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         // a secondary index is being maintained.
 
         if (criteria != null) {
-            HttpServletRequestCriterion requestCriterion = criteria.get(HttpServletRequestCriterion.class);
+            final HttpServletRequestCriterion requestCriterion = criteria.get(HttpServletRequestCriterion.class);
             if (requestCriterion != null) {
                 if (httpRequest != null) {
-                    Cookie[] cookies = httpRequest.getCookies();
+                    final Cookie[] cookies = httpRequest.getCookies();
                     if (cookies != null) {
-                        for (Cookie cookie : cookies) {
+                        for (final Cookie cookie : cookies) {
                             if (cookieName.equals(cookie.getName())) {
                                 IdPSession session = lookupBySessionId(cookie.getValue());
                                 if (session != null) {
@@ -568,9 +550,9 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 }
             }
 
-            SessionIdCriterion sessionIdCriterion = criteria.get(SessionIdCriterion.class);
+            final SessionIdCriterion sessionIdCriterion = criteria.get(SessionIdCriterion.class);
             if (sessionIdCriterion != null) {
-                IdPSession session = lookupBySessionId(sessionIdCriterion.getSessionId());
+                final IdPSession session = lookupBySessionId(sessionIdCriterion.getSessionId());
                 if (session != null) {
                     return ImmutableList.of(session);
                 } else {
@@ -578,7 +560,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 }
             }
 
-            SPSessionCriterion serviceCriterion = criteria.get(SPSessionCriterion.class);
+            final SPSessionCriterion serviceCriterion = criteria.get(SPSessionCriterion.class);
             if (serviceCriterion != null) {
                 if (!secondaryServiceIndex) {
                     throw new ResolverException("Secondary service index is disabled");
@@ -594,7 +576,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     
     /** {@inheritDoc} */
     @Override @Nullable public IdPSession resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
-        Iterator<IdPSession> i = resolve(criteria).iterator();
+        final Iterator<IdPSession> i = resolve(criteria).iterator();
         if (i != null && i.hasNext()) {
             return i.next();
         }
@@ -626,8 +608,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             }
             log.debug("Maintaining secondary index for service ID {} and key {}", serviceId, serviceKey);
 
-            int contextSize = storageService.getCapabilities().getContextSize();
-            int keySize = storageService.getCapabilities().getKeySize();
+            final int contextSize = storageService.getCapabilities().getContextSize();
+            final int keySize = storageService.getCapabilities().getKeySize();
 
             // Truncate context and key if needed.
             if (serviceId.length() > contextSize) {
@@ -663,13 +645,13 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                     log.debug("Secondary index record appeared, retrying as update");
                     indexBySPSession(idpSession, spSession, attempts - 1);
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 log.error("Exception maintaining secondary index for service ID {} and key {}",
                         serviceId, serviceKey, e);
                 if (!maskStorageFailure) {
                     throw new SessionException("Exception maintaining seconday index", e);
                 }
-            } catch (VersionMismatchException e) {
+            } catch (final VersionMismatchException e) {
                 log.debug("Secondary index record was updated between read/update, retrying");
                 indexBySPSession(idpSession, spSession, attempts - 1);
             }
@@ -688,13 +670,14 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         log.debug("Performing primary lookup on session ID {}", sessionId);
 
         try {
-            StorageRecord<StorageBackedIdPSession> sessionRecord = storageService.read(sessionId, SESSION_MASTER_KEY);
+            final StorageRecord<StorageBackedIdPSession> sessionRecord =
+                    storageService.read(sessionId, SESSION_MASTER_KEY);
             if (sessionRecord != null) {
                 return sessionRecord.getValue(serializer, sessionId, SESSION_MASTER_KEY);
             } else {
                 log.debug("Primary lookup failed for session ID {}", sessionId);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Exception while querying for session ID {}", sessionId, e);
             if (!maskStorageFailure) {
                 throw new ResolverException("Exception while querying for session", e);
@@ -715,8 +698,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     @Nonnull @NonnullElements private Iterable<IdPSession>
             lookupBySPSession(@Nonnull final SPSessionCriterion criterion) throws ResolverException {
 
-        int contextSize = storageService.getCapabilities().getContextSize();
-        int keySize = storageService.getCapabilities().getKeySize();
+        final int contextSize = storageService.getCapabilities().getContextSize();
+        final int keySize = storageService.getCapabilities().getKeySize();
 
         String serviceId = criterion.getServiceId();
         String serviceKey = criterion.getSPSessionKey();
@@ -734,7 +717,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         try {
             sessionList = storageService.read(serviceId, serviceKey);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Exception while querying based service ID {} and key {}", serviceId, serviceKey, e);
             if (!maskStorageFailure) {
                 throw new ResolverException("Exception while querying based on SPSession", e);
@@ -746,12 +729,12 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             return ImmutableList.of();
         }
 
-        ImmutableList.Builder builder = ImmutableList.<IdPSession> builder();
+        final ImmutableList.Builder builder = ImmutableList.<IdPSession> builder();
 
-        StringBuilder writeBackSessionList = new StringBuilder(sessionList.getValue().length());
+        final StringBuilder writeBackSessionList = new StringBuilder(sessionList.getValue().length());
 
-        for (String sessionId : sessionList.getValue().split(",")) {
-            IdPSession session = lookupBySessionId(sessionId);
+        for (final String sessionId : sessionList.getValue().split(",")) {
+            final IdPSession session = lookupBySessionId(sessionId);
             if (session != null) {
                 // Session was found, so add it to the return set and to the updated index record.
                 builder.add(session);
@@ -761,16 +744,16 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         }
 
         try {
-            String writeBackValue = writeBackSessionList.toString();
+            final String writeBackValue = writeBackSessionList.toString();
             if (writeBackValue.length() == 0) {
                 storageService.deleteWithVersion(sessionList.getVersion(), serviceId, serviceKey);
             } else if (!writeBackValue.equals(sessionList.getValue())) {
                 storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, writeBackValue,
                         sessionList.getExpiration());
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn("Ignoring exception while updating secondary index", e);
-        } catch (VersionMismatchException e) {
+        } catch (final VersionMismatchException e) {
             log.debug("Ignoring version mismatch while updating secondary index");
         }
 

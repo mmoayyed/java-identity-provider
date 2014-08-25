@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
@@ -51,6 +52,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /** {@link StorageBackedSessionManager} unit test. */
 public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase {
@@ -63,8 +65,11 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
     
     @BeforeClass public void setUp() throws ComponentInitializationException {
         serializerRegistry = new SPSessionSerializerRegistry();
-        serializerRegistry.register(BasicSPSession.class, new BasicSPSessionSerializer(sessionSlop));
-        serializerRegistry.register(ExtendedSPSession.class, new ExtendedSPSessionSerializer(sessionSlop));
+        final Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> map = Maps.newHashMap();
+        map.put(BasicSPSession.class, new BasicSPSessionSerializer(sessionSlop));
+        map.put(ExtendedSPSession.class, new ExtendedSPSessionSerializer(sessionSlop));
+        serializerRegistry.setMappings(map);
+        serializerRegistry.initialize();
         
         StorageSerializer<AuthenticationResult> resultSerializer = new DefaultAuthenticationResultSerializer();
         resultSerializer.initialize();

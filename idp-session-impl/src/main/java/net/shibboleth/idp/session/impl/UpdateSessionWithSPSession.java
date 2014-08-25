@@ -26,9 +26,7 @@ import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.context.SessionContext;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -46,28 +44,23 @@ import com.google.common.base.Predicates;
 /**
  * An action that establishes a record of an {@link SPSession} in an existing {@link IdPSession} for the client.
  * 
- * <p>The {@link SPSession} to add is obtained using a strategy function injected into the action,
- * with a default that creates a standard implementation using information from the ProfileRequestContext.</p>
+ * <p>The {@link SPSession} to add is obtained using a strategy function injected into the action.</p>
  * 
  * <p>The existing session to modify is identified via a {@link SessionContext} attached to the
  * {@link ProfileRequestContext}.</p>
  * 
- * <p>An error interacting with the session layer will result in an {@link EventIds#IO_ERROR}
- * event.</p>
+ * <p>An error interacting with the session layer will result in an {@link EventIds#IO_ERROR} event.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#IO_ERROR}
- * @post If ProfileRequestContext.getSubcontext(SessionContext.class, false).getIdPSession() != null and
+ * @post If ProfileRequestContext.getSubcontext(SessionContext.class).getIdPSession() != null and
  * a non-null SPSession is supplied by the strategy function, then the steps above are performed.
  */
 public class UpdateSessionWithSPSession extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(UpdateSessionWithSPSession.class);
-
-    /** Lifetime of sessions to create, if using the default strategy function. */
-    @Positive @Duration private long sessionLifetime;
     
     /** A function that returns the {@link SPSession} to add. */
     @Nonnull private Function<ProfileRequestContext,SPSession> spSessionCreationStrategy;
@@ -84,20 +77,6 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
     /** Constructor. */
     public UpdateSessionWithSPSession() {
         sessionContextLookupStrategy = new ChildContextLookup<>(SessionContext.class);
-    }
-
-    /**
-     * Set the default session lifetime to apply if using the default creation
-     * strategy for an {@link SPSession}.
-     * 
-     * <p>Only used if a strategy is not set.</p>
-     * 
-     * @param lifetime lifetime in milliseconds
-     */
-    public void setSessionLifetime(@Positive @Duration final long lifetime) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
     }
     
     /**
@@ -142,10 +121,8 @@ public class UpdateSessionWithSPSession extends AbstractProfileAction {
         if (!getActivationCondition().equals(Predicates.alwaysFalse())) {
             if (sessionManager == null) {
                 throw new ComponentInitializationException("SessionManager cannot be null");
-            }
-            
-            if (spSessionCreationStrategy == null) {
-                spSessionCreationStrategy = new BasicSPSessionCreationStrategy(sessionLifetime);
+            } else if (spSessionCreationStrategy == null) {
+                throw new ComponentInitializationException("Session creation strategy cannot be null");
             }
         }
     }

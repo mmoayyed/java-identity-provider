@@ -18,4 +18,12 @@
 	<import resource="authn/authn-comparison.xml" />
 	<import resource="authn/general-authn.xml" />
 
+    <!-- Modify only to add extension types associated with non-built-in protocols. -->
+    <bean id="shibboleth.SPSessionSerializerRegistry" parent="shibboleth.DefaultSPSessionSerializerRegistry">
+        <property name="mappings">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
+
 </beans>

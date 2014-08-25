@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.util.Collections;
+
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
@@ -30,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.storage.StorageSerializer;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
@@ -55,26 +58,29 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
 
         action = new UpdateSessionWithSPSession();
         action.setSessionManager(sessionManager);
-        action.setSessionLifetime(3600 * 60 * 1000);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void adjustProperties() {
+    protected void adjustProperties() throws ComponentInitializationException {
         sessionManager.setTrackSPSessions(true);
         sessionManager.setSecondaryServiceIndex(true);
-        SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
-        registry.register(BasicSPSession.class, new BasicSPSessionSerializer(900 * 60 * 1000));
+        final SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
+        registry.setMappings(
+                Collections.<Class<? extends SPSession>,StorageSerializer<? extends SPSession>>singletonMap(
+                        BasicSPSession.class, new BasicSPSessionSerializer(900 * 60 * 1000)));
+        registry.initialize();
         sessionManager.setSPSessionSerializerRegistry(registry);
     }
     
     @Test public void testNoSession() throws ComponentInitializationException {
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        action.setSPSessionCreationStrategy(new NullStrategy());
         action.initialize();
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(prc.getSubcontext(SessionContext.class, false));
+        Assert.assertNull(prc.getSubcontext(SessionContext.class));
     }
     
     @Test public void testNullSession() throws SessionException, ComponentInitializationException {

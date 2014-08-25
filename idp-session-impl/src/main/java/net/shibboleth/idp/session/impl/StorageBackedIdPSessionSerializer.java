@@ -112,20 +112,20 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                 gen.write(IPV6_ADDRESS_FIELD, instance.getAddress(AbstractIdPSession.AddressFamily.IPV6));
             }
 
-            Set<AuthenticationResult> results = instance.getAuthenticationResults();
+            final Set<AuthenticationResult> results = instance.getAuthenticationResults();
             if (!results.isEmpty()) {
                 gen.writeStartArray(FLOW_ID_ARRAY_FIELD);
-                for (AuthenticationResult result : results) {
+                for (final AuthenticationResult result : results) {
                     gen.write(result.getAuthenticationFlowId());
                 }
                 gen.writeEnd();
             }
 
             if (sessionManager.isTrackSPSessions()) {
-                Set<SPSession> services = instance.getSPSessions();
+                final Set<SPSession> services = instance.getSPSessions();
                 if (!services.isEmpty()) {
                     gen.writeStartArray(SERVICE_ID_ARRAY_FIELD);
-                    for (SPSession service : services) {
+                    for (final SPSession service : services) {
                         gen.write(service.getId());
                     }
                     gen.writeEnd();
@@ -135,7 +135,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             gen.writeEnd().close();
 
             return sink.toString();
-        } catch (JsonException e) {
+        } catch (final JsonException e) {
             log.error("Exception while serializing IdPSession", e);
             throw new IOException("Exception while serializing IdPSession", e);
         }
@@ -180,9 +180,9 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
 
             objectToPopulate.getAuthenticationResultMap().clear();
             if (obj.containsKey(FLOW_ID_ARRAY_FIELD)) {
-                JsonArray flowIds = obj.getJsonArray(FLOW_ID_ARRAY_FIELD);
+                final JsonArray flowIds = obj.getJsonArray(FLOW_ID_ARRAY_FIELD);
                 if (flowIds != null) {
-                    for (JsonString flowId : flowIds.getValuesAs(JsonString.class)) {
+                    for (final JsonString flowId : flowIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a result not yet loaded.
                         objectToPopulate.getAuthenticationResultMap().put(flowId.getString(),
                                 Optional.<AuthenticationResult> absent());
@@ -192,9 +192,9 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
 
             objectToPopulate.getSPSessionMap().clear();
             if (obj.containsKey(SERVICE_ID_ARRAY_FIELD)) {
-                JsonArray svcIds = obj.getJsonArray(SERVICE_ID_ARRAY_FIELD);
+                final JsonArray svcIds = obj.getJsonArray(SERVICE_ID_ARRAY_FIELD);
                 if (svcIds != null) {
-                    for (JsonString svcId : svcIds.getValuesAs(JsonString.class)) {
+                    for (final JsonString svcId : svcIds.getValuesAs(JsonString.class)) {
                         // An absent mapping is used to signify the existence of a session not yet loaded.
                         objectToPopulate.getSPSessionMap().put(svcId.getString(), Optional.<SPSession> absent());
                     }
@@ -203,7 +203,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
 
             return objectToPopulate;
 
-        } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
+        } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing IdPSession", e);
             throw new IOException("Found invalid data structure while parsing IdPSession", e);
         }

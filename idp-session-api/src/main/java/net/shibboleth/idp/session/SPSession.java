@@ -39,21 +39,21 @@ public interface SPSession extends IdentifiedComponent {
      * 
      * @return time, in milliseconds since the epoch, when this session was created, never less than 0
      */
-    @Positive public long getCreationInstant();
+    @Positive long getCreationInstant();
 
     /**
      * Get the time, in milliseconds since the epoch, when this session will expire.
      * 
      * @return time, in milliseconds since the epoch, when this session will expire, never less than 0
      */
-    @Positive public long getExpirationInstant();
+    @Positive long getExpirationInstant();
 
     /**
      * Get the authentication flow ID associated with this service session.
      * 
      * @return authentication flow ID associated with this service session
      */
-    @Nonnull @NotEmpty public String getAuthenticationFlowId();
+    @Nonnull @NotEmpty String getAuthenticationFlowId();
     
     /**
      * Get a unique key identifying this subject's session with the service.
@@ -65,5 +65,5 @@ public interface SPSession extends IdentifiedComponent {
      * 
      * @return a unique key identifying this subject's session with the service, or null
      */
-    @Nullable public String getSPSessionKey();
+    @Nullable String getSPSessionKey();
 }

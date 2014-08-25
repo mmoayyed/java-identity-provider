@@ -16,12 +16,16 @@
         class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy"
         c:identifierSize="%{idp.session.idSize:32}" />
 
-    <bean id="shibboleth.SPSessionSerializerRegistry" class="net.shibboleth.idp.session.SPSessionSerializerRegistry"
-            depends-on="shibboleth.OpenSAMLConfig">
-        <constructor-arg>
+    <bean id="shibboleth.DefaultSPSessionSerializerRegistry" abstract="true"
+            class="net.shibboleth.idp.session.SPSessionSerializerRegistry">
+        <property name="mappings">
             <map>
                 <entry key="#{ T(net.shibboleth.idp.session.BasicSPSession) }">
                     <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer"
+                        c:offset="%{idp.session.slop:0}" />
+                </entry>
+                <entry key="#{ T(net.shibboleth.idp.saml.session.SAML1SPSession) }">
+                    <bean class="net.shibboleth.idp.saml.session.impl.SAML1SPSessionSerializer"
                         c:offset="%{idp.session.slop:0}" />
                 </entry>
                 <entry key="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }">
@@ -30,10 +34,11 @@
                         p:parserPool-ref="shibboleth.ParserPool" />
                 </entry>
             </map>
-        </constructor-arg>
+        </property>
     </bean>
 
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
+            depends-on="shibboleth.OpenSAMLConfig"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
             p:httpServletResponse-ref="shibboleth.HttpServletResponse"
             p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(%{idp.authn.flows:})']}"

@@ -51,7 +51,7 @@
           p:failFast="%{idp.service.logging.failFast:true}" />
     
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
-        depends-on="shibboleth.LogbackLogging" p:parserPool-ref="shibboleth.ParserPool" />
+        depends-on="shibboleth.LogbackLogging,shibboleth.ParserPool" p:parserPool-ref="shibboleth.ParserPool" />
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" depends-on="shibboleth.LogbackLogging">
         <property name="overrideLogging" value="false"/>

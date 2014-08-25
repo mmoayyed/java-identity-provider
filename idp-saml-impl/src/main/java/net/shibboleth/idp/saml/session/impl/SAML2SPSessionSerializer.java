@@ -98,7 +98,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
             generator.write(NAMEID_FIELD, SerializeSupport.nodeToString(
                     XMLObjectSupport.marshall(saml2Session.getNameID()), NO_XML_DECL_PARAMS));
             generator.write(SESSION_INDEX_FIELD, saml2Session.getSessionIndex());
-        } catch (MarshallingException e) {
+        } catch (final MarshallingException e) {
             throw new XMLRuntimeException("Error marshalling and serializing NameID", e);
         }
     }
@@ -119,7 +119,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
             } else {
                 throw new IOException("XMLObject stored in NameID field was not a NameID");
             }
-        } catch (XMLParserException | UnmarshallingException e) {
+        } catch (final XMLParserException | UnmarshallingException e) {
             throw new IOException("Unable to parse or unmarshall NameID field", e);
         }
     }

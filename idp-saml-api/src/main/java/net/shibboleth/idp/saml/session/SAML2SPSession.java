@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 
 import com.google.common.base.Objects;
 
@@ -46,6 +47,7 @@ public class SAML2SPSession extends BasicSPSession {
     /** The SessionIndex asserted to the SP. */
     @Nonnull @NotEmpty private final String sessionIndex;
     
+// Checkstyle: ParameterNumber OFF
     /**
      * Constructor.
      *
@@ -56,7 +58,6 @@ public class SAML2SPSession extends BasicSPSession {
      * @param assertedNameID the NameID asserted to the SP
      * @param assertedIndex the SessionIndex asserted to the SP
      */
-    // Checkstyle: ParameterNumber OFF
     public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
             @Duration @Positive final long creation, @Duration @Positive final long expiration,
             @Nonnull final NameID assertedNameID, @Nonnull @NotEmpty final String assertedIndex) {
@@ -66,7 +67,7 @@ public class SAML2SPSession extends BasicSPSession {
         sessionIndex = Constraint.isNotNull(StringSupport.trimOrNull(assertedIndex),
                 "SessionIndex cannot be null or empty");
     }
-    // Checkstyle: ParameterNumber ON
+// Checkstyle: ParameterNumber ON
    
     /**
      * Get the {@link NameID} asserted to the SP.
@@ -106,11 +107,13 @@ public class SAML2SPSession extends BasicSPSession {
         }
 
         if (obj instanceof SAML2SPSession) {
-            
-            // TODO: need to implement a strong matching algorithm in a support class
-            
-            if (Objects.equal(getSessionIndex(), ((SAML2SPSession) obj).getSessionIndex())) {
-                return true;
+            final NameID n1 = ((SAML2SPSession) obj).getNameID();
+            final NameID n2 = nameID;
+            if (n1 != null && n2 != null && Objects.equal(n1.getValue(), n2.getValue())
+                    && SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(n1.getFormat(), n2.getFormat())
+                    && Objects.equal(n1.getNameQualifier(), n2.getNameQualifier())
+                    && Objects.equal(n1.getSPNameQualifier(), n2.getSPNameQualifier())) {
+                return Objects.equal(getSessionIndex(), ((SAML2SPSession) obj).getSessionIndex());
             }
         }
 
@@ -124,7 +127,7 @@ public class SAML2SPSession extends BasicSPSession {
             return Objects.toStringHelper(this)
                     .add("NameID", SerializeSupport.nodeToString(XMLObjectSupport.marshall(nameID)))
                     .add("SessionIndex", sessionIndex).toString();
-        } catch (MarshallingException e) {
+        } catch (final MarshallingException e) {
             throw new IllegalArgumentException("Error marshalling NameID", e);
         }
     }
