@@ -5,6 +5,7 @@
     <action-state id="DoLogout">
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="ProcessLogout" />
+        <evaluate expression="LogoutPopulateAuditContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="LogoutView" />
@@ -14,6 +15,7 @@
 
     <end-state id="LogoutView" view="logout">
         <on-entry>
+            <evaluate expression="WriteAuditLog" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="requestScope.logoutContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
@@ -22,21 +24,18 @@
         </on-entry>
     </end-state>
 
-    <!-- Populates inputs to error views and dispatches based on the error event. -->
-    <action-state id="HandleErrorWithView">
+    <!-- Unsuccessful terminal state. -->
+    
+    <end-state id="HandleErrorWithView" view="#{MapEventToView.apply(currentEvent)}">
         <on-entry>
+            <evaluate expression="ErrorViewPopulateAuditContext" />
+            <evaluate expression="WriteAuditLogForLocalError" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
         </on-entry>
-        
-        <evaluate expression="currentEvent" />
-        
-        <transition to="error" />
-    </action-state>
-
-    <end-state id="error" view="#{MapEventToView.apply(currentEvent)}" />
+    </end-state>
 
     <!-- Default is to turn non-proceed events into an error. -->
     <global-transitions>

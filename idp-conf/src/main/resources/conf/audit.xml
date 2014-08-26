@@ -11,35 +11,42 @@
 
     <!-- TODO: explain this stuff -->
 
-    <bean id="shibboleth.PostDecodeAuditExtractors" parent="shibboleth.DefaultPostDecodeAuditExtractors">
+    <bean id="shibboleth.PostDecodeAuditExtractors" parent="shibboleth.DefaultPostDecodeAuditExtractors" lazy-init="true">
         <property name="sourceMap">
             <map merge="true">
             </map>
         </property>
     </bean>
 
-    <bean id="shibboleth.PostLookupAuditExtractors" parent="shibboleth.DefaultPostLookupAuditExtractors">
+    <bean id="shibboleth.PostLookupAuditExtractors" parent="shibboleth.DefaultPostLookupAuditExtractors" lazy-init="true">
         <property name="sourceMap">
             <map merge="true">
             </map>
         </property>
     </bean>
 
-    <bean id="shibboleth.PostAssertionAuditExtractors" parent="shibboleth.DefaultPostAssertionAuditExtractors">
+    <bean id="shibboleth.PostAssertionAuditExtractors" parent="shibboleth.DefaultPostAssertionAuditExtractors" lazy-init="true">
         <property name="sourceMap">
             <map merge="true">
             </map>
         </property>
     </bean>
 
-    <bean id="shibboleth.PostResponseAuditExtractors" parent="shibboleth.DefaultPostResponseAuditExtractors">
+    <bean id="shibboleth.PostResponseAuditExtractors" parent="shibboleth.DefaultPostResponseAuditExtractors" lazy-init="true">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.LogoutAuditExtractors" parent="shibboleth.DefaultLogoutAuditExtractors" lazy-init="true">
         <property name="sourceMap">
             <map merge="true">
             </map>
         </property>
     </bean>
 
-    <bean id="shibboleth.ErrorViewAuditExtractors" parent="shibboleth.DefaultErrorViewAuditExtractors">
+    <bean id="shibboleth.ErrorViewAuditExtractors" parent="shibboleth.DefaultErrorViewAuditExtractors" lazy-init="true">
         <property name="sourceMap">
             <map merge="true">
             </map>

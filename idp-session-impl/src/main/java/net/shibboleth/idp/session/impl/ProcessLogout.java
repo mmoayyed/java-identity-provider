@@ -28,6 +28,7 @@ import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -50,6 +51,8 @@ import com.google.common.base.Predicates;
  * Profile action that resolves an active session from the profile request, and destroys it,
  * populating the associated {@link SPSession} objects into a {@link LogoutContext}.
  * 
+ * <p>A {@link SubjectContext} and {@link SessionContext} are also populated.</p>
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @post The matching session is destroyed.
  * @post If a session was found, then a SubjectContext and LogoutContext will be populated.
@@ -68,6 +71,9 @@ public class ProcessLogout extends AbstractProfileAction {
     /** Creation/lookup function for SubjectContext. */
     @Nonnull private Function<ProfileRequestContext,SubjectContext> subjectContextCreationStrategy;
 
+    /** Creation/lookup function for SessionContext. */
+    @Nonnull private Function<ProfileRequestContext,SessionContext> sessionContextCreationStrategy;
+
     /** Creation/lookup function for LogoutContext. */
     @Nonnull private Function<ProfileRequestContext,LogoutContext> logoutContextCreationStrategy;
     
@@ -77,6 +83,7 @@ public class ProcessLogout extends AbstractProfileAction {
     /** Constructor. */
     public ProcessLogout() {
         subjectContextCreationStrategy = new ChildContextLookup<>(SubjectContext.class, true);
+        sessionContextCreationStrategy = new ChildContextLookup<>(SessionContext.class, true);
         logoutContextCreationStrategy = new ChildContextLookup<>(LogoutContext.class, true);
         
         sessionResolverCriteriaStrategy = new Function<ProfileRequestContext,CriteriaSet>() {
@@ -121,6 +128,19 @@ public class ProcessLogout extends AbstractProfileAction {
                 "SubjectContext creation strategy cannot be null");
     }
 
+    /**
+     * Set the creation/lookup strategy for the SessionContext to populate.
+     * 
+     * @param strategy  creation/lookup strategy
+     */
+    public void setSessionContextCreationStrategy(
+            @Nonnull final Function<ProfileRequestContext,SessionContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        sessionContextCreationStrategy = Constraint.isNotNull(strategy,
+                "SessionContext creation strategy cannot be null");
+    }
+    
     /**
      * Set the creation/lookup strategy for the LogoutContext to populate.
      * 
@@ -188,13 +208,15 @@ public class ProcessLogout extends AbstractProfileAction {
             }
 
             final SubjectContext subjectCtx = subjectContextCreationStrategy.apply(profileRequestContext);
-            if (subjectCtx == null) {
-                log.error("{} Unable to create or locate SubjectContext", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-                return;
+            if (subjectCtx != null) {
+                subjectCtx.setPrincipalName(session.getPrincipalName());
             }
-            subjectCtx.setPrincipalName(session.getPrincipalName());
-            
+
+            final SessionContext sessionCtx = sessionContextCreationStrategy.apply(profileRequestContext);
+            if (sessionCtx != null) {
+                sessionCtx.setIdPSession(session);
+            }
+
             final LogoutContext logoutCtx = logoutContextCreationStrategy.apply(profileRequestContext);
             if (logoutCtx == null) {
                 log.error("{} Unable to create or locate LogoutContext", getLogPrefix());
