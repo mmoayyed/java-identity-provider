@@ -59,6 +59,7 @@
     </filter>
     <filter-mapping>
         <filter-name>CookieBufferingFilter</filter-name>
+        <url-pattern>/profile/Logout</url-pattern>
         <url-pattern>/profile/Shibboleth/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
@@ -67,6 +68,7 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>DelegatingFilterProxy</filter-name>
+        <url-pattern>/profile/Logout</url-pattern>
         <url-pattern>/profile/Shibboleth/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>

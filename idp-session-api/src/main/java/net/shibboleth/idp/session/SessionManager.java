@@ -50,6 +50,9 @@ public interface SessionManager extends
      * Invalidates or otherwise removes a session from persistent storage and/or unbinds it
      * from a client.
      * 
+     * <p>After calling this method, no further method calls on a corresponding {@link IdPSession}
+     * object that may be in hand are guaranteed to function correctly. Their behavior is unspecified.</p>
+     * 
      * @param sessionId the unique ID of the session to destroy
      * 
      * @throws SessionException if the session cannot be destroyed

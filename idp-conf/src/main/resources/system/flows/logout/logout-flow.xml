@@ -1,0 +1,49 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <action-state id="DoLogout">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="ProcessLogout" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="LogoutView" />
+    </action-state>
+    
+    <!-- Terminus -->
+
+    <end-state id="LogoutView" view="logout">
+        <on-entry>
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="requestScope.logoutContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-entry>
+    </end-state>
+
+    <!-- Populates inputs to error views and dispatches based on the error event. -->
+    <action-state id="HandleErrorWithView">
+        <on-entry>
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-entry>
+        
+        <evaluate expression="currentEvent" />
+        
+        <transition to="error" />
+    </action-state>
+
+    <end-state id="error" view="#{MapEventToView.apply(currentEvent)}" />
+
+    <!-- Default is to turn non-proceed events into an error. -->
+    <global-transitions>
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleErrorWithView" />
+    </global-transitions>
+
+    <!-- The import references the parent folder because the abstract flow is used only from one level down. -->
+    <bean-import resource="logout-beans.xml" />
+
+</flow>

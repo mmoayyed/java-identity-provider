@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.context;
+package net.shibboleth.idp.session.context;
 
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -30,37 +31,35 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-/**
- * {@link BaseContext} containing information to preserve for auditing/logging.
- */
-public final class AuditContext extends BaseContext {
+/** A {@link BaseContext} that holds a set of {@link SPSession} objects. */
+public class LogoutContext extends BaseContext {
 
-    /** Extensible map of arbitrary field to data mappings. */
-    @Nonnull @NonnullElements private Multimap<String,String> fieldMap;
-    
+    /** SP sessions needing logout. */
+    private Multimap<String,SPSession> sessionMap;
+
     /** Constructor. */
-    public AuditContext() {
-        fieldMap = ArrayListMultimap.create(20, 1);
+    public LogoutContext() {
+        sessionMap = ArrayListMultimap.create(10, 1);
+    }
+
+    /**
+     * Get a live view of the map of service ID/session mappings.
+     * 
+     * @return service ID/session mappings
+     */
+    @Nonnull @NonnullElements @Live public Multimap<String,SPSession> getSessionMap() {
+        return sessionMap;
     }
     
     /**
-     * Get a live view of the map of field/data mappings.
+     * Get a live collection of sessions associated with a service.
      * 
-     * @return field/data mappings
+     * @param id name of service to retrieve
+     * 
+     * @return the sessions for the service
      */
-    @Nonnull @NonnullElements @Live public Multimap<String,String> getFields() {
-        return fieldMap;
-    }
-    
-    /**
-     * Get a live collection of values associated with a field.
-     * 
-     * @param field field to retrieve
-     * 
-     * @return the field's values
-     */
-    @Nonnull @NonnullElements @Live public Collection<String> getFieldValues(@Nonnull @NotEmpty final String field) {
-        return fieldMap.get(field);
+    @Nonnull @NonnullElements @Live public Collection<SPSession> getSessions(@Nonnull @NotEmpty final String id) {
+        return sessionMap.get(id);
     }
     
 }

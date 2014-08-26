@@ -22,6 +22,9 @@
 
         <!-- Status flow. -->
         <webflow:flow-location id="status" path="../system/flows/status/status-flow.xml" />
+        
+        <!-- Proprietary logout flow. -->
+        <webflow:flow-location id="profile/Logout" path="../system/flows/logout/logout-flow.xml" />
 
         <!-- Abstract flows underpinning SAML profiles. -->
         <webflow:flow-location id="saml.abstract" path="../system/flows/saml/saml-abstract-flow.xml" />
