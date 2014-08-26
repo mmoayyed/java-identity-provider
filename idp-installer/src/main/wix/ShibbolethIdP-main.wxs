@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed to the University Corporation for Advanced Internet
+     Development, Inc. (UCAID) under one or more contributor license
+     agreements.  See the NOTICE file distributed with this work for
+     additional information regarding copyright ownership. The UCAID
+     licenses this file to You under the Apache License, Version 2.0
+     (the 'License'); you may not use this file except in compliance
+     with the License.  You may obtain a copy of the License at
+     
+     http://www.apache.org/licenses/LICENSE-2.0
+     
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an 'AS IS' BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+     implied.  See the License for the specific language governing
+     permissions and limitations under the License.  -->
+
+<?define UpgradeUUID="8d3bfb53-47ff-4cbc-9363-cbf9e46bedc4"?>
+
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="Shibboleth IdP" Language="1033" Version="0.0.3.0" Manufacturer="Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+    <Package InstallerVersion="300" Compressed="yes" InstallScope="perMachine" Platform="x86" Description="Shibboleth IdP" Manufacturer="Shibboleth Consortium"/>
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize"/>
+    <MediaTemplate EmbedCab="yes"/>
+
+    <Feature Id="ProductFeature" Title="IdP" Level="1">
+      <Feature Id="InstallJetty" Title="Jetty">
+        <MergeRef Id="jetty"/>
+      </Feature>
+      <ComponentGroupRef Id="IdPGroup"/>
+      <ComponentGroupRef Id="SaveRegistry"/>
+    </Feature>
+
+    <Directory Id="TARGETDIR" Name="SourceDir" >
+      <Directory Id="ProgramFilesFolder" >
+        <Directory Id="INSTALLDIR" Name="Shibboleth" >
+          <Merge Id="jetty" Language="1033" SourceFile="$(var.ProjectDir)\jetty.msm" DiskId="1"/>
+          <Directory Id="IdPFolder" Name="IdP"/>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Property Id="QI_INSTALLDIR" Secure="yes">
+      <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files\Internet2\ShibIdP"/>
+    </Property>
+
+    <Property Id="IS_V2" Secure="yes">TOSET</Property>
+
+    <Property Id="QI_INSTALLDIR64" Secure="yes">
+      <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files (x86)\Internet2\ShibIdP"/>
+    </Property>
+
+    <!-- Inherit the setup, if they were -->
+    <CustomAction Id="InheritInstallDir" Property="INSTALLDIR" Value="[OLD_INSTALLDIR]" />
+    <CustomAction Id="InheritInstallJetty" Property="INSTALL_JETTY" Value="[OLD_INSTALL_JETTY]" />
+
+    <Binary Id="LocateV2ConfigSrc" SourceFile="scripts\shib_is_v2.vbs-wix" />
+
+    <CustomAction Id="LocateV2Config" BinaryKey="LocateV2ConfigSrc" VBScriptCall="" Execute="immediate" />
+    <CustomAction Id="SetLocateV2Config" Property="LocateV2Config" Value="[INSTALLDIR]" />
+
+
+    <InstallUISequence>
+      <!-- All we need to sequence here is setting up inherited INSTALLDIR and JETTY_INSTALL -->
+
+      <!-- inherit installationDir if there is something to inherit -->
+      <Custom Action="InheritInstallDir" After="AppSearch">
+        OLD_INSTALLDIR
+      </Custom>
+
+      <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
+      <Custom Action="InheritInstallJetty" After="AppSearch">
+        OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
+      </Custom>
+    </InstallUISequence>
+
+    <InstallExecuteSequence>
+      <Custom Action="SetLocateV2Config" Before="CostInitialize">NOT Installed AND NOT OLD_INSTALLDIR</Custom>
+      <Custom Action="LocateV2Config" After="InstallFiles">NOT Installed AND NOT OLD_INSTALLDIR</Custom>
+
+
+      <!-- Duplicate actions from the UI case -->
+      <Custom Action="InheritInstallDir" After="AppSearch">
+        OLD_INSTALLDIR
+      </Custom>
+
+      <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
+      <Custom Action="InheritInstallJetty" After="AppSearch">
+        OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
+      </Custom>
+    </InstallExecuteSequence>
+
+    <Upgrade Id='$(var.UpgradeUUID)'>
+      <UpgradeVersion ExcludeLanguages='yes' IncludeMaximum='yes' Maximum='127.255.255' Minimum='0.0.1' OnlyDetect='yes' Property='ALREADYINSTALLED'/>
+    </Upgrade>
+
+    <UIRef Id="ShibbolethInstallDir"/>
+  </Product>
+</Wix>

@@ -116,10 +116,10 @@ REM Build
 "%WIX%/BIN/CANDLE" -nologo -arch x86 -didpSrc=idp-extract\%idpex% idp_contents.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. idp.wxs registry.wxs
+"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. ShibbolethIdP-main.wxs ShibbolethIdP-registry.wxs ShibbolethIdP-gui.wxs ShibbolethIdP-install-dlg.wxs ShibbolethIdP-update-dlg.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out idp.msi -ext WixUIExtension idp.wixobj idp_contents.wixobj registry.wixobj
+"%WIX%/BIN/LIGHT" -nologo -out idp.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-update-dlg.wixobj
 if ERRORLEVEL 1 goto done
 
 dir idp.msi
