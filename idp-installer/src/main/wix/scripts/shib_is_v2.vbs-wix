@@ -1,0 +1,5 @@
+
+Set WshShell = CreateObject("WScript.Shell")
+WshShell.popup("Hello world")
+s = Session.Property("INSTALLDIR")
+WshShell.popup("Hello world2" + s)

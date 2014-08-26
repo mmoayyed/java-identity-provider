@@ -20,8 +20,8 @@ if not defined WIX (
 
 REM Clear up detritus from last time
 
-if exist jetty.wxs (
-   del jetty.wxs
+if exist jetty_contents.wxs (
+   del jetty_contents.wxs
 )
 
 if exist procrun-extract (
@@ -118,13 +118,13 @@ if ERRORLEVEL 1 (
 )
 cd ..
 for /D %%X in (jetty-extract/*) do set jex=%%X
-"%WIX%/BIN/HEAT"  dir jetty-extract\%Jex% -platform -gg -dr JETTYROOT -var var.jettySrc -cg JettyGroup -out jetty.wxs -nologo
+"%WIX%/BIN/HEAT"  dir jetty-extract\%Jex% -platform -gg -dr JETTYROOT -var var.jettySrc -cg JettyGroup -out jetty_contents.wxs -nologo
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/CANDLE" -nologo -djettySrc=jetty-extract\%Jex% -dPlatform=x86 -arch x86 jetty.wxs MergeModule.wxs
+"%WIX%/BIN/CANDLE" -nologo -djettySrc=jetty-extract\%Jex% -dPlatform=x86 -arch x86 jetty_contents.wxs MergeModule.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out Jetty.msm jetty.wixobj mergemodule.wixobj
+"%WIX%/BIN/LIGHT" -nologo -out Jetty.msm jetty_contents.wixobj mergemodule.wixobj
 if ERRORLEVEL 1 goto done
 
 dir Jetty.msm

@@ -75,28 +75,51 @@ if exist "%1" (
 ) else (
   "%JARCMD%" xf ..\%1 
 )
+
+rem is this a real package?
 dir /s idp.properties 1> nl:a 2> nl:b
 if ERRORLEVEL 1 (
   cd ..
-  echo "Could not find idp.properties in IdP package"
+  echo Could not find idp.properties in IdP package
   goto done;
 )
 
+for /D %%X in (*) do set idpex=%%X
+
+rem we do not want to populate conf/flows/view
+rem we will populate them from the dist directory
+
+rd/s/q %idpex%\conf
+if ERRORLEVEL 1 (
+  cd ..
+  echo Conf directory not found?
+  goto done;
+)
+rd/s/q %idpex%\flows
+if ERRORLEVEL 1 (
+  cd ..
+  echo Flows directory not found?
+  goto done;
+)
+rd/s/q %idpex%\views
+if ERRORLEVEL 1 (
+  cd ..
+  echo Views directory not found?
+  goto done;
+)
 cd ..
 
-for /D %%X in (idp-extract/*) do set idpex=%%X
 "%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr IdPFolder -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
 if ERRORLEVEL 1 goto done
-
 
 REM Build
 "%WIX%/BIN/CANDLE" -nologo -arch x86 -didpSrc=idp-extract\%idpex% idp_contents.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. idp.wxs
+"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. idp.wxs registry.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out idp.msi -ext WixUIExtension idp.wixobj idp_contents.wixobj
+"%WIX%/BIN/LIGHT" -nologo -out idp.msi -ext WixUIExtension idp.wixobj idp_contents.wixobj registry.wixobj
 if ERRORLEVEL 1 goto done
 
 dir idp.msi

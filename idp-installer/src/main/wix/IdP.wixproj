@@ -26,6 +26,7 @@
   <ItemGroup>
     <Compile Include="IdP.wxs" />
     <Compile Include="idp_contents.wxs" />
+    <Compile Include="Registry.wxs" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--
