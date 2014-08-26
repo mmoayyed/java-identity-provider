@@ -28,6 +28,13 @@
         p:accessControlService-ref="shibboleth.AccessControlService"
         p:policyName="%{idp.status.accessPolicy}" />
     
+    <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+
+    <bean id="WriteAuditLogForLocalError" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:activationCondition="%{idp.service.logging.auditLocalErrors:false}"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+    
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
         p:defaultView-ref="shibboleth.DefaultErrorView"
