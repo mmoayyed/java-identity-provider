@@ -1,0 +1,68 @@
+##
+## Velocity Template for logout flow's concluding view-state
+##
+## Velocity context will contain the following properties
+## flowExecutionUrl - the form action location
+## flowRequestContext - the Spring Web Flow RequestContext
+## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
+## profileRequestContext - root of context tree
+## logoutContext - context with SPSession details for logout operation
+## rpUIContext - the context with SP UI information from the metadata
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  	<head>
+        <meta charset="utf-8" />
+        <title>Example Logout Page</title>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
+  	</head>
+
+  	<body>
+    <div class="wrapper">
+      <div class="container">
+        <header>
+          <a class="logo" href="../images/dummylogo.png"><img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo"/></a>
+        </header>
+
+        <div class="content">
+          <div class="column one">
+        <p>This logout page is an example and should be customized.</p>
+
+            <p>This page is displayed when a logout operation at the Identity Provider completes.</p>
+    
+            <p><strong>It does NOT result in the user being logged out of any of the applications he/she
+            has accessed during a session, with the possible exception of a Service Provider that may have
+            initiated the logout operation.</strong></p>
+        
+		    #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
+                <p>The following is a list of Service Provider identifiers tracked by the session that has been terminated:</p>
+		
+				<ul>
+				#foreach ( $sp in $logoutContext.getSessionMap().keySet() )
+					<li>$encoder.encodeForHTML($sp)</li>
+				#end
+				</ul>	
+			#end
+            
+          </div>
+          <div class="column two">
+            <ul class="list list-help">
+              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> Forgot your password?</a></li>
+              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> Need Help?</a></li>
+              <li class="list-help-item"><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"><span class="item-marker">&rsaquo;</span> How to Customize this Skin</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="container container-footer">
+          <p class="footer-text">Insert your footer text here.</p>
+        </div>
+      </footer>
+    </div>
+    
+ 	</body>
+</html>
