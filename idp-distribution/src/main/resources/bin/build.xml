@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Shibboleth Identity Provider V3" basedir=".." default="install">
+
+  <!-- We assume some properties set on the command line 
+       idp.src.dir = where the install has been unpacked to
+       idp.target.dir = where we are installing to.  In windows these are the same
+       (because windows has *not* unpacked the conf/view/flows)
+
+       TODO
+       For now hardwire
+    -->
+
+  <property name="idp.src.dir" value="${basedir}"/>
+  <property name="idp.target.dir" value="${basedir}"/>
+
+  <target name="init">
+    <tstamp/>
+  </target>
+
+  <target name="install" depends="init, genkeys, upgrade, build-war"/>
+  <target name="v2upgrade" depends="init, v2v3prepopulate, install"/>
+
+  <!--
+
+    KEY MANAGEMENT
+
+     TODO: Passwords 
+
+   -->
+
+  <target name="genkeys" depends="init, checkkeys, signing-key, encryption-key, keystore, sealer"/>
+
+  <target name="checkkeys">
+    <available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt"/>
+    <available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt"/>
+    <available property="idp.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12"/>
+    <available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver"/>
+  </target>
+
+  <target name="signing-key" unless="idp.signing.present">
+    <echo>Gotta create that signing key</echo>
+  </target>
+
+  <target name="encryption-key" unless="idp.encryption.present">
+    <echo>Gotta create that encryption key</echo>
+  </target>
+
+  <target name="keystore" unless="idp.keystore.present">
+    <echo>Gotta create that kestore key</echo>
+  </target>
+
+  <target name="sealer" unless="idp.sealer.present">
+    <echo>Gotta create that sealer</echo>
+  </target>
+
+  <!--
+
+     GENERAL V3 TO V3 UPGRADE
+
+    -->
+
+  <target name="upgrade">
+    <!-- conf -->
+    <mkdir  dir="${idp.target.dir}/conf"/>
+    <copy todir="${idp.target.dir}/conf">
+      <fileset dir="${idp.target.dir}/dist/conf" includes="**/*">
+        <present present="srconly" targetdir="${idp.target.dir}/conf">
+          <mapper type="glob" from="*.dist" to="*"/>
+        </present>
+       </fileset>
+      <mapper type="glob" from="*.dist" to="*"/>
+    </copy>
+    <!-- flows -->
+    <mkdir  dir="${idp.target.dir}/flows"/>
+    <copy todir="${idp.target.dir}/flows">
+      <fileset dir="${idp.target.dir}/dist/flows" includes="**/*">
+        <present present="srconly" targetdir="${idp.target.dir}/flows">
+          <mapper type="glob" from="*.dist" to="*"/>
+        </present>
+       </fileset>
+      <mapper type="glob" from="*.dist" to="*"/>
+    </copy>
+    <!-- views -->
+    <mkdir  dir="${idp.target.dir}/views"/>
+    <copy todir="${idp.target.dir}/views">
+      <fileset dir="${idp.target.dir}/dist/views" includes="**/*">
+        <present present="srconly" targetdir="${idp.target.dir}/views">
+          <mapper type="glob" from="*.dist" to="*"/>
+        </present>
+       </fileset>
+      <mapper type="glob" from="*.dist" to="*"/>
+    </copy>
+  </target>
+
+  <!--
+
+    CREATE WAR FILE
+
+   -->
+
+  <target name="build-war" >
+    <copy todir="${idp.target.dir}/war" overwrite="true" failonerror="false">
+      <fileset dir="${idp.target.dir}/edit-webapp"/>
+    </copy>
+    <!-- build a jar, not war, since it is already full populated -->
+    <delete file="${idp.target.dir}/idp.war" failonerror="false"/>
+    <jar destfile="${idp.target.dir}/idp.war" basedir="${idp.target.dir}/war"/>
+  </target>
+
+  <target name="v2v3prepopulate">
+    <!-- TODO - rename config to config.old
+              - create war.old and move away any old war files
+              - rename war to war.old
+              - rename Credentials to credentials.old
+              - copy selected files from config.old -->
+  </target>
+</project>
