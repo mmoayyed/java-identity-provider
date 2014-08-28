@@ -54,8 +54,10 @@ import com.google.common.base.Predicates;
  * <p>A {@link SubjectContext} and {@link SessionContext} are also populated.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @post The matching session is destroyed.
- * @post If a session was found, then a SubjectContext and LogoutContext will be populated.
+ * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}
+ * @event {@link org.opensaml.profile.action.EventIds#IO_ERROR}
+ * @post The matching {@link IdPSession} is destroyed.
+ * @post If a {@link IdPSession} was found, then a {@link SubjectContext} and {@link LogoutContext} will be populated.
  */
 public class ProcessLogout extends AbstractProfileAction {
     
@@ -231,7 +233,7 @@ public class ProcessLogout extends AbstractProfileAction {
             try {
                 sessionManager.destroySession(session.getId());
             } catch (final SessionException e) {
-                log.error("{} Error binding session to client address", getLogPrefix(), e);
+                log.error("{} Error destroying session", getLogPrefix(), e);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
         } catch (final ResolverException e) {
