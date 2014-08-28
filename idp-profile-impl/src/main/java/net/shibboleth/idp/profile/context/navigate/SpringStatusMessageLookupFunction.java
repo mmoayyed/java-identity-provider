@@ -32,7 +32,7 @@ import org.springframework.webflow.execution.RequestContext;
 import com.google.common.base.Function;
 
 /**
- * A function that returns a status message to include, if any, in a SAML reponse based on the current
+ * A function that returns a status message to include, if any, in a SAML response based on the current
  * profile request context state, using Spring's {@link MessageSource} functionality.
  */
 public class SpringStatusMessageLookupFunction implements Function<ProfileRequestContext, String>, MessageSourceAware {
