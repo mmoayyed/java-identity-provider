@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Shibboleth Identity Provider V3" basedir=".." default="install">
 
+  <taskdef resource="net/shibboleth/idp/installer/ant.xml"/>
+	
   <!-- We assume some properties set on the command line 
        idp.src.dir = where the install has been unpacked to
        idp.target.dir = where we are installing to.  In windows these are the same
@@ -20,6 +22,19 @@
   <target name="install" depends="init, genkeys, upgrade, build-war"/>
   <target name="v2upgrade" depends="init, v2v3prepopulate, install"/>
 
+  <!-- USER INPUT -->
+  <target name="gethostname" unless="idp.host.name">
+    <input message="Hostname" addproperty="idp.host.name"/>
+  </target>
+
+  <target name="geturisubjectaltname" unless="uri.subject.alt.name">
+    <property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/org/shibboleth/idp"/>
+  </target>
+
+  <target name="getkeystorepassword" unless="uri.keystore.password">
+    <input message="Key Store Password" addproperty="uri.keystore.password"/>
+  </target>
+
   <!--
 
     KEY MANAGEMENT
@@ -37,16 +52,28 @@
     <available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver"/>
   </target>
 
-  <target name="signing-key" unless="idp.signing.present">
-    <echo>Gotta create that signing key</echo>
+  <target name="signing-key" unless="idp.signing.present" depends="gethostname, geturisubjectaltname">
+    <echo>Creating Signing Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
+    <selfsignedcert hostname="${idp.host.name}" 
+                    privateKeyFile="${idp.target.dir}/creds/idp-signing.key" 
+                    certificateFile="${idp.target.dir}/creds/idp-signing.crt" 
+                    uriSubjectAltNames="${idp.uri.subject.alt.name}"/>
   </target>
 
-  <target name="encryption-key" unless="idp.encryption.present">
-    <echo>Gotta create that encryption key</echo>
+  <target name="encryption-key" unless="idp.encryption.present" depends="gethostname, geturisubjectaltname">
+    <echo>Creating Encryption Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
+    <selfsignedcert hostname="${idp.host.name}" 
+                    privateKeyFile="${idp.target.dir}/creds/idp-encryption.key" 
+                    certificateFile="${idp.target.dir}/creds/idp-encryption.crt" 
+                    uriSubjectAltNames="${idp.uri.subject.alt.name}"/>
   </target>
 
-  <target name="keystore" unless="idp.keystore.present">
-    <echo>Gotta create that kestore key</echo>
+  <target name="keystore" unless="idp.keystore.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
+    <echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
+    <selfsignedcert hostname="${idp.host.name}"
+                    keystoreFile="${idp.target.dir}/creds/idp-tls.p12"
+                    keystorePassword="$(uri.keystore.password}"
+                    uriSubjectAltNames="${idp.uri.subject.alt.name}"/>
   </target>
 
   <target name="sealer" unless="idp.sealer.present">
