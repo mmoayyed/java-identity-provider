@@ -49,6 +49,20 @@ do
     fi
 done
 
+WEBINFLIBS=${ANT_HOME}/lib/*.jar
+for i in ${WEBINFLIBS}
+do
+    # if the directory is empty, then it will return the input string
+    # this is stupid, so case for it
+    if [ "$i" != "${WEBINFLIBS}" ] ; then
+      if [ -z "$LOCALCLASSPATH" ] ; then
+        LOCALCLASSPATH=$i
+      else
+        LOCALCLASSPATH="$i":$LOCALCLASSPATH
+      fi
+    fi
+done
+
 if [ -n "$JAVA_HOME" ] ; then
   if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
     LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/tools.jar

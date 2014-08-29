@@ -29,6 +29,11 @@ for %%i in (%ANT_HOME%\lib\*.jar) do (
 	call %ANT_HOME%\cpappend.bat %%i
 )
 
+for %%i in (%ANT_HOME%\..\war\WEB-INF\lib\*.jar) do (
+	call %ANT_HOME%\cpappend.bat %%i
+)
+
+
 if exist %JAVA_HOME%\lib\tools.jar (
     set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_HOME%\lib\tools.jar
 )

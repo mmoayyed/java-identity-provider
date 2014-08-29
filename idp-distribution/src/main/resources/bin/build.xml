@@ -23,19 +23,27 @@
   <target name="v2upgrade" depends="init, v2v3prepopulate, install"/>
 
   <!-- USER INPUT -->
-  <target name="gethostname" unless="idp.host.name">
+  <target name="gethostname" if="idp.ask.for.hostname" depends="checkkeys">
     <input message="Hostname" addproperty="idp.host.name"/>
   </target>
 
-  <target name="geturisubjectaltname" unless="uri.subject.alt.name">
+  <target name="geturisubjectaltname" if="idp.generate.altname" depends="checkkeys">
     <property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/org/shibboleth/idp"/>
   </target>
 
-  <target name="getkeystorepassword" unless="uri.keystore.password">
-    <input message="Key Store Password" addproperty="uri.keystore.password"/>
+  <target name="getkeystorepassword"  if="idp.ask.keystore.password" depends="checkkeys">
+    <input message="Key Store Password" addproperty="idp.keystore.password"/>
   </target>
 
-  <!--
+  <target name="getsealerpassword" if="idp.ask.sealer.password" depends="checkkeys">
+    <input message="Sealer Password" addproperty="idp.sealer.password"/>
+  </target>
+
+  <target name="getsealeralias" if="idp.ask.sealer.alias" depends="checkkeys">
+    <input message="Sealer Alias" addproperty="idp.sealer.alias"/>
+  </target>
+
+   <!--
 
     KEY MANAGEMENT
 
@@ -50,6 +58,79 @@
     <available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt"/>
     <available property="idp.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12"/>
     <available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver"/>
+    <condition property="idp.will.call.certgen">
+      <!-- we will call the cert gen if
+                EITHER we don't have a signing key
+                OR we don't have a encryption key
+                OR we don't have a tls -->
+      <or>
+        <not>
+          <istrue value="${idp.signing.present}"/>
+        </not>
+        <not>
+          <istrue value="${idp.encryption.present}"/>
+        </not>
+        <not>
+          <istrue value="${idp.keystore.present}"/>
+        </not>
+      </or>
+    </condition>
+
+    <condition property="idp.ask.for.hostname">
+      <!-- We ask for host name if there is no host name and we will call certgen -->
+      <and>
+        <not>
+          <isset property="idp.host.name"/>
+        </not>
+        <istrue value="${idp.will.call.certgen}"/>
+      </and>
+    </condition>
+
+    <condition property="idp.generate.altname">
+      <!-- We ask for alt name if there is no alt name and we will call certgen -->
+      <and>
+        <not>
+          <isset property="uri.subject.alt.name"/>
+        </not>
+        <istrue value="${idp.will.call.certgen}"/>
+      </and>
+    </condition>
+
+    <condition property="idp.ask.keystore.password">
+      <!-- We ask for keystore password if there is no keystore password and no keystore -->
+      <and>
+        <not>
+          <isset property="idp.keystore.password"/>
+        </not>
+        <not>
+          <istrue value="${idp.keystore.present}"/>
+        </not>
+      </and>
+    </condition>
+
+    <condition property="idp.ask.sealer.password">
+      <!-- We ask for sealer password if there is no sealer password and no sealer -->
+      <and>
+        <not>
+          <isset property="idp.sealer.password"/>
+        </not>
+        <not>
+          <istrue value="${idp.sealer.present}"/>
+        </not>
+      </and>
+    </condition>
+
+    <condition property="idp.ask.sealer.alias">
+      <!-- We ask for sealer alias if there is no sealer alias and no sealer -->
+      <and>
+        <not>
+          <isset property="idp.sealer.alias"/>
+        </not>
+        <not>
+          <istrue value="${idp.sealer.present}"/>
+        </not>
+      </and>
+    </condition>
   </target>
 
   <target name="signing-key" unless="idp.signing.present" depends="gethostname, geturisubjectaltname">
@@ -72,12 +153,16 @@
     <echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
     <selfsignedcert hostname="${idp.host.name}"
                     keystoreFile="${idp.target.dir}/creds/idp-tls.p12"
-                    keystorePassword="$(uri.keystore.password}"
+                    keystorePassword="$(idp.keystore.password}"
                     uriSubjectAltNames="${idp.uri.subject.alt.name}"/>
   </target>
 
-  <target name="sealer" unless="idp.sealer.present">
-    <echo>Gotta create that sealer</echo>
+  <target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
+    <echo>Creating sealer</echo>
+    <keystorestrategy keystoreFile="${idp.target.dir}/creds/sealer.jks"
+                      versionFile="${idp.target.dir}/creds/sealer.kver"
+  	              keyAlias="${idp.sealer.alias}"
+  	              keystorePassword="${idp.sealer.password}"/>
   </target>
 
   <!--
