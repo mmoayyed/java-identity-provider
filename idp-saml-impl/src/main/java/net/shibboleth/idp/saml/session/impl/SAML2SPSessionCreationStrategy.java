@@ -143,8 +143,6 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             expiration = now + sessionLifetime;
         }
         
-        // TODO: fix this to clone the NameID and populate any defaulted qualifiers.
-        
         return new SAML2SPSession(issuer, authCtx.getAuthenticationResult().getAuthenticationFlowId(),
                 now, expiration, result.getFirst().getSubject().getNameID(), result.getSecond().getSessionIndex());
     }
