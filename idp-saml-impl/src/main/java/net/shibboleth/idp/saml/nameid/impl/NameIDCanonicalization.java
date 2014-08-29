@@ -182,7 +182,7 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
                     (NameIDCanonicalizationFlowDescriptor) flowDescriptor;
 
             for (String testFormat : nameIDDescriptor.getFormats()) {
-                if (SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(testFormat, format)) {
+                if (SAML2ObjectSupport.areNameIDFormatsEquivalent(testFormat, format)) {
                     log.debug("NameIDCanonicalizationFlowDescriptor {}: format matches {}",
                             nameIDDescriptor.getId(), testFormat);
                     return true;

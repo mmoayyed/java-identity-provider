@@ -110,7 +110,7 @@ public class SAML2SPSession extends BasicSPSession {
             final NameID n1 = ((SAML2SPSession) obj).getNameID();
             final NameID n2 = nameID;
             if (n1 != null && n2 != null && Objects.equal(n1.getValue(), n2.getValue())
-                    && SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(n1.getFormat(), n2.getFormat())
+                    && SAML2ObjectSupport.areNameIDFormatsEquivalent(n1.getFormat(), n2.getFormat())
                     && Objects.equal(n1.getNameQualifier(), n2.getNameQualifier())
                     && Objects.equal(n1.getSPNameQualifier(), n2.getSPNameQualifier())) {
                 return Objects.equal(getSessionIndex(), ((SAML2SPSession) obj).getSessionIndex());

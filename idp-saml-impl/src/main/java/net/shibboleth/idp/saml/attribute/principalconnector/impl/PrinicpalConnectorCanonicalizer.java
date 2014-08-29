@@ -179,7 +179,7 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder  
             log.trace("Legacy Principal Decoder: looking at connector {}", connector.getId());
 
             if (connector.requesterMatches(c14nContext.getRequesterId()) &&
-                    SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(connector.getFormat(), nameID.getFormat())) {
+                    SAML2ObjectSupport.areNameIDFormatsEquivalent(connector.getFormat(), nameID.getFormat())) {
 
                 try {
                     final String result = connector.decode(c14nContext, nameID);

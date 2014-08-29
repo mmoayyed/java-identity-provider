@@ -29,6 +29,7 @@ import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestPr
 import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy;
 import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -36,7 +37,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 /** Base class for tests requiring a SessionManager component to be set up. */
-public class SessionManagerBaseTestCase {
+public class SessionManagerBaseTestCase extends OpenSAMLInitBaseTestCase {
     
     protected MemoryStorageService storageService;
     

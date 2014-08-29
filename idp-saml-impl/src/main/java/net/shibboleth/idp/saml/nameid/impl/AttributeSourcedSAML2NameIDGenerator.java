@@ -154,7 +154,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
             final Set<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof XMLObjectAttributeValue && value.getValue() instanceof NameID) {
-                    if (SAML2ObjectSupport.areNameIdentifierFormatsEquivalent(getFormat(),
+                    if (SAML2ObjectSupport.areNameIDFormatsEquivalent(getFormat(),
                             ((NameID) value.getValue()).getFormat())) {
                         log.info("Returning NameID from XMLObject-valued attribute {}", sourceId);
                         return (NameID) value.getValue();
