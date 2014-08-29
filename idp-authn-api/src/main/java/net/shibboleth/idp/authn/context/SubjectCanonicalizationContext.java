@@ -192,7 +192,7 @@ public class SubjectCanonicalizationContext extends BaseContext {
     }
 
     /**
-     * Get the last flow that was attemted for subject c14n.
+     * Get the last flow that was attempted for subject c14n.
      * 
      * @return last flow that was attempted for subject c14n
      */

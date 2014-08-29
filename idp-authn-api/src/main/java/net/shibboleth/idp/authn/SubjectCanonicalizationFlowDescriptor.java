@@ -29,7 +29,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
- * A descriptor for a subject canonicalication flow.
+ * A descriptor for a subject canonicalization flow.
  * 
  * <p>
  * A flow models a sequence of profile actions that performs canonicalization of a {@link javax.security.auth.Subject}

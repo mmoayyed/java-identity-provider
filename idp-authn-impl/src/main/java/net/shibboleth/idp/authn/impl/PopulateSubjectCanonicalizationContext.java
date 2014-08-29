@@ -78,7 +78,7 @@ public class PopulateSubjectCanonicalizationContext extends AbstractSubjectCanon
 
         log.debug("{} Installing {} canonicalization flows into SubjectCanonicalizationContext", getLogPrefix(),
                 availableFlows.size());
-        for (SubjectCanonicalizationFlowDescriptor desc : availableFlows) {
+        for (final SubjectCanonicalizationFlowDescriptor desc : availableFlows) {
             c14nContext.getPotentialFlows().put(desc.getId(), desc);
         }
     }
