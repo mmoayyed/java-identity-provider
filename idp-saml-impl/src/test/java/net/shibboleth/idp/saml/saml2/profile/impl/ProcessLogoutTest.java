@@ -160,7 +160,7 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));
         
-        sessionManager.destroySession(session.getId());
+        sessionManager.destroySession(session.getId(), false);
     }
 
     @Test public void testSessionOneSPSession() throws SessionException, ResolverException {
@@ -278,7 +278,7 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));
         
-        sessionManager.destroySession(session.getId());
+        sessionManager.destroySession(session.getId(), false);
     }
 
     @Test public void testTwoSessionsOneMatch() throws SessionException, ResolverException {
@@ -330,7 +330,7 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
         Assert.assertEquals(sp.getSessionIndex(), "index");
         
-        sessionManager.destroySession(session2.getId());
+        sessionManager.destroySession(session2.getId(), false);
     }
 
     @Test public void testTwoSessions() throws SessionException, ResolverException {
