@@ -147,7 +147,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertEquals(session.getLastActivityInstant(), lastActivity);
         
         // Test a destroy and a failed lookup.
-        sessionManager.destroySession(sessionId);
+        sessionManager.destroySession(sessionId, true);
         Assert.assertNull(sessionManager.resolveSingle(new CriteriaSet(new SessionIdCriterion(sessionId))));
     }
     
@@ -179,7 +179,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertTrue(two.checkAddress("fe80::ca2a:14ff:fe2a:3e04"));
         Assert.assertFalse(one.checkAddress("fe80::ca2a:14ff:fe2a:3e05"));
         
-        sessionManager.destroySession(session.getId());
+        sessionManager.destroySession(session.getId(), true);
     }
 
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
@@ -238,7 +238,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertTrue(session.removeAuthenticationResult(foo));
         Assert.assertNull(session2.getAuthenticationResult("AuthenticationFlow/Foo"));
         
-        sessionManager.destroySession(session.getId());
+        sessionManager.destroySession(session.getId(), true);
     }
     
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
@@ -286,7 +286,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertTrue(session.removeSPSession(foo));
         Assert.assertNull(session2.getSPSession("https://sp.example.org/shibboleth"));
         
-        sessionManager.destroySession(session.getId());
+        sessionManager.destroySession(session.getId(), true);
     }
     
     @Test
@@ -318,14 +318,14 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
                         ExtendedSPSession.SESSION_KEY))));
         Assert.assertEquals(sessions.size(), 2);
         
-        sessionManager.destroySession(session.getId());
+        sessionManager.destroySession(session.getId(), true);
         
         sessions = Lists.newArrayList(sessionManager.resolve(
                 new CriteriaSet(new SPSessionCriterion("https://sp2.example.org/shibboleth",
                         ExtendedSPSession.SESSION_KEY))));
         Assert.assertEquals(sessions.size(), 1);
         
-        sessionManager.destroySession(session2.getId());
+        sessionManager.destroySession(session2.getId(), true);
         sessions = Lists.newArrayList(sessionManager.resolve(
                 new CriteriaSet(new SPSessionCriterion("https://sp2.example.org/shibboleth",
                         ExtendedSPSession.SESSION_KEY))));

@@ -503,13 +503,16 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /** {@inheritDoc} */
-    @Override public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException {
+    @Override public void destroySession(@Nonnull @NotEmpty final String sessionId, final boolean unbind)
+            throws SessionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         // Note that this can leave entries in the secondary SPSession records, but those
         // will eventually expire outright, or can be cleaned up if the index is searched.
 
-        cookieManager.unsetCookie(cookieName);
+        if (unbind) {
+            cookieManager.unsetCookie(cookieName);
+        }
 
         try {
             storageService.deleteContext(sessionId);

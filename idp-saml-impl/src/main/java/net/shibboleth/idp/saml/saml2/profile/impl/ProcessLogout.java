@@ -286,7 +286,7 @@ public class ProcessLogout extends AbstractProfileAction {
                 }
                     
                 try {
-                    sessionManager.destroySession(session.getId());
+                    sessionManager.destroySession(session.getId(), true);
                 } catch (final SessionException e) {
                     log.error("{} Error destroying session {}", getLogPrefix(), session.getId(), e);
                     ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);

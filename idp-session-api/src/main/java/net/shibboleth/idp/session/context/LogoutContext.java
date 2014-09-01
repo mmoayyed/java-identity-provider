@@ -31,8 +31,14 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-/** A {@link BaseContext} that holds a set of {@link SPSession} objects. */
-public class LogoutContext extends BaseContext {
+/**
+ * A {@link BaseContext} that holds a multimap of {@link SPSession} objects.
+ * 
+ * <p>This context is used primarily to expose the {@link SPSession} objects for which logout is implicated.
+ * It also tracks the processing of actions that populate a {@link MultiRelyingPartyContext} tree containing
+ * detailed information on each relying party, typically for user interface considerations.</p>
+ */
+public final class LogoutContext extends BaseContext {
 
     /** SP sessions needing logout. */
     private Multimap<String,SPSession> sessionMap;

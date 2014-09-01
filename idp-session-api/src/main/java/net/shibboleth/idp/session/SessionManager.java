@@ -54,9 +54,11 @@ public interface SessionManager extends
      * object that may be in hand are guaranteed to function correctly. Their behavior is unspecified.</p>
      * 
      * @param sessionId the unique ID of the session to destroy
+     * @param unbind whether the session should be unbound from the client
      * 
      * @throws SessionException if the session cannot be destroyed
      */
-    public void destroySession(@Nonnull @NotEmpty final String sessionId) throws SessionException;
+    public void destroySession(@Nonnull @NotEmpty final String sessionId, final boolean unbind)
+            throws SessionException;
 
 }

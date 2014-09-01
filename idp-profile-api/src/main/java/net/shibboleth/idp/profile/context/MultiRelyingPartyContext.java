@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.context;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -43,6 +44,9 @@ import com.google.common.collect.Maps;
  * 
  * <p>The multiple parties may be accessed as a collection, by their name, or by "labels",
  * which are specific to a given profile/scenario.</p>
+ * 
+ * <p>The context also provides state management for flows to iterate over the relying parties
+ * in the context using an iterator and a "current" pointer.
  */
 public final class MultiRelyingPartyContext extends BaseContext {
 
@@ -51,6 +55,12 @@ public final class MultiRelyingPartyContext extends BaseContext {
     
     /** Multimap of RP contexts indexed by role. */
     @Nonnull @NonnullElements private ListMultimap<String,RelyingPartyContext> relyingPartyLabelMap;
+    
+    /** An iterator to track progress through the set of relying parties. */
+    @Nullable private Iterator<RelyingPartyContext> relyingPartyIterator;
+    
+    /** Tracks the context being operated on. */
+    @Nullable private RelyingPartyContext relyingPartyCtx;
     
     /** Constructor. */
     public MultiRelyingPartyContext() {
@@ -92,6 +102,48 @@ public final class MultiRelyingPartyContext extends BaseContext {
     }
     
     /**
+     * Get an iterator over the relying parties contained in the context.
+     * 
+     * <p>The first time this method is called, or if the parameter is set,
+     * it will return a fresh iterator; subsequent calls will return the same iterator.</p>
+     * 
+     * <p>Modification of the underlying collection while iterating is not supported.</p>
+     * 
+     * @param fresh if true, a new iterator will be created and returned
+     * 
+     * @return an iterator over the relying parties contained in the context
+     */
+    @Nonnull public Iterator<RelyingPartyContext> getRelyingPartyContextIterator(final boolean fresh) {
+        if (fresh || relyingPartyIterator == null) {
+            relyingPartyIterator = new RelyingPartyContextIterator(this);
+        }
+        return relyingPartyIterator;
+    }
+
+    /**
+     * Equivalent to calling {@link #getRelyingPartyContextIterator(boolean)} with a parameter of "false".
+     * 
+     * @return an iterator over the relying parties contained in the context
+     */
+    @Nonnull public Iterator<RelyingPartyContext> getRelyingPartyContextIterator() {
+        return getRelyingPartyContextIterator(false);
+    }
+    
+    /**
+     * Get the {@link RelyingPartyContext} pointed to by an iterator.
+     * 
+     * @return  the current position of the last iterator returned by {@link #getRelyingPartyContextIterator()}.
+     */
+    @Nullable public RelyingPartyContext getCurrentRelyingPartyContext() {
+        
+        if (relyingPartyIterator != null) {
+            return ((RelyingPartyContextIterator) relyingPartyIterator).current;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
      * Add a RP context associated with a label.
      * 
      * @param label the label to associate with the context
@@ -121,6 +173,51 @@ public final class MultiRelyingPartyContext extends BaseContext {
         
         relyingPartyIdMap.remove(context.getRelyingPartyId());
         relyingPartyLabelMap.remove(trimmed, context);
+    }
+    
+    /**
+     * Wrapper for an iterator that tracks the current object.
+     */
+    private class RelyingPartyContextIterator implements Iterator<RelyingPartyContext> {
+
+        /** Outer ctx. */
+        @Nonnull private final MultiRelyingPartyContext multiCtx;
+        
+        /** Embedded iterator. */
+        @Nonnull private final Iterator<RelyingPartyContext> iterator;
+        
+        /** Current marker. */
+        @Nullable private RelyingPartyContext current;
+        
+        /**
+         * Constructor.
+         * 
+         * @param ctx outer context
+         */
+        public RelyingPartyContextIterator(@Nonnull final MultiRelyingPartyContext ctx) {
+            multiCtx = ctx;
+            iterator = ctx.relyingPartyIdMap.values().iterator();
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public RelyingPartyContext next() {
+            current = iterator.next();
+            return current;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void remove() {
+            iterator.remove();
+            current = null;
+        }
     }
     
 }
