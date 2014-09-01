@@ -25,7 +25,7 @@ if defined CLASSPATH (
 )
 
 REM add in the dependency .jar files
-for %%i in (%ANT_HOME%\lib\*.jar) do (
+for %%i in (%ANT_HOME%\..\utils-lib\*.jar) do (
 	call %ANT_HOME%\cpappend.bat %%i
 )
 

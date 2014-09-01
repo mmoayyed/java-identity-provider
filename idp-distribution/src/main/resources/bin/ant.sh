@@ -35,7 +35,7 @@ if [ -n "$CLASSPATH" ] ; then
 fi
 
 # add in the dependency .jar files
-DIRLIBS=${ANT_HOME}/lib/*.jar
+DIRLIBS=${ANT_HOME}/../utils-lib/*.jar
 for i in ${DIRLIBS}
 do
     # if the directory is empty, then it will return the input string

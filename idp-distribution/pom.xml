@@ -27,6 +27,12 @@
 
         <!-- Runtime Dependencies -->
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-installer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
             <groupId>net.shibboleth.utilities.jetty9</groupId>
             <artifactId>jetty9-dta-ssl</artifactId>
             <version>${jetty9-dta-ssl.version}</version>
@@ -52,6 +58,13 @@
   		    <groupId>org.apache.ant</groupId>
 		    <artifactId>ant</artifactId>
 		    <version>1.9.4</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+  		    <groupId>org.apache.ant</groupId>
+		    <artifactId>ant-launcher</artifactId>
+		    <version>1.9.4</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Test Dependencies -->
@@ -145,7 +158,7 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                    <!-- Copy runtime dependencies to bin/lib directory. -->
+                    <!-- Copy runtime dependencies to utils-lib directory. -->
                     <execution>
                         <id>copy-runtime-dependencies</id>
                         <phase>prepare-package</phase>
@@ -154,6 +167,10 @@
                         </goals>
                         <configuration>
                             <artifactItems>
+                                <artifactItem>
+						            <groupId>${project.groupId}</groupId>
+						            <artifactId>idp-installer</artifactId>
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>com.beust</groupId>
                                     <artifactId>jcommander</artifactId>
@@ -166,8 +183,12 @@
                                     <groupId>org.apache.ant</groupId>
                                     <artifactId>ant</artifactId>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.ant</groupId>
+                                    <artifactId>ant-launcher</artifactId>
+                                </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${assembly-directory}/bin/lib/</outputDirectory>
+                            <outputDirectory>${assembly-directory}/utils-lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
