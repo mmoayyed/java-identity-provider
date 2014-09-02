@@ -10,7 +10,6 @@
 	default-init-method="initialize" default-destroy-method="destroy">
 
     <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
-    
     <bean id="shibboleth.SPSessionSerializerRegistry" parent="shibboleth.DefaultSPSessionSerializerRegistry">
         <property name="mappings">
             <map merge="true">
@@ -18,4 +17,14 @@
         </property>
     </bean>
 
+    <!-- Includes defaults for SAML session types. -->
+    <util:map id="shibboleth.SessionTypeProtocolMap" >
+        <entry key="#{T(net.shibboleth.idp.saml.session.SAML1SPSession)}">
+            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
+        </entry>
+        <entry key="#{T(net.shibboleth.idp.saml.session.SAML2SPSession)}">
+            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
+        </entry>
+    </util:map>
+    
 </beans>

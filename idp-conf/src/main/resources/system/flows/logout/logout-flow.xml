@@ -6,6 +6,7 @@
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="ProcessLogout" />
         <evaluate expression="LogoutPopulateAuditContext" />
+        <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="LogoutView" />
