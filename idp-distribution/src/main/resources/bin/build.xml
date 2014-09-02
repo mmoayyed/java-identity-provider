@@ -364,7 +364,7 @@
     </copy>
     <mkdir dir="${idp.target.dir}/conf"/>
     <mkdir dir="${idp.target.dir}/creds"/>
-    <mkdir dir="${idp.target.dir}/disk"/>
+    <mkdir dir="${idp.target.dir}/dist"/>
     <copy todir="${idp.target.dir}/dist">
       <fileset dir="${idp.src.dir}/dist"/>
     </copy>
