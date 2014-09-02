@@ -48,7 +48,6 @@
         </dependency>
         <!-- Required if you're using classes from the security package. -->
         <dependency>
-            <!-- Required if you're using classes from the security package. -->
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <optional>true</optional>
@@ -66,7 +65,23 @@
             <version>1.9.4</version>
             <scope>runtime</scope>
         </dependency>
-
+        <!-- Logging dependencies. https://issues.shibboleth.net/jira/browse/JPAR-57 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${slf4j.groupId}</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
         <!-- Test Dependencies -->
 
         <!-- Managed Dependencies -->
@@ -189,6 +204,31 @@
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${assembly-directory}/utils-lib/</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <!-- Copy logging dependencies to WEB-INF/lib directory. -->
+                    <execution>
+                        <id>copy-logging-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-classic</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-core</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${slf4j.groupId}</groupId>
+                                    <artifactId>jcl-over-slf4j</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${assembly-directory}/war/WEB-INF/lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
