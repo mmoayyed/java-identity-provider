@@ -2,4 +2,5 @@
 <antlib>
     <taskdef name="selfsignedcert" classname="net.shibboleth.idp.installer.ant.SelfSignedCertificateGeneratorTask"/>
     <taskdef name="keystorestrategy" classname="net.shibboleth.idp.installer.ant.BasicKeystoreKeyStrategyTask"/>
+    <taskdef name="mergeproperties" classname="net.shibboleth.idp.installer.ant.MergeProperties"/>
 </antlib>

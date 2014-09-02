@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Shibboleth Identity Provider V3" basedir=".." default="upgrade">
+<project name="Shibboleth Identity Provider V3" basedir=".." default="install">
 
   <taskdef resource="net/shibboleth/idp/installer/ant.xml"/>
 
@@ -29,7 +29,7 @@
         idp.sealer.password:
         idp.sealer.alias:
         idp.keystore.password:
-        
+        idp.merge.properties: The name of a property file to merge with idp.properties
         
         The property idp.noprompt will cause a failure rather than a prompt.
     -->
@@ -70,19 +70,26 @@
 
   <target name="getsource" unless="idp.src.dir" depends="checkproperties">
     <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Source (Distribution) Directory" addproperty="idp.src.dir"/>
+    <input message="Source (Distribution) Directory" addproperty="idp.src.dir" defaultvalue="${basedir}"/>
   </target>
 
-  <target name="gettarget" depends="prompttarget, settarget"/>
+  <target name="gettarget" depends="target-properties, prompttarget, settarget"/>
 
-  <target name="prompttarget" if="idp.ask.target" depends="checkproperties">
+  <target name="prompttarget" if="idp.ask.target">
     <fail if="idp.noprompt">Input needed, silence demanded</fail>
     <input message="Target (Install to) Directory" addproperty="idp.target.dir" defaultvalue="${basedir}"/>
   </target>
 
-  <target name="settarget" if="idp.set.target" depends="checkproperties">
-    <echo>ist=${idp.set.target} inp=${idp.noprompt} iat=${idp.ask.target} itd=${idp.target.dir}</echo>
+  <target name="settarget" if="idp.set.target" >
     <property name="idp.target.dir" value="${basedir}"/>
+  </target>
+
+  <target name="getentityid" if="idp.ask.entityid" depends="checkproperties">
+    <fail if="idp.noprompt">Input needed, silence demanded</fail>
+    <local name="entityid"/>
+    <input message="EntityID" addproperty="entityid" defaultvalue="https://${idp.host.name}/shibboleth/idp"/>
+    <echo file="replace.properties">idp.entityID=${entityid}</echo>
+    <property name="idp.merge.properties" value="replace.properties"/>
   </target>
 
   <!--
@@ -95,11 +102,12 @@
 
   <target name="genkeys" depends="init, checkproperties, signing-key, encryption-key, keystore, sealer"/>
 
-  <target name="checkproperties">
+  <target name="checkproperties" depends="gettarget">
     <available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt"/>
     <available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt"/>
     <available property="idp.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12"/>
     <available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver"/>
+    <available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties"/>
     <condition property="idp.will.call.certgen">
       <!-- we will call the cert gen if
            EITHER we don't have a signing key
@@ -174,6 +182,21 @@
       </and>
     </condition>
 
+    <condition property="idp.ask.entityid">
+      <!-- Ask for EntityID if this is not an upgrade and the property file wasn't provided -->
+      <and>
+        <not>
+          <isset property="idp.merge.properties"/>
+        </not>
+        <not>
+          <istrue value="${idp.properties.present}"/>
+        </not>
+      </and>
+    </condition>
+
+  </target>
+
+  <target name="target-properties">
     <condition property="idp.ask.target">
       <and>
         <not>
@@ -216,7 +239,7 @@
     <echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
     <selfsignedcert hostname="${idp.host.name}"
                     keystoreFile="${idp.target.dir}/creds/idp-tls.p12"
-                    keystorePassword="$(idp.keystore.password}"
+                    keystorePassword="${idp.keystore.password}"
                     uriSubjectAltNames="${idp.uri.subject.alt.name}"/>
   </target>
 
@@ -234,7 +257,7 @@
 
     -->
 
-  <target name="upgrade">
+  <target name="upgrade" depends="editproperties">
     <!-- conf -->
     <mkdir  dir="${idp.target.dir}/conf"/>
     <copy todir="${idp.target.dir}/conf">
@@ -267,6 +290,13 @@
     </copy>
   </target>
 
+  <target name="editproperties" depends="gettarget, getentityid" unless="idp.properties.present">
+    <mkdir dir="${idp.target.dir}/conf"/>
+    <mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties.dist"
+                     outFile="${idp.target.dir}/conf/idp.properties"
+                     mergeFile="${idp.merge.properties}"/>
+  </target>
+
   <!--
 
      CREATE WAR FILE
@@ -282,7 +312,7 @@
     <jar destfile="${idp.target.dir}/idp.war" basedir="${idp.target.dir}/war"/>
   </target>
 
-  <target name="copy-distribution" depends="init, gettarget, getsource">
+  <target name="copy-distribution" depends="init, getsource, gettarget">
     <local name="target"/>
     <property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}"/>
 
@@ -334,29 +364,36 @@
     </copy>
     <mkdir dir="${idp.target.dir}/conf"/>
     <mkdir dir="${idp.target.dir}/creds"/>
+    <mkdir dir="${idp.target.dir}/disk"/>
     <copy todir="${idp.target.dir}/dist">
       <fileset dir="${idp.src.dir}/dist"/>
     </copy>
+    <mkdir dir="${idp.target.dir}/doc"/>
     <copy todir="${idp.target.dir}/doc">
       <fileset dir="${idp.src.dir}/doc"/>
     </copy>
     <mkdir dir="${idp.target.dir}/edit-webapp"/>
     <mkdir dir="${idp.target.dir}/flows"/>
+    <mkdir dir="${idp.target.dir}/jetty-base"/>
     <copy todir="${idp.target.dir}/jetty-base">
       <fileset dir="${idp.src.dir}/jetty-base"/>
     </copy>
     <mkdir dir="${idp.target.dir}/logs"/>
     <mkdir dir="${idp.target.dir}/metadata"/>
+    <mkdir dir="${idp.target.dir}/misc"/>
     <copy todir="${idp.target.dir}/misc">
       <fileset dir="${idp.src.dir}/misc"/>
     </copy>
+    <mkdir dir="${idp.target.dir}/system"/>
     <copy todir="${idp.target.dir}/system">
       <fileset dir="${idp.src.dir}/system"/>
     </copy>
+    <mkdir dir="${idp.target.dir}/utils-lib"/>
     <copy todir="${idp.target.dir}/utils-lib">
       <fileset dir="${idp.src.dir}/utils-lib"/>
     </copy>
     <mkdir dir="${idp.target.dir}/flows"/>
+    <mkdir dir="${idp.target.dir}/war"/>
     <copy todir="${idp.target.dir}/war">
       <fileset dir="${idp.src.dir}/war"/>
     </copy>
