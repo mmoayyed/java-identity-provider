@@ -31,7 +31,7 @@
             <artifactId>idp-installer</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>net.shibboleth.utilities.jetty9</groupId>
             <artifactId>jetty9-dta-ssl</artifactId>
@@ -55,15 +55,15 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-  		    <groupId>org.apache.ant</groupId>
-		    <artifactId>ant</artifactId>
-		    <version>1.9.4</version>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.9.4</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
-  		    <groupId>org.apache.ant</groupId>
-		    <artifactId>ant-launcher</artifactId>
-		    <version>1.9.4</version>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-launcher</artifactId>
+            <version>1.9.4</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -86,7 +86,7 @@
                         </goals>
                         <configuration>
                             <includeEmptyDirs>true</includeEmptyDirs>
-                             <outputDirectory>${assembly-directory}</outputDirectory>
+                            <outputDirectory>${assembly-directory}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources</directory>
@@ -168,8 +168,8 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-						            <groupId>${project.groupId}</groupId>
-						            <artifactId>idp-installer</artifactId>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>idp-installer</artifactId>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.beust</groupId>
