@@ -173,7 +173,7 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                    <!-- Copy runtime dependencies to utils-lib directory. -->
+                    <!-- Copy runtime dependencies to bin\lib directory. -->
                     <execution>
                         <id>copy-runtime-dependencies</id>
                         <phase>prepare-package</phase>
@@ -203,7 +203,7 @@
                                     <artifactId>ant-launcher</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${assembly-directory}/utils-lib/</outputDirectory>
+                            <outputDirectory>${assembly-directory}/bin/lib/</outputDirectory>
                         </configuration>
                     </execution>
                     <!-- Copy logging dependencies to WEB-INF/lib directory. -->

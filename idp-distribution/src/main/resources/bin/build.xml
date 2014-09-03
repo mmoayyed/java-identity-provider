@@ -36,17 +36,20 @@
 
   <target name="init">
     <tstamp/>
+    <hostinfo/>
   </target>
 
-  <target name="install" depends="init, gettarget, copy-distribution, install-nocopy"/>
-  <target name="install-nocopy" depends="init, gettarget, genkeys, upgrade, build-war"/>
-  <target name="v2upgrade" depends="init, gettarget, v2v3prepopulate, copy-distribution, install-nocopy"/>
-  <target name="v2upgrade-nocopy" depends="init, gettarget, v2v3prepopulate, install-nocopy"/>
+  <target name="install" depends="init, getsource, allinput, copy-distribution, install-nocopy"/>
+  <target name="install-nocopy" depends="init, allinput, genkeys, upgrade, build-war"/>
+  <target name="v2upgrade" depends="init, getsource, allinput, v2v3prepopulate, copy-distribution, install-nocopy"/>
+  <target name="v2upgrade-nocopy" depends="init, allinput, v2v3prepopulate, install-nocopy"/>
 
   <!-- USER INPUT -->
+  <target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid" />
+
   <target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
     <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Hostname" addproperty="idp.host.name"/>
+    <input message="Hostname" addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}"/>
   </target>
 
   <target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties">
@@ -68,16 +71,25 @@
     <input message="Sealer Alias" addproperty="idp.sealer.alias"/>
   </target>
 
-  <target name="getsource" unless="idp.src.dir" depends="checkproperties">
+  <target name="getsource" unless="idp.src.dir" >
     <fail if="idp.noprompt">Input needed, silence demanded</fail>
     <input message="Source (Distribution) Directory" addproperty="idp.src.dir" defaultvalue="${basedir}"/>
   </target>
 
-  <target name="gettarget" depends="target-properties, prompttarget, settarget"/>
+  <target name="gettarget" depends="target-properties, target-src-default, target-nosrc-default, prompttarget, settarget"/>
+  <target name="target-src-default" unless="idp.src.dir.present">
+    <!-- if the source isn't set up then the default is basedir -->
+    <property name="idp.target.default" value="${basedir}"/>
+  </target>
+
+  <target name="target-nosrc-default" if="idp.src.dir.present">
+    <!-- if the source is set up then the default must not be basedir -->
+    <property name="idp.target.default" value="/opt/shibboleth/idp"/>
+  </target>
 
   <target name="prompttarget" if="idp.ask.target">
     <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Target (Install to) Directory" addproperty="idp.target.dir" defaultvalue="${basedir}"/>
+    <input message="Target (Install to) Directory" addproperty="idp.target.dir" defaultvalue="${idp.target.default}"/>
   </target>
 
   <target name="settarget" if="idp.set.target" >
@@ -217,6 +229,9 @@
       </and>
     </condition>
 
+    <condition property="idp.src.dir.present">
+      <isset property="idp.src.dir"/>
+    </condition> 
   </target>
 
   <target name="signing-key" unless="idp.signing.present" depends="gethostname, geturisubjectaltname">
@@ -312,6 +327,7 @@
     <jar destfile="${idp.target.dir}/idp.war" basedir="${idp.target.dir}/war"/>
   </target>
 
+  <!-- specify getsource before get target to force target default-->
   <target name="copy-distribution" depends="init, getsource, gettarget">
     <local name="target"/>
     <property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}"/>
@@ -322,7 +338,7 @@
 
     <!-- NOTE - move task appears to be very flaky - at least on windows.  This is why we
          copy with a force overwrite and then explicitly delete -->
-    <copy todir="${target}/bin" failonerror="false">
+    <copy todir="${target}/bin" failonerror="false" >
       <fileset dir="${idp.target.dir}/bin"/>
     </copy>
     <copy todir="${target}/dist" failonerror="false">
@@ -340,23 +356,22 @@
     <copy todir="${target}/system" failonerror="false">
       <fileset dir="${idp.target.dir}/system"/>
       </copy>
-    <copy todir="${target}/utils-lib" failonerror="false">
-      <fileset dir="${idp.target.dir}/utils-lib"/>
-      </copy>
     <copy todir="${target}/war" failonerror="false">
       <fileset dir="${idp.target.dir}/war"/>
       </copy>
 
-    <!-- DO NOT DELETE BIN -->
+    <!-- Do not delete bin, this preserves user scripts.  
+         Delete bin/lib so as to clear up old jar files. -->
+    <delete dir="${idp.target.dir}/bin/lib" failonerror="false"/>
     <delete dir="${idp.target.dir}/dist" failonerror="false"/>
     <delete dir="${idp.target.dir}/doc" failonerror="false"/>
     <delete dir="${idp.target.dir}/jettty-base" failonerror="false"/>
     <delete dir="${idp.target.dir}/misc" failonerror="false"/>
     <delete dir="${idp.target.dir}/system" failonerror="false"/>
-    <delete dir="${idp.target.dir}/utils-lib" failonerror="false"/>
     <delete dir="${idp.target.dir}/war" failonerror="false"/>
 
-    <!-- now copy or create empty as required.  Creating an existing file is benign, bin gets 
+    <!-- Now copy or create empty as required.  
+         Creating an existing file is benign, bin gets 
          updated -->
 
     <copy todir="${idp.target.dir}/bin" overwrite="true">
@@ -364,7 +379,6 @@
     </copy>
     <mkdir dir="${idp.target.dir}/conf"/>
     <mkdir dir="${idp.target.dir}/creds"/>
-    <mkdir dir="${idp.target.dir}/dist"/>
     <copy todir="${idp.target.dir}/dist">
       <fileset dir="${idp.src.dir}/dist"/>
     </copy>
@@ -374,26 +388,18 @@
     </copy>
     <mkdir dir="${idp.target.dir}/edit-webapp"/>
     <mkdir dir="${idp.target.dir}/flows"/>
-    <mkdir dir="${idp.target.dir}/jetty-base"/>
     <copy todir="${idp.target.dir}/jetty-base">
       <fileset dir="${idp.src.dir}/jetty-base"/>
     </copy>
     <mkdir dir="${idp.target.dir}/logs"/>
     <mkdir dir="${idp.target.dir}/metadata"/>
-    <mkdir dir="${idp.target.dir}/misc"/>
     <copy todir="${idp.target.dir}/misc">
       <fileset dir="${idp.src.dir}/misc"/>
     </copy>
-    <mkdir dir="${idp.target.dir}/system"/>
     <copy todir="${idp.target.dir}/system">
       <fileset dir="${idp.src.dir}/system"/>
     </copy>
-    <mkdir dir="${idp.target.dir}/utils-lib"/>
-    <copy todir="${idp.target.dir}/utils-lib">
-      <fileset dir="${idp.src.dir}/utils-lib"/>
-    </copy>
     <mkdir dir="${idp.target.dir}/flows"/>
-    <mkdir dir="${idp.target.dir}/war"/>
     <copy todir="${idp.target.dir}/war">
       <fileset dir="${idp.src.dir}/war"/>
     </copy>
