@@ -87,10 +87,7 @@
             p:namespaceAware="true">
         <property name="builderAttributes">
             <map>
-                <entry>
-                    <key>
-                        <value>http://apache.org/xml/properties/security-manager</value>
-                    </key>
+                <entry key="http://apache.org/xml/properties/security-manager">
                     <bean id="shibboleth.XercesSecurityManager"
                         class="%{idp.xml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}" />
                 </entry>
@@ -98,17 +95,14 @@
         </property>
         <property name="builderFeatures">
             <map>
-                <entry>
-                    <key>
-                        <value>http://apache.org/xml/features/disallow-doctype-decl</value>
-                    </key>
-                    <util:constant static-field="java.lang.Boolean.TRUE"/>
+                <entry key="http://apache.org/xml/features/disallow-doctype-decl">
+                    <util:constant static-field="java.lang.Boolean.TRUE" />
                 </entry>
-                <entry>
-                    <key>
-                        <value>http://apache.org/xml/features/validation/schema/normalized-value</value>
-                    </key>
-                    <util:constant static-field="java.lang.Boolean.FALSE"/>
+                <entry key="http://apache.org/xml/features/validation/schema/normalized-value">
+                    <util:constant static-field="java.lang.Boolean.FALSE" />
+                </entry>
+                <entry key="http://javax.xml.XMLConstants/feature/secure-processing">
+                    <util:constant static-field="java.lang.Boolean.TRUE" />
                 </entry>
             </map>
         </property>
