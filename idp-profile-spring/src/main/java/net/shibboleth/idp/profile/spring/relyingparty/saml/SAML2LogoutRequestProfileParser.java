@@ -25,7 +25,7 @@ import org.w3c.dom.Element;
 
 /**
  * Parser to generate {@link SingleLogoutProfileConfiguration} from a
- * <code>saml:SAML2ArtifactResolutionProfile</code>.
+ * <code>saml:SAML2LogoutRequestProfile</code>.
  */
 public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurationParser {
 
@@ -47,4 +47,5 @@ public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurati
     @Override protected String getProfileBeanNamePrefix() {
         return "shibboleth.SAML2.Logout.";
     }
+    
 }

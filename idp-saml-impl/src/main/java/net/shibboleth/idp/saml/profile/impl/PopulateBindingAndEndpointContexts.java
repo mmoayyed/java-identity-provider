@@ -60,7 +60,6 @@ import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EndpointCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.IndexedEndpoint;
 import org.slf4j.Logger;
@@ -149,7 +148,6 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     
     /** Constructor. */
     public PopulateBindingAndEndpointContexts() {
-        endpointType = AssertionConsumerService.DEFAULT_ELEMENT_NAME;
         bindingDescriptors = Collections.emptyList();
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
@@ -182,10 +180,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
      * 
      * @param type  type of endpoint to resolve
      */
-    public void setEndpointType(@Nonnull final QName type) {
+    public void setEndpointType(@Nullable final QName type) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        endpointType = Constraint.isNotNull(type, "Endpoint type cannot be null");
+        endpointType = type;
     }
     
     /**
@@ -302,12 +300,15 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             throw new ComponentInitializationException("EndpointResolver cannot be null");
         }
         
-        endpointBuilder = XMLObjectSupport.getBuilder(endpointType);
-        if (endpointBuilder == null) {
-            throw new ComponentInitializationException("Unable to obtain builder for endpoint type " + endpointType);
-        } else if (!(endpointBuilder.buildObject(endpointType) instanceof Endpoint)) {
-            throw new ComponentInitializationException("Builder for endpoint type " + endpointType
-                    + " did not result in Endpoint object");
+        if (endpointType != null) {
+            endpointBuilder = XMLObjectSupport.getBuilder(endpointType);
+            if (endpointBuilder == null) {
+                throw new ComponentInitializationException("Unable to obtain builder for endpoint type "
+                        + endpointType);
+            } else if (!(endpointBuilder.buildObject(endpointType) instanceof Endpoint)) {
+                throw new ComponentInitializationException("Builder for endpoint type " + endpointType
+                        + " did not result in Endpoint object");
+            }
         }
     }
     
@@ -356,6 +357,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         if (handleSynchronousRequest(profileRequestContext)) {
+            return;
+        } else if (endpointType == null) {
+            log.error("Front-channel binding used, but no endpoint type set");
+            ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
             return;
         }
         

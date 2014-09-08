@@ -23,7 +23,9 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="http://shibboleth.net/ns/profiles/logout" />
+        p:profileId="http://shibboleth.net/ns/profiles/logout"
+        p:loggingId="%{idp.service.logging.logout:Logout}"
+        p:browserProfile="true" />
 
     <bean id="ProcessLogout"
         class="net.shibboleth.idp.session.impl.ProcessLogout" scope="prototype"

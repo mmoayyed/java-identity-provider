@@ -57,6 +57,14 @@
         </div>
       </div>
 
+      <p align="center">
+      #if ( $asynchronous )
+        <iframe width="800" src="$flowExecutionUrl&_eventId_AsyncLogout" />
+      #else
+        <iframe width="800" src="$flowExecutionUrl&_eventId_proceed" />
+      #end
+      </p>
+      
       <footer>
         <div class="container container-footer">
           <p class="footer-text">Insert your footer text here.</p>

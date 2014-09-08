@@ -1,0 +1,81 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+      abstract="true" parent="saml.abstract">
+
+    <!-- Bootstrap action has to be at the "top" of the flow after this flow prepends itself to parent. -->
+    
+    <action-state id="InitializeProfileRequestContext">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="DecodeMessage" />
+    </action-state>
+
+    <action-state id="DoProfileWork">
+        <evaluate expression="ProcessLogout" />
+        <evaluate expression="LogoutPopulateAuditContext" />
+        <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
+
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="LogoutView" />
+    </action-state>
+
+    <view-state id="LogoutView" view="logout">
+        <on-render>
+            <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
+            <evaluate expression="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() != null and !opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()" result="viewScope.asynchronous" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="viewScope.logoutContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext))" result="viewScope.multiRelyingPartyContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+        </on-render>
+        <transition on="proceed" to="BuildResponse" />
+        <transition on="AsyncLogout" to="HandleErrorWithView" />
+    </view-state>
+    
+    <action-state id="BuildResponse">
+        <evaluate expression="AddLogoutResponse" />
+        <evaluate expression="AddInResponseToToResponse" />
+        
+        <evaluate expression="PostResponsePopulateAuditContext" />
+        
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ReturnToParentFlow" />
+    </action-state>
+
+    <!-- Error Response Generation -->
+
+    <decision-state id="HandleError">
+        <on-entry>
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
+        </on-entry>
+        <if test="LocalErrorPredicate.apply(opensamlProfileRequestContext)"
+            then="HandleErrorWithView" else="HandleErrorWithResponse" />
+    </decision-state>
+
+    <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
+
+    <action-state id="HandleErrorWithResponse">
+        <evaluate expression="AddLogoutResponse" />
+        <evaluate expression="AddInResponseToToResponse" />
+        <evaluate expression="AddStatusToResponse" />
+        <evaluate expression="PostResponsePopulateAuditContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="CallErrorSubflow" />
+        <transition to="HandleErrorWithView" />
+    </action-state>
+
+    <subflow-state id="CallErrorSubflow" subflow="error/saml-frontchannel">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="ReturnToParentFlow" />
+        <transition to="HandleErrorWithView" />
+    </subflow-state>
+
+    <bean-import resource="slo-front-abstract-beans.xml" />
+
+</flow>

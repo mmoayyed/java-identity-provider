@@ -11,10 +11,6 @@
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 	
-    
-    
-	<!-- TODO establish correct values for Logout InboundFlowId -->
-
     <!--  SAML2 -->
     <bean id="shibboleth.SAML2.Artifact.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/soap" />
@@ -22,7 +18,7 @@
     <bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
         c:_0="%{idp.artifact.endpointIndex:1}" />
     <bean id="shibboleth.SAML2.Logout.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/saml2-logout" /><!-- TODO -->
+        c:_0="security-policy/saml2-slo" />
 
     <bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
         c:_0="%{idp.artifact.endpointIndex:1}" />

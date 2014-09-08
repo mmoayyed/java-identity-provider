@@ -21,6 +21,9 @@
     
     <import resource="common-beans.xml" />
     
+    <util:constant id="shibboleth.EndpointType"
+        static-field="org.opensaml.saml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME" />
+    
     <bean id="InitializeMessageChannelSecurityContext"
         class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
         p:confidentialityActive="false" p:integrityActive="false" />

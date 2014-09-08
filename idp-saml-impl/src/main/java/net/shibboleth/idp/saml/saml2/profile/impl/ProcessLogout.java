@@ -46,6 +46,7 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
+import org.opensaml.saml.ext.saml2aslo.Asynchronous;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.SessionIndex;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
@@ -231,6 +232,11 @@ public class ProcessLogout extends AbstractProfileAction {
             log.warn("{} No LogoutRequest found to process", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
+        }
+        
+        if (log.isDebugEnabled() && logoutRequest.getExtensions() != null
+                && !logoutRequest.getExtensions().getUnknownXMLObjects(Asynchronous.DEFAULT_ELEMENT_NAME).isEmpty()) {
+            log.debug("{} LogoutRequest contained Asynchronous extension", getLogPrefix());
         }
         
         return true;

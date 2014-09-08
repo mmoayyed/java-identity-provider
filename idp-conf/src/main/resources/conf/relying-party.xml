@@ -37,6 +37,7 @@
                 <ref bean="SAML1.ArtifactResolution" />
                 <ref bean="SAML2.SSO" />
                 <ref bean="SAML2.ECP" />
+                <ref bean="SAML2.Logout" />
                 <ref bean="SAML2.AttributeQuery" />
                 <ref bean="SAML2.ArtifactResolution" />
             </util:list>
@@ -71,6 +72,7 @@
                         -->
                     </bean>
                     <ref bean="SAML2.ECP" />
+                    <ref bean="SAML2.Logout" />
                     <ref bean="SAML2.AttributeQuery" />
                     <ref bean="SAML2.ArtifactResolution" />
                 </util:list>

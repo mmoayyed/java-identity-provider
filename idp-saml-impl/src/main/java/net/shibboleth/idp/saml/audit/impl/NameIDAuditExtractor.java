@@ -27,12 +27,13 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.AuthorizationDecisionStatement;
 import org.opensaml.saml.saml1.core.SubjectStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
+import org.opensaml.saml.saml2.core.LogoutRequest;
 
 import com.google.common.base.Function;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link Function} that returns the Name Identifier from an assertion in a response. */
+/** {@link Function} that returns the Name Identifier from a request or response. */
 public class NameIDAuditExtractor implements Function<ProfileRequestContext,String> {
 
     /** Lookup strategy for message to read from. */
@@ -51,27 +52,33 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
     /** {@inheritDoc} */
     @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
-        SAMLObject response = responseLookupStrategy.apply(input);
-        if (response != null) {
+        SAMLObject msg = responseLookupStrategy.apply(input);
+        if (msg != null) {
             
             // Step down into ArtifactResponses.
-            if (response instanceof ArtifactResponse) {
-                response = ((ArtifactResponse) response).getMessage();
+            if (msg instanceof ArtifactResponse) {
+                msg = ((ArtifactResponse) msg).getMessage();
             }
             
-            if (response instanceof org.opensaml.saml.saml2.core.Response) {
+            if (msg instanceof org.opensaml.saml.saml2.core.Response) {
                 
                 for (final org.opensaml.saml.saml2.core.Assertion assertion
-                        : ((org.opensaml.saml.saml2.core.Response) response).getAssertions()) {
+                        : ((org.opensaml.saml.saml2.core.Response) msg).getAssertions()) {
                     if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
                         return assertion.getSubject().getNameID().getValue();
                     }
                 }
                 
-            } else if (response instanceof org.opensaml.saml.saml1.core.Response) {
+            } else if (msg instanceof LogoutRequest) {
+                
+                if (((LogoutRequest) msg).getNameID() != null) {
+                    return ((LogoutRequest) msg).getNameID().getValue();
+                }
+                
+            } else if (msg instanceof org.opensaml.saml.saml1.core.Response) {
 
                 for (final org.opensaml.saml.saml1.core.Assertion assertion
-                        : ((org.opensaml.saml.saml1.core.Response) response).getAssertions()) {
+                        : ((org.opensaml.saml.saml1.core.Response) msg).getAssertions()) {
                     for (final AuthenticationStatement statement : assertion.getAuthenticationStatements()) {
                         if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
                             return statement.getSubject().getNameIdentifier().getValue();

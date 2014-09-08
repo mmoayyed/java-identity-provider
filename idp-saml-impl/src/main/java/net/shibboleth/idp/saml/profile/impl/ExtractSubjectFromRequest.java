@@ -141,7 +141,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
 
         nameIdentifier = msgCtx.getSubcontext(SAMLSubjectNameIdentifierContext.class, true).getSubjectNameIdentifier();
         if (nameIdentifier == null) {
-            log.debug("{} No NameID or NameIdentifier in message", getLogPrefix());
+            log.debug("{} No Subject NameID or NameIdentifier in message", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, NO_SUBJECT);
             return false;
         }
@@ -162,7 +162,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
         final Subject subject;
         if (nameIdentifier instanceof NameIdentifier) {
             log.debug("{} Creating Subject for canonicalization around NameIdentifier {}", getLogPrefix(),
-                    ((NameIdentifier) nameIdentifier).getNameIdentifier());
+                    ((NameIdentifier) nameIdentifier).getValue());
             subject = new Subject(false,
                     Collections.singleton(new NameIdentifierPrincipal((NameIdentifier) nameIdentifier)),
                     Collections.emptySet(), Collections.emptySet());

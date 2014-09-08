@@ -14,63 +14,49 @@
 
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
+        
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-    
-    <import resource="common-beans.xml" />
-    
-    <util:constant id="shibboleth.EndpointType"
-        static-field="org.opensaml.saml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME" />
-    
 
-    <bean id="InitializeProfileRequestContext"
-        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="#{T(net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration).PROFILE_ID}"
-        p:loggingId="%{idp.service.logging.saml1sso:SSO}"
+    <import resource="common-beans.xml" />
+
+    <util:constant id="shibboleth.EndpointType"
+        static-field="org.opensaml.saml.saml2.metadata.SingleLogoutService.DEFAULT_ELEMENT_NAME" />
+
+    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+        p:profileId="#{T(net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration).PROFILE_ID}"
+        p:loggingId="%{idp.service.logging.saml2slo:Logout}"
         p:browserProfile="true" />
 
     <bean id="InitializeMessageChannelSecurityContext"
         class="org.opensaml.profile.action.impl.StaticMessageChannelSecurity" scope="prototype"
         p:confidentialityActive="false" p:integrityActive="false" />
 
-    <bean id="ResolveAttributesPredicate"
-        class="net.shibboleth.idp.saml.profile.config.logic.ResolveAttributesProfileConfigPredicate" />
+    <alias name="shibboleth.OutgoingSAML2SLOBindings" alias="shibboleth.OutgoingBindings"/>
 
-    <bean id="AddAttributeStatementToAssertion"
-            class="net.shibboleth.idp.saml.saml1.profile.impl.AddAttributeStatementToAssertion" scope="prototype">
-        <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.profile.logic.IncludeAttributeStatementPredicate" />
-        </property>
+    <bean id="ProcessLogout"
+        class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessLogout" scope="prototype"
+        p:sessionManager-ref="shibboleth.SessionManager"
+        p:sessionResolver-ref="shibboleth.SessionManager" />
+    
+    <bean id="LogoutPopulateAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        
+    <bean id="PopulateMultiRPContextFromLogoutContext"
+        class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
+        p:activationCondition="%{idp.logout.elaboration:false}"
+        p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
+        p:sessionTypeProtocolMap-ref="shibboleth.SessionTypeProtocolMap" />
+
+    <bean id="AddLogoutResponse" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"
+            p:overwriteExisting="true"
+            p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"
+            p:messageType="#{T(org.opensaml.saml.saml2.core.LogoutResponse).DEFAULT_ELEMENT_NAME}">
         <property name="identifierGeneratorLookupStrategy">
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
-        </property>
-    </bean>
-
-    <bean id="AddNameIdentifierToSubjects"
-            class="org.opensaml.saml.saml1.profile.impl.AddNameIdentifierToSubjects" scope="prototype">
-        <property name="formatLookupStrategy">
-            <bean class="net.shibboleth.idp.saml.profile.logic.DefaultNameIdentifierFormatStrategy"
-                p:defaultFormat="%{idp.nameid.saml1.default:urn:mace:shibboleth:1.0:nameIdentifier}" />
-        </property>
-        <property name="nameIdentifierGenerator">
-            <bean class="net.shibboleth.idp.saml.nameid.impl.ProxySAML1NameIdentifierGenerator"
-                c:service-ref="shibboleth.NameIdentifierGenerationService" />
-        </property>
-    </bean>
-
-    <bean id="AddSubjectConfirmationToSubjects"
-        class="org.opensaml.saml.saml1.profile.impl.AddSubjectConfirmationToSubjects" scope="prototype"
-        p:methods="#{ {'urn:oasis:names:tc:SAML:1.0:cm:bearer'} }" />
-
-    <bean id="UpdateSessionWithSPSession"
-            class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
-            p:activationCondition="%{idp.session.enabled:true}"
-            p:sessionManager-ref="shibboleth.SessionManager">
-        <property name="SPSessionCreationStrategy">
-            <bean class="net.shibboleth.idp.saml.session.impl.SAML1SPSessionCreationStrategy"
-                c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"/>
         </property>
     </bean>
 

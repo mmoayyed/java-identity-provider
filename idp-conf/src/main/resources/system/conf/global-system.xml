@@ -79,7 +79,8 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool" depends-on="shibboleth.LogbackLogging"
+    <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+            depends-on="shibboleth.LogbackLogging"
             p:maxPoolSize="100"
             p:coalescing="true"
             p:ignoreComments="true"
@@ -88,8 +89,7 @@
         <property name="builderAttributes">
             <map>
                 <entry key="http://apache.org/xml/properties/security-manager">
-                    <bean id="shibboleth.XercesSecurityManager"
-                        class="%{idp.xml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}" />
+                    <bean class="%{idp.xml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}" />
                 </entry>
             </map>
         </property>

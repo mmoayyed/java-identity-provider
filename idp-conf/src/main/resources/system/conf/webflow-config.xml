@@ -30,6 +30,7 @@
         <webflow:flow-location id="saml.abstract" path="../system/flows/saml/saml-abstract-flow.xml" />
         <webflow:flow-location id="saml1.sso.abstract" path="../system/flows/saml/saml1/sso-abstract-flow.xml" />
         <webflow:flow-location id="saml2.sso.abstract" path="../system/flows/saml/saml2/sso-abstract-flow.xml" />
+        <webflow:flow-location id="saml2.slo.front.abstract" path="../system/flows/saml/saml2/slo-front-abstract-flow.xml" />
 
         <!-- SAML profile flows. -->
         <webflow:flow-location id="profile/Shibboleth/SSO" path="../system/flows/saml/saml1/sso-unsolicited-flow.xml" />
@@ -40,6 +41,9 @@
         <webflow:flow-location id="profile/SAML2/Redirect/SSO" path="../system/flows/saml/saml2/sso-redirect-flow.xml" />
         <webflow:flow-location id="profile/SAML2/Unsolicited/SSO" path="../system/flows/saml/saml2/sso-unsolicited-flow.xml" />
         <webflow:flow-location id="profile/SAML2/SOAP/ECP" path="../system/flows/saml/saml2/sso-ecp-flow.xml" />
+        <webflow:flow-location id="profile/SAML2/POST/SLO" path="../system/flows/saml/saml2/slo-post-flow.xml" />
+        <webflow:flow-location id="profile/SAML2/POST-SimpleSign/SLO" path="../system/flows/saml/saml2/slo-post-flow.xml" />
+        <webflow:flow-location id="profile/SAML2/Redirect/SLO" path="../system/flows/saml/saml2/slo-redirect-flow.xml" />
         <webflow:flow-location id="profile/SAML2/SOAP/AttributeQuery" path="../system/flows/saml/saml2/attribute-query-flow.xml" />
         <webflow:flow-location id="profile/SAML2/SOAP/ArtifactResolution" path="../system/flows/saml/saml2/artifact-resolution-flow.xml" />
 
@@ -48,6 +52,7 @@
         <webflow:flow-location id="security-policy/shibboleth-sso" path="../system/flows/saml/saml1/sso-security-flow.xml" />
         <webflow:flow-location id="security-policy/saml2-sso" path="../system/flows/saml/saml2/sso-security-flow.xml" />
         <webflow:flow-location id="security-policy/saml2-ecp" path="../system/flows/saml/saml2/ecp-security-flow.xml" />
+        <webflow:flow-location id="security-policy/saml2-slo" path="../system/flows/saml/saml2/slo-security-flow.xml" />
         <webflow:flow-location id="security-policy/soap" path="../system/flows/saml/soap-security-flow.xml" />
 
         <!-- Master flow for authentication. -->
