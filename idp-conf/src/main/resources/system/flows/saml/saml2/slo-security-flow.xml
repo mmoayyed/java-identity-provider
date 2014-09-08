@@ -14,7 +14,7 @@
         <evaluate expression="SAML2HTTPRedirectDeflateSignatureSecurityHandler" />
         <evaluate expression="SAML2HTTPPostSimpleSignSecurityHandler" />
         <evaluate expression="CheckMandatoryIssuer" />
-<!--         <evaluate expression="CheckMandatoryAuthentication" /> -->
+        <evaluate expression="CheckMandatoryAuthentication" />
         <evaluate expression="ExtractChannelBindingsExtensionsHandler" />
         <evaluate expression="'proceed'" />
 
