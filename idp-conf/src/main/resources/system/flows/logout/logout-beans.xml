@@ -44,6 +44,46 @@
         p:activationCondition="%{idp.logout.elaboration:false}"
         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
         p:sessionTypeProtocolMap-ref="shibboleth.SessionTypeProtocolMap" />
+        
+    <bean id="SetRPUIInformation"
+            class="net.shibboleth.idp.ui.context.SetRPUIInformation" scope="prototype"
+            p:activationCondition="%{idp.logout.elaboration:false}"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="metadataContextLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <ref bean="shibboleth.ChildLookup.SAMLMetadataContext" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean class="net.shibboleth.idp.profile.context.navigate.RelyingPartyContextLookupByCurrent" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.MultiRelyingParty" />
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="RPUIContextCreateStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <ref bean="shibboleth.ChildLookupOrCreate.RelyingPartyUIContext" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean class="net.shibboleth.idp.profile.context.navigate.RelyingPartyContextLookupByCurrent" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.MultiRelyingParty" />
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
     
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />

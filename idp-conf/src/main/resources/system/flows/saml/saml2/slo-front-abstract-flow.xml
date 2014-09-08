@@ -19,7 +19,22 @@
 
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="LogoutView" />
+        <transition on="proceed" to="NextRelyingPartyContext" />
+    </action-state>
+
+    <decision-state id="NextRelyingPartyContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext), true).getRelyingPartyContextIterator().hasNext()"
+            then="SetRPUIInformation" else="LogoutView" />
+    </decision-state>
+    
+    <action-state id="SetRPUIInformation">
+        <on-entry>
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext)).getRelyingPartyContextIterator().next()" />
+        </on-entry>
+        <evaluate expression="SetRPUIInformation" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="NextRelyingPartyContext" />
     </action-state>
 
     <view-state id="LogoutView" view="logout">
@@ -27,7 +42,7 @@
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
             <evaluate expression="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() != null and !opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()" result="viewScope.asynchronous" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="viewScope.logoutContext" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext))" result="viewScope.multiRelyingPartyContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext))" result="viewScope.multiRPContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />

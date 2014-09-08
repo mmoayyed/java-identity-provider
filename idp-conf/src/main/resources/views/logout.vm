@@ -7,7 +7,7 @@
 ## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
 ## profileRequestContext - root of context tree
 ## logoutContext - context with SPSession details for logout operation
-## rpUIContext - the context with SP UI information from the metadata
+## multiRPContext - context with RelyingPartyContexts and possibly SP UI information from the metadata
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
 ## response - HttpServletResponse
@@ -37,11 +37,19 @@
             initiated the logout operation.</strong></p>
         
 		    #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
-                <p>The following is a list of Service Provider identifiers tracked by the session that has been terminated:</p>
-		
+                <p>The following is a list of services tracked by the session that has been terminated:</p>
+                <br/>
 				<ul>
 				#foreach ( $sp in $logoutContext.getSessionMap().keySet() )
-					<li>$encoder.encodeForHTML($sp)</li>
+				    #set ( $rpCtx = $multiRPContext.getRelyingPartyContextById($sp) )
+				    #if ( $rpCtx )
+				      #set ( $rpUIContext = $rpCtx.getSubcontext('net.shibboleth.idp.ui.context.RelyingPartyUIContext') )
+				    #end
+					#if ( $rpUIContext and $rpUIContext.getServiceName() )
+					  <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
+					#else
+					  <li>$encoder.encodeForHTML($sp)</li>
+					#end
 				#end
 				</ul>	
 			#end
@@ -57,13 +65,15 @@
         </div>
       </div>
 
-      <p align="center">
-      #if ( $asynchronous )
-        <iframe width="800" src="$flowExecutionUrl&_eventId_AsyncLogout" />
-      #else
-        <iframe width="800" src="$flowExecutionUrl&_eventId_proceed" />
+      #if ( $flowExecutionUrl )
+        <p align="center">
+        #if ( $asynchronous )
+          <iframe width="800" src="$flowExecutionUrl&_eventId_AsyncLogout" />
+        #else
+          <iframe width="800" src="$flowExecutionUrl&_eventId_proceed" />
+        #end
+        </p>
       #end
-      </p>
       
       <footer>
         <div class="container container-footer">

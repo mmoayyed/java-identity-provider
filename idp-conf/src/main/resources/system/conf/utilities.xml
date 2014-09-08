@@ -31,6 +31,9 @@
     <bean id="shibboleth.ChildLookup.RelyingParty"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.profile.context.RelyingPartyContext) }" />
+    <bean id="shibboleth.ChildLookup.MultiRelyingParty"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext) }" />
         
     <bean id="shibboleth.ChildLookup.SecurityParameters"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
@@ -50,6 +53,10 @@
     <bean id="shibboleth.ChildLookupOrCreate.AttributeFilterContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(net.shibboleth.idp.attribute.filter.context.AttributeFilterContext) }"
+        c:createContext="true" />
+    <bean id="shibboleth.ChildLookupOrCreate.RelyingPartyUIContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(net.shibboleth.idp.ui.context.RelyingPartyUIContext) }"
         c:createContext="true" />
 
     <bean id="shibboleth.ChildLookup.AuthenticationContext"
@@ -71,6 +78,9 @@
     <bean id="shibboleth.ChildLookup.SAMLPeerEntityContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext) }" />
+    <bean id="shibboleth.ChildLookup.SAMLMetadataContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLMetadataContext) }" />
     <bean id="shibboleth.ChildLookupOrCreate.SAMLMessageInfoContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext) }"

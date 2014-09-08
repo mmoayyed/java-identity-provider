@@ -50,6 +50,46 @@
         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
         p:sessionTypeProtocolMap-ref="shibboleth.SessionTypeProtocolMap" />
 
+    <bean id="SetRPUIInformation"
+            class="net.shibboleth.idp.ui.context.SetRPUIInformation" scope="prototype"
+            p:activationCondition="%{idp.logout.elaboration:false}"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="metadataContextLookupStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <ref bean="shibboleth.ChildLookup.SAMLMetadataContext" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean class="net.shibboleth.idp.profile.context.navigate.RelyingPartyContextLookupByCurrent" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.MultiRelyingParty" />
+                </constructor-arg>
+            </bean>
+        </property>
+        <property name="RPUIContextCreateStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg name="g">
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <ref bean="shibboleth.ChildLookupOrCreate.RelyingPartyUIContext" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <bean class="net.shibboleth.idp.profile.context.navigate.RelyingPartyContextLookupByCurrent" />
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+                <constructor-arg name="f">
+                    <ref bean="shibboleth.ChildLookup.MultiRelyingParty" />
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+    
     <bean id="AddLogoutResponse" class="org.opensaml.saml.saml2.profile.impl.AddStatusResponseShell" scope="prototype"
             p:overwriteExisting="true"
             p:issuerLookupStrategy-ref="shibboleth.ResponderIdLookup.Simple"

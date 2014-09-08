@@ -96,9 +96,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public RelyingPartyUIContext setRPEntityDescriptor(@Nonnull final EntityDescriptor what) {
-        rpEntityDescriptor = Constraint.isNotNull(what, "Injected RP EntityDescriptor cannot be null");
-        
+    @Nonnull public RelyingPartyUIContext setRPEntityDescriptor(@Nullable final EntityDescriptor what) {
+        rpEntityDescriptor = what;
         return this;
     }
 
@@ -118,9 +117,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public RelyingPartyUIContext setRPSPSSODescriptor(@Nonnull final SPSSODescriptor what) {
-        rpSPSSODescriptor = Constraint.isNotNull(what, "Injected RP EntityDescriptor cannot be null");
-        
+    @Nonnull public RelyingPartyUIContext setRPSPSSODescriptor(@Nullable final SPSSODescriptor what) {
+        rpSPSSODescriptor = what;
         return this;
     }
 
@@ -151,7 +149,6 @@ public class RelyingPartyUIContext extends BaseContext {
      */
     @Nonnull public RelyingPartyUIContext setRPUInfo(@Nullable final UIInfo what) {
         rpUIInfo = what;
-        
         return this;
     }
 
@@ -163,10 +160,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * @return this context
      */
     @Nonnull public RelyingPartyUIContext setRPAttributeConsumingService(
-            @Nonnull final AttributeConsumingService what) {
-        rpAttributeConsumingService =
-                Constraint.isNotNull(what, "Injected RP AttributeConsumingService cannot be null");
-        
+            @Nullable final AttributeConsumingService what) {
+        rpAttributeConsumingService = what;
         return this;
     }
 
