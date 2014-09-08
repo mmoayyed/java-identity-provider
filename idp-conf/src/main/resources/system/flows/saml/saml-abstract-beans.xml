@@ -115,7 +115,7 @@
     <bean id="PopulateBindingAndEndpointContexts"
         class="net.shibboleth.idp.saml.profile.impl.PopulateBindingAndEndpointContexts" scope="prototype"
         p:endpointResolver-ref="shibboleth.EndpointResolver"
-        p:endpointType-ref="shibboleth.EndpointType"
+        p:endpointType="#{getObject('shibboleth.EndpointType')}"
         p:bindings-ref="shibboleth.OutgoingBindings"
         p:artifactImpliesSecureChannel="%{idp.artifact.secureChannel:true}" />
 
