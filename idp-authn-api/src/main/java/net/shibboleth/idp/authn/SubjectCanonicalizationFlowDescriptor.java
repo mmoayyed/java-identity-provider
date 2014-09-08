@@ -20,11 +20,12 @@ package net.shibboleth.idp.authn;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -57,6 +58,7 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
      * @param condition predicate that controls activation of the flow
      */
     public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         activationCondition = Constraint.isNotNull(condition, "Activation condition predicate cannot be null");
     }
 
@@ -89,7 +91,7 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return Objects.toStringHelper(this).add("flowId", getId()).toString();
+        return MoreObjects.toStringHelper(this).add("flowId", getId()).toString();
     }
 
 }
