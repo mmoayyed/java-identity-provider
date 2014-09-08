@@ -31,6 +31,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
@@ -42,25 +44,31 @@ import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 
 /**
  * Action to populate the {@link ProfileRequestContext} with a {@link RelyingPartyUIContext}. The contents are populated
- * by applying the XXX
+ * by accessing a {@link SAMLMetadataContext} via lookup function and using it to copy data over to the UI context.
+ * 
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @post If a lookup function returns a SAMLMetadataContext, then a RelyingPartyUIContext is created and data copied
+ *  into it.
  */
 public class SetRPUIInformation extends AbstractProfileAction {
 
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SetRPUIInformation.class);
+    
     /** Strategy function for access to {@link SAMLMetadataContext}. */
-    private Function<ProfileRequestContext, SAMLMetadataContext> metadataContextLookupStrategy = Functions.compose(
-            new ChildContextLookup<>(SAMLMetadataContext.class), Functions.compose(new ChildContextLookup<>(
-                    SAMLPeerEntityContext.class), new OutboundMessageContextLookup()));
+    private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
 
     /** Strategy function to create the {@link RelyingPartyUIContext}. */
-    private Function<ProfileRequestContext, RelyingPartyUIContext> rpUIContextCreateStrategy = Functions.compose(
-            new ChildContextLookup<AuthenticationContext, RelyingPartyUIContext>(RelyingPartyUIContext.class, true),
-            new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(AuthenticationContext.class, true));
+    private Function<ProfileRequestContext,RelyingPartyUIContext> rpUIContextCreateStrategy;
 
     /**
      * The {@link EntityDescriptor}. If we cannot find this we short cut the {@link #doExecute(ProfileRequestContext)}
@@ -76,13 +84,24 @@ public class SetRPUIInformation extends AbstractProfileAction {
 
     /** The ACS context. */
     private AttributeConsumingService acsDesriptor;
+    
+    /** Constructor. */
+    public SetRPUIInformation() {
+        metadataContextLookupStrategy = Functions.compose(new ChildContextLookup<>(SAMLMetadataContext.class),
+                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
+                        new OutboundMessageContextLookup()));
+
+        rpUIContextCreateStrategy = Functions.compose(
+                new ChildContextLookup<>(RelyingPartyUIContext.class, true),
+                new ChildContextLookup<ProfileRequestContext,AuthenticationContext>(AuthenticationContext.class, true));
+    }
 
     /**
      * Get the mechanism to go from the {@link ProfileRequestContext} to the {@link SAMLMetadataContext}.
      * 
      * @return lookup strategy
      */
-    public Function<ProfileRequestContext, SAMLMetadataContext> getMetadataContextLookupStrategy() {
+    public Function<ProfileRequestContext,SAMLMetadataContext> getMetadataContextLookupStrategy() {
         return metadataContextLookupStrategy;
     }
 
@@ -91,7 +110,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @param strgy what to set.
      */
-    public void setMetadataContextLookupStrategy(@Nonnull Function<ProfileRequestContext, SAMLMetadataContext> strgy) {
+    public void setMetadataContextLookupStrategy(@Nonnull Function<ProfileRequestContext,SAMLMetadataContext> strgy) {
         metadataContextLookupStrategy = Constraint.isNotNull(strgy, "Injected Metadata Strategy cannot be null");
     }
 
@@ -100,7 +119,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @return lookup/creation strategy
      */
-    public Function<ProfileRequestContext, RelyingPartyUIContext> getRPUIContextCreateStrategy() {
+    public Function<ProfileRequestContext,RelyingPartyUIContext> getRPUIContextCreateStrategy() {
         return rpUIContextCreateStrategy;
     }
 
@@ -109,7 +128,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @param strategy what to set.
      */
-    public void setRPUIContextCreateStrategy(@Nonnull Function<ProfileRequestContext, RelyingPartyUIContext> strategy) {
+    public void setRPUIContextCreateStrategy(@Nonnull Function<ProfileRequestContext,RelyingPartyUIContext> strategy) {
         rpUIContextCreateStrategy = Constraint.isNotNull(strategy, "Injected RPUI Strategy cannot be null");
     }
     
@@ -152,7 +171,11 @@ public class SetRPUIInformation extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
-        rpUIContext = rpUIContextCreateStrategy.apply(profileRequestContext);
+        
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         final SAMLMetadataContext metadataContext = metadataContextLookupStrategy.apply(profileRequestContext);
         if (null == metadataContext) {
             return false;
@@ -171,17 +194,24 @@ public class SetRPUIInformation extends AbstractProfileAction {
             acsDesriptor = acsCtx.getAttributeConsumingService();
         }
 
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }    
     
     /** {@inheritDoc} */
     @Override protected void doExecute(ProfileRequestContext profileRequestContext) {
-        super.doExecute(profileRequestContext);
         
+        rpUIContext = rpUIContextCreateStrategy.apply(profileRequestContext);
+        if (rpUIContext == null) {
+            log.error("{} Unable to create RelyingPartyUIContext", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return;
+        }
+
         rpUIContext.setRPEntityDescriptor(entityDescriptor);
         rpUIContext.setRPSPSSODescriptor(spSSODescriptor);
         rpUIContext.setRPAttributeConsumingService(acsDesriptor);
         rpUIContext.setRPUInfo(getRPUInfo());
         rpUIContext.setBrowserLanguages(getBrowserLanguages());
     }
+    
 }
