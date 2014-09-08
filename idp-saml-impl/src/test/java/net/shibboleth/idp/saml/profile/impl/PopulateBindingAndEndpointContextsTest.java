@@ -49,6 +49,7 @@ import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.profile.SAMLEventIds;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport;
 import org.springframework.webflow.execution.Event;
@@ -91,6 +92,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         
         action = new PopulateBindingAndEndpointContexts();
         action.setEndpointResolver(new DefaultEndpointResolver());
+        action.setEndpointType(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
         final List<BindingDescriptor> bindings = Lists.newArrayList();
         bindings.add(new BindingDescriptor());
         bindings.get(0).setId(SAMLConstants.SAML2_POST_BINDING_URI);
