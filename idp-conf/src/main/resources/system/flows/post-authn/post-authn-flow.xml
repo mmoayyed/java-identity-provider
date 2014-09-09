@@ -24,12 +24,12 @@
     -->
     <action-state id="SelectPostAuthnFlow">
         <evaluate expression="SelectPostAuthnFlow" />
+        <evaluate expression="'proceed'" />
 
         <!-- Call a subflow with the same ID as the event. -->
         <transition on="#{currentEvent.id.startsWith('post-authn/')}" to="CallPostAuthnFlow" />
-
-        <!-- Proceed if there are no flows available to be executed. -->
-        <transition on="NoPotentialFlow" to="proceed" />
+        
+        <transition on="proceed" to="proceed" />
     </action-state>
 
     <!--

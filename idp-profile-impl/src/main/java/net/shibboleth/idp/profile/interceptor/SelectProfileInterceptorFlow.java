@@ -20,17 +20,27 @@ package net.shibboleth.idp.profile.interceptor;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.profile.ActionSupport;
 
-import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A profile interceptor flow action that selects profile interceptor flows to execute.
+ * A profile action that selects flows to invoke.
  * 
- * TODO
+ * <p>
+ * The flows available to be executed are held by the {@link ProfileInterceptorContext}. Available flows are executed in
+ * the order that they are configured if their activation condition evaluates to true.
+ * </p>
+ * 
+ * <p>
+ * This action returns the flow ID to be executed or null if there are no flows available.
+ * to be executed.
+ * </p>
+ * 
+ * @event Selected flow ID to execute
+ * @pre <pre>ProfileRequestContext.getSubcontext(ProfileInterceptorContext.class, true) != null</pre>
  */
 public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorAction {
 
@@ -41,11 +51,11 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        // Detect a previous attempted flow, and move it to the intermediate collection.
+        // Detect a previous attempted flow, and move it to the incomplete collection.
         // This will prevent re-selecting the same (probably failed) flow again.
         if (interceptorContext.getAttemptedFlow() != null) {
-            log.info("{} Moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
-                    interceptorContext.getAttemptedFlow().getId());
+            log.info("{} Flow {} did not complete, moving to incomplete set", getLogPrefix(), interceptorContext
+                    .getAttemptedFlow().getId());
             interceptorContext.getIncompleteFlows().put(interceptorContext.getAttemptedFlow().getId(),
                     interceptorContext.getAttemptedFlow());
         }
@@ -60,11 +70,10 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
         final ProfileInterceptorFlowDescriptor flow = selectUnattemptedFlow(profileRequestContext, interceptorContext);
         if (flow == null) {
             log.debug("{} No flows available to choose from", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
 
-        log.debug("{} Selecting interceptor flow {}", getLogPrefix(), flow.getId());
+        log.debug("{} Selecting flow {}", getLogPrefix(), flow.getId());
         ActionSupport.buildEvent(profileRequestContext, flow.getId());
     }
 
@@ -81,12 +90,12 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
             @Nonnull final ProfileInterceptorContext interceptorContext) {
         for (final ProfileInterceptorFlowDescriptor flow : interceptorContext.getAvailableFlows().values()) {
             if (!interceptorContext.getIncompleteFlows().containsKey(flow.getId())) {
-                log.debug("{} Checking interceptor flow {} for applicability...", getLogPrefix(), flow.getId());
+                log.debug("{} Checking flow {} for applicability...", getLogPrefix(), flow.getId());
                 interceptorContext.setAttemptedFlow(flow);
                 if (flow.apply(profileRequestContext)) {
                     return flow;
                 }
-                log.debug("{} Interceptor flow {} was not applicable to this request", getLogPrefix(), flow.getId());
+                log.debug("{} Flow {} was not applicable to this request", getLogPrefix(), flow.getId());
 
                 // Note that we don't exclude this flow from possible future selection, since one flow
                 // could in theory do partial work and change the context such that this flow then applies.
