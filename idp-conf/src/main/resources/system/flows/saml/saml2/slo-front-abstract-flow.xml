@@ -47,9 +47,31 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
         </on-render>
-        <transition on="proceed" to="BuildResponse" />
-        <transition on="AsyncLogout" to="HandleErrorWithView" />
+        <transition on="proceed" to="CheckAsync" />
     </view-state>
+    
+    <decision-state id="CheckAsync">
+        <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() == null or opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
+            then="BuildResponse" else="DoAsync" />
+    </decision-state>
+    
+    <action-state id="DoAsync">
+        <evaluate expression="'AsyncLogout'" />
+        <transition to="HandleAsyncWithView" />
+    </action-state>
+    
+    <!-- Same machinery as error view, but writes the audit log unconditionally. -->
+    
+    <end-state id="HandleAsyncWithView" view="#{MapEventToView.apply(currentEvent)}">
+        <on-entry>
+            <evaluate expression="ErrorViewPopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-entry>
+    </end-state>
     
     <action-state id="BuildResponse">
         <evaluate expression="AddLogoutResponse" />

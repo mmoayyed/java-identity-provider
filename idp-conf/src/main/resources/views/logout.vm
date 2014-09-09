@@ -17,6 +17,9 @@
         <meta charset="utf-8" />
         <title>Example Logout Page</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
+        <style type="text/css">
+        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; } */
+        </style>
   	</head>
 
   	<body>
@@ -65,14 +68,9 @@
         </div>
       </div>
 
+      <!-- If flowExecutionUrl set, complete the flow by adding a hidden iframe. -->
       #if ( $flowExecutionUrl )
-        <p align="center">
-        #if ( $asynchronous )
-          <iframe width="800" src="$flowExecutionUrl&_eventId_AsyncLogout" />
-        #else
-          <iframe width="800" src="$flowExecutionUrl&_eventId_proceed" />
-        #end
-        </p>
+          <iframe id="buffer" src="$flowExecutionUrl&_eventId_proceed" />
       #end
       
       <footer>
