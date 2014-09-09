@@ -94,7 +94,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     /**
      * Set the delimiter to use for serializing scoped attribute values.
      * 
-     * @param ch delimter to use
+     * @param ch delimiter to use
      */
     public void setScopedDelimiter(final char ch) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
