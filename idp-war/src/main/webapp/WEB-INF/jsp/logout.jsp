@@ -2,10 +2,11 @@
 
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
 <%@ page import="org.opensaml.profile.context.ProfileRequestContext" %>
-<%@ page import="net.shibboleth.utilities.java.support.codec.HTMLEncoder" %>
+<%@ page import="net.shibboleth.idp.profile.context.MultiRelyingPartyContext" %>
 <%@ page import="net.shibboleth.idp.session.SPSession" %>
 <%@ page import="net.shibboleth.idp.session.context.LogoutContext" %>
 <%@ page import="net.shibboleth.idp.ui.context.RelyingPartyUIContext" %>
+<%@ page import="net.shibboleth.utilities.java.support.codec.HTMLEncoder" %>
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
 
 <html>
@@ -13,6 +14,9 @@
     <meta charset="utf-8" />
     <title>Example Logout Page</title>
     <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%>/css/main.css"/>
+    <style type="text/css">
+    iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
+    </style>
   </head>
   <body>
     <div class="wrapper">
@@ -36,14 +40,24 @@
 		    final LogoutContext logoutCtx = (LogoutContext) request.getAttribute("logoutContext");
 		    if (logoutCtx != null && !logoutCtx.getSessionMap().isEmpty()) {
 		    %>
-            <p>The following is a list of Service Provider identifiers tracked by the session that has been terminated:</p>
-		
+	            <p>The following is a list of services tracked by the session that has been terminated:</p>
+			    <br/>
 				<ul>
-				<% for (final String sp : logoutCtx.getSessionMap().keySet()) { %>
-					<li><%= HTMLEncoder.encodeForHTML(sp) %></li>
+                <%
+                for (final String sp : logoutCtx.getSessionMap().keySet()) {
+                    RelyingPartyUIContext rpUIContext = null;
+                    final RelyingPartyContext rpCtx =
+                        ((MultiRelyingPartyContext) request.getAttribute("multiRPContext")).getRelyingPartyContextById(sp);
+                    if (rpCtx != null) {
+                        rpUIContext = rpCtx.getSubcontext(RelyingPartyUIContext.class);
+                    }
+                    if (rpUIContext != null && rpUIContext.getServiceName() != null) {
+                %>
+                    <li><%= HTMLEncoder.encodeForHTML(rpUIContext.getServiceName()) %></li>
+                <% } else { %>
+                    <li><%= HTMLEncoder.encodeForHTML(sp) %></li>
 				<% } %>
-				</ul>	
-			
+			    </ul>	
 			<% } %>
           </div>
           <div class="column two">
@@ -55,6 +69,11 @@
           </div>
         </div>
       </div>
+
+      <!-- If flowExecutionUrl set, complete the flow by adding a hidden iframe. -->
+      <% if (request.getAttribute("flowExecutionUrl") != null) { %>
+          <iframe id="buffer" src="<%= request.getAttribute("flowExecutionUrl") %>&_eventId_proceed" />
+      <% } %>
 
       <footer>
         <div class="container container-footer">

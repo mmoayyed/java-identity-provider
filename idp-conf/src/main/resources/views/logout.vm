@@ -18,7 +18,7 @@
         <title>Example Logout Page</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
         <style type="text/css">
-        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; } */
+        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
         </style>
   	</head>
 
@@ -38,25 +38,25 @@
             <p><strong>It does NOT result in the user being logged out of any of the applications he/she
             has accessed during a session, with the possible exception of a Service Provider that may have
             initiated the logout operation.</strong></p>
-        
-		    #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
+
+            #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
                 <p>The following is a list of services tracked by the session that has been terminated:</p>
                 <br/>
-				<ul>
-				#foreach ( $sp in $logoutContext.getSessionMap().keySet() )
-				    #set ( $rpCtx = $multiRPContext.getRelyingPartyContextById($sp) )
-				    #if ( $rpCtx )
-				      #set ( $rpUIContext = $rpCtx.getSubcontext('net.shibboleth.idp.ui.context.RelyingPartyUIContext') )
-				    #end
-					#if ( $rpUIContext and $rpUIContext.getServiceName() )
-					  <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
-					#else
-					  <li>$encoder.encodeForHTML($sp)</li>
-					#end
-				#end
-				</ul>	
-			#end
-            
+                <ul>
+                #foreach ( $sp in $logoutContext.getSessionMap().keySet() )
+                    #set ( $rpCtx = $multiRPContext.getRelyingPartyContextById($sp) )
+                    #if ( $rpCtx )
+                      #set ( $rpUIContext = $rpCtx.getSubcontext('net.shibboleth.idp.ui.context.RelyingPartyUIContext') )
+                    #end
+                    #if ( $rpUIContext and $rpUIContext.getServiceName() )
+                      <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
+                    #else
+                      <li>$encoder.encodeForHTML($sp)</li>
+                    #end
+                #end
+                </ul>	
+            #end
+
           </div>
           <div class="column two">
             <ul class="list list-help">
