@@ -12,14 +12,12 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{"
-        p:placeholderSuffix="}" />
-
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <!-- Placeholder bean definitions for terms-of-use consent. -->
+    <bean id="PopulatePostAuthnContext" class="net.shibboleth.idp.profile.interceptor.PopulateProfileInterceptorContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostAuthnFlows" />
+
+    <bean id="SelectPostAuthnFlow" class="net.shibboleth.idp.profile.interceptor.SelectProfileInterceptorFlow" scope="prototype" />
 
 </beans>

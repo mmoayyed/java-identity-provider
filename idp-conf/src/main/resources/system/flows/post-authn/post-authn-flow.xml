@@ -1,0 +1,46 @@
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    parent="post-authn.abstract">
+
+    <!--
+    This is the post authentication subflow. It handles set up and eventual 
+    selection of a subflow before returning control to the calling (profile) flow.
+    -->
+
+    <!-- 
+    The populate action adds flows from 'shibboleth.PostAuthnFlows' defined 
+    in conf/post-authn.xml to the context.
+    -->
+    <action-state id="PopulatePostAuthnContext">
+        <evaluate expression="PopulatePostAuthnContext" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="SelectPostAuthnFlow" />
+    </action-state>
+
+    <!--
+    The select action is the "dispatching" step. Anything starting with "post-authn/"
+    is a flow descriptor that we send control to. If there are no flows available or
+    remaining to be executed, control passes back to the calling (profile) flow.
+    -->
+    <action-state id="SelectPostAuthnFlow">
+        <evaluate expression="SelectPostAuthnFlow" />
+
+        <!-- Call a subflow with the same ID as the event. -->
+        <transition on="#{currentEvent.id.startsWith('post-authn/')}" to="CallPostAuthnFlow" />
+
+        <!-- Proceed if there are no flows available to be executed. -->
+        <transition on="NoPotentialFlow" to="proceed" />
+    </action-state>
+
+    <!--
+    This invokes a flow. Anything but proceed is an error, otherwise control passes
+    back to this flow to select another flow to be executed.
+    -->
+    <subflow-state id="CallPostAuthnFlow" subflow="#{currentEvent.id}">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="SelectPostAuthnFlow" />
+    </subflow-state>
+
+    <bean-import resource="post-authn-beans.xml" />
+
+</flow>

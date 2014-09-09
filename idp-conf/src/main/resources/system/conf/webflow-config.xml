@@ -75,6 +75,10 @@
         <!-- Standard post-login C14N methods. -->
         <webflow:flow-location id="c14n/simple" path="../system/flows/c14n/simple-subject-c14n-flow.xml" />
         <webflow:flow-location id="c14n/attribute" path="../system/flows/c14n/attribute-sourced-subject-c14n-flow.xml" />
+        
+        <!-- Master post-authn flow. -->
+        <webflow:flow-location id="post-authn.abstract" path="../system/flows/post-authn/post-authn-abstract-flow.xml" />
+        <webflow:flow-location id="post-authn" path="../system/flows/post-authn/post-authn-flow.xml" />
 
         <!--
         Standard SAML C14N methods, including one supporting legacy use of the attribute resolver.

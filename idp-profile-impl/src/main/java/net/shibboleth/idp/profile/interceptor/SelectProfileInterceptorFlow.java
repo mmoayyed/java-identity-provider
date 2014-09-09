@@ -20,6 +20,8 @@ package net.shibboleth.idp.profile.interceptor;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.AuthnEventIds;
+
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -57,9 +59,8 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
 
         final ProfileInterceptorFlowDescriptor flow = selectUnattemptedFlow(profileRequestContext, interceptorContext);
         if (flow == null) {
-            // TODO
-            log.error("{} No potential flows to choose from", getLogPrefix());
-            // ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
+            log.debug("{} No flows available to choose from", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
         }
 

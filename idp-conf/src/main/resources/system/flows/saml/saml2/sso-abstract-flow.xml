@@ -66,15 +66,13 @@
 
     <subflow-state id="DoAttrCheck" subflow="access/attr-check">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="BuildResponse" />
+        <transition on="proceed" to="DoPostAuthnSubflow" />
     </subflow-state>
 
-    <!-- TODO Figure out where to wire in consent flow, here for the time being. 
-    <subflow-state id="Consent" subflow="consent">
+    <subflow-state id="DoPostAuthnSubflow" subflow="post-authn">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="BuildResponse" />
     </subflow-state>
-    -->
 
     <action-state id="BuildResponse">
         <evaluate expression="AddResponseShell" />
