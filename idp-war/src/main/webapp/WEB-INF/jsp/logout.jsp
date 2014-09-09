@@ -3,6 +3,7 @@
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
 <%@ page import="org.opensaml.profile.context.ProfileRequestContext" %>
 <%@ page import="net.shibboleth.idp.profile.context.MultiRelyingPartyContext" %>
+<%@ page import="net.shibboleth.idp.profile.context.RelyingPartyContext" %>
 <%@ page import="net.shibboleth.idp.session.SPSession" %>
 <%@ page import="net.shibboleth.idp.session.context.LogoutContext" %>
 <%@ page import="net.shibboleth.idp.ui.context.RelyingPartyUIContext" %>
@@ -51,13 +52,14 @@
                     if (rpCtx != null) {
                         rpUIContext = rpCtx.getSubcontext(RelyingPartyUIContext.class);
                     }
-                    if (rpUIContext != null && rpUIContext.getServiceName() != null) {
+                    if (rpUIContext != null) {
                 %>
-                    <li><%= HTMLEncoder.encodeForHTML(rpUIContext.getServiceName()) %></li>
-                <% } else { %>
-                    <li><%= HTMLEncoder.encodeForHTML(sp) %></li>
+                        <li><idpui:serviceName uiContext="<%= rpUIContext %>" /></li>
+                    <% } else { %>
+                        <li><%= HTMLEncoder.encodeForHTML(sp) %></li>
+				    <% } %>
 				<% } %>
-			    </ul>	
+			    </ul>
 			<% } %>
           </div>
           <div class="column two">
