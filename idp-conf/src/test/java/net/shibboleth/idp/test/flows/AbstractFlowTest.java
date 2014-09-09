@@ -19,7 +19,6 @@ package net.shibboleth.idp.test.flows;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,10 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.ext.spring.factory.X509CertificateFactoryBean;
-import net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor;
-import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
-import net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization;
-import net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.idp.test.InMemoryDirectory;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
@@ -85,15 +80,13 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /**
  * Abstract flow test.
  */
 @ContextConfiguration(locations = {"/system/conf/global-system.xml", "/system/conf/mvc-beans.xml",
-        "/system/conf/webflow-config.xml", "/test/test-beans.xml"},
+        "/system/conf/webflow-config.xml", "/test/test-beans.xml", "/test/override-beans.xml", },
         initializers = IdPPropertiesApplicationContextInitializer.class, loader = PreferFileSystemContextLoader.class)
 @WebAppConfiguration
 public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests {
