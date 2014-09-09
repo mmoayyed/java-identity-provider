@@ -17,6 +17,12 @@
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
+    </attribute>
   </tag>
   
   <tag>
@@ -24,6 +30,12 @@
     <name>serviceDescription</name>
     <tag-class>net.shibboleth.idp.ui.taglib.ServiceDescriptionTag</tag-class>
     <body-content>scriptless</body-content>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
+    </attribute>
   </tag>
   
   <tag>
@@ -56,6 +68,12 @@
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
+    </attribute>
   </tag>
   
   <tag>
@@ -83,6 +101,12 @@
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
+    </attribute>
   </tag>
   
   <tag>
@@ -109,6 +133,12 @@
       <name>cssStyle</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
     </attribute>
   </tag>
   
@@ -157,6 +187,12 @@
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
     </attribute>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
+    </attribute>
   </tag>
 
   <tag>
@@ -164,6 +200,12 @@
     <name>organizationName</name>
     <tag-class>net.shibboleth.idp.ui.taglib.OrganizationNameTag</tag-class>
     <body-content>scriptless</body-content>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
+    </attribute>
   </tag>
 
   <tag>
@@ -171,6 +213,12 @@
     <name>organizationDisplayName</name>
     <tag-class>net.shibboleth.idp.ui.taglib.OrganizationDisplayNameTag</tag-class>
     <body-content>scriptless</body-content>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
+    </attribute>
   </tag>
 
   <tag>
@@ -197,6 +245,12 @@
       <name>cssStyle</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <name>uiContext</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>net.shibboleth.idp.ui.context.RelyingPartyUIContext</type>
     </attribute>
   </tag>
 

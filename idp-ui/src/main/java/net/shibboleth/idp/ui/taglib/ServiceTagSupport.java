@@ -68,6 +68,15 @@ public class ServiceTagSupport extends BodyTagSupport {
     @Nullable private RelyingPartyUIContext relyingPartyUIContext;
 
     /**
+     * Sets the {@link RelyingPartyUIContext}.
+     *
+     * @param value what to set
+     */
+    public void setUiContext(@Nullable final RelyingPartyUIContext value) {
+        relyingPartyUIContext = value;
+    }
+
+    /**
      * Set the Css class to use.
      * 
      * @param value what to set
