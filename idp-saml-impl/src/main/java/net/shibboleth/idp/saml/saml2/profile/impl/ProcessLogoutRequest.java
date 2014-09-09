@@ -71,10 +71,10 @@ import com.google.common.base.Predicates;
  * @post If a {@link IdPSession} was found, then a {@link SubjectContext} and {@link LogoutContext} will be populated.
  * @post If a single {@link IdPSession} was found, then a {@link SessionContext} will be populated.
  */
-public class ProcessLogout extends AbstractProfileAction {
+public class ProcessLogoutRequest extends AbstractProfileAction {
     
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessLogout.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessLogoutRequest.class);
     
     /** Session resolver. */
     @NonnullAfterInit private SessionResolver sessionResolver;
@@ -101,7 +101,7 @@ public class ProcessLogout extends AbstractProfileAction {
     @Nullable private LogoutRequest logoutRequest;
     
     /** Constructor. */
-    public ProcessLogout() {
+    public ProcessLogoutRequest() {
         subjectContextCreationStrategy = new ChildContextLookup<>(SubjectContext.class, true);
         sessionContextCreationStrategy = new ChildContextLookup<>(SessionContext.class, true);
         logoutContextCreationStrategy = new ChildContextLookup<>(LogoutContext.class, true);

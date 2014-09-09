@@ -62,8 +62,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.Maps;
 
-/** {@link ProcessLogout} unit test. */
-public class ProcessLogoutTest extends SessionManagerBaseTestCase {
+/** {@link ProcessLogoutRequest} unit test. */
+public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
     private SAMLObjectBuilder<SessionIndex> sessionIndexBuilder;
     
@@ -71,7 +71,7 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
     
     private ProfileRequestContext prc;
     
-    private ProcessLogout action;
+    private ProcessLogoutRequest action;
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         sessionIndexBuilder = (SAMLObjectBuilder<SessionIndex>)
@@ -81,7 +81,7 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
         
-        action = new ProcessLogout();
+        action = new ProcessLogoutRequest();
         action.setSessionResolver(sessionManager);
         action.setSessionManager(sessionManager);
         action.initialize();

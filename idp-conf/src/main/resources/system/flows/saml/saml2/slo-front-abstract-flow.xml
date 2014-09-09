@@ -13,7 +13,7 @@
     </action-state>
 
     <action-state id="DoProfileWork">
-        <evaluate expression="ProcessLogout" />
+        <evaluate expression="ProcessLogoutRequest" />
         <evaluate expression="LogoutPopulateAuditContext" />
         <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
 

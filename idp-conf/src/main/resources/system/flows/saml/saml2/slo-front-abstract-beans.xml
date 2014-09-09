@@ -34,8 +34,8 @@
 
     <alias name="shibboleth.OutgoingSAML2SLOBindings" alias="shibboleth.OutgoingBindings"/>
 
-    <bean id="ProcessLogout"
-        class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessLogout" scope="prototype"
+    <bean id="ProcessLogoutRequest"
+        class="net.shibboleth.idp.saml.saml2.profile.impl.ProcessLogoutRequest" scope="prototype"
         p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
