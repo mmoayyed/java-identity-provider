@@ -12,13 +12,15 @@
     <bean id="shibboleth.DefaultErrorView" class="java.lang.String" c:_0="%{idp.errors.defaultView:error}" />
 
     <!-- If desired, map events to alternate error view templates. -->
-    <!--
     <util:map id="shibboleth.EventViewMap">
+    <!--
         <entry key="MessageReplay" value="stale-error" />
         <entry key="MessageExpired" value="stale-error" />
         <entry key="UnableToDecode" value="stale-error" />
-    </util:map>
     -->
+        <!-- Handles final result of SAML 2 LogoutResponse messages. -->
+        <entry key="LogoutResponse" value="logout-response" />
+    </util:map>
 
     <!-- List of events to trap and handle with local views, without returning to SPs. -->
     <!--

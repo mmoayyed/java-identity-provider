@@ -11,8 +11,18 @@
         
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
+    
+    <decision-state id="DoProfileWork">
+        <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutResponse)"
+            then="DoLogoutResponse" else="DoLogoutRequest"/>
+    </decision-state>
 
-    <action-state id="DoProfileWork">
+    <action-state id="DoLogoutResponse">
+        <evaluate expression="'LogoutResponse'" />
+        <transition to="HandleSuccessWithView" />
+    </action-state>
+
+    <action-state id="DoLogoutRequest">
         <evaluate expression="ProcessLogoutRequest" />
         <evaluate expression="LogoutPopulateAuditContext" />
         <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
@@ -40,7 +50,6 @@
     <view-state id="LogoutView" view="logout">
         <on-render>
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
-            <evaluate expression="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() != null and !opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()" result="viewScope.asynchronous" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="viewScope.logoutContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext))" result="viewScope.multiRPContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
@@ -57,12 +66,12 @@
     
     <action-state id="DoAsync">
         <evaluate expression="'AsyncLogout'" />
-        <transition to="HandleAsyncWithView" />
+        <transition to="HandleSuccessWithView" />
     </action-state>
     
-    <!-- Same machinery as error view, but writes the audit log unconditionally. -->
+    <!-- Same machinery as error view, but writes audit log unconditionally. -->
     
-    <end-state id="HandleAsyncWithView" view="#{MapEventToView.apply(currentEvent)}">
+    <end-state id="HandleSuccessWithView" view="#{MapEventToView.apply(currentEvent)}">
         <on-entry>
             <evaluate expression="ErrorViewPopulateAuditContext" />
             <evaluate expression="WriteAuditLog" />
