@@ -353,24 +353,4 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
         map.put("jdoe", ipRanges);
     }
 
-    /**
-     * Configure Direct NameID c14n by overriding the activation condition attached to the Direct c14n descriptors.
-     */
-    @BeforeMethod public void overrideDirectNamePredicates() {
-
-        Predicate<ProfileRequestContext> condition =
-                Predicates.and(new NameIdentifierCanonicalization.ActivationCondition(), new RelyingPartyIdPredicate(
-                        Collections.singletonList(SP_ENTITY_ID)));
-
-        SubjectCanonicalizationFlowDescriptor c14n =
-                applicationContext.getBean(SAML1_TRANSFORM_C14N_BEAN_NAME, SubjectCanonicalizationFlowDescriptor.class);
-        c14n.setActivationCondition(condition);
-
-        condition =
-                Predicates.and(new NameIDCanonicalization.ActivationCondition(), new RelyingPartyIdPredicate(
-                        Collections.singletonList(SP_ENTITY_ID)));
-
-        c14n = applicationContext.getBean(SAML2_TRANSFORM_C14N_BEAN_NAME, SubjectCanonicalizationFlowDescriptor.class);
-        c14n.setActivationCondition(condition);
-    }
 }

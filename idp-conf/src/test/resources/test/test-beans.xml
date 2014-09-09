@@ -27,4 +27,34 @@
         c:entityCertificate-ref="test.idp.X509Certificate"
         p:entityId="${idp.entityID}" />
 
+    <!-- Override beans from system/conf/subject-c14n-system.xml. -->
+
+    <bean id="c14n/SAML2Transform" parent="shibboleth.AbstractSAML2C14NFlowBean"
+            p:formats-ref="shibboleth.NameTransformFormats">
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="and">
+                <constructor-arg>
+                    <list>
+                        <bean class="net.shibboleth.idp.saml.nameid.impl.NameIDCanonicalization.ActivationCondition" />
+                        <bean parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{{'https://sp.example.org'}}"  />
+                    </list>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+               
+    <bean id="c14n/SAML1Transform" parent="shibboleth.AbstractSAML1C14NFlowBean"
+            p:formats-ref="shibboleth.NameTransformFormats"> 
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="and">
+                <constructor-arg>
+                    <list>
+                        <bean class="net.shibboleth.idp.saml.nameid.impl.NameIdentifierCanonicalization.ActivationCondition" />
+                        <bean parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{{'https://sp.example.org'}}"  />
+                    </list>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+
 </beans>
