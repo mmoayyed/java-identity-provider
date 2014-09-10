@@ -82,7 +82,8 @@ public abstract class AbstractProfileInterceptorAction<InboundMessageType, Outbo
             return false;
         }
 
-        return super.doPreExecute(profileRequestContext);
+        return doPreExecute(profileRequestContext, profileInterceptorContext)
+                && super.doPreExecute(profileRequestContext);
     }
 
     /**

@@ -37,15 +37,15 @@ public class ProfileInterceptorContext extends BaseContext {
     /** The last flow attempted. */
     @Nullable private ProfileInterceptorFlowDescriptor attemptedFlow;
 
-    /** Flows that have been executed, successfully or otherwise, without producing a completed result. */
-    @Nonnull @NonnullElements private final Map<String, ProfileInterceptorFlowDescriptor> incompleteFlows;
-
     /** Flows that are available to be executed. */
     @Nonnull @NonnullElements private final Map<String, ProfileInterceptorFlowDescriptor> availableFlows;
 
+    /** Flows that have been attempted, successfully or otherwise, without producing a completed result. */
+    @Nonnull @NonnullElements private final Map<String, ProfileInterceptorFlowDescriptor> intermediateFlows;
+
     /** Constructor. */
     public ProfileInterceptorContext() {
-        incompleteFlows = new LinkedHashMap<>();
+        intermediateFlows = new LinkedHashMap<>();
         availableFlows = new LinkedHashMap<>();
     }
 
@@ -63,7 +63,7 @@ public class ProfileInterceptorContext extends BaseContext {
      * 
      * @param flow last flow that was attempted
      */
-    @Nonnull public void setAttemptedFlow(@Nullable final ProfileInterceptorFlowDescriptor flow) {
+    public void setAttemptedFlow(@Nullable final ProfileInterceptorFlowDescriptor flow) {
         attemptedFlow = flow;
     }
 
@@ -79,9 +79,9 @@ public class ProfileInterceptorContext extends BaseContext {
     /**
      * Get the flows that have been executed, successfully or otherwise, without producing a completed result.
      * 
-     * @return the incompletely executed flows
+     * @return the intermediately executed flows
      */
-    @Nonnull @NonnullElements @Live public Map<String, ProfileInterceptorFlowDescriptor> getIncompleteFlows() {
-        return incompleteFlows;
+    @Nonnull @NonnullElements @Live public Map<String, ProfileInterceptorFlowDescriptor> getIntermediateFlows() {
+        return intermediateFlows;
     }
 }

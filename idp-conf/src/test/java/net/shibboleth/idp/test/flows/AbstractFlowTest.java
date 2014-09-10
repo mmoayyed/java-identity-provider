@@ -32,6 +32,7 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.idp.test.InMemoryDirectory;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
 import net.shibboleth.utilities.java.support.net.IPRange;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -65,7 +66,10 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.EndState;
+import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -259,14 +263,28 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     }
 
     /**
-     * Assert that the flow execution outcome is not null and its id equals 'end'. For testing purposes, the outcome's
-     * attribute map must map {@value #END_STATE_OUTPUT_ATTR_NAME} to the {@link ProfileRequestContext}.
+     * Assert that the flow execution outcome is not null and its id equals {@value #END_STATE_ID}. For testing
+     * purposes, the outcome's attribute map must map {@value #END_STATE_OUTPUT_ATTR_NAME} to the
+     * {@link ProfileRequestContext}.
      * 
      * @param outcome the flow execution outcome
      */
     public void assertFlowExecutionOutcome(@Nullable final FlowExecutionOutcome outcome) {
+        assertFlowExecutionOutcome(outcome, END_STATE_ID);
+    }
+
+    /**
+     * Assert that the flow execution outcome is not null and its id equals the given end state id. For testing
+     * purposes, the outcome's attribute map must map {@value #END_STATE_OUTPUT_ATTR_NAME} to the
+     * {@link ProfileRequestContext}.
+     * 
+     * @param outcome the flow execution outcome
+     * @param endStateId the end state id
+     */
+    public void assertFlowExecutionOutcome(@Nullable final FlowExecutionOutcome outcome,
+            @Nullable final String endStateId) {
         Assert.assertNotNull(outcome, "Flow ended with an error");
-        Assert.assertEquals(outcome.getId(), "end");
+        Assert.assertEquals(outcome.getId(), endStateId);
         Assert.assertTrue(outcome.getOutput().contains(END_STATE_OUTPUT_ATTR_NAME));
         Assert.assertTrue(outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME) instanceof ProfileRequestContext);
     }
@@ -303,16 +321,48 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     }
 
     /**
+     * Get the {@link Flow} with the given flow ID.
+     * 
+     * @param flowID the flow ID
+     * @return the {@link Flow}
+     * 
+     * @see {@link FlowDefinitionLocator#getFlowDefinition(String)}
+     */
+    @Nonnull public Flow getFlow(@Nonnull final String flowID) {
+        Constraint.isNotNull(flowID, "Flow ID can not be null");
+
+        Constraint.isTrue(flowExecutor instanceof FlowExecutorImpl, "The flow executor must be an instance of "
+                + FlowExecutorImpl.class);
+
+        final FlowDefinition flowDefinition =
+                ((FlowExecutorImpl) flowExecutor).getDefinitionLocator().getFlowDefinition(flowID);
+
+        Constraint.isTrue(flowDefinition instanceof Flow, "The flow definition must be an instance of " + Flow.class);
+
+        return (Flow) flowDefinition;
+    }
+
+    /**
      * Map the {@link ProfileRequestContext} as an end state output attribute with name
-     * {@link #END_STATE_OUTPUT_ATTR_NAME} by assembling the flow with the given ID and manually setting the output
-     * attributes.
+     * {@value #END_STATE_OUTPUT_ATTR_NAME} by assembling the flow with the given flow ID and manually setting the
+     * output attributes of the end state with ID {@value #END_STATE_ID}.
      * 
      * @param flowID the flow ID
      */
     public void overrideEndStateOutput(@Nonnull final String flowID) {
+        overrideEndStateOutput(flowID, END_STATE_ID);
+    }
 
-        final FlowDefinition flowDefinition =
-                ((FlowExecutorImpl) flowExecutor).getDefinitionLocator().getFlowDefinition(flowID);
+    /**
+     * Map the {@link ProfileRequestContext} as an end state output attribute with name
+     * {@value #END_STATE_OUTPUT_ATTR_NAME} by assembling the flow with the given flow ID and manually setting the
+     * output attributes of the end state with the given id.
+     * 
+     * @param flowID the flow ID
+     * @param endStateId the end state ID
+     */
+    public void overrideEndStateOutput(@Nonnull final String flowID, @Nonnull final String endStateId) {
+        final FlowDefinition flow = getFlow(flowID);
 
         final ExpressionParser parser = new WebFlowSpringELExpressionParser(new SpelExpressionParser());
         final Expression source =
@@ -325,7 +375,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
         final DefaultMapper defaultMapper = new DefaultMapper();
         defaultMapper.addMapping(defaultMapping);
 
-        final EndState endState = (EndState) flowDefinition.getState(END_STATE_ID);
+        final EndState endState = (EndState) flow.getState(endStateId);
         endState.setOutputMapper(defaultMapper);
     }
 
@@ -335,15 +385,47 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * bean.
      */
     @BeforeMethod(dependsOnMethods = {"initializeFlowExecutor"}) public void overrideIPBasedAuthn() {
-        final FlowDefinition flowDefinition =
-                ((FlowExecutorImpl) flowExecutor).getDefinitionLocator().getFlowDefinition(IP_ADDRESS_AUTHN_FLOW_ID);
+        final Flow flow = getFlow(IP_ADDRESS_AUTHN_FLOW_ID);
 
-        final Map map = flowDefinition.getApplicationContext().getBean(IP_ADDRESS_AUTHN_MAP_BEAN_NAME, Map.class);
+        final Map map = flow.getApplicationContext().getBean(IP_ADDRESS_AUTHN_MAP_BEAN_NAME, Map.class);
 
         final List<IPRange> ipRanges = new ArrayList<IPRange>(2);
         ipRanges.add(IPRange.parseCIDRBlock("127.0.0.1/24"));
         ipRanges.add(IPRange.parseCIDRBlock("::1/128"));
         map.put("jdoe", ipRanges);
+    }
+
+    /**
+     * Add flows defined in a child flow definition registry to its parent registry.
+     * @param flowID the flow ID
+     * @param childRegistryID the child flow registry ID
+     */
+    public void registerFlowsInParentRegistry(@Nonnull final String flowID, @Nonnull final String childRegistryID) {
+        Constraint.isNotNull(flowID, "Flow ID can not be null");
+        Constraint.isNotNull(childRegistryID, "Flow registry ID can not be null");
+
+        final Flow flow = getFlow(flowID);
+
+        final FlowDefinitionRegistry flowRegistry =
+                flow.getApplicationContext().getBean(childRegistryID, FlowDefinitionRegistry.class);
+
+        Constraint.isNotNull(flowRegistry.getParent(), "Child flow registry must have a parent");
+
+        for (final String flowDefinitionId : flowRegistry.getFlowDefinitionIds()) {
+            log.debug("Adding flow '{}' from child registry to parent registry", flowDefinitionId);
+            flowRegistry.getParent().registerFlowDefinition(flowRegistry.getFlowDefinition(flowDefinitionId));
+        }
+    }
+
+    /**
+     * Get the {@link ProfileRequestContext} from the output attributes of the result.
+     * 
+     * @param result the flow execution result
+     * @return the profile request context or null
+     */
+    @Nullable public ProfileRequestContext retrieveProfileRequestContext(@Nonnull final FlowExecutionResult result) {
+        Constraint.isNotNull(result, "Result can not be null");
+        return (ProfileRequestContext) result.getOutcome().getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
     }
 
 }

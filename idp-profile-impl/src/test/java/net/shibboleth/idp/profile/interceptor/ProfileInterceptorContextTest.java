@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.profile.interceptor;
 
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,7 +26,7 @@ public class ProfileInterceptorContextTest {
     @Test public void testInstantiation() {
         final ProfileInterceptorContext context = new ProfileInterceptorContext();
         Assert.assertNull(context.getAttemptedFlow());
-        Assert.assertTrue(context.getIncompleteFlows().isEmpty());
+        Assert.assertTrue(context.getIntermediateFlows().isEmpty());
         Assert.assertTrue(context.getAvailableFlows().isEmpty());
     }
 

@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.profile.interceptor;
 
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.interceptor.SelectProfileInterceptorFlow;
-
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -53,7 +50,7 @@ public class SelectProfileInterceptorFlowTest extends PopulateProfileInterceptor
     }
 
     @Test public void testIncompleteFlows() {
-        interceptorCtx.getIncompleteFlows().put("test1", interceptorCtx.getAvailableFlows().get("test1"));
+        interceptorCtx.getIntermediateFlows().put("test1", interceptorCtx.getAvailableFlows().get("test1"));
 
         final Event event = action.execute(src);
 

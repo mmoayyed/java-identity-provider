@@ -13,14 +13,14 @@
 
     <!-- Error events to reflect back from this subflow. -->
     <end-state id="InvalidContext" />
-    <end-state id="ReselectFlow" />
-    <end-state id="NoPotentialFlow" />
-    <!-- TODO ProfileInterceptorFlowError ? -->
-    <end-state id="FlowError" />
+    <end-state id="HandleError" />
 
-    <!-- Default is to turn any error event into its own end-state. -->
+    <!--
+    Default is to turn non-proceed events into an error, and initiate error handling sequence
+    defined by action in child flows.
+    -->
     <global-transitions>
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
+          <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>
 
 </flow>

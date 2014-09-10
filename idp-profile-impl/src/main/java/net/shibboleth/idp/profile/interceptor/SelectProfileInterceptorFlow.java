@@ -20,8 +20,7 @@ package net.shibboleth.idp.profile.interceptor;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.ActionSupport;
-
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +34,11 @@ import org.slf4j.LoggerFactory;
  * </p>
  * 
  * <p>
- * This action returns the flow ID to be executed or null if there are no flows available.
- * to be executed.
+ * This action returns the flow ID to be executed or {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID} if
+ * there are no flows available to be executed.
  * </p>
  * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event Selected flow ID to execute
  * @pre <pre>ProfileRequestContext.getSubcontext(ProfileInterceptorContext.class, true) != null</pre>
  */
@@ -51,16 +51,16 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        // Detect a previous attempted flow, and move it to the incomplete collection.
+        // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same (probably failed) flow again.
         if (interceptorContext.getAttemptedFlow() != null) {
-            log.info("{} Flow {} did not complete, moving to incomplete set", getLogPrefix(), interceptorContext
-                    .getAttemptedFlow().getId());
-            interceptorContext.getIncompleteFlows().put(interceptorContext.getAttemptedFlow().getId(),
+            log.info("{} Moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
+                    interceptorContext.getAttemptedFlow().getId());
+            interceptorContext.getIntermediateFlows().put(interceptorContext.getAttemptedFlow().getId(),
                     interceptorContext.getAttemptedFlow());
         }
 
-        return super.doPreExecute(profileRequestContext);
+        return super.doPreExecute(profileRequestContext, interceptorContext);
     }
 
     /** {@inheritDoc} */
@@ -88,8 +88,9 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
     @Nullable private ProfileInterceptorFlowDescriptor selectUnattemptedFlow(
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
+
         for (final ProfileInterceptorFlowDescriptor flow : interceptorContext.getAvailableFlows().values()) {
-            if (!interceptorContext.getIncompleteFlows().containsKey(flow.getId())) {
+            if (!interceptorContext.getIntermediateFlows().containsKey(flow.getId())) {
                 log.debug("{} Checking flow {} for applicability...", getLogPrefix(), flow.getId());
                 interceptorContext.setAttemptedFlow(flow);
                 if (flow.apply(profileRequestContext)) {
