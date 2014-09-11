@@ -26,6 +26,9 @@
         <!-- Proprietary logout flow. -->
         <webflow:flow-location id="profile/Logout" path="../system/flows/logout/logout-flow.xml" />
 
+        <!-- Proprietary logout flow. -->
+        <webflow:flow-location id="profile/PropagateLogout" path="../system/flows/logout/logout-propagation-flow.xml" />
+
         <!-- Abstract flows underpinning SAML profiles. -->
         <webflow:flow-location id="saml.abstract" path="../system/flows/saml/saml-abstract-flow.xml" />
         <webflow:flow-location id="saml1.sso.abstract" path="../system/flows/saml/saml1/sso-abstract-flow.xml" />

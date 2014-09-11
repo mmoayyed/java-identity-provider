@@ -36,7 +36,7 @@
             </map>
         </property>
     </bean>
-
+    
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
             depends-on="shibboleth.OpenSAMLConfig"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
@@ -52,6 +52,15 @@
             p:secondaryServiceIndex="%{idp.session.secondaryServiceIndex:false}"
             p:IDGenerator-ref="shibboleth.SessionIDGenerator"
             p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
+
+    <!-- Built-in logout propagation flows. -->
+    
+    <bean id="logoutprop/saml2" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor.ActivationCondition"
+                p:sessionType="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }" />
+        </property>
+    </bean>
 
     <!-- The import is at the bottom to avoid a depends-on in a user-editable file. -->
     <import resource="../../conf/session-manager.xml" />

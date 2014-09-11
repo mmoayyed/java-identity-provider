@@ -620,7 +620,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             
             // Parse out the class type.
             final int pos = record.getValue().indexOf(':');
-            if (pos == -1) {
+            if (pos <= 0) {
                 throw new IOException("No class type found prefixed to record");
             }
             

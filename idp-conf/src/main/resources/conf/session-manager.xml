@@ -16,7 +16,7 @@
             </map>
         </property>
     </bean>
-
+    
     <!-- Includes defaults for SAML session types. -->
     <util:map id="shibboleth.SessionTypeProtocolMap" >
         <entry key="#{T(net.shibboleth.idp.saml.session.SAML1SPSession)}">
@@ -26,5 +26,10 @@
             <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
         </entry>
     </util:map>
+    
+    <!-- Flows that propagate logout to additional services using supported protocols. -->
+    <util:list id="shibboleth.LogoutPropagationFlows">
+        <ref bean="logoutprop/saml2" />
+    </util:list>
     
 </beans>
