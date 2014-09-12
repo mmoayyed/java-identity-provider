@@ -2,6 +2,12 @@
 <project name="Shibboleth Identity Provider V3" basedir=".." default="install">
 
   <taskdef resource="net/shibboleth/idp/installer/ant.xml"/>
+	
+  <!-- TODO 
+  
+    V2 to V3 upgrade
+    V3 to V3 , detect if it is V2
+    -->
 
   <!--  TARGETS:
 
@@ -107,8 +113,6 @@
   <!--
 
      KEY MANAGEMENT
-
-     TODO: Passwords 
 
     -->
 

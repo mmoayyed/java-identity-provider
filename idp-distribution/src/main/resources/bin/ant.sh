@@ -49,7 +49,7 @@ do
     fi
 done
 
-WEBINFLIBS=${ANT_HOME}/lib/*.jar
+WEBINFLIBS=${ANT_HOME}/../war/WEB-INF/lib/*.jar
 for i in ${WEBINFLIBS}
 do
     # if the directory is empty, then it will return the input string
@@ -105,4 +105,4 @@ if $cygwin; then
   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
 fi
-$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" $ANT_OPTS org.apache.tools.ant.Main -e -f src/installer/resources/build.xml "$@"
+$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" $ANT_OPTS org.apache.tools.ant.Main -e -f build.xml "$@"
