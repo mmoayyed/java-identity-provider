@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 public class SAML2UnsolicitedSSOFlowTest extends AbstractSAML2FlowTest {
 
     /** Flow id. */
-    @Nonnull public final static String FLOW_ID = "profile/SAML2/Unsolicited/SSO";
+    @Nonnull public final static String FLOW_ID = "SAML2/Unsolicited/SSO";
 
     /**
      * Test the SAML 2 unsolicited SSO flow

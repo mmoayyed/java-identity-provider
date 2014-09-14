@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
 public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
 
     /** Flow id. */
-    @Nonnull public final static String FLOW_ID = "profile/SAML2/SOAP/AttributeQuery";
+    @Nonnull public final static String FLOW_ID = "SAML2/SOAP/AttributeQuery";
 
     /** SAML 2 Response validator. */
     @Nullable private SAML2TestResponseValidator validator;

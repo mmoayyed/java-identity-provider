@@ -41,7 +41,7 @@ import org.w3c.dom.Element;
 public class SAML2POSTSimpleSignSSOFlowTest extends AbstractSAML2SSOFlowTest {
 
     /** Flow id. */
-    @Nonnull public final static String FLOW_ID = "profile/SAML2/POST-SimpleSign/SSO";
+    @Nonnull public final static String FLOW_ID = "SAML2/POST-SimpleSign/SSO";
 
     /**
      * Test the SAML 2 POST SSO flow.
@@ -65,7 +65,7 @@ public class SAML2POSTSimpleSignSSOFlowTest extends AbstractSAML2SSOFlowTest {
     public void buildRequest() throws Exception {
 
         request.setMethod("POST");
-        request.setRequestURI("/idp/" + FLOW_ID);
+        request.setRequestURI("/idp/profile/" + FLOW_ID);
 
         final AuthnRequest authnRequest = buildAuthnRequest(request);
         authnRequest.setDestination(getDestinationPostSimpleSign(request));

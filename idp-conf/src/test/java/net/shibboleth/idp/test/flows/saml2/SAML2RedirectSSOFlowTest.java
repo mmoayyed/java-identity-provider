@@ -44,7 +44,7 @@ import org.w3c.dom.Element;
 public class SAML2RedirectSSOFlowTest extends AbstractSAML2SSOFlowTest {
 
     /** Flow id. */
-    @Nonnull public final static String FLOW_ID = "profile/SAML2/Redirect/SSO";
+    @Nonnull public final static String FLOW_ID = "SAML2/Redirect/SSO";
 
     /**
      * Test the SAML 2 Redirect SSO flow.
@@ -69,7 +69,7 @@ public class SAML2RedirectSSOFlowTest extends AbstractSAML2SSOFlowTest {
      */
     public void buildRequest() throws Exception {
 
-        request.setRequestURI("/idp/" + FLOW_ID);
+        request.setRequestURI("/idp/profile/" + FLOW_ID);
 
         final AuthnRequest authnRequest = buildAuthnRequest(request);
         authnRequest.setDestination(getDestinationRedirect(request));
