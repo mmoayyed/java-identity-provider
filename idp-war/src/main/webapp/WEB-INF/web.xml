@@ -108,7 +108,8 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>idp</servlet-name>
-        <url-pattern>/</url-pattern>
+        <url-pattern>/status</url-pattern>
+        <url-pattern>/profile/*</url-pattern>
     </servlet-mapping>
 
     <!-- Servlet protected by container used for RemoteUser authentication -->
