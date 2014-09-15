@@ -112,7 +112,6 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         
         final SPSession spSession = session.getSPSession("https://sp.example.org");
         Assert.assertNotNull(spSession);
-        Assert.assertEquals(spSession.getAuthenticationFlowId(), "AuthenticationFlow/LDAP");
         Assert.assertEquals(spSession.getCreationInstant(), creation);
         Assert.assertEquals(spSession.getExpirationInstant(), expiration);
     }
@@ -133,8 +132,7 @@ public class UpdateSessionWithSPSessionTest extends SessionManagerBaseTestCase {
         /** {@inheritDoc} */
         @Override
         public SPSession apply(ProfileRequestContext input) {
-            return new BasicSPSession("https://sp.example.org", "AuthenticationFlow/LDAP", creationTime,
-                    expirationTime);
+            return new BasicSPSession("https://sp.example.org", creationTime, expirationTime);
         }
         
     }

@@ -25,7 +25,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.session.SAML1SPSession;
 import net.shibboleth.idp.session.SPSession;
@@ -91,15 +90,8 @@ public class SAML1SPSessionCreationStrategy implements Function<ProfileRequestCo
             return null;
         }
         
-        final AuthenticationContext authCtx = input.getSubcontext(AuthenticationContext.class);
-        if (authCtx == null || authCtx.getAuthenticationResult() == null) {
-            log.debug("No AuthenticationResult found in AuthenticationContext, no SPSession created");
-            return null;
-        }
-        
         final long now = System.currentTimeMillis();
-        return new SAML1SPSession(issuer, authCtx.getAuthenticationResult().getAuthenticationFlowId(),
-                now, now + sessionLifetime);
+        return new SAML1SPSession(issuer, now, now + sessionLifetime);
     }
 
 }

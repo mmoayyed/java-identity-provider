@@ -250,9 +250,9 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertTrue(session.getSPSessions().isEmpty());
 
         // Add some sessions.
-        SPSession foo = new BasicSPSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
+        SPSession foo = new BasicSPSession("https://sp.example.org/shibboleth",
                 System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
-        SPSession bar = new BasicSPSession("https://sp2.example.org/shibboleth", "AuthenticationFlow/Bar",
+        SPSession bar = new BasicSPSession("https://sp2.example.org/shibboleth",
                 System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
 
         Assert.assertNull(session.addSPSession(foo));
@@ -298,9 +298,9 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         IdPSession session2 = sessionManager.createSession("joe2");
 
         // Add some sessions.
-        SPSession foo = new ExtendedSPSession("https://sp.example.org/shibboleth", "AuthenticationFlow/Foo",
+        SPSession foo = new ExtendedSPSession("https://sp.example.org/shibboleth",
                 System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
-        SPSession bar = new ExtendedSPSession("https://sp2.example.org/shibboleth", "AuthenticationFlow/Bar",
+        SPSession bar = new ExtendedSPSession("https://sp2.example.org/shibboleth",
                 System.currentTimeMillis(), System.currentTimeMillis() + 60 * 60 * 1000);
 
         Assert.assertNull(session.addSPSession(foo));
@@ -336,8 +336,8 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
 
         public static final String SESSION_KEY = "PerSessionNameWouldGoHere";
         
-        public ExtendedSPSession(String id, String flowId, long creation, long expiration) {
-            super(id, flowId, creation, expiration);
+        public ExtendedSPSession(String id, long creation, long expiration) {
+            super(id, creation, expiration);
         }
 
         /** {@inheritDoc} */
@@ -353,14 +353,16 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         }
         
         /** {@inheritDoc} */
-        protected SPSession doDeserialize(JsonObject obj, String id, String flowId, long creation, long expiration)
+        @Override
+        protected SPSession doDeserialize(JsonObject obj, String id, long creation, long expiration)
                 throws IOException {
             // Check if field got serialized.
             obj.getString("sk");
-            return new ExtendedSPSession(id, flowId, creation, expiration);
+            return new ExtendedSPSession(id, creation, expiration);
         }
 
         /** {@inheritDoc} */
+        @Override
         protected void doSerializeAdditional(SPSession instance, JsonGenerator generator) {
             generator.write("sk", ExtendedSPSession.SESSION_KEY);
         }

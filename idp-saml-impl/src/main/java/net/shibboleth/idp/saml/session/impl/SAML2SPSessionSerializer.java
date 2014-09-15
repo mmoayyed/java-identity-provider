@@ -105,8 +105,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj,
-            @Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
+    @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj, @Nonnull @NotEmpty final String id, 
             @Duration @Positive final long creation, @Duration @Positive final long expiration) throws IOException {
         
         final String rawNameID = obj.getString(NAMEID_FIELD);
@@ -115,7 +114,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
         try {
             final XMLObject nameID = XMLObjectSupport.unmarshallFromReader(parserPool, new StringReader(rawNameID));
             if (nameID instanceof NameID) {
-                return new SAML2SPSession(id, flowId, creation, expiration, (NameID) nameID, sessionIndex);
+                return new SAML2SPSession(id, creation, expiration, (NameID) nameID, sessionIndex);
             } else {
                 throw new IOException("XMLObject stored in NameID field was not a NameID");
             }

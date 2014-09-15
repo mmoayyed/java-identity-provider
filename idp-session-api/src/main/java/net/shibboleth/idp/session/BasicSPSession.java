@@ -40,9 +40,6 @@ public class BasicSPSession implements SPSession {
     /** The unique identifier of the service. */
     @Nonnull @NotEmpty private final String serviceId;
     
-    /** Identifies authentication flow used to authenticate to this service. */
-    @Nonnull @NotEmpty private final String authenticationFlowId;
-    
     /** The time, in milliseconds since the epoch, when this session was created. */
     @Duration @Positive private final long creationInstant;
 
@@ -53,15 +50,12 @@ public class BasicSPSession implements SPSession {
      * Constructor.
      * 
      * @param id the identifier of the service associated with this session
-     * @param flowId authentication flow used to authenticate the principal to this service
      * @param creation creation time of session, in milliseconds since the epoch
      * @param expiration expiration time of session, in milliseconds since the epoch
      */
-    public BasicSPSession(@Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
-            @Duration @Positive final long creation, @Duration @Positive final long expiration) {
+    public BasicSPSession(@Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
+            @Duration @Positive final long expiration) {
         serviceId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Service ID cannot be null nor empty");
-        authenticationFlowId = Constraint.isNotNull(
-                StringSupport.trimOrNull(flowId), "Authentication flow ID cannot be null or empty");
         creationInstant = Constraint.isGreaterThan(0, creation, "Creation instant must be greater than 0");
         expirationInstant = Constraint.isGreaterThan(0, expiration, "Expiration instant must be greater than 0");
     }
@@ -82,12 +76,6 @@ public class BasicSPSession implements SPSession {
     @Override
     @Positive  public long getExpirationInstant() {
         return expirationInstant;
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String getAuthenticationFlowId() {
-        return authenticationFlowId;
     }
 
     /** {@inheritDoc} */
@@ -126,8 +114,7 @@ public class BasicSPSession implements SPSession {
     public String toString() {
         return Objects.toStringHelper(this).add("id", serviceId)
                 .add("creationInstant", new DateTime(creationInstant))
-                .add("expirationInstant", new DateTime(expirationInstant))
-                .add("authenticationFlowId", authenticationFlowId).toString();
+                .add("expirationInstant", new DateTime(expirationInstant)).toString();
     }
     
 }

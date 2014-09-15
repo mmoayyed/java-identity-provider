@@ -31,7 +31,6 @@ import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.session.SAML2SPSession;
 import net.shibboleth.idp.session.BasicSPSession;
@@ -120,18 +119,11 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             return null;
         }
         
-        final AuthenticationContext authCtx = input.getSubcontext(AuthenticationContext.class, false);
-        if (authCtx == null || authCtx.getAuthenticationResult() == null) {
-            log.debug("No AuthenticationResult found in AuthenticationContext, no SAML2SPSession created");
-            return null;
-        }
-        
         final Pair<Assertion, AuthnStatement> result = getAssertionAndStatement(input);
         if (result == null) {
             log.info("Creating BasicSPSession in the absence of necessary information");
             final long now = System.currentTimeMillis();
-            return new BasicSPSession(issuer, authCtx.getAuthenticationResult().getAuthenticationFlowId(),
-                    now, now + sessionLifetime);
+            return new BasicSPSession(issuer, now, now + sessionLifetime);
         }
         
         final long now = System.currentTimeMillis();
@@ -143,8 +135,8 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
             expiration = now + sessionLifetime;
         }
         
-        return new SAML2SPSession(issuer, authCtx.getAuthenticationResult().getAuthenticationFlowId(),
-                now, expiration, result.getFirst().getSubject().getNameID(), result.getSecond().getSessionIndex());
+        return new SAML2SPSession(issuer, now, expiration, result.getFirst().getSubject().getNameID(),
+                result.getSecond().getSessionIndex());
     }
 
     /**

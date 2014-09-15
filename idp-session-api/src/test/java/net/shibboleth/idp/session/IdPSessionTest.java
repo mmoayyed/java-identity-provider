@@ -104,9 +104,9 @@ public class IdPSessionTest {
         long now = System.currentTimeMillis();
         long exp = now + 60000L;
         
-        BasicSPSession svcSession1 = new BasicSPSession("svc1", "test", now, exp);
-        BasicSPSession svcSession2 = new BasicSPSession("svc2", "test", now, exp);
-        BasicSPSession svcSession3 = new BasicSPSession("svc3", "test", now, exp);
+        BasicSPSession svcSession1 = new BasicSPSession("svc1", now, exp);
+        BasicSPSession svcSession2 = new BasicSPSession("svc2", now, exp);
+        BasicSPSession svcSession3 = new BasicSPSession("svc3", now, exp);
 
         AbstractIdPSession session = new DummyIdPSession("test", "foo");
         session.addSPSession(svcSession1);
@@ -155,8 +155,8 @@ public class IdPSessionTest {
         long now = System.currentTimeMillis();
         long exp = now + 60000L;
 
-        BasicSPSession svcSession1 = new BasicSPSession("svc1", "test", now, exp);
-        BasicSPSession svcSession2 = new BasicSPSession("svc2", "test", now, exp);
+        BasicSPSession svcSession1 = new BasicSPSession("svc1", now, exp);
+        BasicSPSession svcSession2 = new BasicSPSession("svc2", now, exp);
 
         AbstractIdPSession session = new DummyIdPSession("test", "foo");
         session.addSPSession(svcSession1);

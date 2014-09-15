@@ -151,7 +151,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
-        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, "authn/Password", creation, expiration,
+        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameIdForSession, "index"));
                 
         final Event event = action.execute(src);
@@ -177,7 +177,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
-        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, "authn/Password", creation, expiration,
+        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index"));
         
         final Event event = action.execute(src);
@@ -195,7 +195,6 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER).iterator().next();
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getAuthenticationFlowId(), "authn/Password");
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
@@ -217,9 +216,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
-        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, "authn/Password", creation, expiration,
+        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index"));
-        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", "authn/Password", creation, expiration,
+        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", creation, expiration,
                 nameId2, "index2"));
         
         final Event event = action.execute(src);
@@ -237,7 +236,6 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER).iterator().next();
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getAuthenticationFlowId(), "authn/Password");
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
@@ -245,7 +243,6 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
         sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2").iterator().next();
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getAuthenticationFlowId(), "authn/Password");
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId2, sp.getNameID()));
@@ -267,9 +264,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
-        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, "authn/Password", creation, expiration,
+        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index"));
-        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", "authn/Password", creation, expiration,
+        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2", creation, expiration,
                 nameId2, "index2"));
         
         final Event event = action.execute(src);
@@ -299,7 +296,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
-        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, "authn/Password", creation, expiration,
+        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index"));
         
         
@@ -307,7 +304,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session2);
-        session2.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, "authn/Password", creation, expiration,
+        session2.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index2"));
         
         final Event event = action.execute(src);
@@ -324,7 +321,6 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 1);
         SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER).iterator().next();
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getAuthenticationFlowId(), "authn/Password");
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
@@ -348,7 +344,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
-        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, "authn/Password", creation, expiration,
+        session.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index"));
         
         
@@ -356,7 +352,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         
         final IdPSession session2 = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session2);
-        session2.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, "authn/Password", creation, expiration,
+        session2.addSPSession(new SAML2SPSession(ActionTestingSupport.INBOUND_MSG_ISSUER, creation, expiration,
                 nameId, "index2"));
         
         final Event event = action.execute(src);
@@ -372,7 +368,6 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(logoutCtx.getSessionMap().size(), 2);
         SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessionMap().get(ActionTestingSupport.INBOUND_MSG_ISSUER).toArray()[0];
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getAuthenticationFlowId(), "authn/Password");
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
@@ -380,7 +375,6 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
         sp = (SAML2SPSession) logoutCtx.getSessionMap().get(ActionTestingSupport.INBOUND_MSG_ISSUER).toArray()[1];
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getAuthenticationFlowId(), "authn/Password");
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
         Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));

@@ -17,11 +17,9 @@
 
 package net.shibboleth.idp.session;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
@@ -47,13 +45,6 @@ public interface SPSession extends IdentifiedComponent {
      * @return time, in milliseconds since the epoch, when this session will expire, never less than 0
      */
     @Positive long getExpirationInstant();
-
-    /**
-     * Get the authentication flow ID associated with this service session.
-     * 
-     * @return authentication flow ID associated with this service session
-     */
-    @Nonnull @NotEmpty String getAuthenticationFlowId();
     
     /**
      * Get a unique key identifying this subject's session with the service.

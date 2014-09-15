@@ -110,8 +110,8 @@ public class StorageBackedIdPSessionSerializerTest {
         session.doAddAuthenticationResult(new AuthenticationResult("a", new UsernamePrincipal("jdoe")));
         session.doAddAuthenticationResult(new AuthenticationResult("b", new UsernamePrincipal("jdoe")));
         session.doAddAuthenticationResult(new AuthenticationResult("c", new UsernamePrincipal("jdoe")));
-        session.doAddSPSession(new BasicSPSession("bar", "a", INSTANT, exp));
-        session.doAddSPSession(new BasicSPSession("baz", "c", INSTANT, exp));
+        session.doAddSPSession(new BasicSPSession("bar", INSTANT, exp));
+        session.doAddSPSession(new BasicSPSession("baz", INSTANT, exp));
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "complexIdPSession." + (isV8() ? "jdk8" : "json"));

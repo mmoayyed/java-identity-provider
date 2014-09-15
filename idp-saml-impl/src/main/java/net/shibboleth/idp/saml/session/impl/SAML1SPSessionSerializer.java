@@ -48,11 +48,10 @@ public class SAML1SPSessionSerializer extends AbstractSPSessionSerializer {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj,
-            @Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
+    @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj, @Nonnull @NotEmpty final String id,
             @Duration @Positive final long creation, @Duration @Positive final long expiration) throws IOException {
         
-        return new SAML1SPSession(id, flowId, creation, expiration);
+        return new SAML1SPSession(id, creation, expiration);
     }
     
 }

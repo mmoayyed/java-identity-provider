@@ -62,13 +62,6 @@ public class BasicSPSessionSerializerTest {
         } catch (IOException e) {
             
         }
-        
-        try {
-            serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noFlowId.json"), INSTANT);
-            Assert.fail();
-        } catch (IOException e) {
-            
-        }
 
         try {
             serializer.deserialize(1, CONTEXT, KEY, fileToString(DATAPATH + "noInstant.json"), INSTANT);
@@ -89,7 +82,7 @@ public class BasicSPSessionSerializerTest {
     @Test public void testBasic() throws Exception {
         long exp = INSTANT + 60000L;
         
-        BasicSPSession session = new BasicSPSession("test", "foo", INSTANT, exp);
+        BasicSPSession session = new BasicSPSession("test", INSTANT, exp);
         
         String s = serializer.serialize(session);
         String s2 = fileToString(DATAPATH + "basicSPSession.json");
@@ -98,7 +91,6 @@ public class BasicSPSessionSerializerTest {
         SPSession session2 = serializer.deserialize(1, CONTEXT, KEY, s2, exp);
 
         Assert.assertEquals(session.getId(), session2.getId());
-        Assert.assertEquals(session.getAuthenticationFlowId(), session2.getAuthenticationFlowId());
         Assert.assertEquals(session.getCreationInstant(), session2.getCreationInstant());
         Assert.assertEquals(session.getExpirationInstant(), session2.getExpirationInstant());
     }

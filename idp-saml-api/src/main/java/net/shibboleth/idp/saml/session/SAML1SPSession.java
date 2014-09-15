@@ -34,13 +34,12 @@ public class SAML1SPSession extends BasicSPSession {
      * Constructor.
      *
      * @param id the identifier of the service associated with this session
-     * @param flowId authentication flow used to authenticate the principal to this service
      * @param creation creation time of session, in milliseconds since the epoch
      * @param expiration expiration time of session, in milliseconds since the epoch
      */
-    public SAML1SPSession(@Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
-            @Duration @Positive final long creation, @Duration @Positive final long expiration) {
-        super(id, flowId, creation, expiration);
+    public SAML1SPSession(@Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
+            @Duration @Positive final long expiration) {
+        super(id, creation, expiration);
     }
 
 }

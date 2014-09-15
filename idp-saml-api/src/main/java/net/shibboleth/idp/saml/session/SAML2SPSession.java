@@ -52,16 +52,15 @@ public class SAML2SPSession extends BasicSPSession {
      * Constructor.
      *
      * @param id the identifier of the service associated with this session
-     * @param flowId authentication flow used to authenticate the principal to this service
      * @param creation creation time of session, in milliseconds since the epoch
      * @param expiration expiration time of session, in milliseconds since the epoch
      * @param assertedNameID the NameID asserted to the SP
      * @param assertedIndex the SessionIndex asserted to the SP
      */
-    public SAML2SPSession(@Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
-            @Duration @Positive final long creation, @Duration @Positive final long expiration,
-            @Nonnull final NameID assertedNameID, @Nonnull @NotEmpty final String assertedIndex) {
-        super(id, flowId, creation, expiration);
+    public SAML2SPSession(@Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
+            @Duration @Positive final long expiration, @Nonnull final NameID assertedNameID,
+            @Nonnull @NotEmpty final String assertedIndex) {
+        super(id, creation, expiration);
         
         nameID = Constraint.isNotNull(assertedNameID, "NameID cannot be null");
         sessionIndex = Constraint.isNotNull(StringSupport.trimOrNull(assertedIndex),

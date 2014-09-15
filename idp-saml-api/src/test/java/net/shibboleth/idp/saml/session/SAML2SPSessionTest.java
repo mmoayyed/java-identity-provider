@@ -38,10 +38,9 @@ public class SAML2SPSessionTest {
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        SAML2SPSession session = new SAML2SPSession("test", "test", System.currentTimeMillis(),
+        SAML2SPSession session = new SAML2SPSession("test", System.currentTimeMillis(),
                 System.currentTimeMillis() + 60000L, nameID, "1234567890");
         Assert.assertEquals(session.getId(), "test");
-        Assert.assertEquals(session.getAuthenticationFlowId(), "test");
         Assert.assertTrue(session.getCreationInstant() > start);
         Assert.assertTrue(session.getExpirationInstant() > session.getCreationInstant());
         Assert.assertSame(session.getNameID(), nameID);
@@ -49,49 +48,49 @@ public class SAML2SPSessionTest {
         Assert.assertEquals(session.getSPSessionKey(), "joe@example.org");
 
         try {
-            new SAML2SPSession(null, "test", 0, 0, null, null);
+            new SAML2SPSession(null, 0, 0, null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("", "test", 0, 0, null, null);
+            new SAML2SPSession("", 0, 0, null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("  ", "test", 0, 0, null, null);
+            new SAML2SPSession("  ", 0, 0, null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", null, 0, 0, null, null);
+            new SAML2SPSession("foo", 0, 0, null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", "test", start, 0, null, null);
+            new SAML2SPSession("foo", start, 0, null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", "test", start, start, null, null);
+            new SAML2SPSession("foo", start, start, null, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new SAML2SPSession("foo", "test", start, start, nameID, null);
+            new SAML2SPSession("foo", start, start, nameID, null);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

@@ -31,50 +31,41 @@ public class BasicSPSessionTest {
         // this is here to allow the event's creation time to deviate from the 'start' time
         Thread.sleep(50);
 
-        BasicSPSession session = new BasicSPSession("test", "test", System.currentTimeMillis(),
+        BasicSPSession session = new BasicSPSession("test", System.currentTimeMillis(),
                 System.currentTimeMillis() + 60000L);
         Assert.assertEquals(session.getId(), "test");
-        Assert.assertEquals(session.getAuthenticationFlowId(), "test");
         Assert.assertTrue(session.getCreationInstant() > start);
         Assert.assertTrue(session.getExpirationInstant() > session.getCreationInstant());
 
         try {
-            new BasicSPSession(null, "test", 0, 0);
+            new BasicSPSession(null, 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new BasicSPSession("", "test", 0, 0);
+            new BasicSPSession("", 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new BasicSPSession("  ", "test", 0, 0);
+            new BasicSPSession("  ", 0, 0);
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+
+        }
+        try {
+            new BasicSPSession("foo", 0, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 
         }
 
         try {
-            new BasicSPSession("foo", null, 0, 0);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new BasicSPSession("foo", "test", 0, 0);
-            Assert.fail();
-        } catch (ConstraintViolationException e) {
-
-        }
-
-        try {
-            new BasicSPSession("foo", "test", start, 0);
+            new BasicSPSession("foo", start, 0);
             Assert.fail();
         } catch (ConstraintViolationException e) {
 

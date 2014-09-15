@@ -34,6 +34,7 @@ import javax.json.stream.JsonGenerator;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -53,9 +54,6 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
 
     /** Field name of creation instant. */
     @Nonnull @NotEmpty private static final String CREATION_INSTANT_FIELD = "ts";
-
-    /** Field name of Flow ID. */
-    @Nonnull @NotEmpty private static final String FLOW_ID_FIELD = "flow";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSPSessionSerializer.class);
@@ -80,8 +78,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
             final JsonGenerator gen = Json.createGenerator(sink);
             gen.writeStartObject()
                 .write(SERVICE_ID_FIELD, instance.getId())
-                .write(CREATION_INSTANT_FIELD, instance.getCreationInstant())
-                .write(FLOW_ID_FIELD, instance.getAuthenticationFlowId());
+                .write(CREATION_INSTANT_FIELD, instance.getCreationInstant());
             
             doSerializeAdditional(instance, gen);
             
@@ -114,9 +111,8 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
             
             final String serviceId = obj.getString(SERVICE_ID_FIELD);
             final long creation = obj.getJsonNumber(CREATION_INSTANT_FIELD).longValueExact();
-            final String flowId = obj.getString(FLOW_ID_FIELD);
 
-            return doDeserialize(obj, serviceId, flowId, creation, expiration - expirationOffset);
+            return doDeserialize(obj, serviceId, creation, expiration - expirationOffset);
             
         } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing SPSession", e);
@@ -146,7 +142,6 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
      * 
      * @param obj JSON structure to parse
      * @param id the identifier of the service associated with this session
-     * @param flowId authentication flow used to authenticate the principal to this service
      * @param creation creation time of session, in milliseconds since the epoch
      * @param expiration expiration time of session, in milliseconds since the epoch
      * 
@@ -154,7 +149,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
      * @throws IOException if an error occurs during deserialization
      */
     @Nonnull protected abstract SPSession doDeserialize(@Nonnull final JsonObject obj,
-            @Nonnull @NotEmpty final String id, @Nonnull @NotEmpty final String flowId,
-            final long creation, final long expiration) throws IOException;
+            @Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
+            @Duration @Positive final long expiration) throws IOException;
     
 }

@@ -116,8 +116,8 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
 
         final IdPSession session = sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion()));
         Assert.assertNotNull(session);
-        session.addSPSession(new BasicSPSession("https://sp.example.org", "authn/Password", creation, expiration));
-        session.addSPSession(new BasicSPSession("https://sp2.example.org", "authn/Password", creation, expiration));
+        session.addSPSession(new BasicSPSession("https://sp.example.org", creation, expiration));
+        session.addSPSession(new BasicSPSession("https://sp2.example.org", creation, expiration));
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
@@ -128,13 +128,11 @@ public class ProcessLogoutTest extends SessionManagerBaseTestCase {
         
         BasicSPSession sp = (BasicSPSession) logoutCtx.getSessions("https://sp.example.org").iterator().next();
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getAuthenticationFlowId(), "authn/Password");
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
 
         sp = (BasicSPSession) logoutCtx.getSessions("https://sp2.example.org").iterator().next();
         Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getAuthenticationFlowId(), "authn/Password");
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
 }
