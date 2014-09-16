@@ -89,10 +89,7 @@ form {
   padding-bottom: 21px;
 }
 form label { /* labels are hidden */
-  position: absolute;
-  left: -999em;
-  width: 1em;
-  overflow: hidden;
+  font-weight: bold;
 }
 form legend {
   margin-bottom: 12px;

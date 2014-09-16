@@ -10,8 +10,8 @@
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 
-#set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername() )
-
+#set ( $username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername() )
+#set ( $rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext') )
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   	<head>
     	<meta charset="utf-8" />
@@ -43,20 +43,20 @@
                 </p>
               #end
 
-              #if ( $rpUIContext.getServiceName() )
+              #if ( !$rpContext.getRelyingPartyId().contains($rpUIContext.getServiceName()) )
                 <legend>
                   Login to $encoder.encodeForHTML($rpUIContext.getServiceName())
                 </legend>
               #end
 
               <section>
-                <Label for="username">Username</label>
+                <label for="j_username">Username</label>
                 <input class="form-element form-field" name="j_username" type="text"
                 	value="#if($username)$encoder.encodeForHTML($username)#end">
               </section>
 
               <section>
-                <label for="password">Password</label>
+                <label for="j_password">Password</label>
                 <input class="form-element form-field" name="j_password" type="password" value="">
               </section>
 
@@ -86,11 +86,12 @@
             -->
             #set ($logo = $rpUIContext.getLogo())
             #if ($logo)
-                <img src= "$encoder.encodeForHTMLAttribute($logo)" alt="logo for $rpUIContext.getServiceName()"/>
+              <img src= "$encoder.encodeForHTMLAttribute($logo)"
+                  alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())"/>
             #end
             #set ($desc = $rpUIContext.getServiceDescription())
             #if ($desc)
-              $desc
+              $encoder.encodeForHTML($desc)
             #end
             
           </div>

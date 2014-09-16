@@ -6,6 +6,7 @@
 <%@ page import="net.shibboleth.idp.authn.context.AuthenticationContext" %>
 <%@ page import="net.shibboleth.idp.authn.context.AuthenticationErrorContext" %>
 <%@ page import="net.shibboleth.idp.authn.context.UsernamePasswordContext" %>
+<%@ page import="net.shibboleth.idp.profile.context.RelyingPartyContext" %>
 <%@ page import="net.shibboleth.idp.ui.context.RelyingPartyUIContext" %>
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
 
@@ -16,7 +17,10 @@ if (username == null) {
 	username = "";
 }
 
-final boolean identifiedRP = ((RelyingPartyUIContext) request.getAttribute("rpUIContext")).getServiceName() != null;
+final RelyingPartyContext rpContext = (RelyingPartyContext)
+    ((ProfileRequestContext) request.getAttribute("profileRequestContext")).getSubcontext(RelyingPartyContext.class);
+final RelyingPartyUIContext rpUIContext = (RelyingPartyUIContext) request.getAttribute("rpUIContext");
+final boolean identifiedRP = !rpContext.getRelyingPartyId().contains(rpUIContext.getServiceName());
 %>
 
 <html>
@@ -65,13 +69,13 @@ final boolean identifiedRP = ((RelyingPartyUIContext) request.getAttribute("rpUI
               <% } %>
 
               <section>
-                <Label for="username">Username</label>
+                <Label for="j_username">Username</label>
                 <input class="form-element form-field" name="j_username" type="text"
                 	value="<%= HTMLEncoder.encodeForHTML(username) %>">
               </section>
 
               <section>
-                <label for="password">Password</label>
+                <label for="j_password">Password</label>
                 <input class="form-element form-field" name="j_password" type="password" value="">
               </section>
 
