@@ -46,7 +46,7 @@
         p:sessionTypeProtocolMap-ref="shibboleth.SessionTypeProtocolMap" />
         
     <bean id="SetRPUIInformation"
-            class="net.shibboleth.idp.ui.context.SetRPUIInformation" scope="prototype"
+            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
             p:activationCondition="%{idp.logout.elaboration:false}"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest">
         <property name="metadataContextLookupStrategy">

@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- * Context classes for IdP-specific information needed by the UI.
+ * Context classes for information needed by the UI.
  */
 
 package net.shibboleth.idp.ui.context;

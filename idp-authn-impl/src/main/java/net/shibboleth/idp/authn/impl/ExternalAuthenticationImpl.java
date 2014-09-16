@@ -160,5 +160,13 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         response.sendRedirect(extContext.getFlowExecutionUrl());
     }
 // Checkstyle: CyclomaticComplexity OFF
+
+    /** {@inheritDoc} */
+    @Override
+    protected ProfileRequestContext getProfileRequestContext(@Nonnull final HttpServletRequest request)
+            throws ExternalAuthenticationException {
+        return profileRequestContext;
+    }
+    
     
 }

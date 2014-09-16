@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Public interface supporting external authentication outside the webflow engine. */
@@ -118,6 +120,26 @@ public class ExternalAuthentication {
     }
 
     /**
+     * Get the {@link ProfileRequestContext} associated with a request.
+     * 
+     * @param key   the value returned by {@link #startExternalAuthentication(HttpServletRequest)}
+     * @param request servlet request
+     * 
+     * @return the profile request context
+     * @throws ExternalAuthenticationException if an error occurs
+     */
+    @Nonnull public static ProfileRequestContext getProfileRequestContext(@Nonnull @NotEmpty final String key,
+            @Nonnull final HttpServletRequest request) throws ExternalAuthenticationException {
+        
+        final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + key);
+        if (obj == null || !(obj instanceof ExternalAuthentication)) {
+            throw new ExternalAuthenticationException("No conversation state found in session");
+        }
+        
+        return ((ExternalAuthentication) obj).getProfileRequestContext(request);
+    }
+    
+    /**
      * Initialize a request for external authentication by seeking out the information stored in
      * the servlet session and exposing it as request attributes.
      * 
@@ -144,5 +166,18 @@ public class ExternalAuthentication {
             throws ExternalAuthenticationException, IOException {
         throw new ExternalAuthenticationException("Not implemented");
     }
-        
+    
+    /**
+     * Get the {@link ProfileRequestContext} associated with a request.
+     * 
+     * @param request servlet request
+     * 
+     * @return the profile request context
+     * @throws ExternalAuthenticationException if an error occurs
+     */
+    @Nonnull protected ProfileRequestContext getProfileRequestContext(@Nonnull final HttpServletRequest request)
+            throws ExternalAuthenticationException {
+        throw new ExternalAuthenticationException("Not implemented");
+    }
+    
 }
