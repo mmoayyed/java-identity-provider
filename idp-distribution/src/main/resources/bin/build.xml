@@ -4,9 +4,9 @@
 	<taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
 	<!-- TODO 
-  
-    V2 to V3 upgrade
-    V3 to V3 , detect if it is V2
+       
+       V2 to V3 upgrade
+       V3 to V3 , detect if it is V2
     -->
 
 	<!--  TARGETS:
@@ -47,8 +47,8 @@
 
 	<target name="install" depends="init, getsource, allinput, copy-distribution, install-nocopy" />
 	<target name="install-nocopy" depends="init, allinput, genkeys, upgrade, build-war" />
-	<target name="v2upgrade" depends="init, getsource, allinput, v2v3prepopulate, copy-distribution, install-nocopy" />
-	<target name="v2upgrade-nocopy" depends="init, allinput, v2v3prepopulate, install-nocopy" />
+	<target name="v2upgrade" depends="init, gettarget, v2v3prepopulate, getsource, allinput,copy-distribution, install-nocopy" />
+	<target name="v2upgrade-nocopy" depends="init, gettarget, v2v3prepopulate, allinput, install-nocopy" />
 
 	<!-- USER INPUT -->
 	<target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid" />
@@ -121,7 +121,14 @@
 	<target name="checkproperties" depends="gettarget">
 		<available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt" />
 		<available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt" />
-		<available property="idp.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12" />
+		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12" />
+		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-tls.jks" />
+		<condition property="idp.keystore.present">
+			<or>
+				<istrue value="${idp.p12.keystore.present}" />
+				<istrue value="${idp.jks.keystore.present}" />
+			</or>
+		</condition>
 		<available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver" />
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
 		<condition property="idp.will.call.certgen">
@@ -142,13 +149,28 @@
 			</or>
 		</condition>
 
+		<condition property="idp.ask.entityid">
+			<!-- Ask for EntityID if this is not an upgrade and the property file wasn't provided -->
+			<and>
+				<not>
+					<isset property="idp.merge.properties" />
+				</not>
+				<not>
+					<istrue value="${idp.properties.present}" />
+				</not>
+			</and>
+		</condition>
+
 		<condition property="idp.ask.hostname">
-			<!-- We ask for host name if there is no host name and we will call certgen -->
+			<!-- We ask for host name if there is no host name and we will call certgen or ask for entityID -->
 			<and>
 				<not>
 					<isset property="idp.host.name" />
 				</not>
-				<istrue value="${idp.will.call.certgen}" />
+				<or>
+					<istrue value="${idp.will.call.certgen}" />
+					<istrue value="${idp.ask.entityid}" />
+				</or>
 			</and>
 		</condition>
 
@@ -198,18 +220,6 @@
 			</and>
 		</condition>
 
-		<condition property="idp.ask.entityid">
-			<!-- Ask for EntityID if this is not an upgrade and the property file wasn't provided -->
-			<and>
-				<not>
-					<isset property="idp.merge.properties" />
-				</not>
-				<not>
-					<istrue value="${idp.properties.present}" />
-				</not>
-			</and>
-		</condition>
-
 	</target>
 
 	<target name="target-properties">
@@ -250,7 +260,7 @@
 
 	<target name="keystore" unless="idp.keystore.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
 		<echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
-		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-tls.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-tls.p12" certificateFile="${idp.target.dir}/creds/idp-tls.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
@@ -322,7 +332,7 @@
 		<local name="target" />
 		<property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}" />
 
-		<!-- Save old config.
+		<!-- Save old configuration:
          NOT conf, creds, flows, logs, metadata, views-->
 		<mkdir dir="${target}" />
 
@@ -397,11 +407,52 @@
 
 	<!-- V2 to V3 PrePopulate -->
 
-	<target name="v2v3prepopulate">
-		<!-- TODO - rename config to config.old
-         - create war.old and move away any old war files
-         - rename war to war.old
-         - rename Credentials to credentials.old
-         - copy selected files from config.old -->
+	<target name="v2v3prepopulate" depends="v2detect">
+		<fail unless="isV2">This is not a V2 Installation</fail>
+
+		<!-- rename war to war.v2 -->
+		<copy todir="${idp.target.dir}/war.v2" failonerror="true">
+			<fileset dir="${idp.target.dir}/war" />
+		</copy>
+		<delete dir="${idp.target.dir}/war" failonerror="false" />
+
+		<!-- rename conf to conf.v2 -->
+		<copy todir="${idp.target.dir}/conf.v2" failonerror="true">
+			<fileset dir="${idp.target.dir}/conf" />
+		</copy>
+		<delete dir="${idp.target.dir}/conf" failonerror="false" />
+		<!-- copy selected files from conf.v2 -->
+		<mkdir dir="${idp.target.dir}/conf" />
+		<copy file="${idp.target.dir}/conf.v2/attribute-filter.xml" tofile="${idp.target.dir}/conf/attribute-filter.xml" failonerror="false" />
+		<copy file="${idp.target.dir}/conf.v2/attribute-resolver.xml" tofile="${idp.target.dir}/conf/attribute-resolver.xml" failonerror="false" />
+		<copy file="${idp.target.dir}/conf.v2/relying-party.xml" tofile="${idp.target.dir}/conf/metadata-providers.xml" failonerror="false" />
+		<copy file="${idp.target.dir}/conf.v2/relying-party.xml" tofile="${idp.target.dir}/conf/relying-party.xml" failonerror="false" />
+		<!-- Rename credentials to credentials.v2 -->
+		<copy todir="${idp.target.dir}/credentials.v2" failonerror="true">
+			<fileset dir="${idp.target.dir}/credentials" />
+		</copy>
+		<delete dir="${idp.target.dir}/credentials" failonerror="false" />
+		<!--- copy selected files fron credentials.v2 -->
+		<mkdir dir="${idp.target.dir}/creds" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-encryption.crt" failonerror="false" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-encryption.key" failonerror="false" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-signing.crt" failonerror="false" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-signing.key" failonerror="false" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-tls.crt" failonerror="false" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.jks" tofile="${idp.target.dir}/creds/idp-tls.jks" failonerror="false" />
+
 	</target>
+
+	<target name="v2detect" depends="gettarget">
+		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
+		<available property="idp.relying.party.present" file="${idp.target.dir}/conf/relying-party.xml" />
+		<condition property="isV2">
+			<!-- This is V2 is there is relying party and there is not idp.properties -->
+			<and>
+				<isfalse value="${idp.properties.present}" />
+				<istrue value="${idp.relying.party.present}" />
+			</and>
+		</condition>
+	</target>
+
 </project>
