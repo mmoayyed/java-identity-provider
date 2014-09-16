@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Shibboleth Identity Provider V3" basedir=".." default="install">
 
-  <taskdef resource="net/shibboleth/idp/installer/ant.xml"/>
-	
-  <!-- TODO 
+	<taskdef resource="net/shibboleth/idp/installer/ant.xml" />
+
+	<!-- TODO 
   
     V2 to V3 upgrade
     V3 to V3 , detect if it is V2
     -->
 
-  <!--  TARGETS:
+	<!--  TARGETS:
 
         The following top level targets are implemented.  These in turn call subsidiary targets.
 
@@ -40,382 +40,368 @@
         The property idp.noprompt will cause a failure rather than a prompt.
     -->
 
-  <target name="init">
-    <tstamp/>
-    <hostinfo/>
-  </target>
+	<target name="init">
+		<tstamp />
+		<hostinfo />
+	</target>
 
-  <target name="install" depends="init, getsource, allinput, copy-distribution, install-nocopy"/>
-  <target name="install-nocopy" depends="init, allinput, genkeys, upgrade, build-war"/>
-  <target name="v2upgrade" depends="init, getsource, allinput, v2v3prepopulate, copy-distribution, install-nocopy"/>
-  <target name="v2upgrade-nocopy" depends="init, allinput, v2v3prepopulate, install-nocopy"/>
+	<target name="install" depends="init, getsource, allinput, copy-distribution, install-nocopy" />
+	<target name="install-nocopy" depends="init, allinput, genkeys, upgrade, build-war" />
+	<target name="v2upgrade" depends="init, getsource, allinput, v2v3prepopulate, copy-distribution, install-nocopy" />
+	<target name="v2upgrade-nocopy" depends="init, allinput, v2v3prepopulate, install-nocopy" />
 
-  <!-- USER INPUT -->
-  <target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid" />
+	<!-- USER INPUT -->
+	<target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid" />
 
-  <target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
-    <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Hostname" addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}"/>
-  </target>
+	<target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
+		<fail if="idp.noprompt">Input needed, silence demanded</fail>
+		<input message="Hostname" addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}" />
+	</target>
 
-  <target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties">
-    <property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/org/shibboleth/idp"/>
-  </target>
+	<target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties">
+		<property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/org/shibboleth/idp" />
+	</target>
 
-  <target name="getkeystorepassword"  if="idp.ask.keystore.password" depends="checkproperties">
-    <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Key Store Password" addproperty="idp.keystore.password"/>
-  </target>
+	<target name="getkeystorepassword" if="idp.ask.keystore.password" depends="checkproperties">
+		<fail if="idp.noprompt">Input needed, silence demanded</fail>
+		<input message="Key Store Password" addproperty="idp.keystore.password" />
+	</target>
 
-  <target name="getsealerpassword" if="idp.ask.sealer.password" depends="checkproperties">
-    <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Sealer Password" addproperty="idp.sealer.password"/>
-  </target>
+	<target name="getsealerpassword" if="idp.ask.sealer.password" depends="checkproperties">
+		<fail if="idp.noprompt">Input needed, silence demanded</fail>
+		<input message="Sealer Password" addproperty="idp.sealer.password" />
+	</target>
 
-  <target name="getsealeralias" if="idp.ask.sealer.alias" depends="checkproperties">
-    <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Sealer Alias" addproperty="idp.sealer.alias"/>
-  </target>
+	<target name="getsealeralias" if="idp.ask.sealer.alias" depends="checkproperties">
+		<fail if="idp.noprompt">Input needed, silence demanded</fail>
+		<input message="Sealer Alias" addproperty="idp.sealer.alias" />
+	</target>
 
-  <target name="getsource" unless="idp.src.dir" >
-    <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Source (Distribution) Directory" addproperty="idp.src.dir" defaultvalue="${basedir}"/>
-  </target>
+	<target name="getsource" unless="idp.src.dir">
+		<fail if="idp.noprompt">Input needed, silence demanded</fail>
+		<input message="Source (Distribution) Directory" addproperty="idp.src.dir" defaultvalue="${basedir}" />
+	</target>
 
-  <target name="gettarget" depends="target-properties, target-src-default, target-nosrc-default, prompttarget, settarget"/>
-  <target name="target-src-default" unless="idp.src.dir.present">
-    <!-- if the source isn't set up then the default is basedir -->
-    <property name="idp.target.default" value="${basedir}"/>
-  </target>
+	<target name="gettarget" depends="target-properties, target-src-default, target-nosrc-default, prompttarget, settarget" />
+	<target name="target-src-default" unless="idp.src.dir.present">
+		<!-- if the source isn't set up then the default is basedir -->
+		<property name="idp.target.default" value="${basedir}" />
+	</target>
 
-  <target name="target-nosrc-default" if="idp.src.dir.present">
-    <!-- if the source is set up then the default must not be basedir -->
-    <property name="idp.target.default" value="/opt/shibboleth/idp"/>
-  </target>
+	<target name="target-nosrc-default" if="idp.src.dir.present">
+		<!-- if the source is set up then the default must not be basedir -->
+		<property name="idp.target.default" value="/opt/shibboleth/idp" />
+	</target>
 
-  <target name="prompttarget" if="idp.ask.target">
-    <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <input message="Target (Install to) Directory" addproperty="idp.target.dir" defaultvalue="${idp.target.default}"/>
-  </target>
+	<target name="prompttarget" if="idp.ask.target">
+		<fail if="idp.noprompt">Input needed, silence demanded</fail>
+		<input message="Target (Install to) Directory" addproperty="idp.target.dir" defaultvalue="${idp.target.default}" />
+	</target>
 
-  <target name="settarget" if="idp.set.target" >
-    <property name="idp.target.dir" value="${basedir}"/>
-  </target>
+	<target name="settarget" if="idp.set.target">
+		<property name="idp.target.dir" value="${basedir}" />
+	</target>
 
-  <target name="getentityid" if="idp.ask.entityid" depends="checkproperties">
-    <fail if="idp.noprompt">Input needed, silence demanded</fail>
-    <local name="entityid"/>
-    <input message="EntityID" addproperty="entityid" defaultvalue="https://${idp.host.name}/shibboleth/idp"/>
-    <echo file="replace.properties">idp.entityID=${entityid}</echo>
-    <property name="idp.merge.properties" value="replace.properties"/>
-  </target>
+	<target name="getentityid" if="idp.ask.entityid" depends="checkproperties">
+		<fail if="idp.noprompt">Input needed, silence demanded</fail>
+		<local name="entityid" />
+		<input message="EntityID" addproperty="entityid" defaultvalue="https://${idp.host.name}/shibboleth/idp" />
+		<echo file="replace.properties">idp.entityID=${entityid}</echo>
+		<property name="idp.merge.properties" value="replace.properties" />
+	</target>
 
-  <!--
+	<!--
 
      KEY MANAGEMENT
 
     -->
 
-  <target name="genkeys" depends="init, checkproperties, signing-key, encryption-key, keystore, sealer"/>
+	<target name="genkeys" depends="init, checkproperties, signing-key, encryption-key, keystore, sealer" />
 
-  <target name="checkproperties" depends="gettarget">
-    <available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt"/>
-    <available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt"/>
-    <available property="idp.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12"/>
-    <available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver"/>
-    <available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties"/>
-    <condition property="idp.will.call.certgen">
-      <!-- we will call the cert gen if
+	<target name="checkproperties" depends="gettarget">
+		<available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt" />
+		<available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt" />
+		<available property="idp.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12" />
+		<available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver" />
+		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
+		<condition property="idp.will.call.certgen">
+			<!-- we will call the cert gen if
            EITHER we don't have a signing key
            OR we don't have a encryption key
            OR we don't have a tls -->
-      <or>
-        <not>
-          <istrue value="${idp.signing.present}"/>
-        </not>
-        <not>
-          <istrue value="${idp.encryption.present}"/>
-        </not>
-        <not>
-          <istrue value="${idp.keystore.present}"/>
-        </not>
-      </or>
-    </condition>
+			<or>
+				<not>
+					<istrue value="${idp.signing.present}" />
+				</not>
+				<not>
+					<istrue value="${idp.encryption.present}" />
+				</not>
+				<not>
+					<istrue value="${idp.keystore.present}" />
+				</not>
+			</or>
+		</condition>
 
-    <condition property="idp.ask.hostname">
-      <!-- We ask for host name if there is no host name and we will call certgen -->
-      <and>
-        <not>
-          <isset property="idp.host.name"/>
-        </not>
-        <istrue value="${idp.will.call.certgen}"/>
-      </and>
-    </condition>
+		<condition property="idp.ask.hostname">
+			<!-- We ask for host name if there is no host name and we will call certgen -->
+			<and>
+				<not>
+					<isset property="idp.host.name" />
+				</not>
+				<istrue value="${idp.will.call.certgen}" />
+			</and>
+		</condition>
 
-    <condition property="idp.generate.altname">
-      <!-- We ask for alt name if there is no alt name and we will call certgen -->
-      <and>
-        <not>
-          <isset property="uri.subject.alt.name"/>
-        </not>
-        <istrue value="${idp.will.call.certgen}"/>
-      </and>
-    </condition>
+		<condition property="idp.generate.altname">
+			<!-- We ask for alt name if there is no alt name and we will call certgen -->
+			<and>
+				<not>
+					<isset property="uri.subject.alt.name" />
+				</not>
+				<istrue value="${idp.will.call.certgen}" />
+			</and>
+		</condition>
 
-    <condition property="idp.ask.keystore.password">
-      <!-- We ask for keystore password if there is no keystore password and no keystore -->
-      <and>
-        <not>
-          <isset property="idp.keystore.password"/>
-        </not>
-        <not>
-          <istrue value="${idp.keystore.present}"/>
-        </not>
-      </and>
-    </condition>
+		<condition property="idp.ask.keystore.password">
+			<!-- We ask for keystore password if there is no keystore password and no keystore -->
+			<and>
+				<not>
+					<isset property="idp.keystore.password" />
+				</not>
+				<not>
+					<istrue value="${idp.keystore.present}" />
+				</not>
+			</and>
+		</condition>
 
-    <condition property="idp.ask.sealer.password">
-      <!-- We ask for sealer password if there is no sealer password and no sealer -->
-      <and>
-        <not>
-          <isset property="idp.sealer.password"/>
-        </not>
-        <not>
-          <istrue value="${idp.sealer.present}"/>
-        </not>
-      </and>
-    </condition>
+		<condition property="idp.ask.sealer.password">
+			<!-- We ask for sealer password if there is no sealer password and no sealer -->
+			<and>
+				<not>
+					<isset property="idp.sealer.password" />
+				</not>
+				<not>
+					<istrue value="${idp.sealer.present}" />
+				</not>
+			</and>
+		</condition>
 
-    <condition property="idp.ask.sealer.alias">
-      <!-- We ask for sealer alias if there is no sealer alias and no sealer -->
-      <and>
-        <not>
-          <isset property="idp.sealer.alias"/>
-        </not>
-        <not>
-          <istrue value="${idp.sealer.present}"/>
-        </not>
-      </and>
-    </condition>
+		<condition property="idp.ask.sealer.alias">
+			<!-- We ask for sealer alias if there is no sealer alias and no sealer -->
+			<and>
+				<not>
+					<isset property="idp.sealer.alias" />
+				</not>
+				<not>
+					<istrue value="${idp.sealer.present}" />
+				</not>
+			</and>
+		</condition>
 
-    <condition property="idp.ask.entityid">
-      <!-- Ask for EntityID if this is not an upgrade and the property file wasn't provided -->
-      <and>
-        <not>
-          <isset property="idp.merge.properties"/>
-        </not>
-        <not>
-          <istrue value="${idp.properties.present}"/>
-        </not>
-      </and>
-    </condition>
+		<condition property="idp.ask.entityid">
+			<!-- Ask for EntityID if this is not an upgrade and the property file wasn't provided -->
+			<and>
+				<not>
+					<isset property="idp.merge.properties" />
+				</not>
+				<not>
+					<istrue value="${idp.properties.present}" />
+				</not>
+			</and>
+		</condition>
 
-  </target>
+	</target>
 
-  <target name="target-properties">
-    <condition property="idp.ask.target">
-      <and>
-        <not>
-          <isset property="idp.target.dir"/>
-        </not>
-        <not>
-          <isset property="idp.noprompt"/>
-        </not>
-      </and>
-    </condition>
+	<target name="target-properties">
+		<condition property="idp.ask.target">
+			<and>
+				<not>
+					<isset property="idp.target.dir" />
+				</not>
+				<not>
+					<isset property="idp.noprompt" />
+				</not>
+			</and>
+		</condition>
 
-    <condition property="idp.set.target">
-      <and>
-        <not>
-          <isset property="idp.target.dir"/>
-        </not>
-        <isset property="idp.noprompt"/>
-      </and>
-    </condition>
+		<condition property="idp.set.target">
+			<and>
+				<not>
+					<isset property="idp.target.dir" />
+				</not>
+				<isset property="idp.noprompt" />
+			</and>
+		</condition>
 
-    <condition property="idp.src.dir.present">
-      <isset property="idp.src.dir"/>
-    </condition> 
-  </target>
+		<condition property="idp.src.dir.present">
+			<isset property="idp.src.dir" />
+		</condition>
+	</target>
 
-  <target name="signing-key" unless="idp.signing.present" depends="gethostname, geturisubjectaltname">
-    <echo>Creating Signing Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
-    <selfsignedcert hostname="${idp.host.name}" 
-                    privateKeyFile="${idp.target.dir}/creds/idp-signing.key" 
-                    certificateFile="${idp.target.dir}/creds/idp-signing.crt" 
-                    uriSubjectAltNames="${idp.uri.subject.alt.name}"/>
-  </target>
+	<target name="signing-key" unless="idp.signing.present" depends="gethostname, geturisubjectaltname">
+		<echo>Creating Signing Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
+		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/creds/idp-signing.key" certificateFile="${idp.target.dir}/creds/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+	</target>
 
-  <target name="encryption-key" unless="idp.encryption.present" depends="gethostname, geturisubjectaltname">
-    <echo>Creating Encryption Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
-    <selfsignedcert hostname="${idp.host.name}" 
-                    privateKeyFile="${idp.target.dir}/creds/idp-encryption.key" 
-                    certificateFile="${idp.target.dir}/creds/idp-encryption.crt" 
-                    uriSubjectAltNames="${idp.uri.subject.alt.name}"/>
-  </target>
+	<target name="encryption-key" unless="idp.encryption.present" depends="gethostname, geturisubjectaltname">
+		<echo>Creating Encryption Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
+		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/creds/idp-encryption.key" certificateFile="${idp.target.dir}/creds/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+	</target>
 
-  <target name="keystore" unless="idp.keystore.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
-    <echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
-    <selfsignedcert hostname="${idp.host.name}"
-                    keystoreFile="${idp.target.dir}/creds/idp-tls.p12"
-                    keystorePassword="${idp.keystore.password}"
-                    uriSubjectAltNames="${idp.uri.subject.alt.name}"/>
-  </target>
+	<target name="keystore" unless="idp.keystore.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
+		<echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
+		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-tls.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+	</target>
 
-  <target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
-    <echo>Creating sealer</echo>
-    <keystorestrategy keystoreFile="${idp.target.dir}/creds/sealer.jks"
-                      versionFile="${idp.target.dir}/creds/sealer.kver"
-                      keyAlias="${idp.sealer.alias}"
-  	                  keystorePassword="${idp.sealer.password}"/>
-  </target>
+	<target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
+		<echo>Creating sealer</echo>
+		<keystorestrategy keystoreFile="${idp.target.dir}/creds/sealer.jks" versionFile="${idp.target.dir}/creds/sealer.kver" keyAlias="${idp.sealer.alias}" keystorePassword="${idp.sealer.password}" />
+	</target>
 
-  <!--
+	<!--
 
      GENERAL V3 TO V3 UPGRADE
 
     -->
 
-  <target name="upgrade" depends="editproperties">
-    <!-- conf -->
-    <mkdir  dir="${idp.target.dir}/conf"/>
-    <copy todir="${idp.target.dir}/conf">
-      <fileset dir="${idp.target.dir}/dist/conf" includes="**/*">
-        <present present="srconly" targetdir="${idp.target.dir}/conf">
-          <mapper type="glob" from="*.dist" to="*"/>
-        </present>
-      </fileset>
-      <mapper type="glob" from="*.dist" to="*"/>
-    </copy>
-    <!-- flows -->
-    <mkdir  dir="${idp.target.dir}/flows"/>
-    <copy todir="${idp.target.dir}/flows">
-      <fileset dir="${idp.target.dir}/dist/flows" includes="**/*">
-        <present present="srconly" targetdir="${idp.target.dir}/flows">
-          <mapper type="glob" from="*.dist" to="*"/>
-        </present>
-      </fileset>
-      <mapper type="glob" from="*.dist" to="*"/>
-    </copy>
-    <!-- views -->
-    <mkdir  dir="${idp.target.dir}/views"/>
-    <copy todir="${idp.target.dir}/views">
-      <fileset dir="${idp.target.dir}/dist/views" includes="**/*">
-        <present present="srconly" targetdir="${idp.target.dir}/views">
-          <mapper type="glob" from="*.dist" to="*"/>
-        </present>
-      </fileset>
-      <mapper type="glob" from="*.dist" to="*"/>
-    </copy>
-  </target>
+	<target name="upgrade" depends="editproperties">
+		<!-- conf -->
+		<mkdir dir="${idp.target.dir}/conf" />
+		<copy todir="${idp.target.dir}/conf">
+			<fileset dir="${idp.target.dir}/dist/conf" includes="**/*">
+				<present present="srconly" targetdir="${idp.target.dir}/conf">
+					<mapper type="glob" from="*.dist" to="*" />
+				</present>
+			</fileset>
+			<mapper type="glob" from="*.dist" to="*" />
+		</copy>
+		<!-- flows -->
+		<mkdir dir="${idp.target.dir}/flows" />
+		<copy todir="${idp.target.dir}/flows">
+			<fileset dir="${idp.target.dir}/dist/flows" includes="**/*">
+				<present present="srconly" targetdir="${idp.target.dir}/flows">
+					<mapper type="glob" from="*.dist" to="*" />
+				</present>
+			</fileset>
+			<mapper type="glob" from="*.dist" to="*" />
+		</copy>
+		<!-- views -->
+		<mkdir dir="${idp.target.dir}/views" />
+		<copy todir="${idp.target.dir}/views">
+			<fileset dir="${idp.target.dir}/dist/views" includes="**/*">
+				<present present="srconly" targetdir="${idp.target.dir}/views">
+					<mapper type="glob" from="*.dist" to="*" />
+				</present>
+			</fileset>
+			<mapper type="glob" from="*.dist" to="*" />
+		</copy>
+	</target>
 
-  <target name="editproperties" depends="gettarget, getentityid" unless="idp.properties.present">
-    <mkdir dir="${idp.target.dir}/conf"/>
-    <mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties.dist"
-                     outFile="${idp.target.dir}/conf/idp.properties"
-                     mergeFile="${idp.merge.properties}"/>
-  </target>
+	<target name="editproperties" depends="gettarget, getentityid" unless="idp.properties.present">
+		<mkdir dir="${idp.target.dir}/conf" />
+		<mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties.dist" outFile="${idp.target.dir}/conf/idp.properties" mergeFile="${idp.merge.properties}" />
+	</target>
 
-  <!--
+	<!--
 
      CREATE WAR FILE
 
     -->
 
-  <target name="build-war" depends="gettarget">
-    <copy todir="${idp.target.dir}/war" overwrite="true" failonerror="false">
-      <fileset dir="${idp.target.dir}/edit-webapp"/>
-    </copy>
-    <!-- build a jar, not war, since it is already full populated -->
-    <delete file="${idp.target.dir}/idp.war" failonerror="false"/>
-    <jar destfile="${idp.target.dir}/idp.war" basedir="${idp.target.dir}/war"/>
-  </target>
+	<target name="build-war" depends="gettarget">
+		<copy todir="${idp.target.dir}/war" overwrite="true" failonerror="false">
+			<fileset dir="${idp.target.dir}/edit-webapp" />
+		</copy>
+		<!-- build a jar, not war, since it is already full populated -->
+		<delete file="${idp.target.dir}/idp.war" failonerror="false" />
+		<jar destfile="${idp.target.dir}/idp.war" basedir="${idp.target.dir}/war" />
+	</target>
 
-  <!-- specify getsource before get target to force target default-->
-  <target name="copy-distribution" depends="init, getsource, gettarget">
-    <local name="target"/>
-    <property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}"/>
+	<!-- specify getsource before get target to force target default-->
+	<target name="copy-distribution" depends="init, getsource, gettarget">
+		<local name="target" />
+		<property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}" />
 
-    <!-- Save old config.
+		<!-- Save old config.
          NOT conf, creds, flows, logs, metadata, views-->
-    <mkdir dir="${target}"/>
+		<mkdir dir="${target}" />
 
-    <!-- NOTE - move task appears to be very flaky - at least on windows.  This is why we
+		<!-- NOTE - move task appears to be very flaky - at least on windows.  This is why we
          copy with a force overwrite and then explicitly delete -->
-    <copy todir="${target}/bin" failonerror="false" >
-      <fileset dir="${idp.target.dir}/bin"/>
-    </copy>
-    <copy todir="${target}/dist" failonerror="false">
-      <fileset dir="${idp.target.dir}/dist"/>
-    </copy>
-    <copy todir="${target}/doc" failonerror="false">
-      <fileset dir="${idp.target.dir}/doc"/>
-      </copy>
-    <copy todir="${target}/jetty-base" failonerror="false">
-      <fileset dir="${idp.target.dir}/jetty-base"/>
-      </copy>
-    <copy todir="${target}/misc" failonerror="false">
-      <fileset dir="${idp.target.dir}/misc"/>
-      </copy>
-    <copy todir="${target}/system" failonerror="false">
-      <fileset dir="${idp.target.dir}/system"/>
-      </copy>
-    <copy todir="${target}/war" failonerror="false">
-      <fileset dir="${idp.target.dir}/war"/>
-      </copy>
+		<copy todir="${target}/bin" failonerror="false">
+			<fileset dir="${idp.target.dir}/bin" />
+		</copy>
+		<copy todir="${target}/dist" failonerror="false">
+			<fileset dir="${idp.target.dir}/dist" />
+		</copy>
+		<copy todir="${target}/doc" failonerror="false">
+			<fileset dir="${idp.target.dir}/doc" />
+		</copy>
+		<copy todir="${target}/jetty-base" failonerror="false">
+			<fileset dir="${idp.target.dir}/jetty-base" />
+		</copy>
+		<copy todir="${target}/misc" failonerror="false">
+			<fileset dir="${idp.target.dir}/misc" />
+		</copy>
+		<copy todir="${target}/system" failonerror="false">
+			<fileset dir="${idp.target.dir}/system" />
+		</copy>
+		<copy todir="${target}/war" failonerror="false">
+			<fileset dir="${idp.target.dir}/war" />
+		</copy>
 
-    <!-- Do not delete bin, this preserves user scripts.  
+		<!-- Do not delete bin, this preserves user scripts.  
          Delete bin/lib so as to clear up old jar files. -->
-    <delete dir="${idp.target.dir}/bin/lib" failonerror="false"/>
-    <delete dir="${idp.target.dir}/dist" failonerror="false"/>
-    <delete dir="${idp.target.dir}/doc" failonerror="false"/>
-    <delete dir="${idp.target.dir}/jettty-base" failonerror="false"/>
-    <delete dir="${idp.target.dir}/misc" failonerror="false"/>
-    <delete dir="${idp.target.dir}/system" failonerror="false"/>
-    <delete dir="${idp.target.dir}/war" failonerror="false"/>
+		<delete dir="${idp.target.dir}/bin/lib" failonerror="false" />
+		<delete dir="${idp.target.dir}/dist" failonerror="false" />
+		<delete dir="${idp.target.dir}/doc" failonerror="false" />
+		<delete dir="${idp.target.dir}/jettty-base" failonerror="false" />
+		<delete dir="${idp.target.dir}/misc" failonerror="false" />
+		<delete dir="${idp.target.dir}/system" failonerror="false" />
+		<delete dir="${idp.target.dir}/war" failonerror="false" />
 
-    <!-- Now copy or create empty as required.  
+		<!-- Now copy or create empty as required.  
          Creating an existing file is benign, bin gets 
          updated -->
 
-    <copy todir="${idp.target.dir}/bin" overwrite="true">
-      <fileset dir="${idp.src.dir}/bin"/>
-    </copy>
-    <mkdir dir="${idp.target.dir}/conf"/>
-    <mkdir dir="${idp.target.dir}/creds"/>
-    <copy todir="${idp.target.dir}/dist">
-      <fileset dir="${idp.src.dir}/dist"/>
-    </copy>
-    <mkdir dir="${idp.target.dir}/doc"/>
-    <copy todir="${idp.target.dir}/doc">
-      <fileset dir="${idp.src.dir}/doc"/>
-    </copy>
-    <mkdir dir="${idp.target.dir}/edit-webapp"/>
-    <mkdir dir="${idp.target.dir}/flows"/>
-    <copy todir="${idp.target.dir}/jetty-base">
-      <fileset dir="${idp.src.dir}/jetty-base"/>
-    </copy>
-    <mkdir dir="${idp.target.dir}/logs"/>
-    <mkdir dir="${idp.target.dir}/metadata"/>
-    <copy todir="${idp.target.dir}/misc">
-      <fileset dir="${idp.src.dir}/misc"/>
-    </copy>
-    <copy todir="${idp.target.dir}/system">
-      <fileset dir="${idp.src.dir}/system"/>
-    </copy>
-    <mkdir dir="${idp.target.dir}/flows"/>
-    <copy todir="${idp.target.dir}/war">
-      <fileset dir="${idp.src.dir}/war"/>
-    </copy>
-  </target>
+		<copy todir="${idp.target.dir}/bin" overwrite="true">
+			<fileset dir="${idp.src.dir}/bin" />
+		</copy>
+		<mkdir dir="${idp.target.dir}/conf" />
+		<mkdir dir="${idp.target.dir}/creds" />
+		<copy todir="${idp.target.dir}/dist">
+			<fileset dir="${idp.src.dir}/dist" />
+		</copy>
+		<mkdir dir="${idp.target.dir}/doc" />
+		<copy todir="${idp.target.dir}/doc">
+			<fileset dir="${idp.src.dir}/doc" />
+		</copy>
+		<mkdir dir="${idp.target.dir}/edit-webapp" />
+		<mkdir dir="${idp.target.dir}/flows" />
+		<copy todir="${idp.target.dir}/jetty-base">
+			<fileset dir="${idp.src.dir}/jetty-base" />
+		</copy>
+		<mkdir dir="${idp.target.dir}/logs" />
+		<mkdir dir="${idp.target.dir}/metadata" />
+		<copy todir="${idp.target.dir}/misc">
+			<fileset dir="${idp.src.dir}/misc" />
+		</copy>
+		<copy todir="${idp.target.dir}/system">
+			<fileset dir="${idp.src.dir}/system" />
+		</copy>
+		<mkdir dir="${idp.target.dir}/flows" />
+		<copy todir="${idp.target.dir}/war">
+			<fileset dir="${idp.src.dir}/war" />
+		</copy>
+	</target>
 
-  <!-- V2 to V3 PrePopulate -->
+	<!-- V2 to V3 PrePopulate -->
 
-  <target name="v2v3prepopulate">
-    <!-- TODO - rename config to config.old
+	<target name="v2v3prepopulate">
+		<!-- TODO - rename config to config.old
          - create war.old and move away any old war files
          - rename war to war.old
          - rename Credentials to credentials.old
          - copy selected files from config.old -->
-  </target>
+	</target>
 </project>
