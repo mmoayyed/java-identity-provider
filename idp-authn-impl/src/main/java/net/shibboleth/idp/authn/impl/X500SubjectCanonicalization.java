@@ -136,6 +136,9 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             return;
         }
+        
+        log.warn("{} Unable to extract a suitable RDN from DN: {}", getLogPrefix(), x500Principal.getName());
+        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
     }
     
     /**
