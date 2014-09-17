@@ -43,6 +43,7 @@
     <import resource="subject-c14n-system.xml" />
     <import resource="post-authn-system.xml" />
     <import resource="utilities.xml" />
+    <import resource="../../conf/global.xml" />
     
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
     
