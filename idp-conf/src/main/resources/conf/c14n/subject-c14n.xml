@@ -32,6 +32,12 @@
         <!-- <bean id="c14n/attribute" parent="shibboleth.PostLoginSubjectCanonicalizationFlow" /> -->
 
         <!--
+        This is an alternative that handles Subjects containing an X500Principal object and
+        allows extraction from the DN.
+        -->
+        <ref bean="c14n/x500" />
+
+        <!--
         This is the standard post-login step that returns a username derived from the login process. If you
         have more complex needs such as mapping a certificate DN into a principal name, an alternative may
         be required such as that above, but you can configure simple transforms in simple-subject-c14n-config.xml

@@ -78,6 +78,7 @@
 
         <!-- Standard post-login C14N methods. -->
         <webflow:flow-location id="c14n/simple" path="../system/flows/c14n/simple-subject-c14n-flow.xml" />
+        <webflow:flow-location id="c14n/x500" path="../system/flows/c14n/x500-subject-c14n-flow.xml" />
         <webflow:flow-location id="c14n/attribute" path="../system/flows/c14n/attribute-sourced-subject-c14n-flow.xml" />
         
         <!-- Master post-authn flow. -->

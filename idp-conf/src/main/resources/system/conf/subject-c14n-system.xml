@@ -23,6 +23,12 @@
         </property>
     </bean>
 
+    <bean id="c14n/x500" parent="shibboleth.PostLoginSubjectCanonicalizationFlow">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.authn.impl.X500SubjectCanonicalization.ActivationCondition" />
+        </property>
+    </bean>
+
     <bean id="c14n/LegacyPrincipalConnector" class="net.shibboleth.idp.authn.SubjectCanonicalizationFlowDescriptor">
         <property name="activationCondition">
             <bean class="net.shibboleth.idp.saml.nameid.impl.LegacyCanonicalization.ActivationCondition" 
