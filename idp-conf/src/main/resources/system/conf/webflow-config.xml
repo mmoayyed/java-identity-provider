@@ -68,6 +68,7 @@
         <webflow:flow-location id="authn/RemoteUserInternal" path="../system/flows/authn/remoteuser-internal-authn-flow.xml" />
         <webflow:flow-location id="authn/Password" path="../system/flows/authn/password-authn-flow.xml" />
         <webflow:flow-location id="authn/RemoteUser" path="../system/flows/authn/remoteuser-authn-flow.xml" />
+        <webflow:flow-location id="authn/X509" path="../system/flows/authn/x509-authn-flow.xml" />
         <webflow:flow-location id="authn/External" path="../system/flows/authn/external-authn-flow.xml" />
 
         <!-- Master flows for post-authn and SAML subject c14n. -->

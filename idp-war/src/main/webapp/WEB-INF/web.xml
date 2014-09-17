@@ -129,6 +129,21 @@
         <url-pattern>/Authn/RemoteUser</url-pattern>
     </servlet-mapping>
 
+    <!-- Servlet protected by container used for X.509 authentication -->
+    <servlet>
+        <servlet-name>X509AuthHandler</servlet-name>
+        <servlet-class>net.shibboleth.idp.authn.impl.X509AuthServlet</servlet-class>
+        <init-param>
+            <param-name>trustEngine</param-name>
+            <param-value>shibboleth.X509AuthnTrustEngine</param-value>
+        </init-param>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>X509AuthHandler</servlet-name>
+        <url-pattern>/Authn/X509</url-pattern>
+    </servlet-mapping>
+
     <!-- Send request to the EntityID to the SAML metadata handler. -->
     <!-- 
     <servlet>
