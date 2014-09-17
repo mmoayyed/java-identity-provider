@@ -18,10 +18,19 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.cert.Certificate;
+import java.util.Collection;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
 import org.opensaml.messaging.context.BaseContext;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 /**
  * Context, usually attached to {@link AuthenticationContext}, that carries a {@link Certificate} to be
@@ -31,9 +40,17 @@ public class CertificateContext extends BaseContext {
 
     /** The certificate to be validated. */
     @Nullable private Certificate certificate;
+    
+    /** Additional certificates as input to validation. */
+    @Nonnull @NonnullElements private Collection<Certificate> intermediates;
 
+    /** Constructor. */
+    public CertificateContext() {
+        intermediates = Lists.newArrayList();
+    }
+    
     /**
-     * Gets the certificate to be validated.
+     * Get the certificate to be validated.
      * 
      * @return the certificate to be validated
      */
@@ -42,7 +59,7 @@ public class CertificateContext extends BaseContext {
     }
 
     /**
-     * Sets the certificate to be validated.
+     * Set the certificate to be validated.
      * 
      * @param cert certificate to be validated
      * 
@@ -50,6 +67,31 @@ public class CertificateContext extends BaseContext {
      */
     public CertificateContext setCertificate(@Nullable final Certificate cert) {
         certificate = cert;
+        return this;
+    }
+    
+    /**
+     * Get any additional certificates accompanying the end-entity certificate.
+     * 
+     * @return any additional certificates
+     */
+    @Nonnull @NonnullElements public Collection<Certificate> getIntermediates() {
+        return intermediates;
+    }
+
+    /**
+     * Set the additional certificates accompanying the end-entity certificate.
+     * 
+     * @param certs additional certificates
+     * 
+     * @return this context
+     */
+    public CertificateContext setIntermediates(@Nonnull @NonnullElements final Collection<Certificate> certs) {
+        Constraint.isNotNull(certs, "Intermediate certificate collection cannot be null");
+        
+        intermediates.clear();
+        intermediates.addAll(Collections2.filter(certs, Predicates.notNull()));
+        
         return this;
     }
     

@@ -39,8 +39,13 @@
             </property>
         </bean>
 
+        <bean id="authn/External" parent="shibboleth.AuthenticationFlow"
+            p:nonBrowserSupported="false" />
+
         <bean id="authn/RemoteUser" parent="shibboleth.AuthenticationFlow"
             p:nonBrowserSupported="false" />
+
+        <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
 
         <bean id="authn/X509" parent="shibboleth.AuthenticationFlow"
                 p:nonBrowserSupported="false">
@@ -55,11 +60,19 @@
                 </util:list>
             </property>
         </bean>
-        
-        <bean id="authn/External" parent="shibboleth.AuthenticationFlow"
-            p:nonBrowserSupported="false" />
 
-        <bean id="authn/RemoteUserInternal" parent="shibboleth.AuthenticationFlow" />
+        <bean id="authn/X509Internal" parent="shibboleth.AuthenticationFlow">
+            <property name="supportedPrincipals">
+                <util:list>
+                    <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:X509" />
+                    <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient" />
+                    <bean parent="shibboleth.SAML1AuthenticationMethod"
+                        c:method="urn:ietf:rfc:2246" />
+                </util:list>
+            </property>
+        </bean>
 
         <bean id="authn/Password" parent="shibboleth.AuthenticationFlow"
                 p:passiveAuthenticationSupported="true"

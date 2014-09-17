@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -115,7 +116,6 @@ public class X509AuthServlet extends HttpServlet {
                 return;
             }
 
-            // Take only the end entity certificate.
             final X509Certificate cert = certs[0];
             log.debug("End-entity X.509 certificate found with subject '{}', issued by '{}'",
                     cert.getSubjectDN().getName(), cert.getIssuerDN().getName());
@@ -123,6 +123,7 @@ public class X509AuthServlet extends HttpServlet {
             if (trustEngine != null) {
                 try {
                     final BasicX509Credential cred = new BasicX509Credential(cert);
+                    cred.setEntityCertificateChain(Arrays.asList(certs));
                     if (trustEngine.validate(cred, new CriteriaSet())) {
                         log.debug("Trust engine validated X.509 certificate");
                     } else {
