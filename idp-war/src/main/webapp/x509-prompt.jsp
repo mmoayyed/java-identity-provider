@@ -26,7 +26,7 @@ final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContex
 final AuthenticationContext authnContext = prc.getSubcontext(AuthenticationContext.class);
 final RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.class);
 final RelyingPartyUIContext rpUIContext = authnContext.getSubcontext(RelyingPartyUIContext.class);
-final boolean identifiedRP = !rpContext.getRelyingPartyId().contains(rpUIContext.getServiceName());
+final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId().contains(rpUIContext.getServiceName());
 %>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
