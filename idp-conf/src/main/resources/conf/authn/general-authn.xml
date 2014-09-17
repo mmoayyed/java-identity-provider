@@ -47,6 +47,8 @@
             <property name="supportedPrincipals">
                 <util:list>
                     <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                        c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:X509" />
+                    <bean parent="shibboleth.SAML2AuthnContextClassRef"
                         c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient" />
                     <bean parent="shibboleth.SAML1AuthenticationMethod"
                         c:method="urn:ietf:rfc:2246" />
