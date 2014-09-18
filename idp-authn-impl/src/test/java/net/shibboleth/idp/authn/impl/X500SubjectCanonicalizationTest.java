@@ -122,9 +122,21 @@ public class X500SubjectCanonicalizationTest extends PopulateAuthenticationConte
         Assert.assertEquals(sc.getPrincipalName(), "foo");
     }
     
-    @Test public void testMultiple() {
+    @Test public void testMultipleTypes() {
         final Subject subject = new Subject();
         subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu, 0.9.2342.19200300.100.1.1=bar@example.edu"));
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
+        
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertProceedEvent(event);
+        final SubjectCanonicalizationContext sc = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        Assert.assertEquals(sc.getPrincipalName(), "foo@example.edu");
+    }
+
+    @Test public void testMultipleValues() {
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new X500Principal("EMAILADDRESS=foo@example.edu, EMAILADDRESS=bar@example.edu"));
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(subject);
         
         final Event event = action.execute(src);

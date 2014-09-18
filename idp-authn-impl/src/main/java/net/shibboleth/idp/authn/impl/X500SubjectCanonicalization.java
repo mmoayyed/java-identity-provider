@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import java.io.IOException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,12 +36,9 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.ASN1Set;
-import org.bouncycastle.asn1.ASN1String;
+import org.cryptacular.x509.dn.Attribute;
+import org.cryptacular.x509.dn.Attributes;
+import org.cryptacular.x509.dn.NameReader;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -120,21 +117,14 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
         
         log.debug("{} Searching for RDN to extract from DN: {}", getLogPrefix(), x500Principal.getName());
         
-        try (final ASN1InputStream asn1Stream = new ASN1InputStream(x500Principal.getEncoded())) {
-            final ASN1Primitive dn = asn1Stream.readObject();
-            for (final String oid : objectIds) {
-                final String rdn = findRDN(dn, oid);
-                if (rdn != null) {
-                    log.debug("{} Extracted RDN with OID {}: {}", getLogPrefix(), oid, rdn);
-                    c14nContext.setPrincipalName(applyTransforms(rdn));
-                    return;
-                }
+        final Attributes dnAttrs = NameReader.readX500Principal(x500Principal);
+        for (final String oid : objectIds) {
+            final String rdn = findRDN(dnAttrs, oid);
+            if (rdn != null) {
+                log.debug("{} Extracted RDN with OID {}: {}", getLogPrefix(), oid, rdn);
+                c14nContext.setPrincipalName(applyTransforms(rdn));
+                return;
             }
-        } catch (final IOException e) {
-            log.warn("{} Exception parsing DN", getLogPrefix(), e);
-            c14nContext.setException(e);
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-            return;
         }
         
         log.warn("{} Unable to extract a suitable RDN from DN: {}", getLogPrefix(), x500Principal.getName());
@@ -144,39 +134,22 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     /**
      * Find an RDN with the specified OID.
      * 
-     * @param dn the DN object
+     * @param attributes the DN components
      * @param oid the OID to look for
      * 
      * @return the first matching RDN value, or null
      */
-    @Nullable protected String findRDN(@Nonnull final ASN1Primitive dn, @Nonnull @NotEmpty final String oid) {
+    @Nullable protected String findRDN(@Nonnull final Attributes attributes, @Nonnull @NotEmpty final String oid) {
         
-         for (int i = 0; i < ((ASN1Sequence) dn).size(); i++) {
-            final ASN1Primitive dnComponent = ((ASN1Sequence) dn).getObjectAt(i).toASN1Primitive();
-            if (!(dnComponent instanceof ASN1Set)) {
-                continue;
-            }
-
-            // Each DN component is a set
-            for (int j = 0; j < ((ASN1Set) dnComponent).size(); j++) {
-                final ASN1Sequence grandChild = (ASN1Sequence) ((ASN1Set) dnComponent).getObjectAt(j).toASN1Primitive();
-
-                if (grandChild.getObjectAt(0) != null
-                        && grandChild.getObjectAt(0).toASN1Primitive() instanceof ASN1ObjectIdentifier) {
-                    final ASN1ObjectIdentifier componentId =
-                            (ASN1ObjectIdentifier) grandChild.getObjectAt(0).toASN1Primitive();
-
-                    if (oid.equals(componentId.getId())) {
-                        // OK, this DN component is actually a matching attribute.
-                        if (grandChild.getObjectAt(1) != null
-                                && grandChild.getObjectAt(1).toASN1Primitive() instanceof ASN1String) {
-                            return ((ASN1String) grandChild.getObjectAt(1).toASN1Primitive()).getString();
-                        }
-                    }
-                }
+        // We use backward() here because otherwise the library returns attributes in least to most-specific order.
+        final Iterator<Attribute> i = attributes.backward();
+        while (i.hasNext()) {
+            final Attribute attr = i.next();
+            if (attr.getType().getOid().equals(oid)) {
+                return attr.getValue();
             }
         }
-         
+        
         return null;
     }
      
