@@ -24,7 +24,6 @@ import java.util.Arrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
-import javax.security.auth.login.LoginException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -32,6 +31,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -110,8 +110,7 @@ public class X509AuthServlet extends HttpServlet {
 
             if (certs == null || certs.length < 1) {
                 log.error("No X.509 Certificates found in request");
-                httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY,
-                        new LoginException("No X509Certificates found in request"));
+                httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_ERROR_KEY, AuthnEventIds.NO_CREDENTIALS);
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                 return;
             }
@@ -128,8 +127,8 @@ public class X509AuthServlet extends HttpServlet {
                         log.debug("Trust engine validated X.509 certificate");
                     } else {
                         log.warn("Trust engine failed to validate X.509 certificate");
-                        httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY,
-                                new LoginException("Trust engine failed to validate X.509 certificate"));
+                        httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_ERROR_KEY,
+                                AuthnEventIds.INVALID_CREDENTIALS);
                         ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                         return;
                     }

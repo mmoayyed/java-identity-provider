@@ -22,7 +22,6 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
-import javax.security.auth.login.LoginException;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -99,7 +98,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         } else if (extContext.getAuthnError() != null) {
             log.warn("{} External authentication produced error message: {}", getLogPrefix(),
                     extContext.getAuthnError());
-            handleError(profileRequestContext, authenticationContext, new LoginException(extContext.getAuthnError()),
+            handleError(profileRequestContext, authenticationContext, extContext.getAuthnError(),
                     AuthnEventIds.AUTHN_EXCEPTION);
             return;
         }
@@ -121,8 +120,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         } else {
             log.info("{} External authentication failed, no user identity or error information returned",
                     getLogPrefix());
-            handleError(profileRequestContext, authenticationContext,
-                    new LoginException("No information returned by external authentication"),
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.NO_CREDENTIALS,
                     AuthnEventIds.NO_CREDENTIALS);
             return;
         }

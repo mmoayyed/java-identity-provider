@@ -23,11 +23,16 @@
     Define entries here to map error messages returned by external modules and classify them as particular
     kinds of errors for use in your templates and as events in flows.
     
-    The examples here just allow external signaling of the exact type of condition to record.
+    The examples here just allow external signaling of an exact condition.
     
     If you want to "fall-through" to other login flows, include a mapping to "ReselectFlow".
     -->
     <util:map id="shibboleth.authn.RemoteUser.ClassifiedMessageMap">
+        <entry key="NoCredentials">
+            <list>
+                <value>ReselectFlow</value>
+            </list>
+        </entry>
         <entry key="UnknownUsername">
             <list>
                 <value>UnknownUsername</value>
