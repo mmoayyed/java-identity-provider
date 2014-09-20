@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-/** 
- * Functions dealing with traversing and extracting data from profile request contexts.
+/**
+ * Functions for traversing session-related contexts.
  */
-package net.shibboleth.idp.profile.context.navigate;
+
+package net.shibboleth.idp.session.context.navigate;

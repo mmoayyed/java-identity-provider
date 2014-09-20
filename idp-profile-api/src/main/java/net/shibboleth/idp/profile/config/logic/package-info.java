@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-/**
- * Predicates and functions related to profile configuration.
- */
+/** Predicates related to profile configuration. */
 
 package net.shibboleth.idp.profile.config.logic;

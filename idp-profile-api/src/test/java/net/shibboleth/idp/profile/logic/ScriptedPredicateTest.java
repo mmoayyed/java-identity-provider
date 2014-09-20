@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.logic.impl;
+package net.shibboleth.idp.profile.logic;
 
 import javax.script.ScriptException;
 
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.logic.impl.ScriptedPredicate;
+import net.shibboleth.idp.profile.logic.ScriptedPredicate;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -64,7 +64,7 @@ public class ScriptedPredicateTest {
         GenericApplicationContext ctx = new GenericApplicationContext();
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
-        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource("/net/shibboleth/idp/profile/logic/impl/inlineBean.xml"));
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource("/net/shibboleth/idp/profile/logic/inlineBean.xml"));
 
         ctx.refresh();
         final ScriptedPredicate rule = ctx.getBean(ScriptedPredicate.class);
@@ -79,7 +79,7 @@ public class ScriptedPredicateTest {
         GenericApplicationContext ctx = new GenericApplicationContext();
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
-        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource("/net/shibboleth/idp/profile/logic/impl/resourceBean.xml"));
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource("/net/shibboleth/idp/profile/logic/resourceBean.xml"));
 
         ctx.refresh();
         final ScriptedPredicate rule = ctx.getBean(ScriptedPredicate.class);

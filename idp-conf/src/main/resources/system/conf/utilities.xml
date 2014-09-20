@@ -93,7 +93,7 @@
         class="net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction" />
 
     <bean id="shibboleth.PrincipalNameLookup.Session"
-        class="net.shibboleth.idp.profile.context.navigate.SessionContextPrincipalLookupFunction" />
+        class="net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction" />
 
     <bean id="shibboleth.SignatureValidationConfigurationLookup"
         class="net.shibboleth.idp.profile.config.navigate.SignatureValidationConfigurationLookupFunction"

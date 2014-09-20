@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.logic.impl;
+package net.shibboleth.idp.profile.logic;
 
 import java.io.IOException;
 

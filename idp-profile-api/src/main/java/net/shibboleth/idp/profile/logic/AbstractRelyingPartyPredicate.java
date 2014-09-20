@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.context.logic;
+package net.shibboleth.idp.profile.logic;
 
 import javax.annotation.Nonnull;
 

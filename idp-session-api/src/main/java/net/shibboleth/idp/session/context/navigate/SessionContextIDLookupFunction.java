@@ -15,8 +15,25 @@
  * limitations under the License.
  */
 
-/**
- * Functions to navigate into profile configuration information.
- */
+package net.shibboleth.idp.session.context.navigate;
 
-package net.shibboleth.idp.profile.config.navigate;
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.session.context.SessionContext;
+
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
+
+/** A function that returns the session ID from the session inside a {@link SessionContext}. */
+public class SessionContextIDLookupFunction implements ContextDataLookupFunction<SessionContext,String> {
+
+    /** {@inheritDoc} */
+    @Override
+    @Nullable public String apply(@Nullable final SessionContext input) {
+        
+        if (input != null && input.getIdPSession() != null) {
+            return input.getIdPSession().getId();
+        }
+        return null;
+    }
+
+}

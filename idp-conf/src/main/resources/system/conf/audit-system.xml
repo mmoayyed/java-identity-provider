@@ -197,7 +197,7 @@
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.profile.context.navigate.SubjectContextPrincipalLookupFunction" />
+                            <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
                         </constructor-arg>
                         <constructor-arg name="f">
                             <ref bean="shibboleth.ChildLookup.SubjectContext" />
@@ -210,7 +210,7 @@
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.profile.context.navigate.SessionContextIDLookupFunction" />
+                            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextIDLookupFunction" />
                         </constructor-arg>
                         <constructor-arg name="f">
                             <ref bean="shibboleth.ChildLookup.SessionContext" />
@@ -330,7 +330,7 @@
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.profile.context.navigate.SubjectContextPrincipalLookupFunction" />
+                            <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
                         </constructor-arg>
                         <constructor-arg name="f">
                             <ref bean="shibboleth.ChildLookup.SubjectContext" />
@@ -343,7 +343,7 @@
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.profile.context.navigate.SessionContextIDLookupFunction" />
+                            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextIDLookupFunction" />
                         </constructor-arg>
                         <constructor-arg name="f">
                             <ref bean="shibboleth.ChildLookup.SessionContext" />
@@ -376,7 +376,7 @@
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.profile.context.navigate.SubjectContextPrincipalLookupFunction" />
+                            <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
                         </constructor-arg>
                         <constructor-arg name="f">
                             <ref bean="shibboleth.ChildLookup.SubjectContext" />
@@ -389,7 +389,7 @@
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose">
                         <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.profile.context.navigate.SessionContextIDLookupFunction" />
+                            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextIDLookupFunction" />
                         </constructor-arg>
                         <constructor-arg name="f">
                             <ref bean="shibboleth.ChildLookup.SessionContext" />

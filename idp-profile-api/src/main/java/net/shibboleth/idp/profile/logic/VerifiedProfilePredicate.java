@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.logic.impl;
+package net.shibboleth.idp.profile.logic;
 
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.logic.AbstractRelyingPartyPredicate;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 

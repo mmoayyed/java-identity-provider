@@ -9,6 +9,19 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<bean id="testBean" class="net.shibboleth.idp.profile.logic.impl.ScriptedPredicate"
-		  factory-method="resourceScript" c:resource="classpath:/net/shibboleth/idp/profile/logic/impl/script.js"/>
+	<bean id="testBean" class="net.shibboleth.idp.profile.logic.ScriptedPredicate"
+		factory-method="inlineScript">
+		<constructor-arg>
+			<value>
+<![CDATA[
+       value = true;
+       if (null == profileContext.getSubcontext("net.shibboleth.idp.profile.context.RelyingPartyContext")) {
+         value = false;
+       }
+       value;
+]]>
+			</value>
+		</constructor-arg>
+
+	</bean>
 </beans>

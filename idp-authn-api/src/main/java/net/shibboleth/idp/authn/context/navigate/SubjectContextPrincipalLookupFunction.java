@@ -15,23 +15,23 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.context.navigate;
+package net.shibboleth.idp.authn.context.navigate;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 
-/** A function that returns the principal name from the session inside a {@link SessionContext}. */
-public class SessionContextPrincipalLookupFunction implements ContextDataLookupFunction<SessionContext,String> {
+/** A function that returns the principal name from a {@link SubjectContext}. */
+public class SubjectContextPrincipalLookupFunction implements ContextDataLookupFunction<SubjectContext,String> {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public String apply(@Nullable final SessionContext input) {
+    @Nullable public String apply(@Nullable final SubjectContext input) {
         
-        if (input != null && input.getIdPSession() != null) {
-            return input.getIdPSession().getPrincipalName();
+        if (input != null) {
+            return input.getPrincipalName();
         }
         return null;
     }

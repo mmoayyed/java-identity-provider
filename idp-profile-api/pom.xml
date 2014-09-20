@@ -38,6 +38,11 @@
         <!-- Runtime Dependencies -->
 
         <!-- Test Dependencies -->
+        <dependency>
+            <groupId>net.shibboleth.ext</groupId>
+            <artifactId>spring-extensions</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

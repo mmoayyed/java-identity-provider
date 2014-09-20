@@ -16,7 +16,7 @@
  */
 
 /**
- * APIs supporting predicates based on profile contexts. 
+ * Functions for traversing authentication contexts.
  */
 
-package net.shibboleth.idp.profile.context.logic;
+package net.shibboleth.idp.authn.context.navigate;

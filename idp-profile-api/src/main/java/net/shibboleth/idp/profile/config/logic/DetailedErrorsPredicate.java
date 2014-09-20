@@ -15,25 +15,30 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.context.navigate;
+package net.shibboleth.idp.profile.config.logic;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 
-import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
+import org.opensaml.profile.context.ProfileRequestContext;
 
-/** A function that returns the principal name from a {@link SubjectContext}. */
-public class SubjectContextPrincipalLookupFunction implements ContextDataLookupFunction<SubjectContext,String> {
+/**
+ * Predicate to determine whether a relying party should see detailed error information.
+ */
+public class DetailedErrorsPredicate extends AbstractRelyingPartyPredicate {
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public String apply(@Nullable final SubjectContext input) {
-        
+    @Override public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input != null) {
-            return input.getPrincipalName();
+            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+            if (rpc != null && rpc.getConfiguration() != null) {
+                return rpc.getConfiguration().isDetailedErrors();
+            }
         }
-        return null;
+        
+        return false;
     }
 
 }

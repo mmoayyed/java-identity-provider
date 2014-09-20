@@ -24,14 +24,13 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.xmlsec.DecryptionConfiguration;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
@@ -40,20 +39,10 @@ import com.google.common.collect.Lists;
  * <p>If a specific setting is unavailable, a null value is returned.</p>
  */
 public class DecryptionConfigurationLookupFunction
-        implements Function<ProfileRequestContext,List<DecryptionConfiguration>> {
+        extends AbstractRelyingPartyLookupFunction<List<DecryptionConfiguration>> {
 
     /** A resolver for default security configurations. */
     @Nullable private RelyingPartyConfigurationResolver rpResolver;
-    
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nullable private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
-    
-    /** Constructor. */
-    public DecryptionConfigurationLookupFunction() {
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-    }
 
     /**
      * Set the resolver for default security configurations.
@@ -62,17 +51,6 @@ public class DecryptionConfigurationLookupFunction
      */
     public void setRelyingPartyConfigurationResolver(@Nullable final RelyingPartyConfigurationResolver resolver) {
         rpResolver = resolver;
-    }
-    
-    /**
-     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRelyingPartyContextLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        relyingPartyContextLookupStrategy = strategy;
     }
 
     /** {@inheritDoc} */
@@ -92,13 +70,11 @@ public class DecryptionConfigurationLookupFunction
             }
         }
 
-        if (input != null && relyingPartyContextLookupStrategy != null) {
-            final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);
-            if (rpc != null) {
-                final ProfileConfiguration pc = rpc.getProfileConfig();
-                if (pc != null && pc.getSecurityConfiguration() != null) {
-                    configs.add(pc.getSecurityConfiguration().getDecryptionConfiguration());
-                }
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc.getSecurityConfiguration() != null) {
+                configs.add(pc.getSecurityConfiguration().getDecryptionConfiguration());
             }
         }
         

@@ -34,8 +34,7 @@ import com.google.common.base.Function;
  * A {@link Function} that checks for cases in which the webflow's current event is not reflected by
  * an attached {@link EventContext} and compensates, along with returning a suitably populated context.
  */
-public class WebFlowCurrentEventLookupFunction implements
-        Function<ProfileRequestContext,EventContext> {
+public class WebFlowCurrentEventLookupFunction implements Function<ProfileRequestContext,EventContext> {
 
     /** {@inheritDoc} */
     @Override
