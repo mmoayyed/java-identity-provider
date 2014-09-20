@@ -20,8 +20,8 @@ package net.shibboleth.idp.saml.profile.config.navigate;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.config.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;

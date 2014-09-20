@@ -15,41 +15,42 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.config.navigate;
+package net.shibboleth.idp.saml.profile.context.navigate;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
 
+import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 
 /**
- * A function that returns the allowable proxy count to include in assertions,
- * based on the result of {@link SAML2ProfileConfiguration#getProxyCount()},
- * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
- * by default a child of the {@link ProfileRequestContext}.
- * 
- * <p>If a specific setting is unavailable, a null is returned.</p>
+ * A function to access a {@link SAMLMetadataContext} underlying a {@link RelyingPartyContext} located via a
+ * lookup function, by default a child of the profile request context.
  */
-public class ProxyCountLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
+public class SAMLMetadataContextLookupFunction extends AbstractRelyingPartyLookupFunction<SAMLMetadataContext> {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public SAMLMetadataContext apply(@Nullable final ProfileRequestContext input) {
+        
         if (input != null) {
-            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpc != null) {
-                final ProfileConfiguration pc = rpc.getProfileConfig();
-                if (pc != null && pc instanceof SAML2ProfileConfiguration) {
-                    return ((SAML2ProfileConfiguration) pc).getProxyCount();
+            final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
+            if (rpCtx != null) {
+                final BaseContext peer = rpCtx.getRelyingPartyIdContextTree();
+                if (peer != null) {
+                    if (peer instanceof SAMLMetadataContext) {
+                        return (SAMLMetadataContext) peer;
+                    } else {
+                        return peer.getSubcontext(SAMLMetadataContext.class);
+                    }    
                 }
             }
         }
         
         return null;
     }
-
+    
 }

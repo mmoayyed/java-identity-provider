@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
-import net.shibboleth.idp.saml.profile.config.navigate.EntityDescriptorLookupFunction;
+import net.shibboleth.idp.saml.profile.context.navigate.EntityDescriptorLookupFunction;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.QNameSupport;
 

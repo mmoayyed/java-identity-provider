@@ -21,12 +21,19 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+
+import com.google.common.base.Functions;
+
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.saml.profile.logic.EntitiesDescriptorPredicate;
+import net.shibboleth.idp.saml.profile.context.navigate.EntityDescriptorLookupFunction;
+import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 
 /**
  * Support functions for building {@link RelyingPartyConfiguration} objects with SAML functionality.
@@ -50,11 +57,11 @@ public final class RelyingPartyConfigurationSupport {
     @Nonnull public static RelyingPartyConfiguration byName(
             @Nonnull @NonnullElements final Collection<String> relyingPartyIds) {
 
-        Constraint.isNotNull(relyingPartyIds, "Relying Partys list must be non null");
+        Constraint.isNotNull(relyingPartyIds, "Relying Party ID list cannot be null");
 
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setActivationCondition(new RelyingPartyIdPredicate(relyingPartyIds));
-
+        
         final StringBuffer name = new StringBuffer("EntityNames[");
         for (final String rpId: relyingPartyIds) {
             name.append(rpId).append(',');
@@ -67,16 +74,33 @@ public final class RelyingPartyConfigurationSupport {
 
     /**
      * A shorthand method for constructing a {@link RelyingPartyConfiguration} with an activation condition based on
-     * an {@link org.opensaml.saml.saml2.metadata.EntitiesDescriptor} group.
+     * one or more {@link org.opensaml.saml.saml2.metadata.EntitiesDescriptor} groups.
      * 
-     * @param name the group name
+     * @param groupNames the group names
      * @return  a default-constructed configuration with the appropriate condition set
      */
-    @Nonnull public static RelyingPartyConfiguration byGroup(@Nonnull @NotEmpty final String name) {
-        Constraint.isNotNull(name, "Group name must be non null");
+    @Nonnull public static RelyingPartyConfiguration byGroup(
+            @Nonnull @NonnullElements final Collection<String> groupNames) {
+        Constraint.isNotNull(groupNames, "Group name list cannot be null");
+        
+        // We adapt an OpenSAML Predicate applying to an EntityDescriptor by indirecting the lookup of the
+        // EntityDescriptor to a lookup sequence of PRC -> RPC -> SAMLMetadataContext -> EntityDescriptor.
+        
+        final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
+                new StrategyIndirectedPredicate<>(
+                        Functions.compose(new EntityDescriptorLookupFunction(),new SAMLMetadataContextLookupFunction()),
+                        new EntityGroupNamePredicate(groupNames));
+        
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
-        config.setId(name);
-        config.setActivationCondition(new EntitiesDescriptorPredicate(name));
+        config.setActivationCondition(indirectPredicate);
+
+        final StringBuffer name = new StringBuffer("EntityGroups[");
+        for (final String group: groupNames) {
+            name.append(group).append(',');
+            
+        }
+        name.append(']');
+        config.setId(name.toString());
         return config;
     }
 

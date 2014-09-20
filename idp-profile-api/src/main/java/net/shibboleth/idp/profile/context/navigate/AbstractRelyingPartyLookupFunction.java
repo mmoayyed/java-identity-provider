@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.config.navigate;
+package net.shibboleth.idp.profile.context.navigate;
 
 import javax.annotation.Nonnull;
 

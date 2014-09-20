@@ -22,14 +22,18 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
-import net.shibboleth.idp.saml.profile.logic.EntitiesDescriptorPredicate;
+import net.shibboleth.idp.saml.profile.context.navigate.EntityDescriptorLookupFunction;
+import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
+import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 
 /**
@@ -45,7 +49,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
      * definition is that if the it matches the relyingPartyID *or* it matches the &lt;EntitiesDescriptor&gt;, then the
      * configuration matches. So we need to
      * {@link Predicates#or(com.google.common.base.Predicate, com.google.common.base.Predicate)} a
-     * {@link RelyingPartyIdPredicate} and a {@link EntitiesDescriptorPredicate} These however may have injected lookup
+     * {@link RelyingPartyIdPredicate} and an {@link EntityGroupNamePredicate} These however may have injected lookup
      * strategies and so these need to be constructed as a BeanDefinition.
      * */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -54,20 +58,37 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
         final String id = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
         builder.addPropertyValue("id", id);
 
-        final BeanDefinitionBuilder rpPredicate =
-                BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
         List<String> ids = new ManagedList<>(1);
         ids.add(id);
+
+        // This is a simple predicate acting directly on the RelyingPartyContext.
+        final BeanDefinitionBuilder rpPredicate =
+                BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyIdPredicate.class);
         rpPredicate.addConstructorArgValue(ids);
 
+        // This is the complex predicate to apply to the EntityDescriptor buried inside the context.
         final BeanDefinitionBuilder egPredicate =
-                BeanDefinitionBuilder.genericBeanDefinition(EntitiesDescriptorPredicate.class);
-        egPredicate.addConstructorArgValue(id);
+                BeanDefinitionBuilder.genericBeanDefinition(EntityGroupNamePredicate.class);
+        egPredicate.addConstructorArgValue(ids);
+        
+        // This is a lookup function composition to get from the PRC to the SAMLMetadataContext.
+        final BeanDefinitionBuilder lookupFunction =
+                BeanDefinitionBuilder.rootBeanDefinition(Functions.class, "compose");
+        lookupFunction.addConstructorArgValue(BeanDefinitionBuilder.genericBeanDefinition(
+                EntityDescriptorLookupFunction.class).getBeanDefinition());
+        lookupFunction.addConstructorArgValue(BeanDefinitionBuilder.genericBeanDefinition(
+                SAMLMetadataContextLookupFunction.class).getBeanDefinition());
+        
+        // And this indirects the predicate to apply to the result of the lookup.
+        final BeanDefinitionBuilder indirectPredicate =
+                BeanDefinitionBuilder.genericBeanDefinition(StrategyIndirectedPredicate.class);
+        indirectPredicate.addConstructorArgValue(lookupFunction.getBeanDefinition());
+        indirectPredicate.addConstructorArgValue(egPredicate.getBeanDefinition());
 
         BeanDefinitionBuilder orPredicate = BeanDefinitionBuilder.genericBeanDefinition(Predicates.class);
         orPredicate.setFactoryMethod("or");
         orPredicate.addConstructorArgValue(rpPredicate.getBeanDefinition());
-        orPredicate.addConstructorArgValue(egPredicate.getBeanDefinition());
+        orPredicate.addConstructorArgValue(indirectPredicate.getBeanDefinition());
 
         builder.addPropertyValue("activationCondition", orPredicate.getBeanDefinition());
     }

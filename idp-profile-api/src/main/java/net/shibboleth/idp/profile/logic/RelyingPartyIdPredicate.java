@@ -31,10 +31,9 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import com.google.common.base.Predicate;
 
 /**
- * Predicate that evaluates a {@link ProfileRequestContext} by looking for relying party ID
+ * Predicate that evaluates a {@link ProfileRequestContext} by looking for a relying party ID
  * that matches one of a designated set, or a generic predicate. The ID is obtained from a
- * lookup function, by default from a {@link net.shibboleth.idp.profile.context.RelyingPartyContext}
- * child of the profile request context.
+ * {@link net.shibboleth.idp.profile.context.RelyingPartyContext} child of the profile request context.
  */
 public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<ProfileRequestContext,String> {
 
@@ -55,4 +54,5 @@ public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<Profile
     public RelyingPartyIdPredicate(@Nonnull final Predicate<String> pred) {
         super(new RelyingPartyIdLookupFunction(), pred);
     }
+    
 }

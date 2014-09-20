@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.config.navigate;
+package net.shibboleth.idp.saml.profile.context.navigate;
 
 import javax.annotation.Nullable;
 
