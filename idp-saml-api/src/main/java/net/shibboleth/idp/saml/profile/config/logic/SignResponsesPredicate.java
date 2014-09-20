@@ -15,40 +15,32 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.config.navigate;
+package net.shibboleth.idp.saml.profile.config.logic;
 
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
+import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-/**
- * A function that returns {@link SAMLProfileConfiguration#getAssertionLifetime()}
- * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
- * by default a child of the {@link ProfileRequestContext}.
- * 
- * <p>If a specific setting is unavailable, a null value is returned.</p>
- */
-public class AssertionLifetimeLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
-
+/** A predicate implementation that forwards to {@link SAMLProfileConfiguration#getSignResponses()}. */
+public class SignResponsesPredicate extends AbstractRelyingPartyPredicate {
+    
     /** {@inheritDoc} */
     @Override
-    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
-        if (input != null) {
-            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpc != null) {
-                final ProfileConfiguration pc = rpc.getProfileConfig();
-                if (pc != null && pc instanceof SAMLProfileConfiguration) {
-                    return ((SAMLProfileConfiguration) pc).getAssertionLifetime();
-                }
+    public boolean apply(@Nullable final ProfileRequestContext input) {
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc instanceof SAMLProfileConfiguration) {
+                return ((SAMLProfileConfiguration) pc).getSignResponses().apply(input);
             }
         }
         
-        return null;
+        return false;
     }
 
 }

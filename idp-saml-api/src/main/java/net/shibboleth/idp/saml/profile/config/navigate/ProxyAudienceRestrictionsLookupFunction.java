@@ -17,38 +17,46 @@
 
 package net.shibboleth.idp.saml.profile.config.navigate;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import com.google.common.collect.ImmutableList;
+
 /**
- * A function that returns {@link BrowserSSOProfileConfiguration#getMaximumSPSessionLifetime()}
+ * A function that returns the effective proxy audience restrictions to include in assertions,
+ * based on the result of {@link SAML2ProfileConfiguration#getProxyAudiences()},
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 
- * <p>If a specific setting is unavailable, zero is returned.</p>
+ * <p>If a specific setting is unavailable, no values are returned.</p>
  */
-public class SessionLifetimeLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
+public class ProxyAudienceRestrictionsLookupFunction extends AbstractRelyingPartyLookupFunction<Collection<String>> {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
-        if (input != null) {
-            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpc != null) {
-                final ProfileConfiguration pc = rpc.getProfileConfig();
-                if (pc != null && pc instanceof BrowserSSOProfileConfiguration) {
-                    return ((BrowserSSOProfileConfiguration) pc).getMaximumSPSessionLifetime();
-                }
+    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> apply(
+            @Nullable final ProfileRequestContext input) {
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc instanceof SAML2ProfileConfiguration) {
+                return ImmutableList.copyOf(((SAML2ProfileConfiguration) pc).getProxyAudiences());
             }
         }
         
-        return null;
+        return Collections.emptyList();
     }
 
 }

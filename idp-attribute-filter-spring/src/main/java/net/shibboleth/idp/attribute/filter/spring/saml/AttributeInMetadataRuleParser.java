@@ -23,14 +23,14 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
-import net.shibboleth.idp.saml.profile.config.navigate.AttributeConsumerServiceLookupFunction;
-import net.shibboleth.idp.saml.profile.context.navigate.EntityDescriptorLookupFunction;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.QNameSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.common.messaging.context.navigate.AttributeConsumerServiceLookupFunction;
+import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

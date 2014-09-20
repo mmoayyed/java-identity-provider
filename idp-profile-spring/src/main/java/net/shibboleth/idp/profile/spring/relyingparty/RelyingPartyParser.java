@@ -22,11 +22,11 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
-import net.shibboleth.idp.saml.profile.context.navigate.EntityDescriptorLookupFunction;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;

@@ -15,42 +15,38 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.context.navigate;
+package net.shibboleth.idp.saml.profile.config.navigate;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 
-import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 
 /**
- * A function to access a {@link SAMLMetadataContext} underlying a {@link RelyingPartyContext} located via a
- * lookup function, by default a child of the profile request context.
+ * A function that returns {@link BrowserSSOProfileConfiguration#getMaximumSPSessionLifetime()}
+ * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
+ * by default a child of the {@link ProfileRequestContext}.
+ * 
+ * <p>If a specific setting is unavailable, zero is returned.</p>
  */
-public class SAMLMetadataContextLookupFunction extends AbstractRelyingPartyLookupFunction<SAMLMetadataContext> {
+public class SessionLifetimeLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public SAMLMetadataContext apply(@Nullable final ProfileRequestContext input) {
-        
-        if (input != null) {
-            final RelyingPartyContext rpCtx = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpCtx != null) {
-                final BaseContext peer = rpCtx.getRelyingPartyIdContextTree();
-                if (peer != null) {
-                    if (peer instanceof SAMLMetadataContext) {
-                        return (SAMLMetadataContext) peer;
-                    } else {
-                        return peer.getSubcontext(SAMLMetadataContext.class);
-                    }    
-                }
+    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc instanceof BrowserSSOProfileConfiguration) {
+                return ((BrowserSSOProfileConfiguration) pc).getMaximumSPSessionLifetime();
             }
         }
         
         return null;
     }
-    
+
 }

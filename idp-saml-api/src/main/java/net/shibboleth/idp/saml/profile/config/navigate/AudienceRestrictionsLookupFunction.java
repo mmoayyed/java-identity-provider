@@ -50,22 +50,20 @@ public class AudienceRestrictionsLookupFunction extends AbstractRelyingPartyLook
     @Override
     @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> apply(
             @Nullable final ProfileRequestContext input) {
-        if (input != null) {
-            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpc != null) {
-                final String id = rpc.getRelyingPartyId();
-                final ProfileConfiguration pc = rpc.getProfileConfig();
-                if (pc != null && pc instanceof SAMLProfileConfiguration
-                        && !((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion().isEmpty()) {
-                    final Builder builder = ImmutableList.builder();
-                    if (id != null) {
-                        builder.add(rpc.getRelyingPartyId());
-                    }
-                    builder.add(((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion());
-                    return builder.build();
-                } else if (id != null) {
-                    return ImmutableList.<String>of(rpc.getRelyingPartyId());
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final String id = rpc.getRelyingPartyId();
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc instanceof SAMLProfileConfiguration
+                    && !((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion().isEmpty()) {
+                final Builder builder = ImmutableList.builder();
+                if (id != null) {
+                    builder.add(rpc.getRelyingPartyId());
                 }
+                builder.add(((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion());
+                return builder.build();
+            } else if (id != null) {
+                return ImmutableList.<String>of(rpc.getRelyingPartyId());
             }
         }
         

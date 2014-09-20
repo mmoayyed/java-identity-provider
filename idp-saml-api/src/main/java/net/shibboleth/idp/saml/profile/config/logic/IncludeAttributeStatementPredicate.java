@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.profile.logic;
+package net.shibboleth.idp.saml.profile.config.logic;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -30,7 +31,6 @@ import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 
 /**
  * A predicate that evaluates a SSO {@link ProfileRequestContext} and determines whether an attribute statement
@@ -40,34 +40,15 @@ import com.google.common.base.Predicate;
  * but is overridden to "true" in the case that the outgoing {@link SAMLBindingContext} indicates the outbound
  * binding is an artifact mechanism.</p> 
  */
-public class IncludeAttributeStatementPredicate implements Predicate<ProfileRequestContext> {
-    
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+public class IncludeAttributeStatementPredicate extends AbstractRelyingPartyPredicate {
     
     /** Strategy function for access to {@link SAMLBindingContext} to populate. */
     @Nonnull private Function<ProfileRequestContext,SAMLBindingContext> bindingContextLookupStrategy;
     
     /** Constructor. */
     public IncludeAttributeStatementPredicate() {
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         bindingContextLookupStrategy = Functions.compose(new ChildContextLookup<>(SAMLBindingContext.class),
                 new OutboundMessageContextLookup());
-    }
-
-    /**
-     * Sets the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        relyingPartyContextLookupStrategy = Constraint.isNotNull(strategy,
-                "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /**
@@ -92,18 +73,16 @@ public class IncludeAttributeStatementPredicate implements Predicate<ProfileRequ
             return true;
         }
         
-        if (input != null) {
-            final RelyingPartyContext rpc = relyingPartyContextLookupStrategy.apply(input);
-            if (rpc != null && rpc.getProfileConfig() != null) {
-                if (rpc.getProfileConfig()
-                        instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
-                    return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
-                            rpc.getProfileConfig()).includeAttributeStatement();
-                } else if (rpc.getProfileConfig()
-                        instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
-                    return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
-                            rpc.getProfileConfig()).includeAttributeStatement();
-                }
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null && rpc.getProfileConfig() != null) {
+            if (rpc.getProfileConfig()
+                    instanceof net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration) {
+                return ((net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration)
+                        rpc.getProfileConfig()).includeAttributeStatement();
+            } else if (rpc.getProfileConfig()
+                    instanceof net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration) {
+                return ((net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration)
+                        rpc.getProfileConfig()).includeAttributeStatement();
             }
         }
         

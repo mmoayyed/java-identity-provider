@@ -17,48 +17,36 @@
 
 package net.shibboleth.idp.saml.profile.config.navigate;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.AbstractRelyingPartyLookupFunction;
-import net.shibboleth.idp.saml.saml2.profile.config.SAML2ProfileConfiguration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.idp.saml.profile.config.SAMLProfileConfiguration;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
-import com.google.common.collect.ImmutableList;
-
 /**
- * A function that returns the effective proxy audience restrictions to include in assertions,
- * based on the result of {@link SAML2ProfileConfiguration#getProxyAudiences()},
+ * A function that returns {@link SAMLProfileConfiguration#getAssertionLifetime()}
  * if such a profile is available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 
- * <p>If a specific setting is unavailable, no values are returned.</p>
+ * <p>If a specific setting is unavailable, a null value is returned.</p>
  */
-public class ProxyAudienceRestrictionsLookupFunction extends AbstractRelyingPartyLookupFunction<Collection<String>> {
+public class AssertionLifetimeLookupFunction extends AbstractRelyingPartyLookupFunction<Long> {
 
     /** {@inheritDoc} */
     @Override
-    @Nullable @NonnullElements @NotLive @Unmodifiable public Collection<String> apply(
-            @Nullable final ProfileRequestContext input) {
-        if (input != null) {
-            final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-            if (rpc != null) {
-                final ProfileConfiguration pc = rpc.getProfileConfig();
-                if (pc != null && pc instanceof SAML2ProfileConfiguration) {
-                    return ImmutableList.copyOf(((SAML2ProfileConfiguration) pc).getProxyAudiences());
-                }
+    @Nullable public Long apply(@Nullable final ProfileRequestContext input) {
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc instanceof SAMLProfileConfiguration) {
+                return ((SAMLProfileConfiguration) pc).getAssertionLifetime();
             }
         }
         
-        return Collections.emptyList();
+        return null;
     }
 
 }

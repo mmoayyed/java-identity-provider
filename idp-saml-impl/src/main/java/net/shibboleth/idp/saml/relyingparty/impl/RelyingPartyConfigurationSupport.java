@@ -22,6 +22,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
@@ -29,7 +30,6 @@ import com.google.common.base.Functions;
 
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
-import net.shibboleth.idp.saml.profile.context.navigate.EntityDescriptorLookupFunction;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
