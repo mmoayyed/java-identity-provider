@@ -25,16 +25,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.joda.time.DateTime;
-import org.opensaml.storage.StorageRecord;
-import org.opensaml.storage.StorageSerializer;
-import org.opensaml.storage.VersionMismatchException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.session.AbstractIdPSession;
@@ -49,6 +39,16 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.joda.time.DateTime;
+import org.opensaml.storage.StorageRecord;
+import org.opensaml.storage.StorageSerializer;
+import org.opensaml.storage.VersionMismatchException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 /**
  * Implementation of {@link net.shibboleth.idp.session.IdPSession} for use with {@link StorageBackedSessionManager}.
@@ -165,11 +165,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                         // A null here means the reference to the record should be removed.
                         entries.remove();
                     }
-                // Checkstyle: EmptyBlock OFF - exception's logged in load function
                 } catch (final IOException e) {
                     // An exception implies the record *might* still be accessible later.
                 }
-                // Checkstyle: EmptyBlock ON
             }
         }
         
@@ -200,11 +198,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 // A null here means the reference to the record should be removed.
                 getAuthenticationResultMap().remove(trimmed);
             }
-        // Checkstyle: EmptyBlock OFF - exception's logged in load function
         } catch (final IOException e) {
             // An exception implies the record *might* still be accessible later.
         }
-        // Chckstyle: EmptyBlock ON
         
         return result;
     }
@@ -338,11 +334,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                             // A null here means the reference to the record should be removed.
                             entries.remove();
                         }
-                    // Checkstyle: EmptyBlock OFF - exception's logged in load function
                     } catch (final IOException e) {
                         // An exception implies the record *might* still be accessible later.
                     }
-                    // Checkstyle: EmptyBlock ON
                 }
             }
         }
@@ -375,11 +369,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     // A null here means the reference to the record should be removed.
                     getSPSessionMap().remove(trimmed);
                 }
-            // Checkstyle: EmptyBlock OFF - exception's logged in load function
             } catch (final IOException e) {
                 // An exception implies the record *might* still be accessible later.
             }
-            // Checkstyle: EmptyBlock ON
             return result;
         } else {
             return null;
