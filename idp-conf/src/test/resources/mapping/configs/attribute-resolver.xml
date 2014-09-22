@@ -33,7 +33,7 @@ Part 1 of a two part attribute resolver.
             <dc:Value>RA1</dc:Value>
         </dc:Attribute>
         <dc:Attribute id="ea_1">
-            <dc:Value>http://id.incommon.org/category/research-and-scholarship</dc:Value>
+            <dc:Value>http://refeds.org/category/research-and-scholarship</dc:Value>
         </dc:Attribute>
         <dc:Attribute id="ea_2">
             <dc:Value>http://example.org/category/category</dc:Value>
