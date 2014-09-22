@@ -4,8 +4,6 @@
 	<taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
 	<!-- TODO 
-       
-       V2 to V3 upgrade
        V3 to V3 , detect if it is V2
     -->
 
@@ -35,7 +33,8 @@
         idp.sealer.password:
         idp.sealer.alias:
         idp.keystore.password:
-        idp.merge.properties: The name of a property file to merge with idp.properties
+        idp.merge.properties: The name of a property file to merge with idp.properties.  This file is deleted after processing.
+        idp.property.file: The name of a property file to fill in some or all of the above. This file is deleted after processing.
         
         The property idp.noprompt will cause a failure rather than a prompt.
     -->
@@ -45,12 +44,15 @@
 		<hostinfo />
 	</target>
 
-	<target name="install" depends="init, getsource, allinput, copy-distribution, install-nocopy" />
-	<target name="install-nocopy" depends="init, allinput, genkeys, upgrade, build-war" />
-	<target name="v2upgrade" depends="init, gettarget, v2v3prepopulate, getsource, allinput,copy-distribution, install-nocopy" />
-	<target name="v2upgrade-nocopy" depends="init, gettarget, v2v3prepopulate, allinput, install-nocopy" />
+	<target name="install" depends="init, preload, getsource, allinput, copy-distribution, install-nocopy, tidy" />
+	<target name="install-nocopy" depends="init, preload, allinput, genkeys, upgrade, build-war, tidy" />
+	<target name="v2upgrade" depends="init, preload, gettarget, v2v3prepopulate, getsource, allinput,copy-distribution, install-nocopy, tidy" />
+	<target name="v2upgrade-nocopy" depends="init, preload, gettarget, v2v3prepopulate, allinput, install-nocopy, tidy" />
 
 	<!-- USER INPUT -->
+	<target name="preload" if="idp.property.file">
+	   <property file="$(idp.property.file}"/>
+    </target>
 	<target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid" />
 
 	<target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
@@ -59,7 +61,7 @@
 	</target>
 
 	<target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties">
-		<property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/org/shibboleth/idp" />
+		<property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/shibboleth/idp" />
 	</target>
 
 	<target name="getkeystorepassword" if="idp.ask.keystore.password" depends="checkproperties">
@@ -128,7 +130,7 @@
 
     -->
 
-	<target name="genkeys" depends="init, checkproperties, signing-key, encryption-key, keystore, sealer" />
+	<target name="genkeys" depends="init, preload, checkproperties, signing-key, encryption-key, keystore, sealer" />
  
 	<target name="checkproperties" depends="gettarget">
 		<available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt" />
@@ -472,5 +474,10 @@
 			</and>
 		</condition>
 	</target>
-
+	
+	<target name="tidy">
+		<delete file="${idp.merge.properties}" failonerror="false" />
+        <delete file="${idp.property.file}" failonerror="false" />
+	</target>
+	
 </project>
