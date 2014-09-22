@@ -7,7 +7,7 @@
 	    <mdattr:EntityAttributes xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
 	        <saml:Attribute Name="http://macedir.org/entity-category"
 	            NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-	            <saml:AttributeValue>http://id.incommon.org/category/research-and-scholarship
+	            <saml:AttributeValue>http://refeds.org/category/research-and-scholarship
 	            </saml:AttributeValue>
 	        </saml:Attribute>
 	    </mdattr:EntityAttributes>

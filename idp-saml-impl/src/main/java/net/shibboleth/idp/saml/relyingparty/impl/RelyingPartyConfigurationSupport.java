@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
+import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
+import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
@@ -52,6 +54,7 @@ public final class RelyingPartyConfigurationSupport {
      * <p>If a single ID is supplied, then the ID is also set as the identifier for the configuration.</p>
      * 
      * @param relyingPartyIds the relying parties for which the configuration should be active
+     * 
      * @return  a default-constructed configuration with the appropriate condition set
      */
     @Nonnull public static RelyingPartyConfiguration byName(
@@ -77,6 +80,7 @@ public final class RelyingPartyConfigurationSupport {
      * one or more {@link org.opensaml.saml.saml2.metadata.EntitiesDescriptor} groups.
      * 
      * @param groupNames the group names
+     * 
      * @return  a default-constructed configuration with the appropriate condition set
      */
     @Nonnull public static RelyingPartyConfiguration byGroup(
@@ -101,6 +105,34 @@ public final class RelyingPartyConfigurationSupport {
         }
         name.append(']');
         config.setId(name.toString());
+        return config;
+    }
+
+    
+    /**
+     * A shorthand method for constructing a {@link RelyingPartyConfiguration} with an activation condition based on
+     * an {@link EntityAttributesPredicate}.
+     * 
+     * @param candidates the candidate rules
+     * @param trim true iff tag values in metadata should be trimmed before comparison
+     * 
+     * @return  a default-constructed configuration with the appropriate condition set
+     */
+    @Nonnull public static RelyingPartyConfiguration byTag(
+            @Nonnull @NonnullElements final Collection<Candidate> candidates, final boolean trim) {
+        Constraint.isNotNull(candidates, "Candidate list cannot be null");
+        
+        // We adapt an OpenSAML Predicate applying to an EntityDescriptor by indirecting the lookup of the
+        // EntityDescriptor to a lookup sequence of PRC -> RPC -> SAMLMetadataContext -> EntityDescriptor.
+        
+        final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
+                new StrategyIndirectedPredicate<>(
+                        Functions.compose(new EntityDescriptorLookupFunction(),new SAMLMetadataContextLookupFunction()),
+                        new EntityAttributesPredicate(candidates, trim));
+        
+        final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        config.setActivationCondition(indirectPredicate);
+
         return config;
     }
 
