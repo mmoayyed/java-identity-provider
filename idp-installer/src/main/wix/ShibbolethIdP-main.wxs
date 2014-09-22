@@ -20,10 +20,12 @@
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" Name="Shibboleth IdP" Language="1033" Version="0.0.3.0" Manufacturer="Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
-    <Package InstallerVersion="300" Compressed="yes" InstallScope="perMachine" Platform="x86" Description="Shibboleth IdP" Manufacturer="Shibboleth Consortium"/>
+    <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="x86" Description="Shibboleth IdP" Manufacturer="Shibboleth Consortium"/>
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize"/>
     <MediaTemplate EmbedCab="yes"/>
+
+    <Condition Message='Shibboleth requires a Windows NT-based operating system.'>NOT Version9X</Condition>
 
     <Feature Id="ProductFeature" Title="IdP" Level="1">
       <Feature Id="InstallJetty" Title="Jetty">
@@ -52,7 +54,13 @@
       <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files (x86)\Internet2\ShibIdP"/>
     </Property>
 
-    <!-- Inherit the setup, if they were -->
+    <Property Id="JAVA_EXECUTABLE" Secure="yes">
+	<DirectorySearch Id="JavaBinSearch" Depth="0" Path="[%JAVA_HOME]\bin">
+	    <FileSearch Id="JavaBinSearch" Name="java.exe"/>
+	</DirectorySearch>
+    </Property>
+
+    <!-- Inherit the setup, if they were. -->
     <CustomAction Id="InheritInstallDir" Property="INSTALLDIR" Value="[OLD_INSTALLDIR]" />
     <CustomAction Id="InheritInstallJetty" Property="INSTALL_JETTY" Value="[OLD_INSTALL_JETTY]" />
 
@@ -61,11 +69,11 @@
     <CustomAction Id="LocateV2Config" BinaryKey="LocateV2ConfigSrc" VBScriptCall="" Execute="immediate" />
     <CustomAction Id="SetLocateV2Config" Property="LocateV2Config" Value="[INSTALLDIR]" />
 
+    <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe please check the value for JAVA_HOME"/>
 
-    <InstallUISequence>
-      <!-- All we need to sequence here is setting up inherited INSTALLDIR and JETTY_INSTALL -->
-
-      <!-- inherit installationDir if there is something to inherit -->
+      <InstallUISequence>
+ 
+      <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
       <Custom Action="InheritInstallDir" After="AppSearch">
         OLD_INSTALLDIR
       </Custom>
@@ -74,7 +82,14 @@
       <Custom Action="InheritInstallJetty" After="AppSearch">
         OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
       </Custom>
-    </InstallUISequence>
+	
+      <!-- Could we find JAVA.EXE ?-->
+      <Custom Action="NoJavaBin" After="AppSearch">
+	  NOT JAVA_EXECUTABLE
+      </Custom>
+
+
+      </InstallUISequence>
 
     <InstallExecuteSequence>
       <Custom Action="SetLocateV2Config" Before="CostInitialize">NOT Installed AND NOT OLD_INSTALLDIR</Custom>
@@ -90,6 +105,12 @@
       <Custom Action="InheritInstallJetty" After="AppSearch">
         OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
       </Custom>
+
+     <!-- Could we find JAVA.EXE ?-->
+     <Custom Action="NoJavaBin" After="AppSearch">
+	   NOT JAVA_EXECUTABLE
+     </Custom>
+
     </InstallExecuteSequence>
 
     <Upgrade Id='$(var.UpgradeUUID)'>

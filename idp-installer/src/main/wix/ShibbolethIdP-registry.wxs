@@ -19,7 +19,7 @@
   <!-- to do with the IdP Registry -->
   <Fragment>
     <ComponentGroup Id="SaveRegistry">
-      <Component Id="SaveTarget" Guid="{32A39FB0-21E4-475E-891A-C9901D3548A3}" Directory="INSTALLDIR">
+      <Component Id="SaveTarget" Guid="{32A39FB0-21E4-475E-891A-C9901D3548A3}" Directory="INSTALLDIR" Win64="no">
         <RegistryValue Id="targetReg" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP"  Name="InstallDir" Value="[INSTALLDIR]" Type="string" KeyPath="yes" />
         <RegistryValue Id="targetRegJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP"  Name="InstallJetty" Value="[INSTALL_JETTY]" Type="string" />
       </Component>
@@ -33,11 +33,11 @@
 
     <Property Id="OLD_INSTALLDIR" Secure="yes">
       <RegistrySearch Id="OldInstallDir" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP"
-                      Name="InstallDir" Type="directory" />
+                      Name="InstallDir" Type="directory" Win64="no"/>
     </Property>
     <Property Id="OLD_INSTALL_JETTY" Secure="yes">
       <RegistrySearch Id="OldInstallJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP"
-                      Name="InstallJetty" Type="directory" />
+                      Name="InstallJetty" Type="raw" Win64="no"/>
     </Property>
 
 

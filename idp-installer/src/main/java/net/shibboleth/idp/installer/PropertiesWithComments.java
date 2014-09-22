@@ -98,9 +98,9 @@ public class PropertiesWithComments {
                 Pair<String,String> p = (Pair)o;
                 writer.write(p.getFirst());
                 writer.write('=');
-                writer.write(p.getSecond());   
+                writer.write(p.getSecond());
             }
-            writer.write('\n');
+            writer.newLine();
         }
         writer.flush();
         writer.close();

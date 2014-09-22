@@ -22,8 +22,9 @@
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="jetty.wxs" />
+    <Compile Include="jetty_contents.wxs" />
     <Compile Include="MergeModule.wxs" />
+    <Compile Include="procrun.wxs" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--

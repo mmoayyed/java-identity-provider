@@ -58,8 +58,8 @@ if not exist %1% (
 )
 
 if not exist %1.asc (
-   echo Error: Could not locate signature for procrun zip %1%.asc
-   goto done
+   echo Error: Could not locate signature for Idp zip %1%.asc
+   goto xxxdone
 )
 
 gpg --verify %1.asc %1
@@ -67,7 +67,7 @@ if ERRORLEVEL 1 (
    echo Error: Signature check failed on %1%
    goto done
 )
-
+:xxxdone
 mkdir idp-extract
 cd idp-extract
 if exist "%1" (
@@ -107,7 +107,18 @@ if ERRORLEVEL 1 (
   echo Views directory not found?
   goto done;
 )
+
+rem We want to call jetty-base/start.d jetty-base/start.d.dist
+
+rename  %idpex%\jetty-base\start.d start.d.dist
+if ERRORLEVEL 1 (
+  cd ..
+  echo jetty-base/start.d directory not found?
+  goto done;
+)
 cd ..
+
+
 
 "%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr IdPFolder -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
 if ERRORLEVEL 1 goto done

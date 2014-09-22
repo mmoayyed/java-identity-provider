@@ -1,6 +1,19 @@
 <?xml version="1.0"?>
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_0.dtd">
+<!-- 
+    NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE NOTE
+    
+    Automated install on Windows will overwrite this file.  If you edit
+    this file you will lose your changes on each upgrade.
+    
+    If you need to change this file you need to manage your container
+    yourself and not rely on the windows installer to upgrade your
+    system.
+    
+    If you believe that your change is generally useful, please submit
+    an RFI at https://issues.shibboleth.net/ 
 
+ -->
 <!-- =============================================================== -->
 <!-- Documentation of this file format can be found at:              -->
 <!-- http://wiki.eclipse.org/Jetty/Reference/jetty.xml_syntax        -->
@@ -123,9 +136,9 @@
     <!-- Configure a TLS (SSL) Context Factory                         -->
     <!-- ============================================================= -->
     <New id="sslContextFactory" class="org.eclipse.jetty.util.ssl.SslContextFactory">
-      <Set name="KeyStorePath"><Property name="jetty.keystore.path" /></Set>
-      <Set name="KeyStoreType"><Property name="jetty.keystore.type" /></Set>
-      <Set name="KeyStorePassword"><Property name="jetty.keystore.password" /></Set>
+      <Set name="KeyStorePath"><Property name="jetty.browser.keystore.path" /></Set>
+      <Set name="KeyStoreType"><Property name="jetty.browser.keystore.type" /></Set>
+      <Set name="KeyStorePassword"><Property name="jetty.browser.keystore.password" /></Set>
       <Set name="EndpointIdentificationAlgorithm"></Set>
       <Set name="NeedClientAuth"><Property name="jetty.ssl.needClientAuth" default="false"/></Set>
       <Set name="WantClientAuth"><Property name="jetty.ssl.wantClientAuth" default="false"/></Set>
@@ -146,9 +159,9 @@
     <!-- Configure a No-Validation TLS (SSL) Context Factory           -->
     <!-- ============================================================= -->
     <New id="shibContextFactory" class="net.shibboleth.utilities.jetty9.DelegateToApplicationSslContextFactory">
-      <Set name="KeyStorePath"><Property name="jetty.keystore.path" /></Set>
-      <Set name="KeyStoreType"><Property name="jetty.keystore.type" /></Set>
-      <Set name="KeyStorePassword"><Property name="jetty.keystore.password" /></Set>
+      <Set name="KeyStorePath"><Property name="jetty.backchannel.keystore.path" /></Set>
+      <Set name="KeyStoreType"><Property name="jetty.backchannel.keystore.type" /></Set>
+      <Set name="KeyStorePassword"><Property name="jetty.backchannel.keystore.password" /></Set>
       <Set name="EndpointIdentificationAlgorithm"></Set>
       <Set name="ExcludeCipherSuites">
         <Array type="String">

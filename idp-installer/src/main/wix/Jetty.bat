@@ -101,7 +101,6 @@ if ERRORLEVEL 1 (
    goto done
 )
 
-
 mkdir jetty-extract
 cd jetty-extract
 
@@ -117,14 +116,25 @@ if ERRORLEVEL 1 (
   goto done;
 )
 cd ..
+
+REM Extract Jetty
+
 for /D %%X in (jetty-extract/*) do set jex=%%X
-"%WIX%/BIN/HEAT"  dir jetty-extract\%Jex% -platform -gg -dr JETTYROOT -var var.jettySrc -cg JettyGroup -out jetty_contents.wxs -nologo
+echo %jex% 1> jetty-extract/%jex%/JETTY_VERSION.TXT
+"%WIX%/BIN/HEAT"  dir jetty-extract\%Jex% -platform -gg -dr JETTYROOT -var var.JettySrc -cg JettyGroup -out jetty_contents.wxs -nologo -srd
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/CANDLE" -nologo -djettySrc=jetty-extract\%Jex% -dPlatform=x86 -arch x86 jetty_contents.wxs MergeModule.wxs
+REM TODO extract the Main-Class (via Properties) from start.jar 
+set JETTY_CLASS=org.eclipse.jetty.start.Main
+
+REM compile Jetty and procrun contents as well as the merge module
+
+"%WIX%/BIN/CANDLE" -nologo -dJettySrc=jetty-extract\%Jex% -dJettyClass=%JETTY_CLASS% -dProcrunSrc=procrun-extract -dPlatform=x86 -arch x86 jetty_contents.wxs MergeModule.wxs procrun.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out Jetty.msm jetty_contents.wixobj mergemodule.wixobj
+REM link
+
+"%WIX%/BIN/LIGHT" -nologo -out Jetty.msm jetty_contents.wixobj procrun.wixobj mergemodule.wixobj
 if ERRORLEVEL 1 goto done
 
 dir Jetty.msm

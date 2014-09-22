@@ -70,11 +70,21 @@
 	<target name="getsealerpassword" if="idp.ask.sealer.password" depends="checkproperties">
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
 		<input message="Sealer Password" addproperty="idp.sealer.password" />
+        <echo file="replace.properties" append="yes">
+        	idp.sealer.storePassword=${idp.sealer.password}
+        </echo>
+        <echo file="replace.properties" append="yes">
+        	idp.sealer.keyPassword=${idp.sealer.password}
+        </echo>
+        <property name="idp.merge.properties" value="replace.properties" />
 	</target>
 
 	<target name="getsealeralias" if="idp.ask.sealer.alias" depends="checkproperties">
+		<!-- 
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Sealer Alias" addproperty="idp.sealer.alias" />
+		<input message="Sealer Alias" addproperty="idp.sealer.alias" defaultvalue="secret"/>
+		-->
+		<property name="idp.sealer.alias" value="secret"/>
 	</target>
 
 	<target name="getsource" unless="idp.src.dir">
@@ -106,7 +116,9 @@
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
 		<local name="entityid" />
 		<input message="EntityID" addproperty="entityid" defaultvalue="https://${idp.host.name}/shibboleth/idp" />
-		<echo file="replace.properties">idp.entityID=${entityid}</echo>
+		<echo file="replace.properties" append="yes">
+			idp.entityID=${entityid}
+		</echo>
 		<property name="idp.merge.properties" value="replace.properties" />
 	</target>
 
@@ -117,7 +129,7 @@
     -->
 
 	<target name="genkeys" depends="init, checkproperties, signing-key, encryption-key, keystore, sealer" />
-
+ 
 	<target name="checkproperties" depends="gettarget">
 		<available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt" />
 		<available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt" />
@@ -250,21 +262,25 @@
 
 	<target name="signing-key" unless="idp.signing.present" depends="gethostname, geturisubjectaltname">
 		<echo>Creating Signing Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
+        <mkdir dir="${idp.target.dir}/creds"/>
 		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/creds/idp-signing.key" certificateFile="${idp.target.dir}/creds/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="encryption-key" unless="idp.encryption.present" depends="gethostname, geturisubjectaltname">
 		<echo>Creating Encryption Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
+        <mkdir dir="${idp.target.dir}/creds"/>
 		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/creds/idp-encryption.key" certificateFile="${idp.target.dir}/creds/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="keystore" unless="idp.keystore.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
 		<echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
+        <mkdir dir="${idp.target.dir}/creds"/>
 		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-tls.p12" certificateFile="${idp.target.dir}/creds/idp-tls.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
 		<echo>Creating sealer</echo>
+		<mkdir dir="${idp.target.dir}/creds"/>
 		<keystorestrategy keystoreFile="${idp.target.dir}/creds/sealer.jks" versionFile="${idp.target.dir}/creds/sealer.kver" keyAlias="${idp.sealer.alias}" keystorePassword="${idp.sealer.password}" />
 	</target>
 
@@ -305,6 +321,8 @@
 			</fileset>
 			<mapper type="glob" from="*.dist" to="*" />
 		</copy>
+        <!-- Other dirs -->
+        <mkdir dir="${idp.target.dir}/logs" />
 	</target>
 
 	<target name="editproperties" depends="gettarget, getentityid" unless="idp.properties.present">
