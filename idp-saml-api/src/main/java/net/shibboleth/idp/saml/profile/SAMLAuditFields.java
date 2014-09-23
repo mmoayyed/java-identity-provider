@@ -86,6 +86,12 @@ public final class SAMLAuditFields {
     /** Status message field. */
     @Nonnull @NotEmpty public static final String STATUS_MESSAGE = "SM";
 
+    /** IsPassive requested field. */
+    @Nonnull @NotEmpty public static final String IS_PASSIVE = "pasv";
+
+    /** ForceAuthn requested field. */
+    @Nonnull @NotEmpty public static final String FORCE_AUTHN = "fauth";
+    
     /** Constructor. */
     private SAMLAuditFields() {
 

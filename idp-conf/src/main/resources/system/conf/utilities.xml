@@ -27,6 +27,9 @@
     <bean id="shibboleth.MessageLookup.SAMLObject"
         class="org.opensaml.messaging.context.navigate.MessageLookup"
         c:type="#{ T(org.opensaml.saml.common.SAMLObject) }" />
+    <bean id="shibboleth.MessageLookup.AuthnRequest"
+        class="org.opensaml.messaging.context.navigate.MessageLookup"
+        c:type="#{ T(org.opensaml.saml.saml2.core.AuthnRequest) }" />
 
     <bean id="shibboleth.ChildLookup.RelyingParty"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"

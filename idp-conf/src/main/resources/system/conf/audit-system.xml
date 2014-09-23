@@ -71,6 +71,30 @@
                         </constructor-arg>
                     </bean>
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IS_PASSIVE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.IsPassiveAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.AuthnRequest"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.FORCE_AUTHN"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.ForceAuthnAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.AuthnRequest"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
             </map>
         </property>
     </bean>
