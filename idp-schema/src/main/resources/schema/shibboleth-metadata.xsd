@@ -481,7 +481,7 @@
                         </complexType>
                     </element>
                 </choice>
-                <attribute name="direction" type="string">
+                <attribute name="direction" type="string" use="required">
                     <annotation>
                         <documentation>
                             One of the values "include" or "exclude" indicating whether to whitelist or blacklist
