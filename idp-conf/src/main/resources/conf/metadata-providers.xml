@@ -19,26 +19,23 @@
 	<MetadataProvider id="URLMD" xsi:type="FilesystemMetadataProvider"
 		metadataFile="%{idp.home}/metadata/example-metadata.xml">
         
-		<MetadataFilter xsi:type="ChainingFilter">
-            <!-- Validates the signature of the metadata and filters out all but SP roles to save memory -->
-			<MetadataFilter xsi:type="SignatureValidation"
-				requireSignedMetadata="false"> <!-- TODO -->
-				<PublicKey>
-					MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
-					uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
-					LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88
-					NenXKxY+HMxMs0sT0UKYh1cAEqadrHRBO65aDBcm5a0sBVYt9K6pgaOHrp/zSIbh
-					nR5tFFLjBbtFktDpHL3AdGBH3OYidNGKBO3tJ3Ms7LeKXsM0+0Y4P+9fHZINL2X3
-					E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
-					4wIDAQAB
-				</PublicKey>
-			</MetadataFilter>
-			<MetadataFilter xsi:type="EntityRoleWhiteList">
-				<RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
-			</MetadataFilter>
+        <!-- Validates the signature of the metadata and filters out all but SP roles to save memory -->
+		<MetadataFilter xsi:type="SignatureValidation"
+			requireSignedMetadata="false"> <!-- TODO -->
+			<PublicKey>
+				MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
+				uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
+				LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88
+				NenXKxY+HMxMs0sT0UKYh1cAEqadrHRBO65aDBcm5a0sBVYt9K6pgaOHrp/zSIbh
+				nR5tFFLjBbtFktDpHL3AdGBH3OYidNGKBO3tJ3Ms7LeKXsM0+0Y4P+9fHZINL2X3
+				E2N6GVnKs5PZTg9sP0FtIpAbYm/+zCx7Yj1ET/Er8mDd6tNVGSQsn9s5xUBwGqn1
+				4wIDAQAB
+			</PublicKey>
+		</MetadataFilter>
+		<MetadataFilter xsi:type="EntityRoleWhiteList">
+			<RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
 		</MetadataFilter>
         
 	</MetadataProvider>
 
 </MetadataProvider>
-

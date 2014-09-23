@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
@@ -171,8 +172,17 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         final List<Element> filters =
                 ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_FILTER_ELEMENT_NAME);
 
-        if (null != filters && !filters.isEmpty()) {
-            builder.addPropertyValue("metadataFilter", SpringSupport.parseCustomElements(filters, parserContext));
+        if (null != filters) {
+            if (filters.size() == 1) {
+                // Install directly.
+                builder.addPropertyValue("metadataFilter", SpringSupport.parseCustomElements(filters, parserContext));
+            } else if (filters.size() > 1) {
+                // Wrap in a chaining filter.
+                final BeanDefinitionBuilder chainBuilder =
+                        BeanDefinitionBuilder.genericBeanDefinition(MetadataFilterChain.class);
+                chainBuilder.addPropertyValue("filters", SpringSupport.parseCustomElements(filters, parserContext));
+                builder.addPropertyValue("metadataFilter", chainBuilder.getBeanDefinition());
+            }
         }
 
         final List<Element> trustEngines =

@@ -242,7 +242,7 @@
 
     <complexType name="MetadataProviderType" abstract="true">
         <sequence>
-            <element ref="shibmd:MetadataFilter" minOccurs="0">
+            <element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded">
                 <annotation>
                     <documentation>
                         A filter to be applied to metadata after it has been parsed and validated.
