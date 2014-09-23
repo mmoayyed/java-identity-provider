@@ -25,7 +25,7 @@
 
       <!-- This Dialog sets up:
            - INSTALLDIR
-	   - INSTALL_JETTY
+           - INSTALL_JETTY
         -->
 
       <Dialog Id="InstallDirDlgShib" Width="370" Height="270" Title="[ProductName] Setup">
@@ -56,10 +56,8 @@
 
         <!-- Jetty? -->
         <Control Id="InstallJetty" Type="CheckBox" X="265" Y="146" Height="17" Width="80"
-	         Property="INSTALL_JETTY" CheckBoxValue="TRUE"
+                 Property="INSTALL_JETTY" CheckBoxValue="TRUE"
                  Text="Install Jetty">
-          <Publish Event="AddLocal" Value="InstallJetty">INSTALL_JETTY = "TRUE"</Publish>
-          <Publish Event="Remove" Value="InstallJetty">INSTALL_JETTY &lt;&gt; "TRUE"</Publish>
         </Control>
 
         <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
@@ -69,6 +67,8 @@
         </Control>
 
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="&amp;Next" Default="yes">
+          <Publish Event="AddLocal" Value="InstallJetty">INSTALL_JETTY</Publish>
+          <Publish Event="Remove" Value="InstallJetty">Not INSTALL_JETTY</Publish>
           <Publish Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]">1</Publish>
           <Publish Event="DoAction" Value="WixUIValidatePath" >
             NOT WIXUI_DONTVALIDATEPATH

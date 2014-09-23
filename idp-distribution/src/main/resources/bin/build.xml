@@ -35,6 +35,7 @@
         idp.keystore.password:
         idp.merge.properties: The name of a property file to merge with idp.properties.  This file is deleted after processing.
         idp.property.file: The name of a property file to fill in some or all of the above. This file is deleted after processing.
+        idp.no.tidy: Do not delete the two above files (debug only)
         
         The property idp.noprompt will cause a failure rather than a prompt.
     -->
@@ -51,7 +52,7 @@
 
 	<!-- USER INPUT -->
 	<target name="preload" if="idp.property.file">
-	   <property file="$(idp.property.file}"/>
+	   <property file="${idp.property.file}"/>
     </target>
 	<target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid" />
 
@@ -475,7 +476,7 @@
 		</condition>
 	</target>
 	
-	<target name="tidy">
+	<target name="tidy" unless="idp.no.tidy">
 		<delete file="${idp.merge.properties}" failonerror="false" />
         <delete file="${idp.property.file}" failonerror="false" />
 	</target>

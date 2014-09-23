@@ -55,23 +55,32 @@
     </Property>
 
     <Property Id="JAVA_EXECUTABLE" Secure="yes">
-	<DirectorySearch Id="JavaBinSearch" Depth="0" Path="[%JAVA_HOME]\bin">
-	    <FileSearch Id="JavaBinSearch" Name="java.exe"/>
-	</DirectorySearch>
+        <DirectorySearch Id="JavaBinSearch" Depth="0" Path="[%JAVA_HOME]\bin">
+            <FileSearch Id="JavaBinSearch" Name="java.exe"/>
+        </DirectorySearch>
     </Property>
+
+    <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe please check the value for JAVA_HOME"/>
 
     <!-- Inherit the setup, if they were. -->
     <CustomAction Id="InheritInstallDir" Property="INSTALLDIR" Value="[OLD_INSTALLDIR]" />
     <CustomAction Id="InheritInstallJetty" Property="INSTALL_JETTY" Value="[OLD_INSTALL_JETTY]" />
 
-    <Binary Id="LocateV2ConfigSrc" SourceFile="scripts\shib_is_v2.vbs-wix" />
+    <!-- Other propetrties -->
+    <CustomAction  Id="SetDNSName" Property="DNSNAME" Value="[ComputerName]"/>
 
-    <CustomAction Id="LocateV2Config" BinaryKey="LocateV2ConfigSrc" VBScriptCall="" Execute="immediate" />
-    <CustomAction Id="SetLocateV2Config" Property="LocateV2Config" Value="[INSTALLDIR]" />
+    <Binary Id="WriteConfigFilesSrc" SourceFile="scripts\shib_write_configs.vbs" />
 
-    <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe please check the value for JAVA_HOME"/>
+    <CustomAction Id="WriteConfigFiles" BinaryKey="WriteConfigFilesSrc" VBScriptCall="" Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY]" />
 
-      <InstallUISequence>
+    <!-- Ant actions -->
+    <CustomAction Id="SetIdpAnt" Property="RunIdpAntLine" Value="[JAVA_EXECUTABLE] -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\;war\WEB-INF\lib\*&quot;  org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\build.xml&quot; -Didp.property.file=idp.install.properties install-nocopy" />
+    <CustomAction Id="RunIdpAnt" Directory="IdPFolder" ExeCommand="[RunIdpAntLine]" Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="SetJettyAnt" Property="RunJettyAntLine" Value="[JAVA_EXECUTABLE] -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\;war\WEB-INF\lib\*&quot;  org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\jetty.xml&quot; -Djetty.merge.properties=jetty.install.properties install"/>
+    <CustomAction Id="RunJettyAnt" Directory="IdPFolder" ExeCommand="[RunJettyAntLine]" Execute="deferred" Impersonate="no"/>
+
+    <InstallUISequence>
  
       <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
       <Custom Action="InheritInstallDir" After="AppSearch">
@@ -82,19 +91,17 @@
       <Custom Action="InheritInstallJetty" After="AppSearch">
         OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
       </Custom>
-	
+        
       <!-- Could we find JAVA.EXE ?-->
       <Custom Action="NoJavaBin" After="AppSearch">
-	  NOT JAVA_EXECUTABLE
+          NOT JAVA_EXECUTABLE
       </Custom>
 
+      <Custom Action="SetDNSName" After="AppSearch"/>
 
-      </InstallUISequence>
+    </InstallUISequence>
 
     <InstallExecuteSequence>
-      <Custom Action="SetLocateV2Config" Before="CostInitialize">NOT Installed AND NOT OLD_INSTALLDIR</Custom>
-      <Custom Action="LocateV2Config" After="InstallFiles">NOT Installed AND NOT OLD_INSTALLDIR</Custom>
-
 
       <!-- Duplicate actions from the UI case -->
       <Custom Action="InheritInstallDir" After="AppSearch">
@@ -108,8 +115,18 @@
 
      <!-- Could we find JAVA.EXE ?-->
      <Custom Action="NoJavaBin" After="AppSearch">
-	   NOT JAVA_EXECUTABLE
+           NOT JAVA_EXECUTABLE
      </Custom>
+	
+     <Custom Action="SetDNSName" After="AppSearch"/>
+
+     <!-- Work -->
+     <Custom Action="SetWriteConfigFiles" Before="CostInitialize">NOT Installed</Custom>
+     <Custom Action="WriteConfigFiles" After="InstallFiles">NOT Installed</Custom>
+     <Custom Action="SetIdpAnt" After="WriteConfigFiles">NOT Installed</Custom>
+     <Custom Action="RunIdpAnt" After="SetIdpAnt">NOT Installed</Custom>
+     <Custom Action="SetJettyAnt" After="RunIdpAnt">NOT Installed AND INSTALL_JETTY</Custom>
+     <Custom Action="RunJettyAnt" After="SetJettyAnt">NOT Installed AND INSTALL_JETTY</Custom>
 
     </InstallExecuteSequence>
 

@@ -3,7 +3,7 @@
 
     <taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
-    <target name="install" depends="init, checkini, copyini" />
+    <target name="install" depends="init, checkini, copyinis" />
 
     <target name="init">
         <tstamp />
@@ -14,10 +14,14 @@
         <available property="idp.ini.present" file="jetty-base/start.d/idp.ini" />
     </target>
     
-    <target name="copyini" unless="idp.ini.present">
+	<target name="copyinis" depends="copyidpini"> 
         <mkdir dir="jetty-base/start.d"/>
         <copy file="jetty-base/start.d.dist/jsp.ini" tofile="jetty-base/start.d/jsp.ini" overwrite="false" failonerror="false" />
         <copy file="jetty-base/start.d.dist/jstl.ini" tofile="jetty-base/start.d/jstl.ini" overwrite="false" failonerror="false" />
+	</target>
+	
+    <target name="copyidpini" unless="idp.ini.present">
+        <mkdir dir="jetty-base/start.d"/>
         <mergeproperties inFile="jetty-base/start.d.dist/idp.ini" outFile="jetty-base/start.d/idp.ini" mergeFile="${jetty.merge.properties}" />
     </target>
     
