@@ -111,7 +111,7 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
                 return (RegistrationInfo) object;
             }
         }
-        log.info("Filtering on registration, but RegistrationInfo available");
+        log.info("Filtering on registration, but no RegistrationInfo available");
         return null;
     }
 
