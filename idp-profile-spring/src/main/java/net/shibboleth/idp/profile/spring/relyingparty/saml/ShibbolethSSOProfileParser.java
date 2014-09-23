@@ -97,11 +97,10 @@ public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationPars
             final BeanDefinitionBuilder methodBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(AuthenticationMethodPrincipal.class);
             methodBuilder.addConstructorArgValue(method);
-            List<BeanDefinition> methodsList = new ManagedList<>(1);
-
+            
+            final List<BeanDefinition> methodsList = new ManagedList<>(1);
             methodsList.add(methodBuilder.getBeanDefinition());
-
-            builder.addPropertyValue("defaultAuthenticationMethods", methodBuilder.getBeanDefinition());
+            builder.addPropertyValue("defaultAuthenticationMethods", methodsList);
         }
 
         if (parent.hasAttributeNS(null, "nameIDFormatPrecedence")) {

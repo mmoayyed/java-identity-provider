@@ -96,11 +96,10 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
             final BeanDefinitionBuilder methodBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(AuthnContextClassRefPrincipal.class);
             methodBuilder.addConstructorArgValue(method);
-            List<BeanDefinition> methodsList = new ManagedList<>(1);
-
+            
+            final List<BeanDefinition> methodsList = new ManagedList<>(1);
             methodsList.add(methodBuilder.getBeanDefinition());
-
-            builder.addPropertyValue("defaultAuthenticationMethods", methodBuilder.getBeanDefinition());
+            builder.addPropertyValue("defaultAuthenticationMethods", methodsList);
         }
 
         if (parent.hasAttributeNS(null, "nameIDFormatPrecedence")) {
