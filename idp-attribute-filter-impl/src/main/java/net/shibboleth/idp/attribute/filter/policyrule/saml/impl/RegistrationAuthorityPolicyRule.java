@@ -26,6 +26,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.ext.saml2mdrpi.RegistrationInfo;
 import org.opensaml.saml.saml2.common.Extensions;
+import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,28 +91,39 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
 
         final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
         if (null == metadataContext) {
-            log.info("{} Filtering on registration, but no metadata context available", getLogPrefix());
+            log.debug("{} Filtering on registration, but no metadata context available", getLogPrefix());
             return null;
         }
 
         final EntityDescriptor spEntity = metadataContext.getEntityDescriptor();
         if (null == spEntity) {
-            log.info("Filtering on registration, but no peer metadata available");
+            log.debug("Filtering on registration, but no peer metadata available");
             return null;
         }
 
-        final Extensions extensions = spEntity.getExtensions();
-        if (null == extensions) {
-            log.info("Filtering on registration, but no peer extensions available");
-            return null;
-        }
-
-        for (XMLObject object : extensions.getUnknownXMLObjects()) {
-            if (object instanceof RegistrationInfo) {
-                return (RegistrationInfo) object;
+        Extensions extensions = spEntity.getExtensions();
+        if (null != extensions) {
+            for (final XMLObject object : extensions.getUnknownXMLObjects(RegistrationInfo.DEFAULT_ELEMENT_NAME)) {
+                if (object instanceof RegistrationInfo) {
+                    return (RegistrationInfo) object;
+                }
             }
         }
-        log.info("Filtering on registration, but no RegistrationInfo available");
+        
+        EntitiesDescriptor group = (EntitiesDescriptor) spEntity.getParent();
+        while (null != group) {
+            extensions = group.getExtensions();
+            if (null != extensions) {
+                for (final XMLObject object : extensions.getUnknownXMLObjects(RegistrationInfo.DEFAULT_ELEMENT_NAME)) {
+                    if (object instanceof RegistrationInfo) {
+                        return (RegistrationInfo) object;
+                    }
+                }
+            }
+            group = (EntitiesDescriptor) group.getParent();
+        }
+
+        log.debug("Filtering on registration, but no RegistrationInfo available");
         return null;
     }
 
