@@ -18,6 +18,9 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
+    <import resource="../../conf/audit-system.xml" />
+
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId="http://shibboleth.net/ns/profiles/status" />
@@ -29,6 +32,7 @@
         p:policyName="%{idp.status.accessPolicy}" />
     
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:activationCondition-ref="shibboleth.ProfileAuditingCondition"
         p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
     <bean id="WriteAuditLogForLocalError" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"

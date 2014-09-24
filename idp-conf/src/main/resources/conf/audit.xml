@@ -11,6 +11,10 @@
 
     <!-- TODO: explain this stuff -->
 
+    <util:list id="shibboleth.AuditSuppressedProfiles">
+        <value>http://shibboleth.net/ns/profiles/status</value>
+    </util:list>
+
     <bean id="shibboleth.PostDecodeAuditExtractors" parent="shibboleth.DefaultPostDecodeAuditExtractors" lazy-init="true">
         <property name="sourceMap">
             <map merge="true">
