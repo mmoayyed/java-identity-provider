@@ -41,26 +41,30 @@
         <Control Id="DescriptionLine1" Type="Text" X="25" Y="51" Height="12" Width="320" 
                  Text="The files for [ProductName] will be installed in the following folder."/>
 
-        <Control Id="DescriptionLine2" Type="Text" X="25" Y="70" Height="12" Width="320" 
+        <Control Id="DescriptionLine2" Type="Text" X="25" Y="68" Height="12" Width="320" 
                  Text="To install into a different folder, click the Browse button, and select another folder."/>
 
-        <Control Id="DescriptionLine3" Type="Text" X="25" Y="90" Height="24" Width="320" 
+        <Control Id="DescriptionLine3" Type="Text" X="25" Y="85" Height="12" Width="320" 
                  Text="You can choose not to install [ProductName] by clicking Cancel to exit the installer." />
 
         <!-- Where? -->
-        <Control Id="Dest" Type="Edit" X="25" Y="115" Width="228" Height="17" Property="INSTALLDIR" Text="[INSTALLDIR]" />
-        <Control Id="ChangeFolder" Type="PushButton" X="265" Y="115" Height="17" Width="56" Text="B&amp;rowse...">
+        <Control Id="Dest" Type="Edit" X="25" Y="102" Width="228" Height="17" Property="INSTALLDIR" Text="[INSTALLDIR]" />
+        <Control Id="ChangeFolder" Type="PushButton" X="265" Y="105" Height="17" Width="56" Text="B&amp;rowse...">
           <Publish Event="SpawnDialog" Value="BrowseDlg" Order="1">1</Publish>
           <Publish Event="[_BrowseProperty]" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
         </Control>
 
         <!-- Jetty? -->
-        <Control Id="InstallJetty" Type="CheckBox" X="265" Y="146" Height="17" Width="80"
+        <Control Id="InstallJetty" Type="CheckBox" X="25" Y="126" Height="17" Width="80"
                  Property="INSTALL_JETTY" CheckBoxValue="TRUE"
-                 Text="Install Jetty">
-        </Control>
+                 Text="Install Jetty"/>
 
-        <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
+        <Control Id="DescriptionLine4" Type="Text" X="25" Y="146" Height="36" Width="150"
+                 Text="Chose the DNS name for this IdP.  It will be used to generate the EntityID, Certificates and Metadata" />
+        <Control Id="DnsName" Type="Edit" X="185" Y="146" Height="17" Width="150"
+                 Property="DNSNAME" Text="[DNSNAME]"/>
+
+	  <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="1" />
         <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back">
           <Publish  Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>

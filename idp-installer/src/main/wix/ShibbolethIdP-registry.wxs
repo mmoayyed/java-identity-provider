@@ -14,10 +14,10 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
      implied.  See the License for the specific language governing
      permissions and limitations under the License.  -->
-
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <!-- to do with the IdP Registry -->
-  <Fragment>
+<!-- to do with the IdP Registry -->
+    <?define ServiceName="shibd_idp"?>
+    <Fragment>
     <ComponentGroup Id="SaveRegistry">
       <Component Id="SaveTarget" Guid="{32A39FB0-21E4-475E-891A-C9901D3548A3}" Directory="INSTALLDIR" Win64="no">
         <RegistryValue Id="targetReg" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP"  Name="InstallDir" Value="[INSTALLDIR]" Type="string" KeyPath="yes" />
@@ -29,7 +29,23 @@
         <RegistryValue Root='HKLM' Key='Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductCode]'
                        Name='DisplayIcon' Value='[#shib.ico],0' Type='string' />
       </Component>
-    </ComponentGroup>
+	<!-- Jetty Configuration-->
+	<Component Id="JettyConfig"  Directory="INSTALLDIR" Guid="{FE729EF2-8293-493A-80C9-69CF54DC4565}" KeyPath="yes">
+	    <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM">
+		<RegistryValue Name="Options" Type="multiString">
+		    <MultiStringValue>-Didp.home=[INSTALLDIR]\IdP</MultiStringValue>
+		</RegistryValue>
+
+	    </RegistryKey>
+	    <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Start" Root="HKLM">
+		<RegistryValue Name="Params" Type="multiString">
+		    <!-- Move to IDP -->
+		    <MultiStringValue>jetty.base=[INSTALLDIR]\IdP\jetty-base</MultiStringValue>
+		</RegistryValue>
+	    </RegistryKey>
+	<Condition>INSTALL_JETTY</Condition>
+	</Component>
+	    </ComponentGroup>
 
     <Property Id="OLD_INSTALLDIR" Secure="yes">
       <RegistrySearch Id="OldInstallDir" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP"

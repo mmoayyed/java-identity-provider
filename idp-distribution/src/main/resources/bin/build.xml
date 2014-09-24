@@ -294,6 +294,9 @@
     -->
 
 	<target name="upgrade" depends="editproperties">
+		<!-- Create edit-webapp -->
+        <mkdir dir="${idp.target.dir}/edit-webapp" />
+        <mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF" />
 		<!-- conf -->
 		<mkdir dir="${idp.target.dir}/conf" />
 		<copy todir="${idp.target.dir}/conf">
@@ -407,7 +410,7 @@
 		<copy todir="${idp.target.dir}/doc">
 			<fileset dir="${idp.src.dir}/doc" />
 		</copy>
-		<mkdir dir="${idp.target.dir}/edit-webapp" />
+		    	
 		<mkdir dir="${idp.target.dir}/flows" />
 		<copy todir="${idp.target.dir}/jetty-base">
 			<fileset dir="${idp.src.dir}/jetty-base" />

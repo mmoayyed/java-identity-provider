@@ -70,6 +70,7 @@
     <CustomAction  Id="SetDNSName" Property="DNSNAME" Value="[ComputerName]"/>
 
     <Binary Id="WriteConfigFilesSrc" SourceFile="scripts\shib_write_configs.vbs" />
+    <Binary Id="BJ64" SourceFile="scripts\shib_write_configs.vbs" />
 
     <CustomAction Id="WriteConfigFiles" BinaryKey="WriteConfigFilesSrc" VBScriptCall="" Execute="deferred" Impersonate="no"/>
     <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY]" />
@@ -77,7 +78,7 @@
     <!-- Ant actions -->
     <CustomAction Id="SetIdpAnt" Property="RunIdpAntLine" Value="[JAVA_EXECUTABLE] -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\;war\WEB-INF\lib\*&quot;  org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\build.xml&quot; -Didp.property.file=idp.install.properties install-nocopy" />
     <CustomAction Id="RunIdpAnt" Directory="IdPFolder" ExeCommand="[RunIdpAntLine]" Execute="deferred" Impersonate="no"/>
-    <CustomAction Id="SetJettyAnt" Property="RunJettyAntLine" Value="[JAVA_EXECUTABLE] -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\;war\WEB-INF\lib\*&quot;  org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\jetty.xml&quot; -Djetty.merge.properties=jetty.install.properties install"/>
+    <CustomAction Id="SetJettyAnt" Property="RunJettyAntLine" Value="[JAVA_EXECUTABLE] -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\;war\WEB-INF\lib\*&quot;  org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\jetty.xml&quot; -Djetty.property.file=jetty.install.properties install"/>
     <CustomAction Id="RunJettyAnt" Directory="IdPFolder" ExeCommand="[RunJettyAntLine]" Execute="deferred" Impersonate="no"/>
 
     <InstallUISequence>
@@ -89,7 +90,7 @@
 
       <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
       <Custom Action="InheritInstallJetty" After="AppSearch">
-        OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
+        OLD_JETTY_INSTALL AND NOT INSTALL_JETTY
       </Custom>
         
       <!-- Could we find JAVA.EXE ?-->
@@ -97,7 +98,9 @@
           NOT JAVA_EXECUTABLE
       </Custom>
 
-      <Custom Action="SetDNSName" After="AppSearch"/>
+      <Custom Action="SetDNSName" After="AppSearch">
+         NOT DNSNAME
+      </Custom>
 
     </InstallUISequence>
 
@@ -118,8 +121,6 @@
            NOT JAVA_EXECUTABLE
      </Custom>
 	
-     <Custom Action="SetDNSName" After="AppSearch"/>
-
      <!-- Work -->
      <Custom Action="SetWriteConfigFiles" Before="CostInitialize">NOT Installed</Custom>
      <Custom Action="WriteConfigFiles" After="InstallFiles">NOT Installed</Custom>

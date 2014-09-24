@@ -1,33 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Shibboleth IdP V3 - Jetty Container" basedir=".." default="install">
 
-    <taskdef resource="net/shibboleth/idp/installer/ant.xml" />
+	<taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
-    <target name="install" depends="init, checkini, copyinis" />
+	<target name="install" depends="init, properties, keystores, copyinis, tidy" />
 
-    <target name="init">
-        <tstamp />
-        <hostinfo />
-    </target>
-
-    <target name="checkini">
-        <available property="idp.ini.present" file="jetty-base/start.d/idp.ini" />
-    </target>
-    
-	<target name="copyinis" depends="copyidpini"> 
-        <mkdir dir="jetty-base/start.d"/>
-        <copy file="jetty-base/start.d.dist/jsp.ini" tofile="jetty-base/start.d/jsp.ini" overwrite="false" failonerror="false" />
-        <copy file="jetty-base/start.d.dist/jstl.ini" tofile="jetty-base/start.d/jstl.ini" overwrite="false" failonerror="false" />
+	<target name="init">
+		<tstamp />
+		<hostinfo />
 	</target>
-	
-    <target name="copyidpini" unless="idp.ini.present">
-        <mkdir dir="jetty-base/start.d"/>
-        <mergeproperties inFile="jetty-base/start.d.dist/idp.ini" outFile="jetty-base/start.d/idp.ini" mergeFile="${jetty.merge.properties}" />
-    </target>
-    
-    <target name="tidy">
-        <delete file="${jetty.merge.properties}" failonerror="false" />
-    </target>
-    
+
+	<target name="properties">
+		<property file="${jetty.property.file}" />
+		<available property="idp.ini.present" file="${idp.target.dir}/jetty-base/start.d/idp.ini" />
+		<available property="idp.tls.jks.present" file="${idp.target.dir}/creds/idp-tls.jks" />
+		<available property="idp.ssl.jks.present" file="${idp.target.dir}/creds/idp-ssl.jks" />
+		<available property="idp.ssl.p12.present" file="${idp.target.dir}/creds/idp-ssl.p12" />
+		<condition property="generate.ssl.p12">
+			<!-- Generate the pkcs12 keystore if neither the JKS nor the P12 exist -->
+			<not>
+				<and>
+					<istrue value="${idp.ssl.jks.present}" />
+					<istrue value="${idp.ssl.p12.present}" />
+				</and>
+			</not>
+		</condition>
+	</target>
+
+	<!-- Handle keystores -->
+	<target name="keystores" depends="tls-jks, ssl-jks, gen-ssl" />
+
+	<target name="tls-jks" if="idp.tls.jks.present">
+		<echo file="${jetty.merge.properties}" append="yes">
+    		jetty.backchannel.keystore.type=JKS
+    	</echo>
+	</target>
+
+	<target name="ssl-jks" if="idp.ssl.jks.present">
+		<echo append="true" file="${jetty.merge.properties}">
+            jetty.browser.keystore.type=JKS
+        </echo>
+	</target>
+
+	<target name="gen-ssl" if="generate.ssl.p12">
+		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-ssl.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+	</target>
+
+	<target name="copyinis" depends="copyidpini">
+		<mkdir dir="jetty-base/start.d" />
+		<copy file="jetty-base/start.d.dist/jsp.ini" tofile="jetty-base/start.d/jsp.ini" overwrite="false" failonerror="false" />
+		<copy file="jetty-base/start.d.dist/jstl.ini" tofile="jetty-base/start.d/jstl.ini" overwrite="false" failonerror="false" />
+	</target>
+
+	<target name="copyidpini" unless="idp.ini.present">
+		<mkdir dir="jetty-base/start.d" />
+		<mergeproperties inFile="${idp.target.dir}/jetty-base/start.d.dist/idp.ini" outFile="${idp.target.dir}/jetty-base/start.d/idp.ini" mergeFile="${jetty.merge.properties}" />
+	</target>
+
+	<target name="tidy" unless="jetty.no.tidy">
+		<delete file="${jetty.merge.properties}" failonerror="false" />
+        <delete file="${jetty.property.file}" failonerror="false" />
+	</target>
+
 </project>
-    
