@@ -48,8 +48,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-//TODO(lajoie) performance metrics
-
 /**
  * A policy describing if a set of attribute value filters is applicable.
  * 

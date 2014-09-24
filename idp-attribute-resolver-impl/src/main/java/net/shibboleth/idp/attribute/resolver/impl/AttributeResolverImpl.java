@@ -57,8 +57,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 
-//TODO(lajoie) perf metrics
-
 /**
  * A component that resolves the attributes for a particular subject.
  * 

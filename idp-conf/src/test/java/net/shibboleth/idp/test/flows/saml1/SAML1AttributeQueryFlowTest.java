@@ -54,7 +54,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
     @BeforeClass void setupValidator() {
 
         final NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
-        nameIdentifier.setNameIdentifier("jdoe");
+        nameIdentifier.setValue("jdoe");
         nameIdentifier.setFormat(null);
         nameIdentifier.setNameQualifier(null);
 

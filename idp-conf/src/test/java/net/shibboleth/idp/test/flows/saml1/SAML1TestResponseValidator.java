@@ -416,10 +416,10 @@ public class SAML1TestResponseValidator {
      */
     public void assertNameIdentifier(@Nullable final NameIdentifier identifier) {
         Assert.assertNotNull(identifier);
-        Assert.assertNotNull(identifier.getNameIdentifier());
+        Assert.assertNotNull(identifier.getValue());
         if (nameIdentifier.getFormat() != null
                 && !nameIdentifier.getFormat().equals(SAMLConstants.SAML1_NAMEID_TRANSIENT)) {
-            Assert.assertEquals(identifier.getNameIdentifier(), nameIdentifier.getNameIdentifier());
+            Assert.assertEquals(identifier.getValue(), nameIdentifier.getValue());
         }
         Assert.assertEquals(identifier.getFormat(), nameIdentifier.getFormat());
         Assert.assertEquals(identifier.getNameQualifier(), nameIdentifier.getNameQualifier());

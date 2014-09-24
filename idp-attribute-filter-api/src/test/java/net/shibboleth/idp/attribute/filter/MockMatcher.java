@@ -123,14 +123,4 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
     public void setFailValidate(boolean doFail) {
         fails = doFail;
     }
-
-    /** {@inheritDoc}
-    //TODO remove
-    public boolean matches(@Nonnull AttributeFilterContext filterContext) throws AttributeFilterException {
-        if (fails) {
-            throw new MatcherException("oops");
-        }
-        contextUsed = filterContext;
-        return retVal;
-    }*/
 }

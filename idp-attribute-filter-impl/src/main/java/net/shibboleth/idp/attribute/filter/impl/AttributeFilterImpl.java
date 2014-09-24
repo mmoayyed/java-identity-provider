@@ -49,8 +49,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-//TODO(lajoie) perf metrics
-
 /** Service that filters out attributes and values based upon loaded policies. */
 @ThreadSafe
 public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeFilter> implements AttributeFilter {

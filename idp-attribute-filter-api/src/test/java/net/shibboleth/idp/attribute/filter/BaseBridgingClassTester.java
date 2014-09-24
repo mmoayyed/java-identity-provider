@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Sets;
 
 /**
- * Base for the various XXX from YYY test clases
+ * Base for the various XX from YY test clases
  */
 public class BaseBridgingClassTester {
     

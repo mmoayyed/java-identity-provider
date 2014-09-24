@@ -99,7 +99,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
             NameIdentifier id = (NameIdentifier) val.getValue();
             Assert.assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
             Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
-            nameValues.add(id.getNameIdentifier());
+            nameValues.add(id.getValue());
         }
         Assert.assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
         Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
@@ -199,7 +199,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         Assert.assertEquals(defn.getNameIdFormat(), id.getFormat());
         Assert.assertEquals(id.getNameQualifier(), ALTERNATE_QUALIFIER);
         Assert.assertEquals(defn.getNameIdQualifier(), id.getNameQualifier());
-        Assert.assertEquals(id.getNameIdentifier(), TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
+        Assert.assertEquals(id.getValue(), TestSources.COMMON_ATTRIBUTE_VALUE_STRING);
 
     }
 }

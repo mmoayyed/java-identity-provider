@@ -24,6 +24,7 @@ import net.shibboleth.idp.saml.nameid.impl.CryptoTransientNameIDDecoder;
 import net.shibboleth.idp.saml.nameid.impl.CryptoTransientNameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -41,10 +42,9 @@ public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorPa
     @Override protected void addSAMLDecoders(@Nonnull Element config, @Nonnull ParserContext parserContext,
             @Nonnull BeanDefinitionBuilder builder) {
 
-        // TODO Move this defaulting up into the bean?
-        String dataSealer = "shibboleth.TransientIDDataSealer";
-        if (config.hasAttributeNS(null, "dataSealerRef")) {
-            dataSealer = StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef"));
+        String dataSealer = StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef"));
+        if (dataSealer == null) {
+            throw new BeanCreationException("dataSealerRef attribute is required");
         }
         
 
