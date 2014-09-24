@@ -16,7 +16,7 @@
  */
 
 /**
- * Functions for navigating attribute resolution contexts.
+ * Predicates related to attribute resolution.
  */
 
-package net.shibboleth.idp.attribute.resolver.context.navigate.impl;
+package net.shibboleth.idp.attribute.resolver.logic;

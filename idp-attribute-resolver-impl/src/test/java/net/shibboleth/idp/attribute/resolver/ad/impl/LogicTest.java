@@ -20,9 +20,9 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 import java.util.Collections;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.logic.impl.AttributeIssuerIdPredicate;
-import net.shibboleth.idp.attribute.resolver.logic.impl.AttributePrincipalPredicate;
-import net.shibboleth.idp.attribute.resolver.logic.impl.AttributeRecipientIdPredicate;
+import net.shibboleth.idp.attribute.resolver.logic.AttributeIssuerIdPredicate;
+import net.shibboleth.idp.attribute.resolver.logic.AttributePrincipalPredicate;
+import net.shibboleth.idp.attribute.resolver.logic.AttributeRecipientIdPredicate;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;

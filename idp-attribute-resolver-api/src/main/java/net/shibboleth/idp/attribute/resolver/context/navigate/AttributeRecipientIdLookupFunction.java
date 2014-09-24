@@ -15,26 +15,25 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.context.navigate.impl;
+package net.shibboleth.idp.attribute.resolver.context.navigate;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.context.navigate.AbstractAttributeResolutionLookupFunction;
 
 /**
- * A function that returns {@link AttributeResolutionContext#getPrincipal()} if available from a
+ * A function that returns {@link AttributeResolutionContext#getAttributeRecipientID()} if available from a
  * {@link AttributeResolutionContext} obtained via a lookup function defined on the base class.
  * 
  * <p>If a specific setting is unavailable, a null value is returned.</p>
  */
-public class AttributePrincipalLookupFunction extends AbstractAttributeResolutionLookupFunction<String> {
+public class AttributeRecipientIdLookupFunction extends AbstractAttributeResolutionLookupFunction<String> {
 
     /** {@inheritDoc} */
     @Override
     @Nullable protected String doApply(@Nonnull final AttributeResolutionContext input) {
-        return input.getPrincipal();
+        return input.getAttributeRecipientID();
     }
 
 }
