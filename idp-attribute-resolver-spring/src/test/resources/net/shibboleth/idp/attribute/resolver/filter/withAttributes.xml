@@ -11,8 +11,10 @@
 	</Extensions>
 	<SPSSODescriptor
 		protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+        <AssertionConsumerService Location="https://foo" index="1" Binding="urn:foo" />
 		<AttributeConsumingService xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
 			index="1">
+            <ServiceName xml:lang="en">Foo</ServiceName>
 			<RequestedAttribute FriendlyName="displayName"
 				Name="urn:mace:dir:attribute-def:displayName" NameFormat="urn:mace:shibboleth:1.0:attributeNamespace:uri" />
 			<RequestedAttribute FriendlyName="displayName" isRequired="true"
