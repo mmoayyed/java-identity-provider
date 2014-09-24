@@ -11,7 +11,7 @@
 	</util:list>
 
 	<bean id="peter"
-		class="net.shibboleth.idp.attribute.resolver.logic.impl.AttributePrincipalPredicate"
+		class="net.shibboleth.idp.attribute.resolver.logic.AttributePrincipalPredicate"
 		c:candidates-ref="principals" />
 
 	<util:list id="issuers">
@@ -19,7 +19,7 @@
 	</util:list>
 
     <bean id="principal"
-        class="net.shibboleth.idp.attribute.resolver.logic.impl.AttributeIssuerIdPredicate"
+        class="net.shibboleth.idp.attribute.resolver.logic.AttributeIssuerIdPredicate"
         c:candidates-ref="issuers" />
 
     <util:list id="recipients">
