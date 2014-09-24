@@ -175,8 +175,7 @@ i8V7gp9HK+EimdSbgu7xktKlrqA2Rsn+dBoPSgOUs/LOGtCS9/biF0w=
          <KeyDescriptor use="signing">
             <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
                <ds:KeyName>idp.example.org</ds:KeyName>
-            </ds:KeyInfo>
-         </KeyDescriptor>
+            </ds:KeyInfo>&gt; </KeyDescriptor>
          <AttributeService Binding="urn:oasis:names:tc:SAML:1.0:bindings:SOAP-binding" Location="https://idp.example.org:8443/shibboleth/AA"/>
       </AttributeAuthorityDescriptor>
       
