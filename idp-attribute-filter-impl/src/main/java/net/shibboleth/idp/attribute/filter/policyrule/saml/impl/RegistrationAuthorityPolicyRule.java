@@ -17,10 +17,19 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import java.util.Collection;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.AbstractPolicyRule;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
@@ -31,36 +40,47 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 /**
  * This filter filters on mdrpi in the SP's metadata.
  */
 public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(RegistrationAuthorityPolicyRule.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(RegistrationAuthorityPolicyRule.class);
 
     /** The issuers to match against. */
-    private String[] issuers = new String[0];
+    @Nonnull @NonnullElements private Set<String> issuers;
 
     /** What to say if no MDRPI is present. */
     private boolean matchIfMetadataSilent;
 
     /**
-     * get the issuers.
+     * Get the candidate issuers.
      * 
-     * @return Returns the issuers.
+     * @return the issuers
      */
-    public String[] getIssuers() {
-        return issuers;
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<String> getIssuers() {
+        return ImmutableSet.copyOf(issuers);
     }
 
     /**
-     * Set the issuers.
+     * Set the candidate issuers.
      * 
-     * @param theIssuers The issuers to set.
+     * @param theIssuers candidate issuers
      */
-    public void setIssuers(String[] theIssuers) {
-        issuers = theIssuers;
+    public void setIssuers(@Nonnull @NonnullElements final Collection<String> theIssuers) {
+        Constraint.isNotNull(theIssuers, "Issuer collection cannot be null");
+        
+        issuers = Sets.newHashSetWithExpectedSize(theIssuers.size());
+        for (final String s : theIssuers) {
+            final String trimmed = StringSupport.trimOrNull(s);
+            if (trimmed != null) {
+                issuers.add(trimmed);
+            }
+        }
     }
 
     /**
@@ -77,7 +97,7 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
      * 
      * @param value The matchIfMetadataSilent to set.
      */
-    public void setMatchIfMetadataSilent(boolean value) {
+    public void setMatchIfMetadataSilent(final boolean value) {
         matchIfMetadataSilent = value;
     }
 
@@ -87,7 +107,7 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
      * @param filterContext the context of the operation
      * @return The registration info for the SP in the context
      */
-    private RegistrationInfo getRegistrationInfo(AttributeFilterContext filterContext) {
+    @Nullable private RegistrationInfo getRegistrationInfo(@Nonnull final AttributeFilterContext filterContext) {
 
         final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
         if (null == metadataContext) {
@@ -128,7 +148,7 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
     }
 
     /** {@inheritDoc} */
-    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
         final RegistrationInfo info = getRegistrationInfo(filterContext);
 
         if (info == null) {
@@ -142,11 +162,9 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
 
         final String authority = info.getRegistrationAuthority();
         log.debug("Peer's metadata has registration authority: {}", authority);
-        for (String issuer : issuers) {
-            if (issuer.matches(authority)) {
-                log.debug("Peer's metadata registration authority matches");
-                return Tristate.TRUE;
-            }
+        if (issuers.contains(authority)) {
+            log.debug("Peer's metadata registration authority matches");
+            return Tristate.TRUE;
         }
         log.debug("Peer's metadata registration authority does not match");
         return Tristate.FALSE;

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import java.util.Arrays;
+
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
@@ -61,10 +63,11 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
         AttributeFilterContext context = metadataContext(getEntity(SWAMID), "principal");
         final RegistrationAuthorityPolicyRule filter = new RegistrationAuthorityPolicyRule();
         String[] array = {REQUESTED_REG_INFO, "foo",};
-        filter.setIssuers(array);
+        filter.setIssuers(Arrays.asList(array));
 
         Assert.assertEquals(filter.matches(context), Tristate.TRUE);
         array[0] = INCOMMON_REG_INFO;
+        filter.setIssuers(Arrays.asList(array));
         Assert.assertEquals(filter.matches(context), Tristate.FALSE);
     }
 
@@ -72,10 +75,11 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
         AttributeFilterContext context = metadataContext(getEntity(INCOMMON_SP), "principal");
         final RegistrationAuthorityPolicyRule filter = new RegistrationAuthorityPolicyRule();
         String[] array = {REQUESTED_REG_INFO, "foo",};
-        filter.setIssuers(array);
+        filter.setIssuers(Arrays.asList(array));
 
         Assert.assertEquals(filter.matches(context), Tristate.FALSE);
         array[0] = INCOMMON_REG_INFO;
+        filter.setIssuers(Arrays.asList(array));
         Assert.assertEquals(filter.matches(context), Tristate.TRUE);
     }
 
@@ -83,7 +87,7 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
         AttributeFilterContext context = metadataContext(getEntity(NO_REGINFO_SP), "principal");
         final RegistrationAuthorityPolicyRule filter = new RegistrationAuthorityPolicyRule();
         String[] array = {REQUESTED_REG_INFO, INCOMMON_REG_INFO, "foo",};
-        filter.setIssuers(array);
+        filter.setIssuers(Arrays.asList(array));
 
         filter.setMatchIfMetadataSilent(true);
         Assert.assertEquals(filter.matches(context), Tristate.TRUE);
