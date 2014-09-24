@@ -103,38 +103,38 @@ public class PrinicpalConnectorCanonicalizerTest extends OpenSAMLInitBaseTestCas
         final Subject subject = new Subject();
         final SubjectCanonicalizationContext context = new SubjectCanonicalizationContext();
         NameIdentifier nameIdentifier = nameIdentifierBuilder.buildObject();
-        nameIdentifier.setNameIdentifier("val");
+        nameIdentifier.setValue("val");
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameIdentifier));
         context.setSubject(subject);
         context.setRequesterId("S1Requester");
         context.setResponderId("S1Responder");
 
         Assert.assertEquals(testCanon.doCanonicalize(nameIdentifier, context), NameIdentifier.UNSPECIFIED
-                + nameIdentifier.getNameIdentifier() + context.getRequesterId() + context.getResponderId());
+                + nameIdentifier.getValue() + context.getRequesterId() + context.getResponderId());
 
         subject.getPrincipals().clear();
         nameIdentifier = nameIdentifierBuilder.buildObject();
-        nameIdentifier.setNameIdentifier("val2");
+        nameIdentifier.setValue("val2");
         nameIdentifier.setFormat(NameIdentifier.UNSPECIFIED);
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameIdentifier));
         Assert.assertEquals(testCanon.doCanonicalize(nameIdentifier, context), NameIdentifier.UNSPECIFIED
-                + nameIdentifier.getNameIdentifier() + context.getRequesterId() + context.getResponderId());
+                + nameIdentifier.getValue() + context.getRequesterId() + context.getResponderId());
 
         subject.getPrincipals().clear();
         nameIdentifier = nameIdentifierBuilder.buildObject();
-        nameIdentifier.setNameIdentifier("val3");
+        nameIdentifier.setValue("val3");
         nameIdentifier.setFormat(NameIdentifier.WIN_DOMAIN_QUALIFIED);
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameIdentifier));
         Assert.assertNull(testCanon.doCanonicalize(nameIdentifier, context));
 
         subject.getPrincipals().clear();
         nameIdentifier = nameIdentifierBuilder.buildObject();
-        nameIdentifier.setNameIdentifier("val4");
+        nameIdentifier.setValue("val4");
         nameIdentifier.setFormat(NameID.KERBEROS);
         subject.getPrincipals().add(new NameIdentifierPrincipal(nameIdentifier));
         Assert.assertEquals(
                 testCanon.doCanonicalize(nameIdentifier, context),
-                NameID.KERBEROS + nameIdentifier.getNameIdentifier() + context.getRequesterId()
+                NameID.KERBEROS + nameIdentifier.getValue() + context.getRequesterId()
                         + context.getResponderId());
     }
 
@@ -221,7 +221,7 @@ public class PrinicpalConnectorCanonicalizerTest extends OpenSAMLInitBaseTestCas
         @Override
         @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext scc, @Nonnull NameIdentifier nameIdentifier)
                 throws NameDecoderException {
-            return prefix + nameIdentifier.getNameIdentifier() + scc.getRequesterId() + scc.getResponderId();
+            return prefix + nameIdentifier.getValue() + scc.getRequesterId() + scc.getResponderId();
         }
 
         /** {@inheritDoc} */

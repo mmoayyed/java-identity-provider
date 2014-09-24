@@ -119,7 +119,7 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
         final NameIdentifier nameID = new NameIdentifierBuilder().buildObject();
         nameID.setFormat("https://example.org/");
         nameID.setNameQualifier(TestSources.IDP_ENTITY_ID);
-        nameID.setNameIdentifier(code);
+        nameID.setValue(code);
 
         NameIDCanonicalizationFlowDescriptor desc = new NameIDCanonicalizationFlowDescriptor();
         desc.setId("C14NDesc");

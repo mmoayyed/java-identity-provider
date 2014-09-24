@@ -138,7 +138,7 @@ public class SAML1StringNameIdentifierEncoder extends AbstractSAML1NameIdentifie
             Object value = attrValue.getValue();
 
             if (value instanceof String) {
-                nameId.setNameIdentifier((String) value);
+                nameId.setValue((String) value);
                 return nameId;
             } else {
                 log.debug("Skipping unsupported value of type {} of attribute {}", value.getClass().getName(),

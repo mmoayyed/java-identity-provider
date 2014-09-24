@@ -27,7 +27,7 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 
 /**
  * Processes a transient {@link NameIdentifier}, checks that its {@link NameIdentifier#getNameQualifier()} is
- * correct, and decodes {@link NameIdentifier#getNameIdentifier()} via the base class (reversing the work done by
+ * correct, and decodes {@link NameIdentifier#getValue()} via the base class (reversing the work done by
  * {@link net.shibboleth.idp.attribute.resolver.impl.ad.CryptoTransientIdAttributeDefinition}).
  */
 public class CryptoTransientNameIdentifierDecoder extends BaseCryptoTransientDecoder implements NameIdentifierDecoder {
@@ -37,7 +37,7 @@ public class CryptoTransientNameIdentifierDecoder extends BaseCryptoTransientDec
     @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
 
-        return super.decode(nameIdentifier.getNameIdentifier(), c14nContext.getRequesterId());
+        return super.decode(nameIdentifier.getValue(), c14nContext.getRequesterId());
     }
 
 }

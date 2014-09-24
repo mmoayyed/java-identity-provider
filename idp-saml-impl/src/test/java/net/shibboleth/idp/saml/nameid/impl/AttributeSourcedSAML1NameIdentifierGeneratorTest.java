@@ -63,7 +63,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
     private static IdPAttributeValue<?> saml1NameIdFor(final String ident) {
         NameIdentifier id = saml1Builder.buildObject();
 
-        id.setNameIdentifier(ident);
+        id.setValue(ident);
         id.setFormat(NameIdentifier.X509_SUBJECT);
         id.setNameQualifier(QUALIFIER);
         return new XMLObjectAttributeValue(id);
@@ -147,7 +147,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         final NameIdentifier outputNameId = generator.generate(prc, generator.getFormat());
 
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
+        Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), QUALIFIER);
     }
@@ -166,7 +166,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         final NameIdentifier outputNameId = generator.generate(prc, generator.getFormat());
 
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
+        Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), QUALIFIER);
     }
@@ -185,7 +185,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         final NameIdentifier outputNameId = generator.generate(prc, generator.getFormat());
 
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
+        Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), prc.getSubcontext(RelyingPartyContext.class)
                 .getConfiguration().getResponderId());
@@ -205,7 +205,7 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         final NameIdentifier outputNameId = generator.generate(prc, generator.getFormat());
 
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1 + '@' + QUALIFIER);
+        Assert.assertEquals(outputNameId.getValue(), NAME_1 + '@' + QUALIFIER);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), prc.getSubcontext(RelyingPartyContext.class)
                 .getConfiguration().getResponderId());

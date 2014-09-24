@@ -141,7 +141,7 @@ public class ExtractSubjectFromRequestTest extends XMLObjectBaseTestCase {
         
         final NameIdentifierPrincipal princ =
                 scc.getSubject().getPrincipals(NameIdentifierPrincipal.class).iterator().next();
-        Assert.assertEquals(princ.getNameIdentifier().getNameIdentifier(), "foo");
+        Assert.assertEquals(princ.getNameIdentifier().getValue(), "foo");
     }
 
 }

@@ -63,7 +63,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     private static IdPAttributeValue<?> saml1NameIdFor(final String ident) {
         NameIdentifier id = saml1Builder.buildObject();
 
-        id.setNameIdentifier(ident);
+        id.setValue(ident);
         id.setFormat(NameID.X509_SUBJECT);
         id.setNameQualifier(QUALIFIER);
         return new XMLObjectAttributeValue(id);

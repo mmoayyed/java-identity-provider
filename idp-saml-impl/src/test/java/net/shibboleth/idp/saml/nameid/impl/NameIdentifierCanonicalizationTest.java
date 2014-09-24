@@ -75,7 +75,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
         action.setDecoder(new NameIdentifierDecoder() {
             public String decode(SubjectCanonicalizationContext scc, NameIdentifier nameIdentifier) {
                 if (RESPONDER.equals(scc.getResponderId()) && REQUESTER.equals(scc.getRequesterId())) {
-                    return VALUE_PREFIX + nameIdentifier.getNameIdentifier();
+                    return VALUE_PREFIX + nameIdentifier.getValue();
                 }
                 return null;
             }
@@ -101,7 +101,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
         final NameIdentifier id = builder.buildObject();
 
-        id.setNameIdentifier(value);
+        id.setValue(value);
         id.setFormat(format);
         id.setNameQualifier(nameQualifier);
         return id;

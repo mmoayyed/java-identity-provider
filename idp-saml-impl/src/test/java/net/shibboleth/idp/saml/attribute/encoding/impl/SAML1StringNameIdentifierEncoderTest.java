@@ -80,14 +80,14 @@ public class SAML1StringNameIdentifierEncoderTest extends OpenSAMLInitBaseTestCa
         final SAML1StringNameIdentifierEncoder enc1 = new SAML1StringNameIdentifierEncoder();
 
         NameIdentifier nameId = enc1.encode(attribute);
-        Assert.assertEquals(nameId.getNameIdentifier(), "value");
+        Assert.assertEquals(nameId.getValue(), "value");
         Assert.assertEquals(nameId.getFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
         Assert.assertNull(nameId.getNameQualifier());
 
         enc1.setNameFormat("nameFormat");
         enc1.setNameQualifier("nameQualifier");
         nameId = enc1.encode(attribute);
-        Assert.assertEquals(nameId.getNameIdentifier(), "value");
+        Assert.assertEquals(nameId.getValue(), "value");
         Assert.assertEquals(nameId.getFormat(), "nameFormat");
         Assert.assertEquals(nameId.getNameQualifier(), "nameQualifier");
     }

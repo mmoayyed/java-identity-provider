@@ -128,7 +128,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
         log.debug("{} building a SAML1 NameIdentifier with value of '{}'", getLogPrefix(), nameIdValue);
 
         final NameIdentifier nameIdentifier = nameIdentifierBuilder.buildObject();
-        nameIdentifier.setNameIdentifier(nameIdValue);
+        nameIdentifier.setValue(nameIdValue);
 
         if (nameIdFormat != null) {
             log.debug("{} Format set to '{}'", getLogPrefix(), nameIdFormat);

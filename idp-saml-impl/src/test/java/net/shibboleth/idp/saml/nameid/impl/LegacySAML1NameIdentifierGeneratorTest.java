@@ -134,7 +134,7 @@ public class LegacySAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTest
         
         NameIdentifier outputNameId = generator.generate(prc, NameIdentifier.EMAIL);
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
+        Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.EMAIL);
         Assert.assertEquals(outputNameId.getNameQualifier(), QUALIFIER);
     }
@@ -159,7 +159,7 @@ public class LegacySAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTest
         
         NameIdentifier outputNameId = generator.generate(prc, NameIdentifier.X509_SUBJECT);
         Assert.assertNotNull(outputNameId);
-        Assert.assertEquals(outputNameId.getNameIdentifier(), NAME_1);
+        Assert.assertEquals(outputNameId.getValue(), NAME_1);
         Assert.assertEquals(outputNameId.getFormat(), NameIdentifier.X509_SUBJECT);
         Assert.assertEquals(outputNameId.getNameQualifier(), QUALIFIER);
     }

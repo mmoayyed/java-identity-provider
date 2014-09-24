@@ -34,7 +34,7 @@ public class TransformingNameIdentifierDecoder extends BaseTransformingDecoder i
     @Nullable public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
         
-        return decode(nameIdentifier.getNameIdentifier());
+        return decode(nameIdentifier.getValue());
     }
     
 }

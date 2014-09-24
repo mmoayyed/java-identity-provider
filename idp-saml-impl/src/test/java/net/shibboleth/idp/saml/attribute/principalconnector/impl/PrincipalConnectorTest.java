@@ -100,7 +100,7 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.initialize();
         
         final NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
-        nameIdentifier.setNameIdentifier(NAMEIDENTIFIER_TEXT);
+        nameIdentifier.setValue(NAMEIDENTIFIER_TEXT);
         
         final SubjectCanonicalizationContext scc = new SubjectCanonicalizationContext();
         scc.setRequesterId(RP1);

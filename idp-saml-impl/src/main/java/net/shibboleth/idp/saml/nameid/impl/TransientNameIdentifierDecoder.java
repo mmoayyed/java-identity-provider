@@ -26,7 +26,7 @@ import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 
 /**
- * Decodes {@link NameIdentifier#getNameIdentifier()}  via the base class (reversing the work done by
+ * Decodes {@link NameIdentifier#getValue()}  via the base class (reversing the work done by
  * {@link net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition}).
  */
 public class TransientNameIdentifierDecoder extends BaseTransientDecoder implements NameIdentifierDecoder {
@@ -36,7 +36,7 @@ public class TransientNameIdentifierDecoder extends BaseTransientDecoder impleme
     @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
             @Nonnull final NameIdentifier nameIdentifier) throws NameDecoderException {
 
-        return super.decode(nameIdentifier.getNameIdentifier(), c14nContext.getRequesterId());
+        return super.decode(nameIdentifier.getValue(), c14nContext.getRequesterId());
     }
 
 }
