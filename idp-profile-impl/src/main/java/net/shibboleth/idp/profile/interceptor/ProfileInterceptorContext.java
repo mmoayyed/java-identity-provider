@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
@@ -43,8 +44,12 @@ public class ProfileInterceptorContext extends BaseContext {
     /** Flows that have been attempted, successfully or otherwise, without producing a completed result. */
     @Nonnull @NonnullElements private final Map<String, ProfileInterceptorFlowDescriptor> intermediateFlows;
 
+    /** The result of the flow. */
+    @Nullable private ProfileInterceptorResult result;
+
     /** Constructor. */
     public ProfileInterceptorContext() {
+        // TODO nonnull element constraints
         intermediateFlows = new LinkedHashMap<>();
         availableFlows = new LinkedHashMap<>();
     }
@@ -83,5 +88,23 @@ public class ProfileInterceptorContext extends BaseContext {
      */
     @Nonnull @NonnullElements @Live public Map<String, ProfileInterceptorFlowDescriptor> getIntermediateFlows() {
         return intermediateFlows;
+    }
+
+    /**
+     * Get the result.
+     * 
+     * @return the result
+     */
+    @Nullable public ProfileInterceptorResult getResult() {
+        return result;
+    }
+
+    /**
+     * Set the result.
+     * 
+     * @param interceptorResult the result
+     */
+    public void setResult(@Nonnull final ProfileInterceptorResult interceptorResult) {
+        result = Constraint.isNotNull(interceptorResult, "Interceptor result cannot be null");
     }
 }
