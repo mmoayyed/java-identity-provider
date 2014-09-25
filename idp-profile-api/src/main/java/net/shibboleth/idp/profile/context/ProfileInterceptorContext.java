@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.interceptor;
+package net.shibboleth.idp.profile.context;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,6 +23,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;

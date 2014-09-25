@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.interceptor;
 
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.impl.SelectProfileInterceptorFlow;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;

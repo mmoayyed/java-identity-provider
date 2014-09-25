@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.interceptor;
 
+import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
