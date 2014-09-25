@@ -30,4 +30,17 @@ current_time: $now.toString($dateTimeFormatter)
 #set ($uptime = $now.getMillis() - $startupTime.getMillis()) 
 uptime: $uptime ms
 
+#foreach ($service in $services)
+service: $service.getId()
+#if ($service.getLastSuccessfulReloadInstant())
+last successful reload attempt: $service.getLastSuccessfulReloadInstant().toString($dateTimeFormatter)
+#end
+#if ($service.getLastReloadAttemptInstant())
+last reload attempt: $service.getLastReloadAttemptInstant().toString($dateTimeFormatter)
+#end
+#if ($service.getReloadFailureCause())
+last failure cause: $service.getReloadFailureCause().getClass().getName(): $service.getReloadFailureCause().getMessage()
+#end
+#end
+
 $response.setContentType("text/plain")

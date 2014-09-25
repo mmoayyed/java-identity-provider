@@ -15,6 +15,7 @@
     <end-state id="Status" view="status">
         <on-entry>
             <evaluate expression="WriteAuditLog" />
+            <evaluate expression="ServiceCollection" result="requestScope.services" />
             <evaluate expression="T(java.lang.Runtime).getRuntime()" result="requestScope.runtime" />
             <evaluate expression="T(java.lang.System)" result="requestScope.System" />
             <evaluate expression="T(net.shibboleth.idp.Version)" result="requestScope.Version" />

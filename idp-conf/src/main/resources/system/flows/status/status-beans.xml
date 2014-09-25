@@ -20,6 +20,15 @@
 
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
     <import resource="../../conf/audit-system.xml" />
+    
+    <util:list id="ServiceCollection">
+        <ref bean="shibboleth.ReloadableAccessControlService" />
+        <ref bean="shibboleth.MetadataResolverService" />
+        <ref bean="shibboleth.RelyingPartyResolverService" />
+        <ref bean="shibboleth.NameIdentifierGenerationService" />
+        <ref bean="shibboleth.AttributeResolverService" />
+        <ref bean="shibboleth.AttributeFilterService" />
+    </util:list>
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
