@@ -14,7 +14,12 @@ if not defined WIX (
    goto done
 )
 
-if not exist jetty.msm (
+if not exist jetty-x64.msm (
+   echo RUN JETTY.BAT FIRST
+   goto done
+)
+
+if not exist jetty-x86.msm (
    echo RUN JETTY.BAT FIRST
    goto done
 )
@@ -127,13 +132,23 @@ REM Build
 "%WIX%/BIN/CANDLE" -nologo -arch x86 -didpSrc=idp-extract\%idpex% idp_contents.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. ShibbolethIdP-main.wxs ShibbolethIdP-registry.wxs ShibbolethIdP-gui.wxs ShibbolethIdP-install-dlg.wxs ShibbolethIdP-update-dlg.wxs
+"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. ShibbolethIdP-main.wxs -dmsitype=x86
+
+"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. ShibbolethIdP-registry.wxs ShibbolethIdP-gui.wxs ShibbolethIdP-install-dlg.wxs ShibbolethIdP-update-dlg.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out idp.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-update-dlg.wixobj -ext WixUtilExtension.dll
+"%WIX%/BIN/LIGHT" -nologo -out idp-x86.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-update-dlg.wixobj -ext WixUtilExtension.dll
 if ERRORLEVEL 1 goto done
 
-dir idp.msi
+del  ShibbolethIdP-main.wixobj
+"%WIX%/BIN/CANDLE" -nologo -arch x64 -dProjectDir=. ShibbolethIdP-main.wxs -dmsitype=x64
+if ERRORLEVEL 1 goto done
+
+"%WIX%/BIN/LIGHT" -nologo -out idp-x64.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-update-dlg.wixobj -ext WixUtilExtension.dll
+if ERRORLEVEL 1 goto done
+
+
+dir idp*.msi
 
 REM Tidy up in the Sucessful exit case
    del *.wixobj *.wixpdb

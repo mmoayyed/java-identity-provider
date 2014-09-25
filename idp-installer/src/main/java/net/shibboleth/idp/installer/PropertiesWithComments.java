@@ -133,6 +133,6 @@ public class PropertiesWithComments {
      * @param what what to add
      */
     public void addComment(String what) {
-        contents.add("#"+what);
+        contents.add("# "+what);
     }
 }

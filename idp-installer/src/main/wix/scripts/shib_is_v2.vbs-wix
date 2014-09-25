@@ -1,7 +1,0 @@
-
-Set WshShell = CreateObject("WScript.Shell")
-'WshShell.popup("Hello world")
-s = Session.Property("IS_V2")
-'WshShell.popup("Hello world2 " + s)
-
-Session.Property("IS_V2") = "TRUE"

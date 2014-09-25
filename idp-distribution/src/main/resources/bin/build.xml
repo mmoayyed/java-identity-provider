@@ -3,25 +3,18 @@
 
 	<taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
-	<!-- TODO 
-       V3 to V3 , detect if it is V2
-    -->
-
 	<!--  TARGETS:
 
-        The following top level targets are implemented.  These in turn call subsidiary targets.
+        The following top level targets are implemented and supported.  These in turn call subsidiary targets,
+        whose use outside this file is not supported.
 
         install-nocopy:  Does the installation/upgrade on a layout that has been copied (ie, the important
-                         stuff has been copied or overwritten from the distribution.
+                         stuff has been copied or overwritten from the distribution)
+                         A V2 upgrade will be performed if a V2 site is detected.
         build-war:       Create the war file
         install:         Copies files from the specified target to the distribution and then
                          invokes install-nocopy
         
-        v2upgrade-nocopy: Installs V3 on top of a V2 installation
-        v2upgrade:        Copies files from the specified target to the distribution and
-                          then invokes v2upgrade-nocopy
-
-
         PROPERTIES:
         The following properties are used.  If they are not specified on the command line then
         There will be prompted for if needed.
@@ -46,9 +39,7 @@
 	</target>
 
 	<target name="install" depends="init, preload, getsource, allinput, copy-distribution, install-nocopy, tidy" />
-	<target name="install-nocopy" depends="init, preload, allinput, genkeys, upgrade, build-war, tidy" />
-	<target name="v2upgrade" depends="init, preload, gettarget, v2v3prepopulate, getsource, allinput,copy-distribution, install-nocopy, tidy" />
-	<target name="v2upgrade-nocopy" depends="init, preload, gettarget, v2v3prepopulate, allinput, install-nocopy, tidy" />
+	<target name="install-nocopy" depends="init, preload,  gettarget, v2v3prepopulate, allinput, genkeys, upgrade, build-war, tidy" />
 
 	<!-- USER INPUT -->
 	<target name="preload" if="idp.property.file">
@@ -138,6 +129,7 @@
 		<available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt" />
 		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12" />
 		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-tls.jks" />
+        <available property="idp.metadata.present" file="${idp.target.dir}/metadata/idp-metadata.xml" />
 		<condition property="idp.keystore.present">
 			<or>
 				<istrue value="${idp.p12.keystore.present}" />
@@ -293,7 +285,7 @@
 
     -->
 
-	<target name="upgrade" depends="editproperties">
+	<target name="upgrade" depends="editproperties, metadata-gen">
 		<!-- Create edit-webapp -->
         <mkdir dir="${idp.target.dir}/edit-webapp" />
         <mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF" />
@@ -334,6 +326,12 @@
 	<target name="editproperties" depends="gettarget, getentityid" unless="idp.properties.present">
 		<mkdir dir="${idp.target.dir}/conf" />
 		<mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties.dist" outFile="${idp.target.dir}/conf/idp.properties" mergeFile="${idp.merge.properties}" />
+	</target>
+	
+	<target name="metadata-gen" depends="gettarget, getentityid, gethostname"  unless="idp.metadata.present">
+	   <echo file="${idp.target.dir}/metadata/idp-metadata.xml">
+	Metadata !
+	   	</echo>
 	</target>
 
 	<!--
@@ -431,9 +429,13 @@
 
 	<!-- V2 to V3 PrePopulate -->
 
-	<target name="v2v3prepopulate" depends="v2detect">
-		<fail unless="isV2">This is not a V2 Installation</fail>
-
+	<target name="v2v3prepopulate" depends="v2detect" if="idp.is.V2">
+	    <echo>
+	    	
+	    	A V2 Installation has been detected.  Configuration will be preserved into .v2 folders
+	    	and appropriate files copied forwards
+	    	
+	    </echo>
 		<!-- rename war to war.v2 -->
 		<copy todir="${idp.target.dir}/war.v2" failonerror="true">
 			<fileset dir="${idp.target.dir}/war" />
@@ -452,7 +454,7 @@
 		<copy file="${idp.target.dir}/conf.v2/relying-party.xml" tofile="${idp.target.dir}/conf/metadata-providers.xml" failonerror="false" />
 		<copy file="${idp.target.dir}/conf.v2/relying-party.xml" tofile="${idp.target.dir}/conf/relying-party.xml" failonerror="false" />
 		<!-- Rename credentials to credentials.v2 -->
-		<copy todir="${idp.target.dir}/credentials.v2" failonerror="true">
+		<copy todir="${idp.target.dir}/credentials.v2" failonerror="false">
 			<fileset dir="${idp.target.dir}/credentials" />
 		</copy>
 		<delete dir="${idp.target.dir}/credentials" failonerror="false" />
@@ -470,7 +472,7 @@
 	<target name="v2detect" depends="gettarget">
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
 		<available property="idp.relying.party.present" file="${idp.target.dir}/conf/relying-party.xml" />
-		<condition property="isV2">
+		<condition property="idp.is.V2">
 			<!-- This is V2 is there is relying party and there is not idp.properties -->
 			<and>
 				<isfalse value="${idp.properties.present}" />
