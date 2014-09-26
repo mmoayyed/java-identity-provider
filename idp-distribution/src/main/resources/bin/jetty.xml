@@ -39,37 +39,37 @@
 	<target name="properties">
 		<property file="${jetty.property.file}" />
 		<available property="idp.ini.present" file="${idp.target.dir}/jetty-base/start.d/idp.ini" />
-		<available property="idp.tls.jks.present" file="${idp.target.dir}/creds/idp-tls.jks" />
-		<available property="idp.ssl.jks.present" file="${idp.target.dir}/creds/idp-ssl.jks" />
-		<available property="idp.ssl.p12.present" file="${idp.target.dir}/creds/idp-ssl.p12" />
-		<condition property="generate.ssl.p12">
+		<available property="idp.backchannel.jks.present" file="${idp.target.dir}/creds/idp-backchannel.jks" />
+		<available property="idp.userfacing.jks.present" file="${idp.target.dir}/creds/idp-userfacing.jks" />
+		<available property="idp.userfacing.p12.present" file="${idp.target.dir}/creds/idp-userfacing.p12" />
+		<condition property="generate.userfacing.p12">
 			<!-- Generate the pkcs12 keystore if neither the JKS nor the P12 exist -->
 			<not>
 				<and>
-					<istrue value="${idp.ssl.jks.present}" />
-					<istrue value="${idp.ssl.p12.present}" />
+					<istrue value="${idp.userfacing.jks.present}" />
+					<istrue value="${idp.userfacing.p12.present}" />
 				</and>
 			</not>
 		</condition>
 	</target>
 
 	<!-- Handle keystores -->
-	<target name="keystores" depends="tls-jks, ssl-jks, gen-ssl" />
+	<target name="keystores" depends="backchannel-jks, userfacing-jks, gen-userfacing" />
 
-	<target name="tls-jks" if="idp.tls.jks.present">
+	<target name="backchannel-jks" if="idp.backchannel.jks.present">
 		<echo file="${jetty.merge.properties}" append="yes">
     		jetty.backchannel.keystore.type=JKS
     	</echo>
 	</target>
 
-	<target name="ssl-jks" if="idp.ssl.jks.present">
+	<target name="userfacing-jks" if="idp.userfacing.jks.present">
 		<echo append="true" file="${jetty.merge.properties}">
             jetty.browser.keystore.type=JKS
         </echo>
 	</target>
 
-	<target name="gen-ssl" if="generate.ssl.p12">
-		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-ssl.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+	<target name="gen-userfacing" if="generate.userfacing.p12">
+		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-userfacing.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="copyinis" depends="copyidpini">

@@ -127,8 +127,8 @@
 	<target name="checkproperties" depends="gettarget">
 		<available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt" />
 		<available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt" />
-		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-tls.p12" />
-		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-tls.jks" />
+		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.p12" />
+		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.jks" />
         <available property="idp.metadata.present" file="${idp.target.dir}/metadata/idp-metadata.xml" />
 		<condition property="idp.keystore.present">
 			<or>
@@ -270,7 +270,7 @@
 	<target name="keystore" unless="idp.keystore.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
 		<echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
         <mkdir dir="${idp.target.dir}/creds"/>
-		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-tls.p12" certificateFile="${idp.target.dir}/creds/idp-tls.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-backchannel.p12" certificateFile="${idp.target.dir}/creds/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
@@ -464,8 +464,8 @@
 		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-encryption.key" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-signing.crt" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-signing.key" failonerror="false" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-tls.crt" failonerror="false" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.jks" tofile="${idp.target.dir}/creds/idp-tls.jks" failonerror="false" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-backchannel.crt" failonerror="false" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.jks" tofile="${idp.target.dir}/creds/idp-backchannel.jks" failonerror="false" />
 
 	</target>
 
