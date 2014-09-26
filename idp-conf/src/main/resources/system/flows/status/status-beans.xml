@@ -32,7 +32,8 @@
 
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="http://shibboleth.net/ns/profiles/status" />
+        p:profileId="http://shibboleth.net/ns/profiles/status"
+        p:loggingId="%{idp.service.logging.status:Status}" />
 
     <bean id="CheckAccess"
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
