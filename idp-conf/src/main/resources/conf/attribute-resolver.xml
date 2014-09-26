@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
     This file is an EXAMPLE configuration file.  While the configuration presented in this 
-    example file is functional, it isn't very interesting.  However, there are lots of example
-    attributes, encoders, and a couple example data connectors.
+    example file is functional, it isn't very interesting.  It is here only as a start point
+    for your deployment process.
     
-    Not all attribute definitions, data connectors, or principal connectors are demonstrated.
-    Deployers should refer to the Shibboleth 2 documentation for a complete list of components 
-    and their options.
+    Very few attribute definitions and data connectors are demonstrated.
+
+    Attribute-resolver-full.xml contains many examples of attributes, encoders, and a data
+    connectors. Deployers should refer to the Shibboleth documentation for a complete list
+    of components and their options.
 -->
 <resolver:AttributeResolver
         xmlns:resolver="urn:mace:shibboleth:2.0:resolver" 
