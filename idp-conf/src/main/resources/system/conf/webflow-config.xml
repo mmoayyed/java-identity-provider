@@ -22,6 +22,9 @@
 
         <!-- Status flow. -->
         <webflow:flow-location id="status" path="../system/flows/status/status-flow.xml" />
+
+        <!-- Administrative and debugging flows. -->
+        <webflow:flow-location id="admin/resolvertest" path="../system/flows/admin/resolvertest-flow.xml" />
         
         <!-- Proprietary logout flow. -->
         <webflow:flow-location id="Logout" path="../system/flows/logout/logout-flow.xml" />

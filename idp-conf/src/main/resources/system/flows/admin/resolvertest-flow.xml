@@ -1,0 +1,64 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <action-state id="DecodeMessage">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="CheckAccess" />
+        <evaluate expression="DecodeMessage" />
+        <!-- Stuff the requested principal into a SubjectContext. -->
+        <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.SubjectContext), true).setPrincipalName(opensamlProfileRequestContext.getInboundMessageContext().getMessage().getPrincipal())" />
+
+        <evaluate expression="PostDecodePopulateAuditContext" />
+
+        <evaluate expression="SAMLMetadataLookup" />
+        <evaluate expression="SAMLPopulateAttributeConsumingService" />
+
+        <evaluate expression="InitializeRelyingPartyContexFromSAMLPeer" />
+        <evaluate expression="SelectRelyingPartyConfiguration" />
+
+        <evaluate expression="PostLookupPopulateAuditContext" />
+
+        <evaluate expression="ResolveAttributes" />
+        <evaluate expression="FilterAttributes" />
+
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="#{ ProtocolStateMap.get(opensamlProfileRequestContext.getInboundMessageContext().getMessage().getProtocol()) }" />
+    </action-state>
+    
+    <action-state id="EncodeToSAML1">
+        <evaluate expression="AddAttributeStatementToAssertion" />
+        <evaluate expression="AddNameIdentifierToSubjects" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ResponseView" />
+    </action-state>
+
+    <action-state id="EncodeToSAML2">
+        <evaluate expression="AddAttributeStatementToAssertion" />
+        <evaluate expression="AddNameIDToSubjects" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ResponseView" />
+    </action-state>
+    
+    <end-state id="ResponseView" view="resolvertest">
+        <on-entry>
+            <evaluate expression="PostAssertionPopulateAuditContext" />
+            <evaluate expression="PostResponsePopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-entry>
+    </end-state>
+
+    <global-transitions>
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="ResponseView" />
+    </global-transitions>
+
+    <bean-import resource="resolvertest-beans.xml" />
+
+</flow>
