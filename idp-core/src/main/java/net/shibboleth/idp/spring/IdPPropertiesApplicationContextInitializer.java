@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringUtils;
@@ -52,19 +53,14 @@ public class IdPPropertiesApplicationContextInitializer implements
     @Nonnull public static final String IDP_PROPERTIES = "/conf/idp.properties";
 
     /** Well known search locations. */
-    @Nonnull public static final String[] SEARCH_LOCATIONS = {
-        System.getProperty("idp.home", "."),
-        System.getProperty("user.dir") + "/shibboleth-idp",
-        "/opt/shibboleth-idp",
-        "..",
-        "classpath:",
-        };
+    @Nonnull public static final String[] SEARCH_LOCATIONS = {System.getProperty("idp.home", "."),
+            System.getProperty("user.dir") + "/shibboleth-idp", "/opt/shibboleth-idp", "..", "classpath:",};
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
 
     /** {@inheritDoc} */
-    public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
+    @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
 
         log.debug("Attempting to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
@@ -84,7 +80,7 @@ public class IdPPropertiesApplicationContextInitializer implements
                     return;
                 }
 
-                if ("classpath:".equals(searchLocation)) {
+                if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
                     setIdPHomeProperty(searchLocation, properties);
                 } else {
                     final String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
@@ -180,7 +176,8 @@ public class IdPPropertiesApplicationContextInitializer implements
         }
 
         if (System.getProperty(IDP_HOME_PROPERTY) != null) {
-            log.debug("Will not set '{}' property because it is already set as a system property.", IDP_HOME_PROPERTY);
+            log.debug("Will not set '{}' property because it is already set as a system property '{}'",
+                    IDP_HOME_PROPERTY, System.getProperty(IDP_HOME_PROPERTY));
             return;
         }
 
