@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -24,12 +26,14 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.joda.time.DateTime;
+
 import com.google.common.base.MoreObjects;
 
 /**
  * Represents consent to release an attribute.
- * 
  */
+// TODO tests
 public class AttributeConsent {
 
     /** Attribute identifier. */
@@ -37,6 +41,9 @@ public class AttributeConsent {
 
     /** Hash of all attribute values. */
     @Nullable private String valuesHash;
+    
+    /** When consent expires. */
+    @Nullable private DateTime expiration;
 
     /**
      * Get the attribute identifier.
@@ -73,10 +80,56 @@ public class AttributeConsent {
     public void setValuesHash(@Nonnull @NotEmpty final String hash) {
         valuesHash = Constraint.isNotNull(StringSupport.trimOrNull(hash), "The values hash cannot be null or empty");
     }
+    
+    /**
+     * Get when consent expires.
+     * 
+     * @return when consent expires
+     */
+    @Nullable public DateTime getExpiration() {
+        return expiration;
+    }
+
+    /**
+     * Set when consent expires.
+     * 
+     * @param timestamp when consent expires
+     */
+    public void setExpiration(@Nonnull final DateTime timestamp) {
+        expiration = Constraint.isNotNull(timestamp, "The expiration timestamp cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+    
+        if (obj == null) {
+            return false;
+        }
+    
+        if (!(obj instanceof AttributeConsent)) {
+            return false;
+        }
+    
+        final AttributeConsent other = (AttributeConsent) obj;
+    
+        return Objects.equals(attributeId, other.getAttributeId()) && Objects.equals(valuesHash, other.getValuesHash())
+                && Objects.equals(expiration, other.getExpiration());
+    }
+
+    /** {@inheritDoc} */
+    public int hashCode() {
+        return Objects.hash(attributeId, valuesHash, expiration);
+    }
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return MoreObjects.toStringHelper(this).add("attributeId", attributeId).add("valuesHash", valuesHash)
+        return MoreObjects.toStringHelper(this)
+                .add("attributeId", attributeId)
+                .add("valuesHash", valuesHash)
+                .add("expiration", expiration)
                 .toString();
     }
 }
