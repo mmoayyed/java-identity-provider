@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.context;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +32,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
 /**
  * A {@link BaseContext} that holds information about the subject of a transaction.
@@ -51,7 +51,7 @@ public class SubjectContext extends BaseContext {
     
     /** Constructor. */
     public SubjectContext() {
-        authenticationResults = new HashMap(5);
+        authenticationResults = Maps.newHashMapWithExpectedSize(2);
     }
 
     /**
@@ -67,9 +67,13 @@ public class SubjectContext extends BaseContext {
      * Set the canonical principal name of the subject.
      * 
      * @param name the canonical principal name
+     * 
+     * @return this context
      */
-    public void setPrincipalName(@Nullable final String name) {
+    @Nonnull public SubjectContext setPrincipalName(@Nullable final String name) {
         principalName = name;
+        
+        return this;
     }
 
     /**

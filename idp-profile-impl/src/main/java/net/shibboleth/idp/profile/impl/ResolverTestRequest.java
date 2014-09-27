@@ -40,7 +40,7 @@ public class ResolverTestRequest {
     @Nonnull @NotEmpty private final String principal;
 
     /** The ID of the requester. */
-    @Nullable private final String requesterId;
+    @Nonnull @NotEmpty private final String requesterId;
 
     /** The {@link AttributeConsumingService} index into metadata. */
     @Nullable private final Integer acsIndex;
@@ -60,7 +60,8 @@ public class ResolverTestRequest {
             @Nullable final Integer index, @Nullable final String prot) {
         
         principal = Constraint.isNotNull(StringSupport.trimOrNull(princ), "Principal name cannot be null or empty");
-        requesterId = StringSupport.trimOrNull(requester);
+        requesterId = Constraint.isNotNull(StringSupport.trimOrNull(requester),
+                "Requester name cannot be null or empty");
         acsIndex = index;
         protocol = StringSupport.trimOrNull(prot);
     }
@@ -79,7 +80,7 @@ public class ResolverTestRequest {
      * 
      * @return ID of the requesting relying party
      */
-    @Nullable public String getRequesterId() {
+    @Nonnull @NotEmpty public String getRequesterId() {
         return requesterId;
     }
 

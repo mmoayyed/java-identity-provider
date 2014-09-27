@@ -23,7 +23,8 @@
     
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="http://shibboleth.net/ns/profiles/resolvertest" />
+        p:profileId="http://shibboleth.net/ns/profiles/resolvertest"
+        p:loggingId="%{idp.service.logging.resolvertest:ResolverTest}" />
 
     <bean id="CheckAccess"
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
@@ -33,7 +34,7 @@
         
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean class="%{idp.resolvertest.decoderClass:net.shibboleth.idp.profile.impl.ResolverTestMessageDecoder}"
+            <bean class="%{idp.resolvertest.decoderClass:net.shibboleth.idp.profile.impl.ResolverTestRequestDecoder}"
                     scope="prototype">
                 <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
             </bean>
@@ -41,9 +42,33 @@
     </bean>
     
     <bean id="PostDecodePopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors"
-        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+            class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+            p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}">
+        <property name="fieldExtractors">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.PROTOCOL"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <bean class="com.google.common.base.Functions" factory-method="compose">
+                                <constructor-arg name="g">
+                                    <bean class="org.opensaml.saml.common.messaging.context.navigate.SAMLProtocolContextProtocolFunction" />
+                                </constructor-arg>
+                                <constructor-arg name="f">
+                                    <ref bean="shibboleth.ChildLookup.SAMLProtocolContext" />
+                                </constructor-arg>
+                            </bean>
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
     
     <bean id="SAMLMetadataLookup"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
@@ -78,6 +103,13 @@
         p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors"
         p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
+    <bean id="PopulateSubjectContext"
+            class="net.shibboleth.idp.profile.impl.PopulateSubjectContext" scope="prototype">
+        <property name="principalNameLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.impl.ResolverTestPrincipalLookup" />
+        </property>
+    </bean>
+
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService" />
 
@@ -105,7 +137,12 @@
         </entry>
     </util:map>
     
-    <bean id="PostResolutionPopulateAuditContext"
+    <bean id="PostAssertionPopulateAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors"
+        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+    
+    <bean id="PostResponsePopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
         p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />

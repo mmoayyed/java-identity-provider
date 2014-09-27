@@ -64,14 +64,15 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
     @Override
     protected void doDecode() throws MessageDecodingException {
         final HttpServletRequest request = getHttpServletRequest();
-        if (request != null) {
+        if (request == null) {
             throw new MessageDecodingException("Unable to locate HttpServletRequest");
         }
         
         final ResolverTestRequest message = new ResolverTestRequest(getPrincipal(request), getRequesterId(request),
                 getIndex(request), getProtocol(request));
-        MessageContext<ResolverTestRequest> messageContext = new MessageContext<>();
+        final MessageContext<ResolverTestRequest> messageContext = new MessageContext<>();
         messageContext.setMessage(message);
+        setMessageContext(messageContext);
         
         final SAMLPeerEntityContext peerCtx = new SAMLPeerEntityContext();
         peerCtx.setRole(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
@@ -106,10 +107,18 @@ public class ResolverTestRequestDecoder extends AbstractHttpServletRequestMessag
      * 
      * @param request current HTTP request
      * 
-     * @return the ID of the requester, or null
+     * @return the ID of the requester
+     * 
+     * @throws MessageDecodingException thrown if the request does not contain a requester name
      */
-    @Nullable protected String getRequesterId(@Nonnull final HttpServletRequest request) {
-        return StringSupport.trimOrNull(request.getParameter(REQUESTER_ID_PARAM));
+    @Nonnull @NotEmpty protected String getRequesterId(@Nonnull final HttpServletRequest request)
+            throws MessageDecodingException {
+        final String name = StringSupport.trimOrNull(request.getParameter(REQUESTER_ID_PARAM));
+        if (name == null) {
+            throw new MessageDecodingException("Request did not contain the " + REQUESTER_ID_PARAM
+                    + " query parameter.");
+        }
+        return name;
     }
 
     /**

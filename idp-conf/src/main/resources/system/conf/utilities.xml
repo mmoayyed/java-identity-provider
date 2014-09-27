@@ -78,6 +78,9 @@
     <bean id="shibboleth.ChildLookup.SAMLBindingContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLBindingContext) }" />
+    <bean id="shibboleth.ChildLookup.SAMLProtocolContext"
+        class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+        c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLProtocolContext) }" />
     <bean id="shibboleth.ChildLookup.SAMLPeerEntityContext"
         class="org.opensaml.messaging.context.navigate.ChildContextLookup"
         c:type="#{ T(org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext) }" />
