@@ -25,9 +25,16 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize"/>
     <MediaTemplate EmbedCab="yes"/>
 
-    <Condition Message='Shibboleth requires a Windows NT-based operating system.'>NOT Version9X</Condition>
+    <Condition Message="Shibboleth requires a Windows NT-based operating system.">NOT Version9X</Condition>
 
-    <Feature Id="ProductFeature" Title="IdP" Level="1">
+   <!-- Information for the properties page of the msi -->
+
+   <Property Id="ARPCONTACT" Value="contact@shibboleth.net" />
+   <Property Id="ARPHELPLINK" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
+   <Property Id="ARPURLUPDATEINFO" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
+   <Property Id="ARPURLINFOABOUT" Value="http://shibboleth.net/" />
+
+   <Feature Id="ProductFeature" Title="IdP" Level="1">
       <Feature Id="InstallJetty" Title="Jetty">
         <MergeRef Id="jetty"/>
       </Feature>
@@ -77,10 +84,13 @@
 
 
       <!-- Ant actions -->
-    <CustomAction Id="SetIdpAnt" Property="RunIdpAntLine" Value="[JAVA_EXECUTABLE] -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\;war\WEB-INF\lib\*&quot;  org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\build.xml&quot; -Didp.property.file=idp.install.properties install-nocopy" />
-    <CustomAction Id="RunIdpAnt" Directory="IdPFolder" ExeCommand="[RunIdpAntLine]" Execute="deferred" Impersonate="no"/>
-    <CustomAction Id="SetJettyAnt" Property="RunJettyAntLine" Value="[JAVA_EXECUTABLE] -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\;war\WEB-INF\lib\*&quot;  org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\jetty.xml&quot; -Djetty.property.file=jetty.install.properties install"/>
-    <CustomAction Id="RunJettyAnt" Directory="IdPFolder" ExeCommand="[RunJettyAntLine]" Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="SetIdpAnt" Property="QtIdpAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\war\WEB-INF\lib\*&quot; -Didp.home=&quot;[INSTALLDIR]\IdP&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\build.xml&quot; -Didp.property.file=idp.install.properties install-nocopy" />
+    <CustomAction Id="RunIdpAnt" Directory="ProgramFilesFolder" ExeCommand="[QtIdpAnt]" Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="QtIdpAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no"/>
+      
+    <CustomAction Id="SetJettyAnt" Property="QtJettyAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\war\WEB-INF\lib\*&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\jetty.xml&quot; -Djetty.property.file=jetty.install.properties install"/>
+    <CustomAction Id="RunJettyAnt" Directory="IdPFolder" ExeCommand="[QtJettyAnt]" Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="QtJettyAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no"/>
 
     <InstallUISequence>
  
@@ -127,14 +137,16 @@
      <Custom Action="SetWriteConfigFiles" Before="CostInitialize">NOT Installed</Custom>
      <Custom Action="WriteConfigFiles" After="InstallFiles">NOT Installed</Custom>
      <Custom Action="SetIdpAnt" After="WriteConfigFiles">NOT Installed</Custom>
-     <Custom Action="RunIdpAnt" After="SetIdpAnt">NOT Installed</Custom>
+     <Custom Action="RunIdpAnt" After="SetIdpAnt">NOT Installed AND NOISY_INSTALL</Custom>
+     <Custom Action="QtIdpAnt" After="SetIdpAnt">NOT Installed AND NOT NOISY_INSTALL</Custom>
      <Custom Action="SetJettyAnt" After="RunIdpAnt">NOT Installed AND INSTALL_JETTY</Custom>
-     <Custom Action="RunJettyAnt" After="SetJettyAnt">NOT Installed AND INSTALL_JETTY</Custom>
+     <Custom Action="RunJettyAnt" After="SetJettyAnt">NOT Installed AND INSTALL_JETTY AND NOISY_INSTALL</Custom>
+     <Custom Action="QtJettyAnt" After="SetJettyAnt">NOT Installed AND INSTALL_JETTY AND NOT NOISY_INSTALL</Custom>
 
     </InstallExecuteSequence>
 
-    <Upgrade Id='$(var.UpgradeUUID)'>
-      <UpgradeVersion ExcludeLanguages='yes' IncludeMaximum='yes' Maximum='127.255.255' Minimum='0.0.1' OnlyDetect='yes' Property='ALREADYINSTALLED'/>
+    <Upgrade Id="$(var.UpgradeUUID)">
+      <UpgradeVersion ExcludeLanguages="yes" IncludeMaximum="yes" Maximum="127.255.255" Minimum="0.0.1" OnlyDetect="yes" Property="ALREADYINSTALLED"/>
     </Upgrade>
 
     <UIRef Id="ShibbolethInstallDir"/>

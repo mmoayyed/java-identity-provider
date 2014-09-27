@@ -45,10 +45,10 @@
 		<condition property="generate.userfacing.p12">
 			<!-- Generate the pkcs12 keystore if neither the JKS nor the P12 exist -->
 			<not>
-				<and>
+				<or>
 					<istrue value="${idp.userfacing.jks.present}" />
 					<istrue value="${idp.userfacing.p12.present}" />
-				</and>
+				</or>
 			</not>
 		</condition>
 	</target>

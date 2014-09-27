@@ -26,7 +26,12 @@
         idp.sealer.password:
         idp.sealer.alias:
         idp.keystore.password:
-        idp.merge.properties: The name of a property file to merge with idp.properties.  This file is deleted after processing.
+        idp.scope: The scope to assert.  If present this should also be present in idp.merge.properties
+        idp.merge.properties: The name of a property file to merge with idp.properties.  This file only
+          used when doing the initial create of idp.properties, and is deleted after processing
+            - if idp.noprompt is set then this file should contain a line setting idp.entityID.
+            - if idp.sealer.password is set then this file should contain a line setting idp.sealer.storePassword and idp.sealer.keyPassword
+            - if idp.scope is prsent then this file should contain a line setting idp.scope
         idp.property.file: The name of a property file to fill in some or all of the above. This file is deleted after processing.
         idp.no.tidy: Do not delete the two above files (debug only)
         
@@ -39,13 +44,13 @@
 	</target>
 
 	<target name="install" depends="init, preload, getsource, allinput, copy-distribution, install-nocopy, tidy" />
-	<target name="install-nocopy" depends="init, preload,  gettarget, v2v3prepopulate, allinput, genkeys, upgrade, build-war, tidy" />
+	<target name="install-nocopy" depends="init, preload,  gettarget, v2v3prepopulate, allinput, genkeys, upgrade, metadata-gen, build-war, tidy" />
 
 	<!-- USER INPUT -->
 	<target name="preload" if="idp.property.file">
 	   <property file="${idp.property.file}"/>
     </target>
-	<target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid" />
+	<target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid, setscope, askscope" />
 
 	<target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
@@ -115,7 +120,20 @@
 		</echo>
 		<property name="idp.merge.properties" value="replace.properties" />
 	</target>
-
+	
+	<target name="setscope" if="idp.set.scope" depends="checkproperties">
+		<property name="idp.scope" value="${DOMAIN}"/>
+        <echo file="${idp.merge.properties}" append="yes">
+		   idp.scope=${idp.scope}
+		</echo>
+	</target>
+		        
+    <target name="askscope" if="idp.fet.scope" depends="checkproperties">
+        <input message="EntityID" addproperty="idp.scope" defaultvalue="${DOMAIN}" />
+        <echo file="${idp.merge.properties}" append="yes">
+           idp.scope=${idp.scope}
+        </echo>
+    </target>
 	<!--
 
      KEY MANAGEMENT
@@ -180,6 +198,28 @@
 				</or>
 			</and>
 		</condition>
+		
+		<condition property="idp.ask.scope">
+            <!-- We ask for host name if there is no scope and we allow user input -->
+            <and>
+                <not>
+                    <isset property="idp.scope" />
+                </not>
+            	<not>
+            		<isset property="idp.noprompt" />
+            	</not>
+            </and>
+        </condition>
+
+		<condition property="idp.set.scope">
+            <!-- We set host name if there is no scope and we do not allow user input -->
+            <and>
+                <not>
+                    <isset property="idp.scope" />
+                </not>
+                <isset property="idp.noprompt" />
+            </and>
+        </condition>
 
 		<condition property="idp.generate.altname">
 			<!-- We ask for alt name if there is no alt name and we will call certgen -->
@@ -285,7 +325,7 @@
 
     -->
 
-	<target name="upgrade" depends="editproperties, metadata-gen">
+	<target name="upgrade" depends="editproperties">
 		<!-- Create edit-webapp -->
         <mkdir dir="${idp.target.dir}/edit-webapp" />
         <mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF" />
@@ -328,12 +368,10 @@
 		<mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties.dist" outFile="${idp.target.dir}/conf/idp.properties" mergeFile="${idp.merge.properties}" />
 	</target>
 	
-	<target name="metadata-gen" depends="gettarget, getentityid, gethostname"  unless="idp.metadata.present">
-	   <echo file="${idp.target.dir}/metadata/idp-metadata.xml">
-	Metadata !
-	   	</echo>
+	<target name="metadata-gen" depends="gettarget, getentityid, gethostname, genkeys, upgrade"  unless="idp.metadata.present">
+		<mkdir dir="${idp.target.dir}/metadata"/>
+		<metadatagenerate dnsName="${idp.host.name}" backChannelCert="${idp.target.dir}/creds/idp-backchannel.crt" output="${idp.target.dir}/metadata/idp-metadata.xml"/>
 	</target>
-
 	<!--
 
      CREATE WAR FILE

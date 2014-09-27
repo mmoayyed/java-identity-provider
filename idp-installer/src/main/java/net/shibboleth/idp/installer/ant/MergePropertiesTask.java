@@ -35,7 +35,7 @@ import org.apache.tools.ant.Task;
 /**
  * A class to merge a property file into another property file, preserving the comments. 
  */
-public class MergeProperties extends Task {
+public class MergePropertiesTask extends Task {
 
     /** The input file. */
     private File inFile;
