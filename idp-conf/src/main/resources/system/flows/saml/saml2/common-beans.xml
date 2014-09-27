@@ -54,7 +54,7 @@
         </property>
         <property name="statusCodes">
             <util:list>
-                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.RESPONDER_URI" />
+                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.RESPONDER" />
             </util:list>
         </property>
         <property name="statusCodesLookupStrategy">
