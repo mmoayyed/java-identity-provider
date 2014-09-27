@@ -76,10 +76,10 @@ public class SAML2TestResponseValidator {
     @Nonnull public NameID nameID;
 
     /** Expected status code. */
-    @Nonnull protected String statusCode = StatusCode.SUCCESS_URI;
+    @Nonnull protected String statusCode = StatusCode.SUCCESS;
 
     /** Expected nested status code when an error occurs. */
-    @Nonnull protected String statusCodeNested = StatusCode.REQUEST_DENIED_URI;
+    @Nonnull protected String statusCodeNested = StatusCode.REQUEST_DENIED;
 
     /** Expected status message when an error occurs. */
     @Nonnull protected String statusMessage = "An error occurred.";
@@ -137,7 +137,7 @@ public class SAML2TestResponseValidator {
         assertStatus(response.getStatus());
 
         // short circuit validation upon error
-        if (statusCode != StatusCode.SUCCESS_URI) {
+        if (statusCode != StatusCode.SUCCESS) {
             return;
         }
 
@@ -302,7 +302,7 @@ public class SAML2TestResponseValidator {
         Assert.assertNotNull(status);
         Assert.assertNotNull(status.getStatusCode());
         Assert.assertEquals(status.getStatusCode().getValue(), statusCode);
-        if (statusCode != StatusCode.SUCCESS_URI) {
+        if (statusCode != StatusCode.SUCCESS) {
             Assert.assertEquals(status.getStatusMessage().getMessage(), statusMessage);
             Assert.assertEquals(status.getStatusCode().getStatusCode().getValue(), statusCodeNested);
         }

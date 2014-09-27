@@ -99,7 +99,7 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        validator.statusCode = StatusCode.REQUESTER_URI;
+        validator.statusCode = StatusCode.REQUESTER;
 
         validateResult(result, FLOW_ID, validator);
     }
