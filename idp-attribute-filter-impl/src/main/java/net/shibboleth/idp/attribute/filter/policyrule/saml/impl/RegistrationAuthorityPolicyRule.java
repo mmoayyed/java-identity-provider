@@ -34,9 +34,9 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.ext.saml2mdrpi.RegistrationInfo;
-import org.opensaml.saml.saml2.common.Extensions;
 import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.opensaml.saml.saml2.metadata.Extensions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
