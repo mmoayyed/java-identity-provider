@@ -40,13 +40,32 @@
       </Feature>
       <ComponentGroupRef Id="IdPGroup"/>
       <ComponentGroupRef Id="SaveRegistry"/>
-    </Feature>
+      <ComponentRef Id="IdPPermissions"/>
+   </Feature>
 
     <Directory Id="TARGETDIR" Name="SourceDir" >
       <Directory Id="ProgramFilesFolder" >
         <Directory Id="INSTALLDIR" Name="Shibboleth" >
           <Merge Id="jetty" Language="1033" SourceFile="$(var.ProjectDir)\jetty-$(var.msitype).msm" DiskId="1"/>
-          <Directory Id="IdPFolder" Name="IdP"/>
+	    <Directory Id="IdPFolder" Name="IdP">
+		<Directory Id="CredsFolder" Name="creds"/>
+		<Directory Id="ConfFolder" Name="conf"/>
+		<Directory Id="JettyBaseFolder" Name="jetty-base">
+		    <Directory Id="StartDotD" Name="start.d"/>
+		</Directory>
+		<Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
+		    <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
+		    <CreateFolder Directory="CredsFolder">
+			<Permission User="Administrators" GenericAll="yes"/>
+		    </CreateFolder>
+		    <CreateFolder Directory="ConfFolder">
+			<Permission User="Administrators" GenericAll="yes"/>
+		    </CreateFolder>
+		    <CreateFolder Directory="StartDotD">
+			<Permission User="Administrators" GenericAll="yes"/>
+		    </CreateFolder>
+		</Component>
+	    </Directory>
         </Directory>
       </Directory>
     </Directory>

@@ -15,7 +15,7 @@
      implied.  See the License for the specific language governing
      permissions and limitations under the License.  -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <?define ServiceStart="demand"?>
+    <?define ServiceStart="auto"?>
     <?define ServiceName="shibd_idp"?>
     <Fragment>
         <DirectoryRef Id="PROCRUNROOT">
