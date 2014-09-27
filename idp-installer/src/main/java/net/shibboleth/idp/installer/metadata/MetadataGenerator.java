@@ -37,7 +37,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.saml2.common.Extensions;
+import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.metadata.ArtifactResolutionService;
 import org.opensaml.saml.saml2.metadata.AttributeAuthorityDescriptor;
@@ -429,7 +429,7 @@ public class MetadataGenerator {
         if (null == getScope() || getScope().isEmpty()) {
             return;
         }
-        writer.write("        <");writer.write(Extensions.LOCAL_NAME);writer.write('>');
+        writer.write("        <");writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);writer.write('>');
         writer.newLine();
 
         writer.write("            <");
@@ -445,7 +445,7 @@ public class MetadataGenerator {
         writer.write('>');
         writer.newLine();
 
-        writer.write("        </");writer.write(Extensions.LOCAL_NAME);writer.write('>');
+        writer.write("        </");writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);writer.write('>');
         writer.newLine();
     }
 

@@ -157,7 +157,7 @@ public class MetadataGeneratorParameters {
         if (null == file || !file.exists()) {
             return null;
         }
-        final FileReader fr = new FileReader(encryptionCert);
+        final FileReader fr = new FileReader(file);
         final BufferedReader reader = new BufferedReader(fr);
 
         try {
