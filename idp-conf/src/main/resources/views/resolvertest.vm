@@ -9,15 +9,13 @@
 ## attributeContext
 ## XMLObjectSupport
 ## SerializeSupport
-
 #if ($flowRequestContext.getCurrentEvent() and !$flowRequestContext.getCurrentEvent().getId().equals("proceed"))
     { "error": "$flowRequestContext.getCurrentEvent().getId()" }
     $response.setContentType("application/json")
     #stop
 #end
-
 #if ($profileRequestContext.getOutboundMessageContext() and $profileRequestContext.getOutboundMessageContext().getMessage())
-    $SerializeSupport.nodeToString($XMLObjectSupport.marshall($profileRequestContext.getOutboundMessageContext().getMessage()))
+$SerializeSupport.prettyPrintXML($XMLObjectSupport.marshall($profileRequestContext.getOutboundMessageContext().getMessage()))
     $response.setContentType("text/xml")
     #stop
 #end 

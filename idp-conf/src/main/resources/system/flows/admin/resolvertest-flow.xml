@@ -26,9 +26,9 @@
         <transition on="proceed" to="#{ ProtocolStateMap.get(opensamlProfileRequestContext.getInboundMessageContext().getMessage().getProtocol()) }" />
     </action-state>
     
-    <!--
     <action-state id="EncodeToSAML1">
-        <evaluate expression="AddAttributeStatementToAssertion" />
+        <evaluate expression="InitializeOutboundMessageContext" />
+        <evaluate expression="AddSAML1AttributeStatementToAssertion" />
         <evaluate expression="AddNameIdentifierToSubjects" />
         <evaluate expression="'proceed'" />
         
@@ -36,13 +36,13 @@
     </action-state>
 
     <action-state id="EncodeToSAML2">
-        <evaluate expression="AddAttributeStatementToAssertion" />
+        <evaluate expression="InitializeOutboundMessageContext" />
+        <evaluate expression="AddSAML2AttributeStatementToAssertion" />
         <evaluate expression="AddNameIDToSubjects" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="ResponseView" />
     </action-state>
-    -->
     
     <end-state id="ResponseView" view="resolvertest">
         <on-entry>

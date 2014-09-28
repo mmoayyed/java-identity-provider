@@ -27,28 +27,19 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
-import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
 import net.shibboleth.idp.saml.attribute.encoding.SAML1AttributeEncoder;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.idp.saml.profile.impl.BaseAddAttributeStatementToAssertion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml1.core.Assertion;
@@ -60,184 +51,46 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
- * Action that builds an {@link AttributeStatement} and adds it to the {@link Response} returned by a lookup
- * strategy, by default the message returned by {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * Action that builds an {@link AttributeStatement} and adds it to an {@link Assertion} in the {@link Response}
+ * returned by a lookup strategy, by default the message in {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * 
+ * <p>If no {@link Response} exists, then either an {@link Assertion} directly in the outbound message context will
+ * be used or created</p>
 
  * <p>The {@link IdPAttribute} set to be encoded is drawn from an {@link AttributeContext} returned from a
  * lookup strategy, by default located on the {@link RelyingPartyContext} beneath the profile request context.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE}
  */
-public class AddAttributeStatementToAssertion extends AbstractProfileAction {
+public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementToAssertion {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AddAttributeStatementToAssertion.class);
-
-    /** Whether the generated attribute statement should be placed in its own assertion or added to one if it exists. */
-    private boolean statementInOwnAssertion;
-
-    /**
-     * Whether attributes that result in an {@link AttributeEncodingException} when being encoded should be ignored or
-     * result in an {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
-     */
-    private boolean ignoringUnencodableAttributes;
-
-    /**
-     * Strategy used to locate the {@link AttributeContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
-
-    /** Strategy used to locate the {@link IdentifierGenerationStrategy} to use. */
-    @NonnullAfterInit private Function<ProfileRequestContext,IdentifierGenerationStrategy> idGeneratorLookupStrategy;
-
-    /** Strategy used to obtain the assertion issuer value. */
-    @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
     
-    /** Strategy used to locate the {@link Response} to operate on. */
-    @Nonnull private Function<ProfileRequestContext,Response> responseLookupStrategy;
-
-    /** AttributeContext to use. */
-    @Nullable private AttributeContext attributeCtx;
-
-    /** The generator to use. */
-    @Nullable private IdentifierGenerationStrategy idGenerator;
-
-    /** EntityID to populate as assertion issuer. */
-    @Nullable private String issuerId;
-    
-    /** Response to modify. */
-    @Nullable private Response response;
+    /** Strategy used to locate the {@link Assertion} to operate on. */
+    @Nonnull private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;
     
     /** Constructor. */
     public AddAttributeStatementToAssertion() {
-        statementInOwnAssertion = false;
-        ignoringUnencodableAttributes = true;
-
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
-        responseLookupStrategy =
-                Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
-        idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+        assertionLookupStrategy = new AssertionStrategy();
     }
 
     /**
-     * Set whether the generated attribute statement should be placed in its own assertion or added to one if it
-     * exists.
+     * Set the strategy used to locate the {@link Assertion} to operate on.
      * 
-     * @param flag whether the generated attribute statement should be placed in its own assertion or added to
-     *            one if it exists
+     * @param strategy strategy used to locate the {@link Assertion} to operate on
      */
-    public void setStatementInOwnAssertion(final boolean flag) {
+    public void setAssertionLookupStrategy(@Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        statementInOwnAssertion = flag;
-    }
-
-    /**
-     * Set whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
-     * ignored or result in an {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
-     * 
-     * @param flag flag to set
-     */
-    public void setIgnoringUnencodableAttributes(final boolean flag) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        ignoringUnencodableAttributes = flag;
-    }
-
-    /**
-     * Set the strategy used to locate the {@link AttributeContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link AttributeContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public void setAttributeContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        attributeContextLookupStrategy =
-                Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
-    }
-
-    /**
-     * Set the strategy used to locate the {@link Response} to operate on.
-     * 
-     * @param strategy strategy used to locate the {@link Response} to operate on
-     */
-    public void setResponseLookupStrategy(@Nonnull final Function<ProfileRequestContext,Response> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
-    }
-
-    /**
-     * Set the strategy used to locate the {@link IdentifierGenerationStrategy} to use.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setIdentifierGeneratorLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        idGeneratorLookupStrategy =
-                Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
-    }
-
-    /**
-     * Set the strategy used to locate the issuer value to use.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        log.debug("{} Attempting to add an AttributeStatement to outgoing Response", getLogPrefix());
-
-        idGenerator = idGeneratorLookupStrategy.apply(profileRequestContext);
-        if (idGenerator == null) {
-            log.debug("{} No identifier generation strategy", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        issuerId = issuerLookupStrategy.apply(profileRequestContext);
-        if (issuerId == null) {
-            log.debug("{} No assertion issuer value", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
-        if (attributeCtx == null) {
-            log.debug("{} No AttributeSubcontext available, nothing to do", getLogPrefix());
-            return false;
-        }
-        
-        response = responseLookupStrategy.apply(profileRequestContext);
-        if (response == null) {
-            log.debug("{} No SAML response located in current profile request context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
-            return false;
-        }
-        
-        return super.doPreExecute(profileRequestContext);
+        assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -245,31 +98,24 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
             final AttributeStatement statement = buildAttributeStatement(profileRequestContext,
-                    attributeCtx.getIdPAttributes().values());
+                    getAttributeContext().getIdPAttributes().values());
             if (statement == null) {
                 log.debug("{} No AttributeStatement was built, nothing to do", getLogPrefix());
                 return;
             }
 
-            final Assertion assertion = getStatementAssertion();
+            final Assertion assertion = assertionLookupStrategy.apply(profileRequestContext);
+            if (assertion == null) {
+                log.error("Unable to obtain assertion to modify");
+                ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+                return;
+            }
+                        
             assertion.getAttributeStatements().add(statement);
 
             log.debug("{} Adding constructed AttributeStatement to Assertion {} ", getLogPrefix(), assertion.getID());
         } catch (final AttributeEncodingException e) {
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
-        }
-    }
-
-    /**
-     * Get the assertion to which the attribute statement will be added.
-     * 
-     * @return the assertion to which the attribute statement will be added
-     */
-    @Nonnull private Assertion getStatementAssertion() {
-        if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            return SAML1ActionSupport.addAssertionToResponse(this, response, idGenerator, issuerId);
-        } else {
-            return response.getAssertions().get(0);
         }
     }
 
@@ -340,7 +186,7 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
                 try {
                     return (Attribute) encoder.encode(attribute);
                 } catch (final AttributeEncodingException e) {
-                    if (ignoringUnencodableAttributes) {
+                    if (isIgnoringUnencodableAttributes()) {
                         log.debug("{} Unable to encode attribute {} as SAML 1 attribute", getLogPrefix(),
                                 attribute.getId(), e);
                     } else {
@@ -355,4 +201,41 @@ public class AddAttributeStatementToAssertion extends AbstractProfileAction {
         return null;
     }
     
+    /**
+     * Default strategy for obtaining assertion to modify.
+     * 
+     * <p>If the outbound context is empty, a new assertion is created and stored there. If the outbound
+     * message is already an assertion, it's returned. If the outbound message is a response, then either
+     * an existing or new assertion in the response is returned, depending on the action setting. If the
+     * outbound message is anything else, null is returned.</p>
+     */
+    private class AssertionStrategy implements Function<ProfileRequestContext,Assertion> {
+
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public Assertion apply(@Nullable final ProfileRequestContext input) {
+            if (input != null && input.getOutboundMessageContext() != null) {
+                final Object outboundMessage = input.getOutboundMessageContext().getMessage();
+                if (outboundMessage == null) {
+                    final Assertion ret = SAML1ActionSupport.buildAssertion(AddAttributeStatementToAssertion.this,
+                            getIdGenerator(), getIssuerId());
+                    input.getOutboundMessageContext().setMessage(ret);
+                    return ret;
+                } else if (outboundMessage instanceof Assertion) {
+                    return (Assertion) outboundMessage;
+                } else if (outboundMessage instanceof Response) {
+                    if (isStatementInOwnAssertion() || ((Response) outboundMessage).getAssertions().isEmpty()) {
+                        return SAML1ActionSupport.addAssertionToResponse(AddAttributeStatementToAssertion.this,
+                                (Response) outboundMessage, getIdGenerator(), getIssuerId());
+                    } else {
+                        return ((Response) outboundMessage).getAssertions().get(0);
+                    } 
+                }
+            }
+            
+            return null;
+        }
+        
+    }
+
 }

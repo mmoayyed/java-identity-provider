@@ -51,55 +51,93 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
     /** {@inheritDoc} */
     @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
-        SAMLObject response = responseLookupStrategy.apply(input);
-        if (response != null) {
+        SAMLObject msg = responseLookupStrategy.apply(input);
+        if (msg != null) {
             
             // Step down into ArtifactResponses.
-            if (response instanceof ArtifactResponse) {
-                response = ((ArtifactResponse) response).getMessage();
+            if (msg instanceof ArtifactResponse) {
+                msg = ((ArtifactResponse) msg).getMessage();
             }
             
-            if (response instanceof org.opensaml.saml.saml2.core.Response) {
+            if (msg instanceof org.opensaml.saml.saml2.core.Response) {
                 
                 for (final org.opensaml.saml.saml2.core.Assertion assertion
-                        : ((org.opensaml.saml.saml2.core.Response) response).getAssertions()) {
-                    if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
-                        return assertion.getSubject().getNameID().getFormat();
+                        : ((org.opensaml.saml.saml2.core.Response) msg).getAssertions()) {
+                    final String format = apply(assertion);
+                    if (format != null) {
+                        return format;
                     }
                 }
                 
-            } else if (response instanceof org.opensaml.saml.saml1.core.Response) {
+            } else if (msg instanceof org.opensaml.saml.saml1.core.Response) {
 
                 for (final org.opensaml.saml.saml1.core.Assertion assertion
-                        : ((org.opensaml.saml.saml1.core.Response) response).getAssertions()) {
-                    for (final AuthenticationStatement statement : assertion.getAuthenticationStatements()) {
-                        if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                            return statement.getSubject().getNameIdentifier().getFormat();
-                        }
-                    }
-                    for (final AttributeStatement statement : assertion.getAttributeStatements()) {
-                        if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                            return statement.getSubject().getNameIdentifier().getFormat();
-                        }
-                    }
-                    for (final AuthorizationDecisionStatement statement
-                            : assertion.getAuthorizationDecisionStatements()) {
-                        if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                            return statement.getSubject().getNameIdentifier().getFormat();
-                        }
-                    }
-                    for (final SubjectStatement statement : assertion.getSubjectStatements()) {
-                        if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                            return statement.getSubject().getNameIdentifier().getFormat();
-                        }
+                        : ((org.opensaml.saml.saml1.core.Response) msg).getAssertions()) {
+                    final String format = apply(assertion);
+                    if (format != null) {
+                        return format;
                     }
                 }
                 
+            } else if (msg instanceof org.opensaml.saml.saml2.core.Assertion) {
+                return apply((org.opensaml.saml.saml2.core.Assertion) msg);
+            } else if (msg instanceof org.opensaml.saml.saml1.core.Assertion) {
+                return apply((org.opensaml.saml.saml1.core.Assertion) msg);
             }
         }
         
         return null;
     }
 // Checkstyle: CyclomaticComplexity ON
-    
+
+    /**
+     * Apply function to an assertion.
+     * 
+     * @param assertion assertion to operate on
+     * 
+     * @return the format, or null
+     */
+    @Nullable private String apply(@Nonnull final org.opensaml.saml.saml2.core.Assertion assertion) {
+        if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
+            return assertion.getSubject().getNameID().getFormat();
+        }
+        return null;
+    }
+
+// Checkstyle: CyclomaticComplexity OFF
+    /**
+     * Apply function to an assertion.
+     * 
+     * @param assertion assertion to operate on
+     * 
+     * @return the format, or null
+     */
+    @Nullable private String apply(@Nonnull final org.opensaml.saml.saml1.core.Assertion assertion) {
+
+        for (final AuthenticationStatement statement : assertion.getAuthenticationStatements()) {
+            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
+                return statement.getSubject().getNameIdentifier().getFormat();
+            }
+        }
+        for (final AttributeStatement statement : assertion.getAttributeStatements()) {
+            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
+                return statement.getSubject().getNameIdentifier().getFormat();
+            }
+        }
+        for (final AuthorizationDecisionStatement statement
+                : assertion.getAuthorizationDecisionStatements()) {
+            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
+                return statement.getSubject().getNameIdentifier().getFormat();
+            }
+        }
+        for (final SubjectStatement statement : assertion.getSubjectStatements()) {
+            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
+                return statement.getSubject().getNameIdentifier().getFormat();
+            }
+        }
+        
+        return null;
+    }
+// Checkstyle: CyclomaticComplexity ON
+
 }

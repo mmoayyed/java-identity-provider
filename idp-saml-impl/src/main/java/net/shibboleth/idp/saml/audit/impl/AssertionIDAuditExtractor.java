@@ -51,18 +51,18 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
     /** {@inheritDoc} */
     @Override
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
-        SAMLObject response = responseLookupStrategy.apply(input);
-        if (response != null) {
+        SAMLObject message = responseLookupStrategy.apply(input);
+        if (message != null) {
             
             // Step down into ArtifactResponses.
-            if (response instanceof ArtifactResponse) {
-                response = ((ArtifactResponse) response).getMessage();
+            if (message instanceof ArtifactResponse) {
+                message = ((ArtifactResponse) message).getMessage();
             }
             
-            if (response instanceof org.opensaml.saml.saml2.core.Response) {
+            if (message instanceof org.opensaml.saml.saml2.core.Response) {
                 
                 final List<org.opensaml.saml.saml2.core.Assertion> assertions =
-                        ((org.opensaml.saml.saml2.core.Response) response).getAssertions();
+                        ((org.opensaml.saml.saml2.core.Response) message).getAssertions();
                 if (!assertions.isEmpty()) {
                     return Collections2.transform(assertions,
                             new Function<org.opensaml.saml.saml2.core.Assertion,String>() {
@@ -72,10 +72,10 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                                 });
                 }
                 
-            } else if (response instanceof org.opensaml.saml.saml1.core.Response) {
+            } else if (message instanceof org.opensaml.saml.saml1.core.Response) {
 
                 final List<org.opensaml.saml.saml1.core.Assertion> assertions =
-                        ((org.opensaml.saml.saml1.core.Response) response).getAssertions();
+                        ((org.opensaml.saml.saml1.core.Response) message).getAssertions();
                 if (!assertions.isEmpty()) {
                     return Collections2.transform(assertions,
                             new Function<org.opensaml.saml.saml1.core.Assertion,String>() {
@@ -85,6 +85,10 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                                 });
                 }
                 
+            } else if (message instanceof org.opensaml.saml.saml2.core.Assertion) {
+                return Collections.singletonList(((org.opensaml.saml.saml2.core.Assertion) message).getID());
+            } else if (message instanceof org.opensaml.saml.saml1.core.Assertion) {
+                return Collections.singletonList(((org.opensaml.saml.saml1.core.Assertion) message).getID());
             }
         }
         

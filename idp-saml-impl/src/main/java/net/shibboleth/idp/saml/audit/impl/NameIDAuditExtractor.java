@@ -64,8 +64,9 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
                 
                 for (final org.opensaml.saml.saml2.core.Assertion assertion
                         : ((org.opensaml.saml.saml2.core.Response) msg).getAssertions()) {
-                    if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
-                        return assertion.getSubject().getNameID().getValue();
+                    final String id = apply(assertion);
+                    if (id != null) {
+                        return id;
                     }
                 }
                 
@@ -79,34 +80,71 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
 
                 for (final org.opensaml.saml.saml1.core.Assertion assertion
                         : ((org.opensaml.saml.saml1.core.Response) msg).getAssertions()) {
-                    for (final AuthenticationStatement statement : assertion.getAuthenticationStatements()) {
-                        if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                            return statement.getSubject().getNameIdentifier().getValue();
-                        }
-                    }
-                    for (final AttributeStatement statement : assertion.getAttributeStatements()) {
-                        if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                            return statement.getSubject().getNameIdentifier().getValue();
-                        }
-                    }
-                    for (final AuthorizationDecisionStatement statement
-                            : assertion.getAuthorizationDecisionStatements()) {
-                        if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                            return statement.getSubject().getNameIdentifier().getValue();
-                        }
-                    }
-                    for (final SubjectStatement statement : assertion.getSubjectStatements()) {
-                        if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
-                            return statement.getSubject().getNameIdentifier().getValue();
-                        }
+                    final String id = apply(assertion);
+                    if (id != null) {
+                        return id;
                     }
                 }
                 
+            } else if (msg instanceof org.opensaml.saml.saml2.core.Assertion) {
+                return apply((org.opensaml.saml.saml2.core.Assertion) msg);
+            } else if (msg instanceof org.opensaml.saml.saml1.core.Assertion) {
+                return apply((org.opensaml.saml.saml1.core.Assertion) msg);
             }
         }
         
         return null;
     }
 // Checkstyle: CyclomaticComplexity ON
-    
+
+    /**
+     * Apply function to an assertion.
+     * 
+     * @param assertion assertion to operate on
+     * 
+     * @return the identifier, or null
+     */
+    @Nullable private String apply(@Nonnull final org.opensaml.saml.saml2.core.Assertion assertion) {
+        if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
+            return assertion.getSubject().getNameID().getValue();
+        }
+        return null;
+    }
+
+// Checkstyle: CyclomaticComplexity OFF
+    /**
+     * Apply function to an assertion.
+     * 
+     * @param assertion assertion to operate on
+     * 
+     * @return the identifier, or null
+     */
+    @Nullable private String apply(@Nonnull final org.opensaml.saml.saml1.core.Assertion assertion) {
+
+        for (final AuthenticationStatement statement : assertion.getAuthenticationStatements()) {
+            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
+                return statement.getSubject().getNameIdentifier().getValue();
+            }
+        }
+        for (final AttributeStatement statement : assertion.getAttributeStatements()) {
+            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
+                return statement.getSubject().getNameIdentifier().getValue();
+            }
+        }
+        for (final AuthorizationDecisionStatement statement
+                : assertion.getAuthorizationDecisionStatements()) {
+            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
+                return statement.getSubject().getNameIdentifier().getValue();
+            }
+        }
+        for (final SubjectStatement statement : assertion.getSubjectStatements()) {
+            if (statement.getSubject() != null && statement.getSubject().getNameIdentifier() != null) {
+                return statement.getSubject().getNameIdentifier().getValue();
+            }
+        }
+        
+        return null;
+    }
+// Checkstyle: CyclomaticComplexity ON
+
 }

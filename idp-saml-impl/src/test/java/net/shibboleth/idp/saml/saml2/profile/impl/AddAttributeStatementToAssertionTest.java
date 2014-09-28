@@ -93,10 +93,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CTX);
     }
 
-    /** Test that the action errors out properly if there is no response. */
-    @Test public void testNoResponse() throws Exception {
-        prc.getOutboundMessageContext().setMessage(null);
-        final AttributeContext attribCtx = new AttributeContext();
+    /** Test that the action errors out properly if there is no outbound context. */
+    @Test public void testNoOutboundContext() throws Exception {
+        prc.setOutboundMessageContext(null);
+
+        final AttributeContext attribCtx = buildAttributeContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.initialize();

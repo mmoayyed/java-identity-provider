@@ -93,10 +93,11 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CTX);
     }
 
-    /** Test that the action errors out properly if there is no response. */
-    @Test public void testNoResponse() throws Exception {
-        prc.getOutboundMessageContext().setMessage(null);
-        final AttributeContext attribCtx = new AttributeContext();
+    /** Test that the action errors out properly if there is no outbound context. */
+    @Test public void testNoOutboundContext() throws Exception {
+        prc.setOutboundMessageContext(null);
+
+        final AttributeContext attribCtx = buildAttributeContext();
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.initialize();
@@ -133,7 +134,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.setIgnoringUnencodableAttributes(true);
         action.initialize();
@@ -153,7 +154,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
 
         final AttributeContext attribCtx = new AttributeContext();
         attribCtx.setIdPAttributes(Arrays.asList(attribute));
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.setIgnoringUnencodableAttributes(false);
         action.initialize();
@@ -171,7 +172,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 SAML1ActionTestingSupport.buildAssertion());
 
         final AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.setStatementInOwnAssertion(true);
         action.initialize();
@@ -198,7 +199,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
                 SAML1ActionTestingSupport.buildAssertion());
 
         final AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.initialize();
         final Event result = action.execute(rc);
@@ -222,7 +223,7 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
      */
     @Test public void testNoAssertionInResponse() throws Exception {
         final AttributeContext attribCtx = buildAttributeContext();
-        ((RelyingPartyContext) prc.getSubcontext(RelyingPartyContext.class)).addSubcontext(attribCtx);
+        prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attribCtx);
 
         action.initialize();
         final Event result = action.execute(rc);
