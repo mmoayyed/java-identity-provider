@@ -62,7 +62,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     @Nonnull private final StorageBackedSessionManager sessionManager;
     
     /** Storage version used to synchronize changes. */
-    private int version;
+    private long version;
     
     /**
      * Constructor.
@@ -484,7 +484,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
      * 
      * @return current version of the storage record
      */
-    protected int getVersion() {
+    protected long getVersion() {
         return version;
     }
     
@@ -493,7 +493,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
      * 
      * @param ver version to set
      */
-    protected void setVersion(final int ver) {
+    protected void setVersion(final long ver) {
         version = ver;
     }
 
@@ -712,7 +712,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
      */
     private boolean writeToStorage() throws IOException {
         try {
-            final Integer ver = sessionManager.getStorageService().updateWithVersion(version, getId(),
+            final Long ver = sessionManager.getStorageService().updateWithVersion(version, getId(),
                     StorageBackedSessionManager.SESSION_MASTER_KEY, this, sessionManager.getStorageSerializer(),
                     getLastActivityInstant() + sessionManager.getSessionTimeout() + sessionManager.getSessionSlop());
             if (ver == null) {

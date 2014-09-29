@@ -183,7 +183,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 // Checkstyle: CyclomaticComplexity OFF    
     /** {@inheritDoc} */
     @Override
-    @Nonnull public AuthenticationResult deserialize(final int version, @Nonnull @NotEmpty final String context,
+    @Nonnull public AuthenticationResult deserialize(final long version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
                     @Nullable final Long expiration) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

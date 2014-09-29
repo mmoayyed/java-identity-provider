@@ -93,7 +93,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull public SPSession deserialize(final int version, @Nonnull @NotEmpty final String context,
+    @Nonnull public SPSession deserialize(final long version, @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nullable final Long expiration)
                     throws IOException {
         
