@@ -113,7 +113,7 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
                 success = storageService.create(context, key, value, expiration);
                 if (!success) {
                     // The record already exists, so we need to overwrite via an update.
-                    success = storageService.update(context, key, value, expiration) != null;
+                    success = storageService.update(context, key, value, expiration);
                 }
             } while (!success && attempts-- > 0);
 

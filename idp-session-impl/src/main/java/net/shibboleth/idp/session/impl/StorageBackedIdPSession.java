@@ -251,9 +251,9 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         final AuthenticationFlowDescriptor flow = sessionManager.getAuthenticationFlowDescriptor(flowId);
         if (flow != null) {
             try {
-                if (sessionManager.getStorageService().updateExpiration(getId(), result.getAuthenticationFlowId(),
+                if (!sessionManager.getStorageService().updateExpiration(getId(), result.getAuthenticationFlowId(),
                         result.getLastActivityInstant() + flow.getInactivityTimeout()
-                            + AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET) == null) {
+                            + AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET)) {
                     log.warn("Skipping update, AuthenticationResult for flow {} in session {} not found in storage",
                             flowId, getId());
                 }
@@ -573,7 +573,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     // The record already exists, so we need to overwrite via an update.
                     success = sessionManager.getStorageService().update(getId(), flowId, result, flow,
                             result.getLastActivityInstant() + flow.getInactivityTimeout()
-                                + AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET) != null;
+                                + AuthenticationFlowDescriptor.STORAGE_EXPIRATION_OFFSET);
                 }
             } while (!success && attempts-- > 0);
             
@@ -673,7 +673,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 if (!success) {
                     // The record already exists, so we need to overwrite via an update.
                     success = sessionManager.getStorageService().update(getId(), key, builder.toString(),
-                            session.getExpirationInstant() + sessionManager.getSessionSlop()) != null;
+                            session.getExpirationInstant() + sessionManager.getSessionSlop());
                 }
             } while (!success && attempts-- > 0);
             
