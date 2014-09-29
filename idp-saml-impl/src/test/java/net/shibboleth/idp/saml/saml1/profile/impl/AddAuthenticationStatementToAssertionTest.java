@@ -80,9 +80,9 @@ public class AddAuthenticationStatementToAssertionTest extends OpenSAMLInitBaseT
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
 
-    /** Test that the action errors out properly if there is no response. */
-    @Test public void testNoResponse() throws Exception {
-        prc.getOutboundMessageContext().setMessage(null);
+    /** Test that the action errors out properly if there is no context. */
+    @Test public void testNoContext() throws Exception {
+        prc.setOutboundMessageContext(null);
         prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(
                 new AuthenticationResult("Test", new AuthenticationMethodPrincipal("Test")));
 

@@ -56,10 +56,10 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
- * Action that builds an {@link AttributeStatement} and adds it to an {@link Assertion} in the {@link Response}
- * returned by a lookup strategy, by default the message in {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * Action that builds an {@link AttributeStatement} and adds it to an {@link Assertion} returned by a lookup
+ * strategy, by default in the {@link ProfileRequestContext#getOutboundMessageContext()}.
  * 
- * <p>If no {@link Response} exists, then either an {@link Assertion} directly in the outbound message context will
+ * <p>If no {@link Response} exists, then an {@link Assertion} directly in the outbound message context will
  * be used or created</p>
 
  * <p>The {@link IdPAttribute} set to be encoded is drawn from an {@link AttributeContext} returned from a
@@ -106,7 +106,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
 
             final Assertion assertion = assertionLookupStrategy.apply(profileRequestContext);
             if (assertion == null) {
-                log.error("Unable to obtain assertion to modify");
+                log.error("Unable to obtain Assertion to modify");
                 ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
                 return;
             }

@@ -70,7 +70,7 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
     @NonnullAfterInit private Function<ProfileRequestContext,IdentifierGenerationStrategy> idGeneratorLookupStrategy;
 
     /** Strategy used to obtain the assertion issuer value. */
-    @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,String> issuerLookupStrategy;
 
     /**
      * Strategy used to locate the {@link AttributeContext} associated with a given {@link ProfileRequestContext}.
@@ -199,7 +199,7 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
      * @return the ID generation strategy
      */
     @Nonnull public IdentifierGenerationStrategy getIdGenerator() {
-        Constraint.isNotNull(attributeCtx, "IdentifierGenerationStrategy has not been initialized yet");
+        Constraint.isNotNull(idGenerator, "IdentifierGenerationStrategy has not been initialized yet");
         return idGenerator;
     }
 
@@ -209,7 +209,7 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
      * @return the issuer name
      */
     @Nonnull public String getIssuerId() {
-        Constraint.isNotNull(attributeCtx, "Issuer name has not been initialized yet");
+        Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
         return issuerId;
     }
 

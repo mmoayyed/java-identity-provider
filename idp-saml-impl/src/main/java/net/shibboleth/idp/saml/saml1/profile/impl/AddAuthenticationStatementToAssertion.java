@@ -20,9 +20,6 @@ package net.shibboleth.idp.saml.saml1.profile.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.AbstractAuthenticationAction;
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
@@ -30,12 +27,9 @@ import net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.profile.context.navigate.OutboundMessageContextLookup;
 
-import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAssertion;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -43,7 +37,6 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -54,15 +47,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
- * Action that builds an {@link AuthenticationStatement} and adds it to the {@link Response} returned by a lookup
- * strategy, by default the message returned by {@link ProfileRequestContext#getOutboundMessageContext()}.
+ * Action that builds an {@link AuthenticationStatement} and adds it to an {@link Assertion} returned by a lookup
+ * strategy, by default in the {@link ProfileRequestContext#getOutboundMessageContext()}.
  * 
- * <p>If the {@link Response} does not contain an {@link Assertion} one will be created and added to,
- * otherwise the {@link AuthenticationStatement} will be added to first {@link Assertion} in the {@link Response},
- * unless the option is set to preclude this.</p>
+ * <p>If no {@link Response} exists, then an {@link Assertion} directly in the outbound message context will
+ * be used or created</p>
  * 
  * <p>A constructed {@link Assertion} will have its ID, IssueInstant, Issuer, and Version properties set.
  * The issuer is based on {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()}.</p>
@@ -77,25 +68,13 @@ import com.google.common.base.Functions;
  * @event {@link EventIds#INVALID_MSG_CTX}
  * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
  */
-public class AddAuthenticationStatementToAssertion extends AbstractAuthenticationAction {
+public class AddAuthenticationStatementToAssertion extends BaseAddAuthenticationStatementToAssertion {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
 
-    /**
-     * Whether the generated authentication statement should be placed in its own assertion or added to one if it
-     * exists.
-     */
-    private boolean statementInOwnAssertion;
-
-    /** Strategy used to locate the {@link Response} to operate on. */
-    @Nonnull private Function<ProfileRequestContext,Response> responseLookupStrategy;
-
-    /** Strategy used to locate the {@link IdentifierGenerationStrategy} to use. */
-    @NonnullAfterInit private Function<ProfileRequestContext,IdentifierGenerationStrategy> idGeneratorLookupStrategy;
-
-    /** Strategy used to obtain the assertion issuer value. */
-    @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
+    /** Strategy used to locate the {@link Assertion} to operate on. */
+    @Nonnull private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;
     
     /** Strategy used to determine the AuthenticationMethod attribute. */
     @Nonnull private Function<ProfileRequestContext,AuthenticationMethodPrincipal> methodLookupStrategy;
@@ -103,73 +82,23 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
     /** The generator to use. */
     @Nullable private IdentifierGenerationStrategy idGenerator;
     
-    /** AuthenticationResult basis of statement. */
-    @Nullable private AuthenticationResult authenticationResult;
-    
-    /** Response to modify. */
-    @Nullable private Response response;
-    
-    /** EntityID to populate as assertion issuer. */
-    @Nullable private String issuerId;
-    
     /** Constructor. */
     public AddAuthenticationStatementToAssertion() {
-        statementInOwnAssertion = false;
-
-        responseLookupStrategy =
-                Functions.compose(new MessageLookup<>(Response.class), new OutboundMessageContextLookup());
-        idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
-        issuerLookupStrategy = new ResponderIdLookupFunction();
+    
+        assertionLookupStrategy = new AssertionStrategy();
         methodLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthenticationMethodPrincipal.class,
                 new AuthenticationMethodPrincipal(AuthenticationStatement.UNSPECIFIED_AUTHN_METHOD));
     }
-
-    /**
-     * Set whether the generated authentication statement should be placed in its own assertion or added to one if it
-     * exists.
-     * 
-     * @param inOwnAssertion whether the generated authentication statement should be placed in its own assertion or
-     *            added to one if it exists
-     */
-    public void setStatementInOwnAssertion(final boolean inOwnAssertion) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        statementInOwnAssertion = inOwnAssertion;
-    }
     
     /**
-     * Set the strategy used to locate the {@link Response} to operate on.
+     * Set the strategy used to locate the {@link Assertion} to operate on.
      * 
-     * @param strategy strategy used to locate the {@link Response} to operate on
+     * @param strategy strategy used to locate the {@link Assertion} to operate on
      */
-    public void setResponseLookupStrategy(@Nonnull final Function<ProfileRequestContext,Response> strategy) {
+    public void setAssertionLookupStrategy(@Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
-    }
-
-    /**
-     * Set the strategy used to locate the {@link IdentifierGenerationStrategy} to use.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setIdentifierGeneratorLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        idGeneratorLookupStrategy =
-                Constraint.isNotNull(strategy, "IdentifierGenerationStrategy lookup strategy cannot be null");
-    }
-
-    /**
-     * Set the strategy used to locate the issuer value to use.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setIssuerLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        issuerLookupStrategy = Constraint.isNotNull(strategy, "Issuer lookup strategy cannot be null");
+        assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
     
     /**
@@ -186,65 +115,21 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        log.debug("{} Attempting to add an AuthenticationStatement to Response", getLogPrefix());
-        
-        idGenerator = idGeneratorLookupStrategy.apply(profileRequestContext);
-        if (idGenerator == null) {
-            log.debug("{} No identifier generation strategy", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        issuerId = issuerLookupStrategy.apply(profileRequestContext);
-        if (issuerId == null) {
-            log.debug("{} No assertion issuer value", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        authenticationResult = authenticationContext.getAuthenticationResult();
-        if (authenticationResult == null) {
-            log.debug("{} No AuthenticationResult in current authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
-            return false;
-        }
-        
-        response = responseLookupStrategy.apply(profileRequestContext);
-        if (response == null) {
-            log.debug("{} No SAML response located in current profile request context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
-            return false;
-        }
-        
-        return super.doPreExecute(profileRequestContext, authenticationContext);
-    }
-    
-    /** {@inheritDoc} */
-    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final Assertion assertion = getStatementAssertion();
+        final Assertion assertion = assertionLookupStrategy.apply(profileRequestContext);
+        if (assertion == null) {
+            log.error("Unable to obtain Assertion to modify");
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+            return;
+        }
+
         final AuthenticationStatement statement = buildAuthenticationStatement(profileRequestContext,
-                authenticationContext.getSubcontext(RequestedPrincipalContext.class, false)); 
+                authenticationContext.getSubcontext(RequestedPrincipalContext.class)); 
         assertion.getAuthenticationStatements().add(statement);
 
-        log.debug("{} Added AuthenticationStatement to assertion {}", getLogPrefix(), assertion.getID());
-    }
-
-    /**
-     * Get the assertion to which the authentication statement will be added.
-     * 
-     * @return the assertion to which the attribute statement will be added
-     */
-    @Nonnull private Assertion getStatementAssertion() {
-        if (statementInOwnAssertion || response.getAssertions().isEmpty()) {
-            return SAML1ActionSupport.addAssertionToResponse(this, response, idGenerator, issuerId);
-        } else {
-            return response.getAssertions().get(0);
-        }
+        log.debug("{} Added AuthenticationStatement to Assertion {}", getLogPrefix(), assertion.getID());
     }
 
     /**
@@ -266,7 +151,7 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
                 bf.<SubjectLocality>getBuilderOrThrow(SubjectLocality.TYPE_NAME);
 
         final AuthenticationStatement statement = statementBuilder.buildObject();
-        statement.setAuthenticationInstant(new DateTime(authenticationResult.getAuthenticationInstant()));
+        statement.setAuthenticationInstant(new DateTime(getAuthenticationResult().getAuthenticationInstant()));
         
         if (requestedPrincipalContext != null && requestedPrincipalContext.getMatchingPrincipal() != null
                 && requestedPrincipalContext.getMatchingPrincipal() instanceof AuthenticationMethodPrincipal) {
@@ -284,6 +169,43 @@ public class AddAuthenticationStatementToAssertion extends AbstractAuthenticatio
         }
         
         return statement;
+    }
+    
+    /**
+     * Default strategy for obtaining assertion to modify.
+     * 
+     * <p>If the outbound context is empty, a new assertion is created and stored there. If the outbound
+     * message is already an assertion, it's returned. If the outbound message is a response, then either
+     * an existing or new assertion in the response is returned, depending on the action setting. If the
+     * outbound message is anything else, null is returned.</p>
+     */
+    private class AssertionStrategy implements Function<ProfileRequestContext,Assertion> {
+
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public Assertion apply(@Nullable final ProfileRequestContext input) {
+            if (input != null && input.getOutboundMessageContext() != null) {
+                final Object outboundMessage = input.getOutboundMessageContext().getMessage();
+                if (outboundMessage == null) {
+                    final Assertion ret = SAML1ActionSupport.buildAssertion(AddAuthenticationStatementToAssertion.this,
+                            getIdGenerator(), getIssuerId());
+                    input.getOutboundMessageContext().setMessage(ret);
+                    return ret;
+                } else if (outboundMessage instanceof Assertion) {
+                    return (Assertion) outboundMessage;
+                } else if (outboundMessage instanceof Response) {
+                    if (isStatementInOwnAssertion() || ((Response) outboundMessage).getAssertions().isEmpty()) {
+                        return SAML1ActionSupport.addAssertionToResponse(AddAuthenticationStatementToAssertion.this,
+                                (Response) outboundMessage, getIdGenerator(), getIssuerId());
+                    } else {
+                        return ((Response) outboundMessage).getAssertions().get(0);
+                    } 
+                }
+            }
+            
+            return null;
+        }
+        
     }
     
 }
