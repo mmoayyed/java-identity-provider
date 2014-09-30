@@ -110,6 +110,16 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:ReloadingMetadataProviderType">
+                <attribute name="httpClientRef" type="string">
+                    <annotation>
+                        <documentation>
+	                        The reference to an externally defined Spring bean which specifies a hand
+	                        org.apache.http.client.HttpClient.
+	                        
+	                        This attribute conflicts with all other settings except metadata URL
+                       </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="metadataURL" type="anyURI" use="required">
                     <annotation>
                         <documentation>The URL from which to retrieve the metadata.</documentation>

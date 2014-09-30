@@ -69,4 +69,16 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         Assert.assertNotSame(resolver.getParserPool(), parserPool);
         
     }
+    
+    @Test public void httpClient() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "HTTPEntitiesClient.xml", "beans.xml", "httpClient.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPEntities");
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+        Assert.assertNotSame(resolver.getParserPool(), parserPool);
+        
+    }
+    
 }

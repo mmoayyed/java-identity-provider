@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.Version;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
@@ -29,13 +32,24 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
 
     /** Our captive builder. */
-    private HttpClientBuilder builder = new HttpClientBuilder();
-
+    private final HttpClientBuilder builder;
+    
     /**
      * Connection Timeout.<br/>
      * We need this field to ensure that Spring does the conversion.
      */
     @Duration private long connectionTimeout;
+
+    /**
+     * Constructor.
+     *
+     */
+    public HttpClientFactoryBean() {
+        builder = new HttpClientBuilder();
+        final StringBuilder stringBuilder = new StringBuilder("ShibbolethIdp/");
+        stringBuilder .append(Version.getVersion()).append(" OpenSAML/").append(org.opensaml.core.Version.getVersion());
+        builder.setUserAgent(stringBuilder.toString());
+    }
 
     /** {@inheritDoc} */
     @Override public Class<HttpClient> getObjectType() {
@@ -100,6 +114,16 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
      */
     public void setConnectionProxyPassword(final String password) {
         builder.setConnectionProxyPassword(password);
+    }
+
+    /**
+     * Sets the user agent to be used when talking to the server. may not be null in which case the default will be
+     * used.
+     * 
+     * @param agent what to set
+     */
+    public void setUserAgent(@Nullable final String agent) {
+        builder.setUserAgent(agent);
     }
 
     /** {@inheritDoc} */

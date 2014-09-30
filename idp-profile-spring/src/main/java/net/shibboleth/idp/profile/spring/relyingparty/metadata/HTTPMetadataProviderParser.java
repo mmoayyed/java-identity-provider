@@ -21,6 +21,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -43,6 +45,9 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
     /** BASIC auth password. */
     private static final String BASIC_AUTH_PASSWORD = "basicAuthPassword";
 
+    /** Logger. */
+    private final Logger log = LoggerFactory.getLogger(HTTPMetadataProviderParser.class);
+
     /** {@inheritDoc} */
     @Override protected Class<? extends HTTPMetadataResolver> getNativeBeanClass(Element element) {
         return HTTPMetadataResolver.class;
@@ -53,7 +58,18 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
             BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
-        builder.addConstructorArgValue(buildHttpClient(element));
+        if (element.hasAttributeNS(null, "httpClientRef")) {
+            builder.addConstructorArgReference(element.getAttributeNS(null, "httpClientRef"));
+            if (element.hasAttributeNS(null, "requestTimeout")
+                    || element.hasAttributeNS(null, "disregardSslCertificate")
+                    || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
+                    || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
+                log.warn("httpClientRef overrides settings for requestTimeout, "
+                        + "disregardSslCertificate, proxyHost, proxyPort, proxyUser and proxyPassword");
+            }
+        } else {
+            builder.addConstructorArgValue(buildHttpClient(element));
+        }
         builder.addConstructorArgValue(element.getAttributeNS(null, METADATA_URL));
 
         if (element.hasAttributeNS(null, BASIC_AUTH_USER) || element.hasAttributeNS(null, BASIC_AUTH_PASSWORD)) {
