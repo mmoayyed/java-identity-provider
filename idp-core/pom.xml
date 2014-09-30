@@ -23,6 +23,10 @@
             <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${spring.groupId}</groupId>
             <artifactId>spring-core</artifactId>
         </dependency>

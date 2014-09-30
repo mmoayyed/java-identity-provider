@@ -52,7 +52,6 @@
         <module>../idp-attribute-resolver-spring</module>
         <module>../idp-attribute-filter-spring</module>
 
-        <module>../idp-attribute-cli</module>
         <module>../idp-war</module>
         <module>../idp-installer</module>
         <module>../idp-conf</module>
