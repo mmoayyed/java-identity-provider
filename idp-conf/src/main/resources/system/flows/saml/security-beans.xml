@@ -105,6 +105,10 @@
             <bean class="org.opensaml.saml.common.binding.security.impl.SAMLMDClientCertAuthSecurityHandler" scope="prototype"
                     p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         </constructor-arg>
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="not"
+                c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
+        </property>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_AUTHN_ERROR" />
         </property>

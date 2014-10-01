@@ -13,12 +13,12 @@
        default-destroy-method="destroy">
 
     <bean id="shibboleth.Pair" class="net.shibboleth.utilities.java.support.collection.Pair" abstract="true" />
-
-    <bean id="shibboleth.Conditions.True" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
-    <bean id="shibboleth.Conditions.False" class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
     
     <bean id="shibboleth.Conditions.RelyingPartyId"
         class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate" abstract="true" />
+        
+    <bean id="shibboleth.Conditions.BrowserProfile"
+        class="org.opensaml.profile.logic.BrowserProfilePredicate" />
 
     <bean id="shibboleth.MessageContextLookup.Inbound"
         class="org.opensaml.profile.context.navigate.InboundMessageContextLookup" />
