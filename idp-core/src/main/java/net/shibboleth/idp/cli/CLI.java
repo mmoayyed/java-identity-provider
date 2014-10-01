@@ -91,8 +91,9 @@ public final class CLI {
      * @param args  the populated command line arguments
      */
     private static void doRequest(@Nonnull final CommandLineArguments args) {
+        URL url = null;
         try {
-            final URL url = args.buildURL();
+            url = args.buildURL();
             try (final InputStream stream = url.openStream()) {
                 try (final InputStreamReader reader = new InputStreamReader(stream)) {
                     try (final BufferedReader in = new BufferedReader(reader)) {
@@ -106,7 +107,7 @@ public final class CLI {
         } catch (final MalformedURLException e) {
             errorAndExit(e.getMessage());
         } catch (final IOException e) {
-            errorAndExit(e.getMessage());
+            errorAndExit((url != null ? "(" + url.toString() + ") " : "") + e.getMessage());
         }
     }
     
