@@ -107,6 +107,7 @@
     <util:list id="shibboleth.MessageSourceResources">
         <value>%{idp.home}/conf/messages</value>
         <value>%{idp.home}/conf/post-authn/terms-of-use</value>
+        <value>%{idp.home}/conf/post-authn/attribute-consent</value>
     </util:list>
     
 </beans>

@@ -7,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>#springMessageText("attribute-release.title" "Attribute Release")</title>
+        <title>#springMessageText("idp.tou.title" "Terms Of Use")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
     </head>
     <body>
@@ -35,7 +35,7 @@
                             ## #springMessage("attribute-release.global-consent")
                             ## #endif
                             <section>
-                                <button class="form-element form-button" type="submit" name="_eventId_proceed" >#springMessageText("idp.attribute-release.submit" "Submit")</button>
+                                <button class="form-element form-button" type="submit" name="_eventId_proceed" >#springMessageText("idp.tou.submit" "Submit")</button>
                             </section>
                     </form>
                 </div>

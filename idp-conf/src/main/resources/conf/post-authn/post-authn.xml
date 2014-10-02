@@ -37,8 +37,8 @@
         p:storageService-ref="shibboleth.ClientStorageService"
         p:storageKeyLookupStrategy-ref="StorageKeyLookupFunction"
         p:compareValues="true"
-        p:idMessageCode="tou.id"
-        p:textMessageCode="tou.text"
+        p:idMessageCode="idp.tou.id"
+        p:textMessageCode="idp.tou.text"
         scope="prototype" />
 
     <bean id="Consent.Conditions.RelyingPartyID" parent="shibboleth.Conditions.RelyingPartyId">
@@ -52,6 +52,5 @@
     <bean id="StorageKeyLookupFunction" class="net.shibboleth.idp.consent.logic.StorageKeyLookupFunction" scope="prototype"
         c:attributeId="email" />
     -->
-    
 
 </beans>
