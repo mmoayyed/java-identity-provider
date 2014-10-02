@@ -64,6 +64,12 @@
                 <input type="checkbox" name="donotcache" value="1" /> Don't Remember Login
               </section>
               
+              ## TODO change param name for consent revocation
+              ## <section>
+              ##  <input id="uApprove.consent-revocation" type="checkbox" name="uApprove.consent-revocation" value="true"/>
+              ##  Clear data release consent for this service
+              ## </section>
+              
               <section>
                 <button class="form-element form-button" type="submit" name="_eventId_proceed" >Login</button>
               </section>
