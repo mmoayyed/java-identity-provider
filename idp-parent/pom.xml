@@ -32,8 +32,6 @@
         <module>../idp-attribute-resolver-api</module>
         <module>../idp-attribute-filter-api</module>
         <!--   <module>../idp-metadata-api</module> -->
-        <module>../idp-consent-api</module>
-        <module>../idp-tou-api</module>
         <module>../idp-profile-api</module>
         <module>../idp-saml-api</module>
         <module>../idp-session-api</module>
@@ -42,8 +40,6 @@
         <module>../idp-attribute-impl</module>
         <module>../idp-attribute-resolver-impl</module>
         <module>../idp-attribute-filter-impl</module>
-        <module>../idp-consent-impl</module>
-        <module>../idp-tou-impl</module>
         <module>../idp-profile-impl</module>
         <module>../idp-profile-spring</module>
         <module>../idp-saml-impl</module>
@@ -52,6 +48,7 @@
         <module>../idp-attribute-resolver-spring</module>
         <module>../idp-attribute-filter-spring</module>
 
+        <module>../idp-consent</module>
         <module>../idp-war</module>
         <module>../idp-installer</module>
         <module>../idp-conf</module>
