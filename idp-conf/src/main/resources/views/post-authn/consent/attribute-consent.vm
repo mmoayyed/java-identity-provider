@@ -25,16 +25,10 @@
                                 #set($serializedValue = ${consentContext.getConsentChoices().get($attribute.id).getSecond()} )
                                 #set($encodedValue = $encoder.encodeForHTML($serializedValue) )
                                 <tr>
-                                    <td>$attribute.id</td>
+                                    <td>$attributeDisplayNameFunction.apply($attribute)</td>
                                     <td>$attribute.values</td>
-                                </tr>
-                                <tr>
-                                    <td>$serializedValue</td>
-                                    <td>$encodedValue</td>
-                                </tr>
-                                <tr>
                                     <td>
-                                        <input type="hidden" name="consents" value="${encodedValue}" />${encodedValue}
+                                        <input type="hidden" name="consents" value="${encodedValue}" />
                                     </td>
                                 </tr>
                             #end

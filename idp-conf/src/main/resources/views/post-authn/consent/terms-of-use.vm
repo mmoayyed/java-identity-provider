@@ -19,23 +19,18 @@
                     </a>
                 </header>
                 <div class="content" >
+                    <div id="tou-content">
+                        $termsOfUseContext.getTermsOfUse().getText()
+                    </div>
                     <form action="$flowExecutionUrl" method="post"  >
                         <table>
                             #foreach($termsOfUseId in $consentContext.getConsentChoices().keySet())
                                 #set($serializedValue = ${consentContext.getConsentChoices().get($termsOfUseId).getSecond()} )
                                 #set($encodedValue = $encoder.encodeForHTML($serializedValue) )
-                                <tr>
-                                    <td>$serializedValue</td>
-                                    <td>$encodedValue</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <input type="hidden" name="consents" value="${encodedValue}" />
-                                    </td>
-                                </tr>
+                                <input type="hidden" name="consents" value="${encodedValue}" />
                             #end
                         </table>
-                        ## #if ($globalConsentEnabled)
+                            ## #if ($globalConsentEnabled)
                             ## <input type="checkbox" name="consent.global"> value="yes" />
                             ## #springMessage("attribute-release.global-consent")
                             ## #endif

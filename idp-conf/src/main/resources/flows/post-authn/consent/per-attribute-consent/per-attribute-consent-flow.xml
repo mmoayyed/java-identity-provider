@@ -46,6 +46,7 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getLocale())" result="requestScope.attributeDisplayNameFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext))" result="viewScope.consentContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.AttributeConsentContext))" result="viewScope.attributeConsentContext" />
         </on-render>
