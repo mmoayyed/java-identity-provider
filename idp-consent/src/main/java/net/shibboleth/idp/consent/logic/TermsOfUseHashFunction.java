@@ -15,8 +15,34 @@
  * limitations under the License.
  */
 
-/**
- * Actions and flow descriptors related to consent.
- */
+package net.shibboleth.idp.consent.logic;
 
-package net.shibboleth.idp.consent.flow;
+import javax.annotation.Nonnull;
+
+import net.shibboleth.idp.consent.flow.tou.TermsOfUse;
+
+import org.cryptacular.util.CodecUtil;
+import org.cryptacular.util.HashUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+
+/**
+ * Function to create hash of terms of use text.
+ */
+public class TermsOfUseHashFunction implements Function<TermsOfUse, String> {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TermsOfUseHashFunction.class);
+
+    /** {@inheritDoc} */
+    public String apply(@Nonnull final TermsOfUse input) {
+
+        if (input == null) {
+            return null;
+        }
+
+        return CodecUtil.b64(HashUtil.sha256(input.getText()));
+    }
+}

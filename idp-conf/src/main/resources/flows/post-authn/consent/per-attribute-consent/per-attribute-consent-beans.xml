@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:c="http://www.springframework.org/schema/c"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+
+    default-init-method="initialize" default-destroy-method="destroy">
+
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    
+    <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
+
+    <bean id="InitializeAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.InitializeAttributeConsentContext" scope="prototype"
+        p:consentFlowDescriptor-ref="AttributeConsentFlowDescriptor" />
+        
+    <bean id="RevokeConsent" class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
+    <bean id="ReadConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype" />
+
+    <bean id="IsAttributeConsentRequired" class="net.shibboleth.idp.consent.flow.ar.IsAttributeConsentRequired" scope="prototype" />
+
+    <bean id="ProcessAttributes" class="net.shibboleth.idp.consent.flow.ar.ProcessAttributes" scope="prototype" />
+
+    <bean id="CreateAttributeConsentChoices" class="net.shibboleth.idp.consent.flow.ar.CreateAttributeConsentChoices" scope="prototype" />
+
+    <bean id="ExtractConsent" class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
+    <bean id="CreateResult" class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype" />
+
+    <bean id="ReleaseAttributes" class="net.shibboleth.idp.consent.flow.ar.ReleaseAttributes" scope="prototype" />
+
+</beans>

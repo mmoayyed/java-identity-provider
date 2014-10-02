@@ -15,8 +15,38 @@
  * limitations under the License.
  */
 
-/**
- * Actions and flow descriptors related to consent.
- */
+package net.shibboleth.idp.consent.context;
 
-package net.shibboleth.idp.consent.flow;
+import javax.annotation.Nullable;
+
+import net.shibboleth.idp.consent.flow.tou.TermsOfUse;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.messaging.context.BaseContext;
+
+/**
+ * Context for terms of use consent.
+ */
+public class TermsOfUseContext extends BaseContext {
+
+    /** Terms of use. */
+    @Nullable private TermsOfUse termsOfUse;
+
+    /**
+     * Get the terms of use.
+     * 
+     * @return the terms of use
+     */
+    @Nullable public TermsOfUse getTermsOfUse() {
+        return termsOfUse;
+    }
+
+    /**
+     * Set the terms of use.
+     * 
+     * @param terms the terms of use
+     */
+    public void setTermsOfUse(TermsOfUse terms) {
+        termsOfUse = Constraint.isNotNull(terms, "Terms cannot be null");
+    }
+}

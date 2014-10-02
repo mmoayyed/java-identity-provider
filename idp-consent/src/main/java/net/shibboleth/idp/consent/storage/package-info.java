@@ -16,7 +16,7 @@
  */
 
 /**
- * Actions and flow descriptors related to consent.
+ * Storage and serialization classes related to attribute consent.
  */
 
-package net.shibboleth.idp.consent.flow;
+package net.shibboleth.idp.consent.storage;

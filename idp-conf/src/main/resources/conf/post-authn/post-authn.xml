@@ -12,12 +12,46 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <!-- TODO placeholder -->
+    <!-- TODO use property replacement for storage key attribute id -->
+
     <!-- Flows executed after authentication. -->
     <util:list id="shibboleth.PostAuthnFlows">
-        <!-- 
-        <bean id="post-authn/consent/terms-of-use" parent="shibboleth.PostAuthnFlow" />
-        <bean id="post-authn/consent/attribute-release" parent="shibboleth.PostAuthnFlow" />
+        <!--
+        <bean id="post-authn/consent/terms-of-use" parent="TermsOfUseFlowDescriptor" />
+        <bean id="post-authn/consent/attribute-consent" parent="AttributeConsentFlowDescriptor" />
+        <bean id="post-authn/consent/per-attribute-consent" parent="AttributeConsentFlowDescriptor" />
          -->
     </util:list>
+
+    <!--
+    <bean id="AttributeConsentFlowDescriptor" class="net.shibboleth.idp.consent.flow.ar.AttributeConsentFlowDescriptor"
+        p:activationCondition-ref="Consent.Conditions.RelyingPartyID"
+        p:storageService-ref="shibboleth.ClientStorageService"
+        p:storageKeyLookupStrategy-ref="StorageKeyLookupFunction"
+        p:compareValues="true"
+        scope="prototype" />
+        
+    <bean id="TermsOfUseFlowDescriptor" class="net.shibboleth.idp.consent.flow.tou.TermsOfUseFlowDescriptor"
+        p:activationCondition-ref="Consent.Conditions.RelyingPartyID"
+        p:storageService-ref="shibboleth.ClientStorageService"
+        p:storageKeyLookupStrategy-ref="StorageKeyLookupFunction"
+        p:compareValues="true"
+        p:idMessageCode="tou.id"
+        p:textMessageCode="tou.text"
+        scope="prototype" />
+
+    <bean id="Consent.Conditions.RelyingPartyID" parent="shibboleth.Conditions.RelyingPartyId">
+        <constructor-arg>
+            <util:list>
+                <value>https://sp.example.org</value>
+            </util:list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="StorageKeyLookupFunction" class="net.shibboleth.idp.consent.logic.StorageKeyLookupFunction" scope="prototype"
+        c:attributeId="email" />
+    -->
+    
 
 </beans>

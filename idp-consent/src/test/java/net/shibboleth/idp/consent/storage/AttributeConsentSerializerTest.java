@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.consent.storage;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,9 +26,10 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.consent.AttributeConsent;
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.logic.AttributeValuesHashFunction;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -39,18 +39,18 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
-
-/** Unit tests for {@link AttributeConsentSerializer}. */
+/** Unit tests for {@link ConsentSerializer}. */
+// TODO incomplete
 public class AttributeConsentSerializerTest {
 
     /** Class logger. */
     @Nonnull protected final Logger log = LoggerFactory.getLogger(AttributeConsentSerializerTest.class);
-    
+
     private static final String CONTEXT = "_context";
-    
+
     private static final String KEY = "_key";
 
-    protected AttributeConsentSerializer serializer;
+    protected ConsentSerializer serializer;
 
     protected IdPAttribute attribute1;
 
@@ -62,16 +62,18 @@ public class AttributeConsentSerializerTest {
 
     protected IdPAttributeValue<?> value3;
 
-    protected AttributeConsent consent1;
+    protected Consent consent1;
 
-    protected AttributeConsent consent2;
-    
-    protected Map<String, AttributeConsent> consents;
+    protected Consent consent2;
+
+    protected DateTime expiration;
+
+    protected Map<String, Consent> consents;
 
     protected Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
 
     @BeforeMethod public void setUp() {
-        serializer = new AttributeConsentSerializer();
+        serializer = new ConsentSerializer();
 
         attributeValuesHashFunction = new AttributeValuesHashFunction();
 
@@ -84,26 +86,43 @@ public class AttributeConsentSerializerTest {
         attribute2 = new IdPAttribute("attribute2");
         attribute2.setValues(Sets.newHashSet(value1, value2));
 
-        consent1 = new AttributeConsent();
-        consent1.setAttributeId("attribute1");
-        consent1.setValuesHash(attributeValuesHashFunction.apply(attribute1.getValues()));
+        consent1 = new Consent();
+        consent1.setId("attribute1");
+        consent1.setValue(attributeValuesHashFunction.apply(attribute1.getValues()));
+        consent1.setApproved(true);
 
-        consent2 = new AttributeConsent();
-        consent2.setAttributeId("attribute2");
-        consent2.setValuesHash(attributeValuesHashFunction.apply(attribute2.getValues()));
+        consent2 = new Consent();
+        consent2.setId("attribute2");
+        consent2.setValue(attributeValuesHashFunction.apply(attribute2.getValues()));
+        consent2.setApproved(true);
         
         consents = new LinkedHashMap<>();
-        consents.put(consent1.getAttributeId(), consent1);
-        consents.put(consent2.getAttributeId(), consent2);
+        consents.put(consent1.getId(), consent1);
+        consents.put(consent2.getId(), consent2);
     }
 
-    @Test public void testSimple() throws IOException {
-
+    @Test public void testSimple() throws Exception {
+        serializer.initialize();
+        
         final String serialized = serializer.serialize(consents);
-        
-        final Map<String, AttributeConsent> deserialized = serializer.deserialize(1, CONTEXT, KEY, serialized, null);
-        
+
+        final Map<String, Consent> deserialized = serializer.deserialize(1, CONTEXT, KEY, serialized, null);
+
         Assert.assertEquals(consents, deserialized);
     }
 
+    @Test public void testExpiration() throws Exception {
+        serializer.initialize();
+        
+        expiration = new DateTime().plusYears(1);
+        consent1.setExpiration(expiration);
+        consent2.setExpiration(expiration);
+
+        final String serialized = serializer.serialize(consents);
+
+        final Map<String, Consent> deserialized =
+                serializer.deserialize(1, CONTEXT, KEY, serialized, expiration.getMillis());
+
+        Assert.assertEquals(consents, deserialized);
+    }
 }

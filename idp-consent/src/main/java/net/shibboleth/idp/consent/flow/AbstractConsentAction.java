@@ -20,10 +20,8 @@ package net.shibboleth.idp.consent.flow;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -34,106 +32,72 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
- * A base class for consent actions.
+ * Base class for consent actions.
  * 
- * In addition to the work performed by {@link AbstractProfileInterceptorAction}, this action also looks up and makes
- * available the {@link ConsentContext}.
+ * Ensures that
+ * <ul>
+ * <li>the flow descriptor is a {@link ConsentFlowDescriptor}</li>
+ * </ul>
  * 
- * Consent action implementations should override
- * {@link #doPreExecute(ProfileRequestContext, ProfileInterceptorContext, ConsentContext)} and
- * {@link #doExecute(ProfileRequestContext, ProfileInterceptorContext, ConsentContext)}.
+ * TODO details
  */
 public abstract class AbstractConsentAction extends AbstractProfileInterceptorAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractConsentAction.class);
 
-    /** The {@link AttributeContext} to operate on. */
-    @Nullable private AttributeContext attributeContext;
+    /** The consent context to operate on. */
+    @Nullable private ConsentContext consentContext;
 
-    /** Strategy used to find the {@link AttributeContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
-
-    /** The {@link ConsentContext} to operate on. */
-    @Nullable private ConsentContext consentCtx;
+    /** The consent flow descriptor. */
+    @Nullable private ConsentFlowDescriptor consentFlowDescriptor;
 
     /** Strategy used to find the {@link ConsentContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, ConsentContext> consentContextlookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, ConsentContext> consentContextLookupStrategy;
 
     /** Constructor. */
     public AbstractConsentAction() {
-        attributeContextLookupStrategy =
-                Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                        new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
-
-        consentContextlookupStrategy = new ChildContextLookup(ConsentContext.class, false);
+        consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class, false);
     }
 
     /**
-     * Get the attribute context.
+     * Get the consent context.
      * 
-     * @return the attribute context
+     * @return the consent context
      */
-    @Nullable public AttributeContext getAttributeContext() {
-        return attributeContext;
+    @Nullable public ConsentContext getConsentContext() {
+        return consentContext;
+    }
+
+    /**
+     * Get the consent flow descriptor.
+     * 
+     * @return the consent flow descriptor
+     */
+    @Nullable public ConsentFlowDescriptor getConsentFlowDescriptor() {
+        return consentFlowDescriptor;
     }
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        attributeContext = attributeContextLookupStrategy.apply(profileRequestContext);
-        log.debug("{} Found attributeContext '{}'", getLogPrefix(), attributeContext);
-        if (attributeContext == null) {
-            log.error("{} Unable to locate attribute context", getLogPrefix());
+        consentContext = consentContextLookupStrategy.apply(profileRequestContext);
+        if (consentContext == null) {
+            log.debug("{} Unable to locate consent context within profile request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
 
-        consentCtx = consentContextlookupStrategy.apply(profileRequestContext);
-        if (consentCtx == null) {
-            log.error("{} Unable to locate consent context", getLogPrefix());
+        if (!(interceptorContext.getAttemptedFlow() instanceof ConsentFlowDescriptor)) {
+            log.debug("{} ProfileInterceptorFlowDescriptor is not an ConsentFlowDescriptor", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
+        consentFlowDescriptor = (ConsentFlowDescriptor) interceptorContext.getAttemptedFlow();
 
-        return super.doPreExecute(profileRequestContext, interceptorContext)
-                && super.doPreExecute(profileRequestContext);
+        return super.doPreExecute(profileRequestContext, interceptorContext);
     }
-
-    /**
-     * Performs this consent action's pre-execute step. Default implementation returns true.
-     * 
-     * @param profileRequestContext the current profile request context
-     * @param interceptorContext the profile interceptor context
-     * @param consentContext the current consent context
-     * 
-     * @return true iff execution should continue
-     */
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext, @Nonnull final ConsentContext consentContext) {
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override protected final void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
-        doExecute(profileRequestContext, interceptorContext, consentCtx);
-    }
-
-    /**
-     * Performs this consent action. Default implementation does nothing.
-     * 
-     * @param profileRequestContext the current profile request context
-     * @param interceptorContext the profile interceptor context
-     * @param consentContext the current consent context
-     */
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext, @Nonnull final ConsentContext consentContext) {
-
-    }
-
 }

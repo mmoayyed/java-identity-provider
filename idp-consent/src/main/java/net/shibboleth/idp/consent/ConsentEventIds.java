@@ -15,8 +15,14 @@
  * limitations under the License.
  */
 
-/**
- * Actions and flow descriptors related to consent.
- */
+package net.shibboleth.idp.consent;
 
-package net.shibboleth.idp.consent.flow;
+/**
+ * Consent-specific constants to use for {@link org.opensaml.profile.action.ProfileAction}
+ * {@link org.opensaml.profile.context.EventContext}s.
+ */
+public enum ConsentEventIds {
+
+    /** Consent is not required. */
+    ConsentNotRequired;
+}

@@ -38,8 +38,14 @@
     -->
     <subflow-state id="CallPostAuthnFlow" subflow="#{currentEvent.id}">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="SelectPostAuthnFlow" />
+        <transition on="proceed" to="WriteResultToStorage" />
     </subflow-state>
+    
+    <action-state id="WriteResultToStorage">
+        <evaluate expression="WriteResultToStorage" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="SelectPostAuthnFlow" />
+    </action-state>
 
     <bean-import resource="post-authn-beans.xml" />
 

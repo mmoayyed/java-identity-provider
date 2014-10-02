@@ -7,10 +7,9 @@
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
 
-    <action-state id="TermsOfUseSetup">
+    <action-state id="AttributeConsentSetup">
         <evaluate expression="InitializeConsentContext" />
-        <evaluate expression="InitializeTermsOfUseContext" />
-        <evaluate expression="PopulateTermsOfUse" />
+        <evaluate expression="InitializeAttributeConsentContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="RevokeConsent" />
     </action-state>
@@ -18,36 +17,37 @@
     <action-state id="RevokeConsent">
         <evaluate expression="RevokeConsent" />
         <evaluate expression="'proceed'" />
-        <transition on="RevokeConsent" to="CreateTermsOfUseChoice" />
+        <transition on="RevokeConsent" to="ProcessAttributes" />
         <transition on="proceed" to="ReadConsentFromStorage" />
     </action-state>
     
     <action-state id="ReadConsentFromStorage">
         <evaluate expression="ReadConsentFromStorage" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="IsTermsOfUseConsentRequired" />
+        <transition on="proceed" to="IsAttributeConsentRequired" />
     </action-state>
 
-    <action-state id="IsTermsOfUseConsentRequired">
-        <evaluate expression="IsTermsOfUseConsentRequired" />
+    <action-state id="IsAttributeConsentRequired">
+        <evaluate expression="IsAttributeConsentRequired" />
         <evaluate expression="'proceed'" />
-        <transition on="ConsentNotRequired" to="proceed" />
-        <transition on="proceed" to="CreateTermsOfUseChoice" />
+        <transition on="ConsentNotRequired" to="ReleaseAttributes" />
+        <transition on="proceed" to="ProcessAttributes" />
     </action-state>
     
-    <action-state id="CreateTermsOfUseChoice">
-        <evaluate expression="CreateTermsOfUseChoice" />
+    <action-state id="ProcessAttributes">
+        <evaluate expression="ProcessAttributes" />
+        <evaluate expression="CreateAttributeConsentChoices" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="DisplayTermsOfUsePage" />
+        <transition on="proceed" to="DisplayAttributeReleasePage" />
     </action-state>
-
-    <view-state id="DisplayTermsOfUsePage" view="#{flowRequestContext.activeFlow.id}">
+    
+    <view-state id="DisplayAttributeReleasePage" view="#{flowRequestContext.activeFlow.id}">
         <on-render>
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext))" result="viewScope.consentContext" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.TermsOfUseContext))" result="viewScope.termsOfUseContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.AttributeConsentContext))" result="viewScope.attributeConsentContext" />
         </on-render>
         <transition on="proceed" to="ExtractConsent" />
     </view-state>
@@ -56,6 +56,12 @@
         <evaluate expression="ExtractConsent" />
         <evaluate expression="CreateResult" />
         <evaluate expression="'proceed'" />    
+        <transition on="proceed" to="ReleaseAttributes" />
+    </action-state>
+    
+    <action-state id="ReleaseAttributes">
+        <evaluate expression="ReleaseAttributes" />
+        <evaluate expression="'proceed'" />
         <transition on="proceed" to="proceed" />
     </action-state>
 
@@ -63,6 +69,6 @@
 
     <end-state id="proceed" />
 
-    <bean-import resource="terms-of-use-beans.xml" />
+    <bean-import resource="attribute-consent-beans.xml" />
 
 </flow>

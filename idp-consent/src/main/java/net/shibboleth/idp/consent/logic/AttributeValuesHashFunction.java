@@ -36,7 +36,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- *
+ * Function to calculate the hash of the values of an IdP attribute.
+ * 
+ * TODO details
  */
 public class AttributeValuesHashFunction implements Function<Collection<IdPAttributeValue<?>>, String> {
 

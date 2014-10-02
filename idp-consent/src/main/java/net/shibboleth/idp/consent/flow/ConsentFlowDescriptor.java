@@ -17,18 +17,76 @@
 
 package net.shibboleth.idp.consent.flow;
 
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import java.util.Map;
 
-import com.google.common.base.MoreObjects;
+import javax.annotation.Nonnull;
+
+import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.logic.FlowIdLookupFunction;
+import net.shibboleth.idp.consent.storage.ConsentSerializer;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.storage.StorageSerializer;
 
 /**
- * Descriptor for a consent flow.
+ * Abstract descriptor for a consent flow.
+ * 
+ * Holds a {@link StorageSerializer} for {@link Consent}. Defaults the storage context lookup strategy to a
+ * {@link FlowIdLookupFunction}.
+ * 
+ * TODO details
  */
-// TODO Just a stub.
-public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
+public abstract class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
 
-    /** {@inheritDoc} */
-    @Override public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", getId()).toString();
+    /** Whether consent equality includes comparing consent values. */
+    private boolean compareValues;
+
+    /** Consent serializer. */
+    @Nonnull private StorageSerializer<Map<String, Consent>> consentSerializer;
+
+    /** Constructor. */
+    public ConsentFlowDescriptor() {
+        setStorageContextLookupStrategy(new FlowIdLookupFunction());
+        setConsentSerializer(new ConsentSerializer());
+    }
+
+    /**
+     * Whether consent equality includes comparing consent values.
+     * 
+     * @return true if consent equality includes comparing consent values
+     */
+    public boolean compareValues() {
+        return compareValues;
+    }
+
+    /**
+     * Get the consent serializer.
+     * 
+     * @return consent serializer
+     */
+    @Nonnull public StorageSerializer<Map<String, Consent>> getConsentSerializer() {
+        return consentSerializer;
+    }
+
+    /**
+     * Set whether consent equality includes comparing consent values.
+     * 
+     * @param flag true if consent equality includes comparing consent values
+     */
+    public void setCompareValues(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+    
+        compareValues = flag;
+    }
+
+    /**
+     * Set the consent serializer.
+     * 
+     * @param serializer consent serializer
+     */
+    public void setConsentSerializer(@Nonnull final StorageSerializer<Map<String, Consent>> serializer) {
+        consentSerializer = Constraint.isNotNull(serializer, "Consent serializer cannot be null");
     }
 }

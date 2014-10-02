@@ -18,65 +18,34 @@
 package net.shibboleth.idp.consent.flow;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.context.ConsentContext;
-import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An action that creates a {@link ConsentContext} and attaches it to the current {@link ProfileRequestContext}.
+ * Action that creates a {@link ConsentContext} and attaches it to the current {@link ProfileRequestContext}.
+ * 
+ * TODO details
  */
 public class InitializeConsentContext extends AbstractProfileInterceptorAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeConsentContext.class);
 
-    /** Consent flow descriptor. */
-    @Nullable private ConsentFlowDescriptor consentFlowDescriptor;
-
-    /**
-     * Set the consent flow descriptor.
-     * 
-     * @param descriptor the consent flow descriptor
-     */
-    public void setConsentFlowDescriptor(@Nonnull final ConsentFlowDescriptor descriptor) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        consentFlowDescriptor = Constraint.isNotNull(descriptor, "ConsentFlowDescriptor cannot be null");
-    }
-
-    /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
-
-        if (consentFlowDescriptor == null) {
-            // TODO Is this the correct event to return ?
-            log.warn("{} A consent flow descriptor must be configured", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
-            return false;
-        }
-
-        return super.doPreExecute(profileRequestContext, interceptorContext);
-    }
-
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         final ConsentContext consentContext = new ConsentContext();
-        consentContext.setConsentFlowDescriptor(consentFlowDescriptor);
+
+        log.debug("{} Created consent context '{}'", getLogPrefix(), consentContext);
 
         profileRequestContext.addSubcontext(consentContext, true);
-
-        log.debug("{} Created consent context {}", getLogPrefix(), consentContext);
 
         super.doExecute(profileRequestContext, interceptorContext);
     }

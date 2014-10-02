@@ -15,8 +15,25 @@
  * limitations under the License.
  */
 
-/**
- * Actions and flow descriptors related to consent.
- */
+package net.shibboleth.idp.consent.storage;
 
-package net.shibboleth.idp.consent.flow;
+import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorResult;
+
+/**
+ * The result of a consent flow, suitable for storage.
+ */
+public class ConsentResult extends AbstractProfileInterceptorResult {
+
+    /**
+     * Constructor.
+     *
+     * @param context storage context
+     * @param key storage key
+     * @param value storage value
+     * @param expiration storage expiration
+     */
+    public ConsentResult(String context, String key, String value, Long expiration) {
+        super(context, key, value, expiration);
+    }
+
+}

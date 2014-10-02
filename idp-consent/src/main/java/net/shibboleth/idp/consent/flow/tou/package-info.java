@@ -16,7 +16,7 @@
  */
 
 /**
- * Actions and flow descriptors related to consent.
+ * Actions and flow descriptors related to terms of use consent.
  */
 
-package net.shibboleth.idp.consent.flow;
+package net.shibboleth.idp.consent.flow.tou;

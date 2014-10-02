@@ -16,7 +16,7 @@
  */
 
 /**
- * Actions and flow descriptors related to consent.
+ * Actions and flow descriptors related to attribute consent.
  */
 
-package net.shibboleth.idp.consent.flow;
+package net.shibboleth.idp.consent.flow.ar;
