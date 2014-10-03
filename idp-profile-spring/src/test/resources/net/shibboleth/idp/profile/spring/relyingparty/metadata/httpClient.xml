@@ -11,7 +11,6 @@
 
 	<bean id="apacheClient"
 		class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
-		p:userAgent="disguised/1.0.0 hidden/3.4.5"
-		p:connectionTimeout="5000" />
+		p:userAgent="disguised/1.0.0 hidden/3.4.5" />
 
 </beans>
