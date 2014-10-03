@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>idp-cas-impl</name>
+    <name>Shibboleth IdP :: CAS Implementation</name>
     <artifactId>idp-cas-impl</artifactId>
     <packaging>jar</packaging>
 
