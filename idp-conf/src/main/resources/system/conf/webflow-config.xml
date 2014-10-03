@@ -18,12 +18,10 @@
     <webflow:flow-registry id="flowRegistry" base-path="%{idp.home}/flows" flow-builder-services="flowBuilderServices">
         <webflow:flow-location-pattern value="/**/*-flow.xml" />
 
-        <!-- System-supplied flows, do not modify. -->
+        <!-- Status flow (location is for backward compatibility). -->
+        <webflow:flow-location id="status" path="../system/flows/admin/status-flow.xml" />
 
-        <!-- Status flow. -->
-        <webflow:flow-location id="status" path="../system/flows/status/status-flow.xml" />
-
-        <!-- Administrative and debugging flows. -->
+        <!-- New administrative and debugging flows. -->
         <webflow:flow-location id="admin/resolvertest" path="../system/flows/admin/resolvertest-flow.xml" />
         
         <!-- Proprietary logout flow. -->
