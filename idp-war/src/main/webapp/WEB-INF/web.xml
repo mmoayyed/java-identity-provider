@@ -140,17 +140,17 @@
         <url-pattern>/Authn/X509</url-pattern>
     </servlet-mapping>
 
-    <!-- Send request to the EntityID to the SAML metadata handler. -->
-    <!-- 
+    <!-- Send request for the EntityID to the SAML metadata echoing JSP. -->
     <servlet>
         <servlet-name>shibboleth_jsp</servlet-name>
-        <jsp-file>/shibboleth.jsp</jsp-file>
+        <jsp-file>/WEB-INF/jsp/metadata.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>shibboleth_jsp</servlet-name>
         <url-pattern>/shibboleth</url-pattern>
     </servlet-mapping>
 
+    <!-- 
     <error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/jsp/error-500.jsp</location>
