@@ -416,7 +416,7 @@ public class MetadataGenerator {
             writer.write(protocol);
             first = false;
         }
-        writer.write("\">)");
+        writer.write("\">");
         writer.newLine();
     }
     
