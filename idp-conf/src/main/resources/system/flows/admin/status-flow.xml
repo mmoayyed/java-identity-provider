@@ -16,13 +16,8 @@
         <on-entry>
             <evaluate expression="WriteAuditLog" />
             <evaluate expression="ServiceCollection" result="requestScope.services" />
-            <evaluate expression="T(java.lang.Runtime).getRuntime()" result="requestScope.runtime" />
-            <evaluate expression="T(java.lang.System)" result="requestScope.System" />
-            <evaluate expression="T(net.shibboleth.idp.Version)" result="requestScope.Version" />
-            <evaluate expression="T(org.joda.time.format.ISODateTimeFormat).dateTimeNoMillis()" result="requestScope.dateTimeFormatter" />
-            <evaluate expression="new org.joda.time.DateTime(flowExecutionContext.getActiveSession().getDefinition().getApplicationContext().getStartupDate())"
-                result="requestScope.startupTime" />
-            <evaluate expression="T(org.joda.time.DateTime).now()" result="requestScope.now" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
         </on-entry>
