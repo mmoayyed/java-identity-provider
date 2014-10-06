@@ -90,6 +90,7 @@
             p:namespaceAware="true">
         <property name="builderAttributes">
             <map>
+                <!-- Sun/Oracle is the default, for Xerces, set property to org.apache.xerces.util.SecurityManager -->            
                 <entry key="http://apache.org/xml/properties/security-manager">
                     <bean class="%{idp.xml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}" />
                 </entry>
