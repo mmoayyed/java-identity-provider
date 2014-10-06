@@ -96,14 +96,14 @@ public class IsAttributeConsentRequired extends AbstractAttributeConsentAction {
             return false;
         }
 
-        final Map<String, Consent> storedAttributeConsents = consentContext.getStoredConsents();
-        if (storedAttributeConsents == null || storedAttributeConsents.isEmpty()) {
+        final Map<String, Consent> previousConsents = consentContext.getPreviousConsents();
+        if (previousConsents == null || previousConsents.isEmpty()) {
             log.debug("{} Consent is required because there is no previous consent.", getLogPrefix());
             return true;
         }
 
         for (IdPAttribute attribute : attributes.values()) {
-            final Consent consent = storedAttributeConsents.get(attribute.getId());
+            final Consent consent = previousConsents.get(attribute.getId());
             if (consent == null) {
                 log.debug("{} Consent is required because there is a new attribute to consent to.", getLogPrefix());
                 return true;

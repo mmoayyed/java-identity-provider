@@ -24,12 +24,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
-import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Maps;
@@ -37,107 +36,59 @@ import com.google.common.collect.Maps;
 /**
  * Context representing the state of a consent flow.
  */
-// TODO Just a stub.
-public class ConsentContext extends ProfileInterceptorContext {
+public class ConsentContext extends BaseContext {
 
-    /** Consent flow descriptor. */
-    @Nullable private ConsentFlowDescriptor consentFlowDescriptor;
+    /** Previous consents read from storage. */
+    @Nonnull @NonnullElements private Map<String, Consent> previousConsents;
 
-    /** Consents read from storage. */
-    @Nullable @NonnullElements private Map<String, Consent> storedConsents;
-
-    /** Consent choices to be chosen by user. Key is consent id. Second pair object is serialized form of the first. */
-    @Nullable @NonnullElements private Map<String, Pair<Consent, String>> consentChoices;
-
-    /** Consents chosen by user. */
-    @Nullable @NonnullElements private Map<String, Consent> chosenConsents;
-
+    /** Current consents extracted from user input. */
+    @Nonnull @NonnullElements private Map<String, Consent> currentConsents;
+    
     /** Constructor. */
     public ConsentContext() {
         // TODO proper inits
-        storedConsents = Collections.EMPTY_MAP;
-        consentChoices = Collections.EMPTY_MAP;
-        chosenConsents = Collections.EMPTY_MAP;
+        previousConsents = Collections.EMPTY_MAP;
+        currentConsents = Collections.EMPTY_MAP;
     }
 
     /**
-     * Get the consent flow descriptor.
+     * Get current consents extracted from user input.
      * 
-     * @return the consent flow descriptor
+     * @return consents extracted from user input
      */
-    public ConsentFlowDescriptor getConsentFlowDescriptor() {
-        return consentFlowDescriptor;
+    @Nullable @NonnullElements public Map<String, Consent> getCurrentConsents() {
+        return currentConsents;
     }
 
     /**
-     * Set the consent flow descriptor.
-     * 
-     * @param descriptor consent flow descriptor
-     */
-    public void setConsentFlowDescriptor(@Nonnull final ConsentFlowDescriptor descriptor) {
-        consentFlowDescriptor = Constraint.isNotNull(descriptor, "Consent flow descriptor cannot be null");
-    }
-
-    /**
-     * Get consents read from storage.
+     * Get previous consents read from storage.
      * 
      * @return consents read from storage
      */
-    @Nullable @NonnullElements public Map<String, Consent> getStoredConsents() {
-        return storedConsents;
+    @Nullable @NonnullElements public Map<String, Consent> getPreviousConsents() {
+        return previousConsents;
     }
 
     /**
-     * Set consents read from storage.
+     * Set consents extracted from user input.
+     * 
+     * @param map consents extracted from user input
+     */
+    public void setCurrentConsents(@Nonnull @NonnullElements final Map<String, Consent> map) {
+        Constraint.isNotNull(map, "Current consents cannot be null");
+
+        currentConsents = ConsentContext.setMap(map);
+    }
+
+    /**
+     * Set previous consents read from storage.
      * 
      * @param map consents read from storage
      */
-    public void setStoredConsents(@Nonnull @NonnullElements final Map<String, Consent> map) {
-        Constraint.isNotNull(map, "Stored consents cannot be null");
+    public void setPreviousConsents(@Nonnull @NonnullElements final Map<String, Consent> map) {
+        Constraint.isNotNull(map, "Previous consents cannot be null");
 
-        storedConsents = ConsentContext.setMap(map);
-    }
-
-    /**
-     * Get consent choices to be chosen by user. Key is consent id. Second pair object is serialized form of the first.
-     * 
-     * @return consent choices to be chosen by user.
-     */
-    @Nullable @NonnullElements public Map<String, Pair<Consent, String>> getConsentChoices() {
-        return consentChoices;
-    }
-
-    /**
-     * Set consent choices to be chosen by user. Key is consent id. Second pair object is serialized form of the first.
-     * 
-     * @param choices consent choices to be chosen by user.
-     */
-    public void setConsentChoices(@Nonnull @NonnullElements Map<String, Pair<Consent, String>> choices) {
-        Constraint.isNotNull(choices, "Consent choices cannot be null");
-
-        // TODO non null elements constraint
-
-        consentChoices = choices;
-    }
-
-    /**
-     * Get consents chosen by user.
-     * 
-     * @return consents chosen by user
-     */
-    @Nullable @NonnullElements public Map<String, Consent> getChosenConsents() {
-        return chosenConsents;
-    }
-
-    /**
-     * Set consents chosen by user.
-     * 
-     * @param map consents chosen by user
-     */
-    public void setChosenConsents(@Nonnull @NonnullElements final Map<String, Consent> map) {
-        Constraint.isNotNull(map, "Chosen consents cannot be null");
-
-        chosenConsents = ConsentContext.setMap(map);
+        previousConsents = ConsentContext.setMap(map);
     }
 
     /**
@@ -163,9 +114,8 @@ public class ConsentContext extends ProfileInterceptorContext {
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return MoreObjects.toStringHelper(this).add("consentFlowDescriptor", consentFlowDescriptor)
-                .add("storedConsents", storedConsents).add("consentChoices", consentChoices)
-                .add("chosenConsents", chosenConsents).toString();
+        return MoreObjects.toStringHelper(this).add("previousConsents", previousConsents)
+                .add("chosenConsents", currentConsents).toString();
     }
 
 }

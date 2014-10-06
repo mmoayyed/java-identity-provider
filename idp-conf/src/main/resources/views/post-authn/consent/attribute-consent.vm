@@ -22,13 +22,11 @@
                     <form action="$flowExecutionUrl" method="post"  >
                         <table>
                             #foreach($attribute in $attributeConsentContext.getProcessedAttributes().values())
-                                #set($serializedValue = ${consentContext.getConsentChoices().get($attribute.id).getSecond()} )
-                                #set($encodedValue = $encoder.encodeForHTML($serializedValue) )
                                 <tr>
                                     <td>$attributeDisplayNameFunction.apply($attribute)</td>
                                     <td>$attribute.values</td>
                                     <td>
-                                        <input type="hidden" name="consents" value="${encodedValue}" />
+                                        <input type="hidden" name="consents" value="$encoder.encodeForHTML($attribute.id)" />
                                     </td>
                                 </tr>
                             #end

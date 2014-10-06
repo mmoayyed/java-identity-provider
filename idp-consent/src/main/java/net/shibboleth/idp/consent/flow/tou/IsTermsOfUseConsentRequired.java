@@ -67,7 +67,7 @@ public class IsTermsOfUseConsentRequired extends AbstractTermsOfUseAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        final Map<String, Consent> storedConsents = getConsentContext().getStoredConsents();
+        final Map<String, Consent> storedConsents = getConsentContext().getPreviousConsents();
         if (storedConsents == null || storedConsents.isEmpty()) {
             log.debug("{} Terms of use consent is required because there is no previous consent.", getLogPrefix());
             return;

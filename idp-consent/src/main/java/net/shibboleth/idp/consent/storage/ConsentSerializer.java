@@ -104,7 +104,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
                     final Consent consent = new Consent();
                     consent.setId(o.getString(ATTRIBUTE_ID_FIELD));
                     consent.setValue(o.getString(ATTRIBUTE_VALUES_HASH_FIELD));
-                    consent.setApproved(Boolean.valueOf(o.getBoolean(IS_APPROVED_FIELD, true)));
+                    consent.setApproved(o.getBoolean(IS_APPROVED_FIELD, true));
                     if (expiration != null) {
                         consent.setExpiration(new DateTime(expiration));
                     }
@@ -141,7 +141,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
             gen.writeStartObject();
             gen.write(ATTRIBUTE_ID_FIELD, consent.getId());
             gen.write(ATTRIBUTE_VALUES_HASH_FIELD, consent.getValue());
-            if (consent.isApproved() != null && !consent.isApproved()) {
+            if (!consent.isApproved()) {
                 gen.write(IS_APPROVED_FIELD, false);
             }
             gen.writeEnd();

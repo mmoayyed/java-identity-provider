@@ -68,7 +68,7 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
             final Map<String, Consent> consents =
                     (Map<String, Consent>) storageRecord.getValue(getConsentSerializer(), getContext(), getKey());
 
-            getConsentContext().setStoredConsents(consents);
+            getConsentContext().setPreviousConsents(consents);
 
         } catch (IOException e) {
             log.error("{} Unable to read consent from storage", getLogPrefix(), e);

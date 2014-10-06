@@ -59,7 +59,7 @@ public class CreateResult extends AbstractConsentStorageAction {
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         try {
-            final Map<String, Consent> chosenAttributeConsents = getConsentContext().getChosenConsents();
+            final Map<String, Consent> chosenAttributeConsents = getConsentContext().getCurrentConsents();
 
             final String value = getConsentSerializer().serialize(chosenAttributeConsents);
 

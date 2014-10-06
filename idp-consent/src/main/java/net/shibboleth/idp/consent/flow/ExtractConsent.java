@@ -17,8 +17,7 @@
 
 package net.shibboleth.idp.consent.flow;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
+import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -28,28 +27,24 @@ import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.collection.Pair;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 /**
- * Consent action which reads serialized consent objects from a HTTP form body.
+ * Consent action which reads serialized consent objects from an HTTP form body.
  */
 public class ExtractConsent extends AbstractConsentAction {
 
+    /** Parameter name for consent IDs. */
+    @Nonnull @NotEmpty private static final String CONSENT_IDS_REQUEST_PARAMETER = "consentIds";
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractConsent.class);
-
-    /** Parameters name for consents. */
-    @Nonnull @NotEmpty private static final String CONSENT_REQUEST_PARAMETER = "consents";
-
-    /** Consent serializer. */
-    private StorageSerializer<Map<String, Consent>> consentSerializer;
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -58,8 +53,6 @@ public class ExtractConsent extends AbstractConsentAction {
         if (!(super.doPreExecute(profileRequestContext, interceptorContext))) {
             return false;
         }
-
-        consentSerializer = getConsentFlowDescriptor().getConsentSerializer();
 
         return true;
     }
@@ -77,7 +70,7 @@ public class ExtractConsent extends AbstractConsentAction {
             return;
         }
 
-        final String[] consentParams = request.getParameterValues(CONSENT_REQUEST_PARAMETER);
+        final String[] consentParams = request.getParameterValues(CONSENT_IDS_REQUEST_PARAMETER);
         log.debug("{} Consent paramter values '{}'", getLogPrefix(), consentParams);
         if (consentParams == null) {
             log.debug("{} No consent choices", getLogPrefix());
@@ -85,34 +78,16 @@ public class ExtractConsent extends AbstractConsentAction {
             return;
         }
 
-        final Map<String, Consent> userConsents = new LinkedHashMap<>();
-        for (final String consentParam : consentParams) {
-            try {
-                final Map<String, Consent> consents = consentSerializer.deserialize(0, null, null, consentParam, null);
-                userConsents.putAll(consents);
-            } catch (IOException e) {
-                log.debug("{} Unable to serialize consent.", getLogPrefix(), e);
-                ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
-                return;
-            }
-        }
+        final Collection<String> consentIds = StringSupport.normalizeStringCollection(Sets.newHashSet(consentParams));
 
-        final Map<String, Consent> chosenConsents = new LinkedHashMap<>();
-
-        final Map<String, Pair<Consent, String>> consentChoices = consentContext.getConsentChoices();
-        for (final Map.Entry<String, Pair<Consent, String>> entry : consentChoices.entrySet()) {
-            final Consent consent = entry.getValue().getFirst();
-
-            if (userConsents.containsKey(consent.getId())) {
+        final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
+        for (final Consent consent : currentConsents.values()) {
+            if (consentIds.contains(consent.getId())) {
                 consent.setApproved(Boolean.TRUE);
             } else {
                 consent.setApproved(Boolean.FALSE);
             }
-
-            chosenConsents.put(consent.getId(), consent);
         }
-
-        consentContext.setChosenConsents(chosenConsents);
 
         // TODO Read expiration
         // Long chosenExpiration = null;

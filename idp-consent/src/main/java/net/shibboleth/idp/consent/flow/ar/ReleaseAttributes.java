@@ -55,8 +55,8 @@ public class ReleaseAttributes extends AbstractAttributeConsentAction {
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         final Map<String, Consent> consents =
-                getConsentContext().getChosenConsents().isEmpty() ? getConsentContext().getStoredConsents()
-                        : getConsentContext().getChosenConsents();
+                getConsentContext().getCurrentConsents().isEmpty() ? getConsentContext().getPreviousConsents()
+                        : getConsentContext().getCurrentConsents();
 
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
         log.debug("{} Attributes '{}'", getLogPrefix(), attributes);
@@ -68,9 +68,6 @@ public class ReleaseAttributes extends AbstractAttributeConsentAction {
                 // TODO shouldn't happen
             }
             final Consent consent = consents.get(attribute.getId());
-            if (consent.isApproved() == null) {
-                // TODO shouldn't happen
-            }
             if (consent.isApproved()) {
                 log.debug("{} Attribute '{}' is consented to", getLogPrefix(), attribute);
                 releasedAttributes.put(attribute.getId(), attribute);

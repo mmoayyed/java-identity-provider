@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Consent action which looks for an HTTP parameter and if present deletes records from storage.
  */
+// TODO Support revocation of multiple consent flows, not just the first
 public class RevokeConsent extends AbstractConsentStorageAction {
 
     /** Parameter name for consent revocation. */

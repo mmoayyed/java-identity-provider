@@ -44,8 +44,8 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
     /** When consent expires. */
     @Nullable private DateTime expiration;
 
-    /** Whether consent is approved or denied. */
-    @Nullable private Boolean approved;
+    /** Whether consent is approved. */
+    @Nullable private boolean approved;
 
     /**
      * Get the consent value.
@@ -70,7 +70,7 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
      * 
      * @return true if consent is approved
      */
-    @Nullable public Boolean isApproved() {
+    @Nullable public boolean isApproved() {
         return approved;
     }
 
@@ -97,7 +97,7 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
      * 
      * @param flag true if consent is approved
      */
-    public void setApproved(@Nullable final Boolean flag) {
+    public void setApproved(final boolean flag) {
         approved = flag;
     }
 

@@ -23,13 +23,7 @@
                         $termsOfUseContext.getTermsOfUse().getText()
                     </div>
                     <form action="$flowExecutionUrl" method="post"  >
-                        <table>
-                            #foreach($termsOfUseId in $consentContext.getConsentChoices().keySet())
-                                #set($serializedValue = ${consentContext.getConsentChoices().get($termsOfUseId).getSecond()} )
-                                #set($encodedValue = $encoder.encodeForHTML($serializedValue) )
-                                <input type="hidden" name="consents" value="${encodedValue}" />
-                            #end
-                        </table>
+                            <input type="hidden" name="consents" value="$encoder.encodeForHTML($termsOfUseContext.getTermsOfUse().getId())" />
                             ## #if ($globalConsentEnabled)
                             ## <input type="checkbox" name="consent.global"> value="yes" />
                             ## #springMessage("attribute-release.global-consent")
