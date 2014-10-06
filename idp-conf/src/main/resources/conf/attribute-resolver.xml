@@ -77,8 +77,8 @@
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
         ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
         baseDN="%{idp.attribute.resolver.LDAP.baseDN}" 
-        principal="%{idp.attribute.resolver.LDAP.principal}"
-        principalCredential="%{idp.attribute.resolver.LDAP.principalCredential}">
+        principal="%{idp.attribute.resolver.LDAP.bindDN}"
+        principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${requestContext.principalName})
