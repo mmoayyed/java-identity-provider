@@ -26,7 +26,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,10 @@ public class IdPPropertiesApplicationContextInitializer implements
         ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     /** IdP home property. */
-    @Nonnull public static final String IDP_HOME_PROPERTY = "idp.home";
+    @Nonnull @NotEmpty public static final String IDP_HOME_PROPERTY = "idp.home";
+    
+    /** Property that points to more property sources. */
+    @Nonnull @NotEmpty public static final String IDP_ADDITIONAL_PROPERTY = "idp.additionalProperties";
 
     /** Target resource to be searched for. */
     @Nonnull public static final String IDP_PROPERTIES = "/conf/idp.properties";
@@ -59,6 +64,7 @@ public class IdPPropertiesApplicationContextInitializer implements
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
@@ -74,7 +80,7 @@ public class IdPPropertiesApplicationContextInitializer implements
             if (resource.exists()) {
                 log.debug("Found resource '{}' at search path '{}'", resource, searchPath);
 
-                final Properties properties = loadProperties(resource);
+                final Properties properties = loadProperties(null, resource);
                 if (properties == null) {
                     log.warn("Unable to load properties from resource '{}'", resource);
                     return;
@@ -86,7 +92,32 @@ public class IdPPropertiesApplicationContextInitializer implements
                     final String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
                     setIdPHomeProperty(searchLocationAbsolutePath, properties);
                 }
+                
+                // Load any additional property sources.
+                final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
+                if (additionalSources != null) {
+                    final String[] sources = additionalSources.split(",");
+                    for (final String source : sources) {
+                        final String trimmedSource = StringSupport.trimOrNull(source);
+                        if (trimmedSource == null) {
+                            continue;
+                        }
+                        log.debug("Attempting to load properties from resource '{}'", trimmedSource);
+                        final String pathifiedSource = searchLocation + trimmedSource;
+                        final Resource additionalResource = applicationContext.getResource(pathifiedSource);
+                        if (additionalResource.exists()) {
+                            log.debug("Found resource '{}' at search path '{}'", additionalResource, pathifiedSource);
+                            if (loadProperties(properties, additionalResource) == null) {
+                                log.warn("Unable to load properties from resource '{}'", additionalResource);
+                                continue;
+                            }
+                        } else {
+                            log.warn("Unable to find resource '{}'", additionalResource);
+                        }
+                    }
+                }
 
+                logProperties(properties);
                 final PropertiesPropertySource propertySource =
                         new PropertiesPropertySource(resource.toString(), properties);
 
@@ -98,6 +129,7 @@ public class IdPPropertiesApplicationContextInitializer implements
 
         log.warn("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Get the target resource to be searched for {@link #IDP_PROPERTIES}.
@@ -121,25 +153,39 @@ public class IdPPropertiesApplicationContextInitializer implements
      * Load properties from the resource and log property names and values at debug level, suppressing properties whose
      * name matches 'password'.
      * 
+     * @param sink if non-null use this instance as the target
      * @param resource the resource
      * @return properties loaded from the resource or {@code  null} if loading failed
      */
-    @Nullable public Properties loadProperties(@Nonnull final Resource resource) {
+    @Nullable public Properties loadProperties(@Nullable final Properties sink, @Nonnull final Resource resource) {
         Constraint.isNotNull(resource, "Resource cannot be null");
         try {
-            final Properties properties = PropertiesLoaderUtils.loadProperties(resource);
-            if (log.isDebugEnabled()) {
-                log.debug("Loading properties from resource '{}'", resource);
-                final Pattern pattern = Pattern.compile("password", Pattern.CASE_INSENSITIVE);
-                for (final String name : new TreeSet<String>(properties.stringPropertyNames())) {
-                    final Object value = pattern.matcher(name).find() ? "<suppressed>" : properties.get(name);
-                    log.debug("Loaded property '{}'='{}'", name, value);
-                }
+            final Properties properties;
+            if (sink != null) {
+                properties = sink;
+            } else {
+                properties = new Properties();
             }
+            PropertiesLoaderUtils.fillProperties(properties, resource);
             return properties;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn("Unable to load properties from resource '{}'", resource, e);
             return null;
+        }
+    }
+    
+    /**
+     * Log property names and values at debug level, suppressing properties whose name matches 'password'.
+     * 
+     * @param properties the properties to log
+     */
+    public void logProperties(@Nonnull final Properties properties) {
+        if (log.isDebugEnabled()) {
+            final Pattern pattern = Pattern.compile("password|credential", Pattern.CASE_INSENSITIVE);
+            for (final String name : new TreeSet<String>(properties.stringPropertyNames())) {
+                final Object value = pattern.matcher(name).find() ? "<suppressed>" : properties.get(name);
+                log.debug("Loaded property '{}'='{}'", name, value);
+            }
         }
     }
 
