@@ -38,7 +38,7 @@
         p:availableFlows-ref="shibboleth.LogoutPropagationFlows" />
         
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:format="%{idp.service.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
 
     <bean id="RecordResponseComplete"
         class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />

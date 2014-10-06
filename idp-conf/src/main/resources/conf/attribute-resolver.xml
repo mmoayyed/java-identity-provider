@@ -75,10 +75,10 @@
     <!-- Example LDAP Connector -->
     <!--
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
-        ldapURL="%{idp.attribute.resolver.myLDAP.ldapURL}"
-        baseDN="%{idp.attribute.resolver.myLDAP.baseDN}" 
-        principal="%{idp.attribute.resolver.myLDAP.principal}"
-        principalCredential="%{idp.attribute.resolver.myLDAP.principalCredential}">
+        ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
+        baseDN="%{idp.attribute.resolver.LDAP.baseDN}" 
+        principal="%{idp.attribute.resolver.LDAP.principal}"
+        principalCredential="%{idp.attribute.resolver.LDAP.principalCredential}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${requestContext.principalName})
