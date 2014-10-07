@@ -16,12 +16,13 @@
 
     <!-- Flows executed after authentication. -->
     <util:list id="shibboleth.PostAuthnFlows">
-        <!-- 
+        <!--
         <bean id="post-authn/consent/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow"
                 p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
                 p:storageService-ref="shibboleth.ClientStorageService"
                 p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKey"
                 p:compareValues="true"
+                p:lifetime="P1Y"
                 p:idMessageCode="idp.tou.id"
                 p:textMessageCode="idp.tou.text" />
         
@@ -29,8 +30,9 @@
                 p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
                 p:storageService-ref="shibboleth.ClientStorageService"
                 p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKey"
-                p:compareValues="true" />
-        
+                p:compareValues="true"
+                p:lifetime="P1Y" />
+
         <bean id="post-authn/consent/per-attribute-consent" parent="shibboleth.consent.AttributeConsentFlow"
                 p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
                 p:storageService-ref="shibboleth.ClientStorageService"

@@ -110,19 +110,4 @@ public class AttributeConsentSerializerTest {
 
         Assert.assertEquals(consents, deserialized);
     }
-
-    @Test public void testExpiration() throws Exception {
-        serializer.initialize();
-        
-        expiration = new DateTime().plusYears(1);
-        consent1.setExpiration(expiration);
-        consent2.setExpiration(expiration);
-
-        final String serialized = serializer.serialize(consents);
-
-        final Map<String, Consent> deserialized =
-                serializer.deserialize(1, CONTEXT, KEY, serialized, expiration.getMillis());
-
-        Assert.assertEquals(consents, deserialized);
-    }
 }

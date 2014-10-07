@@ -25,6 +25,7 @@
             p:storageService-ref="shibboleth.ClientStorageService"
             p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKeyLookupFunction"
             p:compareValues="true"
+            p:lifetime="P1Y"
             scope="prototype" />
 
     <!-- Parent bean for terms of use consent flows. -->
@@ -34,6 +35,7 @@
             p:storageService-ref="shibboleth.ClientStorageService"
             p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKeyLookupFunction"
             p:compareValues="true"
+            p:lifetime="P1Y"
             p:idMessageCode="idp.tou.id"
             p:textMessageCode="idp.tou.text"
             scope="prototype" />

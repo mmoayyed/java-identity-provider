@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent.storage;
 
+import com.google.common.base.MoreObjects;
+
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorResult;
 
 /**
@@ -34,6 +36,18 @@ public class ConsentResult extends AbstractProfileInterceptorResult {
      */
     public ConsentResult(String context, String key, String value, Long expiration) {
         super(context, key, value, expiration);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", getId())
+                .add("context", getStorageContext() )
+                .add("key", getStorageKey())
+                .add("value", getStorageValue())
+                .add("expiration", getStorageExpiration())
+                .toString();
     }
 
 }

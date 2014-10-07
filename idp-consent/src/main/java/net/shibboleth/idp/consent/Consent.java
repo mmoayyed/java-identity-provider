@@ -27,8 +27,6 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
-
 import com.google.common.base.MoreObjects;
 
 /**
@@ -41,9 +39,6 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
     /** Consent value. */
     @Nullable private String value;
 
-    /** When consent expires. */
-    @Nullable private DateTime expiration;
-
     /** Whether consent is approved. */
     @Nullable private boolean approved;
 
@@ -54,15 +49,6 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
      */
     @Nullable public String getValue() {
         return value;
-    }
-
-    /**
-     * Get when consent expires.
-     * 
-     * @return when consent expires
-     */
-    @Nullable public DateTime getExpiration() {
-        return expiration;
     }
 
     /**
@@ -81,15 +67,6 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
      */
     public void setValue(@Nonnull @NotEmpty final String val) {
         value = Constraint.isNotNull(StringSupport.trimOrNull(val), "The value cannot be null or empty");
-    }
-
-    /**
-     * Set when consent expires.
-     * 
-     * @param timestamp when consent expires
-     */
-    public void setExpiration(@Nonnull final DateTime timestamp) {
-        expiration = Constraint.isNotNull(timestamp, "The expiration timestamp cannot be null");
     }
 
     /**
@@ -118,19 +95,21 @@ public class Consent extends AbstractIdentifiableInitializableComponent {
         final Consent other = (Consent) obj;
 
         return Objects.equals(getId(), other.getId()) && Objects.equals(getValue(), other.getValue())
-                && Objects.equals(getExpiration(), other.getExpiration())
                 && Objects.equals(isApproved(), other.isApproved());
     }
 
     /** {@inheritDoc} */
     public int hashCode() {
-        return Objects.hash(getId(), getValue(), getExpiration(), isApproved());
+        return Objects.hash(getId(), getValue(), isApproved());
     }
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", getId()).add("value", getValue())
-                .add("expiration", getExpiration()).add("isApproved", isApproved()).toString();
+        return MoreObjects.toStringHelper(this)
+                .add("id", getId())
+                .add("value", getValue())
+                .add("isApproved", isApproved())
+                .toString();
     }
 
 }

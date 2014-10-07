@@ -27,6 +27,7 @@ import net.shibboleth.idp.consent.storage.ConsentResult;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 
+import org.joda.time.DateTime;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -59,13 +60,18 @@ public class CreateResult extends AbstractConsentStorageAction {
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         try {
-            final Map<String, Consent> chosenAttributeConsents = getConsentContext().getCurrentConsents();
+            final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
+            final String value = getConsentSerializer().serialize(currentConsents);
 
-            final String value = getConsentSerializer().serialize(chosenAttributeConsents);
+            Long expiration = null;
+            final Long lifetime = getConsentFlowDescriptor().getLifetime();            
+            if (lifetime != null) {
+                expiration = DateTime.now().plus(lifetime).getMillis();
+            }
 
-            // TODO expiration
+            final ProfileInterceptorResult result = new ConsentResult(getContext(), getKey(), value, expiration);
 
-            final ProfileInterceptorResult result = new ConsentResult(getContext(), getKey(), value, null);
+            log.debug("{} Created consent result '{}'", getLogPrefix(), result);
 
             interceptorContext.setResult(result);
 
@@ -74,5 +80,4 @@ public class CreateResult extends AbstractConsentStorageAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }
-
 }

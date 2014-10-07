@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.logic.AttributeValuesHashFunction;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import com.google.common.base.Function;
@@ -57,6 +58,8 @@ public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
      */
     public void setAttributeValuesHashFunction(
             @Nonnull final Function<Collection<IdPAttributeValue<?>>, String> function) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         attributeValuesHashFunction = Constraint.isNotNull(function, "Attribute values hash function cannot be null");
     }
 

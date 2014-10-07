@@ -42,7 +42,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.joda.time.DateTime;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +55,11 @@ import org.slf4j.LoggerFactory;
 public class ConsentSerializer extends AbstractInitializableComponent implements
         StorageSerializer<Map<String, Consent>> {
 
-    /** Field name of attribute identifier. */
-    @Nonnull @NotEmpty private static final String ATTRIBUTE_ID_FIELD = "attr";
+    /** Field name of consent identifier. */
+    @Nonnull @NotEmpty private static final String ID_FIELD = "id";
 
-    /** Field name of attribute values hash. */
-    @Nonnull @NotEmpty private static final String ATTRIBUTE_VALUES_HASH_FIELD = "hash";
+    /** Field name of consent value. */
+    @Nonnull @NotEmpty private static final String VALUE_FIELD = "val";
 
     /** Field name of whether consent is approved. */
     @Nonnull @NotEmpty private static final String IS_APPROVED_FIELD = "appr";
@@ -102,12 +101,9 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
                     final JsonObject o = (JsonObject) a;
 
                     final Consent consent = new Consent();
-                    consent.setId(o.getString(ATTRIBUTE_ID_FIELD));
-                    consent.setValue(o.getString(ATTRIBUTE_VALUES_HASH_FIELD));
+                    consent.setId(o.getString(ID_FIELD));
+                    consent.setValue(o.getString(VALUE_FIELD));
                     consent.setApproved(o.getBoolean(IS_APPROVED_FIELD, true));
-                    if (expiration != null) {
-                        consent.setExpiration(new DateTime(expiration));
-                    }
                     consents.put(consent.getId(), consent);
                 }
             }
@@ -139,8 +135,8 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
         gen.writeStartArray();
         for (Consent consent : consents.values()) {
             gen.writeStartObject();
-            gen.write(ATTRIBUTE_ID_FIELD, consent.getId());
-            gen.write(ATTRIBUTE_VALUES_HASH_FIELD, consent.getValue());
+            gen.write(ID_FIELD, consent.getId());
+            gen.write(VALUE_FIELD, consent.getValue());
             if (!consent.isApproved()) {
                 gen.write(IS_APPROVED_FIELD, false);
             }
