@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.profile.impl;
 
+import java.io.IOException;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
@@ -33,7 +38,10 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.webflow.execution.RequestContext;
+
+import com.google.common.base.Function;
 
 /**
  * Action that refreshes a {@link ReloadableService} manually.
@@ -45,6 +53,7 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link EventIds#IO_ERROR}
  * @event {@link EventIds#UNABLE_TO_DECODE}
  */
 public class ReloadServiceConfiguration extends AbstractProfileAction {
@@ -55,49 +64,47 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(ReloadServiceConfiguration.class);
     
-    /** Service ID. */
-    @Nullable private String id;
+    /** Lookup function to locate service bean to operate on. */
+    @Nonnull private Function<ProfileRequestContext,ReloadableService> serviceLookupStrategy;
     
     /** The service to reload. */
     @Nullable private ReloadableService service;
+    
+    /** Constructor. */
+    public ReloadServiceConfiguration() {
+        serviceLookupStrategy = new WebFlowApplicationContextLookupStrategy();
+    }
 
+    /**
+     * Set the lookup strategy for the service object to reload.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setServiceLookupStrategy(@Nonnull final Function<ProfileRequestContext,ReloadableService> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        serviceLookupStrategy = Constraint.isNotNull(strategy, "ReloadableService lookup strategy cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
-        } else if (getHttpServletRequest() == null || getHttpServletResponse() == null) {
-            log.debug("{} No HttpServletRequest or HttpServletResponse available", getLogPrefix());
+        } else if (getHttpServletResponse() == null) {
+            log.debug("{} No HttpServletResponse available", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
-        id = StringSupport.trimOrNull(getHttpServletRequest().getParameter(SERVICE_ID));
-        if (id == null) {
-            log.debug("{} No 'id' parameter found in request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);
-            return false;
-        }
-
-        final SpringRequestContext springRequestContext =
-                profileRequestContext.getSubcontext(SpringRequestContext.class);
-        if (springRequestContext == null) {
-            log.debug("{} Spring request context not found in profile request context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-
-        final RequestContext requestContext = springRequestContext.getRequestContext();
-        if (requestContext == null) {
-            log.debug("{} Web Flow request context not found in Spring request context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-                
-        final Object bean = requestContext.getActiveFlow().getApplicationContext().getBean(id);
-        if (bean == null || !(bean instanceof ReloadableService)) {
-            log.debug("{} No bean of the correct type found named {}", getLogPrefix(), id);
-            getHttpServletResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
+        service = serviceLookupStrategy.apply(profileRequestContext);
+        if (service == null) {
+            log.debug("{} Unable to locate service to reload", getLogPrefix());
+            try {
+                getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
+            } catch (final IOException e) {
+                ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+            }
             return false;
         }
         
@@ -107,14 +114,78 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(ProfileRequestContext profileRequestContext) {
         
-        log.debug("{} Reloading configuration for {}", getLogPrefix(), id);
+        final String id;
+        if (service instanceof IdentifiedComponent) {
+            id = ((IdentifiedComponent) service).getId();
+        } else {
+            id = "(unnamed)";
+        }
+        
+        log.debug("{} Reloading configuration for '{}'", getLogPrefix(), id);
         
         try {
             service.reload();
-            log.debug("{} Reloaded configuration for {}", getLogPrefix(), id);
+            log.debug("{} Reloaded configuration for '{}'", getLogPrefix(), id);
+            getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
         } catch (final ServiceException e) {
-            log.error("{} Error reloading service configuration for {}", getLogPrefix(), id, e);
+            log.error("{} Error reloading service configuration for '{}'", getLogPrefix(), id, e);
+            try {
+                getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            } catch (final IOException e2) {
+                ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+            }
         }
+    }
+    
+    /**
+     * Default strategy locates a bean identified with a query parameter in the web flow application context.
+     */
+    private class WebFlowApplicationContextLookupStrategy implements Function<ProfileRequestContext,ReloadableService> {
+
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public ReloadableService apply(@Nullable final ProfileRequestContext input) {
+
+            if (getHttpServletRequest() == null) {
+                log.debug("{} HttpServletRequest not found", getLogPrefix());
+                ActionSupport.buildEvent(input, EventIds.UNABLE_TO_DECODE);
+                return null;
+            }
+            
+            final String id = StringSupport.trimOrNull(getHttpServletRequest().getParameter(SERVICE_ID));
+            if (id == null) {
+                log.debug("{} No 'id' parameter found in request", getLogPrefix());
+                ActionSupport.buildEvent(input, EventIds.UNABLE_TO_DECODE);
+                return null;
+            }
+            
+            final SpringRequestContext springRequestContext = input.getSubcontext(SpringRequestContext.class);
+            if (springRequestContext == null) {
+                log.debug("{} Spring request context not found in profile request context", getLogPrefix());
+                ActionSupport.buildEvent(input, EventIds.INVALID_PROFILE_CTX);
+                return null;
+            }
+
+            final RequestContext requestContext = springRequestContext.getRequestContext();
+            if (requestContext == null) {
+                log.debug("{} Web Flow request context not found in Spring request context", getLogPrefix());
+                ActionSupport.buildEvent(input, EventIds.INVALID_PROFILE_CTX);
+                return null;
+            }
+            
+            try {
+                final Object bean = requestContext.getActiveFlow().getApplicationContext().getBean(id);
+                if (bean != null && bean instanceof ReloadableService) {
+                    return (ReloadableService) bean;
+                }
+            } catch (final BeansException e) {
+                
+            }
+            
+            log.debug("{} No bean of the correct type found named {}", getLogPrefix(), id);
+            return null;
+        }
+        
     }
 
 }

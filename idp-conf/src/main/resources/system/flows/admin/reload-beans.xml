@@ -33,7 +33,7 @@
         p:policyName="%{idp.reload.accessPolicy}" />
 
     <bean id="ReloadServiceConfiguration"
-        class="org.opensaml.profile.action.impl.ReloadServiceConfiguration" scope="prototype"
+        class="net.shibboleth.idp.profile.impl.ReloadServiceConfiguration" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
         

@@ -23,7 +23,7 @@
 
         <!-- New administrative and debugging flows. -->
         <webflow:flow-location id="admin/resolvertest" path="../system/flows/admin/resolvertest-flow.xml" />
-        <webflow:flow-location id="admin/reload" path="../system/flows/admin/reload-flow.xml" />
+        <webflow:flow-location id="admin/reload-service" path="../system/flows/admin/reload-flow.xml" />
         
         <!-- Proprietary logout flow. -->
         <webflow:flow-location id="Logout" path="../system/flows/logout/logout-flow.xml" />
