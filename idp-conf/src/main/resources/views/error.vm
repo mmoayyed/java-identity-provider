@@ -9,7 +9,7 @@
 
 #if ($flowRequestContext)
     #set ($eventId = $flowRequestContext.getCurrentEvent().getId())
-    #set ($springContext = $flowRequestContext.getFlowExecutionContext().getActiveSession().getDefinition().getApplicationContext())
+    #set ($springContext = $flowRequestContext.getActiveFlow().getApplicationContext())
     #set ($locale = $flowRequestContext.getExternalContext().getLocale())
     #set ($eventKey = $springContext.getMessage($eventId, null, "error", $locale))
     #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, "Error", $locale))
@@ -17,6 +17,10 @@
     
     #if ($eventId == "AccessDenied")
         $response.setStatus(403)
+    #elseif ($eventId == "UnableToDecode")
+        $response.setStatus(400)
+    #else
+        $response.setStatus(500)
     #end
 #elseif ($exception)
     #set ($eventId = $exception.getClass().getSimpleName())
