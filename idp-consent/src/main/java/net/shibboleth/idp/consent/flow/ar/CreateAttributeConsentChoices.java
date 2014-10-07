@@ -50,9 +50,13 @@ public class CreateAttributeConsentChoices extends AbstractAttributeConsentActio
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
+        if(!super.doPreExecute(profileRequestContext, interceptorContext)) {
+            return false;
+        }
+        
         attributeValuesHashFunction = getAttributeConsentFlowDescriptor().getAttributeValuesHashFunction();
-
-        return super.doPreExecute(profileRequestContext, interceptorContext);
+        
+        return true;
     }
 
     /** {@inheritDoc} */

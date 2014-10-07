@@ -77,7 +77,7 @@ public abstract class ConsentFlowDescriptor extends ProfileInterceptorFlowDescri
      */
     public void setCompareValues(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-    
+
         compareValues = flag;
     }
 

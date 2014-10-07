@@ -18,16 +18,11 @@
 package net.shibboleth.idp.consent.flow.tou;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.context.TermsOfUseContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,33 +36,6 @@ public class InitializeTermsOfUseContext extends AbstractProfileInterceptorActio
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeTermsOfUseContext.class);
-
-    /** Consent flow descriptor. */
-    @Nullable private TermsOfUseFlowDescriptor termsOfUseFlowDescriptor;
-
-    /**
-     * Set the consent flow descriptor.
-     * 
-     * @param descriptor the consent flow descriptor
-     */
-    public void setConsentFlowDescriptor(@Nonnull final TermsOfUseFlowDescriptor descriptor) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        termsOfUseFlowDescriptor = Constraint.isNotNull(descriptor, "Terms of use flow descriptor cannot be null");
-    }
-
-    /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
-
-        if (termsOfUseFlowDescriptor == null) {
-            log.warn("{} No terms of use flow descriptor available", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-
-        return super.doPreExecute(profileRequestContext, interceptorContext);
-    }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,

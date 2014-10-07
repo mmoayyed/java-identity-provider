@@ -10,12 +10,11 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-    
+
     <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
 
-    <bean id="InitializeAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.InitializeAttributeConsentContext" scope="prototype"
-        p:consentFlowDescriptor-ref="AttributeConsentFlowDescriptor" />
-        
+    <bean id="InitializeAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.InitializeAttributeConsentContext" scope="prototype" />
+
     <bean id="RevokeConsent" class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 

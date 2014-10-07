@@ -14,6 +14,34 @@
 
     <import resource="../../conf/post-authn/post-authn.xml" />
 
-    <bean id="shibboleth.PostAuthnFlow" abstract="true" class="net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor" />
+    <!-- Parent bean for post-authn interceptor flows. -->
+    <bean id="shibboleth.PostAuthnFlow" abstract="true"
+            class="net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor" />
+
+    <!-- Parent bean for attribute consent flows. -->
+    <bean id="shibboleth.consent.AttributeConsentFlow" abstract="true"
+            class="net.shibboleth.idp.consent.flow.ar.AttributeConsentFlowDescriptor"
+            p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
+            p:storageService-ref="shibboleth.ClientStorageService"
+            p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKeyLookupFunction"
+            p:compareValues="true"
+            scope="prototype" />
+
+    <!-- Parent bean for terms of use consent flows. -->
+    <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
+            class="net.shibboleth.idp.consent.flow.tou.TermsOfUseFlowDescriptor"
+            p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
+            p:storageService-ref="shibboleth.ClientStorageService"
+            p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKeyLookupFunction"
+            p:compareValues="true"
+            p:idMessageCode="idp.tou.id"
+            p:textMessageCode="idp.tou.text"
+            scope="prototype" />
+
+    <!-- Parent bean for storage key lookup function. -->
+    <bean id="shibboleth.consent.StorageKeyLookupFunction" abstract="true"
+            class="net.shibboleth.idp.consent.logic.StorageKeyLookupFunction"
+            c:attributeId="eduPersonPrincipalName"
+            scope="prototype" />
 
 </beans>

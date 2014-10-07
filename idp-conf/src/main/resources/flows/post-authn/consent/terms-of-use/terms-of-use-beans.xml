@@ -13,9 +13,8 @@
 
     <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
 
-    <bean id="InitializeTermsOfUseContext" class="net.shibboleth.idp.consent.flow.tou.InitializeTermsOfUseContext" scope="prototype"
-        p:consentFlowDescriptor-ref="TermsOfUseFlowDescriptor" />
-        
+    <bean id="InitializeTermsOfUseContext" class="net.shibboleth.idp.consent.flow.tou.InitializeTermsOfUseContext" scope="prototype" />
+
     <bean id="PopulateTermsOfUse" class="net.shibboleth.idp.consent.flow.tou.PopulateTermsOfUse" scope="prototype" />
 
     <bean id="ReadConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype" />
@@ -31,5 +30,5 @@
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="CreateResult" class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype" />
-    
+
 </beans>

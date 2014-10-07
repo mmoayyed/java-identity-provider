@@ -44,6 +44,10 @@ public class CreateTermsOfUseChoice extends AbstractTermsOfUseAction {
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
+        if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
+            return false;
+        }
+        
         termsOfUse = getTermsOfUseContext().getTermsOfUse();
         if (termsOfUse == null) {
             log.debug("{} Terms of use cannot be null", getLogPrefix());
@@ -51,7 +55,7 @@ public class CreateTermsOfUseChoice extends AbstractTermsOfUseAction {
             return false;
         }
 
-        return super.doPreExecute(profileRequestContext, interceptorContext);
+        return true;
     }
 
     /** {@inheritDoc} */
