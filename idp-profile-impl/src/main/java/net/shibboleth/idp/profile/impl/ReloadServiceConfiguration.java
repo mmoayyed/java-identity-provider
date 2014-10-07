@@ -127,13 +127,18 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
             service.reload();
             log.debug("{} Reloaded configuration for '{}'", getLogPrefix(), id);
             getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+            getHttpServletResponse().getWriter().println("Configuration reloaded.");
         } catch (final ServiceException e) {
             log.error("{} Error reloading service configuration for '{}'", getLogPrefix(), id, e);
             try {
                 getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (final IOException e2) {
+                log.error("{} I/O error responding to request", getLogPrefix(), e2);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
+        } catch (final IOException e) {
+            log.error("{} I/O error responding to request", getLogPrefix(), e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }
     
