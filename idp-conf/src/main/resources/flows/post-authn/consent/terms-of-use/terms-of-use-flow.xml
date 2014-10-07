@@ -2,8 +2,6 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <!-- Placeholder flow for attribute release consent. -->
-
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
 
@@ -12,13 +10,6 @@
         <evaluate expression="InitializeTermsOfUseContext" />
         <evaluate expression="PopulateTermsOfUse" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="RevokeConsent" />
-    </action-state>
-
-    <action-state id="RevokeConsent">
-        <evaluate expression="RevokeConsent" />
-        <evaluate expression="'proceed'" />
-        <transition on="RevokeConsent" to="CreateTermsOfUseChoice" />
         <transition on="proceed" to="ReadConsentFromStorage" />
     </action-state>
     

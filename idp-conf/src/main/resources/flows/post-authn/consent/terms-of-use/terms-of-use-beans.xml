@@ -19,9 +19,6 @@
 
     <bean id="ReadConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype" />
 
-    <bean id="RevokeConsent" class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
-
     <bean id="IsTermsOfUseConsentRequired" class="net.shibboleth.idp.consent.flow.tou.IsTermsOfUseConsentRequired" scope="prototype" />
 
     <bean id="CreateTermsOfUseChoice" class="net.shibboleth.idp.consent.flow.tou.CreateTermsOfUseChoice" scope="prototype" />
