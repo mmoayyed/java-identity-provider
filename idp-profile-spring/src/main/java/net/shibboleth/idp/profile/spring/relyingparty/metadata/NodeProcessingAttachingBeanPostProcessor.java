@@ -29,13 +29,13 @@ import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 
+import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
-import org.opensaml.saml.metadata.resolver.impl.ChainingMetadataResolver;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 

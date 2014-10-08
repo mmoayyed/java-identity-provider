@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
-import org.opensaml.saml.metadata.resolver.impl.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.Assert;
 import org.testng.annotations.Test;

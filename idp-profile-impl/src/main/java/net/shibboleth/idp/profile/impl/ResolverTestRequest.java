@@ -25,7 +25,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /**
  * Object representing a request to run the attribute resolution and filtering components.
@@ -105,7 +105,7 @@ public class ResolverTestRequest {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
             .add("principal", principal)
             .add("requesterId", requesterId)
             .add("acsIndex", acsIndex)

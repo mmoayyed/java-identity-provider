@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
@@ -33,21 +34,20 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 /**
  * This class exists primarily to allow the parsing of relying-party.xml to create a serviceable implementation of
  * {@link MetadataResolver}.
- * 
  */
-public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<MetadataResolver> implements
-        MetadataResolver, RefreshableMetadataResolver {
+public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<MetadataResolver>
+        implements RefreshableMetadataResolver {
 
     /** The embedded resolver. */
-    private final MetadataResolver resolver;
+    @Nonnull private final MetadataResolver resolver;
 
     /**
      * Constructor.
      * 
      * @param child The {@link MetadataResolver} to embed.
      */
-    public RelyingPartyMetadataProvider(MetadataResolver child) {
-        resolver = child;
+    public RelyingPartyMetadataProvider(@Nonnull final MetadataResolver child) {
+        resolver = Constraint.isNotNull(child, "MetadataResolver cannot be null");
     }
 
     /**
@@ -55,18 +55,20 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
      * 
      * @return the parameter we got as a constructor
      */
-    public MetadataResolver getEmbeddedResolver() {
+    @Nonnull public MetadataResolver getEmbeddedResolver() {
         return resolver;
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Iterable<EntityDescriptor> resolve(CriteriaSet criteria) throws ResolverException {
+    @Override
+    @Nonnull public Iterable<EntityDescriptor> resolve(@Nullable final CriteriaSet criteria) throws ResolverException {
 
         return resolver.resolve(criteria);
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public EntityDescriptor resolveSingle(CriteriaSet criteria) throws ResolverException {
+    @Override
+    @Nullable public EntityDescriptor resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
 
         return resolver.resolveSingle(criteria);
     }
@@ -77,13 +79,13 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     }
 
     /** {@inheritDoc} */
-    @Override public void setRequireValidMetadata(boolean requireValidMetadata) {
+    @Override public void setRequireValidMetadata(final boolean requireValidMetadata) {
         resolver.setRequireValidMetadata(requireValidMetadata);
 
     }
 
     /** {@inheritDoc} */
-    @Override public MetadataFilter getMetadataFilter() {
+    @Override @Nullable public MetadataFilter getMetadataFilter() {
         return resolver.getMetadataFilter();
     }
 
@@ -94,7 +96,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     }
 
     /** {@inheritDoc} */
-    @Override public void setMetadataFilter(MetadataFilter newFilter) {
+    @Override public void setMetadataFilter(@Nullable final MetadataFilter newFilter) {
         resolver.setMetadataFilter(newFilter);
     }
 
@@ -110,4 +112,5 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
 
         }
     }
+    
 }

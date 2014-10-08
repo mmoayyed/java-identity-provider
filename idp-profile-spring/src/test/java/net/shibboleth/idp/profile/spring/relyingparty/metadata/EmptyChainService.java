@@ -23,8 +23,8 @@ import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
+import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.ChainingMetadataResolver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

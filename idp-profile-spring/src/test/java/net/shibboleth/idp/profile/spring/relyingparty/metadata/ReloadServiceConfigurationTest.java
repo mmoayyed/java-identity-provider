@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.impl.ReloadServiceConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -57,7 +56,6 @@ public class ReloadServiceConfigurationTest extends AbstractMetadataParserTest {
     
     @BeforeMethod public void setUpAction() throws ComponentInitializationException {
         src = new RequestContextBuilder().buildRequestContext();
-        new WebflowRequestContextProfileRequestContextLookup().apply(src);
     }
 
     @Test public void service() {
