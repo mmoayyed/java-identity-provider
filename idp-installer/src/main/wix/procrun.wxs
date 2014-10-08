@@ -37,7 +37,7 @@
                 <File Id="file_procrun_notice" KeyPath="yes" Source="$(var.ProcrunSrc)\NOTICE.txt" />
             </Component>
             <Component Id="procrun_mgr" Directory="PROCRUNROOT" Guid="{E24E17EE-684F-42E0-B481-1CBBC084A861}">
-                <File Id="file_procrun_mgr" KeyPath="yes" Source="$(var.ProcrunSrc)\prunmgr.exe" />
+                <File Id="file_procrun_mgr" KeyPath="yes" Source="$(var.ProcrunSrc)\prunmgr.exe" Name="$(var.ServiceName)w.exe"/>
             </Component>
             <Component Id="procrun_relnotes" Directory="PROCRUNROOT" Guid="{F0B94ECE-2029-43E6-B9AE-11A6C782D7D5}">
                 <File Id="procrun_relnotes" KeyPath="yes" Source="$(var.ProcrunSrc)\RELEASE-NOTES.txt" />

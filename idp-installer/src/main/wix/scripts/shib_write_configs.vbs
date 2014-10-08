@@ -43,7 +43,7 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "idp.host.name=" & IdpHostName
     AntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/shibboleth/idp"
     AntFile.WriteLine "idp.keystore.password=" & KeyStorePassword
-    AntFile.WriteLine "idp.sealer.password=" & KeyStorePassword
+    AntFile.WriteLine "idp.sealer.password=" & SealerPassword
     AntFile.WriteLine "idp.target.dir=" & InstallDirJava & "/IdP"
     AntFile.WriteLine "idp.merge.properties=idp.install.replace.properties"
     AntFile.WriteLine "#"

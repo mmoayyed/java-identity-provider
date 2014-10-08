@@ -31,15 +31,13 @@
         <Control Id="TopLine" Type="Line" X="0" Y="44" Width="370" Height="1" />
 
         <!-- Where we are installing -->
-        <Control Id="DescriptionLine1" Type="Text" X="25" Y="51" Height="12" Width="320" 
+        <Control Id="DescriptionLine1" Type="Text" X="25" Y="51" Height="24" Width="320" 
                  Text="The updated files for [ProductName] will be installed to [INSTALLDIR]"/>
 
         <!-- Jetty? -->
-        <Control Id="UpdateJetty" Type="CheckBox" X="265" Y="146" Height="17" Width="80"
+        <Control Id="UpdateJetty" Type="CheckBox" X="25" Y="80" Height="17" Width="80"
                  CheckBoxPropertyRef="INSTALL_JETTY" CheckBoxValue="TRUE"
                  Text="Install Jetty">
-          <Publish Event="AddLocal" Value="InstallJetty">INSTALL_JETTY = "TRUE"</Publish>
-          <Publish Event="Remove" Value="InstallJetty">INSTALL_JETTY &lt;&gt; "TRUE"</Publish>
         </Control>
 
         <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
@@ -49,7 +47,9 @@
         </Control>
 
         <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="&amp;Next" Default="yes">
-          <Publish Event="NewDialog" Value="VerifyReadyDlg"/>
+	    <Publish Event="AddLocal" Value="InstallJetty">INSTALL_JETTY</Publish>
+	    <Publish Event="Remove" Value="InstallJetty">Not INSTALL_JETTY</Publish>
+	    <Publish Event="NewDialog" Value="VerifyReadyDlg"/>
         </Control>
 
         <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="&amp;Cancel" Cancel="yes">
