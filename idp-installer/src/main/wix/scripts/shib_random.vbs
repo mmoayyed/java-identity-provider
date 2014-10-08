@@ -4,4 +4,5 @@
 
 Set TypeLib = CreateObject("Scriptlet.TypeLib")
 JettyPassword=left(TypeLib.Guid, 38)
-Session.Property("JETTY_PASS") = JettyPassword
+' Prefix the propoerty with the MM GUID....
+Session.Property("JETTY_PASS.684B3207_0D64_43E6_9E6A_3ACB8B7672D7") = JettyPassword

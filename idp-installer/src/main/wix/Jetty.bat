@@ -156,6 +156,7 @@ REM Tidy up in the Sucessful exit case
    rd /q /s procrun-extract
    rd /q /s jetty-extract
    del *.wixobj *.wixpdb
+   del jetty_contents.wxs
 
 :done
 

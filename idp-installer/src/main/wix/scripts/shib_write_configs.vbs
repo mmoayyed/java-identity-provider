@@ -30,10 +30,9 @@ LogFile.WriteLine "Installing to " & InstallDirJava
 LogFile.WriteLine "Host " & IdPHostName
 LogFile.WriteLine "IntallJetty" & InstallJetty
 
-Set TypeLib = CreateObject("Scriptlet.TypeLib")
-KeyStorePassword=left(TypeLib.Guid, 38)
-SealerPassword=left(TypeLib.Guid, 38)
-SsoStorePassword=left(TypeLib.Guid, 38)
+KeyStorePassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
+SealerPassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
+SsoStorePassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
 
 set AntFile=FileSystemObj.OpenTextFile(InstallDir & "\IdP\idp.install.properties" , 2, True)
 if (Err.Number = 0 ) then
@@ -90,10 +89,11 @@ if (InstallJetty <> "") then
 	JettyFile.WriteLine "# File to be merged into jetty's idp.ini file"
 	JettyFile.WriteLine "#"
 
+	JettyFile.WriteLine "jetty.host=0.0.0.0"
 	JettyFile.WriteLine "jetty.https.port=443"
 	JettyFile.WriteLine "jetty.backchannel.port=8443"
-	JettyFile.WriteLine "jetty.backchannel.keystore.path=" & InstallDirJava & "/IdP/creds/idp-tls.p12"
-	JettyFile.WriteLine "jetty.browser.keystore.path=" & InstallDirJava & "/IdP/creds/idp-tls.p12"
+	JettyFile.WriteLine "jetty.backchannel.keystore.path=" & InstallDirJava & "/IdP/creds/idp-backchannel.p12"
+	JettyFile.WriteLine "jetty.browser.keystore.path=" & InstallDirJava & "/IdP/creds/idp-userfacing.p12"
 	JettyFile.WriteLine "jetty.backchannel.keystore.password=" & KeyStorePassword
 	JettyFile.WriteLine "jetty.browser.keystore.password=" & SsoStorePassword
 	JettyFile.WriteLine "jetty.backchannel.keystore.type=PKCS12"

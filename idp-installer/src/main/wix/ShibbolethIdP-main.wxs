@@ -19,10 +19,11 @@
 
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Shibboleth IdP" Language="1033" Version="0.0.3.0" Manufacturer="Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+  <Product Id="*" Name="Shibboleth IdP" Language="1033" Version="3.0.0.1" Manufacturer="Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
     <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="$(var.msitype)" Description="Shibboleth IdP" Manufacturer="Shibboleth Consortium"/>
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize"/>
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes"
+                  Schedule="afterInstallInitialize" />
     <MediaTemplate EmbedCab="yes"/>
 
     <Condition Message="Shibboleth requires a Windows NT-based operating system.">NOT Version9X</Condition>
@@ -74,8 +75,8 @@
       <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files\Internet2\ShibIdP"/>
     </Property>
 
-    <Property Id="IS_V2" Secure="yes">TOSET</Property>
-    <Property Id="JETTY_PASS" Secure="yes">TOSET</Property>
+<!--    <Property Id="IS_V2" Secure="yes">TOSET</Property>
+    <Property Id="JETTY_PASS" Secure="yes">TOSET</Property> -->
 
     <Property Id="QI_INSTALLDIR64" Secure="yes">
       <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files (x86)\Internet2\ShibIdP"/>
@@ -120,7 +121,7 @@
 
       <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
       <Custom Action="InheritInstallJetty" After="AppSearch">
-        OLD_JETTY_INSTALL AND NOT INSTALL_JETTY
+	  OLD_INSTALL_JETTY AND NOT INSTALL_JETTY
       </Custom>
         
       <!-- Could we find JAVA.EXE ?-->
