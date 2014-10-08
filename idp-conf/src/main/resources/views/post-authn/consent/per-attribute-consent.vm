@@ -22,7 +22,7 @@
                 <div class="content" >
                     <form action="$flowExecutionUrl" method="post"  >
                         <table>
-                            #foreach($attribute in $attributeConsentContext.getProcessedAttributes().values())
+                            #foreach($attribute in $attributeConsentContext.getConsentableAttributes().values())
                                 <tr>
                                     <td>$attributeDisplayNameFunction.apply($attribute)</td>
                                     <td>$attribute.values</td>

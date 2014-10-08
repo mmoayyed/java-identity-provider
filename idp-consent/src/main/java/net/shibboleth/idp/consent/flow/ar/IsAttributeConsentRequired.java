@@ -90,7 +90,7 @@ public class IsAttributeConsentRequired extends AbstractAttributeConsentAction {
      */
     private boolean isAttributeConsentRequired(@Nonnull final ConsentContext consentContext) {
 
-        final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
+        final Map<String, IdPAttribute> attributes = getAttributeConsentContext().getConsentableAttributes();
         if (attributes.isEmpty()) {
             log.debug("{} Consent is not required because there are no attributes to consent to.", getLogPrefix());
             return false;
@@ -108,6 +108,9 @@ public class IsAttributeConsentRequired extends AbstractAttributeConsentAction {
                 log.debug("{} Consent is required because there is a new attribute to consent to.", getLogPrefix());
                 return true;
             }
+            
+            // TODO compare values
+            
             final String hash = attributeValuesHashFunction.apply(attribute.getValues());
             if (!hash.equals(consent.getValue())) {
                 log.debug("{} Consent is required because an attribute has changed since the previous consent.",

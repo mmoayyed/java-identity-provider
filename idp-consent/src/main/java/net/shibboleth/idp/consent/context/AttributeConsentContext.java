@@ -17,40 +17,49 @@
 
 package net.shibboleth.idp.consent.context;
 
+import java.util.Collections;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
+import com.google.common.collect.MapConstraints;
+
 /**
- * Context for attribute consent.
+ * Context for attribute consent. Holds the attributes for which consent is obtained.
  */
 public class AttributeConsentContext extends BaseContext {
 
-    /** The attributes to be consented to. */
-    @Nullable @NonnullElements private Map<String, IdPAttribute> processedAttributes;
+    /** Attributes to be consented to. */
+    @Nonnull @NonnullElements private Map<String, IdPAttribute> consentableAttributes;
+
+    /** Constructor. */
+    public AttributeConsentContext() {
+        consentableAttributes = Collections.emptyMap();
+    }
 
     /**
      * Get the attributes to be consented to.
      * 
      * @return the attributes to be consented to
      */
-    @Nullable @NonnullElements public Map<String, IdPAttribute> getProcessedAttributes() {
-        return processedAttributes;
+    @Nonnull @NonnullElements public Map<String, IdPAttribute> getConsentableAttributes() {
+        return consentableAttributes;
     }
 
     /**
-     * the attributes to be consented to.
+     * Set the attributes to be consented to.
      * 
      * @param attributes the attributes to be consented to
      */
-    public void setProcessedAttributes(@Nullable @NonnullElements Map<String, IdPAttribute> attributes) {
-        // TODO constraints
+    public void setConsentableAttributes(@Nonnull @NonnullElements final Map<String, IdPAttribute> attributes) {
+        Constraint.isNotNull(attributes, "Consentable attributes cannot be null");
 
-        processedAttributes = attributes;
+        consentableAttributes = MapConstraints.constrainedMap(attributes, MapConstraints.notNull());
     }
 }

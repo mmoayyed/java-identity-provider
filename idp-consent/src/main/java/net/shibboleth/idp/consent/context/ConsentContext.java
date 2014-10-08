@@ -46,9 +46,8 @@ public class ConsentContext extends BaseContext {
     
     /** Constructor. */
     public ConsentContext() {
-        // TODO proper inits
-        previousConsents = Collections.EMPTY_MAP;
-        currentConsents = Collections.EMPTY_MAP;
+        previousConsents = Collections.emptyMap();
+        currentConsents = Collections.emptyMap();
     }
 
     /**

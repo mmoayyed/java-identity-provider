@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -46,16 +47,25 @@ public class CreateAttributeConsentChoices extends AbstractAttributeConsentActio
     /** Function to create hash of all attribute values. */
     @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
 
+    /** Attributes to be consented to. */
+    @Nonnull @NonnullElements private Map<String, IdPAttribute> consentableAttributes;
+
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        if(!super.doPreExecute(profileRequestContext, interceptorContext)) {
+        if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
             return false;
         }
-        
+
         attributeValuesHashFunction = getAttributeConsentFlowDescriptor().getAttributeValuesHashFunction();
-        
+
+        consentableAttributes = getAttributeConsentContext().getConsentableAttributes();
+        if (consentableAttributes.isEmpty()) {
+            log.debug("{} No attributes available from attribute consent context, nothing to do", getLogPrefix());
+            return false;
+        }
+
         return true;
     }
 
@@ -63,17 +73,9 @@ public class CreateAttributeConsentChoices extends AbstractAttributeConsentActio
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        // TODO processed attributes
-
-        final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
-        if (attributes.isEmpty()) {
-            log.debug("{} No attributes available from attribute context, nothing to do", getLogPrefix());
-            return;
-        }
-
         final Map<String, Consent> currentConsents = new LinkedHashMap<>();
-        
-        for (IdPAttribute attribute : attributes.values()) {
+
+        for (final IdPAttribute attribute : consentableAttributes.values()) {
             final String hash = attributeValuesHashFunction.apply(attribute.getValues());
 
             final Consent consent = new Consent();
@@ -82,7 +84,7 @@ public class CreateAttributeConsentChoices extends AbstractAttributeConsentActio
 
             // Remember previous choice.
             final Consent previousConsent = getConsentContext().getPreviousConsents().get(consent.getId());
-            if (previousConsent != null && Objects.equal(hash, previousConsent.getValue())) {
+            if (previousConsent != null && Objects.equal(consent.getValue(), previousConsent.getValue())) {
                 consent.setApproved(previousConsent.isApproved());
             }
 

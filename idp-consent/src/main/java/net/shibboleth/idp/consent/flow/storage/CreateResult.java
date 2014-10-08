@@ -63,8 +63,8 @@ public class CreateResult extends AbstractConsentStorageAction {
             final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
             final String value = getConsentSerializer().serialize(currentConsents);
 
+            final Long lifetime = getConsentFlowDescriptor().getLifetime();
             Long expiration = null;
-            final Long lifetime = getConsentFlowDescriptor().getLifetime();            
             if (lifetime != null) {
                 expiration = DateTime.now().plus(lifetime).getMillis();
             }

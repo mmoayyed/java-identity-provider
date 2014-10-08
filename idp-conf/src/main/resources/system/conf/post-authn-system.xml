@@ -45,5 +45,13 @@
             class="net.shibboleth.idp.consent.logic.StorageKeyLookupFunction"
             c:attributeId="eduPersonPrincipalName"
             scope="prototype" />
+            
+    <!-- Attribute consent predicate. -->
+    <bean id="shibboleth.consent.AttributeConsent.AttributePredicate"
+            class="net.shibboleth.idp.consent.logic.AttributePredicate"
+            c:whitelist-ref="shibboleth.consent.AttributeConsent.whitelistedAttributeIDs"
+            c:blacklist-ref="shibboleth.consent.AttributeConsent.blacklistedAttributeIDs"
+            c:matchExpression="#{getObject('shibboleth.consent.AttributeConsent.matchExpression')}"
+            scope="prototype" />
 
 </beans>

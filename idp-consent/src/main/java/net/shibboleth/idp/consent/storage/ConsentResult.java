@@ -17,9 +17,15 @@
 
 package net.shibboleth.idp.consent.storage;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.base.MoreObjects;
 
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorResult;
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
 /**
  * The result of a consent flow, suitable for storage.
@@ -34,7 +40,11 @@ public class ConsentResult extends AbstractProfileInterceptorResult {
      * @param value storage value
      * @param expiration storage expiration
      */
-    public ConsentResult(String context, String key, String value, Long expiration) {
+    public ConsentResult(
+            @Nonnull @NotEmpty final String context,
+            @Nonnull @NotEmpty final String key,
+            @Nonnull @NotEmpty final String value,
+            @Nullable @Positive @Duration final Long expiration) {
         super(context, key, value, expiration);
     }
 
@@ -43,7 +53,7 @@ public class ConsentResult extends AbstractProfileInterceptorResult {
     public String toString() {
         return MoreObjects.toStringHelper(this)
                 .add("id", getId())
-                .add("context", getStorageContext() )
+                .add("context", getStorageContext())
                 .add("key", getStorageKey())
                 .add("value", getStorageValue())
                 .add("expiration", getStorageExpiration())

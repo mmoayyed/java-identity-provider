@@ -15,14 +15,15 @@
 
     <bean id="InitializeAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.InitializeAttributeConsentContext" scope="prototype" />
 
+    <bean id="PopulateAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.PopulateAttributeConsentContext" scope="prototype"
+        p:attributePredicate-ref="shibboleth.consent.AttributeConsent.AttributePredicate" />
+
     <bean id="RevokeConsent" class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="ReadConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype" />
 
     <bean id="IsAttributeConsentRequired" class="net.shibboleth.idp.consent.flow.ar.IsAttributeConsentRequired" scope="prototype" />
-
-    <bean id="ProcessAttributes" class="net.shibboleth.idp.consent.flow.ar.ProcessAttributes" scope="prototype" />
 
     <bean id="CreateAttributeConsentChoices" class="net.shibboleth.idp.consent.flow.ar.CreateAttributeConsentChoices" scope="prototype" />
 
