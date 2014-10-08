@@ -144,7 +144,7 @@ public class ReloadMetadata extends AbstractProfileAction {
                 toRefresh.refresh();
                 log.debug("{} Reloaded metadata from '{}'", getLogPrefix(), id);
                 getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
-                getHttpServletResponse().getWriter().println("Configuration reloaded.");
+                getHttpServletResponse().getWriter().println("Metadata reloaded.");
             } else {
                 log.debug("{} Unable to locate refreshable metadata source '{}'", getLogPrefix(), id);
                 getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
