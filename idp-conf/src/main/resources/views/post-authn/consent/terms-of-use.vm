@@ -23,7 +23,7 @@
                         $termsOfUseContext.getTermsOfUse().getText()
                     </div>
                     <form action="$flowExecutionUrl" method="post"  >
-                            <input type="hidden" name="consents" value="$encoder.encodeForHTML($termsOfUseContext.getTermsOfUse().getId())" />
+                            <input type="hidden" name="consentIds" value="$encoder.encodeForHTML($termsOfUseContext.getTermsOfUse().getId())" />
                             ## #if ($globalConsentEnabled)
                             ## <input type="checkbox" name="consent.global"> value="yes" />
                             ## #springMessage("attribute-release.global-consent")

@@ -1,75 +1,8 @@
  <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+      parent="post-authn/consent/abstract-attribute-consent" >
 
-    <!-- Placeholder flow for attribute release consent. -->
-
-    <!-- Rudimentary impediment to direct execution of subflow. -->
-    <input name="calledAsSubflow" type="boolean" required="true" />
-
-    <action-state id="AttributeConsentSetup">
-        <evaluate expression="InitializeConsentContext" />
-        <evaluate expression="InitializeAttributeConsentContext" />
-        <evaluate expression="PopulateAttributeConsentContext" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="RevokeConsent" />
-    </action-state>
-
-    <action-state id="RevokeConsent">
-        <evaluate expression="RevokeConsent" />
-        <evaluate expression="'proceed'" />
-        <transition on="RevokeConsent" to="IsAttributeConsentRequired" />
-        <transition on="proceed" to="ReadConsentFromStorage" />
-    </action-state>
-    
-    <action-state id="ReadConsentFromStorage">
-        <evaluate expression="ReadConsentFromStorage" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="IsAttributeConsentRequired" />
-    </action-state>
-
-    <action-state id="IsAttributeConsentRequired">
-        <evaluate expression="IsAttributeConsentRequired" />
-        <evaluate expression="'proceed'" />
-        <transition on="ConsentNotRequired" to="ReleaseAttributes" />
-        <transition on="proceed" to="CreateAttributeConsentChoices" />
-    </action-state>
-    
-    <action-state id="CreateAttributeConsentChoices">
-        <evaluate expression="CreateAttributeConsentChoices" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="DisplayAttributeReleasePage" />
-    </action-state>
-    
-    <view-state id="DisplayAttributeReleasePage" view="#{flowRequestContext.activeFlow.id}">
-        <on-render>
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
-            <evaluate expression="new net.shibboleth.idp.consent.logic.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getLocale())" result="requestScope.attributeDisplayNameFunction" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext))" result="viewScope.consentContext" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.AttributeConsentContext))" result="viewScope.attributeConsentContext" />
-        </on-render>
-        <transition on="proceed" to="ExtractConsent" />
-    </view-state>
-    
-    <action-state id="ExtractConsent">
-        <evaluate expression="ExtractConsent" />
-        <evaluate expression="CreateResult" />
-        <evaluate expression="'proceed'" />    
-        <transition on="proceed" to="ReleaseAttributes" />
-    </action-state>
-    
-    <action-state id="ReleaseAttributes">
-        <evaluate expression="ReleaseAttributes" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="proceed" />
-    </action-state>
-
-    <!-- TODO non-browser skip view -->
-
-    <end-state id="proceed" />
-
-    <bean-import resource="attribute-consent-beans.xml" />
+    <bean-import resource="../abstract-attribute-consent/abstract-attribute-consent-beans.xml" />
 
 </flow>

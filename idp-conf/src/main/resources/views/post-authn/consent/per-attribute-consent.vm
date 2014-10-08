@@ -27,7 +27,7 @@
                                     <td>$attributeDisplayNameFunction.apply($attribute)</td>
                                     <td>$attribute.values</td>
                                     <td>
-                                        <input type="checkbox" name="consents" value="$encoder.encodeForHTML($attribute.id)" />
+                                        <input type="checkbox" name="consentIds" value="$encoder.encodeForHTML($attribute.id)" />
                                     </td>
                                 </tr>
                             #end
