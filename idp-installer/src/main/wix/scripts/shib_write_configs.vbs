@@ -41,7 +41,7 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "#"
     AntFile.WriteLine "idp.noprompt=yes"
     AntFile.WriteLine "idp.host.name=" & IdpHostName
-    AntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/shibboleth/idp"
+    AntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/idp/shibboleth"
     AntFile.WriteLine "idp.keystore.password=" & KeyStorePassword
     AntFile.WriteLine "idp.sealer.password=" & SealerPassword
     AntFile.WriteLine "idp.target.dir=" & InstallDirJava & "/IdP"
@@ -75,7 +75,7 @@ if (InstallJetty <> "") then
 	JettyAntFile.WriteLine "jetty.merge.properties="& InstallDirJava & "/IdP/jetty.install.replace.properties"
 	JettyAntFile.WriteLine "idp.host.name=" & IdpHostName
 	JettyAntFile.WriteLine "idp.keystore.password=" & SsoStorePassword
-	JettyAntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/shibboleth/idp"
+	JettyAntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/idp/shibboleth"
 	JettyAntFile.WriteLine "idp.target.dir=" & InstallDirJava & "/IdP"
 	JettyAntFile.WriteLine "#jetty.no.tidy=true"
 	JettyAntFile.Close

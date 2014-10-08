@@ -35,33 +35,8 @@ if [ -n "$CLASSPATH" ] ; then
 fi
 
 # add in the dependency .jar files
-DIRLIBS=${ANT_HOME}/../bin/lib/*.jar
-for i in ${DIRLIBS}
-do
-    # if the directory is empty, then it will return the input string
-    # this is stupid, so case for it
-    if [ "$i" != "${DIRLIBS}" ] ; then
-      if [ -z "$LOCALCLASSPATH" ] ; then
-        LOCALCLASSPATH=$i
-      else
-        LOCALCLASSPATH="$i":$LOCALCLASSPATH
-      fi
-    fi
-done
-
-WEBINFLIBS=${ANT_HOME}/../war/WEB-INF/lib/*.jar
-for i in ${WEBINFLIBS}
-do
-    # if the directory is empty, then it will return the input string
-    # this is stupid, so case for it
-    if [ "$i" != "${WEBINFLIBS}" ] ; then
-      if [ -z "$LOCALCLASSPATH" ] ; then
-        LOCALCLASSPATH=$i
-      else
-        LOCALCLASSPATH="$i":$LOCALCLASSPATH
-      fi
-    fi
-done
+LOCALCLASSPATH="${ANT_HOME}/../war/WEB-INF/lib/*":$LOCALCLASSPATH
+LOCALCLASSPATH="${ANT_HOME}/../bin/lib/*":$LOCALCLASSPATH
 
 if [ -n "$JAVA_HOME" ] ; then
   if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then

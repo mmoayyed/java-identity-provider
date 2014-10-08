@@ -58,7 +58,7 @@
 	</target>
 
 	<target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties">
-		<property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/shibboleth/idp" />
+		<property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/idp/shibboleth" />
 	</target>
 
 	<target name="getkeystorepassword" if="idp.ask.keystore.password" depends="checkproperties">
@@ -99,7 +99,7 @@
 
 	<target name="target-nosrc-default" if="idp.src.dir.present">
 		<!-- if the source is set up then the default must not be basedir -->
-		<property name="idp.target.default" value="/opt/shibboleth/idp" />
+		<property name="idp.target.default" value="/opt/shibboleth-idp" />
 	</target>
 
 	<target name="prompttarget" if="idp.ask.target">
@@ -114,7 +114,7 @@
 	<target name="getentityid" if="idp.ask.entityid" depends="checkproperties">
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
 		<local name="entityid" />
-		<input message="EntityID" addproperty="entityid" defaultvalue="https://${idp.host.name}/shibboleth/idp" />
+		<input message="EntityID" addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
 		<echo file="replace.properties" append="yes">
 			idp.entityID=${entityid}
 		</echo>
