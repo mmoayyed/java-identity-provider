@@ -3,8 +3,6 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
       abstract="true" >
 
-    <!-- Placeholder flow for attribute release consent. -->
-
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
 
@@ -13,14 +11,17 @@
         <evaluate expression="InitializeAttributeConsentContext" />
         <evaluate expression="PopulateAttributeConsentContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="RevokeConsent" />
+        <transition on="proceed" to="TestForRevokeConsent" />
     </action-state>
+
+    <decision-state id="TestForRevokeConsent">
+        <if test="requestParameters._idp_revokeConsent" then="RevokeConsent" else="ReadConsentFromStorage" />
+    </decision-state>
 
     <action-state id="RevokeConsent">
         <evaluate expression="RevokeConsent" />
         <evaluate expression="'proceed'" />
-        <transition on="RevokeConsent" to="IsAttributeConsentRequired" />
-        <transition on="proceed" to="ReadConsentFromStorage" />
+        <transition on="proceed" to="IsAttributeConsentRequired" />
     </action-state>
     
     <action-state id="ReadConsentFromStorage">

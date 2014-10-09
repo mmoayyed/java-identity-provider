@@ -71,7 +71,7 @@ public class ExtractConsent extends AbstractConsentAction {
         }
 
         final String[] consentParams = request.getParameterValues(CONSENT_IDS_REQUEST_PARAMETER);
-        log.debug("{} Consent paramter values '{}'", getLogPrefix(), consentParams);
+        log.debug("{} Consent parameter values '{}'", getLogPrefix(), consentParams);
         if (consentParams == null) {
             log.debug("{} No consent choices", getLogPrefix());
             // TODO
