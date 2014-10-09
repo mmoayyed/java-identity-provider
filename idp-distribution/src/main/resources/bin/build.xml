@@ -36,7 +36,7 @@
         idp.no.tidy: Do not delete the two above files (debug only)
         
         The property idp.noprompt will cause a failure rather than a prompt.
-    -->
+	-->
 
 	<target name="init">
 		<tstamp />
@@ -410,9 +410,6 @@
 		<copy todir="${target}/jetty-base" failonerror="false">
 			<fileset dir="${idp.target.dir}/jetty-base" />
 		</copy>
-		<copy todir="${target}/misc" failonerror="false">
-			<fileset dir="${idp.target.dir}/misc" />
-		</copy>
 		<copy todir="${target}/system" failonerror="false">
 			<fileset dir="${idp.target.dir}/system" />
 		</copy>
@@ -421,18 +418,17 @@
 		</copy>
 
 		<!-- Do not delete bin, this preserves user scripts.  
-         Delete bin/lib so as to clear up old jar files. -->
+		Delete bin/lib so as to clear up old jar files. -->
 		<delete dir="${idp.target.dir}/bin/lib" failonerror="false" />
 		<delete dir="${idp.target.dir}/dist" failonerror="false" />
 		<delete dir="${idp.target.dir}/doc" failonerror="false" />
 		<delete dir="${idp.target.dir}/jettty-base" failonerror="false" />
-		<delete dir="${idp.target.dir}/misc" failonerror="false" />
 		<delete dir="${idp.target.dir}/system" failonerror="false" />
 		<delete dir="${idp.target.dir}/war" failonerror="false" />
 
 		<!-- Now copy or create empty as required.  
-         Creating an existing file is benign, bin gets 
-         updated -->
+		Creating an existing file is benign, bin gets 
+		updated -->
 
 		<copy todir="${idp.target.dir}/bin" overwrite="true">
 			<fileset dir="${idp.src.dir}/bin" />
@@ -453,9 +449,6 @@
 		</copy>
 		<mkdir dir="${idp.target.dir}/logs" />
 		<mkdir dir="${idp.target.dir}/metadata" />
-		<copy todir="${idp.target.dir}/misc">
-			<fileset dir="${idp.src.dir}/misc" />
-		</copy>
 		<copy todir="${idp.target.dir}/system">
 			<fileset dir="${idp.src.dir}/system" />
 		</copy>
