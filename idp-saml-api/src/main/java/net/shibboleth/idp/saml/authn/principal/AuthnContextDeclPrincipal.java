@@ -30,7 +30,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /** Principal based on a SAML AuthnContextDecl. */
 public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
@@ -95,7 +95,7 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("authnContextDecl", name).toString();
+        return MoreObjects.toStringHelper(this).add("authnContextDecl", name).toString();
     }
 
     /** {@inheritDoc} */

@@ -39,6 +39,7 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
@@ -238,13 +239,13 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         }
 
         IdPAttribute other = (IdPAttribute) obj;
-        return Objects.equal(id, other.getId());
+        return java.util.Objects.equals(id, other.getId());
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull public String toString() {
-        return Objects.toStringHelper(this).add("id", getId()).add("displayNames", displayNames)
+        return MoreObjects.toStringHelper(this).add("id", getId()).add("displayNames", displayNames)
                 .add("displayDescriptions", displayDescriptions).add("encoders", encoders).add("values", values)
                 .toString();
     }

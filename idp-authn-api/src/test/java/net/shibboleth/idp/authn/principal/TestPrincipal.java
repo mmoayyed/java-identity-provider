@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn.principal;
 
-
 import java.security.Principal;
 
 import javax.annotation.Nonnull;
@@ -26,7 +25,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /** Test Principal for testing requested authentication behavior. */
 public final class TestPrincipal implements Principal {
@@ -72,7 +71,7 @@ public final class TestPrincipal implements Principal {
 
     /** {@inheritDoc} */
     public String toString() {
-        return Objects.toStringHelper(this).add("value", value).toString();
+        return MoreObjects.toStringHelper(this).add("value", value).toString();
     }
 
 }

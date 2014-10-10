@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +44,6 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -395,7 +395,7 @@ public class RequestContextBuilder {
     @Nonnull protected RelyingPartyContext buildRelyingPartyContext(
             @Nonnull final ProfileRequestContext profileRequestContext) throws ComponentInitializationException {
         final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, true);
-        if (Objects.equal(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
+        if (Objects.equals(NO_VAL, inboundMessageIssuer) || inboundMessageIssuer == null) {
             rpCtx.setRelyingPartyId(ActionTestingSupport.INBOUND_MSG_ISSUER);
         } else {
             rpCtx.setRelyingPartyId(inboundMessageIssuer);
@@ -426,7 +426,7 @@ public class RequestContextBuilder {
      */
     @Nonnull protected RelyingPartyConfiguration buildRelyingPartyConfiguration() throws ComponentInitializationException {
         String responderId;
-        if (Objects.equal(NO_VAL, outboundMessageIssuer) || outboundMessageIssuer == null) {
+        if (Objects.equals(NO_VAL, outboundMessageIssuer) || outboundMessageIssuer == null) {
             responderId = ActionTestingSupport.OUTBOUND_MSG_ISSUER;
         } else {
             responderId = outboundMessageIssuer;

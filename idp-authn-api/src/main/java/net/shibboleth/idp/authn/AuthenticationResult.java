@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -37,7 +38,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -173,7 +174,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         }
 
         if (obj instanceof AuthenticationResult) {
-            return Objects.equal(getAuthenticationFlowId(),
+            return Objects.equals(getAuthenticationFlowId(),
                     ((AuthenticationResult) obj).getAuthenticationFlowId());
         }
 
@@ -183,7 +184,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("authenticationFlowId", authenticationFlowId)
+        return MoreObjects.toStringHelper(this).add("authenticationFlowId", authenticationFlowId)
                 .add("authenticatedPrincipal", getSubjectName())
                 .add("authenticationInstant", new DateTime(authenticationInstant))
                 .add("lastActivityInstant", new DateTime(lastActivityInstant)).toString();

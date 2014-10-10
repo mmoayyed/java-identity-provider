@@ -19,7 +19,7 @@ package net.shibboleth.idp.session.criterion;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -69,7 +69,7 @@ public final class SPSessionCriterion implements Criterion {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("serviceId", id)
+        return MoreObjects.toStringHelper(this).add("serviceId", id)
                 .add("SPSessionKey", key)
                 .toString();
     }

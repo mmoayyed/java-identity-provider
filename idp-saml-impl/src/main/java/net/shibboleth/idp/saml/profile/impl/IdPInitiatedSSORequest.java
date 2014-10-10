@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -30,7 +32,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 /**
  * Object representing a Shibboleth Authentication Request message.
@@ -172,9 +173,9 @@ public class IdPInitiatedSSORequest {
             return false;
         }
 
-        IdPInitiatedSSORequest other = (IdPInitiatedSSORequest) obj;
-        return Objects.equal(entityId, other.entityId) && Objects.equal(acsURL, other.acsURL)
-                && Objects.equal(relayState, other.relayState) && time == other.time;
+        final IdPInitiatedSSORequest other = (IdPInitiatedSSORequest) obj;
+        return Objects.equals(entityId, other.entityId) && Objects.equals(acsURL, other.acsURL)
+                && Objects.equals(relayState, other.relayState) && time == other.time;
     }
     
 }

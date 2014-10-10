@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,8 +39,6 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Objects;
 
 /**
  * Base class for matchers that check whether a particular entity attribute is present and contains a given value.<br/>
@@ -206,11 +205,11 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
     @Nullable private Attribute compareAttributes(List<Attribute> entityAttributes, EntityDescriptor entityDescriptor) {
 
         for (Attribute entityAttribute : entityAttributes) {
-            if (!Objects.equal(getAttributeName(), entityAttribute.getName())) {
+            if (!Objects.equals(getAttributeName(), entityAttribute.getName())) {
                 continue;
             }
 
-            if (getNameFormat() == null || (Objects.equal(getNameFormat(), entityAttribute.getNameFormat()))) {
+            if (getNameFormat() == null || (Objects.equals(getNameFormat(), entityAttribute.getNameFormat()))) {
                 log.debug("{} Descriptor for {} contains an entity attribute with the name {} and the format {}",
                         new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getAttributeName(),
                                 getNameFormat(),});

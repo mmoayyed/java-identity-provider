@@ -292,10 +292,9 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         }
 
         if (obj instanceof AbstractSAMLAttributeMapper) {
-            AbstractSAMLAttributeMapper other = (AbstractSAMLAttributeMapper) obj;
-
+            final AbstractSAMLAttributeMapper other = (AbstractSAMLAttributeMapper) obj;
             return matches(other.getSAMLName(), other.getAttributeFormat())
-                    && Objects.equal(getAttributeIds(), other.getAttributeIds());
+                    && java.util.Objects.equals(getAttributeIds(), other.getAttributeIds());
         }
         return false;
     }

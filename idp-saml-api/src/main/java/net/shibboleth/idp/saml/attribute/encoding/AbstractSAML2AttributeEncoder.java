@@ -158,9 +158,8 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
             return false;
         }
 
-        AbstractSAML2AttributeEncoder other = (AbstractSAML2AttributeEncoder) obj;
-
-        return Objects.equal(getEffectiveNameFormat(), other.getEffectiveNameFormat());
+        final AbstractSAML2AttributeEncoder other = (AbstractSAML2AttributeEncoder) obj;
+        return java.util.Objects.equals(getEffectiveNameFormat(), other.getEffectiveNameFormat());
     }
 
     /** {@inheritDoc} */

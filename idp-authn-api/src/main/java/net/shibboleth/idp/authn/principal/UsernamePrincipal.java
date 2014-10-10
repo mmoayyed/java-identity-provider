@@ -23,7 +23,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /** Principal based on a username. */
 public class UsernamePrincipal implements CloneablePrincipal {
@@ -73,7 +73,7 @@ public class UsernamePrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("username", username).toString();
+        return MoreObjects.toStringHelper(this).add("username", username).toString();
     }
     
     /** {@inheritDoc} */

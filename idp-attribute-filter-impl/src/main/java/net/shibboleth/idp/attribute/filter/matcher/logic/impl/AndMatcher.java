@@ -38,7 +38,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /**
  * {@link Matcher} that implements the conjunction of matchers. That is, a given attribute value is considered to have
@@ -106,7 +106,7 @@ public class AndMatcher extends AbstractComposedMatcher {
 
     /** {@inheritDoc} */
     public String toString() {
-        return Objects.toStringHelper(this).add("Composed Matchers : ", getComposedMatchers()).toString();
+        return MoreObjects.toStringHelper(this).add("Composed Matchers : ", getComposedMatchers()).toString();
     }
 
 }

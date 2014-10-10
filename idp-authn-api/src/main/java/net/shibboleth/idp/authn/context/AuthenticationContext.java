@@ -38,7 +38,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -346,7 +346,7 @@ public final class AuthenticationContext extends BaseContext {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("initiationInstant", new DateTime(initiationInstant))
                 .add("isPassive", isPassive)
                 .add("forceAuthn", forceAuthn)

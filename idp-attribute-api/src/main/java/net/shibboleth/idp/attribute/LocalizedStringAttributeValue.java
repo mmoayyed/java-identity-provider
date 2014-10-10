@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /** An optionally localized String value of an {@link IdPAttribute}. */
@@ -45,7 +46,7 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
     }
 
     /**
-     * Gets the locale of the attribute value.
+     * Get the locale of the attribute value.
      * 
      * @return the local of the attribute or null if there no explicit locale
      */
@@ -54,6 +55,7 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(@Nullable Object obj) {
         if (obj == null) {
             return false;
@@ -67,17 +69,20 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
             return false;
         }
 
-        LocalizedStringAttributeValue other = (LocalizedStringAttributeValue) obj;
-        return Objects.equal(getValue(), other.getValue()) && Objects.equal(valueLocale, other.valueLocale);
+        final LocalizedStringAttributeValue other = (LocalizedStringAttributeValue) obj;
+        return java.util.Objects.equals(getValue(), other.getValue())
+                && java.util.Objects.equals(valueLocale, other.valueLocale);
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Objects.hashCode(getValue(), valueLocale);
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public String toString() {
-        return Objects.toStringHelper(this).add("value", getValue()).add("locale", valueLocale).toString();
+        return MoreObjects.toStringHelper(this).add("value", getValue()).add("locale", valueLocale).toString();
     }
 }

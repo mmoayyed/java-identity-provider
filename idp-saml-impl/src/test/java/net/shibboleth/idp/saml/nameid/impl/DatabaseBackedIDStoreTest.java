@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.nameid.impl;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nonnull;
@@ -38,7 +39,6 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Objects;
 import com.google.common.io.CharStreams;
 
 /**
@@ -109,13 +109,13 @@ public class DatabaseBackedIDStoreTest {
         //
         // Do not compare times
         //
-        boolean result = Objects.equal(one.getPersistentId(), other.getPersistentId()) &&
-                Objects.equal(one.getIssuerEntityId(), other.getIssuerEntityId()) &&
-                Objects.equal(one.getRecipientEntityId(), other.getRecipientEntityId()) &&
-                Objects.equal(one.getSourceId(), other.getSourceId()) &&
-                Objects.equal(one.getPrincipalName(), other.getPrincipalName()) &&
-                Objects.equal(one.getPeerProvidedId(), other.getPeerProvidedId()) &&
-                Objects.equal(one.getDeactivationTime(), other.getDeactivationTime());
+        boolean result = Objects.equals(one.getPersistentId(), other.getPersistentId()) &&
+                Objects.equals(one.getIssuerEntityId(), other.getIssuerEntityId()) &&
+                Objects.equals(one.getRecipientEntityId(), other.getRecipientEntityId()) &&
+                Objects.equals(one.getSourceId(), other.getSourceId()) &&
+                Objects.equals(one.getPrincipalName(), other.getPrincipalName()) &&
+                Objects.equals(one.getPeerProvidedId(), other.getPeerProvidedId()) &&
+                Objects.equals(one.getDeactivationTime(), other.getDeactivationTime());
         if (!result) {
             log.warn("Not equals: {} and {}", one, other);
         }

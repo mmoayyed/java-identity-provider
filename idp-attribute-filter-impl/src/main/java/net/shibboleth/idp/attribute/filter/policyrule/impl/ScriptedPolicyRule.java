@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /**
@@ -200,7 +201,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return Objects.toStringHelper(this).add("Script", getScript()).toString();
+        return MoreObjects.toStringHelper(this).add("Script", getScript()).toString();
     }
 
     /**

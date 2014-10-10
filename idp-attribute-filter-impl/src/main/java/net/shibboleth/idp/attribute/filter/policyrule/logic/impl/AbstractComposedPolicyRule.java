@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -73,6 +73,6 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiableIni
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return Objects.toStringHelper(this).add("Composed Rules : ", getComposedRules()).toString();
+        return MoreObjects.toStringHelper(this).add("Composed Rules : ", getComposedRules()).toString();
     }
 }

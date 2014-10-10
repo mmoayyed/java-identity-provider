@@ -165,10 +165,9 @@ public class SAML1StringNameIdentifierEncoder extends AbstractSAML1NameIdentifie
             return false;
         }
 
-        SAML1StringNameIdentifierEncoder other = (SAML1StringNameIdentifierEncoder) obj;
-
-        return Objects.equal(getNameFormat(), other.getNameFormat())
-                && Objects.equal(getNameQualifier(), other.getNameQualifier());
+        final SAML1StringNameIdentifierEncoder other = (SAML1StringNameIdentifierEncoder) obj;
+        return java.util.Objects.equals(getNameFormat(), other.getNameFormat())
+                && java.util.Objects.equals(getNameQualifier(), other.getNameQualifier());
     }
 
     /** {@inheritDoc} */

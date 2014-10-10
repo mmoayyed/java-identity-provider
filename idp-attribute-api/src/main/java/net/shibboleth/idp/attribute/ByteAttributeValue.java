@@ -27,7 +27,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.apache.commons.codec.binary.Hex;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /** A <code>byte[]</code> value for an {@link IdPAttribute}. */
 public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
@@ -45,12 +45,13 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public final byte[] getValue() {
         return value;
     }
 
     /**
-     * Gets this value as a hex-encoded string.
+     * Get this value as a hex-encoded string.
      * 
      * @return a hex-encoded string
      */
@@ -68,6 +69,7 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(@Nullable Object obj) {
         if (obj == null) {
             return false;
@@ -81,17 +83,19 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
             return false;
         }
 
-        ByteAttributeValue other = (ByteAttributeValue) obj;
+        final ByteAttributeValue other = (ByteAttributeValue) obj;
         return Arrays.equals(other.value, value);
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Arrays.hashCode(value);
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("value", value).toString();
+        return MoreObjects.toStringHelper(this).add("value", value).toString();
     }
 }

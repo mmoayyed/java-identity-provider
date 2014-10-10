@@ -165,10 +165,9 @@ public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
             return false;
         }
 
-        SAML2StringNameIDEncoder other = (SAML2StringNameIDEncoder) obj;
-
-        return Objects.equal(getNameFormat(), other.getNameFormat())
-                && Objects.equal(getNameQualifier(), other.getNameQualifier());
+        final SAML2StringNameIDEncoder other = (SAML2StringNameIDEncoder) obj;
+        return java.util.Objects.equals(getNameFormat(), other.getNameFormat())
+                && java.util.Objects.equals(getNameQualifier(), other.getNameQualifier());
     }
 
     /** {@inheritDoc} */

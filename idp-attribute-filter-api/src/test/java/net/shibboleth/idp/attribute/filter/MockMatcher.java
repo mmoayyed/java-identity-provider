@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -28,8 +29,6 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiedInitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import com.google.common.base.Objects;
 
 /** A simple, mock implementation of {@link Matcher}. */
 public class MockMatcher extends AbstractIdentifiedInitializableComponent implements Matcher { 
@@ -82,7 +81,7 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
         if (fails) {
             return null;
         }
-        if (!Objects.equal(attribute.getId(), matchingAttribute)) {
+        if (!Objects.equals(attribute.getId(), matchingAttribute)) {
             return Collections.EMPTY_SET;
         }
 

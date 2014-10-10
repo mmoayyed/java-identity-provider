@@ -17,18 +17,20 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Objects;
 
 /**
  * Matcher that checks, via an exact match, if the attribute requester contains an entity attribute with a given value.
@@ -36,10 +38,10 @@ import com.google.common.base.Objects;
 public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEntityAttributePolicyRule {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeRequesterEntityAttributeExactPolicyRule.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterEntityAttributeExactPolicyRule.class);
 
     /** The value of the entity attribute the entity must have. */
-    private String value;
+    @NonnullAfterInit private String value;
 
     /**
      * Gets the value of the entity attribute the entity must have.
@@ -55,14 +57,14 @@ public class AttributeRequesterEntityAttributeExactPolicyRule extends AbstractEn
      * 
      * @param attributeValue value of the entity attribute the entity must have
      */
-    public void setValue(@Nullable final String attributeValue) {
-        value = attributeValue;
+    public void setValue(@Nonnull final String attributeValue) {
+        value = Constraint.isNotNull(attributeValue, "Attribute value cannot be null.");
     }
 
     /** {@inheritDoc} */
     @Override
     protected boolean entityAttributeValueMatches(@Nullable final String stringValue) {
-        return Objects.equal(value, stringValue);
+        return Objects.equals(value, stringValue);
     }
 
     /** {@inheritDoc} */

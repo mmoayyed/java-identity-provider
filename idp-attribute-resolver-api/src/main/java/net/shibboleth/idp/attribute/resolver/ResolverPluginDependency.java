@@ -25,6 +25,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /**
@@ -102,8 +103,8 @@ public final class ResolverPluginDependency {
         }
 
         ResolverPluginDependency other = (ResolverPluginDependency) obj;
-        if (Objects.equal(getDependencyPluginId(), other.getDependencyPluginId())
-                && Objects.equal(getDependencyAttributeId(), other.getDependencyAttributeId())) {
+        if (java.util.Objects.equals(getDependencyPluginId(), other.getDependencyPluginId())
+                && java.util.Objects.equals(getDependencyAttributeId(), other.getDependencyAttributeId())) {
             return true;
         }
 
@@ -112,7 +113,7 @@ public final class ResolverPluginDependency {
 
     /** {@inheritDoc} */
     public String toString() {
-        return Objects.toStringHelper(this).add("pluginId", dependencyPluginId)
+        return MoreObjects.toStringHelper(this).add("pluginId", dependencyPluginId)
                 .add("attributeId", dependencyAttributeId).toString();
     }
 }

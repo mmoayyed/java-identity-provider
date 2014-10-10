@@ -41,7 +41,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -333,7 +333,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return Objects.toStringHelper(this).add("flowId", getId()).add("supportsPassive", supportsPassive)
+        return MoreObjects.toStringHelper(this).add("flowId", getId()).add("supportsPassive", supportsPassive)
                 .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime)
                 .add("inactivityTimeout", inactivityTimeout).toString();
     }

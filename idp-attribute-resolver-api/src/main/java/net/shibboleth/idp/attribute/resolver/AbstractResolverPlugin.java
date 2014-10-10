@@ -245,7 +245,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         }
 
         AbstractResolverPlugin<ResolvedType> other = (AbstractResolverPlugin<ResolvedType>) obj;
-        return Objects.equal(getId(), other.getId());
+        return java.util.Objects.equals(getId(), other.getId());
     }
 
     /**

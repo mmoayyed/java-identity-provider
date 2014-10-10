@@ -34,7 +34,7 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /**
  * {@link Matcher} that implements the negation of a matcher. <br/>
@@ -98,6 +98,6 @@ public final class NotMatcher extends AbstractIdentifiableInitializableComponent
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return Objects.toStringHelper(this).add("negatedMatcher", negatedMatcher).toString();
+        return MoreObjects.toStringHelper(this).add("negatedMatcher", negatedMatcher).toString();
     }
 }

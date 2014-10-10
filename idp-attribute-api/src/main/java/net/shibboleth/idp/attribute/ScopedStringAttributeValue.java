@@ -25,6 +25,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /** An attribute value with an associated scope. */
@@ -48,7 +49,7 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
     
 
     /**
-     * Gets the scope of the value.
+     * Get the scope of the value.
      * 
      * @return scope of the value
      */
@@ -57,6 +58,7 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
@@ -70,17 +72,20 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
             return false;
         }
 
-        ScopedStringAttributeValue otherValue = (ScopedStringAttributeValue) obj;
-        return Objects.equal(getValue(), otherValue.getValue()) && Objects.equal(scope, otherValue.scope);
+        final ScopedStringAttributeValue otherValue = (ScopedStringAttributeValue) obj;
+        return java.util.Objects.equals(getValue(), otherValue.getValue())
+                && java.util.Objects.equals(scope, otherValue.scope);
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Objects.hashCode(getValue(), scope);
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String toString() {
-        return Objects.toStringHelper(this).add("value", getValue()).add("scope", scope).toString();
+        return MoreObjects.toStringHelper(this).add("value", getValue()).add("scope", scope).toString();
     }
 }

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.session;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -29,7 +31,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /**
  * Implementation support for a concrete {@link SPSession} implementation.
@@ -103,7 +105,7 @@ public class BasicSPSession implements SPSession {
         }
 
         if (obj instanceof BasicSPSession) {
-            return Objects.equal(serviceId, ((BasicSPSession) obj).getId());
+            return Objects.equals(serviceId, ((BasicSPSession) obj).getId());
         }
 
         return false;
@@ -112,7 +114,7 @@ public class BasicSPSession implements SPSession {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", serviceId)
+        return MoreObjects.toStringHelper(this).add("id", serviceId)
                 .add("creationInstant", new DateTime(creationInstant))
                 .add("expirationInstant", new DateTime(expirationInstant)).toString();
     }

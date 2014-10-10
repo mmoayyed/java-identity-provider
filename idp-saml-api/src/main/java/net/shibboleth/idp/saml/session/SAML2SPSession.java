@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.session;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -25,7 +27,7 @@ import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.profile.SAML2ObjectSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 import net.shibboleth.idp.session.BasicSPSession;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -108,11 +110,11 @@ public class SAML2SPSession extends BasicSPSession {
         if (obj instanceof SAML2SPSession) {
             final NameID n1 = ((SAML2SPSession) obj).getNameID();
             final NameID n2 = nameID;
-            if (n1 != null && n2 != null && Objects.equal(n1.getValue(), n2.getValue())
+            if (n1 != null && n2 != null && Objects.equals(n1.getValue(), n2.getValue())
                     && SAML2ObjectSupport.areNameIDFormatsEquivalent(n1.getFormat(), n2.getFormat())
-                    && Objects.equal(n1.getNameQualifier(), n2.getNameQualifier())
-                    && Objects.equal(n1.getSPNameQualifier(), n2.getSPNameQualifier())) {
-                return Objects.equal(getSessionIndex(), ((SAML2SPSession) obj).getSessionIndex());
+                    && Objects.equals(n1.getNameQualifier(), n2.getNameQualifier())
+                    && Objects.equals(n1.getSPNameQualifier(), n2.getSPNameQualifier())) {
+                return Objects.equals(getSessionIndex(), ((SAML2SPSession) obj).getSessionIndex());
             }
         }
 
@@ -123,7 +125,7 @@ public class SAML2SPSession extends BasicSPSession {
     @Override
     public String toString() {
         try {
-            return Objects.toStringHelper(this)
+            return MoreObjects.toStringHelper(this)
                     .add("NameID", SerializeSupport.nodeToString(XMLObjectSupport.marshall(nameID)))
                     .add("SessionIndex", sessionIndex).toString();
         } catch (final MarshallingException e) {

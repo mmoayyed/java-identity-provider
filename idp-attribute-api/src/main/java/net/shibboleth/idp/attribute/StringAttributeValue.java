@@ -17,19 +17,21 @@
 
 package net.shibboleth.idp.attribute;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /** Base class for {@link IdPAttribute} values that are strings. */
 public class StringAttributeValue implements IdPAttributeValue<String> {
 
     /** The attribute value. */
-    private final String value;
+    @Nonnull @NotEmpty private final String value;
 
     /**
      * Constructor.
@@ -43,7 +45,7 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
     }
 
     /**
-     * Gets the attribute value.
+     * Get the attribute value.
      * 
      * @return the attribute value
      */
@@ -52,6 +54,7 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -65,17 +68,19 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
             return false;
         }
 
-        StringAttributeValue other = (StringAttributeValue) obj;
-        return Objects.equal(value, other.value);
+        final StringAttributeValue other = (StringAttributeValue) obj;
+        return Objects.equals(value, other.value);
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return value.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("value", value).toString();
+        return MoreObjects.toStringHelper(this).add("value", value).toString();
     }
 }

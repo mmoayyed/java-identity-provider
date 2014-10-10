@@ -2,10 +2,10 @@
 <configuration>
 
     <!-- Logs IdP, but not OpenSAML, messages -->
-    <logger name="net.shibboleth.idp" level="INFO"/>
+    <logger name="net.shibboleth.idp" level="DEBUG"/>
 
     <!-- Logs OpenSAML, but not IdP, messages -->
-    <logger name="org.opensaml" level="WARN"/>
+    <logger name="org.opensaml.saml" level="DEBUG"/>
     
     <!-- Logs LDAP related messages -->
     <logger name="org.ldaptive" level="WARN"/>
@@ -75,7 +75,7 @@
     
     <logger name="org.eclipse.jetty" level="ERROR"/>
 
-    <root level="ERROR">
+    <root level="INFO">
         <appender-ref ref="IDP_PROCESS"/>
     </root>
 

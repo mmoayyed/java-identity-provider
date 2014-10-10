@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.component.AbstractIdentifiableIniti
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /**
  * {@link PolicyRequirementRule} that implements the negation of a matcher. <br/>
@@ -74,6 +74,6 @@ public final class NotPolicyRule extends AbstractIdentifiableInitializableCompon
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return Objects.toStringHelper(this).add("Negated Policy Rule", negatedRule).toString();
+        return MoreObjects.toStringHelper(this).add("Negated Policy Rule", negatedRule).toString();
     }
 }

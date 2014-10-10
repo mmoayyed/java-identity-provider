@@ -20,6 +20,7 @@ package net.shibboleth.idp.consent.flow.ar;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
@@ -34,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 
 /**
  * Attribute consent action to create the consents to be chosen by the user.
@@ -84,7 +84,7 @@ public class CreateAttributeConsentChoices extends AbstractAttributeConsentActio
 
             // Remember previous choice.
             final Consent previousConsent = getConsentContext().getPreviousConsents().get(consent.getId());
-            if (previousConsent != null && Objects.equal(consent.getValue(), previousConsent.getValue())) {
+            if (previousConsent != null && Objects.equals(consent.getValue(), previousConsent.getValue())) {
                 consent.setApproved(previousConsent.isApproved());
             }
 

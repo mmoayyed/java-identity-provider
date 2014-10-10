@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /**
  * Represents incoming attribute values and rules used for matching them. The value may include regular expressions.
@@ -120,7 +120,7 @@ public class SourceValue {
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return Objects.toStringHelper(this).add("value", value).add("IsIgnoreCase", isIgnoreCase())
+        return MoreObjects.toStringHelper(this).add("value", value).add("IsIgnoreCase", isIgnoreCase())
                 .add("isPartialMatch", isPartialMatch()).toString();
     }
 

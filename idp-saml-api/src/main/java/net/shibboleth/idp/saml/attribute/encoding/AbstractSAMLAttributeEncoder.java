@@ -182,9 +182,9 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
             return false;
         }
 
-        AbstractSAMLAttributeEncoder other = (AbstractSAMLAttributeEncoder) obj;
-
-        return Objects.equal(getName(), other.getName()) && Objects.equal(getProtocol(), other.getProtocol());
+        final AbstractSAMLAttributeEncoder other = (AbstractSAMLAttributeEncoder) obj;
+        return java.util.Objects.equals(getName(), other.getName())
+                && java.util.Objects.equals(getProtocol(), other.getProtocol());
     }
 
     /** {@inheritDoc} */

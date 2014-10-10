@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.profile.config;
 
+import java.util.Objects;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
-import com.google.common.base.Objects;
 
 /** Base class for {@link ProfileConfiguration} implementations. */
 public abstract class AbstractProfileConfiguration implements ProfileConfiguration {
@@ -122,8 +122,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
             return false;
         }
 
-        AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
-        return Objects.equal(profileId, other.getId());
+        final AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
+        return Objects.equals(profileId, other.getId());
     }
     
 }

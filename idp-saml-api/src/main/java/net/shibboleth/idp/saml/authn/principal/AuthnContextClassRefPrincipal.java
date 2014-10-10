@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.authn.principal;
 
-
 import javax.annotation.Nonnull;
 
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -28,7 +27,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /** Principal based on a SAML AuthnContextClassRef. */
 public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
@@ -91,7 +90,7 @@ public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("authnContextClassRef", authnContextClassRef).toString();
+        return MoreObjects.toStringHelper(this).add("authnContextClassRef", authnContextClassRef).toString();
     }
 
     /** {@inheritDoc} */

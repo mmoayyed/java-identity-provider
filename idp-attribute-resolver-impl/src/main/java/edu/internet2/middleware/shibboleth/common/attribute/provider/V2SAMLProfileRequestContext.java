@@ -38,7 +38,7 @@ import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /**
  * Emulation code for Scripted Attributes.
@@ -914,7 +914,7 @@ public class V2SAMLProfileRequestContext {
 
     /** {@inheritDoc}. */
     @Override public String toString() {
-        return Objects.toStringHelper(V2SAMLProfileRequestContext.class).add("Id", getId())
+        return MoreObjects.toStringHelper(V2SAMLProfileRequestContext.class).add("Id", getId())
                 .add("PrincipalName", getPrincipalName()).add("PeerEntityId", getPeerEntityId())
                 .add("LocalEntityId", getLocalEntityId()).toString();
     }

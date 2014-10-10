@@ -24,7 +24,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /** A {@link XMLObjectAttributeValue} value for an {@link net.shibboleth.idp.attribute.IdPAttribute}. */
 public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
@@ -42,12 +42,14 @@ public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public final XMLObject getValue() {
         return value;
     }
 
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(@Nullable Object obj) {
         if (obj == null) {
             return false;
@@ -66,12 +68,14 @@ public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return value.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("value", value).toString();
+        return MoreObjects.toStringHelper(this).add("value", value).toString();
     }
 }

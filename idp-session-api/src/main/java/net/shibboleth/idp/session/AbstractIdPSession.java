@@ -18,6 +18,7 @@
 package net.shibboleth.idp.session;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -41,7 +42,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 
@@ -405,7 +406,7 @@ public abstract class AbstractIdPSession implements IdPSession {
         }
     
         if (obj instanceof AbstractIdPSession) {
-            return Objects.equal(getId(), ((AbstractIdPSession) obj).getId());
+            return Objects.equals(getId(), ((AbstractIdPSession) obj).getId());
         }
     
         return false;
@@ -420,7 +421,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("sessionId", id).add("principalName", principalName)
+        return MoreObjects.toStringHelper(this).add("sessionId", id).add("principalName", principalName)
                 .add("IPv4", ipV4Address).add("IPv6", ipV6Address)
                 .add("creationInstant", new DateTime(creationInstant))
                 .add("lastActivityInstant", new DateTime(lastActivityInstant))

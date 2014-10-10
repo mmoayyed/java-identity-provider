@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.authn.principal;
 
-
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.principal.CloneablePrincipal;
@@ -25,7 +24,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
 /** Principal based on a SAML 1.x AuthenticationMethod. */
 public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
@@ -75,7 +74,7 @@ public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("authnMethod", authnMethod).toString();
+        return MoreObjects.toStringHelper(this).add("authnMethod", authnMethod).toString();
     }
 
     /** {@inheritDoc} */
