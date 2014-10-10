@@ -17,13 +17,14 @@
 
 package net.shibboleth.idp.consent.context;
 
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -46,8 +47,8 @@ public class ConsentContext extends BaseContext {
     
     /** Constructor. */
     public ConsentContext() {
-        previousConsents = Collections.emptyMap();
-        currentConsents = Collections.emptyMap();
+        previousConsents = new LinkedHashMap<>();
+        currentConsents = new LinkedHashMap<>();
     }
 
     /**
@@ -55,7 +56,7 @@ public class ConsentContext extends BaseContext {
      * 
      * @return consents extracted from user input
      */
-    @Nullable @NonnullElements public Map<String, Consent> getCurrentConsents() {
+    @Nullable @NonnullElements @Live public Map<String, Consent> getCurrentConsents() {
         return currentConsents;
     }
 
@@ -64,7 +65,7 @@ public class ConsentContext extends BaseContext {
      * 
      * @return consents read from storage
      */
-    @Nullable @NonnullElements public Map<String, Consent> getPreviousConsents() {
+    @Nullable @NonnullElements @Live public Map<String, Consent> getPreviousConsents() {
         return previousConsents;
     }
 
@@ -113,8 +114,10 @@ public class ConsentContext extends BaseContext {
 
     /** {@inheritDoc} */
     @Override public String toString() {
-        return MoreObjects.toStringHelper(this).add("previousConsents", previousConsents)
-                .add("chosenConsents", currentConsents).toString();
+        return MoreObjects.toStringHelper(this)
+                .add("previousConsents", previousConsents)
+                .add("chosenConsents", currentConsents)
+                .toString();
     }
 
 }

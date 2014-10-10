@@ -97,6 +97,8 @@ public class PopulateTermsOfUse extends AbstractTermsOfUseAction {
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         // TODO support TOU replacement args ?
+        
+        // TODO TOU per relying party ?
 
         final TermsOfUse termsOfUse = new TermsOfUse();
         termsOfUse.setId(termsOfUseId);

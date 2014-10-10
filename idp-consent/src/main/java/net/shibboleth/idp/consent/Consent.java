@@ -36,6 +36,9 @@ import com.google.common.base.MoreObjects;
  */
 public class Consent extends AbstractIdentifiableInitializableComponent {
 
+    /** Wildcard used to represent consent to any ID or value. */
+    @Nonnull @NotEmpty public static final String WILDCARD = "*";
+
     /** Consent value. */
     @Nullable private String value;
 

@@ -15,62 +15,60 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.consent.flow.storage;
+package net.shibboleth.idp.consent.flow.ar;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.flow.storage.AbstractConsentStorageAction;
+import net.shibboleth.idp.consent.storage.ConsentResult;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 
+import org.joda.time.DateTime;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.storage.StorageRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Consent action which reads consents from storage and adds them to the consent context as previous consents.
+ * Attribute consent action to create a consent result representing global consent to be stored in a storage service.
  */
-public class ReadConsentFromStorage extends AbstractConsentStorageAction {
+public class CreateGlobalConsentResult extends AbstractConsentStorageAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ReadConsentFromStorage.class);
-
-    /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
-
-        if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
-            return false;
-        }
-
-        return true;
-    }
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CreateGlobalConsentResult.class);
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         try {
-            final StorageRecord storageRecord = getStorageService().read(getContext(), getKey());
-            log.debug("{} Read storage record '{}'", getLogPrefix(), storageRecord);
+            final Consent globalConsent = new Consent();
+            globalConsent.setId(Consent.WILDCARD);
+            globalConsent.setApproved(true);
 
-            if (storageRecord == null) {
-                // TODO
-                return;
+            final String value =
+                    getConsentSerializer().serialize(Collections.singletonMap(globalConsent.getId(), globalConsent));
+
+            final Long lifetime = getConsentFlowDescriptor().getLifetime();
+            Long expiration = null;
+            if (lifetime != null) {
+                expiration = DateTime.now().plus(lifetime).getMillis();
             }
 
-            final Map<String, Consent> consents =
-                    (Map<String, Consent>) storageRecord.getValue(getConsentSerializer(), getContext(), getKey());
+            final ProfileInterceptorResult result = new ConsentResult(getContext(), getKey(), value, expiration);
 
-            getConsentContext().getPreviousConsents().putAll(consents);
+            log.debug("{} Created global consent result '{}'", getLogPrefix(), result);
+
+            interceptorContext.setResult(result);
 
         } catch (IOException e) {
-            log.error("{} Unable to read consent from storage", getLogPrefix(), e);
+            log.debug("{} Unable to serialize consent", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }

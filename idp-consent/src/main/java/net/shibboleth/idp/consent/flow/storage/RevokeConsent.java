@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Consent action which deletes records from storage.
  */
-// TODO Support revocation of multiple consent flows, not just the first
 public class RevokeConsent extends AbstractConsentStorageAction {
 
     /** Storage service. */
@@ -82,7 +81,8 @@ public class RevokeConsent extends AbstractConsentStorageAction {
             } else {
                 log.warn("{} Unable to delete consent storage record with context '{}' and key '{}'", getLogPrefix(),
                         context, key);
-                // TODO build appropriate event
+                // TODO build appropriate event ?
+                // TODO read from storage first to avoid ambiguity ?
             }
         } catch (IOException e) {
             log.error("{} Unable to delete consent storage record with context '{}' and key '{}'", getLogPrefix(),

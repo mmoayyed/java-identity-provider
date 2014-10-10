@@ -4,6 +4,12 @@
 ## Velocity context will contain the following properties :
 ##
 ## TODO This is only a rudimentary UI.
+#set ($locale = $flowRequestContext.getExternalContext().getLocale())
+#if ($enablePerAttributeConsent)
+    #set ($inputType = "checkbox")
+#else
+    #set ($inputType = "hidden")
+#end
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <meta charset="utf-8" />
@@ -26,18 +32,28 @@
                                     <td>$attributeDisplayNameFunction.apply($attribute)</td>
                                     <td>$attribute.values</td>
                                     <td>
-                                        <input type="hidden" name="consentIds" value="$encoder.encodeForHTML($attribute.id)" />
+                                        <input type="$inputType" name="consentIds" value="$encoder.encodeForHTML($attribute.id)" checked />
                                     </td>
                                 </tr>
                             #end
                         </table>
-                        ## #if ($globalConsentEnabled)
-                            ## <input type="checkbox" name="consent.global"> value="yes" />
-                            ## #springMessage("attribute-release.global-consent")
-                            ## #endif
-                            <section>
-                                <button class="form-element form-button" type="submit" name="_eventId_proceed" >#springMessageText("idp.attribute-consent.submit" "Submit")</button>
-                            </section>
+                        <p>
+                            <input type="radio" name="_idp_consentOptions" value="_idp_alwaysRequireConsent" />
+                            #springMessageText("idp.attribute-consent.alwaysRequireConsent" "Ask me again at next login")
+                        </p>
+                        <p>
+                            <input type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
+                            #springMessageText("idp.attribute-consent.rememberConsent" "Only ask me again if data changes")
+                        </p>
+                        #if ($allowGlobalConsent)
+                            <p>
+                                <input type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
+                                #springMessageText("idp.attribute-consent.globalConsent" "Do not ask me again")
+                            </p>
+                        #end
+                        <section>
+                            <button class="form-element form-button" type="submit" name="_eventId_proceed" >#springMessageText("idp.attribute-consent.submit" "Submit")</button>
+                        </section>
                     </form>
                 </div>
             </div>

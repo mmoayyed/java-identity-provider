@@ -24,10 +24,6 @@
                     </div>
                     <form action="$flowExecutionUrl" method="post"  >
                             <input type="hidden" name="consentIds" value="$encoder.encodeForHTML($termsOfUseContext.getTermsOfUse().getId())" />
-                            ## #if ($globalConsentEnabled)
-                            ## <input type="checkbox" name="consent.global"> value="yes" />
-                            ## #springMessage("attribute-release.global-consent")
-                            ## #endif
                             <section>
                                 <button class="form-element form-button" type="submit" name="_eventId_proceed" >#springMessageText("idp.tou.submit" "Submit")</button>
                             </section>

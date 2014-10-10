@@ -28,7 +28,6 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
  * Represents the result of a profile interceptor flow intended for storage by a
  * {@link org.opensaml.storage.StorageService}.
  */
-// TODO just a stub
 public interface ProfileInterceptorResult extends IdentifiedComponent {
 
     /**

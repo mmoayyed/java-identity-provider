@@ -34,12 +34,36 @@ import com.google.common.base.Function;
  */
 public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
 
+    /** Whether consent to any attribute and to any relying party is allowed. */
+    private boolean allowGlobalConsent;
+
+    /** Whether per-attribute consent is enabled. */
+    private boolean enablePerAttributeConsent;
+
     /** Function to create hash of all attribute values. */
     @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
 
     /** Constructor. */
     public AttributeConsentFlowDescriptor() {
         attributeValuesHashFunction = new AttributeValuesHashFunction();
+    }
+
+    /**
+     * Get whether consent to any attribute and to any relying party is allowed.
+     * 
+     * @return true iff consent to any attribute and to any relying party is allowed
+     */
+    public boolean allowGlobalConsent() {
+        return allowGlobalConsent;
+    }
+
+    /**
+     * Get whether per-attribute consent is enabled.
+     * 
+     * @return true iff per-attribute consent is enabled
+     */
+    public boolean enablePerAttributeConsent() {
+        return enablePerAttributeConsent;
     }
 
     /**
@@ -52,6 +76,24 @@ public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
     }
 
     /**
+     * Set whether consent to any attribute and to any relying party is allowed.
+     * 
+     * @param flag true iff consent to any attribute and to any relying party is allowed
+     */
+    public void setAllowGlobalConsent(boolean flag) {
+        allowGlobalConsent = flag;
+    }
+
+    /**
+     * Set whether per-attribute consent is enabled.
+     * 
+     * @param flag true iff per-attribute consent is enabled
+     */
+    public void setEnablePerAttributeConsent(boolean flag) {
+        enablePerAttributeConsent = flag;
+    }
+
+    /**
      * Set the function to create hash of all attribute values.
      * 
      * @param function function to create hash of all attribute values
@@ -59,7 +101,7 @@ public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
     public void setAttributeValuesHashFunction(
             @Nonnull final Function<Collection<IdPAttributeValue<?>>, String> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         attributeValuesHashFunction = Constraint.isNotNull(function, "Attribute values hash function cannot be null");
     }
 

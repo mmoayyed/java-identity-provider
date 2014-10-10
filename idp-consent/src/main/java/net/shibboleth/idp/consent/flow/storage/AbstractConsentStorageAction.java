@@ -24,8 +24,12 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.AbstractConsentAction;
+import net.shibboleth.idp.consent.logic.FlowIdLookupFunction;
+import net.shibboleth.idp.consent.storage.ConsentSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageSerializer;
@@ -46,43 +50,28 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractConsentStorageAction.class);
 
-    /** Flow descriptor. */
-    @Nullable private ProfileInterceptorFlowDescriptor flowDescriptor;
-
-    /** Storage service. */
-    @Nullable private StorageService storageService;
-
     /** Strategy used to determine the storage context. */
     @Nullable private Function<ProfileRequestContext, String> storageContextLookupStrategy;
 
     /** Strategy used to determine the storage key. */
     @Nullable private Function<ProfileRequestContext, String> storageKeyLookupStrategy;
 
-    /** Storage context. */
-    @Nullable private String context;
-
-    /** Storage key. */
-    @Nullable private String key;
-
-    /** Attribute consent serializer. */
+    /** Storage serializer for map of consent objects keyed by consent id. */
     @Nonnull private StorageSerializer<Map<String, Consent>> consentSerializer;
 
-    /**
-     * Get the profile interceptor flow descriptor.
-     * 
-     * @return the profile interceptor flow descriptor
-     */
-    @Nullable public ProfileInterceptorFlowDescriptor getFlowDescriptor() {
-        return flowDescriptor;
-    }
+    /** Storage service from the {@link ProfileInterceptorFlowDescriptor}. */
+    @Nullable private StorageService storageService;
 
-    /**
-     * Get the storage service.
-     * 
-     * @return the storage service
-     */
-    @Nullable public StorageService getStorageService() {
-        return storageService;
+    /** Storage context resulting from lookup strategy. */
+    @Nullable private String context;
+
+    /** Storage key resulting from lookup strategy. */
+    @Nullable private String key;
+
+    /** Constructor. */
+    public AbstractConsentStorageAction() {
+        setStorageContextLookupStrategy(new FlowIdLookupFunction());
+        setConsentSerializer(new ConsentSerializer());
     }
 
     /**
@@ -113,7 +102,49 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     }
 
     /**
-     * Get the storage context.
+     * Set the consent serializer.
+     * 
+     * @param serializer consent serializer
+     */
+    public void setConsentSerializer(@Nonnull final StorageSerializer<Map<String, Consent>> serializer) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        consentSerializer = Constraint.isNotNull(serializer, "Consent serializer cannot be null");
+    }
+
+    /**
+     * Set the storage context lookup strategy.
+     * 
+     * @param strategy the storage context lookup strategy
+     */
+    public void setStorageContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        storageContextLookupStrategy = Constraint.isNotNull(strategy, "Storage context lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the storage key lookup strategy.
+     * 
+     * @param strategy the storage key lookup strategy
+     */
+    public void setStorageKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        storageKeyLookupStrategy = Constraint.isNotNull(strategy, "Storage key lookup strategy cannot be null");
+    }
+
+    /**
+     * Get the storage service from the {@link ProfileInterceptorFlowDescriptor}.
+     * 
+     * @return the storage service
+     */
+    @Nullable public StorageService getStorageService() {
+        return storageService;
+    }
+
+    /**
+     * Get the storage context resulting from lookup strategy.
      * 
      * @return the storage context
      */
@@ -122,7 +153,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     }
 
     /**
-     * Get the storage key.
+     * Get the storage key resulting from lookup strategy.
      * 
      * @return the storage key
      */
@@ -130,20 +161,18 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
         return key;
     }
 
-// Checkstyle: ReturnCount OFF
+    // Checkstyle: ReturnCount OFF
     /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         // TODO build some event when required data is missing ?
 
         if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
-            // TODO log
             return false;
         }
 
-        flowDescriptor = interceptorContext.getAttemptedFlow();
+        final ProfileInterceptorFlowDescriptor flowDescriptor = interceptorContext.getAttemptedFlow();
         log.trace("{} Flow descriptor '{}'", getLogPrefix(), flowDescriptor);
         if (flowDescriptor == null) {
             log.debug("{} No flow descriptor available from interceptor context", getLogPrefix());
@@ -157,14 +186,18 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
             return false;
         }
 
-        storageContextLookupStrategy = flowDescriptor.getStorageContextLookupStrategy();
+        log.trace("{} Consent serializer '{}'", getLogPrefix(), consentSerializer);
+        if (consentSerializer == null) {
+            log.debug("{} No consent serializer available from consent flow descriptor", getLogPrefix());
+            return false;
+        }
+
         log.trace("{} Storage context lookup strategy '{}'", getLogPrefix(), storageContextLookupStrategy);
         if (storageContextLookupStrategy == null) {
             log.debug("{} No storage context lookup strategy available from flow descriptor", getLogPrefix());
             return false;
         }
 
-        storageKeyLookupStrategy = flowDescriptor.getStorageKeyLookupStrategy();
         log.trace("{} Storage key lookup strategy '{}'", getLogPrefix(), storageKeyLookupStrategy);
         if (storageKeyLookupStrategy == null) {
             log.debug("{} No storage key lookup strategy available from flow descriptor", getLogPrefix());
@@ -185,14 +218,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
             return false;
         }
 
-        consentSerializer = getConsentFlowDescriptor().getConsentSerializer();
-        log.trace("{} Consent serializer '{}'", getLogPrefix(), consentSerializer);
-        if (consentSerializer == null) {
-            log.debug("{} No consent serializer available from consent flow descriptor", getLogPrefix());
-            return false;
-        }
-
         return true;
     }
-// Checkstyle: ReturnCount ON
+    // Checkstyle: ReturnCount ON
 }

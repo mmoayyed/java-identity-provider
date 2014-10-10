@@ -12,35 +12,17 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- TODO use property replacement for storage key attribute id ? -->
-
     <!-- Flows executed after authentication. -->
     <util:list id="shibboleth.PostAuthnFlows">
-        <!--
-        <bean id="post-authn/consent/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow"
-                p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
-                p:storageService-ref="shibboleth.ClientStorageService"
-                p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKey"
-                p:compareValues="true"
-                p:lifetime="P1Y"
-                p:idMessageCode="idp.tou.id"
-                p:textMessageCode="idp.tou.text" />
+        <!-- 
+        <bean id="post-authn/consent/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow" />
 
         <bean id="post-authn/consent/attribute-consent" parent="shibboleth.consent.AttributeConsentFlow"
-                p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
-                p:storageService-ref="shibboleth.ClientStorageService"
-                p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKey"
-                p:compareValues="true"
-                p:lifetime="P1Y" />
-
-        <bean id="post-authn/consent/per-attribute-consent" parent="shibboleth.consent.AttributeConsentFlow"
-                p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
-                p:storageService-ref="shibboleth.ClientStorageService"
-                p:storageKeyLookupStrategy-ref="shibboleth.consent.StorageKey"
-                p:compareValues="true" />
+            p:allowGlobalConsent="true" p:enablePerAttributeConsent="true" />
         -->
     </util:list>
 
+    <!-- TODO doc -->
     <bean id="shibboleth.consent.RelyingPartyPredicate" parent="shibboleth.Conditions.RelyingPartyId">
         <constructor-arg>
             <util:list>
@@ -48,19 +30,19 @@
             </util:list>
         </constructor-arg>
     </bean>
-
-    <!-- IdP attribute used to determine the unique user identifier. -->
-    <bean id="shibboleth.consent.StorageKey" parent="shibboleth.consent.StorageKeyLookupFunction"
-            c:attributeId="email" />
-            
-    <!-- Uncomment/configure to install attribute ID whitelist, blacklist, and/or match expressions. -->
     
+    <!-- TODO add property to properties file -->
+    <!-- TODO doc -->
+    <bean id="shibboleth.consent.UserIdentifierAttributeId" class="java.lang.String"
+        c:_0="%{idp.consent.userIdentifierAttributeId:email}" />
+
+    <!-- Uncomment/configure to install attribute ID whitelist, blacklist, and/or match expressions. -->
     <util:list id="shibboleth.consent.AttributeConsent.whitelistedAttributeIDs">
         <!--
         <value>email</value>
         -->
     </util:list>
-
+    
     <util:list id="shibboleth.consent.AttributeConsent.blacklistedAttributeIDs">
         <value>transientId</value>
         <value>persistentId</value>

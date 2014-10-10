@@ -59,7 +59,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
     @Nonnull @NotEmpty private static final String ID_FIELD = "id";
 
     /** Field name of consent value. */
-    @Nonnull @NotEmpty private static final String VALUE_FIELD = "val";
+    @Nonnull @NotEmpty private static final String VALUE_FIELD = "v";
 
     /** Field name of whether consent is approved. */
     @Nonnull @NotEmpty private static final String IS_APPROVED_FIELD = "appr";
@@ -80,8 +80,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
     }
 
     /** {@inheritDoc} */
-    @Nonnull
-    public Map<String, Consent>
+    @Nonnull public Map<String, Consent>
             deserialize(final long version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
                     @Nullable final Long expiration) throws IOException {
@@ -102,7 +101,9 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
 
                     final Consent consent = new Consent();
                     consent.setId(o.getString(ID_FIELD));
-                    consent.setValue(o.getString(VALUE_FIELD));
+                    if (o.containsKey(VALUE_FIELD)) {
+                        consent.setValue(o.getString(VALUE_FIELD));
+                    }
                     consent.setApproved(o.getBoolean(IS_APPROVED_FIELD, true));
                     consents.put(consent.getId(), consent);
                 }
@@ -136,7 +137,9 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
         for (Consent consent : consents.values()) {
             gen.writeStartObject();
             gen.write(ID_FIELD, consent.getId());
-            gen.write(VALUE_FIELD, consent.getValue());
+            if (consent.getValue() != null) {
+                gen.write(VALUE_FIELD, consent.getValue());
+            }
             if (!consent.isApproved()) {
                 gen.write(IS_APPROVED_FIELD, false);
             }

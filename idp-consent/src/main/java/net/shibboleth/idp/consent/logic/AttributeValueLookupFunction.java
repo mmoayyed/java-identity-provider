@@ -56,10 +56,12 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
     /**
      * Constructor.
      *
-     * @param attrId the attribute id
+     * @param userAttributeId the attribute id
      */
-    public AttributeValueLookupFunction(@Nonnull @NotEmpty final String attrId) {
-        attributeId = Constraint.isNotNull(StringSupport.trimOrNull(attrId), "Attribute ID cannot be null nor empty");
+    public AttributeValueLookupFunction(@Nonnull @NotEmpty final String userAttributeId) {
+        attributeId =
+                Constraint.isNotNull(StringSupport.trimOrNull(userAttributeId),
+                        "User attribute ID cannot be null nor empty");
 
         attributeContextLookupStrategy =
                 Functions.compose(new ChildContextLookup<>(AttributeContext.class),
@@ -82,7 +84,7 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
         }
 
         if (attribute.getValues().size() != 1) {
-           log.debug("Returning first string value of attribute '{}'", attributeId);
+            log.debug("Returning first string value of attribute '{}'", attributeId);
         }
 
         for (final IdPAttributeValue value : attribute.getValues()) {

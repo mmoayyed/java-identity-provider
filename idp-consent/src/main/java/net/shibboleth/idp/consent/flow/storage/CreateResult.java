@@ -35,9 +35,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The result of a consent flow to be stored in a storage service.
+ * Consent action to create a consent result representing the result of a consent flow to be stored in a storage
+ * service.
  */
-// TODO just a stub
 public class CreateResult extends AbstractConsentStorageAction {
 
     /** Class logger. */
@@ -48,7 +48,6 @@ public class CreateResult extends AbstractConsentStorageAction {
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
-            log.debug("TODO");
             return false;
         }
 
@@ -76,7 +75,7 @@ public class CreateResult extends AbstractConsentStorageAction {
             interceptorContext.setResult(result);
 
         } catch (IOException e) {
-            log.debug("{} Unable to serialize consent.", getLogPrefix(), e);
+            log.debug("{} Unable to serialize consent", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }

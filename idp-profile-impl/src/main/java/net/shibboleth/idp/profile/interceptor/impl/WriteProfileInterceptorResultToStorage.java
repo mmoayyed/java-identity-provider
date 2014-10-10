@@ -26,9 +26,6 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -57,18 +54,6 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
     /** Storage service. */
     @Nullable private StorageService storageService;
 
-    /** Storage context. */
-    @Nonnull @NotEmpty private String context;
-
-    /** Storage key. */
-    @Nonnull @NotEmpty private String key;
-
-    /** Storage value. */
-    @Nonnull @NotEmpty private String value;
-
-    /** Storage expiration. */
-    @Nullable @Positive @Duration private Long expiration;
-
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
@@ -93,11 +78,6 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
             return false;
         }
 
-        context = result.getStorageContext();
-        key = result.getStorageKey();
-        value = result.getStorageValue();
-        expiration = result.getStorageExpiration();
-
         return super.doPreExecute(profileRequestContext, interceptorContext);
     }
 
@@ -105,6 +85,11 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
+        final String context = result.getStorageContext();
+        final String key = result.getStorageKey();
+        final String value = result.getStorageValue();
+        final Long expiration = result.getStorageExpiration();
+        
         try {
             // Create / update loop until we succeed or exhaust attempts.
             int attempts = 10;

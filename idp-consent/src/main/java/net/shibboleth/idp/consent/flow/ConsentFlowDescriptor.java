@@ -17,27 +17,17 @@
 
 package net.shibboleth.idp.consent.flow;
 
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.consent.logic.FlowIdLookupFunction;
-import net.shibboleth.idp.consent.storage.ConsentSerializer;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.storage.StorageSerializer;
-
 /**
  * Abstract descriptor for a consent flow.
- * 
- * Holds a {@link StorageSerializer} for {@link Consent}. Defaults the storage context lookup strategy to a
- * {@link FlowIdLookupFunction}.
  * 
  * TODO details
  */
@@ -49,15 +39,6 @@ public abstract class ConsentFlowDescriptor extends ProfileInterceptorFlowDescri
     /** Maximum amount of time, in milliseconds, before a consent storage record expires. */
     @Nullable @Duration @NonNegative private Long lifetime;
 
-    /** Consent serializer. */
-    @Nonnull private StorageSerializer<Map<String, Consent>> consentSerializer;
-
-    /** Constructor. */
-    public ConsentFlowDescriptor() {
-        setStorageContextLookupStrategy(new FlowIdLookupFunction());
-        setConsentSerializer(new ConsentSerializer());
-    }
-
     /**
      * Whether consent equality includes comparing consent values.
      * 
@@ -65,15 +46,6 @@ public abstract class ConsentFlowDescriptor extends ProfileInterceptorFlowDescri
      */
     public boolean compareValues() {
         return compareValues;
-    }
-
-    /**
-     * Get the consent serializer.
-     * 
-     * @return consent serializer
-     */
-    @Nonnull public StorageSerializer<Map<String, Consent>> getConsentSerializer() {
-        return consentSerializer;
     }
 
     /**
@@ -97,17 +69,6 @@ public abstract class ConsentFlowDescriptor extends ProfileInterceptorFlowDescri
     }
 
     /**
-     * Set the consent serializer.
-     * 
-     * @param serializer consent serializer
-     */
-    public void setConsentSerializer(@Nonnull final StorageSerializer<Map<String, Consent>> serializer) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        consentSerializer = Constraint.isNotNull(serializer, "Consent serializer cannot be null");
-    }
-
-    /**
      * Set maximum amount of time, in milliseconds, before a consent storage record expires.
      * 
      * @param consentLifetime maximum amount of time, in milliseconds, before a consent storage record expires
@@ -115,7 +76,7 @@ public abstract class ConsentFlowDescriptor extends ProfileInterceptorFlowDescri
     public void setLifetime(@Nonnull @Duration @NonNegative final Long consentLifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(consentLifetime, "Lifetime cannot be null");
-        
+
         lifetime = Constraint.isGreaterThanOrEqual(0, consentLifetime, "Lifetime must be greater than or equal to 0");
     }
 }
