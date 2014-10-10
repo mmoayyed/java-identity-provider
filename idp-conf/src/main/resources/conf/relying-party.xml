@@ -15,8 +15,11 @@
     <context:property-placeholder />
 
     <!--
-    Anonymous configuration, defaults to no support for any profiles. Add <ref> elements to the list
-    to enable specific default profile settings (as below), or create new beans inline to override defaults. 
+    Unverified RP configuration, defaults to no support for any profiles. Add <ref> elements to the list
+    to enable specific default profile settings (as below), or create new beans inline to override defaults.
+    
+    "Unverified" typically means the IdP has no metadata, or equivalent way of assuring the identity and
+    legitimacy of a requesting system. To run an "open" IdP, you can enable profiles here.
     -->
     
     <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">

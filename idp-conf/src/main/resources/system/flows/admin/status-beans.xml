@@ -22,6 +22,7 @@
     <import resource="../../conf/audit-system.xml" />
     
     <util:list id="ServiceCollection">
+        <ref bean="shibboleth.LogbackLogging" />
         <ref bean="shibboleth.ReloadableAccessControlService" />
         <ref bean="shibboleth.MetadataResolverService" />
         <ref bean="shibboleth.RelyingPartyResolverService" />
