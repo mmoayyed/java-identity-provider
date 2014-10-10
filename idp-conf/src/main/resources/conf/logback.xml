@@ -19,20 +19,6 @@
     
     <!-- Note that ${idp.home} is the only property available for variable substitution. -->
     
-    <!-- Access log. -->
-    <appender name="IDP_ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${idp.home}/logs/idp-access.log</File>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${idp.home}/logs/idp-access-%d{yyyy-MM-dd}.log</FileNamePattern>
-        </rollingPolicy>
-
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <charset>UTF-8</charset>
-            <Pattern>%msg%n</Pattern>
-        </encoder>
-    </appender>
-
     <!-- Audit log. -->
     <appender name="IDP_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${idp.home}/logs/idp-audit.log</File>
@@ -60,10 +46,6 @@
             <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
         </encoder>
     </appender>
-  
-    <logger name="Shibboleth-Access" level="ALL">
-        <appender-ref ref="IDP_ACCESS"/>
-    </logger>
     
     <logger name="Shibboleth-Audit" level="ALL">
         <appender-ref ref="IDP_AUDIT"/>
