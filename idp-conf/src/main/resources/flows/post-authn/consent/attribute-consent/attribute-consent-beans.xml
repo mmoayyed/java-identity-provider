@@ -10,6 +10,9 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    
+    <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="AllowGlobalAttributeConsentPredicate" class="net.shibboleth.idp.consent.logic.AllowGlobalAttributeConsentPredicate" scope="prototype" />
 

@@ -10,58 +10,93 @@
 #else
     #set ($inputType = "hidden")
 #end
+#set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext') )
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>#springMessageText("idp.attribute-consent.title" "Attribute Consent")</title>
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css"/>
+        <title>#springMessageText("idp.attributeConsent.title" "Attribute Consent")</title>
     </head>
     <body>
-        <div class="wrapper">
-            <div class="container">
-                <header>
-                    <a class="logo" href="../images/dummylogo.png">
-                        <img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo"/>
-                    </a>
-                </header>
-                <div class="content" >
-                    <form action="$flowExecutionUrl" method="post"  >
-                        <table>
+        <form action="$flowExecutionUrl" method="post" style="padding:10px" >
+            <div class="box">
+                <div class="box_header">
+                    <header>
+                        #set ($logo = $rpUIContext.getLogo())
+                        #if ($logo)
+                            <img src="$encoder.encodeForHTMLAttribute($logo)" alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())" class="federation_logo" />
+                        #end
+                        <a href="../images/dummylogo.png">
+                            <img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo" />
+                        </a>
+                    </header>
+                </div>
+                <p style="margin-top: 70px;">
+                    #springMessage("idp.attributeConsent.serviceNameLabel")<br/>
+                    <span class="service_name">$rpUIContext.serviceName</span>
+                    #springMessage("idp.attributeConsent.of") <span class="organization_name">$encoder.encodeForHTML($rpUIContext.organizationName)</span>
+                </p>
+                <p style="margin-top: 10px;">
+                    #springMessage("idp.attributeConsent.serviceDescriptionLabel")<br/>
+                    <span class="service_description">$encoder.encodeForHTML($rpUIContext.serviceDescription)</span>
+                    <br />
+                </p>
+                <div class="attributeRelease" >
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="2">
+                                    #springMessageText("idp.attributeConsent.attributesHeader" "Data Requested by Service")
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
                             #foreach($attribute in $attributeConsentContext.getConsentableAttributes().values())
-                                <tr>
+                                #if ($foreach.count % 2 == 0)
+                                    #set ($rowStyle = "background-color:#E4E5E3;")
+                                #else
+                                    #set ($rowStyle = "")
+                                #end
+                                <tr style=$rowStyle>
                                     <td>$attributeDisplayNameFunction.apply($attribute)</td>
-                                    <td>$attribute.values</td>
                                     <td>
+                                        #foreach($value in $attribute.values)
+                                            <strong>$value.value</strong>
+                                            <br />
+                                        #end
+                                    </td>
+                                    <td style="vertical-align: top">
                                         <input type="$inputType" name="consentIds" value="$encoder.encodeForHTML($attribute.id)" checked />
                                     </td>
                                 </tr>
                             #end
-                        </table>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="float:left;">
+                    <p>
+                        #springMessageText("idp.attributeConsent.confirmationQuestion" "Do you accept?")
+                    </p>
+                    <p>
+                        <input type="radio" name="_idp_consentOptions" value="_idp_alwaysRequireConsent" />
+                        #springMessageText("idp.attributeConsent.alwaysRequireConsent" "Ask me again at next login")
+                    </p>
+                    <p>
+                        <input type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
+                        #springMessageText("idp.attributeConsent.rememberConsent" "Only ask me again if data changes")
+                    </p>
+                    #if ($allowGlobalConsent)
                         <p>
-                            <input type="radio" name="_idp_consentOptions" value="_idp_alwaysRequireConsent" />
-                            #springMessageText("idp.attribute-consent.alwaysRequireConsent" "Ask me again at next login")
+                            <input type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
+                            #springMessageText("idp.attributeConsent.globalConsent" "Do not ask me again")
                         </p>
-                        <p>
-                            <input type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
-                            #springMessageText("idp.attribute-consent.rememberConsent" "Only ask me again if data changes")
-                        </p>
-                        #if ($allowGlobalConsent)
-                            <p>
-                                <input type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
-                                #springMessageText("idp.attribute-consent.globalConsent" "Do not ask me again")
-                            </p>
-                        #end
-                        <section>
-                            <button class="form-element form-button" type="submit" name="_eventId_proceed" >#springMessageText("idp.attribute-consent.submit" "Submit")</button>
-                        </section>
-                    </form>
+                    #end
+                    <p style="text-align: center;">
+                        <input type="reset" name="_eventId_proceed" value="#springMessageText("idp.attributeConsent.reject" "Reject")" style="margin-right: 30px;" onclick="alert('#springMessage("idp.attributeConsent.rejectMessage")')" />
+                        <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.attributeConsent.accept" "Accept")" />
+                    </p>
                 </div>
             </div>
-            <footer>
-                <div class="container container-footer">
-                    <p class="footer-text">Insert your footer text here.</p>
-                </div>
-            </footer>
-        </div>
+        </form>
     </body>
 </html>
