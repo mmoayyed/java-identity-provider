@@ -1,8 +1,0 @@
- <flow xmlns="http://www.springframework.org/schema/webflow"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-      parent="post-authn/consent/abstract-attribute-consent" >
-
-    <bean-import resource="../abstract-attribute-consent/abstract-attribute-consent-beans.xml" />
-
-</flow>
