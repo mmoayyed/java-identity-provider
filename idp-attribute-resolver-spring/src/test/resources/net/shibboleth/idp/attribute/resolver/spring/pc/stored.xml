@@ -19,7 +19,7 @@
 		sourceAttributeID="foobar">
 		<resolver:Dependency ref="staticAttributes" />
 		<dc:ApplicationManagedConnection
-			jdbcURL="jdbc:hsqldb:hsql:storedId" jdbcDriver="org.hsqldb.jdbc.JDBCDriver" />
+			jdbcURL="jdbc:hsqldb:mem:storedId" jdbcDriver="org.hsqldb.jdbc.JDBCDriver" jdbcUserName="SA" jdbcPassword="" />
 	</resolver:DataConnector>
 
 	<resolver:DataConnector id="staticAttributes"

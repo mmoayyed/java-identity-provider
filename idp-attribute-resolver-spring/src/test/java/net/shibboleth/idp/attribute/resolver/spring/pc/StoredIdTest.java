@@ -96,7 +96,7 @@ public class StoredIdTest extends BaseAttributeDefinitionParserTest {
         Assert.assertTrue(principalConnector.getRelyingParties().isEmpty());
     }
     
-    @Test(enabled=false) public void case426() throws ResolutionException {
+    @Test public void case426() throws ResolutionException {
         setupConnectors("stored.xml");
         
         final AttributeResolutionContext context = new AttributeResolutionContext();
