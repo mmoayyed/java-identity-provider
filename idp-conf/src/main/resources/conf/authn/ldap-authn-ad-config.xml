@@ -19,8 +19,6 @@
     <bean id="formatDnResolver" class="org.ldaptive.auth.FormatDnResolver" p:format-ref="shibboleth.authn.LDAP.dn-format" />
     <bean id="bindConnectionConfig" parent="connectionConfig" />
     
-    <bean id="searchConnectionConfig" parent="connectionConfig" />
-
     <!-- Having SSL trust issues? Configure trust by adding
     <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
         <property name="credentialConfig">

@@ -10,20 +10,20 @@
 
     <bean id="searchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver" p:baseDn-ref="shibboleth.authn.LDAP.baseDn"
         p:subtreeSearch-ref="shibboleth.authn.LDAP.subtreeSearch" p:userFilter-ref="shibboleth.authn.LDAP.userFilter"
-        p:connectionFactory-ref="searchPooledConnectionFactory" />
+        p:connectionFactory-ref="searchPooledConnectionFactory" lazy-init="true" />
 
     <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler" p:connectionFactory-ref="bindPooledConnectionFactory" />
 
     <bean id="searchPooledConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
-        p:connectionPool-ref="searchConnectionPool" />
+        p:connectionPool-ref="searchConnectionPool" lazy-init="true" />
 
     <bean id="bindPooledConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory" p:connectionPool-ref="bindConnectionPool" />
 
     <bean id="searchConnectionPool" class="org.ldaptive.pool.BlockingConnectionPool" parent="connectionPool"
-        p:connectionFactory-ref="searchConnectionFactory" />
+        p:connectionFactory-ref="searchConnectionFactory" p:name="search-pool" lazy-init="true" />
 
     <bean id="bindConnectionPool" class="org.ldaptive.pool.BlockingConnectionPool" parent="connectionPool"
-        p:connectionFactory-ref="bindConnectionFactory" />
+        p:connectionFactory-ref="bindConnectionFactory" p:name="bind-pool" />
 
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool" abstract="true" init-method="initialize"
         p:blockWaitTime-ref="shibboleth.authn.LDAP.pool.blockWaitTime" p:poolConfig-ref="poolConfig"
@@ -33,7 +33,7 @@
         p:maxPoolSize-ref="shibboleth.authn.LDAP.pool.maxSize" p:validateOnCheckOut-ref="shibboleth.authn.LDAP.pool.validateOnCheckout"
         p:validatePeriodically-ref="shibboleth.authn.LDAP.pool.validatePeriodically" p:validatePeriod-ref="shibboleth.authn.LDAP.pool.validatePeriod" />
 
-    <bean id="searchConnectionFactory" class="org.ldaptive.DefaultConnectionFactory" p:connectionConfig-ref="searchConnectionConfig" />
+    <bean id="searchConnectionFactory" class="org.ldaptive.DefaultConnectionFactory" p:connectionConfig-ref="searchConnectionConfig" lazy-init="true" />
 
     <bean id="bindConnectionFactory" class="org.ldaptive.DefaultConnectionFactory" p:connectionConfig-ref="bindConnectionConfig" />
 
