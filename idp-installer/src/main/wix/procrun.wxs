@@ -14,7 +14,7 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
      implied.  See the License for the specific language governing
      permissions and limitations under the License.  -->
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:fw="http://schemas.microsoft.com/wix/FirewallExtension">
     <?define ServiceStart="auto"?>
     <?define ServiceName="shibd_idp"?>
     <Fragment>
@@ -51,6 +51,8 @@
 	    -->
             <Component Id="procrun_32_service" Directory="PROCRUNROOT" Guid="{544A5D33-CF99-4384-A74D-79FB29DE904D}">
 		<File Id="file_procrun_32_service" KeyPath="yes" Source="$(var.ProcrunSrc)\prunsrv.exe" Name="$(var.ServiceName).exe" />
+		<fw:FirewallException Id="Win32Shibd_idp" Program="[#file_procrun_32_service]" Name="Win32Shibd_idp"
+				      Description="The Shibboleth IdP" Protocol="tcp" Scope="any"/>
 <?if $(var.msitype) = "x86" ?>
 		<ServiceInstall Id="Service32" Name="$(var.ServiceName)" DisplayName="Shibboleth 3 IdP Daemon"
 			  Description="Runs the Jetty Container"
@@ -62,6 +64,8 @@
 	    <Component Id="procrun_AMD64_service" Directory="dir64" Guid="{2673BCBE-3659-4AC6-B39C-DF1EEDF72C0E}">
 		<Condition>VersionNT64 And Not Intel64</Condition>
 		<File Id="file_procrun_AMD64_service" KeyPath="yes" Source="$(var.ProcrunSrc)\amd64\prunsrv.exe" Name="$(var.ServiceName).exe" />
+		<fw:FirewallException Id="Win64Shibd_idp" Program="[#file_procrun_AMD64_service]" Name="Win64Shibd_idp"
+				      Description="The Shibboleth IdP" Protocol="tcp" Scope="any"/>
 <?if $(var.msitype) != "x86" ?>
 		<ServiceInstall Id="ServiceX64" Name="$(var.ServiceName)" DisplayName="Shibboleth 3 IdP Daemon"
 			  Description="Runs the Jetty Container"
@@ -72,6 +76,8 @@
 	    <Component Id="procrun_IA64_servce" Directory="diria64" Guid="{38261437-73B7-4E9A-BB6A-B1752157D379}">
 		<Condition>Intel64</Condition>
 		<File Id="file_procrun_IA64_service" KeyPath="yes" Source="$(var.ProcrunSrc)\ia64\prunsrv.exe" Name="$(var.ServiceName).exe" />
+		<fw:FirewallException Id="WinIA64Shibd_idp" Program="[#file_procrun_IA64_service]" Name="WinIA64Shibd_idp"
+				      Description="The Shibboleth IdP" Protocol="tcp" Scope="any"/>
 <?if $(var.msitype) != "x86" ?>
 		<ServiceInstall Id="ServiceIA" Name="$(var.ServiceName)" DisplayName="Shibboleth 3 IdP Daemon"	
 			  Description="Runs the Jetty Container"
