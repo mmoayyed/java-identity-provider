@@ -19,7 +19,7 @@
 
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Shibboleth IdP" Language="1033" Version="3.0.0.1" Manufacturer="Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+  <Product Id="*" Name="Shibboleth IdP" Language="1033" Version="3.0.0.0" Manufacturer="Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
     <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="$(var.msitype)" Description="Shibboleth IdP" Manufacturer="Shibboleth Consortium"/>
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes"
@@ -48,25 +48,25 @@
       <Directory Id="ProgramFilesFolder" >
         <Directory Id="INSTALLDIR" Name="Shibboleth" >
           <Merge Id="jetty" Language="1033" SourceFile="$(var.ProjectDir)\jetty-$(var.msitype).msm" DiskId="1"/>
-	    <Directory Id="IdPFolder" Name="IdP">
-		<Directory Id="CredsFolder" Name="creds"/>
-		<Directory Id="ConfFolder" Name="conf"/>
-		<Directory Id="JettyBaseFolder" Name="jetty-base">
-		    <Directory Id="StartDotD" Name="start.d"/>
-		</Directory>
-		<Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
-		    <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
-		    <CreateFolder Directory="CredsFolder">
-			<Permission User="Administrators" GenericAll="yes"/>
-		    </CreateFolder>
-		    <CreateFolder Directory="ConfFolder">
-			<Permission User="Administrators" GenericAll="yes"/>
-		    </CreateFolder>
-		    <CreateFolder Directory="StartDotD">
-			<Permission User="Administrators" GenericAll="yes"/>
-		    </CreateFolder>
-		</Component>
-	    </Directory>
+            <Directory Id="IdPFolder" Name="IdP">
+              <Directory Id="CredsFolder" Name="creds"/>
+              <Directory Id="ConfFolder" Name="conf"/>
+              <Directory Id="JettyBaseFolder" Name="jetty-base">
+                <Directory Id="StartDotD" Name="start.d"/>
+              </Directory>
+              <Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
+                <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
+                <CreateFolder Directory="CredsFolder">
+                  <Permission User="Administrators" GenericAll="yes"/>
+                </CreateFolder>
+                <CreateFolder Directory="ConfFolder">
+                  <Permission User="Administrators" GenericAll="yes"/>
+                </CreateFolder>
+                <CreateFolder Directory="StartDotD">
+                  <Permission User="Administrators" GenericAll="yes"/>
+                </CreateFolder>
+              </Component>
+            </Directory>
         </Directory>
       </Directory>
     </Directory>
@@ -74,9 +74,6 @@
     <Property Id="QI_INSTALLDIR" Secure="yes">
       <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files\Internet2\ShibIdP"/>
     </Property>
-
-<!--    <Property Id="IS_V2" Secure="yes">TOSET</Property>
-    <Property Id="JETTY_PASS" Secure="yes">TOSET</Property> -->
 
     <Property Id="QI_INSTALLDIR64" Secure="yes">
       <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files (x86)\Internet2\ShibIdP"/>
@@ -98,12 +95,14 @@
     <CustomAction  Id="SetDNSName" Property="DNSNAME" Value="[ComputerName]"/>
 
     <Binary Id="WriteConfigFilesSrc" SourceFile="scripts\shib_write_configs.vbs" />
+    <Binary Id="SetJavaIdpHomeSrc" SourceFile="scripts\shib_set_java_idp_home.vbs" />
 
     <CustomAction Id="WriteConfigFiles" BinaryKey="WriteConfigFilesSrc" VBScriptCall="" Execute="deferred" Impersonate="no"/>
+    <CustomAction Id="SetJavaIdpHome" BinaryKey="SetJavaIdpHomeSrc" VBScriptCall="" Execute="immediate" />
     <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY]" />
 
 
-      <!-- Ant actions -->
+    <!-- Ant actions -->
     <CustomAction Id="SetIdpAnt" Property="QtIdpAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\war\WEB-INF\lib\*&quot; -Didp.home=&quot;[INSTALLDIR]\IdP&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\build.xml&quot; -Didp.property.file=idp.install.properties install-nocopy" />
     <CustomAction Id="RunIdpAnt" Directory="ProgramFilesFolder" ExeCommand="[QtIdpAnt]" Execute="deferred" Impersonate="no"/>
     <CustomAction Id="QtIdpAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no"/>
@@ -113,7 +112,7 @@
     <CustomAction Id="QtJettyAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no"/>
 
     <InstallUISequence>
- 
+
       <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
       <Custom Action="InheritInstallDir" After="AppSearch">
         OLD_INSTALLDIR
@@ -121,16 +120,16 @@
 
       <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
       <Custom Action="InheritInstallJetty" After="AppSearch">
-	  OLD_INSTALL_JETTY AND NOT INSTALL_JETTY
+        OLD_INSTALL_JETTY AND NOT INSTALL_JETTY
       </Custom>
         
       <!-- Could we find JAVA.EXE ?-->
       <Custom Action="NoJavaBin" After="AppSearch">
-          NOT JAVA_EXECUTABLE and NOT Installed
+        NOT JAVA_EXECUTABLE and NOT Installed
       </Custom>
 
       <Custom Action="SetDNSName" After="AppSearch">
-         NOT DNSNAME
+        NOT DNSNAME
       </Custom>
 
     </InstallUISequence>
@@ -147,21 +146,23 @@
         OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
       </Custom>
 
-     <!-- Could we find JAVA.EXE ?-->
-     <Custom Action="NoJavaBin" After="AppSearch">
+      <Custom Action="SetJavaIdpHome" Before="WriteRegistryValues"/>
+
+      <!-- Could we find JAVA.EXE ?-->
+      <Custom Action="NoJavaBin" After="AppSearch">
            NOT JAVA_EXECUTABLE
-     </Custom>
-	
-     <!-- Work -->
-	
-     <Custom Action="SetWriteConfigFiles" Before="CostInitialize">NOT Installed</Custom>
-     <Custom Action="WriteConfigFiles" After="InstallFiles">NOT Installed</Custom>
-     <Custom Action="SetIdpAnt" After="WriteConfigFiles">NOT Installed</Custom>
-     <Custom Action="RunIdpAnt" After="SetIdpAnt">NOT Installed AND NOISY_INSTALL</Custom>
-     <Custom Action="QtIdpAnt" After="SetIdpAnt">NOT Installed AND NOT NOISY_INSTALL</Custom>
-     <Custom Action="SetJettyAnt" After="RunIdpAnt">NOT Installed AND INSTALL_JETTY</Custom>
-     <Custom Action="RunJettyAnt" After="SetJettyAnt">NOT Installed AND INSTALL_JETTY AND NOISY_INSTALL</Custom>
-     <Custom Action="QtJettyAnt" After="SetJettyAnt">NOT Installed AND INSTALL_JETTY AND NOT NOISY_INSTALL</Custom>
+      </Custom>
+
+      <!-- Work -->
+
+      <Custom Action="SetWriteConfigFiles" Before="CostInitialize">NOT Installed</Custom>
+      <Custom Action="WriteConfigFiles" After="InstallFiles">NOT Installed</Custom>
+      <Custom Action="SetIdpAnt" After="WriteConfigFiles">NOT Installed</Custom>
+      <Custom Action="RunIdpAnt" After="SetIdpAnt">NOT Installed AND NOISY_INSTALL</Custom>
+      <Custom Action="QtIdpAnt" After="SetIdpAnt">NOT Installed AND NOT NOISY_INSTALL</Custom>
+      <Custom Action="SetJettyAnt" After="RunIdpAnt">NOT Installed AND INSTALL_JETTY</Custom>
+      <Custom Action="RunJettyAnt" After="SetJettyAnt">NOT Installed AND INSTALL_JETTY AND NOISY_INSTALL</Custom>
+      <Custom Action="QtJettyAnt" After="SetJettyAnt">NOT Installed AND INSTALL_JETTY AND NOT NOISY_INSTALL</Custom>
 
     </InstallExecuteSequence>
 

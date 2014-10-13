@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "IdP", "IdP.wixproj", "{160BBB2F-0656-4132-9428-8FE5DC417E08}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -13,6 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{604AB912-549C-4613-A987-E0146AE7BB68}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\shib_random.vbs = scripts\shib_random.vbs
+		scripts\shib_set_java_idp_home.vbs = scripts\shib_set_java_idp_home.vbs
 		scripts\shib_write_configs.vbs = scripts\shib_write_configs.vbs
 	EndProjectSection
 EndProject

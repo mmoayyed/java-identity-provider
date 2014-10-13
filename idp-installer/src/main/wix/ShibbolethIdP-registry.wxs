@@ -14,9 +14,18 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
      implied.  See the License for the specific language governing
      permissions and limitations under the License.  -->
+
+
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
 <!-- to do with the IdP Registry -->
-    <?define ServiceName="shibd_idp"?>
+
+<?if $(var.msitype) != "x86" ?>
+<?define isWin64="yes" ?>
+<?else?>
+<?define isWin64="no" ?>
+<?endif?>
+<?define ServiceName="shibd_idp"?>
     <Fragment>
     <ComponentGroup Id="SaveRegistry">
       <Component Id="SaveTarget" Guid="{32A39FB0-21E4-475E-891A-C9901D3548A3}" Directory="INSTALLDIR" Win64="no">
@@ -24,16 +33,16 @@
         <RegistryValue Id="targetRegJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP"  Name="InstallJetty" Value="[INSTALL_JETTY]" Type="string" />
       </Component>
       <!-- pretty icon for the "install programs" page -->
-      <Component Id='shib.ico' Guid='{7F4CE60B-A27B-4E07-8DD9-19F16B008C56}' Directory="INSTALLDIR">
+      <Component Id='shib.ico' Guid='{7F4CE60B-A27B-4E07-8DD9-19F16B008C56}' Directory="TARGETDIR" Win64="$(var.isWin64)">
         <File KeyPath='yes' Source='$(var.ProjectDir)\shib.ico' />
         <RegistryValue Root='HKLM' Key='Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductCode]'
                        Name='DisplayIcon' Value='[#shib.ico],0' Type='string' />
       </Component>
-	<!-- Jetty Configuration-->
-	<Component Id="JettyConfig"  Directory="INSTALLDIR" Guid="{FE729EF2-8293-493A-80C9-69CF54DC4565}" KeyPath="yes">
+      <!-- Jetty Configuration-->
+      <Component Id="JettyConfig"  Directory="INSTALLDIR" Guid="{FE729EF2-8293-493A-80C9-69CF54DC4565}" KeyPath="yes"  Win64="no">
 	    <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM">
 		<RegistryValue Name="Options" Type="multiString">
-		    <MultiStringValue>-Didp.home=[INSTALLDIR]\IdP</MultiStringValue>
+		    <MultiStringValue>-Didp.home=[JAVA_IDP_HOME]</MultiStringValue>
 		</RegistryValue>
 
 	    </RegistryKey>
@@ -49,7 +58,7 @@
 	    </RegistryKey>
 	    <Condition>INSTALL_JETTY</Condition>
 	</Component>
-	    </ComponentGroup>
+    </ComponentGroup>
 
     <Property Id="OLD_INSTALLDIR" Secure="yes">
       <RegistrySearch Id="OldInstallDir" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP"
