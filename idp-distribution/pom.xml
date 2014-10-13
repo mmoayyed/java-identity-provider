@@ -128,7 +128,7 @@
                                     <artifactId>idp-war</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
-                                    <outputDirectory>${assembly-directory}/war/</outputDirectory>
+                                    <outputDirectory>${assembly-directory}/webapp/</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -228,7 +228,7 @@
                                     <artifactId>jcl-over-slf4j</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${assembly-directory}/war/WEB-INF/lib/</outputDirectory>
+                            <outputDirectory>${assembly-directory}/webapp/WEB-INF/lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

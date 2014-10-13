@@ -379,12 +379,12 @@
     -->
 
 	<target name="build-war" depends="gettarget">
-		<copy todir="${idp.target.dir}/war" overwrite="true" failonerror="false">
+		<copy todir="${idp.target.dir}/webapp" overwrite="true" failonerror="false">
 			<fileset dir="${idp.target.dir}/edit-webapp" />
 		</copy>
-		<!-- build a jar, not war, since it is already full populated -->
+		<!-- build a jar, not war, since it is already fully populated -->
 		<delete file="${idp.target.dir}/idp.war" failonerror="false" />
-		<jar destfile="${idp.target.dir}/idp.war" basedir="${idp.target.dir}/war" />
+		<jar destfile="${idp.target.dir}/idp.war" basedir="${idp.target.dir}/webapp" />
 	</target>
 
 	<!-- specify getsource before get target to force target default-->
@@ -413,8 +413,8 @@
 		<copy todir="${target}/system" failonerror="false">
 			<fileset dir="${idp.target.dir}/system" />
 		</copy>
-		<copy todir="${target}/war" failonerror="false">
-			<fileset dir="${idp.target.dir}/war" />
+		<copy todir="${target}/webapp" failonerror="false">
+			<fileset dir="${idp.target.dir}/webapp" />
 		</copy>
 
 		<!-- Do not delete bin, this preserves user scripts.  
@@ -424,7 +424,7 @@
 		<delete dir="${idp.target.dir}/doc" failonerror="false" />
 		<delete dir="${idp.target.dir}/jettty-base" failonerror="false" />
 		<delete dir="${idp.target.dir}/system" failonerror="false" />
-		<delete dir="${idp.target.dir}/war" failonerror="false" />
+		<delete dir="${idp.target.dir}/webapp" failonerror="false" />
 
 		<!-- Now copy or create empty as required.  
 		Creating an existing file is benign, bin gets 
@@ -452,9 +452,9 @@
 		<copy todir="${idp.target.dir}/system">
 			<fileset dir="${idp.src.dir}/system" />
 		</copy>
-		<mkdir dir="${idp.target.dir}/flows" />
-		<copy todir="${idp.target.dir}/war">
-			<fileset dir="${idp.src.dir}/war" />
+		<mkdir dir="${idp.target.dir}/webapp" />
+		<copy todir="${idp.target.dir}/webapp">
+			<fileset dir="${idp.src.dir}/webapp" />
 		</copy>
 	</target>
 

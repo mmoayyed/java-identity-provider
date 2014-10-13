@@ -32,7 +32,7 @@ if [ -n "$CLASSPATH" ] ; then
 fi
 
 # add in the dependency .jar files
-LOCALCLASSPATH="$LOCATION/../war/WEB-INF/lib/*":$LOCALCLASSPATH
+LOCALCLASSPATH="$LOCATION/../webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 LOCALCLASSPATH="$LOCATION/lib/*":$LOCALCLASSPATH
 
 if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then

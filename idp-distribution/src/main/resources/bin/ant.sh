@@ -9,7 +9,8 @@ case "`uname`" in
 esac
 
 #Find the necessary resources
-ANT_HOME=.
+ANT_HOME=$0
+ANT_HOME=${ANT_HOME%/*}
 
 if [ -z "$JAVACMD" ] ; then 
   if [ -n "$JAVA_HOME"  ] ; then
@@ -35,7 +36,7 @@ if [ -n "$CLASSPATH" ] ; then
 fi
 
 # add in the dependency .jar files
-LOCALCLASSPATH="${ANT_HOME}/../war/WEB-INF/lib/*":$LOCALCLASSPATH
+LOCALCLASSPATH="${ANT_HOME}/../webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 LOCALCLASSPATH="${ANT_HOME}/../bin/lib/*":$LOCALCLASSPATH
 
 if [ -n "$JAVA_HOME" ] ; then
@@ -80,4 +81,4 @@ if $cygwin; then
   JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
   LOCALCLASSPATH=`cygpath --path --windows "$LOCALCLASSPATH"`
 fi
-$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" $ANT_OPTS org.apache.tools.ant.Main -e -f build.xml "$@"
+$JAVACMD -classpath "$LOCALCLASSPATH" -Dant.home="${ANT_HOME}" $ANT_OPTS org.apache.tools.ant.Main -e -f "${ANT_HOME}/build.xml" "$@"

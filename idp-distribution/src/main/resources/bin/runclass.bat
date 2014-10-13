@@ -22,7 +22,7 @@ if defined CLASSPATH (
 )
 
 set LOCALCLASSPATH=%LOCALCLASSPATH%;%~dp0lib\*
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%~dp0..\war\WEB-INF\lib\*
+set LOCALCLASSPATH=%LOCALCLASSPATH%;%~dp0..\webapp\WEB-INF\lib\*
 
 if exist %JAVA_HOME%\lib\tools.jar (
     set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_HOME%\lib\tools.jar
