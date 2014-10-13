@@ -326,9 +326,11 @@
     -->
 
 	<target name="upgrade" depends="editproperties">
-		<!-- Create edit-webapp -->
+		<!-- Create edit-webapp tree -->
         <mkdir dir="${idp.target.dir}/edit-webapp" />
         <mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF" />
+		<mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF/lib" />
+		<mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF/classes" />
 		<!-- conf -->
 		<mkdir dir="${idp.target.dir}/conf" />
 		<copy todir="${idp.target.dir}/conf">
