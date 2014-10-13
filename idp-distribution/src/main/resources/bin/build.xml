@@ -44,7 +44,7 @@
 	</target>
 
 	<target name="install" depends="init, preload, getsource, allinput, copy-distribution, install-nocopy, tidy" />
-	<target name="install-nocopy" depends="init, preload,  gettarget, v2v3prepopulate, allinput, genkeys, upgrade, metadata-gen, build-war, tidy" />
+	<target name="install-nocopy" depends="init, preload, gettarget, v2v3prepopulate, allinput, genkeys, upgrade, metadata-gen, build-war, tidy" />
 
 	<!-- USER INPUT -->
 	<target name="preload" if="idp.property.file">
@@ -134,13 +134,14 @@
            idp.scope=${idp.scope}
         </echo>
     </target>
+	
 	<!--
 
      KEY MANAGEMENT
 
     -->
 
-	<target name="genkeys" depends="init, preload, checkproperties, signing-key, encryption-key, keystore, sealer" />
+	<target name="genkeys" depends="init, preload, checkproperties, signing-key, encryption-key, backchannel-key, sealer" />
  
 	<target name="checkproperties" depends="gettarget">
 		<available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt" />
@@ -148,7 +149,7 @@
 		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.p12" />
 		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.jks" />
         <available property="idp.metadata.present" file="${idp.target.dir}/metadata/idp-metadata.xml" />
-		<condition property="idp.keystore.present">
+		<condition property="idp.backchannel.present">
 			<or>
 				<istrue value="${idp.p12.keystore.present}" />
 				<istrue value="${idp.jks.keystore.present}" />
@@ -158,9 +159,9 @@
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
 		<condition property="idp.will.call.certgen">
 			<!-- we will call the cert gen if
-           EITHER we don't have a signing key
-           OR we don't have a encryption key
-           OR we don't have a tls -->
+           EITHER we don't have a signing keypair
+           OR we don't have a encryption keypair
+           OR we don't have a backchannel keystore -->
 			<or>
 				<not>
 					<istrue value="${idp.signing.present}" />
@@ -169,7 +170,7 @@
 					<istrue value="${idp.encryption.present}" />
 				</not>
 				<not>
-					<istrue value="${idp.keystore.present}" />
+					<istrue value="${idp.backchannel.present}" />
 				</not>
 			</or>
 		</condition>
@@ -238,7 +239,7 @@
 					<isset property="idp.keystore.password" />
 				</not>
 				<not>
-					<istrue value="${idp.keystore.present}" />
+					<istrue value="${idp.backchannel.present}" />
 				</not>
 			</and>
 		</condition>
@@ -307,10 +308,10 @@
 		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/creds/idp-encryption.key" certificateFile="${idp.target.dir}/creds/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
-	<target name="keystore" unless="idp.keystore.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
+	<target name="backchannel-key" unless="idp.backchannel.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
 		<echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
         <mkdir dir="${idp.target.dir}/creds"/>
-		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-backchannel.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-backchannel.p12" certificateFile="${idp.target.dir}/creds/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
@@ -480,6 +481,10 @@
 			<fileset dir="${idp.target.dir}/conf" />
 		</copy>
 		<delete dir="${idp.target.dir}/conf" failonerror="false" />
+		
+		<!-- delete old lib folder, just avoids confusion -->
+		<delete dir="${idp.target.dir}/lib" failonerror="false" />
+		
 		<!-- copy selected files from conf.v2 -->
 		<mkdir dir="${idp.target.dir}/conf" />
 		<copy file="${idp.target.dir}/conf.v2/attribute-filter.xml" tofile="${idp.target.dir}/conf/attribute-filter.xml" failonerror="false" />
@@ -491,7 +496,7 @@
 			<fileset dir="${idp.target.dir}/credentials" />
 		</copy>
 		<delete dir="${idp.target.dir}/credentials" failonerror="false" />
-		<!--- copy selected files fron credentials.v2 -->
+		<!--- copy selected files from credentials.v2 -->
 		<mkdir dir="${idp.target.dir}/creds" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-encryption.crt" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-encryption.key" failonerror="false" />
@@ -499,7 +504,6 @@
 		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-signing.key" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-backchannel.crt" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.jks" tofile="${idp.target.dir}/creds/idp-backchannel.jks" failonerror="false" />
-
 	</target>
 
 	<target name="v2detect" depends="gettarget">
