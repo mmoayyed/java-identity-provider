@@ -190,21 +190,28 @@
 		<available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver" />
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
 		<condition property="idp.will.call.certgen">
-			<!-- we will call the cert gen if
-           EITHER we don't have a signing keypair
-           OR we don't have a encryption keypair
-           OR we don't have a backchannel keystore -->
-			<or>
+			<!--
+			we will call the cert gen if this is not a V2 upgrade
+           	AND EITHER we don't have a signing keypair
+           		OR we don't have a encryption keypair
+           		OR we don't have a backchannel keystore
+           	-->
+			<and>
 				<not>
-					<istrue value="${idp.signing.present}" />
+					<istrue value="${idp.is.V2}" />
 				</not>
-				<not>
-					<istrue value="${idp.encryption.present}" />
-				</not>
-				<not>
-					<istrue value="${idp.backchannel.present}" />
-				</not>
-			</or>
+				<or>
+					<not>
+						<istrue value="${idp.signing.present}" />
+					</not>
+					<not>
+						<istrue value="${idp.encryption.present}" />
+					</not>
+					<not>
+						<istrue value="${idp.backchannel.present}" />
+					</not>
+				</or>
+			</and>
 		</condition>
 
 		<condition property="idp.ask.entityid">
@@ -518,10 +525,8 @@
 		<echo append="true" file="idp_ant.log">target: v2v3prepopulate
 		</echo>
 	    <echo>
-		
-		A V2 Installation has been detected.  Configuration will be preserved into .v2 folders
-		and appropriate files copied forwards
-		
+A V2 Installation has been detected. Configuration will be preserved into
+.v2 folders and appropriate files copied forward.
 	    </echo>
 		<!-- rename war to war.v2 -->
 		<copy todir="${idp.target.dir}/war.v2" failonerror="true">
@@ -557,6 +562,7 @@
 		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-signing.key" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-backchannel.crt" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.jks" tofile="${idp.target.dir}/creds/idp-backchannel.jks" failonerror="false" />
+		<copy file="${idp.target.dir}/credentials.v2/idp.p12" tofile="${idp.target.dir}/creds/idp-backchannel.p12" failonerror="false" />
 	</target>
 
 	<target name="v2detect" depends="gettarget">
