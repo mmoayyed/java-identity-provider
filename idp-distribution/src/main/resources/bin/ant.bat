@@ -4,6 +4,11 @@ setlocal
 REM Find the necessary resources
 set ANT_HOME=%~dp0
 
+REM strip trailing backslash - it confuses java
+if "%ANT_HOME:~-1%" == "\" (
+  set ANT_HOME=%ANT_HOME:~0,-1%
+)
+
 REM We need a JVM
 if not defined JAVA_HOME  (
   echo Error: JAVA_HOME is not defined.
