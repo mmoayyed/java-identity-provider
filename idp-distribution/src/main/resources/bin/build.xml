@@ -180,7 +180,12 @@
 		<available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt" />
 		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.p12" />
 		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.jks" />
-        <available property="idp.metadata.present" file="${idp.target.dir}/metadata/idp-metadata.xml" />
+		<condition property="idp.metadata.present">
+			<or>
+				<istrue value="${idp.is.V2}" />
+		        <available file="${idp.target.dir}/metadata/idp-metadata.xml" />
+			</or>
+		</condition>
 		<condition property="idp.backchannel.present">
 			<or>
 				<istrue value="${idp.is.V2}" />
@@ -479,7 +484,7 @@
 		<delete dir="${idp.target.dir}/bin/lib" failonerror="false" />
 		<delete dir="${idp.target.dir}/dist" failonerror="false" />
 		<delete dir="${idp.target.dir}/doc" failonerror="false" />
-		<delete dir="${idp.target.dir}/jettty-base" failonerror="false" />
+		<delete dir="${idp.target.dir}/jetty-base" failonerror="false" />
 		<delete dir="${idp.target.dir}/system" failonerror="false" />
 		<delete dir="${idp.target.dir}/webapp" failonerror="false" />
 
@@ -556,7 +561,6 @@ A V2 Installation has been detected. Configuration will be preserved into
 		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-encryption.key" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-signing.crt" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-signing.key" failonerror="false" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-backchannel.crt" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.jks" tofile="${idp.target.dir}/creds/idp-backchannel.jks" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.p12" tofile="${idp.target.dir}/creds/idp-backchannel.p12" failonerror="false" />
 	</target>
