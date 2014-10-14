@@ -61,7 +61,7 @@
         p:reloadTaskTimer-ref="shibboleth.TaskTimer" />
 
     <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
-        p:serviceConfigurations-ref="shibboleth.RelyingPartyResolverResources"
+        p:serviceConfigurations-ref="#{ %{idp.service.relyingparty.legacy:false} ? 'shibboleth.LegacyRelyingPartyResolverResources' :  'shibboleth.RelyingPartyResolverResources' }"
         p:failFast="%{idp.service.relyingparty.failFast:false}"
         p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:0}"
         p:reloadTaskTimer-ref="shibboleth.TaskTimer">
