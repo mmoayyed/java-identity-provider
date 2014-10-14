@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Shibboleth Identity Provider V3" basedir=".." default="install">
+<project name="Shibboleth Identity Provider V3" basedir=".." default="install"
+	xmlns:if="ant:if"
+	xmlns:unless="ant:unless">
 
 	<taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
@@ -178,21 +180,32 @@
 	<target name="checkproperties" depends="gettarget">
 		<echo append="true" file="idp_ant.log">target: checkproperties
 		</echo>
-		<available property="idp.signing.present" file="${idp.target.dir}/creds/idp-signing.crt" />
-		<available property="idp.encryption.present" file="${idp.target.dir}/creds/idp-encryption.crt" />
-		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.p12" />
-		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.jks" />
-		<condition property="idp.metadata.present">
+		<!-- Detecting credential and metadata presence is overridden in the case of a V2 upgrade -->
+		<condition property="idp.signing.present">
 			<or>
 				<istrue value="${idp.is.V2}" />
-		        <available file="${idp.target.dir}/metadata/idp-metadata.xml" />
+				<available file="${idp.target.dir}/creds/idp-signing.crt" />
 			</or>
 		</condition>
+		<condition property="idp.encryption.present">
+			<or>
+				<istrue value="${idp.is.V2}" />
+				<available file="${idp.target.dir}/creds/idp-encryption.crt" />
+			</or>
+		</condition>
+		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.p12" />
+		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.jks" />
 		<condition property="idp.backchannel.present">
 			<or>
 				<istrue value="${idp.is.V2}" />
 				<istrue value="${idp.p12.keystore.present}" />
 				<istrue value="${idp.jks.keystore.present}" />
+			</or>
+		</condition>
+		<condition property="idp.metadata.present">
+			<or>
+				<istrue value="${idp.is.V2}" />
+		        <available file="${idp.target.dir}/metadata/idp-metadata.xml" />
 			</or>
 		</condition>
 		<available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver" />
@@ -398,6 +411,7 @@
 			</fileset>
 			<mapper type="glob" from="*.dist" to="*" />
 		</copy>
+		<delete file="${idp.target.dir}/conf/credentials.xml" if:true="idp.is.V2" />
 		<!-- flows -->
 		<mkdir dir="${idp.target.dir}/flows" />
 		<copy todir="${idp.target.dir}/flows">
@@ -566,15 +580,13 @@ A V2 Installation has been detected. Configuration will be preserved into
 			<fileset dir="${idp.target.dir}/credentials" />
 		</copy>
 		<delete dir="${idp.target.dir}/credentials" failonerror="false" />
-		<!--- copy selected files from credentials.v2 -->
+		<!--- Copy all files from credentials.v2 back into new creds -->
 		<mkdir dir="${idp.target.dir}/creds" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-encryption.crt" failonerror="false" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-encryption.key" failonerror="false" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.crt" tofile="${idp.target.dir}/creds/idp-signing.crt" failonerror="false" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-signing.key" failonerror="false" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.jks" tofile="${idp.target.dir}/creds/idp-backchannel.jks" failonerror="false" />
-		<copy file="${idp.target.dir}/credentials.v2/idp.p12" tofile="${idp.target.dir}/creds/idp-backchannel.p12" failonerror="false" />
+		<copy todir="${idp.target.dir}/creds" failonerror="false">
+			<fileset dir="${idp.target.dir}/credentials.v2" />
+		</copy>
 
+		<!-- Signal we're a legacy RP config -->
         <echo file="replace.services.properties" append="yes">
         	idp.service.relyingparty.legacy=true
         </echo>
