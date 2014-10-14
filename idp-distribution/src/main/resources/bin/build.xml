@@ -29,9 +29,11 @@
         idp.scope: The scope to assert.  If present this should also be present in idp.merge.properties
         idp.merge.properties: The name of a property file to merge with idp.properties.  This file only
           used when doing the initial create of idp.properties, and is deleted after processing
-            - if idp.noprompt is set then this file should contain a line setting idp.entityID.
-            - if idp.sealer.password is set then this file should contain a line setting idp.sealer.storePassword and idp.sealer.keyPassword
-            - if idp.scope is prsent then this file should contain a line setting idp.scope
+            - if idp.noprompt is set, then this file should contain a line setting idp.entityID.
+            - if idp.sealer.password is set, then this file should contain a line setting idp.sealer.storePassword and idp.sealer.keyPassword
+            - if idp.scope is present, then this file should contain a line setting idp.scope
+        service.merge.properties: The name of a property file to merge with service.properties
+        	- if idp.is.V2 is set, then this file should contain a line setting idp.service.relyingparty.legacy=true
         idp.property.file: The name of a property file to fill in some or all of the above. This file is deleted after processing.
         idp.no.tidy: Do not delete the two above files (debug only)
         
@@ -195,6 +197,7 @@
 		</condition>
 		<available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver" />
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
+		<available property="service.properties.present" file="${idp.target.dir}/conf/service.properties" />
 		<condition property="idp.will.call.certgen">
 			<!--
 			we will call the cert gen if
@@ -376,7 +379,7 @@
 
     -->
 
-	<target name="upgrade" depends="editproperties">
+	<target name="upgrade" depends="editproperties, editserviceproperties">
 		<echo append="true" file="idp_ant.log">target: upgrade
 		</echo>
 		<!-- Create edit-webapp tree -->
@@ -384,6 +387,7 @@
         <mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF" />
 		<mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF/lib" />
 		<mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF/classes" />
+		
 		<!-- conf -->
 		<mkdir dir="${idp.target.dir}/conf" />
 		<copy todir="${idp.target.dir}/conf">
@@ -424,19 +428,26 @@
 		<mkdir dir="${idp.target.dir}/conf" />
 		<mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties.dist" outFile="${idp.target.dir}/conf/idp.properties" mergeFile="${idp.merge.properties}" />
 	</target>
-	
+
+	<target name="editserviceproperties" depends="gettarget" if="idp.is.V2" unless="service.properties.present">
+		<echo append="true" file="idp_ant.log">target: editserviceproperties
+		</echo>
+		<mkdir dir="${idp.target.dir}/conf" />
+		<mergeproperties inFile="${idp.target.dir}/dist/conf/service.properties.dist" outFile="${idp.target.dir}/conf/service.properties" mergeFile="${service.merge.properties}" />
+	</target>
+
 	<target name="metadata-gen" depends="gettarget, getentityid, gethostname, genkeys, upgrade"  unless="idp.metadata.present">
 		<echo append="true" file="idp_ant.log">target: metadata-gen
 		</echo>
 		<mkdir dir="${idp.target.dir}/metadata"/>
 		<metadatagenerate dnsName="${idp.host.name}" backChannelCert="${idp.target.dir}/creds/idp-backchannel.crt" output="${idp.target.dir}/metadata/idp-metadata.xml"/>
 	</target>
+	
 	<!--
 
      CREATE WAR FILE
 
     -->
-
 	<target name="build-war" depends="gettarget">
 		<!-- no logging -->
 		<copy todir="${idp.target.dir}/webapp" overwrite="true" failonerror="false">
@@ -563,6 +574,11 @@ A V2 Installation has been detected. Configuration will be preserved into
 		<copy file="${idp.target.dir}/credentials.v2/idp.key" tofile="${idp.target.dir}/creds/idp-signing.key" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.jks" tofile="${idp.target.dir}/creds/idp-backchannel.jks" failonerror="false" />
 		<copy file="${idp.target.dir}/credentials.v2/idp.p12" tofile="${idp.target.dir}/creds/idp-backchannel.p12" failonerror="false" />
+
+        <echo file="replace.service.properties" append="yes">
+        	idp.service.relyingparty.legacy=true
+        </echo>
+        <property name="service.merge.properties" value="replace.service.properties" />
 	</target>
 
 	<target name="v2detect" depends="gettarget">
@@ -571,7 +587,7 @@ A V2 Installation has been detected. Configuration will be preserved into
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
 		<available property="idp.relying.party.present" file="${idp.target.dir}/conf/relying-party.xml" />
 		<condition property="idp.is.V2">
-			<!-- This is V2 is there is relying party and there is not idp.properties -->
+			<!-- This is V2 is there is relying-party.xml and not idp.properties -->
 			<and>
 				<isfalse value="${idp.properties.present}" />
 				<istrue value="${idp.relying.party.present}" />
@@ -583,6 +599,7 @@ A V2 Installation has been detected. Configuration will be preserved into
 		<echo append="true" file="idp_ant.log">target: tidy
 		</echo>
 		<delete file="${idp.merge.properties}" failonerror="false" />
+		<delete file="${service.merge.properties}" failonerror="false" />
         <delete file="${idp.property.file}" failonerror="false" />
 	</target>
 	
