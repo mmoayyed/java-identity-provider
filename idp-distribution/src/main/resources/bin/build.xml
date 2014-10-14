@@ -156,13 +156,13 @@
 		</echo>
 	</target>
 	
-    <target name="askscope" if="idp.fet.scope" depends="checkproperties">
-	<echo append="true" file="idp_ant.log">target: askscope
-	</echo>
-	<input message="EntityID" addproperty="idp.scope" defaultvalue="${DOMAIN}" />
-	<echo file="${idp.merge.properties}" append="yes">
-	   idp.scope=${idp.scope}
-	</echo>
+    <target name="askscope" if="idp.ask.scope" depends="checkproperties">
+		<echo append="true" file="idp_ant.log">target: askscope
+		</echo>
+		<input message="Attribute Scope" addproperty="idp.scope" defaultvalue="${DOMAIN}" />
+		<echo file="${idp.merge.properties}" append="yes">
+		   idp.scope=${idp.scope}
+		</echo>
     </target>
 	
 	<!--
@@ -241,7 +241,7 @@
 		</condition>
 		
 		<condition property="idp.ask.scope">
-            <!-- We ask for host name if there is no scope and we allow user input -->
+            <!-- We ask for scope if there is no scope and we allow user input -->
             <and>
                 <not>
                     <isset property="idp.scope" />
@@ -253,7 +253,7 @@
         </condition>
 
 		<condition property="idp.set.scope">
-            <!-- We set host name if there is no scope and we do not allow user input -->
+            <!-- We set scope if there is no scope and we do not allow user input -->
             <and>
                 <not>
                     <isset property="idp.scope" />
