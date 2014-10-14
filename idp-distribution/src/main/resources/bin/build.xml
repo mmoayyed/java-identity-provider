@@ -183,6 +183,7 @@
         <available property="idp.metadata.present" file="${idp.target.dir}/metadata/idp-metadata.xml" />
 		<condition property="idp.backchannel.present">
 			<or>
+				<istrue value="${idp.is.V2}" />
 				<istrue value="${idp.p12.keystore.present}" />
 				<istrue value="${idp.jks.keystore.present}" />
 			</or>
@@ -191,27 +192,22 @@
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
 		<condition property="idp.will.call.certgen">
 			<!--
-			we will call the cert gen if this is not a V2 upgrade
-           	AND EITHER we don't have a signing keypair
+			we will call the cert gen if
+           	EITHER we don't have a signing keypair
            		OR we don't have a encryption keypair
            		OR we don't have a backchannel keystore
            	-->
-			<and>
+			<or>
 				<not>
-					<istrue value="${idp.is.V2}" />
+					<istrue value="${idp.signing.present}" />
 				</not>
-				<or>
-					<not>
-						<istrue value="${idp.signing.present}" />
-					</not>
-					<not>
-						<istrue value="${idp.encryption.present}" />
-					</not>
-					<not>
-						<istrue value="${idp.backchannel.present}" />
-					</not>
-				</or>
-			</and>
+				<not>
+					<istrue value="${idp.encryption.present}" />
+				</not>
+				<not>
+					<istrue value="${idp.backchannel.present}" />
+				</not>
+			</or>
 		</condition>
 
 		<condition property="idp.ask.entityid">
