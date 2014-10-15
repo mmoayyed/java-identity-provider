@@ -310,7 +310,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (null != failoverDataConnectorId) {
                 log.debug("{} data connector {} failed to resolve, invoking failover data"
-                        + " connector {}.  Reason for the failure was: {}", new Object[] {logPrefix, connectorId,
+                        + " connector {}.  Reason for failure:", new Object[] {logPrefix, connectorId,
                         failoverDataConnectorId, e,});
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
                 return;
