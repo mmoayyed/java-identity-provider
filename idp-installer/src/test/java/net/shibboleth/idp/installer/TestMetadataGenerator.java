@@ -47,7 +47,7 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
 
     @Test public void generator() throws IOException {
         final MetadataGeneratorTask task = new MetadataGeneratorTask();
-        final Resource backChannelCrt = new ClassPathResource("/creds/idp-backchannel.crt");
+        final Resource backChannelCrt = new ClassPathResource("/credentials/idp-backchannel.crt");
         task.setBackchannelCert(backChannelCrt.getFile());
         final File out = File.createTempFile("TestMetadataGenerator", ".xml");
 
