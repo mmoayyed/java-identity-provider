@@ -65,11 +65,6 @@
         <value>%{idp.home}/system/conf/relying-party-system.xml</value>
     </util:list>
 
-    <util:list id="shibboleth.MetadataResolverResources">
-        <value>%{idp.home}/conf/metadata-providers.xml</value>
-        <value>%{idp.home}/conf/property-placeholder.xml</value>
-    </util:list>
-
     <!--
     This set of resources loads a legacy 2.x relying-party.xml file
     when idp.service.relyingparty.legacy=true
@@ -80,14 +75,9 @@
         <value>%{idp.home}/system/conf/legacy-relying-party-defaults.xml</value>
     </util:list>
 
-    <!--
-    This allows a legacy relying-party.xml file to be used for metadata
-    when idp.service.relyingparty.legacy=true
-    -->
-    <util:list id="shibboleth.LegacyMetadataResolverResources">
+    <util:list id="shibboleth.MetadataResolverResources">
         <value>%{idp.home}/conf/metadata-providers.xml</value>
         <value>%{idp.home}/conf/property-placeholder.xml</value>
-        <value>%{idp.home}/system/conf/legacy-relying-party-defaults.xml</value>
     </util:list>
 
     <util:list id ="shibboleth.AttributeResolverResources">

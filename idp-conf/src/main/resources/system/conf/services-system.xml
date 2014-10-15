@@ -75,7 +75,7 @@
 
     <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
         depends-on="shibboleth.AttributeResolverService" 
-        p:serviceConfigurations-ref="#{ %{idp.service.relyingparty.legacy:false} ? 'shibboleth.LegacyMetadataResolverResources' :  'shibboleth.MetadataResolverResources' }"
+        p:serviceConfigurations-ref="shibboleth.MetadataResolverResources"
         p:failFast="%{idp.service.metadata.failFast:false}"
         p:reloadCheckDelay="%{idp.service.metadata.checkInterval:0}"
         p:reloadTaskTimer-ref="shibboleth.TaskTimer">
