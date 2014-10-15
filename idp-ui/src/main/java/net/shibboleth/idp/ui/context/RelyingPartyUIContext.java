@@ -708,7 +708,7 @@ public class RelyingPartyUIContext extends BaseContext {
                 log.trace("Size Mismatch");
                 continue;
             }
-            log.debug("Returning logo from UIInfo, '{}' ({} x {}) : {", logo.getXMLLang(), logo.getWidth(),
+            log.debug("Returning logo from UIInfo, '{}' ({} x {}) : {}", logo.getXMLLang(), logo.getWidth(),
                     logo.getHeight(), logo.getURL());
             return logo.getURL();
         }
@@ -734,7 +734,7 @@ public class RelyingPartyUIContext extends BaseContext {
                 log.trace("Size Mismatch");
                 continue;
             }
-            log.debug("Returning logo from UIInfo, ({} x {}) : {", logo.getWidth(), logo.getHeight(), logo.getURL());
+            log.debug("Returning logo from UIInfo, ({} x {}) : {}", logo.getWidth(), logo.getHeight(), logo.getURL());
             return logo.getURL();
         }
         return null;
