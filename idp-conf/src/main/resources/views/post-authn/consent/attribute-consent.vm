@@ -22,18 +22,17 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css"/>
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/uapprove_jp.css"/>
         <title>#springMessage("idp.attributeConsent.title")</title>
     </head>
     <body>
         <form action="$flowExecutionUrl" method="post" style="padding:10px" >
             <div class="box">
                 <header>
-                    #set ($logo = $rpUIContext.getLogo())
-                    #if ($logo)
-                        <img src="$encoder.encodeForHTMLAttribute($logo)" alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())" class="organization_logo" />
+                    <img src="$request.getContextPath()/images/federation-logo.png" alt="" class="federation_logo" >
+                    #set ($rpOrganizationLogo = $rpUIContext.getLogo())
+                    #if ($rpOrganizationLogo)
+                        <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())" class="organization_logo" />
                     #end
-                    ## TODO federation logo
                 </header>
                 <p style="margin-top: 70px;">
                     #springMessage("idp.attributeConsent.serviceNameLabel")<br/>
@@ -73,7 +72,6 @@
                                         #foreach($value in $attribute.values)
                                             <strong>$value.value</strong>
                                             <br />
-                                            ## TODO replace $ with <br />
                                         #end
                                     </td>
                                     <td style="vertical-align: top">
@@ -127,7 +125,7 @@
                                     #if("$message" != "")
                                         <li>$message</li>
                                     #end
-                                #end   
+                                #end
                             </ul>
                         </p>
                     #end
@@ -142,7 +140,7 @@
                                     <li>$message</li>
                                 #end
                             #end
-                            </ul> 
+                            </ul>
                         </p>
                     #end
                     #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
@@ -150,9 +148,8 @@
                         </div>
                     #end
                     <p style="text-align: center;">
-                        ## TODO name of reset button ?
-                        <input type="reset" name="_eventId_proceed" value="#springMessageText("idp.attributeConsent.reject" "Reject")" style="margin-right: 30px;" onclick="alert('#springMessage("idp.attributeConsent.rejectMessage")')" />
-                        <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.attributeConsent.accept" "Accept")" />
+                        <input type="reset" name="noconfirm" value="#springMessage("idp.attributeConsent.reject")" style="margin-right: 30px;" onclick="alert('#springMessage("idp.attributeConsent.rejectMessage")')" />
+                        <input type="submit" name="_eventId_proceed" value="#springMessage("idp.attributeConsent.accept")" />
                     </p>
                 </div>
             </div>
