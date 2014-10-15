@@ -137,13 +137,14 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
             if (isAuthenticated(uaContext.getAddress(), e.getValue())) {
                 principalName = e.getKey();
                 log.debug("{} Authenticated user agent with address {} as {}",
-                        getLogPrefix(), uaContext.getAddress(), principalName);
+                        getLogPrefix(), uaContext.getAddress().getHostAddress(), principalName);
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 return;
             }
         }
             
-        log.debug("{} User agent with address {} was not authenticated", getLogPrefix(), uaContext.getAddress());
+        log.debug("{} User agent with address {} was not authenticated", getLogPrefix(),
+                uaContext.getAddress().getHostAddress());
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
