@@ -34,11 +34,14 @@ import com.google.common.base.Function;
  */
 public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
 
+    /** Whether not remembering consent is allowed. */
+    private boolean doNotRememberConsentAllowed;
+
     /** Whether consent to any attribute and to any relying party is allowed. */
-    private boolean allowGlobalConsent;
+    private boolean globalConsentAllowed;
 
     /** Whether per-attribute consent is enabled. */
-    private boolean enablePerAttributeConsent;
+    private boolean perAttributeConsentEnabled;
 
     /** Function to create hash of all attribute values. */
     @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
@@ -49,12 +52,21 @@ public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
     }
 
     /**
+     * Get whether not remembering consent is allowed.
+     * 
+     * @return true if consent should not be remembered
+     */
+    public boolean isDoNotRememberConsentAllowed() {
+        return doNotRememberConsentAllowed;
+    }
+
+    /**
      * Get whether consent to any attribute and to any relying party is allowed.
      * 
      * @return true iff consent to any attribute and to any relying party is allowed
      */
-    public boolean allowGlobalConsent() {
-        return allowGlobalConsent;
+    public boolean isGlobalConsentAllowed() {
+        return globalConsentAllowed;
     }
 
     /**
@@ -62,8 +74,8 @@ public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
      * 
      * @return true iff per-attribute consent is enabled
      */
-    public boolean enablePerAttributeConsent() {
-        return enablePerAttributeConsent;
+    public boolean isPerAttributeConsentEnabled() {
+        return perAttributeConsentEnabled;
     }
 
     /**
@@ -76,12 +88,25 @@ public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
     }
 
     /**
+     * Set whether not remembering consent is allowed.
+     * 
+     * @param flag true if consent should not be remembered
+     */
+    public void setDoNotRememberConsentAllowed(boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        doNotRememberConsentAllowed = flag;
+    }
+
+    /**
      * Set whether consent to any attribute and to any relying party is allowed.
      * 
      * @param flag true iff consent to any attribute and to any relying party is allowed
      */
-    public void setAllowGlobalConsent(boolean flag) {
-        allowGlobalConsent = flag;
+    public void setGlobalConsentAllowed(boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        globalConsentAllowed = flag;
     }
 
     /**
@@ -89,8 +114,10 @@ public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
      * 
      * @param flag true iff per-attribute consent is enabled
      */
-    public void setEnablePerAttributeConsent(boolean flag) {
-        enablePerAttributeConsent = flag;
+    public void setPerAttributeConsentEnabled(boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        perAttributeConsentEnabled = flag;
     }
 
     /**

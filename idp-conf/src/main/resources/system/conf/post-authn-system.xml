@@ -23,8 +23,9 @@
             class="net.shibboleth.idp.consent.flow.ar.AttributeConsentFlowDescriptor"
             p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
             p:storageService-ref="shibboleth.ClientStorageService"
-            p:allowGlobalConsent="false"
-            p:enablePerAttributeConsent="false"
+            p:doNotRememberConsentAllowed="false"
+            p:globalConsentAllowed="false"
+            p:perAttributeConsentEnabled="false"
             p:compareValues="true"
             p:lifetime="P1Y"
             scope="prototype" />

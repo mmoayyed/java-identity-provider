@@ -26,49 +26,44 @@ import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
- * Predicate to determine whether global consent is allowed.
+ * Function to return an attribute consent flow descriptor from a profile request context.
  */
-public class AllowGlobalAttributeConsentPredicate implements Predicate<ProfileRequestContext> {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AllowGlobalAttributeConsentPredicate.class);
+public class AttributeConsentFlowDescriptorLookupStrategy implements
+        Function<ProfileRequestContext, AttributeConsentFlowDescriptor> {
 
     /** Strategy used to find the {@link ProfileInterceptorContext} from the {@link ProfileRequestContext}. */
     @Nonnull private Function<ProfileRequestContext, ProfileInterceptorContext> interceptorContextlookupStrategy;
 
     /** Constructor. */
-    public AllowGlobalAttributeConsentPredicate() {
+    public AttributeConsentFlowDescriptorLookupStrategy() {
         interceptorContextlookupStrategy = new ChildContextLookup<>(ProfileInterceptorContext.class);
     }
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable final ProfileRequestContext input) {
+    @Nullable public AttributeConsentFlowDescriptor apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
-            return false;
+            return null;
         }
 
         final ProfileInterceptorContext interceptorContext = interceptorContextlookupStrategy.apply(input);
         if (interceptorContext == null) {
-            return false;
+            return null;
         }
 
         final ProfileInterceptorFlowDescriptor interceptorFlowDescriptor = interceptorContext.getAttemptedFlow();
         if (interceptorFlowDescriptor == null) {
-            return false;
+            return null;
         }
 
         if (!(interceptorFlowDescriptor instanceof AttributeConsentFlowDescriptor)) {
-            return false;
+            return null;
         }
 
-        return ((AttributeConsentFlowDescriptor) interceptorFlowDescriptor).allowGlobalConsent();
+        return (AttributeConsentFlowDescriptor) interceptorFlowDescriptor;
     }
 
 }

@@ -10,13 +10,8 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-    
-    <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="AllowGlobalAttributeConsentPredicate" class="net.shibboleth.idp.consent.logic.AllowGlobalAttributeConsentPredicate" scope="prototype" />
-
-    <bean id="EnablePerAttributeConsentPredicate" class="net.shibboleth.idp.consent.logic.EnablePerAttributeConsentPredicate" scope="prototype" />
+    <bean id="AttributeConsentFlowDescriptorLookupStrategy" class="net.shibboleth.idp.consent.logic.AttributeConsentFlowDescriptorLookupStrategy" scope="prototype" />
 
     <bean id="GlobalAttributeConsentPredicate" class="net.shibboleth.idp.consent.logic.GlobalAttributeConsentPredicate" scope="prototype" />
 
@@ -26,6 +21,9 @@
 
     <bean id="PopulateAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.PopulateAttributeConsentContext" scope="prototype"
         p:attributePredicate-ref="shibboleth.consent.AttributeConsent.AttributePredicate" />
+        
+    <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="RevokeConsent" class="net.shibboleth.idp.consent.flow.storage.RevokeConsent"  scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"

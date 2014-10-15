@@ -1,36 +1,40 @@
 ##
-## Velocity Template for DisplayAttributeReleaseConsentPage view-state
+## Velocity Template for attribute consent view-state
 ##
 ## Velocity context will contain the following properties :
 ##
-## TODO This is only a rudimentary UI.
-#set ($locale = $flowRequestContext.getExternalContext().getLocale())
-#if ($enablePerAttributeConsent)
-    #set ($inputType = "checkbox")
-#else
-    #set ($inputType = "hidden")
-#end
-#set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext') )
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+## attributeConsentContext - context holding consentable attributes
+## attributeConsentFlowDescriptor - attribute consent flow descriptor
+## attributeDisplayNameFunction - function to display attribute name
+## consentContext - context representing the state of a consent flow
+## encoder - HTMLEncoder class
+## flowExecutionKey - SWF execution key (this is built into the flowExecutionUrl)
+## flowExecutionUrl - form action location
+## flowRequestContext - Spring Web Flow RequestContext
+## profileRequestContext - OpenSAML profile request context
+## request - HttpServletRequest
+## response - HttpServletResponse
+## rpUIContext - context with SP UI information from the metadata
+##
+<!DOCTYPE html>
+<html>
     <head>
-        <meta charset="utf-8" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css"/>
-        <title>#springMessageText("idp.attributeConsent.title" "Attribute Consent")</title>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/uapprove_jp.css"/>
+        <title>#springMessage("idp.attributeConsent.title")</title>
     </head>
     <body>
         <form action="$flowExecutionUrl" method="post" style="padding:10px" >
             <div class="box">
-                <div class="box_header">
-                    <header>
-                        #set ($logo = $rpUIContext.getLogo())
-                        #if ($logo)
-                            <img src="$encoder.encodeForHTMLAttribute($logo)" alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())" class="federation_logo" />
-                        #end
-                        <a href="../images/dummylogo.png">
-                            <img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo" />
-                        </a>
-                    </header>
-                </div>
+                <header>
+                    #set ($logo = $rpUIContext.getLogo())
+                    #if ($logo)
+                        <img src="$encoder.encodeForHTMLAttribute($logo)" alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())" class="organization_logo" />
+                    #end
+                    ## TODO federation logo
+                </header>
                 <p style="margin-top: 70px;">
                     #springMessage("idp.attributeConsent.serviceNameLabel")<br/>
                     <span class="service_name">$rpUIContext.serviceName</span>
@@ -41,12 +45,18 @@
                     <span class="service_description">$encoder.encodeForHTML($rpUIContext.serviceDescription)</span>
                     <br />
                 </p>
-                <div class="attributeRelease" >
+                #set ($informationURL = $rpUIContext.informationURL)
+                #if ($informationURL)
+                    <p style="margin-top: 10px;">
+                        <a href="$informationURL">#springMessage("idp.attributeConsent.informationURLLabel")</a>
+                    </p>
+                #end
+                <div id="attributeRelease" >
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="2">
-                                    #springMessageText("idp.attributeConsent.attributesHeader" "Data Requested by Service")
+                                <th colspan="3">
+                                    #springMessage("idp.attributeConsent.attributesHeader")
                                 </th>
                             </tr>
                         </thead>
@@ -63,9 +73,15 @@
                                         #foreach($value in $attribute.values)
                                             <strong>$value.value</strong>
                                             <br />
+                                            ## TODO replace $ with <br />
                                         #end
                                     </td>
                                     <td style="vertical-align: top">
+                                        #if ($attributeConsentFlowDescriptor.perAttributeConsentEnabled)
+                                            #set ($inputType = "checkbox")
+                                        #else
+                                            #set ($inputType = "hidden")
+                                        #end
                                         <input type="$inputType" name="consentIds" value="$encoder.encodeForHTML($attribute.id)" checked />
                                     </td>
                                 </tr>
@@ -73,25 +89,68 @@
                         </tbody>
                     </table>
                 </div>
+                #set ($privacyStatementURL = $rpUIContext.privacyStatementURL)
+                #if ($privacyStatementURL)
+                    <p style="margin-top: 10px;">
+                        <a href="$privacyStatementURL">#springMessage("idp.attributeConsent.privacyStatementURLLabel")</a>
+                    </p>
+                #end
                 <div style="float:left;">
                     <p>
-                        #springMessageText("idp.attributeConsent.confirmationQuestion" "Do you accept?")
+                        #springMessage("idp.attributeConsent.confirmationQuestion")
                     </p>
-                    <p>
-                        <input type="radio" name="_idp_consentOptions" value="_idp_alwaysRequireConsent" />
-                        #springMessageText("idp.attributeConsent.alwaysRequireConsent" "Ask me again at next login")
-                    </p>
-                    <p>
-                        <input type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
-                        #springMessageText("idp.attributeConsent.rememberConsent" "Only ask me again if data changes")
-                    </p>
-                    #if ($allowGlobalConsent)
+                    #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
+                        <div id="generalConsentDiv" style="display: block; background-color: #F6F6F6;border: 1px gray solid; padding: 10px; width: 92%;">
+                        #springMessage("idp.attributeConsent.consentMethod")
+                    #end
+                    #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed)
                         <p>
-                            <input type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
-                            #springMessageText("idp.attributeConsent.globalConsent" "Do not ask me again")
+                            <input type="radio" name="_idp_consentOptions" value="_idp_doNotRememberConsent" />
+                            #springMessage("idp.attributeConsent.doNotRememberConsent")
+                            <ul>
+                                #foreach( $i in ["1", "2", "3"] )
+                                    #set($message = $springMacroRequestContext.getMessage("idp.attributeConsent.doNotRememberConsentItem$i"))
+                                    #if("$message" != "")
+                                        <li>$message</li>
+                                    #end
+                                #end 
+                            </ul>
                         </p>
                     #end
+                    #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
+                        <p>
+                            <input type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
+                            #springMessage("idp.attributeConsent.rememberConsent")
+                            <ul>
+                                #foreach( $i in ["1", "2", "3"] )
+                                    #set($message = $springMacroRequestContext.getMessage("idp.attributeConsent.rememberConsentItem$i"))
+                                    #if("$message" != "")
+                                        <li>$message</li>
+                                    #end
+                                #end   
+                            </ul>
+                        </p>
+                    #end
+                    #if ($attributeConsentFlowDescriptor.globalConsentAllowed)
+                        <p>
+                            <input type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
+                            #springMessage("idp.attributeConsent.globalConsent")
+                            <ul>
+                            #foreach( $i in ["1", "2", "3"] )
+                                #set($message = $springMacroRequestContext.getMessage("idp.attributeConsent.globalConsentItem$i"))
+                                #if("$message" != "")
+                                    <li>$message</li>
+                                #end
+                            #end
+                            </ul> 
+                        </p>
+                    #end
+                    #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
+                        #springMessage("idp.attributeConsent.consentMethodRevoke")
+                        </div>
+                    #end
                     <p style="text-align: center;">
+                        ## TODO name of reset button ?
                         <input type="reset" name="_eventId_proceed" value="#springMessageText("idp.attributeConsent.reject" "Reject")" style="margin-right: 30px;" onclick="alert('#springMessage("idp.attributeConsent.rejectMessage")')" />
                         <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.attributeConsent.accept" "Accept")" />
                     </p>
