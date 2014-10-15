@@ -219,7 +219,7 @@ public class ManagedConnectionParser {
             return dataSource;
         } catch (NamingException e) {
             final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
-            log.error("Managed data source could not be found", e);
+            log.error("Managed data source '{}' could not be found", resourceName, e);
             return null;
         }
     }
@@ -238,7 +238,7 @@ public class ManagedConnectionParser {
             classLoader.loadClass(jdbcDriver);
         } catch (ClassNotFoundException e) {
             final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
-            log.error("JDBC driver could not be found", e);
+            log.error("JDBC driver '{}' could not be found", jdbcDriver, e);
         }
         return jdbcDriver;
     }
