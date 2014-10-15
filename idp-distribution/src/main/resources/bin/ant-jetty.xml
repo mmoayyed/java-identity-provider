@@ -39,9 +39,9 @@
 	<target name="properties">
 		<property file="${jetty.property.file}" />
 		<available property="idp.ini.present" file="${idp.target.dir}/jetty-base/start.d/idp.ini" />
-		<available property="idp.backchannel.jks.present" file="${idp.target.dir}/creds/idp-backchannel.jks" />
-		<available property="idp.userfacing.jks.present" file="${idp.target.dir}/creds/idp-userfacing.jks" />
-		<available property="idp.userfacing.p12.present" file="${idp.target.dir}/creds/idp-userfacing.p12" />
+		<available property="idp.backchannel.jks.present" file="${idp.target.dir}/credentials/idp-backchannel.jks" />
+		<available property="idp.userfacing.jks.present" file="${idp.target.dir}/credentials/idp-userfacing.jks" />
+		<available property="idp.userfacing.p12.present" file="${idp.target.dir}/credentials/idp-userfacing.p12" />
 		<condition property="generate.userfacing.p12">
 			<!-- Generate the pkcs12 keystore if neither the JKS nor the P12 exist -->
 			<not>
@@ -69,7 +69,7 @@
 	</target>
 
 	<target name="gen-userfacing" if="generate.userfacing.p12">
-		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-userfacing.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/credentials/idp-userfacing.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="copyinis" depends="copyidpini">

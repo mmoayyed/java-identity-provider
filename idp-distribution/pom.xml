@@ -148,7 +148,7 @@
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <outputDirectory>${assembly-directory}</outputDirectory>
-                                    <excludes>**/META-INF/**,**/logs/*,**/creds/*</excludes>
+                                    <excludes>**/META-INF/**,**/logs/*,**/credentials/*</excludes>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>

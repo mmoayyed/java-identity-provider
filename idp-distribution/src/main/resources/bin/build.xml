@@ -184,17 +184,17 @@
 		<condition property="idp.signing.present">
 			<or>
 				<istrue value="${idp.is.V2}" />
-				<available file="${idp.target.dir}/creds/idp-signing.crt" />
+				<available file="${idp.target.dir}/credentials/idp-signing.crt" />
 			</or>
 		</condition>
 		<condition property="idp.encryption.present">
 			<or>
 				<istrue value="${idp.is.V2}" />
-				<available file="${idp.target.dir}/creds/idp-encryption.crt" />
+				<available file="${idp.target.dir}/credentials/idp-encryption.crt" />
 			</or>
 		</condition>
-		<available property="idp.p12.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.p12" />
-		<available property="idp.jks.keystore.present" file="${idp.target.dir}/creds/idp-backchannel.jks" />
+		<available property="idp.p12.keystore.present" file="${idp.target.dir}/credentials/idp-backchannel.p12" />
+		<available property="idp.jks.keystore.present" file="${idp.target.dir}/credentials/idp-backchannel.jks" />
 		<condition property="idp.backchannel.present">
 			<or>
 				<istrue value="${idp.is.V2}" />
@@ -208,7 +208,7 @@
 		        <available file="${idp.target.dir}/metadata/idp-metadata.xml" />
 			</or>
 		</condition>
-		<available property="idp.sealer.present" file="${idp.target.dir}/creds/sealer.kver" />
+		<available property="idp.sealer.present" file="${idp.target.dir}/credentials/sealer.kver" />
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
 		<available property="services.properties.present" file="${idp.target.dir}/conf/services.properties" />
 		<condition property="idp.will.call.certgen">
@@ -358,32 +358,32 @@
 		<echo append="true" file="idp_ant.log">target: signing-key
 		</echo>
 		<echo>Creating Signing Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
-        <mkdir dir="${idp.target.dir}/creds"/>
-		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/creds/idp-signing.key" certificateFile="${idp.target.dir}/creds/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+        <mkdir dir="${idp.target.dir}/credentials"/>
+		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-signing.key" certificateFile="${idp.target.dir}/credentials/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="encryption-key" unless="idp.encryption.present" depends="gethostname, geturisubjectaltname">
 		<echo append="true" file="idp_ant.log">target: encryption-key
 		</echo>
 		<echo>Creating Encryption Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
-        <mkdir dir="${idp.target.dir}/creds"/>
-		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/creds/idp-encryption.key" certificateFile="${idp.target.dir}/creds/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+        <mkdir dir="${idp.target.dir}/credentials"/>
+		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-encryption.key" certificateFile="${idp.target.dir}/credentials/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="backchannel-key" unless="idp.backchannel.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
 		<echo append="true" file="idp_ant.log">target: backchannel-key
 		</echo>
 		<echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
-        <mkdir dir="${idp.target.dir}/creds"/>
-		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/creds/idp-backchannel.p12" certificateFile="${idp.target.dir}/creds/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+        <mkdir dir="${idp.target.dir}/credentials"/>
+		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/credentials/idp-backchannel.p12" certificateFile="${idp.target.dir}/credentials/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
 	<target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
 		<echo append="true" file="idp_ant.log">target: sealer
 		</echo>
 		<echo>Creating sealer</echo>
-		<mkdir dir="${idp.target.dir}/creds"/>
-		<keystorestrategy keystoreFile="${idp.target.dir}/creds/sealer.jks" versionFile="${idp.target.dir}/creds/sealer.kver" keyAlias="${idp.sealer.alias}" keystorePassword="${idp.sealer.password}" />
+		<mkdir dir="${idp.target.dir}/credentials"/>
+		<keystorestrategy keystoreFile="${idp.target.dir}/credentials/sealer.jks" versionFile="${idp.target.dir}/credentials/sealer.kver" keyAlias="${idp.sealer.alias}" keystorePassword="${idp.sealer.password}" />
 	</target>
 
 	<!--
@@ -454,7 +454,7 @@
 		<echo append="true" file="idp_ant.log">target: metadata-gen
 		</echo>
 		<mkdir dir="${idp.target.dir}/metadata"/>
-		<metadatagenerate dnsName="${idp.host.name}" backChannelCert="${idp.target.dir}/creds/idp-backchannel.crt" output="${idp.target.dir}/metadata/idp-metadata.xml"/>
+		<metadatagenerate dnsName="${idp.host.name}" backChannelCert="${idp.target.dir}/credentials/idp-backchannel.crt" output="${idp.target.dir}/metadata/idp-metadata.xml"/>
 	</target>
 	
 	<!--
@@ -480,7 +480,7 @@
 		<property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}" />
 
 		<!-- Save old configuration:
-         NOT conf, creds, flows, logs, metadata, views-->
+         NOT conf, credentials, flows, logs, metadata, views-->
 		<mkdir dir="${target}" />
 
 		<!-- NOTE - move task appears to be very flaky - at least on windows.  This is why we
@@ -521,7 +521,7 @@
 			<fileset dir="${idp.src.dir}/bin" />
 		</copy>
 		<mkdir dir="${idp.target.dir}/conf" />
-		<mkdir dir="${idp.target.dir}/creds" />
+		<mkdir dir="${idp.target.dir}/credentials" />
 		<copy todir="${idp.target.dir}/dist">
 			<fileset dir="${idp.src.dir}/dist" />
 		</copy>
@@ -576,16 +576,6 @@ A V2 Installation has been detected. Configuration will be preserved into
 		<copy file="${idp.target.dir}/conf.v2/attribute-resolver.xml" tofile="${idp.target.dir}/conf/attribute-resolver.xml" failonerror="false" />
 		<copy file="${idp.target.dir}/conf.v2/relying-party.xml" tofile="${idp.target.dir}/conf/metadata-providers.xml" failonerror="false" />
 		<copy file="${idp.target.dir}/conf.v2/relying-party.xml" tofile="${idp.target.dir}/conf/relying-party.xml" failonerror="false" />
-		<!-- Rename credentials to credentials.v2 -->
-		<copy todir="${idp.target.dir}/credentials.v2" failonerror="false">
-			<fileset dir="${idp.target.dir}/credentials" />
-		</copy>
-		<delete dir="${idp.target.dir}/credentials" failonerror="false" />
-		<!--- Copy all files from credentials.v2 back into new creds -->
-		<mkdir dir="${idp.target.dir}/creds" />
-		<copy todir="${idp.target.dir}/creds" failonerror="false">
-			<fileset dir="${idp.target.dir}/credentials.v2" />
-		</copy>
 
 		<!-- Signal we're a legacy RP config -->
         <echo file="replace.services.properties" append="yes">
