@@ -468,8 +468,8 @@
 			<fileset dir="${idp.target.dir}/edit-webapp" />
 		</copy>
 		<!-- build a jar, not war, since it is already fully populated -->
-		<delete file="${idp.target.dir}/idp.war" failonerror="false" />
-		<jar destfile="${idp.target.dir}/idp.war" basedir="${idp.target.dir}/webapp" />
+		<delete file="${idp.target.dir}/war/idp.war" failonerror="false" />
+		<jar destfile="${idp.target.dir}/war/idp.war" basedir="${idp.target.dir}/webapp" />
 	</target>
 
 	<!-- specify getsource before get target to force target default-->
@@ -539,6 +539,7 @@
 		<copy todir="${idp.target.dir}/system">
 			<fileset dir="${idp.src.dir}/system" />
 		</copy>
+		<mkdir dir="${idp.target.dir}/war" />
 		<mkdir dir="${idp.target.dir}/webapp" />
 		<copy todir="${idp.target.dir}/webapp">
 			<fileset dir="${idp.src.dir}/webapp" />
