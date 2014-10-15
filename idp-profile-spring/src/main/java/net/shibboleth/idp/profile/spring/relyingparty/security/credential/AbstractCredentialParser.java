@@ -54,6 +54,8 @@ public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinit
             final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         
+        builder.setLazyInit(true);
+        
         parseAttributes(element, builder);
         parseKeyNames(ElementSupport.getChildElements(element, KEY_NAME_ELEMENT_NAME), builder);
     }

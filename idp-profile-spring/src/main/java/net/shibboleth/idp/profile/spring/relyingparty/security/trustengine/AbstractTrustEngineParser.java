@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -35,4 +36,8 @@ public abstract class AbstractTrustEngineParser extends AbstractSingleBeanDefini
         return StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
     }
 
+    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        super.doParse(element, parserContext, builder);
+        builder.setLazyInit(true);
+    }
 }

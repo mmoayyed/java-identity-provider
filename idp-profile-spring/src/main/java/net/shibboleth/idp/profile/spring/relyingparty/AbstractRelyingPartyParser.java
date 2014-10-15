@@ -50,6 +50,7 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
 
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        builder.setLazyInit(true);
         super.doParse(element, parserContext, builder);
 
         // defaultSigningCredentialRef
@@ -58,6 +59,7 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
 
         final String provider = StringSupport.trimOrNull(element.getAttributeNS(null, "provider"));
         builder.addPropertyValue("responderId", provider);
+        
         
         final String detailedErrors = StringSupport.trimOrNull(element.getAttributeNS(null, "detailedErrors"));
         if (null != detailedErrors) {

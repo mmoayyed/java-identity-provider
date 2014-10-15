@@ -196,6 +196,8 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
     // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
+        
+        builder.setLazyInit(true);
 
         log.debug("Parsing Legacy SAML profile.  Destination type: '{}'", builder.getBeanDefinition()
                 .getBeanClass().getName());
