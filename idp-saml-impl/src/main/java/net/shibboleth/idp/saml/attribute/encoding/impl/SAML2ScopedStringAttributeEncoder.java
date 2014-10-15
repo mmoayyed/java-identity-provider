@@ -147,15 +147,9 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
                 throw new ComponentInitializationException(
                         "Encoder of type \"attribute\" must specify a scope attribute name");
             }
-            if (null != getScopeDelimiter()) {
-                log.warn("Scope delimiter {} not valid for type \"attribute\"", getScopeDelimiter());
-            }
         } else if ("inline".equals(getScopeType())) {
             if (null == getScopeDelimiter()) {
                 throw new ComponentInitializationException("Encoder of type \"inline\" must specify a scope delimiter");
-            }
-            if (null != getScopeAttributeName()) {
-                log.warn("Scope attribute name {} not valid for type \"inline\"", getScopeAttributeName());
             }
         } else {
             throw new ComponentInitializationException("Encoder scope type must be set to \"inline\" or \"attribute\"");
