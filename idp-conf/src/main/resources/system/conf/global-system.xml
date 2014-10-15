@@ -133,6 +133,9 @@
         </property>
     </bean>
     
+    <!-- This is a convenience for compatibility with the examples for configuring this in V2. -->
+    <alias name="shibboleth.DataSealer" alias="shibboleth.TransientIDDataSealer"/>
+    
     <bean id="shibboleth.StorageService"
         class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"        
         p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}"
