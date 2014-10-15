@@ -26,6 +26,9 @@ InstallDirWindows = Replace(InstallDirJava, "/", "\\")
 
 IdPHostName = LCase(msiProperties(1))
 InstallJetty = LCase(msiProperties(2))
+IdPScope = LCase(msiProperties(3))
+DebugInstall = LCase(msiProperties(4))
+
 LogFile.WriteLine "Installing to " & InstallDirJava
 LogFile.WriteLine "Host " & IdPHostName
 LogFile.WriteLine "IntallJetty" & InstallJetty
@@ -46,10 +49,17 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "idp.sealer.password=" & SealerPassword
     AntFile.WriteLine "idp.target.dir=" & InstallDirJava & "/IdP"
     AntFile.WriteLine "idp.merge.properties=idp.install.replace.properties"
+    if (IdPScope <> "") then
+        AntFile.WriteLine "idp.scope=" & IdPScope
+    endif
     AntFile.WriteLine "#"
     AntFile.WriteLine "# Debug"
     AntFile.WriteLine "#"
-    AntFile.WriteLine "#idp.no.tidy=true"
+    if (DebugInstall <> "") then
+        AntFile.WriteLine "idp.no.tidy=true"
+    else
+        AntFile.WriteLine "#idp.no.tidy=true"
+    endif
     AntFile.Close
 end if
 
@@ -61,6 +71,9 @@ if (Err.Number = 0 ) then
     PropsFile.WriteLine "idp.entityID=https://" & IdpHostName & "/idp/shibboleth"
     PropsFile.WriteLine "idp.sealer.storePassword=" & SealerPassword
     PropsFile.WriteLine "idp.sealer.keyPassword=" & SealerPassword
+    if (IdPScope <> "") then
+        AntFile.WriteLine "idp.scope=" & IdPScope
+    endif
     PropsFile.Close
 else
     LogFile.Writeline "PropsFile failed " & Err & "  -  " & PropsFile
@@ -77,7 +90,11 @@ if (InstallJetty <> "") then
 	JettyAntFile.WriteLine "idp.keystore.password=" & SsoStorePassword
 	JettyAntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/idp/shibboleth"
 	JettyAntFile.WriteLine "idp.target.dir=" & InstallDirJava & "/IdP"
-	JettyAntFile.WriteLine "#jetty.no.tidy=true"
+        if (DebugInstall <> "") then
+	    JettyAntFile.WriteLine "jetty.no.tidy=true"
+	else 
+	    JettyAntFile.WriteLine "#jetty.no.tidy=true"
+	endif
 	JettyAntFile.Close
     else
 	LogFile.Writeline "jettyAnt failed " & Err
@@ -92,13 +109,13 @@ if (InstallJetty <> "") then
 	JettyFile.WriteLine "jetty.host=0.0.0.0"
 	JettyFile.WriteLine "jetty.https.port=443"
 	JettyFile.WriteLine "jetty.backchannel.port=8443"
-	JettyFile.WriteLine "jetty.backchannel.keystore.path=" & InstallDirJava & "/IdP/creds/idp-backchannel.p12"
-	JettyFile.WriteLine "jetty.browser.keystore.path=" & InstallDirJava & "/IdP/creds/idp-userfacing.p12"
+	JettyFile.WriteLine "jetty.backchannel.keystore.path=" & InstallDirJava & "/IdP/credentials/idp-backchannel.p12"
+	JettyFile.WriteLine "jetty.browser.keystore.path=" & InstallDirJava & "/IdP/credentials/idp-userfacing.p12"
 	JettyFile.WriteLine "jetty.backchannel.keystore.password=" & KeyStorePassword
 	JettyFile.WriteLine "jetty.browser.keystore.password=" & SsoStorePassword
 	JettyFile.WriteLine "jetty.backchannel.keystore.type=PKCS12"
 	JettyFile.WriteLine "jetty.browser.keystore.type=PKCS12"
-	JettyFile.WriteLine "jetty.war.path=" & InstallDirJava & "/IdP/idp.war"
+	JettyFile.WriteLine "jetty.war.path=" & InstallDirJava & "/IdP/war/idp.war"
 	JettyFile.WriteLine "jetty.jaas.path=" & InstallDirJava & "/IdP/conf/authn/jaas.config"
 	JettyFile.Close
     else
