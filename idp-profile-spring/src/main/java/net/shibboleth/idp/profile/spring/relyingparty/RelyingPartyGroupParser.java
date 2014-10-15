@@ -41,10 +41,11 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for &lt;AnonymousRelyingParty&gt;<br/>
- * This parser summons up two beans: a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
+ * Parser for &lt;RelyingPartyGroup&gt;
+ * 
+ * <p>This parser summons up two beans: a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
  * RelyingParty bit of the file, and a series of {@link RelyingPartyMetadataProvider}s which deal with the metadata
- * configuration.
+ * configuration.</p>
  */
 public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser {
 
