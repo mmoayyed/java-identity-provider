@@ -175,6 +175,11 @@
           <Item>SSL_RSA_WITH_3DES_EDE_CBC_SHA</Item>
         </Array>
       </Set>
+      <Set name="excludeProtocols">
+        <Array type="String">
+          <Item>SSLv3</Item>
+        </Array>
+     </Set>
     </New>
 
     <!-- ============================================================= -->
