@@ -110,7 +110,7 @@
 
     <bean id="UpdateSessionWithSPSession"
             class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
-            p:activationCondition="%{idp.session.enabled:true}"
+            p:activationCondition="%{idp.session.trackSPSessions:false}"
             p:sessionManager-ref="shibboleth.SessionManager">
         <property name="SPSessionCreationStrategy">
             <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionCreationStrategy"

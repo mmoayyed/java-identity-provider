@@ -66,7 +66,7 @@
 
     <bean id="UpdateSessionWithSPSession"
             class="net.shibboleth.idp.session.impl.UpdateSessionWithSPSession" scope="prototype"
-            p:activationCondition="%{idp.session.enabled:true}"
+            p:activationCondition="%{idp.session.trackSPSessions:false}"
             p:sessionManager-ref="shibboleth.SessionManager">
         <property name="SPSessionCreationStrategy">
             <bean class="net.shibboleth.idp.saml.session.impl.SAML1SPSessionCreationStrategy"
@@ -77,13 +77,13 @@
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
         <property name="handlers">
-            <util:list>
+            <list>
                 <!-- TODO outbound handlers -->
                 <bean class="org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler" scope="prototype"/>
                 <bean class="org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler" scope="prototype"/>
                 <bean class="org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler"
                     scope="prototype" p:signErrorResponses="%{idp.errors.signed:true}" />
-            </util:list>
+            </list>
         </property>
     </bean>
 
