@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 
 import java.sql.ResultSet;
 
-import net.shibboleth.idp.attribute.resolver.dc.impl.MappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
 
 /**
  * Strategy for mapping from a {@link ResultSet} to a collection of {@link

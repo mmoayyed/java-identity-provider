@@ -15,15 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
-
-import org.ldaptive.SearchResult;
-
-import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
-
 /**
- * Strategy for mapping from a {@link SearchResult} to a collection of 
- * {@link net.shibboleth.idp.attribute.IdPAttribute}s.
+ * Interfaces supporting data connectors.
  */
-public interface SearchResultMappingStrategy extends MappingStrategy<SearchResult> {
-}
+
+package net.shibboleth.idp.attribute.resolver.dc;
