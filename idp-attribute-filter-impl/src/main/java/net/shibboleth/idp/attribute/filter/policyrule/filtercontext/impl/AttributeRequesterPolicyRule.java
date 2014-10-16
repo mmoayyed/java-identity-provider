@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AttributeRequesterPolicyRule extends AbstractStringPolicyRule {
 
-    /** The logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeRequesterPolicyRule.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterPolicyRule.class);
 
     /**
      * Compare the requester from the context with the provided string.
@@ -51,7 +51,7 @@ public class AttributeRequesterPolicyRule extends AbstractStringPolicyRule {
             log.warn("{} No attribute requester found for comparison", getLogPrefix());
             return Tristate.FAIL;
         }
-        log.debug("{} found attribute requester: ", getLogPrefix(), requester);
+        log.debug("{} Found attribute requester: {}", getLogPrefix(), requester);
 
         return stringCompare(requester);
     }

@@ -38,19 +38,26 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
     
-    /** The logger. */
-    private final Logger log = LoggerFactory.getLogger(NumOfAttributeValuesPolicyRule.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(NumOfAttributeValuesPolicyRule.class);
 
     /** ID of the attribute that will be checked. */
-    private String attributeId;
+    @NonnullAfterInit private String attributeId;
 
     /** Minimum allowed number of attribute values. */
-    private int minimumValues = -1;
+    private int minimumValues;
 
     /** Maximum allowed number of attribute values. */
-    private int maximumValues = -1;
+    private int maximumValues;
+    
+    /** Constructor. */
+    public NumOfAttributeValuesPolicyRule() {
+        minimumValues = -1;
+        maximumValues = -1;
+    }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == attributeId) {
@@ -65,6 +72,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -88,7 +96,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
     /**
      * Return the attribute whose value count is under question.
      * 
-     * @return Returns the attributeId.
+     * @return the attributeId.
      */
     @NonnullAfterInit public String getAttributeId() {
         return attributeId;
@@ -117,7 +125,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
      * 
      * @param minValues The minimumValues to set.
      */
-    public void setMinimum(int minValues) {
+    public void setMinimum(final int minValues) {
         minimumValues =  (int) Constraint.isGreaterThanOrEqual(0, minValues, "min value must be >= 0");
     }
 
@@ -135,7 +143,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
      * 
      * @param maxValues The maximumValues to set.
      */
-    public void setMaximum(int maxValues) {
+    public void setMaximum(final int maxValues) {
         maximumValues = (int) Constraint.isGreaterThan(0, maxValues, "max value must be > 0");
     }
 

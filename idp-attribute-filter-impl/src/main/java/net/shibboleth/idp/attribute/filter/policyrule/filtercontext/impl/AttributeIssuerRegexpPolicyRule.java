@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AttributeIssuerRegexpPolicyRule extends AbstractRegexpPolicyRule {
 
-    /** The logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeIssuerRegexpPolicyRule.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeIssuerRegexpPolicyRule.class);
 
     /**
      * Compare the issuer from the context with the provided regexp.
@@ -51,7 +51,7 @@ public class AttributeIssuerRegexpPolicyRule extends AbstractRegexpPolicyRule {
             log.warn("{} No attribute issuer found for comparison", getLogPrefix());
             return Tristate.FAIL;
         }
-        log.debug("{} found attribute issuer: ", getLogPrefix(), issuer);
+        log.debug("{} Found attribute issuer: {}", getLogPrefix(), issuer);
 
         return regexpCompare(issuer);
     }

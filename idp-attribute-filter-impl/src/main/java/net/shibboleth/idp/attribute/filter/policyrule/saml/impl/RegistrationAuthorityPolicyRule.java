@@ -143,7 +143,7 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
             group = (EntitiesDescriptor) group.getParent();
         }
 
-        log.debug("Filtering on registration, but no RegistrationInfo available");
+        log.debug("{} Filtering on registration, but no RegistrationInfo available", getLogPrefix());
         return null;
     }
 
@@ -152,7 +152,7 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
         final RegistrationInfo info = getRegistrationInfo(filterContext);
 
         if (info == null) {
-            log.debug("The peer's metadata did not contain a RegistrationInfo descriptor");
+            log.debug("{} The peer's metadata did not contain a RegistrationInfo descriptor", getLogPrefix());
             if (matchIfMetadataSilent) {
                 return Tristate.TRUE;
             } else {
@@ -161,12 +161,12 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
         }
 
         final String authority = info.getRegistrationAuthority();
-        log.debug("Peer's metadata has registration authority: {}", authority);
+        log.debug("{} Peer's metadata has registration authority: {}", getLogPrefix(), authority);
         if (issuers.contains(authority)) {
-            log.debug("Peer's metadata registration authority matches");
+            log.debug("{} Peer's metadata registration authority matches", getLogPrefix());
             return Tristate.TRUE;
         }
-        log.debug("Peer's metadata registration authority does not match");
+        log.debug("{} Peer's metadata registration authority does not match", getLogPrefix());
         return Tristate.FALSE;
     }
 

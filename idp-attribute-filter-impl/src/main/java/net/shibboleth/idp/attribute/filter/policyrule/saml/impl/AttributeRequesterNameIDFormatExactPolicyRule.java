@@ -131,7 +131,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == nameIdFormat) {
-            throw new ComponentInitializationException(getLogPrefix() + " No NameId format specified");
+            throw new ComponentInitializationException(getLogPrefix() + " No NameID format specified");
         }
     }
 

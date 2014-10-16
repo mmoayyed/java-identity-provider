@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AttributeIssuerPolicyRule extends AbstractStringPolicyRule {
 
-    /** The logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeIssuerPolicyRule.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeIssuerPolicyRule.class);
 
     /**
      * Compare the issuer from the context with the provided string.
@@ -51,7 +51,7 @@ public class AttributeIssuerPolicyRule extends AbstractStringPolicyRule {
             log.warn("{} No attribute issuer found for comparison", getLogPrefix());
             return Tristate.FAIL;
         }
-        log.debug("{} found attribute issuer: ", getLogPrefix(), issuer);
+        log.debug("{} Found attribute issuer: {}", getLogPrefix(), issuer);
 
         return stringCompare(issuer);
     }

@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PrincipalNameRegexpPolicyRule extends AbstractRegexpPolicyRule {
 
-    /** The logger. */
-    private final Logger log = LoggerFactory.getLogger(PrincipalNameRegexpPolicyRule.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PrincipalNameRegexpPolicyRule.class);
 
     /**
      * Compare the principal name for this resolution with the provided regexp.
@@ -49,7 +49,7 @@ public class PrincipalNameRegexpPolicyRule extends AbstractRegexpPolicyRule {
             log.warn("{} No principal found for comparison", getLogPrefix());
             return Tristate.FAIL;
         }
-        log.debug("{} found principal: ", getLogPrefix(), principal);
+        log.debug("{} Found principal: {}", getLogPrefix(), principal);
 
         return regexpCompare(principal);
     }

@@ -41,20 +41,20 @@ import com.google.common.base.Predicate;
  */
 public class PredicatePolicyRule extends AbstractPolicyRule {
 
-    /** The logger. */
-    private final Logger log = LoggerFactory.getLogger(PredicatePolicyRule.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PredicatePolicyRule.class);
 
     /** The predicate to use. */
     @NonnullAfterInit private Predicate<ProfileRequestContext> rulePredicate;
 
     /** How to get to the {@link ProfileRequestContext} from the {@link AttributeFilterContext}. */
-    @Nonnull private Function<AttributeFilterContext, ProfileRequestContext> profileContextStrategy;
+    @Nonnull private Function<AttributeFilterContext,ProfileRequestContext> profileContextStrategy;
 
     /** Constructor. */
     public PredicatePolicyRule() {
         profileContextStrategy =
-                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
-                        new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
+                Functions.compose(new ParentContextLookup<RelyingPartyContext,ProfileRequestContext>(),
+                        new ParentContextLookup<AttributeFilterContext,RelyingPartyContext>());
     }
 
     /**
@@ -89,16 +89,16 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
      * 
      * @param strategy what to set.
      */
-    public void setProfileContextStrategy(Function<AttributeFilterContext, ProfileRequestContext> strategy) {
-        profileContextStrategy = Constraint.isNotNull(strategy, "ProfileContextStrategy should be non null");
+    public void setProfileContextStrategy(Function<AttributeFilterContext,ProfileRequestContext> strategy) {
+        profileContextStrategy = Constraint.isNotNull(strategy, "ProfileContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == getRulePredicate()) {
-            log.error("{} : Provided Rule Predicate was null.", getLogPrefix());
-            throw new ComponentInitializationException("Provided Rule Predicate was null.");
+            log.error("{} Provided Rule Predicate was null", getLogPrefix());
+            throw new ComponentInitializationException("Provided Rule Predicate was null");
         }
     }
 
@@ -116,19 +116,19 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
         final ProfileRequestContext pc = profileContextStrategy.apply(filterContext);
 
         if (null == pc) {
-            log.warn("{} : Could not locate profile context.", getLogPrefix());
+            log.warn("{} Could not locate profile context", getLogPrefix());
             return Tristate.FAIL;
         }
 
         try {
             if (rulePredicate.apply(pc)) {
-                log.trace("{} : Predicate returned false");
+                log.trace("{} Predicate returned false", getLogPrefix());
                 return Tristate.TRUE;
             }
-            log.trace("{} : Predicate returned false");
+            log.trace("{} Predicate returned false", getLogPrefix());
             return Tristate.FALSE;
-        } catch (Throwable ex) {
-            log.warn("{} : applying the predicated failed {}", ex);
+        } catch (final Throwable ex) {
+            log.warn("{} Applying the predicated failed", getLogPrefix(), ex);
             return Tristate.FAIL;
         }
     }

@@ -54,7 +54,7 @@ import com.google.common.collect.Multimap;
 public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializableComponent implements Matcher {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AttributeInMetadataMatcher.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeInMetadataMatcher.class);
 
     /** Whether optionally requested attributes should be matched. */
     private boolean onlyIfRequired;
@@ -100,7 +100,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * 
      * @param strategy what to set.
      */
-    public void setObjectStrategy(@Nonnull Function<SAMLMetadataContext, ? extends XMLObject> strategy) {
+    public void setObjectStrategy(@Nonnull final Function<SAMLMetadataContext, ? extends XMLObject> strategy) {
         objectStrategy = Constraint.isNotNull(strategy, "ObjectStrategy must be non null");
     }
 
@@ -141,23 +141,23 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             @Nonnull final AttributeFilterContext filterContext) {
         final SAMLMetadataContext metadataContext = filterContext.getRequesterMetadataContext();
         if (null == metadataContext) {
-            log.warn("{} : No metadata context when filtering.", getLogPrefix());
+            log.warn("{} No metadata context when filtering", getLogPrefix());
             return null;
         }
 
         final XMLObject xmlObject = getXMLObjectStrategy().apply(metadataContext);
         if (null == xmlObject) {
-            log.warn("{} : No RP XML Object found when filtering.", getLogPrefix());
+            log.warn("{} No RP XML Object found when filtering", getLogPrefix());
             return null;
         }
         final List<AttributesMapContainer> containerList =
                 xmlObject.getObjectMetadata().get(AttributesMapContainer.class);
         if (null == containerList || containerList.isEmpty()) {
-            log.debug("{} : No mapped attributes found when filtering.", getLogPrefix());
+            log.debug("{} No mapped attributes found when filtering", getLogPrefix());
             return null;
         }
         if (containerList.size() > 1) {
-            log.warn("{} : More than one set of mapped attributes found when filtering, please report an error.",
+            log.warn("{} More than one set of mapped attributes found when filtering, please report an error",
                     getLogPrefix());
         }
         return containerList.get(0).get();

@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AuthenticationMethodPolicyRule extends AbstractStringPolicyRule {
 
-    /** The logger. */
-    private final Logger log = LoggerFactory.getLogger(AuthenticationMethodPolicyRule.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AuthenticationMethodPolicyRule.class);
 
     /**
      * Compare the authentication method for this resolution with the provided string.
@@ -51,7 +51,7 @@ public class AuthenticationMethodPolicyRule extends AbstractStringPolicyRule {
             log.warn("{} No authetication method found for comparison", getLogPrefix());
             return Tristate.FAIL;
         }
-        log.debug("{} found authentication method: ", getLogPrefix(), method);
+        log.debug("{} Found authentication method: {}", getLogPrefix(), method);
 
         return stringCompare(method);
     }
