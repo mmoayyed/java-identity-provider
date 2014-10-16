@@ -105,7 +105,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
         // Create work context to hold intermediate results.
         filterContext.getSubcontext(AttributeFilterWorkContext.class, true);
 
-        log.debug("{} beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
+        log.debug("{} Beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
                 prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
 
         final List<AttributeFilterPolicy> policies = getFilterPolicies();
@@ -165,7 +165,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
                     getId(), attributeId);
         } else {
             log.debug("Attribute filtering engine '{}': {} values for attribute '{}' remained after filtering",
-                    new Object[] {filteredAttributeValues.size(), attributeId,});
+                    new Object[] {getId(), filteredAttributeValues.size(), attributeId,});
         }
 
         return filteredAttributeValues;
