@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -27,7 +26,6 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -41,11 +39,13 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.collection.LazyMap;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.velocity.Template;
 
@@ -56,18 +56,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * An attribute definition that constructs its values based on the values of its dependencies using the Velocity
- * Template Language. Dependencies may have multiple values, however multiples dependencies must have the same number of
+ * Template Language. Dependencies may have multiple values, however multiple dependencies must have the same number of
  * values. In the case of multi-valued dependencies, the template will be evaluated multiples times, iterating over each
- * dependency. <br/>
- * The template is inserted into the engine with a unique name derived from this class and from the id supplied for this
- * attribute. <br/>
- * This is marked not thread safe since the constructor cannot do a safe check & insert of the template into the
- * repository.
+ * dependency.
+ * 
+ * <p>The template is inserted into the engine with a unique name derived from this class and from the id supplied for
+ * this attribute.</p>
  */
-@NotThreadSafe
+@ThreadSafeAfterInit
 public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
@@ -83,7 +84,12 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     @NonnullAfterInit private VelocityEngine engine;
 
     /** The names of the attributes we need. */
-    @Nonnull private List<String> sourceAttributes = Collections.emptyList();
+    @Nonnull @NonnullElements private List<String> sourceAttributes;
+    
+    /** Constructor. */
+    public TemplateAttributeDefinition() {
+        sourceAttributes = Collections.emptyList();
+    }
 
     /**
      * Get the source attribute IDs.
@@ -102,14 +108,14 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     public void setSourceAttributes(@Nonnull @NullableElements final List<String> newSourceAttributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+        Constraint.isNotNull(newSourceAttributes, "Source attribute list cannot be null");
 
-        final ArrayList<String> checkedSourceAttrs = new ArrayList<String>(newSourceAttributes.size());
-        CollectionSupport.addIf(checkedSourceAttrs, newSourceAttributes, Predicates.notNull());
-        sourceAttributes = Collections.unmodifiableList(checkedSourceAttrs);
+        sourceAttributes = Lists.newArrayListWithExpectedSize(newSourceAttributes.size());
+        CollectionSupport.addIf(sourceAttributes, newSourceAttributes, Predicates.notNull());
     }
 
     /**
-     * Gets the template text to be evaluated.
+     * Get the template text to be evaluated.
      * 
      * @return the template
      */
@@ -118,7 +124,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /**
-     * Gets the template text to be evaluated.
+     * Get the template text to be evaluated.
      * 
      * @return the template
      */
@@ -127,7 +133,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /**
-     * Sets the template to be evaluated.
+     * Set the literal text of the template to be evaluated.
      * 
      * @param velocityTemplate template to be evaluated
      */
@@ -135,11 +141,11 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        templateText = velocityTemplate;
+        templateText = StringSupport.trimOrNull(velocityTemplate);
     }
 
     /**
-     * Gets the {@link VelocityEngine} to be used.
+     * Get the {@link VelocityEngine} to be used.
      * 
      * @return the template
      */
@@ -148,84 +154,33 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
     }
 
     /**
-     * Sets the {@link VelocityEngine} to be used.
+     * Set the {@link VelocityEngine} to be used.
      * 
      * @param velocityEngine engine to be used
      */
-    public void setVelocityEngine(@Nullable final VelocityEngine velocityEngine) {
+    public void setVelocityEngine(@Nonnull final VelocityEngine velocityEngine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        engine = velocityEngine;
-    }
-
-    /** {@inheritDoc} */
-    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
-
-        final IdPAttribute resultantAttribute = new IdPAttribute(getId());
-
-        final Map<String, Iterator<IdPAttributeValue<?>>> sourceValues = new LazyMap<>();
-        final int valueCount = setupSourceValues(workContext, sourceValues);
-
-        // build velocity context
-        VelocityContext velocityContext;
-        String templateResult;
-        final LinkedHashSet<StringAttributeValue> hs = new LinkedHashSet<>(valueCount);
-
-        for (int i = 0; i < valueCount; i++) {
-            log.debug("{} determing value {}", getLogPrefix(), i + 1);
-            velocityContext = new VelocityContext();
-
-            for (final String attributeId : sourceValues.keySet()) {
-                final IdPAttributeValue value = sourceValues.get(attributeId).next();
-                if (!(value instanceof StringAttributeValue)) {
-                    throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
-                            + "This attribute definition only supports attribute value types of "
-                            + StringAttributeValue.class.getName() + " not values of type "
-                            + value.getClass().getName()));
-                }
-
-                log.debug("{} adding value '{}' for attribute '{}' to the template context", new Object[] {
-                        getLogPrefix(), value.getValue(), attributeId,});
-                velocityContext.put(attributeId, value.getValue());
-            }
-
-            try {
-                log.debug("{} evaluating template", getLogPrefix());
-                templateResult = template.merge(velocityContext);
-                log.debug("{} result of template evaluating was '{}'", getLogPrefix(), templateResult);
-                hs.add(new StringAttributeValue(templateResult));
-            } catch (final VelocityException e) {
-                // uncovered path
-                log.error("{} Unable to evaluate velocity template", getLogPrefix(), e);
-                throw new ResolutionException("Unable to evaluate template", e);
-            }
-        }
-        resultantAttribute.setValues(hs);
-
-        return resultantAttribute;
+        engine = Constraint.isNotNull(velocityEngine, "VelocityEngine cannot be null");
     }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-
+    
         if (getDependencies().isEmpty()) {
             throw new ComponentInitializationException(getLogPrefix() + " no dependencies were configured");
         }
-
+    
         if (null == engine) {
             throw new ComponentInitializationException(getLogPrefix() + " no velocity engine was configured");
         }
-
+    
         if (sourceAttributes.isEmpty()) {
-            log.info("{} no Source Attributes supplied, was this intended?", getLogPrefix());
+            log.info("{} No Source Attributes supplied, was this intended?", getLogPrefix());
         }
-
-        templateText = StringSupport.trimOrNull(templateText);
-
+    
         if (null == templateText) {
             // V2 compatibility - define our own template
             final StringBuffer defaultTemplate = new StringBuffer();
@@ -238,18 +193,67 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 throw new ComponentInitializationException(getLogPrefix()
                         + " no template and no source attributes were configured");
             }
-            log.info("{} no template supplied. Default generated was '{}'", getLogPrefix(), templateText);
+            log.info("{} No template supplied. Default generated was '{}'", getLogPrefix(), templateText);
         }
-
+    
         template = Template.fromTemplate(engine, templateText);
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected IdPAttribute doAttributeDefinitionResolve(
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+
+        final IdPAttribute resultantAttribute = new IdPAttribute(getId());
+
+        final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues = new LazyMap<>();
+        final int valueCount = setupSourceValues(workContext, sourceValues);
+
+        final LinkedHashSet<StringAttributeValue> hs = Sets.newLinkedHashSetWithExpectedSize(valueCount);
+
+        for (int i = 0; i < valueCount; i++) {
+            log.debug("{} Determing value {}", getLogPrefix(), i + 1);
+            final VelocityContext velocityContext = new VelocityContext();
+
+            // Build velocity context.
+            for (final String attributeId : sourceValues.keySet()) {
+                final IdPAttributeValue value = sourceValues.get(attributeId).next();
+                if (!(value instanceof StringAttributeValue)) {
+                    throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
+                            + "This attribute definition only supports attribute value types of "
+                            + StringAttributeValue.class.getName() + " not values of type "
+                            + value.getClass().getName()));
+                }
+
+                log.debug("{} Adding value '{}' for attribute '{}' to the template context", new Object[] {
+                        getLogPrefix(), value.getValue(), attributeId,});
+                velocityContext.put(attributeId, value.getValue());
+            }
+
+            // Evaluate the context.
+            try {
+                log.debug("{} Evaluating template", getLogPrefix());
+                final String templateResult = template.merge(velocityContext);
+                log.debug("{} Result of template evaluating was '{}'", getLogPrefix(), templateResult);
+                hs.add(new StringAttributeValue(templateResult));
+            } catch (final VelocityException e) {
+                // uncovered path
+                log.error("{} Unable to evaluate velocity template", getLogPrefix(), e);
+                throw new ResolutionException("Unable to evaluate template", e);
+            }
+        }
+        
+        resultantAttribute.setValues(hs);
+        return resultantAttribute;
     }
 
     /**
      * Set up a map which can be used to populate the template. The key is the attribute name and the value is the
      * iterator to give all the names. We also return how deep the iteration will be and throw an exception if there is
-     * a mismatch in number of elements in any attribute. <br/>
-     * Finally, the names of the source attributes is checked against the dependency attributes and if there is a
-     * mismatch then a warning is emitted.
+     * a mismatch in number of elements in any attribute.
+     * 
+     * <p>Finally, the names of the source attributes is checked against the dependency attributes and if there is a
+     * mismatch then a warning is emitted.</p>
      * 
      * @param workContext source for dependencies
      * @param sourceValues to populate with the attribute iterators
@@ -258,7 +262,8 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
      * @throws ResolutionException if there is a mismatched count of attributes
      */
     private int setupSourceValues(@Nonnull final AttributeResolverWorkContext workContext,
-            final Map<String, Iterator<IdPAttributeValue<?>>> sourceValues) throws ResolutionException {
+            @Nonnull @NonnullElements final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues)
+                    throws ResolutionException {
 
         final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
@@ -268,19 +273,17 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         for (final String attributeName : sourceAttributes) {
 
-            final Set<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
+            Set<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
             if (null == attributeValues) {
-                throw new ResolutionException(getLogPrefix() + " no values found for attribute named '" + attributeName
-                        + "'");
+                attributeValues = Collections.emptySet();
             }
 
             if (!valueCountSet) {
                 valueCount = attributeValues.size();
                 valueCountSet = true;
             } else if (attributeValues.size() != valueCount) {
-                final String msg =
-                        getLogPrefix() + " all attributes used in"
-                                + " TemplateAttributeDefinition must have the same number of values.";
+                final String msg = getLogPrefix() + " All source attributes used in"
+                        + " TemplateAttributeDefinition must have the same number of values.";
                 log.error(msg);
                 throw new ResolutionException(msg);
             }
