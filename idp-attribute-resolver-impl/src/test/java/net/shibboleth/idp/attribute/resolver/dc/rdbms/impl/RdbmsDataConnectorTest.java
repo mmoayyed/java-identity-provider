@@ -60,7 +60,9 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private static final String DATA_FILE = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/rdbms/RdbmsData.sql";
 
-    private static final String SQL_QUERY = "SELECT userid, name, homephone, mail FROM people WHERE userid='%s'";
+    private static final String USER_QUERY = "SELECT userid, name, homephone, mail FROM people WHERE userid='%s'";
+
+    private static final String GROUP_QUERY = "SELECT name FROM groups WHERE userid='%s'";
 
     private DataSource datasource;
 
@@ -84,12 +86,30 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @param strategy to map results
      * @return rdbms data connector
      */
-    protected RDBMSDataConnector createRdbmsDataConnector(ExecutableSearchBuilder builder,
+    protected RDBMSDataConnector createUserRdbmsDataConnector(ExecutableSearchBuilder builder,
             ResultMappingStrategy strategy) {
         RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDataSource(datasource);
-        connector.setExecutableSearchBuilder(builder == null ? new FormatExecutableStatementBuilder(SQL_QUERY) : builder);
+        connector.setExecutableSearchBuilder(builder == null ? new FormatExecutableStatementBuilder(USER_QUERY) : builder);
+        connector.setMappingStrategy(strategy == null ? new StringResultMappingStrategy() : strategy);
+        return connector;
+    }
+
+    /**
+     * Creates a RDBMS data connector for group lookup using the supplied builder and strategy. Sets defaults values if
+     * the parameters are null.
+     * 
+     * @param builder to build executable statements
+     * @param strategy to map results
+     * @return rdbms data connector
+     */
+    protected RDBMSDataConnector createGroupRdbmsDataConnector(ExecutableSearchBuilder builder,
+            ResultMappingStrategy strategy) {
+        RDBMSDataConnector connector = new RDBMSDataConnector();
+        connector.setId(TEST_CONNECTOR_NAME + "ForGroups");
+        connector.setDataSource(datasource);
+        connector.setExecutableSearchBuilder(builder == null ? new FormatExecutableStatementBuilder(GROUP_QUERY) : builder);
         connector.setMappingStrategy(strategy == null ? new StringResultMappingStrategy() : strategy);
         return connector;
     }
@@ -114,7 +134,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
             // OK
         }
 
-        ExecutableSearchBuilder statementBuilder = new FormatExecutableStatementBuilder(SQL_QUERY);
+        ExecutableSearchBuilder statementBuilder = new FormatExecutableStatementBuilder(USER_QUERY);
         connector.setExecutableSearchBuilder(statementBuilder);
         try {
             connector.initialize();
@@ -193,7 +213,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createRdbmsDataConnector(null, null);
+        RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
         connector.initialize();
 
         AttributeResolutionContext context =
@@ -223,7 +243,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoStatement()
             throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
+        RDBMSDataConnector connector = createUserRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
 
             @Override @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext, @Nonnull Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes)
                     throws ResolutionException {
@@ -240,7 +260,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoResultIsError()
             throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createRdbmsDataConnector(null, null);
+        RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
         connector.setNoResultAnError(true);
         connector.initialize();
 
@@ -260,7 +280,7 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createRdbmsDataConnector(null, null);
+        RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
         final TestCache cache = new TestCache();
         connector.setResultsCache(cache);
         connector.initialize();
@@ -272,6 +292,22 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Map<String, IdPAttribute> optional = connector.resolve(context);
         Assert.assertTrue(cache.size() == 1);
         Assert.assertEquals(cache.iterator().next(), optional);
+    }
+
+    @Test public void resolveMultiple() throws ComponentInitializationException, ResolutionException {
+        final RDBMSDataConnector connector = createGroupRdbmsDataConnector(null, null);
+        connector.initialize();
+
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+
+        Map<String, IdPAttribute> attrs = connector.resolve(context);
+        // check total attributes: name
+        Assert.assertTrue(attrs.size() == 1);
+        // check name
+        Assert.assertTrue(attrs.get("NAME").getValues().size() == 1);
+        Assert.assertEquals(new StringAttributeValue("group1"), attrs.get("NAME").getValues().iterator().next());
     }
     
 }

@@ -4,5 +4,10 @@ CREATE TABLE people (
         password VARCHAR(50) NOT NULL,
         homephone VARCHAR(15) NOT NULL,
         mail VARCHAR(100) NOT NULL,
-        description VARCHAR(250));
+        description VARCHAR(250)
+        );
 
+CREATE TABLE groups (
+        userid VARCHAR(50) NOT NULL,
+        name VARCHAR(50) NOT NULL
+        );

@@ -18,3 +18,12 @@ INSERT INTO people
          'paul.principal@shibboleth.net',
          'test principal');
 
+INSERT INTO groups (userid, name)
+        values (
+        'PETER_THE_PRINCIPAL',
+        'group1');
+        
+INSERT INTO groups (userid, name)
+        values (
+        'PETER_THE_PRINCIPAL',
+        'group2');
