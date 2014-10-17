@@ -54,7 +54,7 @@ public class PrincipalAuthenticationMethodAttributeDefinition extends AbstractAt
         }
 
         final IdPAttribute attribute = new IdPAttribute(getId());
-        attribute.setValues(Collections.singleton(new StringAttributeValue(method)));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue(method)));
         return attribute;
     }
 }

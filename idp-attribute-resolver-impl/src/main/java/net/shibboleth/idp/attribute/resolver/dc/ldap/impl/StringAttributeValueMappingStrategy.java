@@ -18,7 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -34,6 +34,8 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 //TODO(lajoie): do we want something that can map data types too like the RDBMS equivalent?
 //TODO(lajoie): want some settings to control what happens if there is more than one LdapEntry
@@ -56,7 +58,7 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
         for (LdapEntry entry : results.getEntries()) {
             for (LdapAttribute attr : entry.getAttributes()) {
                 final IdPAttribute attribute = new IdPAttribute(attr.getName());
-                final LinkedHashSet<StringAttributeValue> hs = new LinkedHashSet<>(attr.getStringValues().size());
+                final List<StringAttributeValue> hs = Lists.newArrayListWithExpectedSize(attr.getStringValues().size());
 
                 for (String value : attr.getStringValues()) {
                     hs.add(new StringAttributeValue(value));
@@ -72,4 +74,5 @@ public class StringAttributeValueMappingStrategy implements SearchResultMappingS
             return attributes;
         }
     }
+    
 }

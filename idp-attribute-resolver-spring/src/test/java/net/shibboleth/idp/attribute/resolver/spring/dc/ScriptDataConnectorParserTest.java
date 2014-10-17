@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -60,7 +60,7 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
         
         Assert.assertEquals(result.size(), 2);
         
-        Set<IdPAttributeValue<?>> values = result.get("ScriptedOne").getValues();
+        List<IdPAttributeValue<?>> values = result.get("ScriptedOne").getValues();
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue("Value 1")));
         Assert.assertTrue(values.contains(new StringAttributeValue("Value 2")));

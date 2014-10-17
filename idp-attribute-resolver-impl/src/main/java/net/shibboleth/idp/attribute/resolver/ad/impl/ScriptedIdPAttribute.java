@@ -19,8 +19,7 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,6 +34,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * An encapsulated Attribute suitable for handing to scripts. This handles some of the cumbersome issues associated with
@@ -149,7 +150,7 @@ public class ScriptedIdPAttribute {
      * @param values the set to add to.
      * @param value the value to add. Known to be a {@link String} or an {@link IdPAttributeValue}
      */
-    private void addValue(@Nonnull final Set<IdPAttributeValue<?>> values, @Nonnull final Object value) {
+    private void addValue(@Nonnull final List<IdPAttributeValue<?>> values, @Nonnull final Object value) {
         if (value instanceof String) {
             values.add(new StringAttributeValue((String) value));
         } else {
@@ -204,15 +205,15 @@ public class ScriptedIdPAttribute {
         }
 
         // Otherwise re-marshall the {@link #attributeValues}
-        final Set<IdPAttributeValue<?>> values = new HashSet<>(attributeValues.size());
+        final List<IdPAttributeValue<?>> valueList = Lists.newArrayListWithExpectedSize(attributeValues.size());
 
         log.debug("{} recreating attribute contents from {}", getLogPrefix(), attributeValues);
         for (final Object object : attributeValues) {
             policeValueType(object);
-            addValue(values, object);
+            addValue(valueList, object);
         }
-        encapsulatedAttribute.setValues(values);
-        log.debug("{} recreated attribute contents are {}", getLogPrefix(), values);
+        encapsulatedAttribute.setValues(valueList);
+        log.debug("{} recreated attribute contents are {}", getLogPrefix(), valueList);
         return encapsulatedAttribute;
     }
 

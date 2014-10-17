@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -191,7 +191,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        final Map<String, Set<IdPAttributeValue<?>>> dependsAttributes =
+        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
         final T executable = searchBuilder.build(resolutionContext, dependsAttributes);
         Map<String, IdPAttribute> resolvedAttributes = null;

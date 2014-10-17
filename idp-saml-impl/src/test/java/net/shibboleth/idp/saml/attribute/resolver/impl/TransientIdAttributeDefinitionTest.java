@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.attribute.resolver.impl;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -71,10 +71,10 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
                 defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                         TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
-        Set<IdPAttributeValue<?>> vals = result.getValues();
+        List<IdPAttributeValue<?>> vals = result.getValues();
         Assert.assertEquals(vals.size(), 1);
 
-        String val = (String) vals.iterator().next().getValue();
+        String val = (String) vals.get(0).getValue();
 
         StorageRecord record = store.read(TransientIdParameters.CONTEXT, val);
         
@@ -156,8 +156,8 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         IdPAttribute result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                 TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
 
-        Set<IdPAttributeValue<?>> vals = result.getValues();
-        String firstTime = (String) vals.iterator().next().getValue();
+        List<IdPAttributeValue<?>> vals = result.getValues();
+        String firstTime = (String) vals.get(0).getValue();
 
         result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                 TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
@@ -169,7 +169,7 @@ public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         result = defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID,
                 TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
         vals = result.getValues();
-        Assert.assertNotEquals(firstTime, vals.iterator().next().getValue());
+        Assert.assertNotEquals(firstTime, vals.get(0).getValue());
 
         defn.destroy();
         store.destroy();

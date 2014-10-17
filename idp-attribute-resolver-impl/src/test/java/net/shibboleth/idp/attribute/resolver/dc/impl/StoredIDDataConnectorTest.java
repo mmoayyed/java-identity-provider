@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.dc.impl;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.util.Set;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -157,7 +157,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<IdPAttributeValue<?>> resultValues =
+        List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
@@ -200,7 +200,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<IdPAttributeValue<?>> resultValues =
+        List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
@@ -287,7 +287,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<IdPAttributeValue<?>> resultValues =
+        List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         String val = ((StringAttributeValue) resultValues.iterator().next()).getValue();

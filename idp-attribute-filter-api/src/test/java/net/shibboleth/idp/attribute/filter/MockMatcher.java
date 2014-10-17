@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -82,11 +84,11 @@ public class MockMatcher extends AbstractIdentifiedInitializableComponent implem
             return null;
         }
         if (!Objects.equals(attribute.getId(), matchingAttribute)) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         if (matchingValues == null) {
-            return attribute.getValues();
+            return ImmutableSet.copyOf(attribute.getValues());
         }
 
         HashSet<IdPAttributeValue<?>> values = new HashSet<>();

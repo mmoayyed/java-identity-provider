@@ -17,11 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
+
+import com.google.common.collect.Lists;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -81,10 +82,10 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final Set<IdPAttributeValue<?>> dependencyValues =
+        final List<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
 
-        final LinkedHashSet<StringAttributeValue> hs = new LinkedHashSet<>(dependencyValues.size());
+        final List<StringAttributeValue> valueList = Lists.newArrayListWithExpectedSize(dependencyValues.size());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
@@ -94,9 +95,9 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
                         + dependencyValue.getClass().getName()));
             }
 
-           hs.add(new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
+            valueList.add(new ScopedStringAttributeValue((String) dependencyValue.getValue(), scope));
         }
-        resultantAttribute.setValues(hs);
+        resultantAttribute.setValues(valueList);
         return resultantAttribute;
     }
 

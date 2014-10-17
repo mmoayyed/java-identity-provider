@@ -25,9 +25,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 
-//TODO(lajoie): I wonder if there should be an abstract class impl of this that...
-//has some properties like name and data type mappings, name lower/uppercasing, etc.
-
 /**
  * Strategy for mapping from an arbitrary result type to a collection of {@link IdPAttribute}s.
  * 
@@ -44,5 +41,6 @@ public interface MappingStrategy<T> {
      * 
      * @throws ResolutionException thrown if there is a problem reading data or mapping it
      */
-    @Nullable public Map<String, IdPAttribute> map(@Nonnull T results) throws ResolutionException;
+    @Nullable Map<String,IdPAttribute> map(@Nonnull final T results) throws ResolutionException;
+    
 }

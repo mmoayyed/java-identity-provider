@@ -135,7 +135,7 @@ public class MappedAttributeTest {
 
     @Test public void invalidValueType() throws ComponentInitializationException {
         IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
-        attr.setValues(Collections.singleton(new ByteAttributeValue(new byte[] {1, 2, 3})));
+        attr.setValues(Collections.singletonList(new ByteAttributeValue(new byte[] {1, 2, 3})));
 
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
@@ -157,13 +157,13 @@ public class MappedAttributeTest {
     }
 
     @Test public void validValueType() throws Exception {
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
                         ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
                                 ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
                                 ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA3_VALUES)));
 
-        MappedAttributeDefinition definition = new MappedAttributeDefinition();
+        final MappedAttributeDefinition definition = new MappedAttributeDefinition();
         definition.setId(TEST_ATTRIBUTE_NAME);
         definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
                 ResolverTestSupport.EPA_ATTRIB_ID)));
@@ -172,11 +172,12 @@ public class MappedAttributeTest {
         Assert.assertEquals(definition.getValueMaps().size(), 1);
         definition.initialize();
 
-        IdPAttribute result = definition.resolve(resolutionContext);
+        final IdPAttribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
-        Assert.assertEquals(result.getValues().size(), 1);
-        Assert.assertTrue(result.getValues().contains(new StringAttributeValue("student")));
+        Assert.assertEquals(result.getValues().size(), 2);
+        Assert.assertTrue(result.getValues().get(0).equals(new StringAttributeValue("student")));
+        Assert.assertTrue(result.getValues().get(1).equals(new StringAttributeValue("student")));
     }
 
     @Test public void defaultCase() throws Exception {
@@ -200,8 +201,10 @@ public class MappedAttributeTest {
         IdPAttribute result = definition.resolve(resolutionContext);
         Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
         Assert.assertFalse(result.getValues().isEmpty());
-        Assert.assertEquals(result.getValues().size(), 1);
-        Assert.assertTrue(result.getValues().contains(new StringAttributeValue("default")));
+        Assert.assertEquals(result.getValues().size(), 3);
+        Assert.assertTrue(result.getValues().get(0).equals(new StringAttributeValue("default")));
+        Assert.assertTrue(result.getValues().get(1).equals(new StringAttributeValue("default")));
+        Assert.assertTrue(result.getValues().get(2).equals(new StringAttributeValue("default")));
     }
 
     @Test public void passThrough() throws Exception {

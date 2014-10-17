@@ -19,10 +19,8 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * An attribute definition that constructs its values based on the values of its dependencies using the Velocity
@@ -209,7 +206,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues = new LazyMap<>();
         final int valueCount = setupSourceValues(workContext, sourceValues);
 
-        final LinkedHashSet<StringAttributeValue> hs = Sets.newLinkedHashSetWithExpectedSize(valueCount);
+        final List<StringAttributeValue> valueList = Lists.newArrayListWithExpectedSize(valueCount);
 
         for (int i = 0; i < valueCount; i++) {
             log.debug("{} Determing value {}", getLogPrefix(), i + 1);
@@ -235,7 +232,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 log.debug("{} Evaluating template", getLogPrefix());
                 final String templateResult = template.merge(velocityContext);
                 log.debug("{} Result of template evaluating was '{}'", getLogPrefix(), templateResult);
-                hs.add(new StringAttributeValue(templateResult));
+                valueList.add(new StringAttributeValue(templateResult));
             } catch (final VelocityException e) {
                 // uncovered path
                 log.error("{} Unable to evaluate velocity template", getLogPrefix(), e);
@@ -243,7 +240,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             }
         }
         
-        resultantAttribute.setValues(hs);
+        resultantAttribute.setValues(valueList);
         return resultantAttribute;
     }
 
@@ -265,7 +262,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
             @Nonnull @NonnullElements final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues)
                     throws ResolutionException {
 
-        final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
+        final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
 
         int valueCount = 0;
@@ -273,9 +270,9 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
         for (final String attributeName : sourceAttributes) {
 
-            Set<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
+            List<IdPAttributeValue<?>> attributeValues = dependencyAttributes.get(attributeName);
             if (null == attributeValues) {
-                attributeValues = Collections.emptySet();
+                attributeValues = Collections.emptyList();
             }
 
             if (!valueCountSet) {

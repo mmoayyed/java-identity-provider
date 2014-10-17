@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,7 +132,7 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
      * @param attributeValues the input values
      * @return a list of values, Possibly empty.
      */
-    @Nullable protected @Nonnull Collection<IdPAttributeValue<?>> encodeValues(final List<XMLObject> attributeValues) {
+    @Nullable protected @Nonnull List<IdPAttributeValue<?>> encodeValues(final List<XMLObject> attributeValues) {
         final ArrayList<IdPAttributeValue<?>> result = new ArrayList<>(attributeValues.size());
 
         for (XMLObject object : attributeValues) {
@@ -162,7 +161,7 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
             final String attributeName = samlAttribute.getName();
             log.debug("Connector '{}': found attribute named '{}'", getId(), attributeName);
 
-            final Collection<IdPAttributeValue<?>> values = encodeValues(samlAttribute.getAttributeValues());
+            final List<IdPAttributeValue<?>> values = encodeValues(samlAttribute.getAttributeValues());
             log.debug("Connector '{}': attribute '{}', values '{}'", new Object[] {getId(), attributeName, values,});
 
             final IdPAttribute IdPAttribute = new IdPAttribute(attributeName);

@@ -323,7 +323,7 @@ public class TemplateAttributeTest {
         templateDef.initialize();
 
         IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
-        attr.setValues(Collections.singleton(new ByteAttributeValue(new byte[] {1, 2, 3})));
+        attr.setValues(Collections.singletonList(new ByteAttributeValue(new byte[] {1, 2, 3})));
         StaticAttributeDefinition simple = new StaticAttributeDefinition();
         simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);
         simple.setValue(attr);

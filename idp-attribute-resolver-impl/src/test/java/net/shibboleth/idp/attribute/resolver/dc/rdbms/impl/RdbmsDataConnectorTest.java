@@ -18,10 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
@@ -46,6 +44,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -175,8 +174,8 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, Set<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
-        Set<IdPAttributeValue<?>> attributeValues = new HashSet<>();
+        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
+        List<IdPAttributeValue<?>> attributeValues = Lists.newArrayList();
         attributeValues.add(new StringAttributeValue("student"));
         dependsAttributes.put("affiliation", attributeValues);
         String query = builder.getSQLQuery(context, dependsAttributes);
@@ -191,8 +190,8 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, Set<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
-        Set<IdPAttributeValue<?>> attributeValues = new LinkedHashSet<>();
+        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
+        List<IdPAttributeValue<?>> attributeValues = Lists.newArrayList();
         attributeValues.add(new StringAttributeValue("entitlement1"));
         attributeValues.add(new StringAttributeValue("entitlement2"));
         dependsAttributes.put("entitlement", attributeValues);
@@ -245,8 +244,9 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
             throws ComponentInitializationException, ResolutionException {
         RDBMSDataConnector connector = createUserRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
 
-            @Override @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext, @Nonnull Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes)
-                    throws ResolutionException {
+            @Override
+            @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext,
+                    @Nonnull Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
                 return null;
             }
         }, null);
@@ -306,8 +306,9 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // check total attributes: name
         Assert.assertTrue(attrs.size() == 1);
         // check name
-        Assert.assertTrue(attrs.get("NAME").getValues().size() == 1);
-        Assert.assertEquals(new StringAttributeValue("group1"), attrs.get("NAME").getValues().iterator().next());
+        Assert.assertTrue(attrs.get("NAME").getValues().size() == 2);
+        Assert.assertTrue(attrs.get("NAME").getValues().contains(new StringAttributeValue("group1")));
+        Assert.assertTrue(attrs.get("NAME").getValues().contains(new StringAttributeValue("group2")));
     }
     
 }

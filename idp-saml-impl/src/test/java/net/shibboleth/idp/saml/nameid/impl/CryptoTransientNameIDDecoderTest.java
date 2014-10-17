@@ -19,7 +19,7 @@ package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import javax.security.auth.Subject;
 
@@ -170,9 +170,9 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
 
         final IdPAttribute result = defn.resolve(context);
 
-        final Set<IdPAttributeValue<?>> values = result.getValues();
+        final List<IdPAttributeValue<?>> values = result.getValues();
         Assert.assertEquals(values.size(), 1);
-        final String code = ((StringAttributeValue) values.iterator().next()).getValue();
+        final String code = ((StringAttributeValue) values.get(0)).getValue();
 
         final NameID nameID = new NameIDBuilder().buildObject();
         nameID.setFormat("https://example.org/");

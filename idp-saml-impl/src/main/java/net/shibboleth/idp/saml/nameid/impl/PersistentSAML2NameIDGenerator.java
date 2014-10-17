@@ -20,7 +20,6 @@ package net.shibboleth.idp.saml.nameid.impl;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -193,7 +192,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                 continue;
             }
 
-            final Set<IdPAttributeValue<?>> values = attribute.getValues();
+            final List<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof ScopedStringAttributeValue) {
                     log.info("Generating NameID from Scoped String-valued attribute {}", sourceId);

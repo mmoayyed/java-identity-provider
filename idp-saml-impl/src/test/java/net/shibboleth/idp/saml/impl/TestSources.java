@@ -17,9 +17,11 @@
 
 package net.shibboleth.idp.saml.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -49,7 +51,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Lists;
 
 /** Basic data sources for testing the attribute generators. */
 public final class TestSources {
@@ -134,12 +136,12 @@ public final class TestSources {
         attributeSet = new LazySet<IdPAttribute>();
 
         attr = new IdPAttribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
-        attr.setValues(Sets.newHashSet(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING),
+        attr.setValues(Arrays.asList(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING),
                 new StringAttributeValue(CONNECTOR_ATTRIBUTE_VALUE_STRING)));
         attributeSet.add(attr);
 
         attr = new IdPAttribute(DEPENDS_ON_SECOND_ATTRIBUTE_NAME);
-        attr.setValues(Sets.newHashSet(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),
+        attr.setValues(Arrays.asList(new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[0]),
                 new StringAttributeValue(SECOND_ATTRIBUTE_VALUE_STRINGS[1])));
         attributeSet.add(attr);
 
@@ -164,21 +166,19 @@ public final class TestSources {
     public static AttributeDefinition populatedStaticAttribute(String definitionName, String attributeName,
             int attributeCount) throws ComponentInitializationException {
         IdPAttribute attr;
-        Set<IdPAttributeValue<?>> valuesSet;
-
-        valuesSet = new LazySet<>();
+        List<IdPAttributeValue<?>> valuesList = Lists.newArrayList();
 
         if (attributeCount > 0) {
-            valuesSet.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
+            valuesList.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));
         }
         if (attributeCount > 1) {
-            valuesSet.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
+            valuesList.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
         }
         for (int i = 2; i < attributeCount; i++) {
-            valuesSet.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING + i));
+            valuesList.add(new StringAttributeValue(ATTRIBUTE_ATTRIBUTE_VALUE_STRING + i));
         }
         attr = new IdPAttribute(attributeName);
-        attr.setValues(valuesSet);
+        attr.setValues(valuesList);
 
         StaticAttributeDefinition definition = new StaticAttributeDefinition();
         definition.setId(definitionName);

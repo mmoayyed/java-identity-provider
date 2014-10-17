@@ -18,8 +18,7 @@
 package net.shibboleth.idp.saml.attribute.resolver.impl;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +40,8 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * An attribute definition the creates attributes whose values are {@link NameIdentifier}. <br/>
@@ -178,8 +179,8 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        Set<? extends IdPAttributeValue<?>> inputValues;
-        Set<? extends IdPAttributeValue<?>> outputValues = null;
+        List<? extends IdPAttributeValue<?>> inputValues;
+        List<? extends IdPAttributeValue<?>> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
         inputValues = PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
@@ -189,12 +190,12 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
             if (1 == inputValues.size()) {
                 final IdPAttributeValue<?> val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
                 if (null != val) {
-                    outputValues = Collections.singleton(val);
+                    outputValues = Collections.singletonList(val);
                 }
             } else {
                 // TODO(rdw) Fix typing
                 // Intermediate to solve typing issues.
-                final HashSet<XMLObjectAttributeValue> xmlVals = new HashSet<>(inputValues.size());
+                final List<XMLObjectAttributeValue> xmlVals = Lists.newArrayListWithExpectedSize(inputValues.size());
                 for (final IdPAttributeValue<?> theValue : inputValues) {
                     final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
                     if (null != val) {

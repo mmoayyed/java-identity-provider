@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -44,5 +44,5 @@ public interface ExecutableSearchBuilder<T extends ExecutableSearch> {
      * @throws ResolutionException throw if their is a problem creating the executable search
      */
     @Nonnull public T build(@Nonnull AttributeResolutionContext resolutionContext,
-            @Nonnull Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException;
+            @Nonnull Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException;
 }

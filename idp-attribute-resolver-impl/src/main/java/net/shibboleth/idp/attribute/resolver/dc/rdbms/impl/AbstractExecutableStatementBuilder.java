@@ -21,8 +21,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -70,11 +70,11 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
      * @return the SQL string
      */
     protected abstract String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes);
+            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes);
 
     /** {@inheritDoc} */
     @Override public ExecutableStatement build(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
         final String query = getSQLQuery(resolutionContext, dependencyAttributes);
 
         return new ExecutableStatement() {

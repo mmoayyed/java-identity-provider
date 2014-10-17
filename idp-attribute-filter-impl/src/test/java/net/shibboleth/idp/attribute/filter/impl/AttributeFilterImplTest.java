@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.filter.impl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -141,15 +140,15 @@ public class AttributeFilterImplTest {
                 new StringAttributeValue("b")));
         filterContext.getPrefilteredIdPAttributes().put(attribute2.getId(), attribute2);
 
-        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        final AttributeFilterImpl filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         attribute1Policy.initialize();
         policy.initialize();
         ComponentSupport.initialize(filter);
 
         filter.filterAttributes(filterContext);
-        Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
+        final Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
         Assert.assertEquals(resultAttrs.size(), 1);
-        Set<IdPAttributeValue<?>> result = resultAttrs.get("attribute1").getValues();
+        final List<IdPAttributeValue<?>> result = resultAttrs.get("attribute1").getValues();
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(new StringAttributeValue("one")));
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
@@ -180,7 +179,7 @@ public class AttributeFilterImplTest {
         filter.initialize();
 
         filter.filterAttributes(filterContext);
-        Set<IdPAttributeValue<?>> result = filterContext.getFilteredIdPAttributes().get("attribute1").getValues();
+        List<IdPAttributeValue<?>> result = filterContext.getFilteredIdPAttributes().get("attribute1").getValues();
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(new StringAttributeValue("one")));
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
@@ -282,7 +281,7 @@ public class AttributeFilterImplTest {
         filter.filterAttributes(filterContext);
         Map<String, IdPAttribute> resultAttrs = filterContext.getFilteredIdPAttributes();
         Assert.assertEquals(resultAttrs.size(), 1);
-        Set<IdPAttributeValue<?>> result = resultAttrs.get("attribute1").getValues();
+        List<IdPAttributeValue<?>> result = resultAttrs.get("attribute1").getValues();
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(new StringAttributeValue("two")));
     }

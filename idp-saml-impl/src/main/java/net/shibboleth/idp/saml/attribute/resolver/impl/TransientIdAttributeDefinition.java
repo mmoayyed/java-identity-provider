@@ -87,7 +87,7 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
             log.debug("{} creating new transient ID '{}'", new Object[] {getLogPrefix(), transientId,});
 
             final IdPAttribute result = new IdPAttribute(getId());
-            result.setValues(Collections.singleton(new StringAttributeValue(transientId)));
+            result.setValues(Collections.singletonList(new StringAttributeValue(transientId)));
             return result;
         } catch (final SAMLException e) {
             throw new ResolutionException(e);

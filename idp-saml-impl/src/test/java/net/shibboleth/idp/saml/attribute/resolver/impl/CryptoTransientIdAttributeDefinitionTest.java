@@ -18,7 +18,7 @@
 package net.shibboleth.idp.saml.attribute.resolver.impl;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -135,9 +135,9 @@ public class CryptoTransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTe
 
         final IdPAttribute result = defn.resolve(context);
 
-        final Set<IdPAttributeValue<?>> values = result.getValues();
+        final List<IdPAttributeValue<?>> values = result.getValues();
         Assert.assertEquals(values.size(), 1);
-        final String code = ((StringAttributeValue) values.iterator().next()).getValue();
+        final String code = ((StringAttributeValue) values.get(0)).getValue();
 
         final String decode = dataSealer.unwrap(code);
 

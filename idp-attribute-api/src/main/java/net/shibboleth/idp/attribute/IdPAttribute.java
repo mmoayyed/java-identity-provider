@@ -19,9 +19,7 @@ package net.shibboleth.idp.attribute;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,13 +33,14 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -65,7 +64,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     private Map<Locale, String> displayDescriptions;
 
     /** Values for this attribute. */
-    private Set<IdPAttributeValue<?>> values;
+    private List<IdPAttributeValue<?>> values;
 
     /** Encoders that may be used to encode this attribute. */
     private Set<AttributeEncoder<?>> encoders;
@@ -81,7 +80,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
         displayNames = Collections.emptyMap();
         displayDescriptions = Collections.emptyMap();
 
-        values = Collections.EMPTY_SET;
+        values = Collections.emptyList();
         encoders = Collections.emptySet();
     }
 
@@ -112,20 +111,20 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     @Nonnull @NonnullElements @Unmodifiable private Map<Locale, String> checkedNamesFrom(
             @Nullable @NullableElements final Map<Locale, String> inputMap) {
-        HashMap<Locale, String> checkedMap = new HashMap<Locale, String>();
-        String trimmedName;
+        
+        final ImmutableMap.Builder<Locale,String> builder = ImmutableMap.builder();
 
         if (inputMap != null) {
-            for (Entry<Locale, String> entry : inputMap.entrySet()) {
+            for (final Entry<Locale,String> entry : inputMap.entrySet()) {
                 if (entry.getKey() != null) {
-                    trimmedName = StringSupport.trimOrNull(entry.getValue());
+                    final String trimmedName = StringSupport.trimOrNull(entry.getValue());
                     if (trimmedName != null) {
-                        checkedMap.put(entry.getKey(), trimmedName);
+                        builder.put(entry.getKey(), trimmedName);
                     }
                 }
             }
         }
-        return ImmutableMap.copyOf(checkedMap);
+        return builder.build();
     }
 
     /**
@@ -156,11 +155,11 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
     }
 
     /**
-     * Gets the unordered, but guarded, collection of values of the attribute.
+     * Get the unmodifiable ordered collection of values of the attribute.
      * 
-     * @return values of the attribute.
+     * @return values of the attribute
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getValues() {
+    @Nonnull @NonnullElements @Unmodifiable public List<IdPAttributeValue<?>> getValues() {
         return values;
     }
 
@@ -170,9 +169,11 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * @param newValues the new values for this attribute
      */
     public void setValues(@Nullable @NullableElements final Collection<? extends IdPAttributeValue<?>> newValues) {
-        Set<IdPAttributeValue<?>> checkedValues = new LinkedHashSet<>();
-        CollectionSupport.addIf(checkedValues, newValues, Predicates.<IdPAttributeValue> notNull());
-        values = ImmutableSet.copyOf(checkedValues);
+        final ImmutableList.Builder<IdPAttributeValue<?>> builder = ImmutableList.builder();
+        if (newValues != null) {
+            builder.addAll(Collections2.filter(newValues, Predicates.notNull()));
+        }
+        values = builder.build();
     }
 
     /**
@@ -190,9 +191,11 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * @param newEncoders the new encoders for this attribute
      */
     public void setEncoders(@Nullable @NullableElements final Collection<AttributeEncoder<?>> newEncoders) {
-        Set<AttributeEncoder<?>> checkedEncoders = new HashSet<AttributeEncoder<?>>();
-        CollectionSupport.addIf(checkedEncoders, newEncoders, Predicates.notNull());
-        encoders = ImmutableSet.copyOf(checkedEncoders);
+        final ImmutableSet.Builder<AttributeEncoder<?>> builder = ImmutableSet.builder();
+        if (newEncoders != null) {
+            builder.addAll(Collections2.filter(newEncoders, Predicates.notNull()));
+        }
+        encoders = builder.build();
     }
 
     /** {@inheritDoc} */
@@ -209,7 +212,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      */
     @Override
     @Nonnull public IdPAttribute clone() throws CloneNotSupportedException {
-        IdPAttribute clone = (IdPAttribute) super.clone();
+        final IdPAttribute clone = (IdPAttribute) super.clone();
         clone.setDisplayDescriptions(getDisplayDescriptions());
         clone.setDisplayNames(getDisplayNames());
         clone.setEncoders(getEncoders());

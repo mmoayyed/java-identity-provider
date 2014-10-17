@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -50,13 +50,13 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
 
     /** {@inheritDoc} */
     @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
         final SearchFilter sf = new SearchFilter(searchFilter);
         sf.setParameter("principalName", resolutionContext.getPrincipal());
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (Map.Entry<String, Set<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+            for (Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
                 int i = 0;
-                for (IdPAttributeValue<?> value : entry.getValue()) {
+                for (final IdPAttributeValue<?> value : entry.getValue()) {
                     if (i == 0) {
                         sf.setParameter(String.format("%s", entry.getKey(), i), value.getValue());
                     }
@@ -66,4 +66,5 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
         }
         return super.build(sf);
     }
+    
 }

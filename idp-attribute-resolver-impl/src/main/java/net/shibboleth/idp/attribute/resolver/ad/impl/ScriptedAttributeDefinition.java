@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -184,7 +184,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
+        final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
 
         if (dependencyAttributes.containsKey(getId())) {
@@ -206,7 +206,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
                 ScriptContext.ENGINE_SCOPE);
 
-        for (final Entry<String, Set<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
+        for (final Entry<String, List<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("{} adding dependent attribute '{}' with the following values to the script context: {}",
                     new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());

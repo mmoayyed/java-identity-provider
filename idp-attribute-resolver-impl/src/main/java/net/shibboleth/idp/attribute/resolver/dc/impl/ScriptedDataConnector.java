@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.collect.Lists;
 
 /**
  * A Data Connector which populates a series of attributes from a provided {@link ProfileRequestContext}.
@@ -145,10 +146,10 @@ public class ScriptedDataConnector extends AbstractDataConnector {
         scriptContext.setAttribute("profileContext", prcLookupStrategy.apply(resolutionContext),
                 ScriptContext.ENGINE_SCOPE);
 
-        final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes =
+        final Map<String,List<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
 
-        for (final Entry<String, Set<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
+        for (final Entry<String,List<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("{} adding dependent attribute '{}' with the following values to the script context: {}",
                     new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());
@@ -166,18 +167,18 @@ public class ScriptedDataConnector extends AbstractDataConnector {
      * 
      * @param attribute the attribute to look at
      */
-    private void checkValues(IdPAttribute attribute) {
+    private void checkValues(final IdPAttribute attribute) {
 
         if (null == attribute.getValues()) {
             log.info("{} Attribute '{}' has no values provided.", getLogPrefix(), attribute.getId());
-            attribute.setValues(Collections.EMPTY_SET);
+            attribute.setValues(Collections.<IdPAttributeValue<?>>emptyList());
             return;
         }
         log.debug("{} Attribute '{}' has {} values.", getLogPrefix(), attribute.getId(), attribute.getValues().size());
-        Set<?> inputValues = attribute.getValues();
-        HashSet<IdPAttributeValue<?>> outputValues = new HashSet<>(inputValues.size());
+        List<IdPAttributeValue<?>> inputValues = attribute.getValues();
+        List<IdPAttributeValue<?>> outputValues = Lists.newArrayListWithExpectedSize(inputValues.size());
 
-        for (Object o : inputValues) {
+        for (final Object o : inputValues) {
             if (o instanceof IdPAttributeValue<?>) {
                 outputValues.add((IdPAttributeValue<?>) o);
             } else {

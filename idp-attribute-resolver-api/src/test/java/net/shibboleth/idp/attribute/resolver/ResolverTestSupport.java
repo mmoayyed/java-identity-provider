@@ -18,8 +18,9 @@
 package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -80,11 +81,11 @@ public class ResolverTestSupport {
     public static IdPAttribute buildAttribute(String attributeId, String... values) {
         final IdPAttribute attribute = new IdPAttribute(attributeId);
         
-        Set<StringAttributeValue> valueSet = new LinkedHashSet<>();
+        List<StringAttributeValue> valueList = Lists.newArrayList();
         for (String value : values) {
-            valueSet.add(new StringAttributeValue(value));
+            valueList.add(new StringAttributeValue(value));
         }
-        attribute.setValues(valueSet);
+        attribute.setValues(valueList);
 
         return attribute;
     }

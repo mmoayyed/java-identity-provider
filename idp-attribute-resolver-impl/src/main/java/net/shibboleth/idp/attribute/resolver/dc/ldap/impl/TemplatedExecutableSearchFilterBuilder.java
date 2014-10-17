@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -160,7 +159,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
 
     /** {@inheritDoc} */
     @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
 
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
@@ -173,7 +172,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
         }
 
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (Map.Entry<String, Set<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+            for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = Lists.newArrayList();
                 for (IdPAttributeValue<?> value : entry.getValue()) {
                     values.add(value.getValue());

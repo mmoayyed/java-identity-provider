@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 
 /**
@@ -174,11 +175,11 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
             if (matchIfMetadataSilent) {
                 log.debug("{} The peer's metadata did not have appropriate requested attributes available"
                         + ", returning all the input values", getLogPrefix());
-                return Collections.unmodifiableSet(attribute.getValues());
+                return ImmutableSet.copyOf(attribute.getValues());
             } else {
                 log.debug("{} The peer's metadata did not have appropriate requested attributes available"
                         + ", returning no values", getLogPrefix());
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             }
         }
 
@@ -186,7 +187,7 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
 
         if (null == requestedAttributeList) {
             log.debug("{} Attribute {} not found in metadata", getLogPrefix(), attribute.getId());
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         final Set<IdPAttributeValue<?>> values = new HashSet<>();
@@ -219,20 +220,22 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
      * @return the result of the filter
      */
     @Nonnull private Set<IdPAttributeValue<?>> filterValues(@Nullable final IdPAttribute attribute,
-            @Nonnull @NonnullElements final Set<? extends IdPAttributeValue> requestedValues) {
+            @Nonnull @NonnullElements final List<? extends IdPAttributeValue> requestedValues) {
 
         if (null == requestedValues || requestedValues.isEmpty()) {
             log.debug("{} Attribute {} found in metadata and no values specified", getLogPrefix(), attribute.getId());
-            return attribute.getValues();
+            return ImmutableSet.copyOf(attribute.getValues());
         }
 
-        final Set<IdPAttributeValue<?>> result = new HashSet<>(attribute.getValues().size());
+        final ImmutableSet.Builder<IdPAttributeValue<?>> builder = ImmutableSet.builder();
 
         for (final IdPAttributeValue attributeValue : attribute.getValues()) {
             if (requestedValues.contains(attributeValue)) {
-                result.add(attributeValue);
+                builder.add(attributeValue);
             }
         }
+        
+        final ImmutableSet<IdPAttributeValue<?>> result = builder.build();
         log.debug("{} Values matched with metadata for Attribute {} : {}", getLogPrefix(), attribute.getId(), result);
         return result;
     }

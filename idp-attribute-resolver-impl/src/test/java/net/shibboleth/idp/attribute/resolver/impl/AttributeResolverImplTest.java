@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -140,7 +141,7 @@ public class AttributeResolverImplTest {
     /** Test that a simple resolve returns the expected results. */
     @Test public void resolve() throws Exception {
         IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
 
         LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
@@ -159,7 +160,7 @@ public class AttributeResolverImplTest {
     /** Test that a simple resolve returns the expected results. */
     @Test public void resolveSpecificAttribute() throws Exception {
         IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
 
         LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         definitions.add(new MockAttributeDefinition("ad1", attribute));
@@ -186,7 +187,7 @@ public class AttributeResolverImplTest {
     @Test public void resolveFails() throws Exception {
         log.debug("Log Resolve fails");
         IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
 
         LazySet<AttributeDefinition> definitions = new LazySet<AttributeDefinition>();
         AbstractAttributeDefinition attrDef = new MockAttributeDefinition("ad1", new ResolutionException());
@@ -239,7 +240,7 @@ public class AttributeResolverImplTest {
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
 
         final IdPAttribute attr = new IdPAttribute("test");
-        attr.setValues(Sets.newHashSet(new StringAttributeValue("a"), new StringAttributeValue("b")));
+        attr.setValues(Arrays.asList(new StringAttributeValue("a"), new StringAttributeValue("b")));
         
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
@@ -347,13 +348,13 @@ public class AttributeResolverImplTest {
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         IdPAttribute attr = new IdPAttribute("test1");
-        attr.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attr.setValues(Collections.singletonList(new StringAttributeValue("value1")));
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
         ad1.setDependencies(Sets.newHashSet(dep1));
         ad1.initialize();
 
         attr = new IdPAttribute("test2");
-        attr.setValues(Collections.singleton(new StringAttributeValue("value2")));
+        attr.setValues(Collections.singletonList(new StringAttributeValue("value2")));
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", attr);
         ad2.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1")));
         ad2.initialize();
@@ -407,7 +408,7 @@ public class AttributeResolverImplTest {
     @Test public void dataConnectorWithDataDependency() throws ComponentInitializationException, ResolutionException {
         Map<String, IdPAttribute> values = new HashMap<String, IdPAttribute>(1);
         IdPAttribute attr = new IdPAttribute("SubAttribute");
-        attr.setValues(Collections.singleton(new StringAttributeValue("SubValue1")));
+        attr.setValues(Collections.singletonList(new StringAttributeValue("SubValue1")));
 
         values.put("SubAttribute", attr);
         MockDataConnector dc1 = new MockDataConnector("dc1", values);
@@ -415,7 +416,7 @@ public class AttributeResolverImplTest {
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         dep1.setDependencyAttributeId("SubAttribute");
         attr = new IdPAttribute("test1");
-        attr.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attr.setValues(Collections.singletonList(new StringAttributeValue("value1")));
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
         ad1.setDependencies(Sets.newHashSet(dep1));
         ad1.initialize();
@@ -458,7 +459,7 @@ public class AttributeResolverImplTest {
      */
     @Test public void resolveCleanDependencyOnly() throws Exception {
         IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue("value1")));
 
         MockAttributeDefinition definition = new MockAttributeDefinition("ad1", attribute);
         definition.setDependencyOnly(true);
@@ -479,7 +480,7 @@ public class AttributeResolverImplTest {
     /** Test that after resolution that the values for a resolved attribute are deduped. */
     @Test public void resolveCleanDuplicateValues() throws Exception {
         IdPAttribute attribute = new IdPAttribute("ad1");
-        attribute.setValues(Sets.newHashSet(new StringAttributeValue("value1"), new StringAttributeValue("value1")));
+        attribute.setValues(Arrays.asList(new StringAttributeValue("value1"), new StringAttributeValue("value1")));
 
         MockAttributeDefinition definition = new MockAttributeDefinition("ad1", attribute);
 

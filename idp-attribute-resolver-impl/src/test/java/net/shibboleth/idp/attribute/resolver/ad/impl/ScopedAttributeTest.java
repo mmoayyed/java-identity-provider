@@ -102,7 +102,7 @@ public class ScopedAttributeTest {
 
     @Test public void invalidValueType() throws ComponentInitializationException {
         IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
-        attr.setValues(Collections.singleton(new ByteAttributeValue(new byte[] {1, 2, 3})));
+        attr.setValues(Collections.singletonList(new ByteAttributeValue(new byte[] {1, 2, 3})));
 
         AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));

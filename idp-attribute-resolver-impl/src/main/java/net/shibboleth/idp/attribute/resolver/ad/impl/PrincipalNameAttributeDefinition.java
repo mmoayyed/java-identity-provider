@@ -45,7 +45,7 @@ public class PrincipalNameAttributeDefinition extends AbstractAttributeDefinitio
         }
 
         final IdPAttribute attribute = new IdPAttribute(getId());
-        attribute.setValues(Collections.singleton(new StringAttributeValue(principalName)));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue(principalName)));
         return attribute;
     }
     

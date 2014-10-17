@@ -17,8 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,6 +41,8 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * An attribute definition that creates {@link ScopedStringAttributeValue}s by taking a source attribute value splitting
@@ -89,12 +90,12 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
 
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final Set<IdPAttributeValue<?>> dependencyValues =
+        final List<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
         log.debug("{} Dependencies {} provided unmapped values of {}", new Object[] {getLogPrefix(), getDependencies(),
                 dependencyValues,});
 
-        final LinkedHashSet<ScopedStringAttributeValue> valueSet = new LinkedHashSet<>(dependencyValues.size());
+        final List<ScopedStringAttributeValue> valueList = Lists.newArrayListWithExpectedSize(dependencyValues.size());
         for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
@@ -103,9 +104,9 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
                         + dependencyValue.getClass().getName()));
             }
 
-            valueSet.add(buildScopedStringAttributeValue((StringAttributeValue) dependencyValue));
+            valueList.add(buildScopedStringAttributeValue((StringAttributeValue) dependencyValue));
         }
-        resultantAttribute.setValues(valueSet);
+        resultantAttribute.setValues(valueList);
         return resultantAttribute;
     }
 

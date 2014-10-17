@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
@@ -145,7 +145,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         // Static
         IdPAttribute attribute = resolvedAttributes.get("eduPersonAffiliation");
         Assert.assertNotNull(attribute);
-        Set<IdPAttributeValue<?>> values = attribute.getValues();
+        List<IdPAttributeValue<?>> values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("member")));
 

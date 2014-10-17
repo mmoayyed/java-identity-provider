@@ -19,12 +19,14 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -41,7 +43,7 @@ public final class PluginDependencySupport {
     }
 
     /**
-     * Gets the values, as a single set, from all dependencies. This method only supports dependencies which contain an
+     * Gets the values, as a single list, from all dependencies. This method only supports dependencies which contain an
      * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null). It
      * is therefore used inside Attribute definitions which only process a single attribute as input.
      * 
@@ -56,22 +58,21 @@ public final class PluginDependencySupport {
      * 
      * @return the merged value set
      */
-    @Nonnull @NonnullElements public static Set<IdPAttributeValue<?>> getMergedAttributeValues(
+    @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
             @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies) {
         Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
         Constraint.isNotNull(dependencies, "Resolver dependency collection cannot be null");
 
-        final Set<IdPAttributeValue<?>> values = new LinkedHashSet<>();
+        final List<IdPAttributeValue<?>> values = Lists.newArrayList();
 
-        for (ResolverPluginDependency dependency : dependencies) {
-            final IdPAttribute resolvedAttribute;
+        for (final ResolverPluginDependency dependency : dependencies) {
             Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
 
-            ResolvedAttributeDefinition attributeDefinition =
+            final ResolvedAttributeDefinition attributeDefinition =
                     workContext.getResolvedIdPAttributeDefinitions().get(dependency.getDependencyPluginId());
             if (attributeDefinition != null) {
-                resolvedAttribute = attributeDefinition.getResolvedAttribute();
+                final IdPAttribute resolvedAttribute = attributeDefinition.getResolvedAttribute();
                 addAttributeValues(resolvedAttribute, values);
                 continue;
             }
@@ -83,7 +84,7 @@ public final class PluginDependencySupport {
                         + "must specify a dependant attribute ID");
 
                 if (null != dataConnector.getResolvedAttributes()) {
-                    resolvedAttribute =
+                    final IdPAttribute resolvedAttribute =
                             dataConnector.getResolvedAttributes().get(dependency.getDependencyAttributeId());
                     addAttributeValues(resolvedAttribute, values);
                     continue;
@@ -96,7 +97,7 @@ public final class PluginDependencySupport {
 
     /**
      * Gets the values from all dependencies. Attributes, with the same identifier but from different resolver plugins,
-     * will have their values merged into a single set within this method's returned map. This method is the equivalent
+     * will have their values merged into a single list within this method's returned map. This method is the equivalent
      * of calling {@link #getMergedAttributeValues(AttributeResolverWorkContext, Collection)} for all attributes
      * resolved by all the given dependencies.  This is therefore used when an attribute definition may have multiple
      * input attributes (for instance scripted or templated definitions).
@@ -112,13 +113,13 @@ public final class PluginDependencySupport {
      * 
      * @return the merged value set
      */
-    public static Map<String, Set<IdPAttributeValue<?>>> getAllAttributeValues(
+    public static Map<String,List<IdPAttributeValue<?>>> getAllAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
             @Nonnull final Collection<ResolverPluginDependency> dependencies) {
 
-        final HashMap<String, Set<IdPAttributeValue<?>>> result = new HashMap<>();
+        final HashMap<String,List<IdPAttributeValue<?>>> result = Maps.newHashMap();
 
-        for (ResolverPluginDependency dependency : dependencies) {
+        for (final ResolverPluginDependency dependency : dependencies) {
             Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
 
             final ResolvedAttributeDefinition attributeDefinition =
@@ -148,7 +149,7 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void addAttributeValues(@Nonnull final Map<String, IdPAttribute> sources,
-            @Nullable final Map<String, Set<IdPAttributeValue<?>>> target) {
+            @Nullable final Map<String, List<IdPAttributeValue<?>>> target) {
         for (IdPAttribute source : sources.values()) {
             if (source == null) {
                 continue;
@@ -165,13 +166,13 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void addAttributeValues(@Nullable final IdPAttribute source,
-            @Nullable final Map<String, Set<IdPAttributeValue<?>>> target) {
+            @Nullable final Map<String, List<IdPAttributeValue<?>>> target) {
         if (source == null) {
             return;
         }
-        Set<IdPAttributeValue<?>> attributeValues = target.get(source.getId());
+        List<IdPAttributeValue<?>> attributeValues = target.get(source.getId());
         if (attributeValues == null) {
-            attributeValues = new LinkedHashSet<>();
+            attributeValues = Lists.newArrayList();
             target.put(source.getId(), attributeValues);
         }
 
@@ -185,7 +186,7 @@ public final class PluginDependencySupport {
      * @param target current set attribute values
      */
     @Nonnull private static void addAttributeValues(@Nullable final IdPAttribute source,
-            @Nonnull final Set<IdPAttributeValue<?>> target) {
+            @Nonnull final List<IdPAttributeValue<?>> target) {
         if (source != null) {
             target.addAll(source.getValues());
         }

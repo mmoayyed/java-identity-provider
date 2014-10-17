@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.impl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -149,7 +148,7 @@ public class FilterAttributesTest {
         final Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
-        final Set<IdPAttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
+        final List<IdPAttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
         Assert.assertEquals(resultAttributeValue.size(), 2);
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("one")));
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("two")));
@@ -211,7 +210,7 @@ public class FilterAttributesTest {
         final Map<String, IdPAttribute> resultAttributes = resultAttributeCtx.getIdPAttributes();
         Assert.assertEquals(resultAttributes.size(), 1);
 
-        final Set<IdPAttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
+        final List<IdPAttributeValue<?>> resultAttributeValue = resultAttributes.get("attribute1").getValues();
         Assert.assertEquals(resultAttributeValue.size(), 2);
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("one")));
         Assert.assertTrue(resultAttributeValue.contains(new StringAttributeValue("two")));

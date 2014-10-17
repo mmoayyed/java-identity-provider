@@ -17,8 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +41,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that produces its attribute values by taking the
@@ -86,9 +87,10 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
+        final List<IdPAttributeValue<?>> resultantValues = Lists.newArrayList();
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
-        final Set<IdPAttributeValue<?>> dependencyValues =
+        final List<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
@@ -99,17 +101,21 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
                         dependencyValue.getClass().getName()));
             }
 
-            log.debug("{} applying regexp '{}' to input value '{}'", new Object[] {getLogPrefix(), regexp.pattern(),
+            log.debug("{} Applying regexp '{}' to input value '{}'", new Object[] {getLogPrefix(), regexp.pattern(),
                     dependencyValue.getValue(),});
             final Matcher matcher = regexp.matcher((String) dependencyValue.getValue());
             if (matcher.matches()) {
-                log.debug("{} computed the value '{}' by apply regexp '{}' to input value '{}'", new Object[] {
+                log.debug("{} Computed the value '{}' by apply regexp '{}' to input value '{}'", new Object[] {
                         getLogPrefix(), matcher.group(1), regexp.pattern(), dependencyValue.getValue(),});
-                resultantAttribute.setValues(Collections.singleton(new StringAttributeValue(matcher.group(1))));
+                resultantValues.add(new StringAttributeValue(matcher.group(1)));
             } else {
                 log.debug("{} Regexp '{}' did not match anything in input value '{}'", new Object[] {getLogPrefix(),
                         regexp.pattern(), dependencyValue.getValue(),});
             }
+        }
+        
+        if (!resultantValues.isEmpty()) {
+            resultantAttribute.setValues(resultantValues);
         }
         return resultantAttribute;
     }

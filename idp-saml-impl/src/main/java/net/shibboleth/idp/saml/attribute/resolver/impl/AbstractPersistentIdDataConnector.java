@@ -18,8 +18,8 @@
 package net.shibboleth.idp.saml.attribute.resolver.impl;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -125,7 +125,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final Set<IdPAttributeValue<?>> attributeValues =
+        final List<IdPAttributeValue<?>> attributeValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("{} Source attribute {} for connector {} provide no values", getLogPrefix(),
@@ -170,7 +170,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
             return null;
         }
         final IdPAttribute attribute = new IdPAttribute(getGeneratedAttributeId());
-        attribute.setValues(Collections.singleton(new StringAttributeValue(value)));
+        attribute.setValues(Collections.singletonList(new StringAttributeValue(value)));
         return Collections.singletonMap(getGeneratedAttributeId(), attribute);
     }
 

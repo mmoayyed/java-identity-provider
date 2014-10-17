@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -56,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 
 /**
  * A component that resolves the attributes for a particular subject.
@@ -109,7 +112,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             for (AttributeDefinition definition : definitions) {
                 if (definition != null) {
                     if (checkedDefinitions.containsKey(definition.getId())) {
-                        throw new IllegalArgumentException(logPrefix + " duplicate Attribute Definition with id "
+                        throw new IllegalArgumentException(logPrefix + " Duplicate Attribute Definition with id "
                                 + definition.getId());
                     }
                     checkedDefinitions.put(definition.getId(), definition);
@@ -126,7 +129,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             for (DataConnector connector : connectors) {
                 if (connector != null) {
                     if (checkedConnectors.containsKey(connector.getId())) {
-                        throw new IllegalArgumentException(logPrefix + " duplicate Data Connector Definition with id "
+                        throw new IllegalArgumentException(logPrefix + " Duplicate Data Connector Definition with id "
                                 + connector.getId());
                     }
                     checkedConnectors.put(connector.getId(), connector);
@@ -177,15 +180,15 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
 
-        log.debug("{} initiating attribute resolution", logPrefix);
+        log.debug("{} Initiating attribute resolution", logPrefix);
 
         if (attributeDefinitions.size() == 0) {
-            log.debug("{} no attribute definition available, no attributes were resolved", logPrefix);
+            log.debug("{} No attribute definition available, no attributes were resolved", logPrefix);
             return;
         }
 
         final Collection<String> attributeIds = getToBeResolvedAttributeIds(resolutionContext);
-        log.debug("{} attempting to resolve the following attribute definitions {}", logPrefix, attributeIds);
+        log.debug("{} Attempting to resolve the following attribute definitions {}", logPrefix, attributeIds);
 
         // Create work context to hold intermediate results.
         final AttributeResolverWorkContext workContext =
@@ -195,12 +198,12 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             resolveAttributeDefinition(attributeId, resolutionContext);
         }
 
-        log.debug("{} finalizing resolved attributes", logPrefix);
+        log.debug("{} Finalizing resolved attributes", logPrefix);
         finalizeResolvedAttributes(resolutionContext);
 
         resolutionContext.removeSubcontext(workContext);
 
-        log.debug("{} final resolved attribute collection: {}", logPrefix, resolutionContext.getResolvedIdPAttributes()
+        log.debug("{} Final resolved attribute collection: {}", logPrefix, resolutionContext.getResolvedIdPAttributes()
                 .keySet());
     }
 
@@ -245,28 +248,28 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
-        log.trace("{} beginning to resolve attribute definition {}", logPrefix, attributeId);
+        log.trace("{} Beginning to resolve attribute definition {}", logPrefix, attributeId);
 
         if (workContext.getResolvedIdPAttributeDefinitions().containsKey(attributeId)) {
-            log.trace("{} attribute definition {} was already resolved, nothing to do", logPrefix, attributeId);
+            log.trace("{} Attribute definition {} was already resolved, nothing to do", logPrefix, attributeId);
             return;
         }
 
         final AttributeDefinition definition = attributeDefinitions.get(attributeId);
         if (definition == null) {
-            log.debug("{} no attribute definition was registered with ID {}, nothing to do", logPrefix, attributeId);
+            log.debug("{} No attribute definition was registered with ID {}, nothing to do", logPrefix, attributeId);
             return;
         }
 
         resolveDependencies(definition, resolutionContext);
 
-        log.trace("{} resolving attribute definition {}", logPrefix, attributeId);
+        log.trace("{} Resolving attribute definition {}", logPrefix, attributeId);
         final IdPAttribute resolvedAttribute = definition.resolve(resolutionContext);
 
         if (null == resolvedAttribute) {
-            log.warn("{} attribute definition {} produced no attribute", logPrefix, attributeId);
+            log.warn("{} Attribute definition {} produced no attribute", logPrefix, attributeId);
         } else {
-            log.debug("{} attribute definition {} produced an attribute with {} values", new Object[] {logPrefix,
+            log.debug("{} Attribute definition {} produced an attribute with {} values", new Object[] {logPrefix,
                     attributeId, resolvedAttribute.getValues().size(),});
         }
 
@@ -291,25 +294,25 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
         if (workContext.getResolvedDataConnectors().containsKey(connectorId)) {
-            log.trace("{} data connector {} was already resolved, nothing to do", logPrefix, connectorId);
+            log.trace("{} Data connector {} was already resolved, nothing to do", logPrefix, connectorId);
             return;
         }
 
         final DataConnector connector = dataConnectors.get(connectorId);
         if (connector == null) {
-            log.debug("{} no data connector was registered with ID {}, nothing to do", logPrefix, connectorId);
+            log.debug("{} No data connector was registered with ID {}, nothing to do", logPrefix, connectorId);
             return;
         }
 
         resolveDependencies(connector, resolutionContext);
         Map<String, IdPAttribute> resolvedAttributes;
         try {
-            log.debug("{} resolving data connector {}", logPrefix, connectorId);
+            log.debug("{} Resolving data connector {}", logPrefix, connectorId);
             resolvedAttributes = connector.resolve(resolutionContext);
         } catch (ResolutionException e) {
             final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (null != failoverDataConnectorId) {
-                log.debug("{} data connector {} failed to resolve, invoking failover data"
+                log.debug("{} Data connector {} failed to resolve, invoking failover data"
                         + " connector {}.  Reason for failure:", new Object[] {logPrefix, connectorId,
                         failoverDataConnectorId, e,});
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
@@ -322,10 +325,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
 
         if (null != resolvedAttributes) {
-            log.debug("{} data connector {} resolved the following attributes {}", new Object[] {logPrefix,
+            log.debug("{} Data connector {} resolved the following attributes {}", new Object[] {logPrefix,
                     connectorId, resolvedAttributes.keySet(),});
         } else {
-            log.debug("{} data connector {} produced no attributes", logPrefix, connectorId);
+            log.debug("{} Data connector {} produced no attributes", logPrefix, connectorId);
         }
         workContext.recordDataConnectorResolution(connector, resolvedAttributes);
     }
@@ -347,7 +350,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             return;
         }
 
-        log.debug("{} resolving dependencies for {}", logPrefix, plugin.getId());
+        log.debug("{} Resolving dependencies for {}", logPrefix, plugin.getId());
 
         String pluginId;
         for (ResolverPluginDependency dependency : plugin.getDependencies()) {
@@ -363,13 +366,16 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             }
         }
 
-        log.debug("{} finished resolving dependencies for {}", logPrefix, plugin.getId());
+        log.debug("{} Finished resolving dependencies for {}", logPrefix, plugin.getId());
     }
 
     /**
      * Finalizes the set of resolved attributes and places them in the {@link AttributeResolutionContext}. The result of
      * each {@link AttributeDefinition} resolution is inspected. If the result is not null, a dependency-only attribute,
      * or an attribute that contains no values then it becomes part of the final set of resolved attributes.
+     * 
+     * <p>Values are also de-duplicated here, so that all the intermediate operations maintain the coherency of
+     * multi-valued result sets produced by data connectors.</p>
      * 
      * @param resolutionContext current resolution context
      */
@@ -380,30 +386,46 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         final LazySet<IdPAttribute> resolvedAttributes = new LazySet<IdPAttribute>();
 
-        IdPAttribute resolvedAttribute;
-        for (ResolvedAttributeDefinition definition : workContext.getResolvedIdPAttributeDefinitions().values()) {
-            resolvedAttribute = definition.getResolvedAttribute();
+        for (final ResolvedAttributeDefinition definition : workContext.getResolvedIdPAttributeDefinitions().values()) {
+            final IdPAttribute resolvedAttribute = definition.getResolvedAttribute();
 
-            // remove nulls
+            // Remove nulls.
             if (null == resolvedAttribute) {
-                log.debug("{} removing result of attribute definition {}, it is null", logPrefix, definition.getId());
+                log.debug("{} Removing result of attribute definition {}, is null", logPrefix, definition.getId());
                 continue;
             }
 
-            // remove dependency-only attributes
+            // Remove dependency-only attributes.
             if (definition.isDependencyOnly()) {
-                log.debug("{} removing result of attribute definition {}, it is marked as depdency only", logPrefix,
+                log.debug("{} Removing result of attribute definition {}, is marked as depdency only", logPrefix,
                         definition.getId());
                 continue;
             }
 
-            // remove value-less attributes
+            // Remove value-less attributes.
             if (resolvedAttribute.getValues().size() == 0) {
-                log.debug("{} removing result of attribute definition {}, its attribute contains no values", logPrefix,
+                log.debug("{} Removing result of attribute definition {}, contains no values", logPrefix,
                         definition.getId());
                 continue;
             }
+            
+            // Remove duplicate attribute values.
+            log.debug("{} De-duping attribute definition {} result", logPrefix, definition.getId());
+            final Iterator<IdPAttributeValue<?>> valueIter = resolvedAttribute.getValues().iterator();
+            final Set<IdPAttributeValue<?>> monitor =
+                    Sets.newHashSetWithExpectedSize(resolvedAttribute.getValues().size());
+            while (valueIter.hasNext()) {
+                final IdPAttributeValue<?> value = valueIter.next();
+                if (!monitor.add(value)) {
+                    log.debug("{} Removing duplicate value {} of attribute {} from resolution result", logPrefix, value,
+                            resolvedAttribute.getId());
+                }
+            }
 
+            resolvedAttribute.setValues(monitor);
+            log.debug("{} Attribute {} has {} values after post-processing", logPrefix, resolvedAttribute.getId(),
+                    monitor.size());
+            
             resolvedAttributes.add(resolvedAttribute);
         }
 
@@ -416,12 +438,12 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
         for (DataConnector plugin : dataConnectors.values()) {
-            log.debug("{} checking if data connector {} is has a circular dependency", logPrefix, plugin.getId());
+            log.debug("{} Checking if data connector {} is has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
 
         for (AttributeDefinition plugin : attributeDefinitions.values()) {
-            log.debug("{} checking if attribute definition {} has a circular dependency", logPrefix, plugin.getId());
+            log.debug("{} Checking if attribute definition {} has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
     }

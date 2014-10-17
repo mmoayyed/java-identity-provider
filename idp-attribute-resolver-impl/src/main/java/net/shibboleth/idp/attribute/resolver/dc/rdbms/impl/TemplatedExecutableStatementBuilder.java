@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -174,7 +173,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
      * Apply the context to the template. {@inheritDoc}
      */
     @Override protected String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, Set<IdPAttributeValue<?>>> dependencyAttributes) {
+            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) {
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
@@ -187,7 +186,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
 
         // inject dependencies
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (Map.Entry<String, Set<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+            for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = Lists.newArrayList();
                 for (IdPAttributeValue<?> value : entry.getValue()) {
                     values.add(value.getValue());

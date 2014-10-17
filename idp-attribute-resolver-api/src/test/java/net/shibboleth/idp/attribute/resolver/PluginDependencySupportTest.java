@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -59,7 +59,7 @@ public class PluginDependencySupportTest {
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
-        final Set<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Lists.newArrayList(new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
@@ -80,7 +80,7 @@ public class PluginDependencySupportTest {
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPE_ATTRIB_ID);
-        final Set<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext, Lists.newArrayList(depend));
 
         Assert.assertNotNull(result);
@@ -107,12 +107,12 @@ public class PluginDependencySupportTest {
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        final Set<IdPAttributeValue<?>> result =
+        final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
                         Lists.newArrayList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(result.size(), 4);
         Assert.assertTrue(result.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[0])));
         Assert.assertTrue(result.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[1])));
         Assert.assertTrue(result.contains(new StringAttributeValue(ResolverTestSupport.EPA2_VALUES[1])));
@@ -136,14 +136,14 @@ public class PluginDependencySupportTest {
 
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        final Map<String, Set<IdPAttributeValue<?>>> result =
+        final Map<String, List<IdPAttributeValue<?>>> result =
                 PluginDependencySupport.getAllAttributeValues(workContext,
                         Lists.newArrayList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
 
-        Set<IdPAttributeValue<?>> values = result.get(ResolverTestSupport.EPE_ATTRIB_ID);
+        List<IdPAttributeValue<?>> values = result.get(ResolverTestSupport.EPE_ATTRIB_ID);
         Assert.assertNotNull(values);
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPE1_VALUES[0])));
@@ -151,7 +151,7 @@ public class PluginDependencySupportTest {
 
         values = result.get(ResolverTestSupport.EPA_ATTRIB_ID);
         Assert.assertNotNull(values);
-        Assert.assertEquals(values.size(), 3);
+        Assert.assertEquals(values.size(), 4);
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[0])));
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA1_VALUES[1])));
         Assert.assertTrue(values.contains(new StringAttributeValue(ResolverTestSupport.EPA2_VALUES[1])));

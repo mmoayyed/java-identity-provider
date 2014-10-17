@@ -104,7 +104,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
 
-        test.setValues(Collections.singleton(new StringAttributeValue(SIMPLE_VALUE)));
+        test.setValues(Collections.singletonList(new StringAttributeValue(SIMPLE_VALUE)));
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());
@@ -114,7 +114,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertNotNull(attr.getScript());
 
         final IdPAttribute val = attr.resolve(generateContext());
-        final Set<IdPAttributeValue<?>> results = val.getValues();
+        final List<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
@@ -134,7 +134,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
 
-        test.setValues(Collections.singleton(new StringAttributeValue(SIMPLE_VALUE)));
+        test.setValues(Collections.singletonList(new StringAttributeValue(SIMPLE_VALUE)));
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());
@@ -144,7 +144,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertNotNull(attr.getScript());
 
         final IdPAttribute val = attr.resolve(generateContext());
-        final Set<IdPAttributeValue<?>> results = val.getValues();
+        final List<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
@@ -157,7 +157,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
         final IdPAttributeValue<?> attributeValue = new StringAttributeValue(SIMPLE_VALUE);
 
-        test.setValues(Collections.singleton(attributeValue));
+        test.setValues(Collections.singletonList(attributeValue));
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
         Assert.assertNull(attr.getScript());
@@ -167,7 +167,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertNotNull(attr.getScript());
 
         final IdPAttribute val = attr.resolve(generateContext());
-        final Set<IdPAttributeValue<?>> results = val.getValues();
+        final List<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
@@ -231,7 +231,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             ComponentInitializationException {
 
         final IdPAttribute result = buildTest("addAfterGetValues.script", true).resolve(generateContext());
-        final Set<IdPAttributeValue<?>> values = result.getValues();
+        final List<IdPAttributeValue<?>> values = result.getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("newValue")));
     }
@@ -271,7 +271,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final AttributeResolutionContext context = generateContext();
         resolver.resolveAttributes(context);
         final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
-        final Set<IdPAttributeValue<?>> values = attribute.getValues();
+        final List<IdPAttributeValue<?>> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
@@ -306,7 +306,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final AttributeResolutionContext context = generateContext();
         resolver.resolveAttributes(context);
         final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
-        final Set<IdPAttributeValue<?>> values = attribute.getValues();
+        final List<IdPAttributeValue<?>> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
         for (IdPAttributeValue value : values) {

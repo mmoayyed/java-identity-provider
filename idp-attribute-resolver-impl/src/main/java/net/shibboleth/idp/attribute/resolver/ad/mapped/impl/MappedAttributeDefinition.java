@@ -19,7 +19,7 @@ package net.shibboleth.idp.attribute.resolver.ad.mapped.impl;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -38,7 +38,6 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
-import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -50,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * Implementation of Mapped Attributes. <br/>
@@ -158,11 +158,11 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @return the set of attribute values that the given dependency value maps in to
      */
-    protected Set<IdPAttributeValue<?>> mapValue(@Nullable String value) {
+    protected List<StringAttributeValue> mapValue(@Nullable String value) {
         log.debug("Attribute Definition {}: mapping depdenency attribute value {}", getId(), value);
 
         final String trimmedValue = StringSupport.trimOrNull(value);
-        final LazySet<IdPAttributeValue<?>> mappedValues = new LazySet<>();
+        final List<StringAttributeValue> mappedValues = Lists.newArrayList();
 
         boolean valueMapMatch = false;
         if (null != trimmedValue) {
@@ -196,7 +196,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
-        final Set<IdPAttributeValue<?>> unmappedResults =
+        final List<IdPAttributeValue<?>> unmappedResults =
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
         log.debug("Attribute Definition '{}': Attempting to map the following values: {}", getId(), unmappedResults);
 
@@ -208,21 +208,21 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
             if (null != defaultValue) {
                 log.debug("Attribute Definition {}: Default value of {} added as the value for this attribute",
                         getId(), defaultValue);
-                resultAttribute.setValues(Collections.singleton(defaultValue));
+                resultAttribute.setValues(Collections.singletonList(defaultValue));
             }
         } else {
 
-            final LinkedHashSet<IdPAttributeValue<?>> hs = new LinkedHashSet<>();
-            for (IdPAttributeValue unmappedValue : unmappedResults) {
+            final List<StringAttributeValue> valueList = Lists.newArrayList();
+            for (final IdPAttributeValue unmappedValue : unmappedResults) {
                 if (!(unmappedValue instanceof StringAttributeValue)) {
                     throw new ResolutionException(new UnsupportedAttributeTypeException("Attribute definition '"
                             + getId() + "' does not support dependency values of type "
                             + unmappedValue.getClass().getName()));
                 }
 
-                hs.addAll(mapValue(((StringAttributeValue) unmappedValue).getValue()));
+                valueList.addAll(mapValue(((StringAttributeValue) unmappedValue).getValue()));
             }
-            resultAttribute.setValues(hs);
+            resultAttribute.setValues(valueList);
         }
         return resultAttribute;
     }

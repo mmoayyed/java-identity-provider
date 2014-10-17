@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.dc.impl;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -107,7 +108,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
-        Set<IdPAttributeValue<?>> resultValues =
+        List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
@@ -206,7 +207,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        Set<IdPAttributeValue<?>> resultValues =
+        List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
@@ -312,7 +313,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                         TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
-        final Set<IdPAttributeValue<?>> resultValues =
+        final List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
 

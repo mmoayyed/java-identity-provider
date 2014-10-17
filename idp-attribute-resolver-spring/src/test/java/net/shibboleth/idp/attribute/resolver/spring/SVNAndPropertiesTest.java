@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.shibboleth.ext.spring.resource.SVNBasicAuthenticationManager;
 import net.shibboleth.ext.spring.resource.SVNResource;
@@ -131,7 +131,7 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
 
         IdPAttribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertNotNull(attribute);
-        Set<IdPAttributeValue<?>> values = attribute.getValues();
+        List<IdPAttributeValue<?>> values = attribute.getValues();
         Assert.assertEquals(values.size(), 3);
         for (IdPAttributeValue<?> value : values) {
             assertEquals(value, EXPECTED_EPA);

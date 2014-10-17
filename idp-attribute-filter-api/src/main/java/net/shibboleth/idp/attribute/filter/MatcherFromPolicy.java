@@ -33,6 +33,8 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Bridging class to go from a {@link PolicyRequirementRule} to a {@link Matcher}.
  * <p>
@@ -73,7 +75,8 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
             return Collections.EMPTY_SET;
         } else {
             log.debug("{} The rule returned TRUE, all values returned", getLogPrefix());
-            return Collections.unmodifiableSet(attribute.getValues());
+            return ImmutableSet.copyOf(attribute.getValues());
         }
     }
+    
 }
