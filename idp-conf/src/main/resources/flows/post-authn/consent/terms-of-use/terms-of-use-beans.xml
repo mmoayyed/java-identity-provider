@@ -11,23 +11,26 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <bean id="TermsOfUseConsentFunction" class="net.shibboleth.idp.consent.flow.tou.TermsOfUseConsentFunction" scope="prototype" />
+
     <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
 
-    <bean id="InitializeTermsOfUseContext" class="net.shibboleth.idp.consent.flow.tou.InitializeTermsOfUseContext" scope="prototype" />
+    <bean id="PopulateCurrentConsents" class="net.shibboleth.idp.consent.flow.PopulateCurrentConsents" scope="prototype"
+        c:currentConsentsFunction-ref="TermsOfUseConsentFunction"  />
 
-    <bean id="PopulateTermsOfUse" class="net.shibboleth.idp.consent.flow.tou.PopulateTermsOfUse" scope="prototype" />
-
-    <bean id="ReadConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype" 
+    <bean id="ReadConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
-    <bean id="IsTermsOfUseConsentRequired" class="net.shibboleth.idp.consent.flow.tou.IsTermsOfUseConsentRequired" scope="prototype" />
+    <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="CreateTermsOfUseChoice" class="net.shibboleth.idp.consent.flow.tou.CreateTermsOfUseChoice" scope="prototype" />
+    <bean id="IsTermsOfUseConsentRequiredPredicate" class="net.shibboleth.idp.consent.flow.tou.IsTermsOfUseConsentRequiredPredicate"
+        c:consentFunction-ref="TermsOfUseConsentFunction" scope="prototype" />
 
     <bean id="ExtractConsent" class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="CreateResult" class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype" 
+    <bean id="CreateResult" class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
 </beans>

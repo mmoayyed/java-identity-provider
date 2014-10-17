@@ -1,44 +1,40 @@
  <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+      parent="post-authn.abstract">
+
+    <!-- TODO non-browser skip view -->
 
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
+    
+    <on-start>
+        <evaluate expression="resourceBundle['idp.tou.id']" result="flowScope.termsOfUseId" />
+    </on-start>
+    
+    <decision-state id="IsTermsOfUseIdNull">
+        <if test="termsOfUseId == null" then="HandleError" else="TermsOfUseSetup" />
+    </decision-state>
 
     <action-state id="TermsOfUseSetup">
         <evaluate expression="InitializeConsentContext" />
-        <evaluate expression="InitializeTermsOfUseContext" />
-        <evaluate expression="PopulateTermsOfUse" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ReadConsentFromStorage" />
-    </action-state>
-    
-    <action-state id="ReadConsentFromStorage">
+        <evaluate expression="PopulateCurrentConsents" />
         <evaluate expression="ReadConsentFromStorage" />
+        <evaluate expression="SetRPUIInformation" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="IsTermsOfUseConsentRequired" />
     </action-state>
-
-    <action-state id="IsTermsOfUseConsentRequired">
-        <evaluate expression="IsTermsOfUseConsentRequired" />
-        <evaluate expression="'proceed'" />
-        <transition on="ConsentNotRequired" to="proceed" />
-        <transition on="proceed" to="CreateTermsOfUseChoice" />
-    </action-state>
     
-    <action-state id="CreateTermsOfUseChoice">
-        <evaluate expression="CreateTermsOfUseChoice" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="DisplayTermsOfUsePage" />
-    </action-state>
+   <decision-state id="IsTermsOfUseConsentRequired">
+        <if test="IsTermsOfUseConsentRequiredPredicate.apply(opensamlProfileRequestContext)" then="DisplayTermsOfUsePage" else="proceed" />
+    </decision-state>
 
     <view-state id="DisplayTermsOfUsePage" view="#{flowRequestContext.activeFlow.id}">
         <on-render>
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext))" result="viewScope.consentContext" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.TermsOfUseContext))" result="viewScope.termsOfUseContext" />
+            <evaluate expression="SetRPUIInformation.getRPUIContextCreateStrategy().apply(opensamlProfileRequestContext)" result="viewScope.rpUIContext" />
         </on-render>
         <transition on="proceed" to="ExtractConsent" />
     </view-state>
@@ -49,8 +45,6 @@
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="proceed" />
     </action-state>
-
-    <!-- TODO non-browser skip view -->
 
     <end-state id="proceed" />
 

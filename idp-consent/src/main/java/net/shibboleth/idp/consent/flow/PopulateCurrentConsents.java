@@ -15,38 +15,47 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.consent.flow.tou;
+package net.shibboleth.idp.consent.flow;
+
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.consent.context.TermsOfUseContext;
+import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+
 /**
- * Action that creates a {@link TermsOfUseContext} and attaches it to the current {@link ProfileRequestContext}.
- * 
- * TODO details
+ * Consent action which populates the current consents of a consent context with the output value of a function whose
+ * input value is a profile request context.
  */
-public class InitializeTermsOfUseContext extends AbstractProfileInterceptorAction {
+public class PopulateCurrentConsents extends AbstractConsentAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeTermsOfUseContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateCurrentConsents.class);
+
+    /** Function which returns the current consents. */
+    @Nonnull private Function<ProfileRequestContext, Map<String, Consent>> function;
+
+    /**
+     * Constructor.
+     *
+     * @param currentConsentsFunction function which returns the current consents
+     */
+    public PopulateCurrentConsents(
+            @Nonnull final Function<ProfileRequestContext, Map<String, Consent>> currentConsentsFunction) {
+        function = Constraint.isNotNull(currentConsentsFunction, "Current consents function cannot be null");
+    }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
-
-        final TermsOfUseContext termsOfUseContext = new TermsOfUseContext();
-
-        log.debug("{} Created terms of use context '{}'", getLogPrefix(), termsOfUseContext);
-
-        profileRequestContext.addSubcontext(termsOfUseContext, true);
-
-        super.doExecute(profileRequestContext, interceptorContext);
+        getConsentContext().setCurrentConsents(function.apply(profileRequestContext));
     }
 }

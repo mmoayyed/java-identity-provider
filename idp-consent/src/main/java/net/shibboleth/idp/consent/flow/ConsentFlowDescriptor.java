@@ -27,11 +27,11 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
- * Abstract descriptor for a consent flow.
+ * Descriptor for a consent flow.
  * 
  * TODO details
  */
-public abstract class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
+public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
 
     /** Whether consent equality includes comparing consent values. */
     private boolean compareValues;

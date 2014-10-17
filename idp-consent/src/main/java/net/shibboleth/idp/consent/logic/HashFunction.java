@@ -15,38 +15,27 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.consent.context;
+package net.shibboleth.idp.consent.logic;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.consent.flow.tou.TermsOfUse;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import org.cryptacular.util.CodecUtil;
+import org.cryptacular.util.HashUtil;
 
-import org.opensaml.messaging.context.BaseContext;
+import com.google.common.base.Function;
 
 /**
- * Context for terms of use consent.
+ * Function whose output value is a hash of the input value.
  */
-public class TermsOfUseContext extends BaseContext {
+public class HashFunction implements Function<String, String> {
 
-    /** Terms of use. */
-    @Nullable private TermsOfUse termsOfUse;
+    /** {@inheritDoc} */
+    public String apply(@Nonnull final String input) {
 
-    /**
-     * Get the terms of use.
-     * 
-     * @return the terms of use
-     */
-    @Nullable public TermsOfUse getTermsOfUse() {
-        return termsOfUse;
-    }
+        if (input == null) {
+            return null;
+        }
 
-    /**
-     * Set the terms of use.
-     * 
-     * @param terms the terms of use
-     */
-    public void setTermsOfUse(TermsOfUse terms) {
-        termsOfUse = Constraint.isNotNull(terms, "Terms cannot be null");
+        return CodecUtil.b64(HashUtil.sha256(input));
     }
 }

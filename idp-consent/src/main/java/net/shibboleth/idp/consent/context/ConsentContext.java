@@ -21,7 +21,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
@@ -56,7 +55,7 @@ public class ConsentContext extends BaseContext {
      * 
      * @return consents extracted from user input
      */
-    @Nullable @NonnullElements @Live public Map<String, Consent> getCurrentConsents() {
+    @Nonnull @NonnullElements @Live public Map<String, Consent> getCurrentConsents() {
         return currentConsents;
     }
 
@@ -65,7 +64,7 @@ public class ConsentContext extends BaseContext {
      * 
      * @return consents read from storage
      */
-    @Nullable @NonnullElements @Live public Map<String, Consent> getPreviousConsents() {
+    @Nonnull @NonnullElements @Live public Map<String, Consent> getPreviousConsents() {
         return previousConsents;
     }
 

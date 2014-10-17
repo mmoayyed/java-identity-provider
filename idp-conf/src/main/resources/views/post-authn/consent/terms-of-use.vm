@@ -3,32 +3,49 @@
 ##
 ## Velocity context will contain the following properties :
 ##
-## TODO This is only a rudimentary UI.
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+## encoder - HTMLEncoder class
+## flowExecutionKey - SWF execution key (this is built into the flowExecutionUrl)
+## flowExecutionUrl - form action location
+## flowRequestContext - Spring Web Flow RequestContext
+## request - HttpServletRequest
+## response - HttpServletResponse
+## rpUIContext - context with SP UI information from the metadata
+## termsOfUseId - terms of use id
+##
+<!DOCTYPE html>
+<html>
     <head>
-        <meta charset="utf-8" />
-        <title>#springMessageText("idp.tou.title" "Terms Of Use")</title>
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css"/>
+        <title>#springMessage("idp.tou.title")</title>
     </head>
     <body>
-        <div class="wrapper">
-            <div class="container">
-                <header>
-                    <a class="logo" href="../images/dummylogo.png">
-                        <img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo"/>
-                    </a>
-                </header>
-                <div class="content" >
-                    <div id="tou-content">
-                        $termsOfUseContext.getTermsOfUse().getText()
+        <div class="box">
+            <header>
+                <img src="$request.getContextPath()/images/federation-logo.png" alt="" class="federation_logo" />
+                #set ($rpOrganizationLogo = $rpUIContext.getLogo())
+                #if ($rpOrganizationLogo)
+                    <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())" class="organization_logo" />
+                #end
+            </header>
+            <div style="float:left;">
+                <h1>#springMessage("idp.tou.title")</h1>
+            </div>
+            <div id="tou-content">
+                #springMessage("idp.tou.text")
+            </div>
+            <div id="tou-acceptance">
+                <form action="$flowExecutionUrl" method="post" >
+                    <div style="float:left;">
+                        <input id="accept" type="checkbox" name="consentIds" value="$encoder.encodeForHTML($termsOfUseId)" />
+                        <label for="accept">#springMessage("idp.tou.accept")</label>
                     </div>
-                    <form action="$flowExecutionUrl" method="post"  >
-                            <input type="hidden" name="consentIds" value="$encoder.encodeForHTML($termsOfUseContext.getTermsOfUse().getId())" />
-                            <section>
-                                <button class="form-element form-button" type="submit" name="_eventId_proceed" >#springMessageText("idp.tou.submit" "Submit")</button>
-                            </section>
-                    </form>
-                </div>
+                    <div style="float:right;">
+                        <input type="submit" name="_eventId_proceed" value="#springMessage("idp.tou.submit")" />
+                    </div>
+                    <div style="clear:both;"></div>
+                </form>
             </div>
             <footer>
                 <div class="container container-footer">

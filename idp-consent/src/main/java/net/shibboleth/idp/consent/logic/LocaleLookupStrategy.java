@@ -17,32 +17,33 @@
 
 package net.shibboleth.idp.consent.logic;
 
-import javax.annotation.Nonnull;
+import java.util.Locale;
 
-import net.shibboleth.idp.consent.flow.tou.TermsOfUse;
+import javax.annotation.Nullable;
 
-import org.cryptacular.util.CodecUtil;
-import org.cryptacular.util.HashUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.shibboleth.idp.profile.context.SpringRequestContext;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
 
 /**
- * Function to create hash of terms of use text.
+ * Function which resolves the {@link Locale} from a {@link ProfileRequestContext}.
  */
-public class TermsOfUseHashFunction implements Function<TermsOfUse, String> {
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(TermsOfUseHashFunction.class);
+public class LocaleLookupStrategy implements Function<ProfileRequestContext, Locale> {
 
     /** {@inheritDoc} */
-    public String apply(@Nonnull final TermsOfUse input) {
-
+    @Nullable public Locale apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }
 
-        return CodecUtil.b64(HashUtil.sha256(input.getText()));
+        final SpringRequestContext springSubcontext = input.getSubcontext(SpringRequestContext.class);
+        if (springSubcontext != null && springSubcontext.getRequestContext() != null) {
+            return springSubcontext.getRequestContext().getExternalContext().getLocale();
+        }
+
+        return null;
     }
+
 }

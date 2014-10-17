@@ -16,7 +16,7 @@
  */
 
 /**
- * Actions and flow descriptors related to terms of use consent.
+ * Classes related to terms of use consent.
  */
 
 package net.shibboleth.idp.consent.flow.tou;
