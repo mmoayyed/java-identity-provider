@@ -69,6 +69,7 @@ public class JoinFunction implements Function<ProfileRequestContext, String> {
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;

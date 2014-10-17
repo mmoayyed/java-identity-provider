@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.logic;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.cryptacular.util.CodecUtil;
 import org.cryptacular.util.HashUtil;
@@ -30,7 +31,8 @@ import com.google.common.base.Function;
 public class HashFunction implements Function<String, String> {
 
     /** {@inheritDoc} */
-    public String apply(@Nonnull final String input) {
+    @Override
+    @Nullable public String apply(@Nonnull final String input) {
 
         if (input == null) {
             return null;

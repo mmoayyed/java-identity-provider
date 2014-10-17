@@ -106,7 +106,8 @@ public class IsTermsOfUseConsentRequiredPredicate implements Predicate<ProfileRe
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public boolean apply(@Nullable final ProfileRequestContext input) {
+    @Override
+    @Nullable public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             log.debug("Terms of use consent is not required, no profile request context");
             return false;

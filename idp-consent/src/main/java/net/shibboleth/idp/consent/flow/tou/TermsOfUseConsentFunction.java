@@ -29,7 +29,6 @@ import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.logic.FlowDescriptorLookupStrategy;
 import net.shibboleth.idp.consent.logic.HashFunction;
 import net.shibboleth.idp.consent.logic.LocaleLookupStrategy;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.MessageSource;
@@ -56,7 +55,7 @@ public class TermsOfUseConsentFunction implements Function<ProfileRequestContext
     @Nonnull private Function<ProfileRequestContext, ConsentFlowDescriptor> consentFlowDescriptorLookupStrategy;
 
     /** Function used to create a hash of the terms of use text. */
-    @Nullable @NonnullAfterInit private Function<String, String> hashFunction;
+    @Nonnull private Function<String, String> hashFunction;
 
     /** Locale lookup strategy. */
     @Nonnull private Function<ProfileRequestContext, Locale> localeLookupStrategy;
@@ -72,7 +71,8 @@ public class TermsOfUseConsentFunction implements Function<ProfileRequestContext
     }
 
     /** {@inheritDoc} */
-    @Override public void setMessageSource(MessageSource source) {
+    @Override
+    public void setMessageSource(MessageSource source) {
         messageSource = source;
     }
 
@@ -141,6 +141,7 @@ public class TermsOfUseConsentFunction implements Function<ProfileRequestContext
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public Map<String, Consent> apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;

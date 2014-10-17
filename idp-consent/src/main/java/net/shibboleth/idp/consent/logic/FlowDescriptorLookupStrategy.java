@@ -59,6 +59,7 @@ public class FlowDescriptorLookupStrategy<T extends ProfileInterceptorFlowDescri
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public T apply(ProfileRequestContext input) {
         if (input == null) {
             return null;

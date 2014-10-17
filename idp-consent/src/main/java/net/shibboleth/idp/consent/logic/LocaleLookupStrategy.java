@@ -33,6 +33,7 @@ import com.google.common.base.Function;
 public class LocaleLookupStrategy implements Function<ProfileRequestContext, Locale> {
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public Locale apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
