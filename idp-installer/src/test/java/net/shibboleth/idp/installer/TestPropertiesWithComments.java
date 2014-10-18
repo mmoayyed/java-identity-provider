@@ -38,11 +38,11 @@ public class TestPropertiesWithComments {
     private File testFile;
 
     @BeforeClass public void setup() throws IOException {
-        testFile = File.createTempFile("test", "properties");
+        testFile = File.createTempFile("test", ".properties");
     }
 
     @AfterClass public void tearDown() {
-        //testFile.delete();
+        testFile.delete();
     }
 
     @Test public void test() throws FileNotFoundException, IOException {
@@ -58,6 +58,7 @@ public class TestPropertiesWithComments {
         Assert.assertTrue(pwc.replaceProperty("p", "321"));
         pwc.addComment("Comment");
         Assert.assertFalse(pwc.replaceProperty("nn", "123"));
+        Assert.assertTrue(pwc.replaceProperty("yy", "123321"));
         
         pwc.store(new FileOutputStream(testFile));
         
@@ -65,9 +66,10 @@ public class TestPropertiesWithComments {
         
         p.load(new FileInputStream(testFile));
         
-        Assert.assertEquals(p.stringPropertyNames().size(), 3);
+        Assert.assertEquals(p.stringPropertyNames().size(), 4);
         Assert.assertEquals(p.getProperty("p"), "321");
         Assert.assertEquals(p.getProperty("nn"), "123");
+        Assert.assertEquals(p.getProperty("yy"), "123321");
         Assert.assertEquals(p.getProperty("q"), "elephants");
         
     }

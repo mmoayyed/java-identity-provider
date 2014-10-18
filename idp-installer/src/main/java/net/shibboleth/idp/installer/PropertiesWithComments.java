@@ -31,7 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import net.shibboleth.utilities.java.support.collection.Pair;
+import javax.annotation.Nonnull;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -44,7 +46,47 @@ public class PropertiesWithComments {
     private List<Object> contents;
 
     /** The properties bit. */
-    private Map<String, Pair<String, String>> properties;
+    private Map<String, CommentedProperty> properties;
+
+    /**
+     * Add a property, either as a key/vsalue pair or as a key/comment pair.
+     * 
+     * @param line what to look at
+     * @param isComment whether this is a comment or not.
+     * @throws IOException when badness happens.
+     */
+    protected void addCommentedProperty(@Nonnull @NotEmpty final String line, boolean isComment) throws IOException {
+        final Properties parser = new Properties();
+        final String modifiedLine;
+
+        if (isComment) {
+            modifiedLine = line.substring(1);
+        } else {
+            modifiedLine = line;
+        }
+
+        parser.load(new ByteArrayInputStream(modifiedLine.getBytes()));
+        if (!parser.isEmpty()) {
+            final String propName = StringSupport.trimOrNull(parser.stringPropertyNames().iterator().next());
+            if (propName != null) {
+                final CommentedProperty commentedProperty;
+
+                if (isComment) {
+                    commentedProperty = new CommentedProperty(propName, line, true);
+
+                } else {
+                    commentedProperty = new CommentedProperty(propName, parser.getProperty(propName), false);
+
+                }
+                properties.put(propName, commentedProperty);
+                contents.add(commentedProperty);
+            }
+        } else {
+            contents.add(line);
+        }
+        parser.clear();
+
+    }
 
     /**
      * Read the input stream into our structures.
@@ -53,7 +95,6 @@ public class PropertiesWithComments {
      * @throws IOException if readline fails
      */
     public void load(InputStream input) throws IOException {
-        final Properties parser = new Properties();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         contents = new ArrayList<>();
         properties = new HashMap<>();
@@ -65,26 +106,22 @@ public class PropertiesWithComments {
             if (what == null) {
                 contents.add("");
             } else if (what.startsWith("#")) {
-                contents.add(what);
-            } else {
-                parser.load(new ByteArrayInputStream(s.getBytes()));
-                if (!parser.isEmpty()) {
-                    final String propName = StringSupport.trimOrNull(parser.stringPropertyNames().iterator().next());
-                    if (propName != null) {
-                        final Pair<String, String> pair = new Pair<>();
-                        pair.setFirst(propName);
-                        pair.setSecond(parser.getProperty(propName));
-                        properties.put(propName, pair);
-                        contents.add(pair);
-                    }
+                if (what.contains("=")) {
+                    addCommentedProperty(s, true);
+                } else {
+                    contents.add(what);
                 }
-                parser.clear();
+            } else {
+
+                addCommentedProperty(s, false);
             }
             s = reader.readLine();
         }
     }
-    
-    /** Put the output to the supplied stream.
+
+    /**
+     * Put the output to the supplied stream.
+     * 
      * @param output where to write
      * @throws IOException is the write fails
      */
@@ -94,11 +131,9 @@ public class PropertiesWithComments {
         for (Object o : contents) {
             if (o instanceof String) {
                 writer.write((String) o);
-            } else if (o instanceof Pair) {
-                Pair<String,String> p = (Pair)o;
-                writer.write(p.getFirst());
-                writer.write('=');
-                writer.write(p.getSecond());
+            } else if (o instanceof CommentedProperty) {
+                final CommentedProperty commentedProperty = (CommentedProperty) o;
+                commentedProperty.write(writer);
             }
             writer.newLine();
         }
@@ -107,32 +142,90 @@ public class PropertiesWithComments {
         output.close();
     }
 
-    
-    /** Replace the supplied property or stuff it at the bottom of the list.
+    /**
+     * Replace the supplied property or stuff it at the bottom of the list.
+     * 
      * @param propName the name of the property to replace
-     * @param newPropValue the value to  replace
+     * @param newPropValue the value to replace
      * @return true if the property was replaced false if it was added
      */
     public boolean replaceProperty(String propName, String newPropValue) {
-        
-        Pair<String, String> p = properties.get(propName);
+
+        CommentedProperty p = properties.get(propName);
         if (null != p) {
-            p.setSecond(newPropValue);
+            p.setValue(newPropValue);
             return true;
         }
-        p = new Pair<>();
-        p.setFirst(propName);
-        p.setSecond(newPropValue);
-        
+        p = new CommentedProperty(propName, newPropValue, false);
         contents.add(p);
         properties.put(propName, p);
         return false;
     }
-    
-    /** Append a comment to the list.
+
+    /**
+     * Append a comment to the list.
+     * 
      * @param what what to add
      */
     public void addComment(String what) {
-        contents.add("# "+what);
+        contents.add("# " + what);
+    }
+
+    /**
+     * A POJO which looks like a property.
+     * 
+     * It may be a commented property from a line like this "#prop=value" or a property prop=value.
+     * 
+     */
+    protected class CommentedProperty {
+
+        /** The property name. */
+        private final String property;
+
+        /** The value - or the entire line if this is a comment. */
+        private String value;
+
+        /** Whether this is a comment or a value. */
+        private boolean isComment;
+
+        /**
+         * Constructor.
+         * 
+         * @param prop the property name.
+         * @param val the value or the entire line if this was a comment.
+         * @param comment whether this is a comment.
+         */
+        CommentedProperty(final String prop, final String val, final boolean comment) {
+            property = prop;
+            value = val;
+            isComment = comment;
+        }
+
+        /**
+         * Set a new value.
+         * 
+         * @param newValue what to set
+         */
+        protected void setValue(String newValue) {
+            value = newValue;
+            isComment = false;
+        }
+
+        /**
+         * Write ourselves to the writer.
+         * 
+         * @param writer what to write with
+         * @throws IOException from the writer
+         */
+        protected void write(final BufferedWriter writer) throws IOException {
+
+            if (isComment) {
+                writer.write(value);
+            } else {
+                writer.write(property);
+                writer.write('=');
+                writer.write(value);
+            }
+        }
     }
 }
