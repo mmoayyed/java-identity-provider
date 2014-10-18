@@ -101,19 +101,19 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
                         dependencyValue.getClass().getName()));
             }
 
-            log.debug("{} Applying regexp '{}' to input value '{}'", new Object[] {getLogPrefix(), regexp.pattern(),
-                    dependencyValue.getValue(),});
+            log.debug("{} Applying regexp '{}' to input value '{}'", getLogPrefix(), regexp.pattern(),
+                    dependencyValue.getValue());
             final Matcher matcher = regexp.matcher((String) dependencyValue.getValue());
             if (matcher.matches()) {
-                log.debug("{} Computed the value '{}' by apply regexp '{}' to input value '{}'", new Object[] {
-                        getLogPrefix(), matcher.group(1), regexp.pattern(), dependencyValue.getValue(),});
+                log.debug("{} Computed the value '{}' by apply regexp '{}' to input value '{}'", 
+                        getLogPrefix(), matcher.group(1), regexp.pattern(), dependencyValue.getValue());
                 resultantValues.add(new StringAttributeValue(matcher.group(1)));
             } else {
-                log.debug("{} Regexp '{}' did not match anything in input value '{}'", new Object[] {getLogPrefix(),
-                        regexp.pattern(), dependencyValue.getValue(),});
+                log.debug("{} Regexp '{}' did not match anything in input value '{}'", getLogPrefix(),
+                        regexp.pattern(), dependencyValue.getValue());
             }
         }
-        
+
         if (!resultantValues.isEmpty()) {
             resultantAttribute.setValues(resultantValues);
         }

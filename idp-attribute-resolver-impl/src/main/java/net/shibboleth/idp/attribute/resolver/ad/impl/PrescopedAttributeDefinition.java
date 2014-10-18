@@ -92,8 +92,8 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
 
         final List<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
-        log.debug("{} Dependencies {} provided unmapped values of {}", new Object[] {getLogPrefix(), getDependencies(),
-                dependencyValues,});
+        log.debug("{} Dependencies {} provided unmapped values of {}", getLogPrefix(), getDependencies(),
+                dependencyValues);
 
         final List<ScopedStringAttributeValue> valueList = Lists.newArrayListWithExpectedSize(dependencyValues.size());
         for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {

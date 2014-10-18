@@ -145,9 +145,9 @@ public class ScriptedIdPAttribute {
     }
 
     /**
-     * Add the provided value to the provided set, converting {@link String} to {@link StringAttributeValue}.
+     * Add the provided value to the provided list, converting {@link String} to {@link StringAttributeValue}.
      * 
-     * @param values the set to add to.
+     * @param values the list to add to.
      * @param value the value to add. Known to be a {@link String} or an {@link IdPAttributeValue}
      */
     private void addValue(@Nonnull final List<IdPAttributeValue<?>> values, @Nonnull final Object value) {
