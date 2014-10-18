@@ -419,7 +419,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 if (!monitor.add(value)) {
                     log.debug("{} Removing duplicate value {} of attribute {} from resolution result", logPrefix, value,
                             resolvedAttribute.getId());
-                    valueIter.remove();
                 }
             }
 
