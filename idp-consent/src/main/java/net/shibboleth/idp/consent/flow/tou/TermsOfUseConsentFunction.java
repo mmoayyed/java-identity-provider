@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
-import net.shibboleth.idp.consent.logic.FlowDescriptorLookupStrategy;
+import net.shibboleth.idp.consent.logic.FlowDescriptorLookup;
 import net.shibboleth.idp.consent.logic.HashFunction;
 import net.shibboleth.idp.consent.logic.LocaleLookupStrategy;
 
@@ -65,7 +65,8 @@ public class TermsOfUseConsentFunction implements Function<ProfileRequestContext
 
     /** Constructor. */
     public TermsOfUseConsentFunction() {
-        consentFlowDescriptorLookupStrategy = new FlowDescriptorLookupStrategy<ConsentFlowDescriptor>();
+        consentFlowDescriptorLookupStrategy =
+                new FlowDescriptorLookup<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
         hashFunction = new HashFunction();
         localeLookupStrategy = new LocaleLookupStrategy();
     }
@@ -136,7 +137,7 @@ public class TermsOfUseConsentFunction implements Function<ProfileRequestContext
         if (consentFlowDescriptor != null) {
             return consentFlowDescriptor.compareValues();
         }
-    
+
         return false;
     }
 
@@ -146,14 +147,14 @@ public class TermsOfUseConsentFunction implements Function<ProfileRequestContext
         if (input == null) {
             return null;
         }
-    
+
         final Consent consent = new Consent();
         consent.setId(getConsentId(input));
-    
+
         if (isCompareValues(input)) {
             consent.setValue(getConsentValue(input));
         }
-    
+
         return Collections.singletonMap(consent.getId(), consent);
     }
 }

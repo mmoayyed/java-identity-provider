@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
-import net.shibboleth.idp.consent.logic.FlowDescriptorLookupStrategy;
+import net.shibboleth.idp.consent.logic.FlowDescriptorLookup;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -52,20 +52,11 @@ public class IsTermsOfUseConsentRequiredPredicate implements Predicate<ProfileRe
     /** Consent flow descriptor lookup strategy. */
     @Nonnull private Function<ProfileRequestContext, ConsentFlowDescriptor> consentFlowDescriptorLookupStrategy;
 
-    /** Function that returns a consent object representing consent to a terms of use. */
-    @Nonnull private Function<ProfileRequestContext, Map<String, Consent>> termsOfUseConsentFunction;
-
-    /**
-     * Constructor.
-     *
-     * @param consentFunction function that returns a consent object representing consent to a terms of use
-     */
-    public IsTermsOfUseConsentRequiredPredicate(
-            @Nonnull final Function<ProfileRequestContext, Map<String, Consent>> consentFunction) {
+    /** Constructor. */
+    public IsTermsOfUseConsentRequiredPredicate() {
         consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class);
-        consentFlowDescriptorLookupStrategy = new FlowDescriptorLookupStrategy<ConsentFlowDescriptor>();
-        termsOfUseConsentFunction =
-                Constraint.isNotNull(consentFunction, "Terms of use consent function cannot be null");
+        consentFlowDescriptorLookupStrategy =
+                new FlowDescriptorLookup<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
     }
 
     /**
