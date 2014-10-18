@@ -119,6 +119,11 @@ a:focus, a:hover, a:active {
     border: 0;
 }
 
+.form-error {
+  padding: 0;
+  color: #B61601;
+}
+
 /* Device specific styles */
 @media only screen and (max-device-width: 721px){
   .box {

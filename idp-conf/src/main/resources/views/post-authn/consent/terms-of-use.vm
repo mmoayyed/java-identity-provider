@@ -38,8 +38,11 @@
             <div id="tou-acceptance">
                 <form action="$flowExecutionUrl" method="post" >
                     <div style="float:left;">
-                        <input id="accept" type="checkbox" name="consentIds" value="$encoder.encodeForHTML($termsOfUseId)" />
+                        <input id="accept" type="checkbox" name="consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
                         <label for="accept">#springMessage("idp.tou.accept")</label>
+                        #if($requireCheckbox)
+                            <p class="form-error">#springMessage("idp.tou.required")</p>
+                        #end
                     </div>
                     <div style="float:right;">
                         <input type="submit" name="_eventId_proceed" value="#springMessage("idp.tou.submit")" />

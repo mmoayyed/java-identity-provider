@@ -36,8 +36,17 @@
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="SetRPUIInformation.getRPUIContextCreateStrategy().apply(opensamlProfileRequestContext)" result="viewScope.rpUIContext" />
         </on-render>
-        <transition on="proceed" to="ExtractConsent" />
+        <transition on="proceed" to="TestForCheckbox" />
     </view-state>
+    
+    <decision-state id="TestForCheckbox">
+        <if test="requestParameters.consentIds != null" then="ExtractConsent" else="RequireCheckbox" />
+    </decision-state>
+    
+    <action-state id="RequireCheckbox">
+        <evaluate expression="true" result="flowScope.requireCheckbox" />
+        <transition to="DisplayTermsOfUsePage" />
+    </action-state>
     
     <action-state id="ExtractConsent">
         <evaluate expression="ExtractConsent" />
