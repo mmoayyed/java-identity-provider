@@ -11,7 +11,8 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <bean id="AttributeConsentFlowDescriptorLookupStrategy" class="net.shibboleth.idp.consent.logic.AttributeConsentFlowDescriptorLookupStrategy" scope="prototype" />
+    <bean id="AttributeConsentFlowDescriptorLookupStrategy" class="net.shibboleth.idp.consent.logic.FlowDescriptorLookup" scope="prototype"
+        c:type="#{ T(net.shibboleth.idp.consent.flow.ar.AttributeConsentFlowDescriptor) }" />
 
     <bean id="GlobalAttributeConsentPredicate" class="net.shibboleth.idp.consent.logic.GlobalAttributeConsentPredicate" scope="prototype" />
 

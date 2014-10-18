@@ -20,9 +20,9 @@ package net.shibboleth.idp.consent.logic;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.consent.flow.ar.AttributeConsentFlowDescriptor;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -30,21 +30,44 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import com.google.common.base.Function;
 
 /**
- * Function to return an attribute consent flow descriptor from a profile request context.
+ * Function that returns a profile interceptor flow descriptor from a profile request context using a lookup strategy.
+ *
+ * @param <T> the profile interceptor flow descriptor type to locate
  */
-public class AttributeConsentFlowDescriptorLookupStrategy implements
-        Function<ProfileRequestContext, AttributeConsentFlowDescriptor> {
+public class FlowDescriptorLookup<T extends ProfileInterceptorFlowDescriptor> implements
+        Function<ProfileRequestContext, T> {
 
-    /** Strategy used to find the {@link ProfileInterceptorContext} from the {@link ProfileRequestContext}. */
+    /** Profile interceptor flow descriptor type to look up. */
+    @Nonnull private final Class<T> interceptorFlowDescriptorType;
+
+    /** Profile interceptor context lookup strategy. */
     @Nonnull private Function<ProfileRequestContext, ProfileInterceptorContext> interceptorContextlookupStrategy;
 
-    /** Constructor. */
-    public AttributeConsentFlowDescriptorLookupStrategy() {
+    /**
+     * Constructor.
+     *
+     * @param type profile interceptor flow descriptor type to look up
+     */
+    public FlowDescriptorLookup(@Nonnull final Class<T> type) {
+        interceptorFlowDescriptorType = Constraint.isNotNull(type, "Interceptor flow descriptor type cannot be null");
+        
         interceptorContextlookupStrategy = new ChildContextLookup<>(ProfileInterceptorContext.class);
     }
 
+    /**
+     * Set the interceptor context lookup strategy.
+     * 
+     * @param strategy interceptor context lookup strategy
+     */
+    public void setInterceptorContextlookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, ProfileInterceptorContext> strategy) {
+        interceptorContextlookupStrategy =
+                Constraint.isNotNull(strategy, "Profile interceptor context lookup strategy cannot be null");
+    }
+
     /** {@inheritDoc} */
-    @Nullable public AttributeConsentFlowDescriptor apply(@Nullable final ProfileRequestContext input) {
+    @Override
+    @Nullable public T apply(ProfileRequestContext input) {
         if (input == null) {
             return null;
         }
@@ -59,11 +82,11 @@ public class AttributeConsentFlowDescriptorLookupStrategy implements
             return null;
         }
 
-        if (!(interceptorFlowDescriptor instanceof AttributeConsentFlowDescriptor)) {
+        if (!(interceptorFlowDescriptorType.isInstance(interceptorFlowDescriptor))) {
             return null;
         }
 
-        return (AttributeConsentFlowDescriptor) interceptorFlowDescriptor;
+        return (T) interceptorFlowDescriptor;
     }
 
 }

@@ -24,8 +24,7 @@
     <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="IsTermsOfUseConsentRequiredPredicate" class="net.shibboleth.idp.consent.flow.tou.IsTermsOfUseConsentRequiredPredicate"
-        c:consentFunction-ref="TermsOfUseConsentFunction" scope="prototype" />
+    <bean id="IsTermsOfUseConsentRequiredPredicate" class="net.shibboleth.idp.consent.flow.tou.IsTermsOfUseConsentRequiredPredicate" scope="prototype" />
 
     <bean id="ExtractConsent" class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
