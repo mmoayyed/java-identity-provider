@@ -85,13 +85,12 @@
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
 		<input message="Sealer Password" addproperty="idp.sealer.password" />
-        <echo file="replace.properties" append="yes">
+        <echo file="${idp.merge.properties}" append="yes">
         	idp.sealer.storePassword=${idp.sealer.password}
         </echo>
-        <echo file="replace.properties" append="yes">
+        <echo file="${idp.merge.properties}" append="yes">
         	idp.sealer.keyPassword=${idp.sealer.password}
         </echo>
-        <property name="idp.merge.properties" value="replace.properties" />
 	</target>
 
 	<target name="getsealeralias" if="idp.ask.sealer.alias" depends="checkproperties">
@@ -111,7 +110,16 @@
 		<input message="Source (Distribution) Directory" addproperty="idp.src.dir" defaultvalue="${basedir}" />
 	</target>
 
-	<target name="gettarget" depends="target-properties, target-src-default, target-nosrc-default, prompttarget, settarget" />
+	<target name="gettarget" depends="target-properties, setmerge, setservicemerge, target-src-default, target-nosrc-default, prompttarget, settarget" />
+	
+	<target name="setmerge" unless="idp.merge.properties.present">
+        <property name="idp.merge.properties" value="replace.properties" />
+	</target>
+	
+    <target name="setservicemerge" unless="services.merge.properties.present">
+        <property name="services.merge.properties" value="replace.services.properties" />
+    </target>
+
 	<target name="target-src-default" unless="idp.src.dir.present">
 		<echo append="true" file="idp_ant.log">target: target-src-default
 		</echo>
@@ -145,10 +153,9 @@
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
 		<local name="entityid" />
 		<input message="EntityID" addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
-		<echo file="replace.properties" append="yes">
+        <echo file="${idp.merge.properties}" append="yes">
 			idp.entityID=${entityid}
 		</echo>
-		<property name="idp.merge.properties" value="replace.properties" />
 	</target>
 	
 	<target name="setscope" if="idp.set.scope" depends="checkproperties">
@@ -352,6 +359,15 @@
 		<condition property="idp.src.dir.present">
 			<isset property="idp.src.dir" />
 		</condition>
+		
+		<condition property="idp.merge.properties.present">
+			<isset property="idp.merge.properties" />
+	    </condition>	
+		
+        <condition property="services.merge.properties.present">
+            <isset property="services.merge.properties" />
+        </condition>    
+		
 	</target>
 
 	<target name="signing-key" unless="idp.signing.present" depends="gethostname, geturisubjectaltname">
@@ -548,7 +564,7 @@
 
 	<!-- V2 to V3 PrePopulate -->
 
-	<target name="v2v3prepopulate" depends="v2detect" if="idp.is.V2">
+	<target name="v2v3prepopulate" depends="gettarget, v2detect" if="idp.is.V2">
 		<echo append="true" file="idp_ant.log">target: v2v3prepopulate
 		</echo>
 	    <echo>
@@ -578,10 +594,13 @@ A V2 Installation has been detected. Configuration will be preserved into
 		<copy file="${idp.target.dir}/conf.v2/relying-party.xml" tofile="${idp.target.dir}/conf/relying-party.xml" failonerror="false" />
 
 		<!-- Signal we're a legacy RP config -->
-        <echo file="replace.services.properties" append="yes">
+        <echo file="${services.merge.properties}" append="yes">
         	idp.service.relyingparty.legacy=true
         </echo>
-        <property name="services.merge.properties" value="replace.services.properties" />
+	    <echo file="${idp.merge.properties}" append="yes">
+	    	idp.nameid.saml2.legacyGenerator = shibboleth.LegacySAML2NameIDGenerator
+	    	idp.nameid.saml1.legacyGenerator = shibboleth.LegacySAML1NameIdentifierGenerator
+	    </echo>
 	</target>
 
 	<target name="v2detect" depends="gettarget">
