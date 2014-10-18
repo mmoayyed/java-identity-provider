@@ -33,12 +33,16 @@
 	     The EntityRoleWhiteList saves memory by only loading metadata from entity types
 	     that you will interoperate with. 
     
-	<MetadataProvider id="HTTPMetadata" xsi:type="FilesystemMetadataProvider"
-		metadataFile="%{idp.home}/metadata/example-metadata.xml">
+	<MetadataProvider id="HTTPMetadata"
+	                  xsi:type="metadata:FileBackedHTTPMetadataProvider"
+                      backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
+                      metadataURL="http://WHATEVER"> 
         
 		<MetadataFilter xsi:type="SignatureValidation"
 			requireSignedMetadata="false">
 			<PublicKey>
+                THIS IS AN EXAMPLE
+			
 				MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
 				uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
 				LspmBWxfZS+n+cc7I82E5yvCAPX67QsZgqgglp2W5dvK/FsMMCS6X6SVqzBLMP88

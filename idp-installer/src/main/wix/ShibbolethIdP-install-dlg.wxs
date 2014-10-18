@@ -64,7 +64,12 @@
         <Control Id="DnsName" Type="Edit" X="185" Y="146" Height="17" Width="150"
                  Property="DNSNAME" Text="[DNSNAME]"/>
 
-	  <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
+	<Control Id="DescriptionLine5" Type="Text" X="25" Y="182" Height="36" Width="150"
+	         Text="Chose the scope that this IdP will assert. " />
+	<Control Id="IdpScope" Type="Edit" X="185" Y="182" Height="17" Width="150"
+	         Property="IDP_SCOPE" Text="[IDP_SCOPE]"/>
+
+	<!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="1" />
         <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back">
           <Publish  Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>

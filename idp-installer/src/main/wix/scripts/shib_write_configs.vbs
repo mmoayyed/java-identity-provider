@@ -2,9 +2,8 @@
 ' Code taken from the Shib SP install
 '
 Dim FileSystemObj, AntFile, PropsFile, JettyFile, JettyAntFile, LogFile
-Dim CustomData, msiProperties, InstallDir, TypeLib
+Dim CustomData, msiProperties, InstallDir, IdPScope, DebugInstall
 
-Set TypeLib = CreateObject("Scriptlet.TypeLib")
 Set FileSystemObj = CreateObject("Scripting.FileSystemObject")
 
 ' Eek 
@@ -50,8 +49,8 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "idp.target.dir=" & InstallDirJava & "/IdP"
     AntFile.WriteLine "idp.merge.properties=idp.install.replace.properties"
     if (IdPScope <> "") then
-        AntFile.WriteLine "idp.scope=" & IdPScope
-    endif
+       AntFile.WriteLine "idp.scope=" & IdPScope
+    end if
     AntFile.WriteLine "#"
     AntFile.WriteLine "# Debug"
     AntFile.WriteLine "#"
@@ -59,7 +58,7 @@ if (Err.Number = 0 ) then
         AntFile.WriteLine "idp.no.tidy=true"
     else
         AntFile.WriteLine "#idp.no.tidy=true"
-    endif
+    end if
     AntFile.Close
 end if
 
@@ -72,8 +71,8 @@ if (Err.Number = 0 ) then
     PropsFile.WriteLine "idp.sealer.storePassword=" & SealerPassword
     PropsFile.WriteLine "idp.sealer.keyPassword=" & SealerPassword
     if (IdPScope <> "") then
-        AntFile.WriteLine "idp.scope=" & IdPScope
-    endif
+        PropsFile.WriteLine "idp.scope=" & IdPScope
+    end if
     PropsFile.Close
 else
     LogFile.Writeline "PropsFile failed " & Err & "  -  " & PropsFile
@@ -94,7 +93,7 @@ if (InstallJetty <> "") then
 	    JettyAntFile.WriteLine "jetty.no.tidy=true"
 	else 
 	    JettyAntFile.WriteLine "#jetty.no.tidy=true"
-	endif
+	end if
 	JettyAntFile.Close
     else
 	LogFile.Writeline "jettyAnt failed " & Err
