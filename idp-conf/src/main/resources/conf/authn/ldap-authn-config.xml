@@ -36,7 +36,7 @@
     <!-- Pool Configuration -->
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool" abstract="true" init-method="initialize"
         p:blockWaitTime="%{idp.pool.LDAP.blockWaitTime}" p:poolConfig-ref="poolConfig" p:pruneStrategy-ref="pruneStrategy"
-        p:validator-ref="searchValidator" />
+        p:validator-ref="searchValidator" p:failFastInitialize="false" />
     <bean id="poolConfig" class="org.ldaptive.pool.PoolConfig" p:minPoolSize="%{idp.pool.LDAP.minSize}"
         p:maxPoolSize="%{idp.pool.LDAP.maxSize}" p:validateOnCheckOut="%{idp.pool.LDAP.validateOnCheckout}"
         p:validatePeriodically="%{idp.pool.LDAP.validatePeriodically}" p:validatePeriod="%{idp.pool.LDAP.validatePeriod}" />
