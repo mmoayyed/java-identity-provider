@@ -17,10 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 
@@ -193,6 +191,12 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolve(builder);
     }
 
+    @Test public void resolveMulti() throws ComponentInitializationException, ResolutionException {
+        ParameterizedExecutableSearchFilterBuilder builder =
+                new ParameterizedExecutableSearchFilterBuilder("(objectclass=inetOrgPerson)");
+        resolveMulti(builder);
+    }
+
     @Test public void resolveWithDepends() throws ComponentInitializationException, ResolutionException {
         ParameterizedExecutableSearchFilterBuilder builder =
                 new ParameterizedExecutableSearchFilterBuilder("(&(cn={principalName})(eduPersonAffiliation={affiliation[0]}))");
@@ -296,13 +300,13 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     protected void resolve(ExecutableSearchBuilder builder) throws ComponentInitializationException,
             ResolutionException {
-        LDAPDataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
+        final LDAPDataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
         connector.initialize();
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = connector.resolve(context);
+        final Map<String, IdPAttribute> attrs = connector.resolve(context);
         Assert.assertNotNull(attrs);
         // check total attributes: uid, cn, sn, mail
         Assert.assertTrue(attrs.size() == 4);
@@ -312,22 +316,51 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 .next());
         // check cn
         Assert.assertTrue(attrs.get("cn").getValues().size() == 3);
-        Set<StringAttributeValue> cn = new HashSet<StringAttributeValue>();
-        cn.add(new StringAttributeValue("Peter Principal"));
-        cn.add(new StringAttributeValue("Peter J Principal"));
-        cn.add(new StringAttributeValue("pete principal"));
-        Assert.assertEquals(cn, attrs.get("cn").getValues());
+        Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Peter Principal")));
+        Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Peter J Principal")));
+        Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("pete principal")));
         // check sn
         Assert.assertTrue(attrs.get("sn").getValues().size() == 1);
         Assert.assertEquals(new StringAttributeValue("Principal"), attrs.get("sn").getValues().iterator().next());
         // check mail
         Assert.assertTrue(attrs.get("mail").getValues().size() == 2);
-        Set<StringAttributeValue> mail = new HashSet<StringAttributeValue>();
-        mail.add(new StringAttributeValue("peter.principal@shibboleth.net"));
-        mail.add(new StringAttributeValue("peterprincipal@shibboleth.net"));
-        Assert.assertEquals(mail, attrs.get("mail").getValues());
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peter.principal@shibboleth.net")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
     }
 
+    protected void resolveMulti(ExecutableSearchBuilder builder) throws ComponentInitializationException,
+            ResolutionException {
+        final LDAPDataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
+        connector.initialize();
+        
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        final Map<String, IdPAttribute> attrs = connector.resolve(context);
+        Assert.assertNotNull(attrs);
+        // check total attributes: uid, cn, sn, mail
+        Assert.assertTrue(attrs.size() == 4);
+        // check uid
+        Assert.assertTrue(attrs.get("uid").getValues().size() == 2);
+        Assert.assertTrue(attrs.get("uid").getValues().contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
+        Assert.assertTrue(attrs.get("uid").getValues().contains(new StringAttributeValue("PAUL_THE_PRINCIPAL")));
+        // check cn
+        Assert.assertTrue(attrs.get("cn").getValues().size() == 4);
+        Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Peter Principal")));
+        Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Peter J Principal")));
+        Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("pete principal")));
+        Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Paul Principal")));
+        // check sn
+        Assert.assertTrue(attrs.get("sn").getValues().size() == 2);
+        Assert.assertTrue(attrs.get("sn").getValues().contains(new StringAttributeValue("Principal")));
+        // check mail
+        Assert.assertTrue(attrs.get("mail").getValues().size() == 4);
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peter.principal@shibboleth.net")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("paul.principal@shibboleth.net")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("paulprincipal@shibboleth.net")));
+    }
+    
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoFilter()
             throws ComponentInitializationException, ResolutionException {
         LDAPDataConnector connector = createLdapDataConnector(new ExecutableSearchBuilder<ExecutableSearchFilter>() {
