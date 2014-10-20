@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +24,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.dc.AbstractMappingStrategy;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.ldaptive.LdapAttribute;
@@ -36,37 +37,56 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-
-//TODO(lajoie): do we want something that can map data types too like the RDBMS equivalent?
-//TODO(lajoie): want some settings to control what happens if there is more than one LdapEntry
+import com.google.common.collect.Maps;
 
 /**
  * A simple {@link SearchResultMappingStrategy} that iterates over all result entries and includes all attribute values
  * as strings.
  */
-public class StringAttributeValueMappingStrategy implements SearchResultMappingStrategy {
+public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy<SearchResult>
+        implements SearchResultMappingStrategy {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(StringAttributeValueMappingStrategy.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StringAttributeValueMappingStrategy.class);
 
     /** {@inheritDoc} */
-    @Override @Nullable public Map<String, IdPAttribute> map(@Nonnull final SearchResult results)
+    @Override @Nullable public Map<String,IdPAttribute> map(@Nonnull final SearchResult results)
             throws ResolutionException {
         Constraint.isNotNull(results, "Results can not be null");
 
-        final Map<String, IdPAttribute> attributes = new HashMap<String, IdPAttribute>();
-        for (LdapEntry entry : results.getEntries()) {
-            for (LdapAttribute attr : entry.getAttributes()) {
-                final IdPAttribute attribute = new IdPAttribute(attr.getName());
-                final List<StringAttributeValue> hs = Lists.newArrayListWithExpectedSize(attr.getStringValues().size());
+        final Map<String,IdPAttribute> attributes = Maps.newHashMapWithExpectedSize(results.size());
+        
+        final Map<String,String> aliases = getResultRenamingMap();
 
-                for (String value : attr.getStringValues()) {
-                    hs.add(new StringAttributeValue(value));
+        for (final LdapEntry entry : results.getEntries()) {
+            for (final LdapAttribute attr : entry.getAttributes()) {
+                
+                final String originalId = attr.getName();
+                final String effectiveId = aliases.containsKey(originalId) ? aliases.get(originalId) : originalId;
+                if (log.isDebugEnabled()) {
+                    if (!effectiveId.equals(originalId)) {
+                        log.debug("Remapping attribute {} to {}", originalId, effectiveId);
+                    }
                 }
-                attribute.setValues(hs);
-                attributes.put(attribute.getId(), attribute);
+                
+                IdPAttribute attribute = attributes.get(effectiveId);
+                if (attribute == null) {
+                    attribute = new IdPAttribute(effectiveId);
+                    attributes.put(effectiveId, attribute);
+                }
+
+                final List<IdPAttributeValue<?>> values = Lists.newArrayListWithExpectedSize(
+                        attr.getStringValues().size() + attribute.getValues().size());
+
+                values.addAll(attribute.getValues());
+                
+                for (final String value : attr.getStringValues()) {
+                    values.add(new StringAttributeValue(value));
+                }
+                attribute.setValues(values);
             }
         }
+        
         log.trace("Mapping strategy mapped {} to {}", results, attributes);
         if (attributes.isEmpty()) {
             return null;

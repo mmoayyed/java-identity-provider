@@ -47,7 +47,7 @@ import com.google.common.collect.Maps;
 public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultSet> implements ResultMappingStrategy {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(StringResultMappingStrategy.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StringResultMappingStrategy.class);
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
