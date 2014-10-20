@@ -104,6 +104,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @return whether the entity has the configured attribute {@inheritDoc}
      */
+    @Override
     public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 
         Constraint.isNotNull(filterContext, "Context must be supplied");
@@ -164,6 +165,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @return the entity or null if the metadata does not contain such an entity attribute
      */
+    // Checkstyle: CyclomaticComplexity OFF
     @Nullable protected Attribute getEntityAttribute(EntityDescriptor entityDescriptor) {
         List<XMLObject> entityAttributesCollection = null;
         if (entityDescriptor.getExtensions() != null) {
@@ -188,22 +190,6 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
             return null;
         }
 
-        //  TODO this is syntatic sugar for checkstyle.  Remove and relax the rules. 
-        return compareAttributes(entityAttributes, entityDescriptor);
-    }
-
-    /**
-     * Helper function for {@link #getEntityAttribute(EntityDescriptor)}. Having done all the null checking in
-     * {@link #getEntityAttribute(EntityDescriptor)}, this function actually does the match as per the rules:<br/>
-     * If both the attribute name and name format for this match functor is configured then both must match, otherwise
-     * only the attribute name must match.
-     * 
-     * @param entityAttributes the list of attributes
-     * @param entityDescriptor the entity in question
-     * @return an attribute that matches or null
-     */
-    @Nullable private Attribute compareAttributes(List<Attribute> entityAttributes, EntityDescriptor entityDescriptor) {
-
         for (Attribute entityAttribute : entityAttributes) {
             if (!Objects.equals(getAttributeName(), entityAttribute.getName())) {
                 continue;
@@ -221,8 +207,10 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
                 new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getAttributeName(), getNameFormat()});
         return null;
     }
-
+    // Checkstyle: CyclomaticComplexity ON
+    
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (attrName == null) {

@@ -60,8 +60,9 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
         SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
         connector.setId(xmlFileName);
         connector.setAttributesStrategy(new Function<AttributeResolutionContext, List<Attribute>>() {
+            @Override
             @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
-                return (List) obj.getAttributes();
+                return obj.getAttributes();
             }
         });
 
@@ -73,7 +74,6 @@ public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
     }
 
     protected AttributeFilter getPolicy(String xmlFileName) {
-        // TODO this or something like
         return null;
     }
 

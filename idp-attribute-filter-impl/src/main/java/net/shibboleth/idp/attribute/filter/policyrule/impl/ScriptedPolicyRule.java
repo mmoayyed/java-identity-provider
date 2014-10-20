@@ -174,7 +174,6 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
         }
     }
 
-    // TODO do we still need this?
     /** {@inheritDoc} */
     @Override public boolean equals(Object obj) {
         if (obj == null) {
