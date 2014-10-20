@@ -50,7 +50,7 @@
 	</target>
 
 	<target name="install" depends="init, preload, getsource, gettarget, v2v3prepopulate, allinput, copy-distribution, install-nocopy, tidy" />
-	<target name="install-nocopy" depends="init, preload, gettarget, v2v3prepopulate, allinput, genkeys, upgrade, metadata-gen, build-war, tidy" />
+	<target name="install-nocopy" depends="init, preload, gettarget, v2v3prepopulate, allinput, genkeys, upgrade, metadata-gen, reprotect, build-war, tidy" />
 
 	<!-- USER INPUT -->
 	<target name="preload" if="idp.property.file">
@@ -264,7 +264,7 @@
 		</condition>
 		
 		<condition property="idp.ask.scope">
-            <!-- We ask for scope if there is no scope and we allow user input -->
+            <!-- We ask for scope if there is no scope and we allow user input and there is no idp properties file -->
             <and>
                 <not>
                     <isset property="idp.scope" />
@@ -272,16 +272,18 @@
             	<not>
             		<isset property="idp.noprompt" />
             	</not>
+            	<isfalse value="${idp.properties.present}" />  
             </and>
         </condition>
 
 		<condition property="idp.set.scope">
-            <!-- We set scope if there is no scope and we do not allow user input -->
+            <!-- We set scope if there is no scope and we do not allow user input and there is no idp properties file -->
             <and>
                 <not>
                     <isset property="idp.scope" />
                 </not>
                 <isset property="idp.noprompt" />
+            	<isfalse value="${idp.properties.present}" />
             </and>
         </condition>
 
@@ -526,6 +528,10 @@
 		<delete dir="${idp.target.dir}/dist" failonerror="false" />
 		<delete dir="${idp.target.dir}/doc" failonerror="false" />
 		<delete dir="${idp.target.dir}/jetty-base" failonerror="false" />
+        <mkdir dir="${idp.target.dir}/system"/> <!-- create because it wont exist first time -->
+        <attrib readonly="false">
+            <fileset dir="${idp.target.dir}/system" includes="**/*"/>
+        </attrib>
 		<delete dir="${idp.target.dir}/system" failonerror="false" />
 		<delete dir="${idp.target.dir}/webapp" failonerror="false" />
 
@@ -615,6 +621,15 @@ A V2 Installation has been detected. Configuration will be preserved into
 				<istrue value="${idp.relying.party.present}" />
 			</and>
 		</condition>
+	</target>
+	
+	<target name="reprotect" depends="gettarget">
+        <chmod perm="755" dir="${idp.target.dir}/bin" includes="**/*.sh"/>
+        <chmod perm="600" dir="${idp.target.dir}/credentials" includes="**/*.key"/>
+        <chmod perm="444" dir="${idp.target.dir}/system" includes="**/*"/>
+        <attrib readonly="true">
+            <fileset dir="${idp.target.dir}/system" includes="**/*"/>
+        </attrib>
 	</target>
 	
 	<target name="tidy" unless="idp.no.tidy">

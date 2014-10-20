@@ -41,4 +41,4 @@ if exist %JAVA_HOME%\lib\classes.zip (
     set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_HOME%\lib\classes.zip
 )
 
-%JAVACMD% -cp "%LOCALCLASSPATH%" -Dant.home="%ANT_HOME%" %ANT_OPTS% org.apache.tools.ant.Main -e -f %ANT_HOME%/build.xml %*
+%JAVACMD% -cp "%LOCALCLASSPATH%" -Dant.home="%ANT_HOME%" %ANT_OPTS% org.apache.tools.ant.Main -e -q -f %ANT_HOME%/build.xml %*
