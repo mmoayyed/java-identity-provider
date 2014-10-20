@@ -24,6 +24,8 @@ import net.shibboleth.idp.saml.nameid.impl.TransientNameIDDecoder;
 import net.shibboleth.idp.saml.nameid.impl.TransientNameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -36,6 +38,9 @@ public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
 
     /** Schema type name. */
     public static final QName ELEMENT_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "Transient");
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(TransientConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected void addSAMLDecoders(@Nonnull Element config, @Nonnull ParserContext parserContext,
@@ -56,6 +61,10 @@ public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
         subBuilder.addPropertyValue("id", id);
                 
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
+        
+        if (config.hasAttributeNS(null, "noResultIsError")) {
+            log.warn("Transient Principal Connector does not support 'noResultIsError'");
+        }
         
         // NameIdentifier
         subBuilder = BeanDefinitionBuilder.genericBeanDefinition(TransientNameIdentifierDecoder.class);
