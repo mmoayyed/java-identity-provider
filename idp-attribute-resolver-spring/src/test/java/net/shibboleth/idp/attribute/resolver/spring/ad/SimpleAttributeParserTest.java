@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +27,8 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1StringAttributeEncoder;
+import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncoder;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -73,10 +77,10 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep2", "flibble")));
         Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", "flibble")));
 
-        //
-        // TODO
-        //
-        Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(),"getgetAttributeEncoders().isEmpty()");
+        Assert.assertEquals(attrDef.getAttributeEncoders().size(), 1);
+        final SAML2StringAttributeEncoder e1 = (SAML2StringAttributeEncoder) attrDef.getAttributeEncoders().iterator().next();
+        Assert.assertEquals(e1.getName(), "urn:oid:0.9.2342.19200300.100.1.3");
+        Assert.assertEquals(e1.getFriendlyName(), "mail");
         
     }
 
@@ -99,10 +103,22 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         Assert.assertEquals(dependencies.size(), 1, "getDisplayDescriptions");
         Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", "simplePopulated2")));
 
-        //
-        // TODO
-        //
-        Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(),"getgetAttributeEncoders().isEmpty()");
+        Assert.assertEquals(attrDef.getAttributeEncoders().size(), 2);
+        List a = new ArrayList(attrDef.getAttributeEncoders());
+        
+        final SAML2StringAttributeEncoder saml2; 
+        final SAML1StringAttributeEncoder saml1; 
+        if (a.get(0) instanceof SAML2StringAttributeEncoder) { 
+            saml2 = (SAML2StringAttributeEncoder) a.get(0);
+            saml1 = (SAML1StringAttributeEncoder) a.get(1);
+        } else {
+            saml2 = (SAML2StringAttributeEncoder) a.get(1);
+            saml1 = (SAML1StringAttributeEncoder) a.get(0);
+        }
+        Assert.assertEquals(saml2.getName(), "urn:oid:0.9.2342.19200300.100.1.3");
+        Assert.assertEquals(saml2.getFriendlyName(), "mail");
+        
+        Assert.assertEquals(saml1.getName(), "urn:mace:dir:attribute-def:mail");
     }
 
     @Test public void bad() throws ComponentInitializationException {
