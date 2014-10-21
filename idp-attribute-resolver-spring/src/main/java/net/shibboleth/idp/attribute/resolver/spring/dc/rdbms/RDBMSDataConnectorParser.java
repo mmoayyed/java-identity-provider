@@ -114,7 +114,10 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
         builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplateBuilder());
 
-        builder.addPropertyValue("mappingStrategy", v2Parser.createMappingStrategy());
+        final BeanDefinition def = v2Parser.createMappingStrategy();
+        if (def != null) {
+            builder.addPropertyValue("mappingStrategy", def);
+        }
         
         builder.addPropertyValue("resultsCache", v2Parser.createCache());
 
