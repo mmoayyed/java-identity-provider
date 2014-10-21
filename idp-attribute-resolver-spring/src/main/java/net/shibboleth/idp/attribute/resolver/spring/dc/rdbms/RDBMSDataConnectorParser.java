@@ -125,6 +125,11 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         if (noResultIsError != null) {
             builder.addPropertyValue("noResultAnError", noResultIsError);
         }
+        
+        if (AttributeSupport.hasAttribute(config, new QName("queryUsesStoredProcedure"))) {
+            log.warn("queryUsesStoredProcedure property no longer supported and should be removed");
+        }
+        
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
@@ -218,7 +223,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                     renamingMap.put(columnName, attributeId);
                 }
                 
-                if (AttributeSupport.hasAttribute(column, new QName(null, "type"))) {
+                if (AttributeSupport.hasAttribute(column, new QName("type"))) {
                     LoggerFactory.getLogger(RDBMSDataConnectorParser.class).warn(
                             "dc:Column type attribute is no longer supported");
                 }

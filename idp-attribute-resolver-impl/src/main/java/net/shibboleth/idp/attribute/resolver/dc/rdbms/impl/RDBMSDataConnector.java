@@ -52,8 +52,6 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
     /** Whether the JDBC connection is read-only. */
     private boolean readOnlyConnection = true;
 
-    // TODO: support queryUsesStoredProcedure?
-
     /**
      * Constructor.
      */

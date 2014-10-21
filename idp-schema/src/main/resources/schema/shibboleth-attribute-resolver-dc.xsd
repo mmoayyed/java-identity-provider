@@ -219,8 +219,7 @@
                 <attribute name="queryUsesStoredProcedure" type="string">
                     <annotation>
                         <documentation>
-                            A boolean flag that determines whether stored procedures might be used in the SQL queries
-                            used in this connector.
+                            No longer supported.
                         </documentation>
                     </annotation>
                 </attribute>
