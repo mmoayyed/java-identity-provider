@@ -123,7 +123,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
     /**
      * Utility class for parsing v2 schema configuration.
      * 
-     * TODO(rdw) Move defaults into the bean
      */
     protected static class V2Parser {
 
@@ -176,8 +175,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                 duration.addConstructorArgValue(queryTimeout);
                 duration.addConstructorArgValue(1);
                 templateBuilder.addPropertyValue("queryTimeout", duration.getBeanDefinition());
-            } else {
-                templateBuilder.addPropertyValue("queryTimeout", 5000);
             }
 
             final Element queryTemplate =

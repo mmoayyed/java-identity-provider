@@ -40,7 +40,7 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
         ExecutableSearchBuilder<ExecutableStatement> {
 
     /** Query timeout. */
-    private int queryTimeout;
+    private int queryTimeout = 5000;
 
     /**
      * Gets the timeout of the SQL query.
@@ -80,19 +80,19 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
         return new ExecutableStatement() {
 
             /** {@inheritDoc} */
-            @Nonnull public String getResultCacheKey() {
+            @Override @Nonnull public String getResultCacheKey() {
                 return query;
             }
 
             /** {@inheritDoc} */
-            @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException {
+            @Override @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException {
                 final Statement stmt = connection.createStatement();
                 stmt.setQueryTimeout(queryTimeout);
                 return stmt.executeQuery(query);
             }
 
             /** {@inheritDoc} */
-            public String toString() {
+            @Override public String toString() {
                 return query;
             }
         };
