@@ -17,11 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.TemplatedExecutableStatementBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
@@ -38,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
@@ -110,6 +114,8 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
         builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplateBuilder());
 
+        builder.addPropertyValue("mappingStrategy", v2Parser.createMappingStrategy());
+        
         builder.addPropertyValue("resultsCache", v2Parser.createCache());
 
         final String noResultIsError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
@@ -186,6 +192,35 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             templateBuilder.setInitMethodName("initialize");
             templateBuilder.setDestroyMethodName("destroy");
             return templateBuilder.getBeanDefinition();
+        }
+        
+        /**
+         * Create the result mapping strategy. See {@link MappingStrategy}.
+         * 
+         * @return mapping strategy
+         */
+        @Nullable public BeanDefinition createMappingStrategy() {
+            
+            final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
+                    DataConnectorNamespaceHandler.NAMESPACE, "Column");
+            if (columns.isEmpty()) {
+                return null;
+            }
+            
+            final ManagedMap renamingMap = new ManagedMap();
+            for (final Element column : columns) {
+                final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
+                final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeId");
+                if (columnName != null && attributeId != null) {
+                    renamingMap.put(columnName, attributeId);
+                }
+            }
+
+            final BeanDefinitionBuilder mapper =
+                    BeanDefinitionBuilder.genericBeanDefinition(StringResultMappingStrategy.class);
+            mapper.addPropertyValue("resultRenamingMap", renamingMap);
+            
+            return mapper.getBeanDefinition();
         }
 
         /**
