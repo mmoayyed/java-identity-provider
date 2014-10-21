@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 
-// TODO incomplete
 /** Namespace handler for the attribute resolver. */
 public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler {
 
@@ -27,6 +26,7 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:attribute:encoder";
 
     /** {@inheritDoc} */
+    @Override
     public void init() {
         registerBeanDefinitionParser(SAML1StringAttributeEncoderParser.TYPE_NAME,
                 new SAML1StringAttributeEncoderParser());
@@ -58,6 +58,5 @@ public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler
         registerBeanDefinitionParser(SAML2StringNameIDEncoderParser.SCHEMA_TYPE,
                 new SAML2StringNameIDEncoderParser());
 
- 
     }
 }
