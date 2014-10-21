@@ -479,6 +479,7 @@
                         </annotation>
                     </element>
                     <element name="ConnectionPool" type="dc:LdapPoolConfigType" minOccurs="0"/>
+                    <element name="Column" type="dc:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
                     <element name="ResultCache" type="dc:CacheConfigType" minOccurs="0"/>
                 </sequence>
                 <attribute name="ldapURL" type="string">

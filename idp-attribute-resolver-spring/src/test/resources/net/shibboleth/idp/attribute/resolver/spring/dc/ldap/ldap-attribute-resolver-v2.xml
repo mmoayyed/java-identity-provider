@@ -48,6 +48,7 @@
             validateTimerPeriod="PT15M"
             validateDN="dc=shibboleth,dc=net"
             validateFilter="(ou=people)"/>
+        <dc:Column columnName="homephone" attributeID="phonenumber" />
         <dc:ResultCache
             elementTimeToLive="PT10S"
             maximumCachedElements="25"/>

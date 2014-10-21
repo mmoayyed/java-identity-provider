@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ServiceException;
@@ -106,6 +107,10 @@ public class LdapDataConnectorParserTest {
                         new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
+        final StringAttributeValueMappingStrategy mappingStrategy =
+                (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
+        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
+        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
 
         dataConnector.initialize();
         AttributeResolutionContext context =

@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.CacheConfigParser;
@@ -122,6 +123,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         builder.setDestroyMethodName("destroy");
     }
 
+// CheckStyle: MethodLength OFF
     /**
      * Parses a version 2 configuration.
      * 
@@ -129,7 +131,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
      * @param parserContext bean definition parsing context
      * @param builder to initialize
      */
-    // CheckStyle: MethodLength OFF
     protected void doParseV2(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
@@ -194,6 +195,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         final BeanDefinition searchExecutor = v2Parser.createSearchExecutor();
         builder.addPropertyValue("searchExecutor", searchExecutor);
 
+        final BeanDefinition def = v2Parser.createMappingStrategy();
+        if (def != null) {
+            builder.addPropertyValue("mappingStrategy", def);
+        }
+
         builder.addPropertyValue("resultsCache", v2Parser.createCache());
 
         final String noResultIsError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
@@ -203,9 +209,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
-
-    // CheckStyle: MethodLength ON
-
+// CheckStyle: MethodLength ON
+    
     /**
      * Utility class for parsing v2 schema configuration. 
      * TODO(rdw) Move defaults into the bean
@@ -545,7 +550,41 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
             return poolConfig.getBeanDefinition();
         }
+        
+        /**
+         * Create the result mapping strategy. See {@link MappingStrategy}.
+         * 
+         * @return mapping strategy
+         */
+        @Nullable public BeanDefinition createMappingStrategy() {
+            
+            final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
+                    DataConnectorNamespaceHandler.NAMESPACE, "Column");
+            if (columns.isEmpty()) {
+                return null;
+            }
+            
+            final ManagedMap renamingMap = new ManagedMap();
+            for (final Element column : columns) {
+                final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
+                final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeID");
+                if (columnName != null && attributeId != null) {
+                    renamingMap.put(columnName, attributeId);
+                }
+                
+                if (AttributeSupport.hasAttribute(column, new QName("type"))) {
+                    LoggerFactory.getLogger(LDAPDataConnectorParser.class).warn(
+                            "dc:Column type attribute not supported for LDAP results");
+                }
+            }
 
+            final BeanDefinitionBuilder mapper =
+                    BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValueMappingStrategy.class);
+            mapper.addPropertyValue("resultRenamingMap", renamingMap);
+            
+            return mapper.getBeanDefinition();
+        }
+        
         /**
          * Create a results cache bean definition. See {@link CacheConfigParser}.
          * 
