@@ -213,7 +213,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             final ManagedMap renamingMap = new ManagedMap();
             for (final Element column : columns) {
                 final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
-                final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeId");
+                final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeID");
                 if (columnName != null && attributeId != null) {
                     renamingMap.put(columnName, attributeId);
                 }

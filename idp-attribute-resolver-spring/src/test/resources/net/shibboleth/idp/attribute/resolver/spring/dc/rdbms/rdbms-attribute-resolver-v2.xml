@@ -26,6 +26,9 @@
                 SELECT * FROM people WHERE userid='%s'
             ]]>
         </dc:QueryTemplate>
+        
+        <dc:Column columnName="homephone" attributeID="phonenumber" />
+        
         <dc:ResultCache
             elementTimeToLive="PT10S"
             maximumCachedElements="25"/>
