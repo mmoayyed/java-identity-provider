@@ -214,6 +214,11 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                 if (columnName != null && attributeId != null) {
                     renamingMap.put(columnName, attributeId);
                 }
+                
+                if (AttributeSupport.hasAttribute(configElement, new QName(null, "type"))) {
+                    LoggerFactory.getLogger(RDBMSDataConnectorParser.class).warn(
+                            "dc:Column type attribute is no longer supported");
+                }
             }
 
             final BeanDefinitionBuilder mapper =
