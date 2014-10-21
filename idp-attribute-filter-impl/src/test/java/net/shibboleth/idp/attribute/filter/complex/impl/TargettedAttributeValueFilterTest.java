@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.AttributeFilterImpl;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueStringMatcher;
+import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcher;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -117,6 +118,68 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         engine.filterAttributes(context);
         attributes = context.getFilteredIdPAttributes();
         Assert.assertNull(attributes.get("eduPersonAffiliation"));
+    }
+
+    /**
+     * test the following policy.
+     * 
+     <code>
+      <AttributeFilterPolicy id="targettedValueInEPA">
+          <PolicyRequirementRule xsi:type="basic:ANY" /> 
+          <AttributeRule attributeID="eduPersonAffiliation">
+              <PermitValueRule xsi:type="basic:Not">
+                  <basic:Rule xsi:type="basic:AttributeValueString" value="jsmith" attributeId="uid" ignoreCase="true"/>
+              </PermitValueRule>
+          </AttributeRule>
+      <AttributeFilterPolicy/>
+      </code> which should return all values of eduPersonAffiliation when uid has a "jsmith"
+     * 
+     */
+    @Test public void testTargettedNotPolicyRequirement() throws ComponentInitializationException, ResolutionException,
+            AttributeFilterException {
+
+        final AttributeRule attributeValueFilterPolicy = new AttributeRule();
+        attributeValueFilterPolicy.setId("test");
+        attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
+        final NotMatcher notM = new NotMatcher(valueMatcher());
+        notM.setId("notM");
+        notM.initialize();
+        final PolicyFromMatcherId pfm = new PolicyFromMatcherId(notM, "uid");
+        pfm.setId("pfm");
+        final MatcherFromPolicy mfp = new MatcherFromPolicy(pfm);
+        mfp.setId("mfp");
+        
+        attributeValueFilterPolicy.setMatcher(mfp);
+        attributeValueFilterPolicy.setIsDenyRule(false);
+
+        final AttributeFilterPolicy policy =
+                new AttributeFilterPolicy("targettedAtPermit", PolicyRequirementRule.MATCHES_ALL,
+                        Collections.singleton(attributeValueFilterPolicy));
+
+        final AttributeFilter engine = new AttributeFilterImpl("engine", Collections.singleton(policy));
+
+        ComponentSupport.initialize(attributeValueFilterPolicy);
+        ComponentSupport.initialize(policy);
+        ComponentSupport.initialize(engine);
+
+        AttributeFilterContext context = new AttributeFilterContext();
+        context.setPrefilteredIdPAttributes(getIdPAttributes("epa-uidwithjsmith.xml").values());
+        engine.filterAttributes(context);
+        Map<String, IdPAttribute> attributes = context.getFilteredIdPAttributes();
+        IdPAttribute attribute = attributes.get("eduPersonAffiliation");
+        Assert.assertEquals(attribute.getValues().size(), 3);
+
+        context = new AttributeFilterContext();
+        context.setPrefilteredIdPAttributes(getIdPAttributes("uid-epawithjsmith.xml").values());
+        engine.filterAttributes(context);
+        attributes = context.getFilteredIdPAttributes();
+        Assert.assertEquals(attribute.getValues().size(), 3);
+
+        context = new AttributeFilterContext();
+        context.setPrefilteredIdPAttributes(getIdPAttributes("epa-uid.xml").values());
+        engine.filterAttributes(context);
+        attributes = context.getFilteredIdPAttributes();
+        Assert.assertEquals(attribute.getValues().size(), 3);
     }
 
     /**
