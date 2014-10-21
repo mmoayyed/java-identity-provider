@@ -53,6 +53,13 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
         super(theMatcher);
         matcher = theMatcher;
     }
+    
+    /** Testing support.  Get the embedded matcher.
+     * @return the embedded matcher.
+     */
+    @Nonnull public Matcher getMatcher() {
+        return matcher;
+    }
 
     /** {@inheritDoc} */
     @Override

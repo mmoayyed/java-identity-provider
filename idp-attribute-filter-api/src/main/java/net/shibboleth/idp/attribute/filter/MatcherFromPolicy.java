@@ -59,6 +59,14 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
         super(theRule);
         rule = theRule;
     }
+    
+    /** Testing support.  Get the embedded PolicyRequirementRule.
+     * @return the embedded matcher.
+     */
+    @Nonnull public PolicyRequirementRule getPolicyRequirementRule() {
+        return rule;
+    }
+
 
     /** {@inheritDoc} */
     @Override

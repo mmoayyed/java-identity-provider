@@ -51,7 +51,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
     private static final String ATTRIBUTE_PATH = "/net/shibboleth/idp/attribute/filter/attribute/";
 
-    private static final String MATCHER_PATH = "/net/shibboleth/idp/attribute/filter/matcher/";
+    protected static final String MATCHER_PATH = "/net/shibboleth/idp/attribute/filter/matcher/";
 
     protected static final String POLICY_RULE_PATH = "/net/shibboleth/idp/attribute/filter/policyrule/";
 
@@ -83,6 +83,13 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         return connector.resolve(context);
     }
+    
+    protected <Type> Type getBean(Class<Type> claz, GenericApplicationContext context) {
+        Collection<Type> beans = context.getBeansOfType(claz).values();
+        Assert.assertEquals(beans.size(), 1);
+
+        return beans.iterator().next();
+    }
 
     protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
 
@@ -92,11 +99,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         beanDefinitionReader.loadBeanDefinitions(fileName);
 
         context.refresh();
-
-        Collection<Type> beans = context.getBeansOfType(claz).values();
-        Assert.assertEquals(beans.size(), 1);
-
-        return beans.iterator().next();
+        return getBean(claz, context);
     }
 
     protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {

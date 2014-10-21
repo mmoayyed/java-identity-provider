@@ -75,12 +75,12 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
         }
 
         if (config.hasAttributeNS(null, "onlyIfRequired")) {
-            builder.addPropertyValue("onlyIfRequired", config.getAttributeNodeNS(null, "onlyIfRequired"));
+            builder.addPropertyValue("onlyIfRequired", config.getAttributeNS(null, "onlyIfRequired"));
         }
 
         if (config.hasAttributeNS(null, "matchIfMetadataSilent")) {
-            builder.addPropertyValue("matchIfMetadataSilent ", 
-                    config.getAttributeNodeNS(null, "matchIfMetadataSilent"));
+            builder.addPropertyValue("matchIfMetadataSilent", 
+                    config.getAttributeNS(null, "matchIfMetadataSilent"));
         }
 
         if (ENTITY_ATTRIBUTE_IN_METADATA.equals(DOMTypeSupport.getXSIType(config))) {

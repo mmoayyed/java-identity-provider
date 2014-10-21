@@ -69,6 +69,13 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
         return attributeId; 
     }
 
+    /** Testing support.  Get the embedded matcher.
+     * @return the embedded matcher.
+     */
+    @Nonnull public Matcher getMatcher() {
+        return theMatcher;
+    }
+
     /** {@inheritDoc} */
     @Override
     @Nonnull public Tristate matches(@Nonnull AttributeFilterContext context) {
