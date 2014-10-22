@@ -69,7 +69,10 @@ import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
 
-/** Bean definition Parser for a {@link LDAPDataConnector}. */
+/** Bean definition Parser for a {@link LDAPDataConnector}.
+ * <em>Note</em> That parsing the V2 configuration will set some beans with hard wired defaults.
+ * See {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
+ */
 public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
@@ -126,6 +129,22 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 // CheckStyle: MethodLength OFF
     /**
      * Parses a version 2 configuration.
+     * <br/>
+     * The following automatically created & injected beans acquire hard wired defaults:
+     * <ul>
+     * <li> {@link SearchExecutor#setTimeLimit(long)} defaults to 3000, 
+     *          overridden by the "searchTimeLimit" attribute.</li>
+     * <li> {@link SearchExecutor#setSizeLimit(long)} defaults to 1, overridden by the "maxResultSize" attribute.</li>
+     * <li> {@link SearchRequest#setBaseDn(String)} default to "", overridden by the "validateDN" attribute.</li>
+     * <li> {@link SearchFilter#SearchFilter(String)} defaults to "(objectClass=*)",
+     *          overridden by the "validateFilter" attribute.</li>
+     * <li> {@link PoolConfig#setMinPoolSize(int)} defaults to 0 if neither the attribute "poolInitialSize"
+     *          nor the attribute "minPoolSize" are set.</li>
+     * <li> {@link PoolConfig#setMaxPoolSize(int)} defaults to 3 if neither the attribute "poolMaxIdleSize"
+     *          nor the attribute "maxPoolSize" are set.</li>
+     * <li> {@link PoolConfig#setValidatePeriod(long)} defaults to 1800,
+     *          overridden by the attribute "validateTimerPeriod"</li>
+     * </ul>
      * 
      * @param config LDAPDirectory containing v2 configuration
      * @param parserContext bean definition parsing context
@@ -209,12 +228,15 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
-// CheckStyle: MethodLength ON
+    // CheckStyle: MethodLength ON
     
     /**
-     * Utility class for parsing v2 schema configuration. 
-     * TODO(rdw) Move defaults into the bean
+     * Utility class for parsing v2 schema configuration.
+     *
+     * <em>Note</em> That parsing the V2 configuration will set some beans with hard wired defaults.
+     * See {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
      */
+    
     protected static class V2Parser {
 
         /** LDAPDirectory XML element. */
@@ -552,7 +574,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         }
         
         /**
-         * Create the result mapping strategy. See {@link MappingStrategy}.
+         * Create the result mapping strategy. See {@link net.shibboleth.idp.attribute.resolver.dc.MappingStrategy}.
          * 
          * @return mapping strategy
          */
