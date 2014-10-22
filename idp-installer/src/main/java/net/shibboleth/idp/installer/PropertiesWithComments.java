@@ -49,7 +49,7 @@ public class PropertiesWithComments {
     private Map<String, CommentedProperty> properties;
 
     /**
-     * Add a property, either as a key/vsalue pair or as a key/comment pair.
+     * Add a property, either as a key/value pair or as a key/comment pair.
      * 
      * @param line what to look at
      * @param isComment whether this is a comment or not.
