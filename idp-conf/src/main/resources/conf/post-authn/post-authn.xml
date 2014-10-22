@@ -14,14 +14,14 @@
 
     <!-- Flows executed after authentication. -->
     <util:list id="shibboleth.PostAuthnFlows">
-        <!-- 
+
         <bean id="post-authn/consent/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow" />
 
         <bean id="post-authn/consent/attribute-consent" parent="shibboleth.consent.AttributeConsentFlow"
              p:doNotRememberConsentAllowed="true" 
              p:globalConsentAllowed="true"
              p:perAttributeConsentEnabled="true" />
-        -->
+
     </util:list>
 
     <!-- TODO doc -->
