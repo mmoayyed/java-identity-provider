@@ -84,10 +84,6 @@
         <webflow:flow-location id="c14n/simple" path="../system/flows/c14n/simple-subject-c14n-flow.xml" />
         <webflow:flow-location id="c14n/x500" path="../system/flows/c14n/x500-subject-c14n-flow.xml" />
         <webflow:flow-location id="c14n/attribute" path="../system/flows/c14n/attribute-sourced-subject-c14n-flow.xml" />
-        
-        <!-- Master post-authn flow. -->
-        <webflow:flow-location id="post-authn.abstract" path="../system/flows/post-authn/post-authn-abstract-flow.xml" />
-        <webflow:flow-location id="post-authn" path="../system/flows/post-authn/post-authn-flow.xml" />
 
         <!--
         Standard SAML C14N methods, including one supporting legacy use of the attribute resolver.
@@ -102,6 +98,14 @@
         <webflow:flow-location id="c14n/SAML1CryptoTransient" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
         <webflow:flow-location id="c14n/SAML1Transform" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
         <webflow:flow-location id="c14n/LegacyPrincipalConnector" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
+
+        <!-- Master post-authn flow. -->
+        <webflow:flow-location id="post-authn.abstract" path="../system/flows/post-authn/post-authn-abstract-flow.xml" />
+        <webflow:flow-location id="post-authn" path="../system/flows/post-authn/post-authn-flow.xml" />
+        
+        <!-- Abstract consent flows. -->
+        <webflow:flow-location id="terms-of-use.abstract" path="../system/flows/post-authn/consent/terms-of-use-abstract-flow.xml" />
+        <webflow:flow-location id="attribute-consent.abstract" path="../system/flows/post-authn/consent/attribute-consent-abstract-flow.xml" />
 
     </webflow:flow-registry>
 

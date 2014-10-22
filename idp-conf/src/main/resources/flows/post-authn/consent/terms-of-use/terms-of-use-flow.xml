@@ -1,62 +1,6 @@
  <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-      parent="post-authn.abstract">
-
-    <!-- TODO non-browser skip view -->
-
-    <!-- Rudimentary impediment to direct execution of subflow. -->
-    <input name="calledAsSubflow" type="boolean" required="true" />
-    
-    <on-start>
-        <evaluate expression="resourceBundle['idp.tou.id']" result="flowScope.termsOfUseId" />
-    </on-start>
-    
-    <decision-state id="IsTermsOfUseIdNull">
-        <if test="termsOfUseId == null" then="HandleError" else="TermsOfUseSetup" />
-    </decision-state>
-
-    <action-state id="TermsOfUseSetup">
-        <evaluate expression="InitializeConsentContext" />
-        <evaluate expression="PopulateCurrentConsents" />
-        <evaluate expression="ReadConsentFromStorage" />
-        <evaluate expression="SetRPUIInformation" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="IsTermsOfUseConsentRequired" />
-    </action-state>
-    
-   <decision-state id="IsTermsOfUseConsentRequired">
-        <if test="IsTermsOfUseConsentRequiredPredicate.apply(opensamlProfileRequestContext)" then="DisplayTermsOfUsePage" else="proceed" />
-    </decision-state>
-
-    <view-state id="DisplayTermsOfUsePage" view="#{flowRequestContext.activeFlow.id}">
-        <on-render>
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
-            <evaluate expression="SetRPUIInformation.getRPUIContextCreateStrategy().apply(opensamlProfileRequestContext)" result="viewScope.rpUIContext" />
-        </on-render>
-        <transition on="proceed" to="TestForCheckbox" />
-    </view-state>
-    
-    <decision-state id="TestForCheckbox">
-        <if test="requestParameters.consentIds != null" then="ExtractConsent" else="RequireCheckbox" />
-    </decision-state>
-    
-    <action-state id="RequireCheckbox">
-        <evaluate expression="true" result="flowScope.requireCheckbox" />
-        <transition to="DisplayTermsOfUsePage" />
-    </action-state>
-    
-    <action-state id="ExtractConsent">
-        <evaluate expression="ExtractConsent" />
-        <evaluate expression="CreateResult" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="proceed" />
-    </action-state>
-
-    <end-state id="proceed" />
-
-    <bean-import resource="terms-of-use-beans.xml" />
+      parent="terms-of-use.abstract" >
 
 </flow>
