@@ -32,13 +32,11 @@
 
     <!-- Parent bean for terms of use consent flows. -->
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
-            class="net.shibboleth.idp.consent.flow.tou.TermsOfUseFlowDescriptor"
+            class="net.shibboleth.idp.consent.flow.ConsentFlowDescriptor"
             p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
             p:storageService-ref="shibboleth.ClientStorageService"
             p:compareValues="true"
             p:lifetime="P1Y"
-            p:idMessageCode="idp.tou.id"
-            p:textMessageCode="idp.tou.text"
             scope="prototype" />
 
     <bean id="shibboleth.consent.UserStorageKey"
