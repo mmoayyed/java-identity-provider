@@ -196,6 +196,13 @@
                                 </documentation>
                             </annotation>
                         </element>
+                        <element name="BeanManagedConnection" type="string">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database configured in a Spring bean.
+                                </documentation>
+                            </annotation>
+                        </element>
                     </choice>
                     <element name="QueryTemplate" type="string"  minOccurs="0">
                         <annotation>
@@ -206,7 +213,10 @@
                         </annotation>
                     </element>
                     <element name="Column" type="dc:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element name="ResultCache" type="dc:CacheConfigType" minOccurs="0"/>
+                    <choice minOccurs="0">
+                        <element name="ResultCache" type="dc:CacheConfigType"/>
+                        <element name="ResultCacheBean" type="string"/>
+                    </choice>
                 </sequence>
                 <attribute name="readOnlyConnection" type="string">
                     <annotation>
@@ -255,6 +265,13 @@
                     <annotation>
                         <documentation>
                             Name of the template engine defined within the application.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mappingStrategyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the MappingStrategy implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>

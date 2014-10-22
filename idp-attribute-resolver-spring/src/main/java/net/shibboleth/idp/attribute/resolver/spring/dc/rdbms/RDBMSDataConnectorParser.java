@@ -110,16 +110,31 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
         final V2Parser v2Parser = new V2Parser(config);
 
-        builder.addPropertyValue("DataSource", v2Parser.createDataSource());
+        final String dataSourceID = v2Parser.getBeanDataSourceID();
+        if (dataSourceID != null) {
+            builder.addPropertyReference("DataSource", dataSourceID);
+        } else {
+            builder.addPropertyValue("DataSource", v2Parser.createManagedDataSource());
+        }
 
         builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplateBuilder());
 
-        final BeanDefinition def = v2Parser.createMappingStrategy();
-        if (def != null) {
-            builder.addPropertyValue("mappingStrategy", def);
+        final String mappingStrategyID = v2Parser.getBeanMappingStrategyID();
+        if (mappingStrategyID != null) {
+            builder.addPropertyReference("mappingStrategy", mappingStrategyID);
+        } else {
+            final BeanDefinition def = v2Parser.createMappingStrategy();
+            if (def != null) {
+                builder.addPropertyValue("mappingStrategy", def);
+            }
         }
         
-        builder.addPropertyValue("resultsCache", v2Parser.createCache());
+        final String resultCacheID = v2Parser.getBeanResultCacheID();
+        if (resultCacheID != null) {
+            builder.addPropertyReference("resultsCache", resultCacheID);
+        } else {
+            builder.addPropertyValue("resultsCache", v2Parser.createCache());
+        }
 
         final String noResultIsError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
         if (noResultIsError != null) {
@@ -158,9 +173,23 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
          * 
          * @return data source bean definition
          */
-        @Nonnull public BeanDefinition createDataSource() {
+        @Nonnull public BeanDefinition createManagedDataSource() {
             final ManagedConnectionParser parser = new ManagedConnectionParser(configElement);
             return parser.createDataSource();
+        }
+
+        /**
+         * Get the bean ID of an externally defined data source.
+         * 
+         * @return data source bean ID
+         */
+        @Nullable public String getBeanDataSourceID() {
+            final Element el = ElementSupport.getFirstChildElement(configElement,
+                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "BeanManagedConnection"));
+            if (el != null) {
+                return ElementSupport.getElementContentAsString(el);
+            }
+            return null;
         }
 
         /**
@@ -203,6 +232,15 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         }
         
         /**
+         * Get the bean ID of an externally defined mapping strategy.
+         * 
+         * @return mapping strategy bean ID
+         */
+        @Nullable public String getBeanMappingStrategyID() {
+            return AttributeSupport.getAttributeValue(configElement, null, "mappingStrategyRef");
+        }
+        
+        /**
          * Create the result mapping strategy. See {@link MappingStrategy}.
          * 
          * @return mapping strategy
@@ -234,6 +272,20 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             mapper.addPropertyValue("resultRenamingMap", renamingMap);
             
             return mapper.getBeanDefinition();
+        }
+        
+        /**
+         * Get the bean ID of an externally defined result cache.
+         * 
+         * @return result cache bean ID
+         */
+        @Nullable public String getBeanResultCacheID() {
+            final Element el = ElementSupport.getFirstChildElement(configElement,
+                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCacheBean"));
+            if (el != null) {
+                return ElementSupport.getElementContentAsString(el);
+            }
+            return null;
         }
 
         /**

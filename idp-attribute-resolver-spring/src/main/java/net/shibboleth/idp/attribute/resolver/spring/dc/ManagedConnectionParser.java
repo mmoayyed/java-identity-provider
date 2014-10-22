@@ -62,7 +62,7 @@ public class ManagedConnectionParser {
      * 
      * @return data source bean definition
      */
-    public BeanDefinition createDataSource() {
+    @Nullable public BeanDefinition createDataSource() {
         final Element containerManagedElement =
                 ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
                         "ContainerManagedConnection"));
@@ -73,7 +73,11 @@ public class ManagedConnectionParser {
         final Element applicationManagedElement =
                 ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
                         "ApplicationManagedConnection"));
-        return createApplicationManagedDataSource(applicationManagedElement);
+        if (applicationManagedElement != null) {
+            return createApplicationManagedDataSource(applicationManagedElement);
+        }
+        
+        return null;
     }
 
     /**
