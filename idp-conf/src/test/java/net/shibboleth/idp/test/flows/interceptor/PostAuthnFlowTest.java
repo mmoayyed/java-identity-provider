@@ -40,7 +40,8 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 
 /** Tests for the post-authn profile interceptor flow. */
-@ContextConfiguration({"classpath:/post-authn/test-webflow-config.xml",})
+@ContextConfiguration(locations = {"classpath:/post-authn/test-webflow-config.xml",},
+        initializers = PostAuthnAppCtxInitializer.class)
 public class PostAuthnFlowTest extends AbstractFlowTest {
 
     /** Flow id. */
