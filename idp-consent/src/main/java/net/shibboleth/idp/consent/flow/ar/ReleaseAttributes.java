@@ -38,7 +38,7 @@ import com.google.common.collect.Maps;
  * 
  * TODO details
  */
-public class ReleaseAttributes extends AbstractAttributeConsentAction {
+public class ReleaseAttributes extends AbstractAttributeReleaseAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ReleaseAttributes.class);

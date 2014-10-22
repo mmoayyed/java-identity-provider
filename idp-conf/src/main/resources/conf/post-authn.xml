@@ -17,7 +17,7 @@
 
         <bean id="post-authn/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow" />
 
-        <bean id="post-authn/attribute-consent" parent="shibboleth.consent.AttributeConsentFlow"
+        <bean id="post-authn/attribute-release" parent="shibboleth.consent.AttributeReleaseFlow"
              p:doNotRememberConsentAllowed="true" 
              p:globalConsentAllowed="true"
              p:perAttributeConsentEnabled="true" />
@@ -39,20 +39,20 @@
         c:_0="%{idp.consent.userIdentifierAttributeId:email}" />
 
     <!-- Uncomment/configure to install attribute ID whitelist, blacklist, and/or match expressions. -->
-    <util:list id="shibboleth.consent.AttributeConsent.whitelistedAttributeIDs">
+    <util:list id="shibboleth.attribute-release.WhitelistedAttributeIDs">
         <!--
         <value>email</value>
         -->
     </util:list>
     
-    <util:list id="shibboleth.consent.AttributeConsent.blacklistedAttributeIDs">
+    <util:list id="shibboleth.attribute-release.BlacklistedAttributeIDs">
         <value>transientId</value>
         <value>persistentId</value>
         <value>eduPersonTargetedID</value>
     </util:list>
     
     <!-- 
-    <bean id="shibboleth.consent.AttributeConsent.matchExpression" class="java.util.regex.Pattern" factory-method="compile" 
+    <bean id="shibboleth.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 
         c:regex="^exampleAttribute.*$" />
      -->
 

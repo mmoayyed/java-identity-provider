@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- * Attribute consent action to create the consents to be chosen by the user.
+ * Attribute release consent action to create the consents to be chosen by the user.
  */
-public class CreateAttributeConsentChoices extends AbstractAttributeConsentAction {
+public class CreateAttributeReleaseChoices extends AbstractAttributeReleaseAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(CreateAttributeConsentChoices.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CreateAttributeReleaseChoices.class);
 
     /** Function to create hash of all attribute values. */
     @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
@@ -58,9 +58,9 @@ public class CreateAttributeConsentChoices extends AbstractAttributeConsentActio
             return false;
         }
 
-        attributeValuesHashFunction = getAttributeConsentFlowDescriptor().getAttributeValuesHashFunction();
+        attributeValuesHashFunction = getAttributeReleaseFlowDescriptor().getAttributeValuesHashFunction();
 
-        consentableAttributes = getAttributeConsentContext().getConsentableAttributes();
+        consentableAttributes = getAttributeReleaseContext().getConsentableAttributes();
         if (consentableAttributes.isEmpty()) {
             log.debug("{} No attributes available from attribute consent context, nothing to do", getLogPrefix());
             return false;

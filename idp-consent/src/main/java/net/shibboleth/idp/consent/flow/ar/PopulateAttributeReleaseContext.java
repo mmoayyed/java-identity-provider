@@ -38,10 +38,10 @@ import com.google.common.collect.Maps;
  * 
  * TODO details
  */
-public class PopulateAttributeConsentContext extends AbstractAttributeConsentAction {
+public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateAttributeConsentContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateAttributeReleaseContext.class);
 
     /** Predicate to determine whether consent should be obtained for an attribute. */
     @Nonnull private Predicate<IdPAttribute> attributePredicate;
@@ -71,7 +71,7 @@ public class PopulateAttributeConsentContext extends AbstractAttributeConsentAct
 
         consentableAttributes.putAll(attributes);
 
-        getAttributeConsentContext().setConsentableAttributes(consentableAttributes);
+        getAttributeReleaseContext().setConsentableAttributes(consentableAttributes);
         
         log.debug("{} Consentable attributes are '{}'", getLogPrefix(), consentableAttributes);
     }

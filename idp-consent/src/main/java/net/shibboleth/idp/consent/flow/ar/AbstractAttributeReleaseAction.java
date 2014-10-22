@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.consent.context.AttributeConsentContext;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.AbstractConsentAction;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -37,30 +37,30 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 
 /**
- * Base class for attribute consent actions.
+ * Base class for attribute release consent actions.
  * 
  * Ensures that
  * <ul>
- * <li>the {@link ProfileInterceptorContext} is a {@link AttributeConsentContext}</li>
- * <li>the flow descriptor is a {@link AttributeConsentFlowDescriptor}</li>
+ * <li>the {@link ProfileInterceptorContext} is a {@link AttributeReleaseContext}</li>
+ * <li>the flow descriptor is a {@link AttributeReleaseFlowDescriptor}</li>
  * <li>an {@link AttributeContext} is available from the {@link ProfileRequestContext}
  * </ul>
  * 
  * TODO details
  */
-public abstract class AbstractAttributeConsentAction extends AbstractConsentAction {
+public abstract class AbstractAttributeReleaseAction extends AbstractConsentAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractAttributeConsentAction.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractAttributeReleaseAction.class);
 
-    /** The {@link AttributeConsentContext} to operate on. */
-    @Nullable private AttributeConsentContext attributeConsentContext;
+    /** The {@link AttributeReleaseContext} to operate on. */
+    @Nullable private AttributeReleaseContext attributeReleaseContext;
 
-    /** Strategy used to find the {@link AttributeConsentContext} from the {@link ProfileRequestContext}. */
-    @Nonnull private Function<ProfileRequestContext, AttributeConsentContext> attributeConsentContextLookupStrategy;
+    /** Strategy used to find the {@link AttributeReleaseContext} from the {@link ProfileRequestContext}. */
+    @Nonnull private Function<ProfileRequestContext, AttributeReleaseContext> attributeReleaseContextLookupStrategy;
 
     /** The attribute consent flow descriptor. */
-    @Nullable private AttributeConsentFlowDescriptor attributeConsentFlowDescriptor;
+    @Nullable private AttributeReleaseFlowDescriptor attributeReleaseFlowDescriptor;
 
     /** The {@link AttributeContext} to operate on. */
     @Nullable private AttributeContext attributeContext;
@@ -69,8 +69,8 @@ public abstract class AbstractAttributeConsentAction extends AbstractConsentActi
     @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
 
     /** Constructor. */
-    public AbstractAttributeConsentAction() {
-        attributeConsentContextLookupStrategy = new ChildContextLookup<>(AttributeConsentContext.class, false);
+    public AbstractAttributeReleaseAction() {
+        attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class, false);
 
         attributeContextLookupStrategy =
                 Functions.compose(new ChildContextLookup<>(AttributeContext.class),
@@ -78,21 +78,21 @@ public abstract class AbstractAttributeConsentAction extends AbstractConsentActi
     }
 
     /**
-     * Get the attribute context.
+     * Get the attribute release context.
      * 
-     * @return the attribute context
+     * @return the attribute release context
      */
-    @Nullable public AttributeConsentContext getAttributeConsentContext() {
-        return attributeConsentContext;
+    @Nullable public AttributeReleaseContext getAttributeReleaseContext() {
+        return attributeReleaseContext;
     }
 
     /**
-     * Get the attribute consent flow descriptor.
+     * Get the attribute release flow descriptor.
      * 
-     * @return the attribute consent flow descriptor
+     * @return the attribute release flow descriptor
      */
-    @Nullable public AttributeConsentFlowDescriptor getAttributeConsentFlowDescriptor() {
-        return attributeConsentFlowDescriptor;
+    @Nullable public AttributeReleaseFlowDescriptor getAttributeReleaseFlowDescriptor() {
+        return attributeReleaseFlowDescriptor;
     }
 
     /**
@@ -108,19 +108,19 @@ public abstract class AbstractAttributeConsentAction extends AbstractConsentActi
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        attributeConsentContext = attributeConsentContextLookupStrategy.apply(profileRequestContext);
-        if (attributeConsentContext == null) {
-            log.debug("{} Unable to locate attribute consent context within profile request context", getLogPrefix());
+        attributeReleaseContext = attributeReleaseContextLookupStrategy.apply(profileRequestContext);
+        if (attributeReleaseContext == null) {
+            log.debug("{} Unable to locate attribute release context within profile request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
 
-        if (!(interceptorContext.getAttemptedFlow() instanceof AttributeConsentFlowDescriptor)) {
-            log.debug("{} ProfileInterceptorFlowDescriptor is not an AttributeConsentFlowDescriptor", getLogPrefix());
+        if (!(interceptorContext.getAttemptedFlow() instanceof AttributeReleaseFlowDescriptor)) {
+            log.debug("{} ProfileInterceptorFlowDescriptor is not an AttributeReleaseFlowDescriptor", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
-        attributeConsentFlowDescriptor = (AttributeConsentFlowDescriptor) interceptorContext.getAttemptedFlow();
+        attributeReleaseFlowDescriptor = (AttributeReleaseFlowDescriptor) interceptorContext.getAttemptedFlow();
 
         attributeContext = attributeContextLookupStrategy.apply(profileRequestContext);
         log.debug("{} Found attributeContext '{}'", getLogPrefix(), attributeContext);

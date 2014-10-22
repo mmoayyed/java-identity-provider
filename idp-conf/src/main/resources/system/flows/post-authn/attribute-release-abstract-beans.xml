@@ -12,15 +12,15 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean id="AttributeConsentFlowDescriptorLookupStrategy" class="net.shibboleth.idp.consent.logic.FlowDescriptorLookup" scope="prototype"
-        c:type="#{ T(net.shibboleth.idp.consent.flow.ar.AttributeConsentFlowDescriptor) }" />
+        c:type="#{ T(net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor) }" />
 
     <bean id="GlobalAttributeConsentPredicate" class="net.shibboleth.idp.consent.logic.GlobalAttributeConsentPredicate" scope="prototype" />
 
     <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
 
-    <bean id="InitializeAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.InitializeAttributeConsentContext" scope="prototype" />
+    <bean id="InitializeAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.InitializeAttributeReleaseContext" scope="prototype" />
 
-    <bean id="PopulateAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.PopulateAttributeConsentContext" scope="prototype"
+    <bean id="PopulateAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.PopulateAttributeReleaseContext" scope="prototype"
         p:attributePredicate-ref="shibboleth.consent.AttributeConsent.AttributePredicate" />
         
     <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
@@ -40,9 +40,9 @@
     <bean id="ReadGlobalAttributeConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
-    <bean id="IsAttributeConsentRequired" class="net.shibboleth.idp.consent.flow.ar.IsAttributeConsentRequired" scope="prototype" />
+    <bean id="IsAttributeConsentRequired" class="net.shibboleth.idp.consent.flow.ar.IsAttributeReleaseConsentRequired" scope="prototype" />
 
-    <bean id="CreateAttributeConsentChoices" class="net.shibboleth.idp.consent.flow.ar.CreateAttributeConsentChoices" scope="prototype" />
+    <bean id="CreateAttributeConsentChoices" class="net.shibboleth.idp.consent.flow.ar.CreateAttributeReleaseChoices" scope="prototype" />
 
     <bean id="ExtractConsent" class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
@@ -50,7 +50,7 @@
     <bean id="CreateResult" class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey" />
 
-    <bean id="CreateGlobalAttributeConsentResult" class="net.shibboleth.idp.consent.flow.ar.CreateGlobalConsentResult" scope="prototype" 
+    <bean id="CreateGlobalAttributeConsentResult" class="net.shibboleth.idp.consent.flow.ar.CreateGlobalAttributeReleaseResult" scope="prototype" 
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
     <bean id="ReleaseAttributes" class="net.shibboleth.idp.consent.flow.ar.ReleaseAttributes" scope="prototype" />

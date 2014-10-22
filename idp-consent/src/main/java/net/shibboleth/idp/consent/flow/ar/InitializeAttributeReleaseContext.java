@@ -19,7 +19,7 @@ package net.shibboleth.idp.consent.flow.ar;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.consent.context.AttributeConsentContext;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 
@@ -28,24 +28,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Action that creates an {@link AttributeConsentContext} and attaches it to the current {@link ProfileRequestContext}.
+ * Action that creates an {@link AttributeReleaseContext} and attaches it to the current {@link ProfileRequestContext}.
  * 
  * TODO details
  */
-public class InitializeAttributeConsentContext extends AbstractProfileInterceptorAction {
+public class InitializeAttributeReleaseContext extends AbstractProfileInterceptorAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeAttributeConsentContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeAttributeReleaseContext.class);
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        final AttributeConsentContext attributeConsentContext = new AttributeConsentContext();
+        final AttributeReleaseContext attributeReleaseContext = new AttributeReleaseContext();
 
-        log.debug("{} Created attribute consent context '{}'", getLogPrefix(), attributeConsentContext);
+        log.debug("{} Created attribute release context '{}'", getLogPrefix(), attributeReleaseContext);
 
-        profileRequestContext.addSubcontext(attributeConsentContext, true);
+        profileRequestContext.addSubcontext(attributeReleaseContext, true);
 
         super.doExecute(profileRequestContext, interceptorContext);
     }

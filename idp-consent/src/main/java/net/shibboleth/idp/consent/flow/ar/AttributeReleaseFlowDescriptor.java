@@ -30,9 +30,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.Function;
 
 /**
- * Descriptor for a consent flow.
+ * Descriptor for an attribute release flow.
  */
-public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
+public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
 
     /** Whether not remembering consent is allowed. */
     private boolean doNotRememberConsentAllowed;
@@ -47,7 +47,7 @@ public class AttributeConsentFlowDescriptor extends ConsentFlowDescriptor {
     @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
 
     /** Constructor. */
-    public AttributeConsentFlowDescriptor() {
+    public AttributeReleaseFlowDescriptor() {
         attributeValuesHashFunction = new AttributeValuesHashFunction();
     }
 

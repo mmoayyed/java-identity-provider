@@ -105,7 +105,7 @@
         
         <!-- Abstract consent flows. -->
         <webflow:flow-location id="terms-of-use.abstract" path="../system/flows/post-authn/terms-of-use-abstract-flow.xml" />
-        <webflow:flow-location id="attribute-consent.abstract" path="../system/flows/post-authn/attribute-consent-abstract-flow.xml" />
+        <webflow:flow-location id="attribute-release.abstract" path="../system/flows/post-authn/attribute-release-abstract-flow.xml" />
 
     </webflow:flow-registry>
 

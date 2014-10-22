@@ -16,7 +16,7 @@
  */
 
 /**
- * Actions and flow descriptors related to attribute consent.
+ * Actions and flow descriptors related to attribute release consent.
  */
 
 package net.shibboleth.idp.consent.flow.ar;

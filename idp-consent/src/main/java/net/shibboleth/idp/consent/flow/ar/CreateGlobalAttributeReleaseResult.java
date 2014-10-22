@@ -36,12 +36,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Attribute consent action to create a consent result representing global consent to be stored in a storage service.
+ * Attribute release consent action to create a consent result representing global consent to be stored in a storage
+ * service.
  */
-public class CreateGlobalConsentResult extends AbstractConsentStorageAction {
+public class CreateGlobalAttributeReleaseResult extends AbstractConsentStorageAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(CreateGlobalConsentResult.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CreateGlobalAttributeReleaseResult.class);
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,

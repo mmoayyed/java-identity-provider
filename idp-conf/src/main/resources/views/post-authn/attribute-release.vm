@@ -22,7 +22,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css"/>
-        <title>#springMessage("idp.attributeConsent.title")</title>
+        <title>#springMessage("idp.attribute-release.title")</title>
     </head>
     <body>
         <form action="$flowExecutionUrl" method="post" style="padding:10px" >
@@ -35,19 +35,19 @@
                     #end
                 </header>
                 <p style="margin-top: 70px;">
-                    #springMessage("idp.attributeConsent.serviceNameLabel")<br/>
+                    #springMessage("idp.attribute-release.serviceNameLabel")<br/>
                     <span class="service_name">$rpUIContext.serviceName</span>
-                    #springMessage("idp.attributeConsent.of") <span class="organization_name">$encoder.encodeForHTML($rpUIContext.organizationName)</span>
+                    #springMessage("idp.attribute-release.of") <span class="organization_name">$encoder.encodeForHTML($rpUIContext.organizationName)</span>
                 </p>
                 <p style="margin-top: 10px;">
-                    #springMessage("idp.attributeConsent.serviceDescriptionLabel")<br/>
+                    #springMessage("idp.attribute-release.serviceDescriptionLabel")<br/>
                     <span class="service_description">$encoder.encodeForHTML($rpUIContext.serviceDescription)</span>
                     <br />
                 </p>
                 #set ($informationURL = $rpUIContext.informationURL)
                 #if ($informationURL)
                     <p style="margin-top: 10px;">
-                        <a href="$informationURL">#springMessage("idp.attributeConsent.informationURLLabel")</a>
+                        <a href="$informationURL">#springMessage("idp.attribute-release.informationURLLabel")</a>
                     </p>
                 #end
                 <div id="attributeRelease" >
@@ -55,7 +55,7 @@
                         <thead>
                             <tr>
                                 <th colspan="3">
-                                    #springMessage("idp.attributeConsent.attributesHeader")
+                                    #springMessage("idp.attribute-release.attributesHeader")
                                 </th>
                             </tr>
                         </thead>
@@ -90,24 +90,24 @@
                 #set ($privacyStatementURL = $rpUIContext.privacyStatementURL)
                 #if ($privacyStatementURL)
                     <p style="margin-top: 10px;">
-                        <a href="$privacyStatementURL">#springMessage("idp.attributeConsent.privacyStatementURLLabel")</a>
+                        <a href="$privacyStatementURL">#springMessage("idp.attribute-release.privacyStatementURLLabel")</a>
                     </p>
                 #end
                 <div style="float:left;">
                     <p>
-                        #springMessage("idp.attributeConsent.confirmationQuestion")
+                        #springMessage("idp.attribute-release.confirmationQuestion")
                     </p>
                     #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
                         <div id="generalConsentDiv" style="display: block; background-color: #F6F6F6;border: 1px gray solid; padding: 10px; width: 92%;">
-                        #springMessage("idp.attributeConsent.consentMethod")
+                        #springMessage("idp.attribute-release.consentMethod")
                     #end
                     #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed)
                         <p>
                             <input type="radio" name="_idp_consentOptions" value="_idp_doNotRememberConsent" />
-                            #springMessage("idp.attributeConsent.doNotRememberConsent")
+                            #springMessage("idp.attribute-release.doNotRememberConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )
-                                    #set($message = $springMacroRequestContext.getMessage("idp.attributeConsent.doNotRememberConsentItem$i"))
+                                    #set($message = $springMacroRequestContext.getMessage("idp.attribute-release.doNotRememberConsentItem$i"))
                                     #if("$message" != "")
                                         <li>$message</li>
                                     #end
@@ -118,10 +118,10 @@
                     #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
                         <p>
                             <input type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
-                            #springMessage("idp.attributeConsent.rememberConsent")
+                            #springMessage("idp.attribute-release.rememberConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )
-                                    #set($message = $springMacroRequestContext.getMessage("idp.attributeConsent.rememberConsentItem$i"))
+                                    #set($message = $springMacroRequestContext.getMessage("idp.attribute-release.rememberConsentItem$i"))
                                     #if("$message" != "")
                                         <li>$message</li>
                                     #end
@@ -132,10 +132,10 @@
                     #if ($attributeConsentFlowDescriptor.globalConsentAllowed)
                         <p>
                             <input type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
-                            #springMessage("idp.attributeConsent.globalConsent")
+                            #springMessage("idp.attribute-release.globalConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )
-                                    #set($message = $springMacroRequestContext.getMessage("idp.attributeConsent.globalConsentItem$i"))
+                                    #set($message = $springMacroRequestContext.getMessage("idp.attribute-release.globalConsentItem$i"))
                                     #if("$message" != "")
                                         <li>$message</li>
                                     #end
@@ -144,12 +144,12 @@
                         </p>
                     #end
                     #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
-                        #springMessage("idp.attributeConsent.consentMethodRevoke")
+                        #springMessage("idp.attribute-release.consentMethodRevoke")
                         </div>
                     #end
                     <p style="text-align: center;">
-                        <input type="reset" name="noconfirm" value="#springMessage("idp.attributeConsent.reject")" style="margin-right: 30px;" onclick="alert('#springMessage("idp.attributeConsent.rejectMessage")')" />
-                        <input type="submit" name="_eventId_proceed" value="#springMessage("idp.attributeConsent.accept")" />
+                        <input type="reset" name="noconfirm" value="#springMessage("idp.attribute-release.reject")" style="margin-right: 30px;" onclick="alert('#springMessage("idp.attribute-release.rejectMessage")')" />
+                        <input type="submit" name="_eventId_proceed" value="#springMessage("idp.attribute-release.accept")" />
                     </p>
                 </div>
             </div>

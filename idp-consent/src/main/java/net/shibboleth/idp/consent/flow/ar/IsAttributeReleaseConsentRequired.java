@@ -41,10 +41,10 @@ import com.google.common.base.Function;
  * 
  * TODO details
  */
-public class IsAttributeConsentRequired extends AbstractAttributeConsentAction {
+public class IsAttributeReleaseConsentRequired extends AbstractAttributeReleaseAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(IsAttributeConsentRequired.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(IsAttributeReleaseConsentRequired.class);
 
     /** Function to create hash of all attribute values. */
     @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
@@ -57,7 +57,7 @@ public class IsAttributeConsentRequired extends AbstractAttributeConsentAction {
             return false;
         }
         
-        attributeValuesHashFunction = getAttributeConsentFlowDescriptor().getAttributeValuesHashFunction();
+        attributeValuesHashFunction = getAttributeReleaseFlowDescriptor().getAttributeValuesHashFunction();
 
         return true;
     }
@@ -90,7 +90,7 @@ public class IsAttributeConsentRequired extends AbstractAttributeConsentAction {
      */
     private boolean isAttributeConsentRequired(@Nonnull final ConsentContext consentContext) {
 
-        final Map<String, IdPAttribute> attributes = getAttributeConsentContext().getConsentableAttributes();
+        final Map<String, IdPAttribute> attributes = getAttributeReleaseContext().getConsentableAttributes();
         if (attributes.isEmpty()) {
             log.debug("{} Consent is not required because there are no attributes to consent to.", getLogPrefix());
             return false;

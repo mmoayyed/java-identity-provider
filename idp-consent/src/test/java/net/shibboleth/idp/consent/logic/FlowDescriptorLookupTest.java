@@ -18,7 +18,7 @@
 package net.shibboleth.idp.consent.logic;
 
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
-import net.shibboleth.idp.consent.flow.ar.AttributeConsentFlowDescriptor;
+import net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
@@ -63,16 +63,16 @@ public class FlowDescriptorLookupTest {
     @Test public void testLookupChild() {
         pic.setAttemptedFlow(new ConsentFlowDescriptor());
 
-        final FlowDescriptorLookup<AttributeConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookup(AttributeConsentFlowDescriptor.class);
+        final FlowDescriptorLookup<AttributeReleaseFlowDescriptor> strategy =
+                new FlowDescriptorLookup(AttributeReleaseFlowDescriptor.class);
 
-        final AttributeConsentFlowDescriptor flow = strategy.apply(prc);
+        final AttributeReleaseFlowDescriptor flow = strategy.apply(prc);
 
         Assert.assertNull(flow);
     }
 
     @Test public void testLookupParent() {
-        pic.setAttemptedFlow(new AttributeConsentFlowDescriptor());
+        pic.setAttemptedFlow(new AttributeReleaseFlowDescriptor());
 
         final FlowDescriptorLookup<ConsentFlowDescriptor> strategy =
                 new FlowDescriptorLookup(ConsentFlowDescriptor.class);

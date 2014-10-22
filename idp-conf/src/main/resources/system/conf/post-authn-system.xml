@@ -19,8 +19,8 @@
             class="net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor" />
 
     <!-- Parent bean for attribute consent flows. -->
-    <bean id="shibboleth.consent.AttributeConsentFlow" abstract="true"
-            class="net.shibboleth.idp.consent.flow.ar.AttributeConsentFlowDescriptor"
+    <bean id="shibboleth.consent.AttributeReleaseFlow" abstract="true"
+            class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"
             p:activationCondition-ref="shibboleth.consent.RelyingPartyPredicate"
             p:storageService-ref="shibboleth.ClientStorageService"
             p:doNotRememberConsentAllowed="false"
@@ -53,9 +53,9 @@
     <!-- Attribute consent predicate. -->
     <bean id="shibboleth.consent.AttributeConsent.AttributePredicate"
             class="net.shibboleth.idp.consent.logic.AttributePredicate"
-            c:whitelist-ref="shibboleth.consent.AttributeConsent.whitelistedAttributeIDs"
-            c:blacklist-ref="shibboleth.consent.AttributeConsent.blacklistedAttributeIDs"
-            c:matchExpression="#{getObject('shibboleth.consent.AttributeConsent.matchExpression')}"
+            c:whitelist-ref="shibboleth.attribute-release.WhitelistedAttributeIDs"
+            c:blacklist-ref="shibboleth.attribute-release.BlacklistedAttributeIDs"
+            c:matchExpression="#{getObject('shibboleth.attribute-release.MatchExpression')}"
             scope="prototype" />
 
 </beans>

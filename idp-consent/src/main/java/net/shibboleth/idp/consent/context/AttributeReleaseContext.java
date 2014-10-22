@@ -33,13 +33,13 @@ import com.google.common.collect.MapConstraints;
 /**
  * Context for attribute consent. Holds the attributes for which consent is obtained.
  */
-public class AttributeConsentContext extends BaseContext {
+public class AttributeReleaseContext extends BaseContext {
 
     /** Attributes to be consented to. */
     @Nonnull @NonnullElements private Map<String, IdPAttribute> consentableAttributes;
 
     /** Constructor. */
-    public AttributeConsentContext() {
+    public AttributeReleaseContext() {
         consentableAttributes = Collections.emptyMap();
     }
 
