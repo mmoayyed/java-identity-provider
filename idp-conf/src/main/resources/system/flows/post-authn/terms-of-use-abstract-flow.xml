@@ -57,6 +57,6 @@
 
     <end-state id="proceed" />
 
-    <bean-import resource="../../../../system/flows/post-authn/consent/terms-of-use-abstract-beans.xml" />
+    <bean-import resource="../../../system/flows/post-authn/terms-of-use-abstract-beans.xml" />
 
 </flow>

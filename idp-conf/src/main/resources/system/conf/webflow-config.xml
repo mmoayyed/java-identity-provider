@@ -104,8 +104,8 @@
         <webflow:flow-location id="post-authn" path="../system/flows/post-authn/post-authn-flow.xml" />
         
         <!-- Abstract consent flows. -->
-        <webflow:flow-location id="terms-of-use.abstract" path="../system/flows/post-authn/consent/terms-of-use-abstract-flow.xml" />
-        <webflow:flow-location id="attribute-consent.abstract" path="../system/flows/post-authn/consent/attribute-consent-abstract-flow.xml" />
+        <webflow:flow-location id="terms-of-use.abstract" path="../system/flows/post-authn/terms-of-use-abstract-flow.xml" />
+        <webflow:flow-location id="attribute-consent.abstract" path="../system/flows/post-authn/attribute-consent-abstract-flow.xml" />
 
     </webflow:flow-registry>
 

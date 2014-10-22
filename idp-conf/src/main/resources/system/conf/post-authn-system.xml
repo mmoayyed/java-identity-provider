@@ -12,7 +12,7 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="../../conf/post-authn/post-authn.xml" />
+    <import resource="../../conf/post-authn.xml" />
 
     <!-- Parent bean for post-authn interceptor flows. -->
     <bean id="shibboleth.PostAuthnFlow" abstract="true"
