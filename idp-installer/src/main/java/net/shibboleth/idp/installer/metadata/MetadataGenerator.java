@@ -36,7 +36,12 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
+import org.opensaml.core.xml.LangBearing;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.ext.saml2mdui.Description;
+import org.opensaml.saml.ext.saml2mdui.DisplayName;
+import org.opensaml.saml.ext.saml2mdui.Logo;
+import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.core.Extensions;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.metadata.ArtifactResolutionService;
@@ -280,6 +285,7 @@ public class MetadataGenerator {
     public void generate() throws IOException {
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.newLine();
+        writeComments();
         writer.write("<");
         writer.write(EntityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write(' ');
@@ -287,6 +293,7 @@ public class MetadataGenerator {
         writeNameSpace(SignatureConstants.XMLSIG_PREFIX, SignatureConstants.XMLSIG_NS);
         writeNameSpace(ExtensionsConstants.SHIB_MDEXT10_PREFIX, ExtensionsConstants.SHIB_MDEXT10_NS);
         writeNameSpace(XMLConstants.XML_PREFIX, XMLConstants.XML_NS);
+        writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
 
         writer.write(" entityID=\"");
         writer.write(getEntityID());
@@ -303,6 +310,25 @@ public class MetadataGenerator {
         writer.newLine();
         writer.flush();
         writer.close();
+    }
+
+    /**
+     * Add appropriate comments to metadata header.
+     * 
+     * @throws IOException if badness occurs in the writer
+     */
+    protected void writeComments() throws IOException {
+        writer.write("<!--");
+        writer.newLine();
+        writer.write("     This is example metadata only. Do *NOT* supply it as is without review,");
+        writer.newLine();
+        writer.write("     and do *NOT* provide it in real time to your partners.");
+        writer.newLine();
+        writer.newLine();
+        writer.write("     This metadata is not dynamic - it will not change as your configuration changes.");
+        writer.newLine();
+        writer.write("-->");
+        writer.newLine();
     }
 
     /**
@@ -430,32 +456,18 @@ public class MetadataGenerator {
     }
 
     /**
-     * Write out any &lt;Extensions&ht;Elements. Currently this is just the scope TODO: mdui TODO: entityAttributes
+     * Write out any &lt;Extensions&gt;Elements. Currently this is just the scope TODO: mdui TODO: entityAttributes
      * 
      * @throws IOException if badness happens
      */
     protected void writeExtensions() throws IOException {
-        if (null == getScope() || getScope().isEmpty()) {
-            return;
-        }
+
         writer.write("        <");
         writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
         writer.newLine();
-
-        writer.write("            <");
-        writer.write(ExtensionsConstants.SHIB_MDEXT10_PREFIX);
-        writer.write(':');
-        writer.write(Scope.DEFAULT_ELEMENT_LOCAL_NAME);
-        writer.write(" regexp=\"false\">");
-        writer.write(getScope());
-        writer.write("</");
-        writer.write(ExtensionsConstants.SHIB_MDEXT10_PREFIX);
-        writer.write(':');
-        writer.write(Scope.DEFAULT_ELEMENT_LOCAL_NAME);
-        writer.write('>');
-        writer.newLine();
-
+        writeScope();
+        writeMDUI();
         writer.write("        </");
         writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
@@ -463,7 +475,104 @@ public class MetadataGenerator {
     }
 
     /**
-     * Write out any &lt;KeyDescriptor&ht;Elements.
+     * Write out the &lt;shibmd:Scope&gt; element.
+     * 
+     * @throws IOException if badness happens
+     */
+    protected void writeScope() throws IOException {
+        if (null == getScope() || getScope().isEmpty()) {
+            return;
+        }
+
+        writer.write("            <");
+        writeNameSpaceQualified(ExtensionsConstants.SHIB_MDEXT10_PREFIX, Scope.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write(" regexp=\"false\">");
+        writer.write(getScope());
+        writer.write("</");
+        writeNameSpaceQualified(ExtensionsConstants.SHIB_MDEXT10_PREFIX, Scope.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write('>');
+        writer.newLine();
+    }
+
+    /**
+     * Write out the &lt;mdui:UIINFO&gt; element and children.
+     * 
+     * @throws IOException if badness happens
+     */
+    protected void writeMDUI() throws IOException {
+        writer.write("<!--");
+        writer.newLine();
+        writer.write("    Fill in the details for your IdP here ");
+        writer.newLine();
+        writer.newLine();
+
+        writer.write("            <");
+        writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, UIInfo.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write('>');
+        writer.newLine();
+
+        // DisplayName
+        writer.write("                <");
+        writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, DisplayName.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write(' ');
+        writeLangAttribute("en");
+        writer.write('>');
+        writer.write("A Name for the IdP at ");
+        writer.write(getDNSName());
+        writer.write("</");
+        writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, DisplayName.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write('>');
+        writer.newLine();
+
+        // Description
+        writer.write("                <");
+        writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Description.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write(' ');
+        writeLangAttribute("en");
+        writer.write('>');
+        writer.write("Enter a description of your IdP at ");
+        writer.write(getDNSName());
+        writer.write("</");
+        writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Description.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write('>');
+        writer.newLine();
+        
+        // Logo
+        writer.write("                <");
+        writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Logo.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write(" height=\"HeightInPixels\" width=\"WidthInPixels\">");
+        writer.write("https://");
+        writer.write(getDNSName());
+        writer.write("/Path/To/Logo.png");
+        writer.write("</");
+        writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Logo.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write('>');
+        writer.newLine();
+
+        writer.write("            </");
+        writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, UIInfo.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write('>');
+        writer.newLine();
+        
+        writer.write("-->");
+        writer.newLine();
+    }
+
+    /**
+     * Write the language attribute.
+     * 
+     * @param language which languages
+     * @throws IOException if badness happens
+     */
+    protected void writeLangAttribute(String language) throws IOException {
+        writeNameSpaceQualified(XMLConstants.XML_PREFIX, LangBearing.XML_LANG_ATTR_LOCAL_NAME);
+        writer.write("=\"");
+        writer.write(language);
+        writer.write('"');
+    }
+
+    /**
+     * Write out any &lt;KeyDescriptor&gt;Elements.
      * 
      * @throws IOException if badness happens
      */
@@ -474,7 +583,7 @@ public class MetadataGenerator {
     }
 
     /**
-     * Write out &lt;KeyDescriptor&ht;Elements. of a specific type
+     * Write out &lt;KeyDescriptor&gt;Elements. of a specific type
      * 
      * @param certs the certificates
      * @param use the type - signing or encryption
@@ -494,21 +603,15 @@ public class MetadataGenerator {
             writer.write("\">");
             writer.newLine();
             writer.write("            <");
-            writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');
-            writer.write(KeyInfo.DEFAULT_ELEMENT_LOCAL_NAME);
+            writeNameSpaceQualified(SignatureConstants.XMLSIG_PREFIX, KeyInfo.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.write("                    <");
-            writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');
-            writer.write(X509Data.DEFAULT_ELEMENT_LOCAL_NAME);
+            writeNameSpaceQualified(SignatureConstants.XMLSIG_PREFIX, X509Data.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.write("                        <");
-            writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');
-            writer.write(X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
+            writeNameSpaceQualified(SignatureConstants.XMLSIG_PREFIX, X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             for (String certLine : cert) {
@@ -516,21 +619,15 @@ public class MetadataGenerator {
                 writer.newLine();
             }
             writer.write("                        </");
-            writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');
-            writer.write(X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
+            writeNameSpaceQualified(SignatureConstants.XMLSIG_PREFIX, X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.write("                    </");
-            writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');
-            writer.write(X509Data.DEFAULT_ELEMENT_LOCAL_NAME);
+            writeNameSpaceQualified(SignatureConstants.XMLSIG_PREFIX, X509Data.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.write("            </");
-            writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');
-            writer.write(KeyInfo.DEFAULT_ELEMENT_LOCAL_NAME);
+            writeNameSpaceQualified(SignatureConstants.XMLSIG_PREFIX, KeyInfo.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.newLine();
@@ -686,6 +783,19 @@ public class MetadataGenerator {
             default:
                 break;
         }
+    }
+
+    /**
+     * Write a namespace:identifier pair.
+     * 
+     * @param nameSpace the namespace
+     * @param what the identifier
+     * @throws IOException if badness happens
+     */
+    protected void writeNameSpaceQualified(@Nonnull String nameSpace, String what) throws IOException {
+        writer.write(nameSpace);
+        writer.write(':');
+        writer.write(what);
     }
 
 }
