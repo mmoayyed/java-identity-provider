@@ -58,7 +58,7 @@
 	   </echo>
 	   <property file="${idp.property.file}"/>
     </target>
-	<target name="allinput" depends="gettarget, checkproperties, gethostname, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, getentityid, setscope, askscope" />
+	<target name="allinput" depends="gettarget, checkproperties, gethostname, getentityid, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, setscope, askscope" />
 
 	<target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
 		<echo append="true" file="idp_ant.log">target: gethostname
@@ -184,7 +184,7 @@
 
 	<target name="genkeys" depends="init, preload, checkproperties, signing-key, encryption-key, backchannel-key, sealer" />
  
-	<target name="checkproperties" depends="gettarget">
+	<target name="checkproperties" depends="gettarget, target-properties">
 		<echo append="true" file="idp_ant.log">target: checkproperties
 		</echo>
 		<!-- Detecting credential and metadata presence is overridden in the case of a V2 upgrade -->
@@ -242,7 +242,7 @@
 			<!-- Ask for EntityID if this is not an upgrade and the property file wasn't provided -->
 			<and>
 				<not>
-					<isset property="idp.merge.properties" />
+					<istrue value="${idp.merge.properties.present}" />
 				</not>
 				<not>
 					<istrue value="${idp.properties.present}" />
