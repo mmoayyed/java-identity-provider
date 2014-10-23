@@ -8,6 +8,10 @@
 
 
     <!-- Attribute consent setup. -->
+    
+    <on-start>
+        <evaluate expression="AttributeConsentFlowDescriptorLookupStrategy.apply(opensamlProfileRequestContext)" result="flowScope.attributeReleaseFlowDescriptor" />
+    </on-start>
 
     <action-state id="AttributeConsentSetup">
         <evaluate expression="InitializeConsentContext" />
@@ -35,7 +39,7 @@
     </action-state>
 
     <decision-state id="TestForReadGlobalAttributeConsentFromStorage">
-        <if test="flowScope.allowGlobalConsent" then="ReadGlobalAttributeConsentFromStorage" else="IsAttributeConsentRequired" />
+        <if test="attributeReleaseFlowDescriptor.globalConsentAllowed" then="ReadGlobalAttributeConsentFromStorage" else="IsAttributeConsentRequired" />
     </decision-state>
 
     <action-state id="ReadGlobalAttributeConsentFromStorage">
@@ -79,7 +83,6 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
-            <evaluate expression="AttributeConsentFlowDescriptorLookupStrategy.apply(opensamlProfileRequestContext)" result="viewScope.attributeConsentFlowDescriptor" />
             <evaluate expression="new net.shibboleth.idp.consent.logic.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getLocale())" result="requestScope.attributeDisplayNameFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext))" result="viewScope.consentContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.AttributeReleaseContext))" result="viewScope.attributeConsentContext" />
@@ -127,7 +130,7 @@
     </action-state>
 
     <decision-state id="TestForRevokeGlobalAttributeConsent">
-        <if test="flowScope.allowGlobalConsent" then="RevokeGlobalAttributeConsent" else="IsAttributeConsentRequired" />
+        <if test="flowScope.allowGlobalConsent" then="RevokeGlobalAttributeConsent" else="ReleaseAttributes" />
     </decision-state>
 
     <action-state id="RevokeGlobalAttributeConsent">

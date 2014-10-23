@@ -26,7 +26,9 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.saml1.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
@@ -44,6 +46,7 @@ import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
+import org.opensaml.saml.saml2.core.impl.AttributeBuilder;
 import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.opensaml.saml.saml2.encryption.Decrypter;
 import org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver;
@@ -65,7 +68,7 @@ public class SAML2TestResponseValidator {
 
     /** Expected SP entity ID. */
     @Nonnull public String spEntityID = "https://sp.example.org";
-    
+
     /** Authentication context class reference. */
     @Nonnull public String authnContextClassRef = AuthnContext.IP_AUTHN_CTX;
 
@@ -93,12 +96,71 @@ public class SAML2TestResponseValidator {
     /** Whether subject confirmation data should be validated. */
     @Nonnull public boolean validateSubjectConfirmationData = true;
 
+    /** Expected attributes. */
+    @Nonnull public List<Attribute> expectedAttributes;
+
+    /** Expected mail attribute. */
+    @Nonnull public Attribute mailAttribute;
+
+    /** Expected eduPersonAffiliation attribute. */
+    @Nonnull public Attribute eduPersonAffiliationAttribute;
+
     /** Constructor. */
     public SAML2TestResponseValidator() {
         nameID = new NameIDBuilder().buildObject();
         nameID.setFormat(NameID.TRANSIENT);
         nameID.setNameQualifier(idpEntityID);
         nameID.setSPNameQualifier(spEntityID);
+
+        buildExpectedAttributes();
+    }
+
+    /**
+     * Build expected attributes.
+     * <p>
+     * The first attribute is
+     * <ul>
+     * <li>name : urn:oid:1.3.6.1.4.1.5923.1.1.1.1</li>
+     * <li>name format : {@link Attribute#URI_REFERENCE}</li>
+     * <li>friendly name : eduPersonAffiliation</li>
+     * <li>value : member</li>
+     * </ul>
+     * <p>
+     * The second attribute is
+     * <ul>
+     * <li>name : urn:oid:0.9.2342.19200300.100.1.3</li>
+     * <li>name format : {@link Attribute#URI_REFERENCE}</li>
+     * <li>friendly name : mail</li>
+     * <li>value : jdoe@shibboleth.net</li>
+     * </ul>
+     */
+    protected void buildExpectedAttributes() {
+
+        final AttributeBuilder builder = new AttributeBuilder();
+
+        // the expected mail attribute
+        mailAttribute = builder.buildObject();
+        mailAttribute.setName("urn:oid:0.9.2342.19200300.100.1.3");
+        mailAttribute.setNameFormat(Attribute.URI_REFERENCE);
+        mailAttribute.setFriendlyName("mail");
+        final XSString mailValue =
+                new XSStringBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+        mailValue.setValue("jdoe@shibboleth.net");
+        mailAttribute.getAttributeValues().add(mailValue);
+
+        // the expected eduPersonAffiliation attribute
+        eduPersonAffiliationAttribute = builder.buildObject();
+        eduPersonAffiliationAttribute.setName("urn:oid:1.3.6.1.4.1.5923.1.1.1.1");
+        eduPersonAffiliationAttribute.setNameFormat(Attribute.URI_REFERENCE);
+        eduPersonAffiliationAttribute.setFriendlyName("eduPersonAffiliation");
+        final XSString eduPersonAffiliationAttributeValue =
+                new XSStringBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+        eduPersonAffiliationAttributeValue.setValue("member");
+        eduPersonAffiliationAttribute.getAttributeValues().add(eduPersonAffiliationAttributeValue);
+
+        expectedAttributes = new ArrayList<>();
+        expectedAttributes.add(eduPersonAffiliationAttribute);
+        expectedAttributes.add(mailAttribute);
     }
 
     private Assertion decryptAssertion(final EncryptedAssertion encrypted) throws DecryptionException {
@@ -515,23 +577,7 @@ public class SAML2TestResponseValidator {
     }
 
     /**
-     * Assert that two attributes are present.
-     * <p>
-     * The first attribute is
-     * <ul>
-     * <li>name : urn:oid:1.3.6.1.4.1.5923.1.1.1.1</li>
-     * <li>name format : {@link Attribute#URI_REFERENCE}</li>
-     * <li>friendly name : eduPersonAffiliation</li>
-     * <li>value : member</li>
-     * </ul>
-     * <p>
-     * The second attribute is
-     * <ul>
-     * <li>name : urn:oid:0.9.2342.19200300.100.1.3</li>
-     * <li>name format : {@link Attribute#URI_REFERENCE}</li>
-     * <li>friendly name : mail</li>
-     * <li>value : jdoe@shibboleth.net</li>
-     * </ul>
+     * Assert that the attributes from the response match the expected attributes.
      * 
      * Calls assert methods :
      * <ul>
@@ -544,16 +590,15 @@ public class SAML2TestResponseValidator {
     public void assertAttributes(@Nullable final List<Attribute> attributes) {
         Assert.assertNotNull(attributes);
         Assert.assertFalse(attributes.isEmpty());
-        Assert.assertEquals(attributes.size(), 2);
+        Assert.assertEquals(attributes.size(), expectedAttributes.size());
 
-        Attribute eduPersonAffiliation = attributes.get(0);
-        assertAttributeName(eduPersonAffiliation, "urn:oid:1.3.6.1.4.1.5923.1.1.1.1", Attribute.URI_REFERENCE,
-                "eduPersonAffiliation");
-        assertAttributeValue(eduPersonAffiliation, "member");
-
-        Attribute mail = attributes.get(1);
-        assertAttributeName(mail, "urn:oid:0.9.2342.19200300.100.1.3", Attribute.URI_REFERENCE, "mail");
-        assertAttributeValue(mail, "jdoe@shibboleth.net");
+        for (int i = 0; i < expectedAttributes.size(); i++) {
+            final Attribute expectedAttribute = expectedAttributes.get(i);
+            final Attribute actualAttribute = attributes.get(i);
+            assertAttributeName(actualAttribute, expectedAttribute.getName(), expectedAttribute.getNameFormat(),
+                    expectedAttribute.getFriendlyName());
+            assertAttributeValue(actualAttribute, ((XSString) expectedAttribute.getAttributeValues().get(0)).getValue());
+        }
     }
 
     /**

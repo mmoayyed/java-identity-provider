@@ -4,7 +4,7 @@
 ## Velocity context will contain the following properties :
 ##
 ## attributeConsentContext - context holding consentable attributes
-## attributeConsentFlowDescriptor - attribute consent flow descriptor
+## attributeReleaseFlowDescriptor - attribute consent flow descriptor
 ## attributeDisplayNameFunction - function to display attribute name
 ## consentContext - context representing the state of a consent flow
 ## encoder - HTMLEncoder class
@@ -75,12 +75,12 @@
                                         #end
                                     </td>
                                     <td style="vertical-align: top">
-                                        #if ($attributeConsentFlowDescriptor.perAttributeConsentEnabled)
+                                        #if ($attributeReleaseFlowDescriptor.perAttributeConsentEnabled)
                                             #set ($inputType = "checkbox")
                                         #else
                                             #set ($inputType = "hidden")
                                         #end
-                                        <input type="$inputType" name="consentIds" value="$encoder.encodeForHTML($attribute.id)" checked />
+                                        <input id="$attribute.id" type="$inputType" name="consentIds" value="$encoder.encodeForHTML($attribute.id)" checked />
                                     </td>
                                 </tr>
                             #end
@@ -97,13 +97,13 @@
                     <p>
                         #springMessage("idp.attribute-release.confirmationQuestion")
                     </p>
-                    #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
+                    #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed || $attributeReleaseFlowDescriptor.globalConsentAllowed)
                         <div id="generalConsentDiv" style="display: block; background-color: #F6F6F6;border: 1px gray solid; padding: 10px; width: 92%;">
                         #springMessage("idp.attribute-release.consentMethod")
                     #end
-                    #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed)
+                    #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed)
                         <p>
-                            <input type="radio" name="_idp_consentOptions" value="_idp_doNotRememberConsent" />
+                            <input id="_idp_doNotRememberConsent" type="radio" name="_idp_consentOptions" value="_idp_doNotRememberConsent" />
                             #springMessage("idp.attribute-release.doNotRememberConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )
@@ -115,9 +115,9 @@
                             </ul>
                         </p>
                     #end
-                    #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
+                    #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed || $attributeReleaseFlowDescriptor.globalConsentAllowed)
                         <p>
-                            <input type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
+                            <input id="_idp_rememberConsent" type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
                             #springMessage("idp.attribute-release.rememberConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )
@@ -129,9 +129,9 @@
                             </ul>
                         </p>
                     #end
-                    #if ($attributeConsentFlowDescriptor.globalConsentAllowed)
+                    #if ($attributeReleaseFlowDescriptor.globalConsentAllowed)
                         <p>
-                            <input type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
+                            <input id="_idp_globalConsent" type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
                             #springMessage("idp.attribute-release.globalConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )
@@ -143,7 +143,7 @@
                             </ul>
                         </p>
                     #end
-                    #if ($attributeConsentFlowDescriptor.doNotRememberConsentAllowed || $attributeConsentFlowDescriptor.globalConsentAllowed)
+                    #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed || $attributeReleaseFlowDescriptor.globalConsentAllowed)
                         #springMessage("idp.attribute-release.consentMethodRevoke")
                         </div>
                     #end
