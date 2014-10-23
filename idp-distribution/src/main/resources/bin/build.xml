@@ -38,6 +38,7 @@
         	- if idp.is.V2 is set, then this file should contain a line setting idp.service.relyingparty.legacy=true
         idp.property.file: The name of a property file to fill in some or all of the above. This file is deleted after processing.
         idp.no.tidy: Do not delete the two above files (debug only)
+        ldap.merge.properties:  The name of a property file to merge with ldap.properties
         
         The property idp.noprompt will cause a failure rather than a prompt.
 	-->
@@ -217,6 +218,7 @@
 		</condition>
 		<available property="idp.sealer.present" file="${idp.target.dir}/credentials/sealer.kver" />
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
+        <available property="ldap.properties.present" file="${idp.target.dir}/conf/ldap.properties" />
 		<available property="services.properties.present" file="${idp.target.dir}/conf/services.properties" />
 		<condition property="idp.will.call.certgen">
 			<!--
@@ -333,6 +335,15 @@
 			</and>
 		</condition>
 
+		<condition property="idp.merge.ldap.properties">
+		    <!-- We merge ldap.properties if ldap.merge.properties is set  AND ldap.properties does NOT exist-->
+			<and>
+			    <isset property="ldap.merge.properties" />
+                <not>
+                    <istrue value="${ldap.properties.present}" />
+                </not>
+            </and>
+        </condition>
 	</target>
 
 	<target name="target-properties">
@@ -410,7 +421,7 @@
 
     -->
 
-	<target name="upgrade" depends="editproperties, editservicesproperties">
+	<target name="upgrade" depends="editproperties, editservicesproperties, editldapproperties">
 		<echo append="true" file="idp_ant.log">target: upgrade
 		</echo>
 		<!-- Create edit-webapp tree -->
@@ -419,7 +430,7 @@
 		<mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF/lib" />
 		<mkdir dir="${idp.target.dir}/edit-webapp/WEB-INF/classes" />
 		
-		<!-- conf -->
+		<!-- conf: copy from dist if not already present -->
 		<mkdir dir="${idp.target.dir}/conf" />
 		<copy todir="${idp.target.dir}/conf">
 			<fileset dir="${idp.target.dir}/dist/conf" includes="**/*">
@@ -430,7 +441,8 @@
 			<mapper type="glob" from="*.dist" to="*" />
 		</copy>
 		<delete file="${idp.target.dir}/conf/credentials.xml" if:set="idp.is.V2" />
-		<!-- flows -->
+		
+		<!-- flows: copy from dist if not already present -->
 		<mkdir dir="${idp.target.dir}/flows" />
 		<copy todir="${idp.target.dir}/flows">
 			<fileset dir="${idp.target.dir}/dist/flows" includes="**/*">
@@ -440,7 +452,8 @@
 			</fileset>
 			<mapper type="glob" from="*.dist" to="*" />
 		</copy>
-		<!-- views -->
+		
+		<!-- views: copy from dist if not already present -->
 		<mkdir dir="${idp.target.dir}/views" />
 		<copy todir="${idp.target.dir}/views">
 			<fileset dir="${idp.target.dir}/dist/views" includes="**/*">
@@ -450,7 +463,8 @@
 			</fileset>
 			<mapper type="glob" from="*.dist" to="*" />
 		</copy>
-        <!-- Other dirs -->
+        
+		<!-- Other dirs -->
         <mkdir dir="${idp.target.dir}/logs" />
 	</target>
 
@@ -467,6 +481,14 @@
 		<mkdir dir="${idp.target.dir}/conf" />
 		<mergeproperties inFile="${idp.target.dir}/dist/conf/services.properties.dist" outFile="${idp.target.dir}/conf/services.properties" mergeFile="${services.merge.properties}" />
 	</target>
+	
+	
+    <target name="editldapproperties" depends="gettarget" if="idp.merge.ldap.properties" unless="ldap.properties.present">
+        <echo append="true" file="idp_ant.log">target: editldapproperties
+        </echo>
+        <mkdir dir="${idp.target.dir}/conf" />
+        <mergeproperties inFile="${idp.target.dir}/dist/conf/ldap.properties.dist" outFile="${idp.target.dir}/conf/ldap.properties" mergeFile="${ldap.merge.properties}" />
+    </target>
 
 	<target name="metadata-gen" depends="gettarget, getentityid, gethostname, genkeys, upgrade"  unless="idp.metadata.present">
 		<echo append="true" file="idp_ant.log">target: metadata-gen
