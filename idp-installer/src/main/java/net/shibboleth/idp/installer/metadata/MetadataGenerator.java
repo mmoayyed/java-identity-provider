@@ -280,7 +280,9 @@ public class MetadataGenerator {
     public void generate() throws IOException {
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.newLine();
-        writer.write("<");writer.write(EntityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);writer.write(' ');
+        writer.write("<");
+        writer.write(EntityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write(' ');
         writeNameSpace(null, SAMLConstants.SAML20MD_NS);
         writeNameSpace(SignatureConstants.XMLSIG_PREFIX, SignatureConstants.XMLSIG_NS);
         writeNameSpace(ExtensionsConstants.SHIB_MDEXT10_PREFIX, ExtensionsConstants.SHIB_MDEXT10_NS);
@@ -356,19 +358,25 @@ public class MetadataGenerator {
             }
         }
         writer.newLine();
-        writer.write("    </");writer.write(IDPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME);writer.write(">");
+        writer.write("    </");
+        writer.write(IDPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write(">");
         writer.newLine();
     }
 
-    /** write out support for a specific name format.
+    /**
+     * write out support for a specific name format.
+     * 
      * @param format what to support
-     * @throws IOException  when badness occurrs
+     * @throws IOException when badness occurrs
      */
     protected void writeNameIdFormat(String format) throws IOException {
-        writer.write("        <");writer.write(NameIDFormat.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write("        <");
+        writer.write(NameIDFormat.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
         writer.write(format);
-        writer.write("</");writer.write(NameIDFormat.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write("</");
+        writer.write(NameIDFormat.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
         writer.newLine();
 
@@ -392,7 +400,8 @@ public class MetadataGenerator {
             }
         }
         writer.newLine();
-        writer.write("    </");writer.write(AttributeAuthorityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write("    </");
+        writer.write(AttributeAuthorityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
         writer.newLine();
     }
@@ -419,7 +428,7 @@ public class MetadataGenerator {
         writer.write("\">");
         writer.newLine();
     }
-    
+
     /**
      * Write out any &lt;Extensions&ht;Elements. Currently this is just the scope TODO: mdui TODO: entityAttributes
      * 
@@ -429,7 +438,9 @@ public class MetadataGenerator {
         if (null == getScope() || getScope().isEmpty()) {
             return;
         }
-        writer.write("        <");writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);writer.write('>');
+        writer.write("        <");
+        writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write('>');
         writer.newLine();
 
         writer.write("            <");
@@ -445,7 +456,9 @@ public class MetadataGenerator {
         writer.write('>');
         writer.newLine();
 
-        writer.write("        </");writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);writer.write('>');
+        writer.write("        </");
+        writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);
+        writer.write('>');
         writer.newLine();
     }
 
@@ -474,24 +487,28 @@ public class MetadataGenerator {
             return;
         }
         for (List<String> cert : certs) {
-            writer.write("        <");writer.write(KeyDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write("        <");
+            writer.write(KeyDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write(" use=\"");
             writer.write(use);
             writer.write("\">");
             writer.newLine();
-            writer.write("            <"); 
+            writer.write("            <");
             writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');writer.write(KeyInfo.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write(':');
+            writer.write(KeyInfo.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.write("                    <");
             writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');writer.write(X509Data.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write(':');
+            writer.write(X509Data.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.write("                        <");
             writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');writer.write(X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write(':');
+            writer.write(X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             for (String certLine : cert) {
@@ -500,21 +517,25 @@ public class MetadataGenerator {
             }
             writer.write("                        </");
             writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');writer.write(X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write(':');
+            writer.write(X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.write("                    </");
             writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');writer.write(X509Data.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write(':');
+            writer.write(X509Data.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
-            writer.write("            </"); 
+            writer.write("            </");
             writer.write(SignatureConstants.XMLSIG_PREFIX);
-            writer.write(':');writer.write(KeyInfo.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write(':');
+            writer.write(KeyInfo.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
             writer.newLine();
-            writer.write("        </");writer.write(KeyDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
+            writer.write("        </");
+            writer.write(KeyDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
         }
@@ -531,8 +552,10 @@ public class MetadataGenerator {
         switch (endpoint) {
             case SAML1Artifact:
                 writer.write("        ");
-                writer.write("<");writer.write(ArtifactResolutionService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML1_SOAP11_BINDING_URI);
+                writer.write("<");
+                writer.write(ArtifactResolutionService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML1_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write(":8443/idp/profile/SAML1/SOAP/ArtifactResolution\"");
@@ -542,8 +565,10 @@ public class MetadataGenerator {
 
             case SAML2Artifact:
                 writer.write("        ");
-                writer.write("<");writer.write(ArtifactResolutionService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
+                writer.write("<");
+                writer.write(ArtifactResolutionService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write(":8443/idp/profile/SAML2/SOAP/ArtifactResolution\"");
@@ -553,8 +578,10 @@ public class MetadataGenerator {
 
             case RedirectSLO:
                 writer.write("        ");
-                writer.write("<");writer.write(SingleLogoutService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+                writer.write("<");
+                writer.write(SingleLogoutService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write("/idp/profile/SAML2/Redirect/SLO\"/>");
@@ -563,8 +590,10 @@ public class MetadataGenerator {
 
             case POSTSLO:
                 writer.write("        ");
-                writer.write("<");writer.write(SingleLogoutService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML2_POST_BINDING_URI);
+                writer.write("<");
+                writer.write(SingleLogoutService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_POST_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write("/idp/profile/SAML2/POST/SLO\"/>");
@@ -573,8 +602,10 @@ public class MetadataGenerator {
 
             case SOAPSLO:
                 writer.write("        ");
-                writer.write("<");writer.write(SingleLogoutService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
+                writer.write("<");
+                writer.write(SingleLogoutService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write(":8443/idp/profile/SAML2/SOAP/SLO\"/>");
@@ -583,7 +614,8 @@ public class MetadataGenerator {
 
             case ShibbolethSSO:
                 writer.write("        ");
-                writer.write("<");writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write("<");
+                writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"urn:mace:shibboleth:1.0:profiles:AuthnRequest\"");
                 writer.write(" Location=\"https://");
                 writer.write(getDNSName());
@@ -593,8 +625,10 @@ public class MetadataGenerator {
 
             case POSTSSO:
                 writer.write("        ");
-                writer.write("<");writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML2_POST_BINDING_URI);
+                writer.write("<");
+                writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_POST_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write("/idp/profile/SAML2/POST/SSO\"/>");
@@ -603,8 +637,10 @@ public class MetadataGenerator {
 
             case POSTSimpleSignSSO:
                 writer.write("        ");
-                writer.write("<");writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
+                writer.write("<");
+                writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write("/idp/profile/SAML2/POST/SSO-SimpleSign\"/>");
@@ -613,8 +649,10 @@ public class MetadataGenerator {
 
             case RedirectSSO:
                 writer.write("        ");
-                writer.write("<");writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+                writer.write("<");
+                writer.write(SingleSignOnService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write("/idp/profile/SAML2/Redirect/SSO\"/>");
@@ -623,8 +661,10 @@ public class MetadataGenerator {
 
             case SAML1Query:
                 writer.write("        ");
-                writer.write("<");writer.write(AttributeService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML1_SOAP11_BINDING_URI);
+                writer.write("<");
+                writer.write(AttributeService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML1_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write(":8443/idp/profile/SAML1/SOAP/AttributeQuery\"/>");
@@ -633,8 +673,10 @@ public class MetadataGenerator {
 
             case SAML2Query:
                 writer.write("        ");
-                writer.write("<");writer.write(AttributeService.DEFAULT_ELEMENT_LOCAL_NAME);
-                writer.write(" Binding=\"");writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
+                writer.write("<");
+                writer.write(AttributeService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_SOAP11_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write(":8443/idp/profile/SAML2/SOAP/AttributeQuery\"/>");
