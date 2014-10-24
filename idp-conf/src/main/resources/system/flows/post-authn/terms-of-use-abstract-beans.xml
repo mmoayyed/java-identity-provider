@@ -17,7 +17,7 @@
 
     <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
 
-    <bean id="PopulateCurrentConsents" class="net.shibboleth.idp.consent.flow.PopulateCurrentConsents" scope="prototype"
+    <bean id="PopulateConsentContext" class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="TermsOfUseConsentFunction"  />
 
     <bean id="ReadConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"

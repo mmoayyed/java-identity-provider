@@ -18,7 +18,7 @@
 
     <action-state id="TermsOfUseSetup">
         <evaluate expression="InitializeConsentContext" />
-        <evaluate expression="PopulateCurrentConsents" />
+        <evaluate expression="PopulateConsentContext" />
         <evaluate expression="ReadConsentFromStorage" />
         <evaluate expression="SetRPUIInformation" />
         <evaluate expression="'proceed'" />

@@ -25,7 +25,7 @@
     <bean id="PopulateAttributeConsentContext" class="net.shibboleth.idp.consent.flow.ar.PopulateAttributeReleaseContext" scope="prototype"
         p:attributePredicate-ref="shibboleth.consent.AttributeConsent.AttributePredicate" />
 
-    <bean id="PopulateCurrentConsents" class="net.shibboleth.idp.consent.flow.PopulateCurrentConsents" scope="prototype"
+    <bean id="PopulateConsentContext" class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="AttributeReleaseConsentFunction"  />
         
     <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"

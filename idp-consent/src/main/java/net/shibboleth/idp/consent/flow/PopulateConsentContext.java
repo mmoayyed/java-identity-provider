@@ -35,10 +35,10 @@ import com.google.common.base.Function;
  * Consent action which populates the current consents of a consent context with the output value of a function whose
  * input value is a profile request context.
  */
-public class PopulateCurrentConsents extends AbstractConsentAction {
+public class PopulateConsentContext extends AbstractConsentAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateCurrentConsents.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateConsentContext.class);
 
     /** Function which returns the current consents. */
     @Nonnull private Function<ProfileRequestContext, Map<String, Consent>> function;
@@ -48,7 +48,7 @@ public class PopulateCurrentConsents extends AbstractConsentAction {
      *
      * @param currentConsentsFunction function which returns the current consents
      */
-    public PopulateCurrentConsents(
+    public PopulateConsentContext(
             @Nonnull final Function<ProfileRequestContext, Map<String, Consent>> currentConsentsFunction) {
         function = Constraint.isNotNull(currentConsentsFunction, "Current consents function cannot be null");
     }

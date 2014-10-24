@@ -26,7 +26,7 @@
     <!-- If consent revocation was requested, skip reading from storage. -->
 
     <decision-state id="TestForRevokeConsent">
-        <if test="requestParameters._idp_revokeConsent" then="PopulateCurrentConsents" else="ReadConsentFromStorage" />
+        <if test="requestParameters._idp_revokeConsent" then="PopulateConsentContext" else="ReadConsentFromStorage" />
     </decision-state>
 
 
@@ -39,7 +39,7 @@
     </action-state>
 
     <decision-state id="TestForReadGlobalAttributeConsentFromStorage">
-        <if test="attributeReleaseFlowDescriptor.globalConsentAllowed" then="ReadGlobalAttributeConsentFromStorage" else="PopulateCurrentConsents" />
+        <if test="attributeReleaseFlowDescriptor.globalConsentAllowed" then="ReadGlobalAttributeConsentFromStorage" else="PopulateConsentContext" />
     </decision-state>
 
     <action-state id="ReadGlobalAttributeConsentFromStorage">
@@ -52,14 +52,14 @@
     <!-- If global consent has been given by user, skip the rest of the flow. -->
     
     <decision-state id="TestForGlobalAttributeConsent">
-        <if test="GlobalAttributeConsentPredicate.apply(opensamlProfileRequestContext)" then="proceed" else="PopulateCurrentConsents" />
+        <if test="GlobalAttributeConsentPredicate.apply(opensamlProfileRequestContext)" then="proceed" else="PopulateConsentContext" />
     </decision-state>
 
 
    <!-- Create consent objects and store in consent context. -->
 
-    <action-state id="PopulateCurrentConsents">
-        <evaluate expression="PopulateCurrentConsents" />
+    <action-state id="PopulateConsentContext">
+        <evaluate expression="PopulateConsentContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="IsConsentRequired" />
     </action-state>
