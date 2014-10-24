@@ -26,7 +26,7 @@
     <!-- If consent revocation was requested, skip reading from storage. -->
 
     <decision-state id="TestForRevokeConsent">
-        <if test="requestParameters._idp_revokeConsent" then="IsAttributeConsentRequired" else="ReadConsentFromStorage" />
+        <if test="requestParameters._idp_revokeConsent" then="PopulateCurrentConsents" else="ReadConsentFromStorage" />
     </decision-state>
 
 
@@ -39,7 +39,7 @@
     </action-state>
 
     <decision-state id="TestForReadGlobalAttributeConsentFromStorage">
-        <if test="attributeReleaseFlowDescriptor.globalConsentAllowed" then="ReadGlobalAttributeConsentFromStorage" else="IsAttributeConsentRequired" />
+        <if test="attributeReleaseFlowDescriptor.globalConsentAllowed" then="ReadGlobalAttributeConsentFromStorage" else="PopulateCurrentConsents" />
     </decision-state>
 
     <action-state id="ReadGlobalAttributeConsentFromStorage">
@@ -52,29 +52,25 @@
     <!-- If global consent has been given by user, skip the rest of the flow. -->
     
     <decision-state id="TestForGlobalAttributeConsent">
-        <if test="GlobalAttributeConsentPredicate.apply(opensamlProfileRequestContext)" then="proceed" else="IsAttributeConsentRequired" />
+        <if test="GlobalAttributeConsentPredicate.apply(opensamlProfileRequestContext)" then="proceed" else="PopulateCurrentConsents" />
     </decision-state>
 
 
-    <!-- Determine whether to prompt user for consent. -->
-    
-    <action-state id="IsAttributeConsentRequired">
-        <evaluate expression="IsAttributeConsentRequired" />
-        <evaluate expression="'proceed'" />
-        <transition on="ConsentNotRequired" to="ReleaseAttributes" />
-        <transition on="proceed" to="CreateAttributeConsentChoices" />
-    </action-state>
-    
-    
-    <!-- Create consent objects and store in consent context. -->
+   <!-- Create consent objects and store in consent context. -->
 
-    <action-state id="CreateAttributeConsentChoices">
-        <evaluate expression="CreateAttributeConsentChoices" />
+    <action-state id="PopulateCurrentConsents">
+        <evaluate expression="PopulateCurrentConsents" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="DisplayAttributeReleasePage" />
+        <transition on="proceed" to="IsConsentRequired" />
     </action-state>
+
+    <!-- If consent is required, display page. Otherwise, release attributes.  -->
     
-    
+    <decision-state id="IsConsentRequired">
+        <if test="IsConsentRequiredPredicate.apply(opensamlProfileRequestContext)" then="DisplayAttributeReleasePage" else="ReleaseAttributes" />
+    </decision-state>
+
+
     <!-- Display consent page. -->
 
     <view-state id="DisplayAttributeReleasePage" view="#{flowRequestContext.activeFlow.id}">

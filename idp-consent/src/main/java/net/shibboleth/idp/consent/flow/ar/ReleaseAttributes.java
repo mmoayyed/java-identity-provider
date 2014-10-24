@@ -57,6 +57,7 @@ public class ReleaseAttributes extends AbstractAttributeReleaseAction {
         final Map<String, Consent> consents =
                 getConsentContext().getCurrentConsents().isEmpty() ? getConsentContext().getPreviousConsents()
                         : getConsentContext().getCurrentConsents();
+        log.debug("{} Consents '{}'", getLogPrefix(), consents);
 
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
         log.debug("{} Attributes '{}'", getLogPrefix(), attributes);

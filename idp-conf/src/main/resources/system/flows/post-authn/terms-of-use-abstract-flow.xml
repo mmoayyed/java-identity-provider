@@ -22,11 +22,11 @@
         <evaluate expression="ReadConsentFromStorage" />
         <evaluate expression="SetRPUIInformation" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="IsTermsOfUseConsentRequired" />
+        <transition on="proceed" to="IsConsentRequired" />
     </action-state>
     
-   <decision-state id="IsTermsOfUseConsentRequired">
-        <if test="IsTermsOfUseConsentRequiredPredicate.apply(opensamlProfileRequestContext)" then="DisplayTermsOfUsePage" else="proceed" />
+   <decision-state id="IsConsentRequired">
+        <if test="IsConsentRequiredPredicate.apply(opensamlProfileRequestContext)" then="DisplayTermsOfUsePage" else="proceed" />
     </decision-state>
 
     <view-state id="DisplayTermsOfUsePage" view="#{flowRequestContext.activeFlow.id}">

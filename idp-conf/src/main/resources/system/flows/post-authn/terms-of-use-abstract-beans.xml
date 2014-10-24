@@ -11,7 +11,9 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <bean id="TermsOfUseConsentFunction" class="net.shibboleth.idp.consent.flow.tou.TermsOfUseConsentFunction" scope="prototype" />
+    <bean id="TermsOfUseConsentFunction" class="net.shibboleth.idp.consent.logic.MessageSourceConsentFunction" scope="prototype"
+        p:consentIdMessageCode="idp.tou.id"
+        p:consentValueMessageCode="idp.tou.text" />
 
     <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
 
@@ -24,7 +26,7 @@
     <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="IsTermsOfUseConsentRequiredPredicate" class="net.shibboleth.idp.consent.flow.tou.IsTermsOfUseConsentRequiredPredicate" scope="prototype" />
+    <bean id="IsConsentRequiredPredicate" class="net.shibboleth.idp.consent.logic.IsConsentRequiredPredicate" scope="prototype" />
 
     <bean id="ExtractConsent" class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
