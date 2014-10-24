@@ -18,10 +18,10 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <bean id="PopulatePostAuthnContext" class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.PostAuthnFlows'.?[id matches 'post-authn/(%{idp.post-authn.flows:})']}" />
+    <bean id="PopulateInterceptContext" class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+        p:availableFlows="#{@'shibboleth.InterceptFlows'.?[id matches 'intercept/(%{idp.intercept.flows:})']}" />
 
-    <bean id="SelectPostAuthnFlow" class="net.shibboleth.idp.profile.interceptor.impl.SelectProfileInterceptorFlow" scope="prototype" />
+    <bean id="SelectInterceptFlow" class="net.shibboleth.idp.profile.interceptor.impl.SelectProfileInterceptorFlow" scope="prototype" />
 
     <bean id="WriteResultToStorage" class="net.shibboleth.idp.profile.interceptor.impl.WriteProfileInterceptorResultToStorage" scope="prototype" />
 

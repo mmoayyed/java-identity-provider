@@ -1,7 +1,7 @@
  <flow xmlns="http://www.springframework.org/schema/webflow"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-       abstract="true" parent="post-authn.abstract">
+       abstract="true" parent="intercept.abstract">
 
     <!-- TODO non-browser skip view -->
 
@@ -57,6 +57,6 @@
 
     <end-state id="proceed" />
 
-    <bean-import resource="../../../system/flows/post-authn/terms-of-use-abstract-beans.xml" />
+    <bean-import resource="../../../system/flows/intercept/terms-of-use-abstract-beans.xml" />
 
 </flow>

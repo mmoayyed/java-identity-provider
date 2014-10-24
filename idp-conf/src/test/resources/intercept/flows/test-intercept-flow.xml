@@ -9,7 +9,7 @@
         <set name="conversationScope.testProceed2" value="false" />
     </on-start>
 
-    <subflow-state id="DoPostAuthnSubflow" subflow="post-authn">
+    <subflow-state id="DoInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="end" />
     </subflow-state>
@@ -26,6 +26,6 @@
         <output name="testProceed2" value="conversationScope.testProceed2" />
     </end-state>
 
-    <bean-import resource="test-post-authn-profile-beans.xml" />
+    <bean-import resource="test-intercept-beans.xml" />
 
 </flow>

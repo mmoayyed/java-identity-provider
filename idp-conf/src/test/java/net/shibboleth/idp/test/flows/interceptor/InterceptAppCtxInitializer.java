@@ -30,17 +30,17 @@ import org.springframework.core.io.support.ResourcePropertySource;
 /**
  * Adds a properties file to the application context environment.
  */
-public class PostAuthnAppCtxInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class InterceptAppCtxInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     /** Location of test properties file. */
-    @Nonnull @NotEmpty public final static String POST_AUTHN_TEST_PROPERTIES =
-            "classpath:/post-authn/post-authn.properties";
+    @Nonnull @NotEmpty public final static String INTERCEPT_TEST_PROPERTIES =
+            "classpath:/intercept/intercept.properties";
 
     /** {@inheritDoc} */
     public void initialize(ConfigurableApplicationContext applicationContext) {
         try {
             applicationContext.getEnvironment().getPropertySources()
-                    .addLast(new ResourcePropertySource(POST_AUTHN_TEST_PROPERTIES));
+                    .addLast(new ResourcePropertySource(INTERCEPT_TEST_PROPERTIES));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

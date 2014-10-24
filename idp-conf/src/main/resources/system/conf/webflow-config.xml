@@ -99,13 +99,13 @@
         <webflow:flow-location id="c14n/SAML1Transform" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
         <webflow:flow-location id="c14n/LegacyPrincipalConnector" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
 
-        <!-- Master post-authn flow. -->
-        <webflow:flow-location id="post-authn.abstract" path="../system/flows/post-authn/post-authn-abstract-flow.xml" />
-        <webflow:flow-location id="post-authn" path="../system/flows/post-authn/post-authn-flow.xml" />
+        <!-- Master intercept flow. -->
+        <webflow:flow-location id="intercept.abstract" path="../system/flows/intercept/intercept-abstract-flow.xml" />
+        <webflow:flow-location id="intercept" path="../system/flows/intercept/intercept-flow.xml" />
         
         <!-- Abstract consent flows. -->
-        <webflow:flow-location id="terms-of-use.abstract" path="../system/flows/post-authn/terms-of-use-abstract-flow.xml" />
-        <webflow:flow-location id="attribute-release.abstract" path="../system/flows/post-authn/attribute-release-abstract-flow.xml" />
+        <webflow:flow-location id="terms-of-use.abstract" path="../system/flows/intercept/terms-of-use-abstract-flow.xml" />
+        <webflow:flow-location id="attribute-release.abstract" path="../system/flows/intercept/attribute-release-abstract-flow.xml" />
 
     </webflow:flow-registry>
 

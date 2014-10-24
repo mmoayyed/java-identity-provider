@@ -13,11 +13,11 @@
        default-destroy-method="destroy">
 
     <!-- Flows executed after authentication. -->
-    <util:list id="shibboleth.PostAuthnFlows">
+    <util:list id="shibboleth.InterceptFlows">
 
-        <bean id="post-authn/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow" />
+        <bean id="intercept/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow" />
 
-        <bean id="post-authn/attribute-release" parent="shibboleth.consent.AttributeReleaseFlow"
+        <bean id="intercept/attribute-release" parent="shibboleth.consent.AttributeReleaseFlow"
              p:doNotRememberConsentAllowed="true" 
              p:globalConsentAllowed="true"
              p:perAttributeConsentEnabled="true" />

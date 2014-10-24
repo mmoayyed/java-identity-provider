@@ -39,38 +39,38 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 
-/** Tests for the post-authn profile interceptor flow. */
-@ContextConfiguration(locations = {"classpath:/post-authn/test-webflow-config.xml",},
-        initializers = PostAuthnAppCtxInitializer.class)
-public class PostAuthnFlowTest extends AbstractFlowTest {
+/** Tests for the profile interceptor flow. */
+@ContextConfiguration(locations = {"classpath:/intercept/test-webflow-config.xml",},
+        initializers = InterceptAppCtxInitializer.class)
+public class InterceptFlowTest extends AbstractFlowTest {
 
     /** Flow id. */
-    @Nonnull public final static String TEST_PROFILE_FLOW_ID = "test-post-authn-profile-flow";
+    @Nonnull public final static String TEST_PROFILE_FLOW_ID = "test-intercept-flow";
 
-    /** Bean ID of user configured post authn flows. */
-    @Nonnull public final static String POST_AUTHN_FLOWS_BEAN_ID = "shibboleth.PostAuthnFlows";
+    /** Bean ID of user configured intercept flows. */
+    @Nonnull public final static String INTERCEPT_FLOWS_BEAN_ID = "shibboleth.InterceptFlows";
 
     @Nonnull public final static String TEST_FLOW_REGISTRY_ID = "testFlowRegistry";
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(PostAuthnFlowTest.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(InterceptFlowTest.class);
 
     /**
-     * Clear the list of user configured flows defined in bean with ID {@link #POST_AUTHN_FLOWS_BEAN_ID}.
+     * Clear the list of user configured flows defined in bean with ID {@link #INTERCEPT_FLOWS_BEAN_ID}.
      */
-    @BeforeMethod public void clearUserConfiguredPostAuthnFlows() {
+    @BeforeMethod public void clearUserConfiguredInterceptFlows() {
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
-        final List postAuthnFlows = flow.getApplicationContext().getBean(POST_AUTHN_FLOWS_BEAN_ID, List.class);
-        postAuthnFlows.clear();
+        final List interceptFlows = flow.getApplicationContext().getBean(INTERCEPT_FLOWS_BEAN_ID, List.class);
+        interceptFlows.clear();
     }
 
     /**
-     * Register test flows in parent registry so they can be called by the 'post-authn' flow in the parent registry.
+     * Register test flows in parent registry so they can be called by the 'intercept' flow in the parent registry.
      */
     @BeforeMethod public void registerFlowsInParentRegistry() {
-        registerFlowsInParentRegistry("post-authn/test-error-flow", TEST_FLOW_REGISTRY_ID);
-        registerFlowsInParentRegistry("post-authn/test-proceed-1-flow", TEST_FLOW_REGISTRY_ID);
-        registerFlowsInParentRegistry("post-authn/test-proceed-2-flow", TEST_FLOW_REGISTRY_ID);
+        registerFlowsInParentRegistry("intercept/test-error-flow", TEST_FLOW_REGISTRY_ID);
+        registerFlowsInParentRegistry("intercept/test-proceed-1-flow", TEST_FLOW_REGISTRY_ID);
+        registerFlowsInParentRegistry("intercept/test-proceed-2-flow", TEST_FLOW_REGISTRY_ID);
     }
 
     @Test public void testNoAvailableFlows() {
@@ -93,12 +93,12 @@ public class PostAuthnFlowTest extends AbstractFlowTest {
     @Test public void testOneAvailableFlow() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor.setId("post-authn/test-proceed-1-flow");
+        flowDescriptor.setId("intercept/test-proceed-1-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
-        final List postAuthnFlows = flow.getApplicationContext().getBean(POST_AUTHN_FLOWS_BEAN_ID, List.class);
-        postAuthnFlows.add(flowDescriptor);
+        final List interceptFlows = flow.getApplicationContext().getBean(INTERCEPT_FLOWS_BEAN_ID, List.class);
+        interceptFlows.add(flowDescriptor);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
 
@@ -120,16 +120,16 @@ public class PostAuthnFlowTest extends AbstractFlowTest {
     @Test public void testTwoAvailableFlows() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor1.setId("post-authn/test-proceed-1-flow");
+        flowDescriptor1.setId("intercept/test-proceed-1-flow");
 
         final ProfileInterceptorFlowDescriptor flowDescriptor2 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor2.setId("post-authn/test-proceed-2-flow");
+        flowDescriptor2.setId("intercept/test-proceed-2-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
-        final List postAuthnFlows = flow.getApplicationContext().getBean(POST_AUTHN_FLOWS_BEAN_ID, List.class);
-        postAuthnFlows.add(flowDescriptor1);
-        postAuthnFlows.add(flowDescriptor2);
+        final List interceptFlows = flow.getApplicationContext().getBean(INTERCEPT_FLOWS_BEAN_ID, List.class);
+        interceptFlows.add(flowDescriptor1);
+        interceptFlows.add(flowDescriptor2);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
 
@@ -153,12 +153,12 @@ public class PostAuthnFlowTest extends AbstractFlowTest {
     @Test public void testErrorFlow() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor1.setId("post-authn/test-error-flow");
+        flowDescriptor1.setId("intercept/test-error-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
-        final List postAuthnFlows = flow.getApplicationContext().getBean(POST_AUTHN_FLOWS_BEAN_ID, List.class);
-        postAuthnFlows.add(flowDescriptor1);
+        final List interceptFlows = flow.getApplicationContext().getBean(INTERCEPT_FLOWS_BEAN_ID, List.class);
+        interceptFlows.add(flowDescriptor1);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
 
@@ -179,16 +179,16 @@ public class PostAuthnFlowTest extends AbstractFlowTest {
     @Test public void testProceedThenErrorFlow() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor1.setId("post-authn/test-proceed-1-flow");
+        flowDescriptor1.setId("intercept/test-proceed-1-flow");
 
         final ProfileInterceptorFlowDescriptor flowDescriptor2 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor2.setId("post-authn/test-error-flow");
+        flowDescriptor2.setId("intercept/test-error-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
-        final List postAuthnFlows = flow.getApplicationContext().getBean(POST_AUTHN_FLOWS_BEAN_ID, List.class);
-        postAuthnFlows.add(flowDescriptor1);
-        postAuthnFlows.add(flowDescriptor2);
+        final List interceptFlows = flow.getApplicationContext().getBean(INTERCEPT_FLOWS_BEAN_ID, List.class);
+        interceptFlows.add(flowDescriptor1);
+        interceptFlows.add(flowDescriptor2);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
 
@@ -211,17 +211,17 @@ public class PostAuthnFlowTest extends AbstractFlowTest {
     @Test public void testAttemptedFlow() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor1.setId("post-authn/test-proceed-1-flow");
+        flowDescriptor1.setId("intercept/test-proceed-1-flow");
         flowDescriptor1.setActivationCondition(new ConversationScopeAttributeCondition("testProceed2"));
 
         final ProfileInterceptorFlowDescriptor flowDescriptor2 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor2.setId("post-authn/test-proceed-2-flow");
+        flowDescriptor2.setId("intercept/test-proceed-2-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
-        final List postAuthnFlows = flow.getApplicationContext().getBean(POST_AUTHN_FLOWS_BEAN_ID, List.class);
-        postAuthnFlows.add(flowDescriptor1);
-        postAuthnFlows.add(flowDescriptor2);
+        final List interceptFlows = flow.getApplicationContext().getBean(INTERCEPT_FLOWS_BEAN_ID, List.class);
+        interceptFlows.add(flowDescriptor1);
+        interceptFlows.add(flowDescriptor2);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
 

@@ -66,10 +66,10 @@
 
     <subflow-state id="DoAttrCheck" subflow="access/attr-check">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="DoPostAuthnSubflow" />
+        <transition on="proceed" to="DoInterceptSubflow" />
     </subflow-state>
 
-    <subflow-state id="DoPostAuthnSubflow" subflow="post-authn">
+    <subflow-state id="DoInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="BuildResponse" />
     </subflow-state>
