@@ -12,15 +12,12 @@
     <end-state id="proceed" />
 
     <!-- Error events to reflect back from this subflow. -->
-    <end-state id="InvalidContext" />
-    <end-state id="HandleError" />
+    <end-state id="InvalidProfileContext" />
+    <end-state id="ContextCheckDenied" />
 
-    <!--
-    Default is to turn non-proceed events into an error, and initiate error handling sequence
-    defined by action in child flows.
-    -->
+    <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
-          <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
+          <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
     </global-transitions>
 
 </flow>

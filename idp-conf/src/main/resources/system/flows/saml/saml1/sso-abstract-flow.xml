@@ -56,10 +56,10 @@
         <evaluate expression="FilterAttributes" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="DoAttrCheck" />
+        <transition on="proceed" to="DoInterceptSubflow" />
     </action-state>
 
-    <subflow-state id="DoAttrCheck" subflow="access/attr-check">
+    <subflow-state id="DoInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="BuildResponse" />
     </subflow-state>

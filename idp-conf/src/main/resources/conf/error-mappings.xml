@@ -23,12 +23,13 @@
     </util:map>
 
     <!-- List of events to trap and handle with local views, without returning to SPs. -->
-    <!--
     <util:list id="shibboleth.LocalEvents">
+        <value>ContextCheckDenied</value>
+        <!--
         <value>IdentitySwitch</value>
         <value>NoPotentialFlow</value>
+        -->
     </util:list>
-    -->
     
     <!-- Mappings of error events during requests to SAML status codes and SOAP fault codes. -->
 

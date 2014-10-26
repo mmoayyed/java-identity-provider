@@ -15,7 +15,7 @@
     #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, "Error", $locale))
     #set ($message = $springContext.getMessage("${eventKey}.message", null, "ERROR: $eventId", $locale))
     
-    #if ($eventId == "AccessDenied")
+    #if ($eventId == "AccessDenied" or $eventId == "ContextCheckDenied")
         $response.setStatus(403)
     #elseif ($eventId == "UnableToDecode")
         $response.setStatus(400)
