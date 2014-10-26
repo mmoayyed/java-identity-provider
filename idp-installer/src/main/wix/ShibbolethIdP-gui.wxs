@@ -69,6 +69,7 @@
       <!-- We also define two dialogs -->
       <DialogRef Id="UpdateDlgShib" />
       <DialogRef Id="InstallDirDlgShib" />
+      <DialogRef Id="ConfigADDlg" />
 
       <!-- Text Styles (from Orca) -->
       <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
@@ -107,8 +108,11 @@
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">
         Installed AND PATCH
       </Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ConfigADDlg">
+        (NOT Installed) AND (NOT ALREADYINSTALLED) AND CONFIGURE_AD="TRUE"
+      </Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlgShib">
-        (NOT Installed) AND (NOT ALREADYINSTALLED)
+        (NOT Installed) AND (NOT ALREADYINSTALLED) AND CONFIGURE_AD &lt;&gt;"TRUE"
       </Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="UpdateDlgShib">
         (NOT Installed) AND ALREADYINSTALLED

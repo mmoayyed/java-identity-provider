@@ -25,7 +25,8 @@
 
       <!-- This Dialog sets up:
            - INSTALLDIR
-           - INSTALL_JETTY
+           - INSTALL_JETTY (and as a result turns the jetty feature on or off)
+	   - CONFIGURE_AD (and as a result selects the AD page or not)
         -->
 
       <Dialog Id="InstallDirDlgShib" Width="370" Height="270" Title="[ProductName] Setup">
@@ -34,7 +35,7 @@
         <Control Id="TopInfo" Type="Text" X="15" Y="6" Width="150" Height="12" 
                  Text="{\WixUI_Font_Title}Configure Shibboleth" Transparent="yes"/>
         <Control Id="TopDetailed" Type="Text" X="25" Y="24" Width="320" Height="12" 
-                 Text="Please choose where to install the Shibboleth SP and other installation options" Transparent="yes"/>
+                 Text="Please choose where to install the Shibboleth IdP and other installation options" Transparent="yes"/>
         <Control Id="TopLine" Type="Line" X="0" Y="44" Width="370" Height="1" />
 
         <!-- Buttons to control Shibboleth Setup -->
@@ -49,27 +50,32 @@
 
         <!-- Where? -->
         <Control Id="Dest" Type="Edit" X="25" Y="102" Width="228" Height="17" Property="INSTALLDIR" Text="[INSTALLDIR]" />
-        <Control Id="ChangeFolder" Type="PushButton" X="265" Y="105" Height="17" Width="56" Text="B&amp;rowse...">
+        <Control Id="ChangeFolder" Type="PushButton" X="265" Y="102" Height="17" Width="56" Text="B&amp;rowse...">
           <Publish Event="SpawnDialog" Value="BrowseDlg" Order="1">1</Publish>
           <Publish Event="[_BrowseProperty]" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
         </Control>
 
         <!-- Jetty? -->
-        <Control Id="InstallJetty" Type="CheckBox" X="25" Y="126" Height="17" Width="80"
+        <Control Id="InstallJetty" Type="CheckBox" X="25" Y="128" Height="20" Width="150"
                  Property="INSTALL_JETTY" CheckBoxValue="TRUE"
-                 Text="Install Jetty"/>
+                 Text="Install &amp;Jetty"/>
+	<!-- AD?=" -->
 
-        <Control Id="DescriptionLine4" Type="Text" X="25" Y="146" Height="36" Width="150"
+	<Control Id="ConfigureAD" Type="CheckBox" X="185" Y="128" Height="20" Width="150"
+		 Property="CONFIGURE_AD" CheckBoxValue="TRUE"
+		 Text="Configure for &amp;Active Directory"/>
+
+	<Control Id="DescriptionLine4" Type="Text" X="25" Y="158" Height="36" Width="150"
                  Text="Chose the DNS name for this IdP.  It will be used to generate the EntityID, Certificates and Metadata" />
-        <Control Id="DnsName" Type="Edit" X="185" Y="146" Height="17" Width="150"
+        <Control Id="DnsName" Type="Edit" X="185" Y="160" Height="17" Width="150"
                  Property="DNSNAME" Text="[DNSNAME]"/>
 
-	<Control Id="DescriptionLine5" Type="Text" X="25" Y="182" Height="36" Width="150"
+	<Control Id="DescriptionLine5" Type="Text" X="25" Y="200" Height="20" Width="150"
 	         Text="Chose the scope that this IdP will assert. " />
-	<Control Id="IdpScope" Type="Edit" X="185" Y="182" Height="17" Width="150"
+	<Control Id="IdpScope" Type="Edit" X="185" Y="200" Height="17" Width="150"
 	         Property="IDP_SCOPE" Text="[IDP_SCOPE]"/>
 
-	<!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
+        <!-- Stuff at the bottom: line, Back,Next, [space] Cancel -->
         <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="1" />
         <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="&amp;Back">
           <Publish  Event="NewDialog" Value="LicenseAgreementDlg">1</Publish>
@@ -86,9 +92,12 @@
             NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID&lt;&gt;"1"
           </Publish>
           <Publish Event="NewDialog" Value="VerifyReadyDlg">
-            WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"
+            (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE"
           </Publish>
-        </Control>
+          <Publish Event="NewDialog" Value="ConfigADDlg">
+            (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD="TRUE"
+	  </Publish>
+	</Control>
 
         <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="&amp;Cancel" Cancel="yes">
           <Publish  Event="SpawnDialog" Value="CancelDlg">1</Publish>

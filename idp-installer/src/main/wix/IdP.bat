@@ -134,10 +134,10 @@ if ERRORLEVEL 1 goto done
 
 "%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. ShibbolethIdP-registry.wxs ShibbolethIdP-main.wxs -dmsitype=x86
 
-"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. ShibbolethIdP-gui.wxs ShibbolethIdP-install-dlg.wxs ShibbolethIdP-update-dlg.wxs
+"%WIX%/BIN/CANDLE" -nologo -arch x86 -dProjectDir=. ShibbolethIdP-gui.wxs ShibbolethIdP-install-dlg.wxs ShibbolethIdP-adconfig-dlg.wxs ShibbolethIdP-update-dlg.wxs
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out idp-x86.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-update-dlg.wixobj -ext WixUtilExtension.dll -sice:ICE61
+"%WIX%/BIN/LIGHT" -nologo -out idp-x86.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-adconfig-dlg.wixobj ShibbolethIdP-update-dlg.wixobj -ext WixUtilExtension.dll -sice:ICE61
 if ERRORLEVEL 1 goto done
 
 del ShibbolethIdP-main.wixobj
@@ -145,7 +145,7 @@ del ShibbolethIdP-registry.wixobj
 "%WIX%/BIN/CANDLE" -nologo -arch x64 -dProjectDir=. ShibbolethIdP-main.wxs ShibbolethIdP-registry.wxs -dmsitype=x64
 if ERRORLEVEL 1 goto done
 
-"%WIX%/BIN/LIGHT" -nologo -out idp-x64.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-update-dlg.wixobj -ext WixUtilExtension.dll -sice:ICE61
+"%WIX%/BIN/LIGHT" -nologo -out idp-x64.msi -ext WixUIExtension ShibbolethIdP-main.wixobj idp_contents.wixobj ShibbolethIdP-registry.wixobj ShibbolethIdP-gui.wixobj ShibbolethIdP-install-dlg.wixobj ShibbolethIdP-adconfig-dlg.wixobj ShibbolethIdP-update-dlg.wixobj -ext WixUtilExtension.dll -sice:ICE61
 if ERRORLEVEL 1 goto done
 
 

@@ -3,6 +3,8 @@
 '
 Dim FileSystemObj, AntFile, PropsFile, JettyFile, JettyAntFile, LogFile
 Dim CustomData, msiProperties, InstallDir, IdPScope, DebugInstall
+Dim ConfigureAd, AdDomain, AdUser, AdPass, AdUseGC, LDAPFile, LDAPPort
+Dim LDAPSearchPath
 
 Set FileSystemObj = CreateObject("Scripting.FileSystemObject")
 
@@ -27,6 +29,13 @@ IdPHostName = LCase(msiProperties(1))
 InstallJetty = LCase(msiProperties(2))
 IdPScope = LCase(msiProperties(3))
 DebugInstall = LCase(msiProperties(4))
+ConfigureAd = LCase(msiProperties(5))
+if ConfigureAd = "true" then
+   AdDomain = LCase(msiProperties(6))
+   AdUser = LCase(msiProperties(7))
+   AdPass = LCase(msiProperties(8))
+   AdUseGC = LCase(msiProperties(9))
+end if
 
 LogFile.WriteLine "Installing to " & InstallDirJava
 LogFile.WriteLine "Host " & IdPHostName
@@ -50,6 +59,9 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "idp.merge.properties=idp.install.replace.properties"
     if (IdPScope <> "") then
        AntFile.WriteLine "idp.scope=" & IdPScope
+    end if
+    if ConfigureAd = "true" then
+       AntFile.WriteLine "ldap.merge.properties=ldap.mergeProperties"
     end if
     AntFile.WriteLine "#"
     AntFile.WriteLine "# Debug"
@@ -123,4 +135,33 @@ if (InstallJetty <> "") then
 else
    LogFile.WriteLine "NoJetty " & InstallJetty
 end if
+
+if ConfigureAd = "true" then
+
+    if AdUseGc= "true" then
+        LDAPPort="3268"
+        LDAPSearchPath="DC=" &Replace(AdDomain, ".", ", DC=")
+    else
+        LDAPPort="389"
+        LDAPSearchPath="CN=Users, DC=" &Replace(AdDomain, ".", ", DC=")
+    end if
+
+    set LDAPFile=FileSystemObj.OpenTextFile(InstallDir & "\IdP\ldap.mergeProperties" , 2, True)
+    if (Err.Number = 0 ) then
+        LDAPFile.Writeline "idp.authn.LDAP.authenticator= adAuthenticator"
+        LDAPFile.Writeline "idp.authn.LDAP.ldapURL=ldap://" & AdDomain & ":" & LDAPPort
+        LDAPFile.Writeline "idp.authn.LDAP.baseDN=" & LDAPSearchPath
+        LDAPFile.Writeline "idp.authn.LDAP.userFilter= (sAMAccountName={user})"
+        LDAPFile.Writeline "idp.authn.LDAP.bindDN=" & AdUser & "@" & AdDomain
+        LDAPFile.Writeline "idp.authn.LDAP.bindDNCredential=" & AdPass
+        LDAPFile.Writeline "idp.authn.LDAP.dnFormat= %s@" & AdDomain
+        LDAPFile.Close
+    else
+	LogFile.Writeline "AD Properties failed " & Err
+    end if
+else
+   LogFile.WriteLine "NoAd " & ConfigureAd
+end if
+
+
 LogFile.Close

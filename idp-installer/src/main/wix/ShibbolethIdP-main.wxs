@@ -28,45 +28,49 @@
 
     <Condition Message="Shibboleth requires a Windows NT-based operating system.">NOT Version9X</Condition>
 
-   <!-- Information for the properties page of the msi -->
+    <!-- Information for the properties page of the msi -->
 
-   <Property Id="ARPCONTACT" Value="contact@shibboleth.net" />
-   <Property Id="ARPHELPLINK" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
-   <Property Id="ARPURLUPDATEINFO" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
-   <Property Id="ARPURLINFOABOUT" Value="http://shibboleth.net/" />
+    <Property Id="ARPCONTACT" Value="contact@shibboleth.net" />
+    <Property Id="ARPHELPLINK" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
+    <Property Id="ARPURLINFOABOUT" Value="http://shibboleth.net/" />
 
-   <Feature Id="ProductFeature" Title="IdP" Level="1">
+    <Feature Id="ProductFeature" Title="IdP" Level="1">
       <Feature Id="InstallJetty" Title="Jetty">
-        <MergeRef Id="jetty"/>
+	<MergeRef Id="jetty"/>
+	<ComponentRef Id="JettyPermissions"/>
       </Feature>
       <ComponentGroupRef Id="IdPGroup"/>
       <ComponentGroupRef Id="SaveRegistry"/>
       <ComponentRef Id="IdPPermissions"/>
-   </Feature>
+    </Feature>
 
     <Directory Id="TARGETDIR" Name="SourceDir" >
       <Directory Id="ProgramFilesFolder" >
         <Directory Id="INSTALLDIR" Name="Shibboleth" >
           <Merge Id="jetty" Language="1033" SourceFile="$(var.ProjectDir)\jetty-$(var.msitype).msm" DiskId="1"/>
-            <Directory Id="IdPFolder" Name="IdP">
-              <Directory Id="CredsFolder" Name="credentials"/>
-              <Directory Id="ConfFolder" Name="conf"/>
-              <Directory Id="JettyBaseFolder" Name="jetty-base">
-                <Directory Id="StartDotD" Name="start.d"/>
-              </Directory>
-              <Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
-                <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
-                <CreateFolder Directory="CredsFolder">
-                  <Permission User="Administrators" GenericAll="yes"/>
-                </CreateFolder>
-                <CreateFolder Directory="ConfFolder">
-                  <Permission User="Administrators" GenericAll="yes"/>
-                </CreateFolder>
-                <CreateFolder Directory="StartDotD">
-                  <Permission User="Administrators" GenericAll="yes"/>
-                </CreateFolder>
-              </Component>
+          <Directory Id="IdPFolder" Name="IdP">
+            <Directory Id="CredsFolder" Name="credentials"/>
+            <Directory Id="ConfFolder" Name="conf"/>
+            <Directory Id="JettyBaseFolder" Name="jetty-base">
+              <Directory Id="StartDotD" Name="start.d"/>
             </Directory>
+	    <Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
+	      <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
+	      <CreateFolder Directory="CredsFolder">
+		<Permission User="Administrators" GenericAll="yes"/>
+	      </CreateFolder>
+	      <CreateFolder Directory="ConfFolder">
+		<Permission User="Administrators" GenericAll="yes"/>
+	      </CreateFolder>
+	    </Component>
+	    <Component Id="JettyPermissions" Guid="{900980C5-CF3D-4816-9922-6142C12F6D13}" Win64="no">
+	      <RegistryValue Id="SetPermissionsJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissionsJetty" Value="TRUE" Type="string" KeyPath="yes" />
+	      <CreateFolder Directory="StartDotD">
+                <Permission User="Administrators" GenericAll="yes"/>
+              </CreateFolder>
+            </Component>
+          </Directory>
         </Directory>
       </Directory>
     </Directory>
@@ -80,9 +84,9 @@
     </Property>
 
     <Property Id="JAVA_EXECUTABLE" Secure="yes">
-        <DirectorySearch Id="JavaBinSearch" Depth="0" Path="[%JAVA_HOME]\bin">
-            <FileSearch Id="JavaBinSearch" Name="java.exe"/>
-        </DirectorySearch>
+      <DirectorySearch Id="JavaBinSearch" Depth="0" Path="[%JAVA_HOME]\bin">
+        <FileSearch Id="JavaBinSearch" Name="java.exe"/>
+      </DirectorySearch>
     </Property>
 
     <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe please check the value for JAVA_HOME"/>
@@ -99,14 +103,14 @@
 
     <CustomAction Id="WriteConfigFiles" BinaryKey="WriteConfigFilesSrc" VBScriptCall="" Execute="deferred" Impersonate="no"/>
     <CustomAction Id="SetJavaIdpHome" BinaryKey="SetJavaIdpHomeSrc" VBScriptCall="" Execute="immediate" />
-    <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY];@;[IDP_SCOPE];@;[DEBUG_INSTALL]" />
+    <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY];@;[IDP_SCOPE];@;[DEBUG_INSTALL];@;[CONFIGURE_AD];@;[AD_DOMAIN];@;[AD_USER];@;[AD_PASS];@;[AD_USE_GC]"/>
 
 
     <!-- Ant actions -->
     <CustomAction Id="SetIdpAnt" Property="QtIdpAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\webapp\WEB-INF\lib\*&quot; -Didp.home=&quot;[INSTALLDIR]\IdP&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\build.xml&quot; -Didp.property.file=idp.install.properties install-nocopy" />
     <CustomAction Id="RunIdpAnt" Directory="ProgramFilesFolder" ExeCommand="[QtIdpAnt]" Execute="deferred" Impersonate="no"/>
     <CustomAction Id="QtIdpAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no"/>
-      
+    
     <CustomAction Id="SetJettyAnt" Property="QtJettyAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\IdP\bin\lib\*;[INSTALLDIR]\IdP\webapp\WEB-INF\lib\*&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\IdP\bin\ant-jetty.xml&quot; -Djetty.property.file=jetty.install.properties install"/>
     <CustomAction Id="RunJettyAnt" Directory="IdPFolder" ExeCommand="[QtJettyAnt]" Execute="deferred" Impersonate="no"/>
     <CustomAction Id="QtJettyAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no"/>
@@ -122,7 +126,7 @@
       <Custom Action="InheritInstallJetty" After="AppSearch">
         OLD_INSTALL_JETTY AND NOT INSTALL_JETTY
       </Custom>
-        
+      
       <!-- Could we find JAVA.EXE ?-->
       <Custom Action="NoJavaBin" After="AppSearch">
         NOT JAVA_EXECUTABLE and NOT Installed
@@ -150,7 +154,7 @@
 
       <!-- Could we find JAVA.EXE ?-->
       <Custom Action="NoJavaBin" After="AppSearch">
-           NOT JAVA_EXECUTABLE
+        NOT JAVA_EXECUTABLE
       </Custom>
 
       <!-- Work -->
