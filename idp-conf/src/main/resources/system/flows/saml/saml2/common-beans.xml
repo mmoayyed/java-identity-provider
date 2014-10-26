@@ -67,6 +67,16 @@
         </property>
     </bean>
 
+    <bean id="AddPartialLogoutStatusToResponse"
+            class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype">
+        <property name="statusCodes">
+            <util:list>
+                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.SUCCESS" />
+                <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.PARTIAL_LOGOUT" />
+            </util:list>
+        </property>
+    </bean>
+
     <bean id="EncryptNameIDs"
             class="org.opensaml.saml.saml2.profile.impl.EncryptNameIDs" scope="prototype"
             p:recipientLookupStrategy-ref="shibboleth.RelyingPartyIdLookup.Simple">

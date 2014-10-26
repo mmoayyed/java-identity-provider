@@ -50,6 +50,7 @@
         <webflow:flow-location id="SAML2/POST/SLO" path="../system/flows/saml/saml2/slo-post-flow.xml" />
         <webflow:flow-location id="SAML2/POST-SimpleSign/SLO" path="../system/flows/saml/saml2/slo-post-flow.xml" />
         <webflow:flow-location id="SAML2/Redirect/SLO" path="../system/flows/saml/saml2/slo-redirect-flow.xml" />
+        <webflow:flow-location id="SAML2/SOAP/SLO" path="../system/flows/saml/saml2/slo-back-flow.xml" />
         <webflow:flow-location id="SAML2/SOAP/AttributeQuery" path="../system/flows/saml/saml2/attribute-query-flow.xml" />
         <webflow:flow-location id="SAML2/SOAP/ArtifactResolution" path="../system/flows/saml/saml2/artifact-resolution-flow.xml" />
 
