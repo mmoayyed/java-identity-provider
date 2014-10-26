@@ -190,15 +190,10 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertNotNull(sessionCtx);
         Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
         
-        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, true);
-        Assert.assertEquals(logoutCtx.getSessionMap().size(), 1);
-        
-        SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER).iterator().next();
-        Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getCreationInstant(), creation);
-        Assert.assertEquals(sp.getExpirationInstant(), expiration);
-        Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
-        Assert.assertEquals(sp.getSessionIndex(), "index");
+        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
+        if (logoutCtx != null) {
+            Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
+        }
     }
     
     @Test public void testSessionTwoSPSessions() throws SessionException, ResolverException {
@@ -232,16 +227,9 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
         
         final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, true);
-        Assert.assertEquals(logoutCtx.getSessionMap().size(), 2);
+        Assert.assertEquals(logoutCtx.getSessionMap().size(), 1);
         
-        SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER).iterator().next();
-        Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getCreationInstant(), creation);
-        Assert.assertEquals(sp.getExpirationInstant(), expiration);
-        Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
-        Assert.assertEquals(sp.getSessionIndex(), "index");
-
-        sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2").iterator().next();
+        final SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER + "/2").iterator().next();
         Assert.assertNotNull(sp);
         Assert.assertEquals(sp.getCreationInstant(), creation);
         Assert.assertEquals(sp.getExpirationInstant(), expiration);
@@ -317,14 +305,10 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         Assert.assertNotNull(sessionCtx);
         Assert.assertEquals(session.getId(), sessionCtx.getIdPSession().getId());
         
-        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, true);
-        Assert.assertEquals(logoutCtx.getSessionMap().size(), 1);
-        SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessions(ActionTestingSupport.INBOUND_MSG_ISSUER).iterator().next();
-        Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getCreationInstant(), creation);
-        Assert.assertEquals(sp.getExpirationInstant(), expiration);
-        Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
-        Assert.assertEquals(sp.getSessionIndex(), "index");
+        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, false);
+        if (logoutCtx != null) {
+            Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
+        }
         
         sessionManager.destroySession(session2.getId(), false);
     }
@@ -364,21 +348,10 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final SessionContext sessionCtx = prc.getSubcontext(SessionContext.class);
         Assert.assertNull(sessionCtx);
         
-        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class, true);
-        Assert.assertEquals(logoutCtx.getSessionMap().size(), 2);
-        SAML2SPSession sp = (SAML2SPSession) logoutCtx.getSessionMap().get(ActionTestingSupport.INBOUND_MSG_ISSUER).toArray()[0];
-        Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getCreationInstant(), creation);
-        Assert.assertEquals(sp.getExpirationInstant(), expiration);
-        Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
-        Assert.assertTrue("index".equals(sp.getSessionIndex()) || "index2".equals(sp.getSessionIndex()));
-
-        sp = (SAML2SPSession) logoutCtx.getSessionMap().get(ActionTestingSupport.INBOUND_MSG_ISSUER).toArray()[1];
-        Assert.assertNotNull(sp);
-        Assert.assertEquals(sp.getCreationInstant(), creation);
-        Assert.assertEquals(sp.getExpirationInstant(), expiration);
-        Assert.assertTrue(SAML2ObjectSupport.areNameIDsEquivalent(nameId, sp.getNameID()));
-        Assert.assertTrue("index".equals(sp.getSessionIndex()) || "index2".equals(sp.getSessionIndex()));
+        final LogoutContext logoutCtx = prc.getSubcontext(LogoutContext.class);
+        if (logoutCtx != null) {
+            Assert.assertEquals(logoutCtx.getSessionMap().size(), 0);
+        }
     }
     
 }
