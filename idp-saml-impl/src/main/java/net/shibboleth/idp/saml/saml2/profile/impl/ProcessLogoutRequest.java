@@ -59,7 +59,8 @@ import com.google.common.base.Predicates;
 
 /**
  * Profile action that processes a {@link LogoutRequest} by resolving matching sessions, and destroys them,
- * populating the associated {@link SPSession} objects into a {@link LogoutContext}.
+ * populating the associated {@link SPSession} objects (excepting the one initiating the logout) into a
+ * {@link LogoutContext}.
  * 
  * <p>A {@link SubjectContext} is also populated. If and only if a single {@link IdPSession} is resolved,
  * a {@link SessionContext} is also populated.</p>
@@ -288,7 +289,9 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                 }
                 
                 for (final SPSession spSession : session.getSPSessions()) {
-                    logoutCtx.getSessionMap().put(spSession.getId(), spSession);
+                    if (!sessionMatches(spSession)) {
+                        logoutCtx.getSessionMap().put(spSession.getId(), spSession);
+                    }
                 }
                     
                 try {
@@ -325,23 +328,37 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
     private boolean sessionMatches(@Nonnull final IdPSession session) {
         
         for (final SPSession spSession : session.getSPSessions()) {
-            if (spSession instanceof SAML2SPSession) {
-                final SAML2SPSession saml2Session = (SAML2SPSession) spSession;
-                
-                if (!saml2Session.getId().equals(logoutRequest.getIssuer().getValue())) {
-                    continue;
-                } else if (!SAML2ObjectSupport.areNameIDsEquivalent(
-                        logoutRequest.getNameID(), saml2Session.getNameID())) {
-                    continue;
-                } else if (logoutRequest.getSessionIndexes().isEmpty()) {
+            if (sessionMatches(spSession)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    /**
+     * Check if the {@link SPSession} has the appropriate service ID and SessionIndex.
+     * 
+     * @param session {@link SPSession} to check
+     * 
+     * @return  true iff the {@link SPSession} directly matches the logout request
+     */
+    private boolean sessionMatches(@Nonnull final SPSession session) {
+        if (session instanceof SAML2SPSession) {
+            final SAML2SPSession saml2Session = (SAML2SPSession) session;
+            
+            if (!saml2Session.getId().equals(logoutRequest.getIssuer().getValue())) {
+                return false;
+            } else if (!SAML2ObjectSupport.areNameIDsEquivalent(
+                    logoutRequest.getNameID(), saml2Session.getNameID())) {
+                return false;
+            } else if (logoutRequest.getSessionIndexes().isEmpty()) {
+                return true;
+            }
+            
+            for (final SessionIndex index : logoutRequest.getSessionIndexes()) {
+                if (index.getSessionIndex() != null
+                        && index.getSessionIndex().equals(saml2Session.getSessionIndex())) {
                     return true;
-                }
-                
-                for (final SessionIndex index : logoutRequest.getSessionIndexes()) {
-                    if (index.getSessionIndex() != null
-                            && index.getSessionIndex().equals(saml2Session.getSessionIndex())) {
-                        return true;
-                    }
                 }
             }
         }
