@@ -1,7 +1,7 @@
  <flow xmlns="http://www.springframework.org/schema/webflow"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-       abstract="true" parent="intercept.abstract">
+       parent="intercept.abstract">
 
     <!-- TODO non-browser skip view -->
 
@@ -9,7 +9,7 @@
     <input name="calledAsSubflow" type="boolean" required="true" />
     
     <on-start>
-        <evaluate expression="resourceBundle['idp.tou.id']" result="flowScope.termsOfUseId" />
+        <evaluate expression="resourceBundle['idp.terms-of-use.id']" result="flowScope.termsOfUseId" />
     </on-start>
     
     <decision-state id="IsTermsOfUseIdNull">
@@ -57,6 +57,6 @@
 
     <end-state id="proceed" />
 
-    <bean-import resource="../../../system/flows/intercept/terms-of-use-abstract-beans.xml" />
+    <bean-import resource="../../../system/flows/intercept/terms-of-use-beans.xml" />
 
 </flow>

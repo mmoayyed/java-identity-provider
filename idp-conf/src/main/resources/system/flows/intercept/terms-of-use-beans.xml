@@ -12,8 +12,8 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
     <bean id="TermsOfUseConsentFunction" class="net.shibboleth.idp.consent.logic.MessageSourceConsentFunction" scope="prototype"
-        p:consentIdMessageCode="idp.tou.id"
-        p:consentValueMessageCode="idp.tou.text" />
+        p:consentIdMessageCode="idp.terms-of-use.id"
+        p:consentValueMessageCode="idp.terms-of-use.text" />
 
     <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
 

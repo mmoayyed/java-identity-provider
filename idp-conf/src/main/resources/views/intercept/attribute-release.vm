@@ -1,9 +1,9 @@
 ##
-## Velocity Template for attribute consent view-state
+## Velocity Template for DisplayAttributeReleasePage view-state
 ##
 ## Velocity context will contain the following properties :
 ##
-## attributeConsentContext - context holding consentable attributes
+## attributeReleaseContext - context holding consentable attributes
 ## attributeReleaseFlowDescriptor - attribute consent flow descriptor
 ## attributeDisplayNameFunction - function to display attribute name
 ## consentContext - context representing the state of a consent flow
@@ -60,7 +60,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            #foreach($attribute in $attributeConsentContext.getConsentableAttributes().values())
+                            #foreach($attribute in $attributeReleaseContext.getConsentableAttributes().values())
                                 #if ($foreach.count % 2 == 0)
                                     #set ($rowStyle = "background-color:#E4E5E3;")
                                 #else

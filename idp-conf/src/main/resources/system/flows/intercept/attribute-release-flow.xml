@@ -1,7 +1,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
-      abstract="true" parent="intercept.abstract">
+      parent="intercept.abstract">
 
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
@@ -71,7 +71,7 @@
     </decision-state>
 
 
-    <!-- Display consent page. -->
+    <!-- Display attribute release page. -->
 
     <view-state id="DisplayAttributeReleasePage" view="#{flowRequestContext.activeFlow.id}">
         <on-render>
@@ -81,7 +81,7 @@
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
             <evaluate expression="new net.shibboleth.idp.consent.logic.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getLocale())" result="requestScope.attributeDisplayNameFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext))" result="viewScope.consentContext" />
-            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.AttributeReleaseContext))" result="viewScope.attributeConsentContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.AttributeReleaseContext))" result="viewScope.attributeReleaseContext" />
             <evaluate expression="SetRPUIInformation.getRPUIContextCreateStrategy().apply(opensamlProfileRequestContext)" result="viewScope.rpUIContext" />
         </on-render>
         <transition on="proceed" to="TestForGlobalConsent" />
@@ -157,6 +157,6 @@
 
     <end-state id="proceed" />
     
-    <bean-import resource="../../../system/flows/intercept/attribute-release-abstract-beans.xml" />
+    <bean-import resource="../../../system/flows/intercept/attribute-release-beans.xml" />
 
 </flow>

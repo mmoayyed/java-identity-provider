@@ -103,13 +103,11 @@
         <!-- Master intercept flow. -->
         <webflow:flow-location id="intercept.abstract" path="../system/flows/intercept/intercept-abstract-flow.xml" />
         <webflow:flow-location id="intercept" path="../system/flows/intercept/intercept-flow.xml" />
-        
-        <!-- Abstract consent flows. -->
-        <webflow:flow-location id="terms-of-use.abstract" path="../system/flows/intercept/terms-of-use-abstract-flow.xml" />
-        <webflow:flow-location id="attribute-release.abstract" path="../system/flows/intercept/attribute-release-abstract-flow.xml" />
 
         <!-- Built-in intercept flows. -->
         <webflow:flow-location id="intercept/context-check" path="../system/flows/intercept/context-check-flow.xml" />
+        <webflow:flow-location id="intercept/terms-of-use" path="../system/flows/intercept/terms-of-use-flow.xml" />
+        <webflow:flow-location id="intercept/attribute-release" path="../system/flows/intercept/attribute-release-flow.xml" />
 
     </webflow:flow-registry>
 

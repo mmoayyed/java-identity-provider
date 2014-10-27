@@ -1,5 +1,5 @@
 ##
-## Velocity Template for DisplayAttributeReleaseConsentPage view-state
+## Velocity Template for DisplayTermsOfUsePage view-state
 ##
 ## Velocity context will contain the following properties :
 ##
@@ -18,7 +18,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css"/>
-        <title>#springMessage("idp.tou.title")</title>
+        <title>#springMessage("idp.terms-of-use.title")</title>
     </head>
     <body>
         <div class="box">
@@ -30,22 +30,22 @@
                 #end
             </header>
             <div style="float:left;">
-                <h1>#springMessage("idp.tou.title")</h1>
+                <h1>#springMessage("idp.terms-of-use.title")</h1>
             </div>
             <div id="tou-content">
-                #springMessage("idp.tou.text")
+                #springMessage("idp.terms-of-use.text")
             </div>
             <div id="tou-acceptance">
                 <form action="$flowExecutionUrl" method="post" >
                     <div style="float:left;">
                         <input id="accept" type="checkbox" name="consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
-                        <label for="accept">#springMessage("idp.tou.accept")</label>
+                        <label for="accept">#springMessage("idp.terms-of-use.accept")</label>
                         #if($requireCheckbox)
-                            <p class="form-error">#springMessage("idp.tou.required")</p>
+                            <p class="form-error">#springMessage("idp.terms-of-use.required")</p>
                         #end
                     </div>
                     <div style="float:right;">
-                        <input type="submit" name="_eventId_proceed" value="#springMessage("idp.tou.submit")" />
+                        <input type="submit" name="_eventId_proceed" value="#springMessage("idp.terms-of-use.submit")" />
                     </div>
                     <div style="clear:both;"></div>
                 </form>
