@@ -26,33 +26,40 @@
 
     </util:list>
 
-    <!-- TODO doc -->
-    <bean id="shibboleth.consent.RelyingPartyPredicate" parent="shibboleth.Conditions.RelyingPartyId">
+    <!-- Condition to evaluate to interrupt SSO flows to obtain consent. -->
+    <bean id="shibboleth.consent.Condition" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
+    
+    <!-- TODO Per relying party condition will be moved elsewhere.
+    <bean id="shibboleth.consent.Condition" parent="shibboleth.Conditions.RelyingPartyId">
         <constructor-arg>
             <util:list>
                 <value>https://sp.example.org</value>
             </util:list>
         </constructor-arg>
     </bean>
-    
+    -->
+
+    <!-- The ID of the attribute to be used as the user identifier when storing consent records. -->
     <!-- TODO add property to properties file -->
     <!-- TODO doc -->
     <bean id="shibboleth.consent.UserIdentifierAttributeId" class="java.lang.String"
         c:_0="%{idp.consent.userIdentifierAttributeId:email}" />
 
-    <!-- Uncomment/configure to install attribute ID whitelist, blacklist, and/or match expressions. -->
+
+    <!-- Attribute release whitelist, blacklist, and match expression to determine 
+        whether consent should be obtained for an attribute based on the attribute ID. -->
     <util:list id="shibboleth.attribute-release.WhitelistedAttributeIDs">
         <!--
         <value>email</value>
         -->
     </util:list>
-    
+
     <util:list id="shibboleth.attribute-release.BlacklistedAttributeIDs">
         <value>transientId</value>
         <value>persistentId</value>
         <value>eduPersonTargetedID</value>
     </util:list>
-    
+
     <!-- 
     <bean id="shibboleth.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 
         c:regex="^exampleAttribute.*$" />
@@ -61,5 +68,5 @@
     <!-- Condition to evaluate to interrupt SSO flows to check the state of the transaction before allowing. -->
     <!-- TODO: turn into legit predicate checking attributes -->
     <bean id="shibboleth.context-check.Condition" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
-    
+
 </beans>
