@@ -27,6 +27,7 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,7 +164,7 @@ public class InterceptFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
 
         assertFlowExecutionResult(result, TEST_PROFILE_FLOW_ID);
-        assertFlowExecutionOutcome(result.getOutcome(), "HandleError");
+        assertFlowExecutionOutcome(result.getOutcome(), EventIds.INVALID_PROFILE_CTX);
 
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
         Assert.assertNotNull(prc);
@@ -193,7 +194,7 @@ public class InterceptFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(TEST_PROFILE_FLOW_ID, null, externalContext);
 
         assertFlowExecutionResult(result, TEST_PROFILE_FLOW_ID);
-        assertFlowExecutionOutcome(result.getOutcome(), "HandleError");
+        assertFlowExecutionOutcome(result.getOutcome(), EventIds.INVALID_PROFILE_CTX);
 
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
         Assert.assertNotNull(prc);

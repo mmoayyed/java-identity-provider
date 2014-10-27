@@ -20,7 +20,7 @@
         <output name="testProceed2" value="conversationScope.testProceed2" />
     </end-state>
 
-    <end-state id="HandleError">
+    <end-state id="InvalidProfileContext">
         <output name="ProfileRequestContext" value="opensamlProfileRequestContext" />
         <output name="testProceed1" value="conversationScope.testProceed1" />
         <output name="testProceed2" value="conversationScope.testProceed2" />
