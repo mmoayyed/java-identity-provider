@@ -86,7 +86,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
      * Constructor.
      * 
      * @param manager parent SessionManager instance
-     * @param target object to overwrite when deseralizing instead of creating a new instance
+     * @param target object to overwrite when deserializing instead of creating a new instance
      */
     public StorageBackedIdPSessionSerializer(@Nonnull final StorageBackedSessionManager manager,
             @Nullable final StorageBackedIdPSession target) {
