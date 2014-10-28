@@ -38,6 +38,7 @@
         	- if idp.is.V2 is set, then this file should contain a line setting idp.service.relyingparty.legacy=true
         idp.property.file: The name of a property file to fill in some or all of the above. This file is deleted after processing.
         idp.no.tidy: Do not delete the two above files (debug only)
+        idp.jetty.config: Copy jetty configuration from distribution (Unsupported)
         ldap.merge.properties:  The name of a property file to merge with ldap.properties
         
         The property idp.noprompt will cause a failure rather than a prompt.
@@ -50,7 +51,7 @@
 		</echo>
 	</target>
 
-	<target name="install" depends="init, preload, getsource, gettarget, v2v3prepopulate, allinput, copy-distribution, install-nocopy, tidy" />
+	<target name="install" depends="init, preload, getsource, gettarget, v2v3prepopulate, allinput, copy-distribution, copy-jetty-distribution, install-nocopy, tidy" />
 	<target name="install-nocopy" depends="init, preload, gettarget, v2v3prepopulate, allinput, genkeys, upgrade, metadata-gen, reprotect, build-war, tidy" />
 
 	<!-- USER INPUT -->
@@ -68,7 +69,7 @@
 		<input message="Hostname" addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}" />
 	</target>
 
-	<target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties">
+	<target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties, gethostname">
 		<echo append="true" file="idp_ant.log">target: geturisubjectname
 		</echo>
 		<property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/idp/shibboleth" />
@@ -500,9 +501,6 @@
 		<copy todir="${target}/doc" failonerror="false">
 			<fileset dir="${idp.target.dir}/doc" />
 		</copy>
-		<copy todir="${target}/jetty-base" failonerror="false">
-			<fileset dir="${idp.target.dir}/jetty-base" />
-		</copy>
 		<copy todir="${target}/system" failonerror="false">
 			<fileset dir="${idp.target.dir}/system" />
 		</copy>
@@ -515,8 +513,7 @@
 		<delete dir="${idp.target.dir}/bin/lib" failonerror="false" />
 		<delete dir="${idp.target.dir}/dist" failonerror="false" />
 		<delete dir="${idp.target.dir}/doc" failonerror="false" />
-		<delete dir="${idp.target.dir}/jetty-base" failonerror="false" />
-        <mkdir dir="${idp.target.dir}/system"/> <!-- create because it wont exist first time -->
+        <mkdir dir="${idp.target.dir}/system"/> <!-- create because it won't exist first time -->
         <attrib readonly="false">
             <fileset dir="${idp.target.dir}/system" includes="**/*"/>
         </attrib>
@@ -528,7 +525,7 @@
 		updated -->
 
 		<copy todir="${idp.target.dir}/bin" overwrite="true">
-			<fileset dir="${idp.src.dir}/bin" />
+			<fileset dir="${idp.src.dir}/bin"  excludes="**/ant-jetty.xml"/>
 		</copy>
 		<mkdir dir="${idp.target.dir}/conf" />
 		<mkdir dir="${idp.target.dir}/credentials" />
@@ -541,9 +538,6 @@
 		</copy>
 			
 		<mkdir dir="${idp.target.dir}/flows" />
-		<copy todir="${idp.target.dir}/jetty-base">
-			<fileset dir="${idp.src.dir}/jetty-base" />
-		</copy>
 		<mkdir dir="${idp.target.dir}/logs" />
 		<mkdir dir="${idp.target.dir}/metadata" />
 		<copy todir="${idp.target.dir}/system">
@@ -555,6 +549,33 @@
 			<fileset dir="${idp.src.dir}/webapp" />
 		</copy>
 	</target>
+
+	<target name="copy-jetty-distribution" depends="copy-distribution" if="idp.jetty.config">
+		<echo append="true" file="idp_ant.log">target: copy-jetty-distribution
+		</echo>
+		
+		<!-- save old -->
+		<local name="target" />
+		<property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}" />
+
+		<copy todir="${target}/jetty-base" failonerror="false">
+			<fileset dir="${idp.target.dir}/jetty-base" />
+		</copy>
+		<delete failonerror="false" dir="${idp.target.dir}/jetty-base"/>
+		
+		<!-- Copy new -->
+		<copy todir="${idp.target.dir}/jetty-base">
+			<fileset dir="${idp.src.dir}/jetty-base" />
+		</copy>
+		<!-- rename Start.d -->
+		<move file="${idp.target.dir}/jetty-base/start.d" tofile="${idp.target.dir}/jetty-base/start.d.dist"/>
+		<!-- And restore the old one if present -->
+		<copy todir="${idp.target.dir}/jetty-base/start.d" failonerror="false">
+			<fileset dir="${target}/jetty-base/start.d" />
+		</copy>
+		<!-- finally copy the ant file -->
+                <copy file="${idp.src.dir}/bin/ant-jetty.xml" tofile="${idp.target.dir}/bin/ant-jetty.xml" overwrite="true"/>
+        </target>
 
 	<!-- V2 to V3 PrePopulate -->
 
