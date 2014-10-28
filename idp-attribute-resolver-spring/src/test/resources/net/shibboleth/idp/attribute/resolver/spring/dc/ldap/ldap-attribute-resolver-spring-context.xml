@@ -74,5 +74,12 @@
     <bean class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder"
         p:templateText="(uid=${resolutionContext.principal})" p:velocityEngine-ref="shibboleth.VelocityEngine"
         init-method="initialize" />
+    <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy">
+        <property name="resultRenamingMap">
+            <map>
+                <entry key="homephone" value="phonenumber" />
+            </map>
+        </property>
+    </bean>
     <import resource="classpath:/net/shibboleth/idp/attribute/resolver/spring/velocity.xml" />
 </beans>

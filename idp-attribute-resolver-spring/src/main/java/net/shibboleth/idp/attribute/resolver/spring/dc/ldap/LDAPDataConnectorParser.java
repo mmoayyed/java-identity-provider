@@ -214,12 +214,24 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         final BeanDefinition searchExecutor = v2Parser.createSearchExecutor();
         builder.addPropertyValue("searchExecutor", searchExecutor);
 
-        final BeanDefinition def = v2Parser.createMappingStrategy();
-        if (def != null) {
-            builder.addPropertyValue("mappingStrategy", def);
+        final String mappingStrategyID = AttributeSupport.getAttributeValue(config, new QName("mappingStrategyRef"));
+        if (mappingStrategyID != null) {
+            builder.addPropertyReference("mappingStrategy", mappingStrategyID);
+        } else {
+            final BeanDefinition def = v2Parser.createMappingStrategy();
+            if (def != null) {
+                builder.addPropertyValue("mappingStrategy", def);
+            }
         }
 
-        builder.addPropertyValue("resultsCache", v2Parser.createCache());
+        final Element resultCacheBean =
+                ElementSupport.getFirstChildElement(config, new QName(
+                        DataConnectorNamespaceHandler.NAMESPACE, "ResultCacheBean"));
+        if (resultCacheBean != null) {
+            builder.addPropertyReference("resultsCache", resultCacheBean.getTextContent().trim());
+        } else {
+            builder.addPropertyValue("resultsCache", v2Parser.createCache());
+        }
 
         final String noResultIsError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
         if (noResultIsError != null) {
