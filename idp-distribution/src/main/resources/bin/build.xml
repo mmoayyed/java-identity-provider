@@ -59,7 +59,7 @@
 	   </echo>
 	   <property file="${idp.property.file}"/>
     </target>
-	<target name="allinput" depends="gettarget, checkproperties, gethostname, getentityid, geturisubjectaltname, getkeystorepassword, getsealerpassword, getsealeralias, setscope, askscope" />
+	<target name="allinput" depends="gettarget, checkproperties, gethostname, getentityid, geturisubjectaltname, setscope, askscope, getkeystorepassword, getsealerpassword, getsealeralias" />
 
 	<target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
 		<echo append="true" file="idp_ant.log">target: gethostname
@@ -185,31 +185,9 @@
 
 	<target name="genkeys" depends="init, preload, checkproperties, signing-key, encryption-key, backchannel-key, sealer" />
  
-	<target name="checkproperties" depends="gettarget, target-properties">
+	<target name="checkproperties" depends="gettarget, v2detect, target-properties">
 		<echo append="true" file="idp_ant.log">target: checkproperties
 		</echo>
-		<!-- Detecting credential and metadata presence is overridden in the case of a V2 upgrade -->
-		<condition property="idp.signing.present">
-			<or>
-				<istrue value="${idp.is.V2}" />
-				<available file="${idp.target.dir}/credentials/idp-signing.crt" />
-			</or>
-		</condition>
-		<condition property="idp.encryption.present">
-			<or>
-				<istrue value="${idp.is.V2}" />
-				<available file="${idp.target.dir}/credentials/idp-encryption.crt" />
-			</or>
-		</condition>
-		<available property="idp.p12.keystore.present" file="${idp.target.dir}/credentials/idp-backchannel.p12" />
-		<available property="idp.jks.keystore.present" file="${idp.target.dir}/credentials/idp-backchannel.jks" />
-		<condition property="idp.backchannel.present">
-			<or>
-				<istrue value="${idp.is.V2}" />
-				<istrue value="${idp.p12.keystore.present}" />
-				<istrue value="${idp.jks.keystore.present}" />
-			</or>
-		</condition>
 		<condition property="idp.metadata.present">
 			<or>
 				<istrue value="${idp.is.V2}" />
@@ -221,23 +199,10 @@
         <available property="ldap.properties.present" file="${idp.target.dir}/conf/ldap.properties" />
 		<available property="services.properties.present" file="${idp.target.dir}/conf/services.properties" />
 		<condition property="idp.will.call.certgen">
-			<!--
-			we will call the cert gen if
-           	EITHER we don't have a signing keypair
-           		OR we don't have a encryption keypair
-           		OR we don't have a backchannel keystore
-           	-->
-			<or>
-				<not>
-					<istrue value="${idp.signing.present}" />
-				</not>
-				<not>
-					<istrue value="${idp.encryption.present}" />
-				</not>
-				<not>
-					<istrue value="${idp.backchannel.present}" />
-				</not>
-			</or>
+		  <!-- We will call CertGen if there is no relying party.  Otherwise the certificates are deemed to be there -->
+		  <not>
+		    <istrue value="${idp.relying.party.present}" />
+		  </not>
 		</condition>
 
 		<condition property="idp.ask.entityid">
@@ -300,13 +265,14 @@
 		</condition>
 
 		<condition property="idp.ask.keystore.password">
-			<!-- We ask for keystore password if there is no keystore password and no keystore -->
+			<!-- We ask for keystore password if there is no keystore password and 
+			     the relying party (and hence keys) are not there -->
 			<and>
 				<not>
 					<isset property="idp.keystore.password" />
 				</not>
 				<not>
-					<istrue value="${idp.backchannel.present}" />
+					<istrue value="${idp.relying.party.present}" />
 				</not>
 			</and>
 		</condition>
@@ -383,7 +349,7 @@
 		
 	</target>
 
-	<target name="signing-key" unless="idp.signing.present" depends="gethostname, geturisubjectaltname">
+	<target name="signing-key" unless="idp.relying.party.present" depends="gethostname, geturisubjectaltname">
 		<echo append="true" file="idp_ant.log">target: signing-key
 		</echo>
 		<echo>Creating Signing Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
@@ -391,7 +357,7 @@
 		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-signing.key" certificateFile="${idp.target.dir}/credentials/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
-	<target name="encryption-key" unless="idp.encryption.present" depends="gethostname, geturisubjectaltname">
+	<target name="encryption-key" unless="idp.relying.party.present" depends="gethostname, geturisubjectaltname">
 		<echo append="true" file="idp_ant.log">target: encryption-key
 		</echo>
 		<echo>Creating Encryption Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
@@ -399,7 +365,7 @@
 		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-encryption.key" certificateFile="${idp.target.dir}/credentials/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
-	<target name="backchannel-key" unless="idp.backchannel.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
+	<target name="backchannel-key" unless="idp.relying.party.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
 		<echo append="true" file="idp_ant.log">target: backchannel-key
 		</echo>
 		<echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
