@@ -646,8 +646,10 @@ A V2 Installation has been detected. Configuration will be preserved into
 	</target>
 	
 	<target name="reprotect" depends="gettarget">
+		<!-- See IdP 487 -->
         <chmod perm="755" dir="${idp.target.dir}/bin" includes="**/*.sh"/>
         <chmod perm="600" dir="${idp.target.dir}/credentials" includes="**/*.key"/>
+        <chmod perm="600" dir="${idp.target.dir}/conf" includes="**/*"/>
         <chmod perm="444" dir="${idp.target.dir}/system" includes="**/*"/>
         <attrib readonly="true">
             <fileset dir="${idp.target.dir}/system" includes="**/*"/>
