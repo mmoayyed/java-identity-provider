@@ -17,7 +17,6 @@
 
     <properties>
         <assembly-directory>${project.build.directory}/${project.build.finalName}</assembly-directory>
-        <jetty9-dta-ssl.version>1.0-SNAPSHOT</jetty9-dta-ssl.version>
     </properties>
 
     <dependencies>
