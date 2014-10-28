@@ -44,7 +44,7 @@ import com.google.common.cache.Cache;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /** Test for {@link RDBMSDataConnectorParser}. */
-public class RdbmsDataConnectorParserTest {
+public class RDBMSDataConnectorParserTest {
 
     private static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsStore.sql";
 
@@ -111,7 +111,7 @@ public class RdbmsDataConnectorParserTest {
 
     protected RDBMSDataConnector getRdbmsDataConnector(final String... beanDefinitions) {
         GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + RdbmsDataConnectorParserTest.class);
+        context.setDisplayName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 

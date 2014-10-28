@@ -65,7 +65,7 @@ import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
 
 /** Test for {@link LDAPDataConnectorParser}. */
-public class LdapDataConnectorParserTest {
+public class LDAPDataConnectorParserTest {
 
     /** In-memory directory server. */
     private InMemoryDirectoryServer directoryServer;
@@ -170,7 +170,7 @@ public class LdapDataConnectorParserTest {
      */
     @Test public void IdP338Canary() {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
+        context.setDisplayName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
@@ -218,7 +218,7 @@ public class LdapDataConnectorParserTest {
 
     protected LDAPDataConnector getLdapDataConnector(final String[] beanDefinitions) {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + LdapDataConnectorParserTest.class);
+        context.setDisplayName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
