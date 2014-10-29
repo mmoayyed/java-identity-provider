@@ -461,7 +461,7 @@
 		<echo append="true" file="idp_ant.log">target: metadata-gen
 		</echo>
 		<mkdir dir="${idp.target.dir}/metadata"/>
-		<metadatagenerate dnsName="${idp.host.name}" backChannelCert="${idp.target.dir}/credentials/idp-backchannel.crt" output="${idp.target.dir}/metadata/idp-metadata.xml"/>
+		<metadatagenerate dnsName="${idp.host.name}" idpHome="${idp.target.dir}" backChannelCert="${idp.target.dir}/credentials/idp-backchannel.crt" output="${idp.target.dir}/metadata/idp-metadata.xml"/>
 	</target>
 	
 	<!--

@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.installer.metadata.MetadataGenerator;
 import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
@@ -42,25 +45,47 @@ import org.springframework.core.io.Resource;
 public class MetadataGeneratorTask extends Task {
 
     /** Where we collect the parameters. */
-    private final MetadataGeneratorParameters parameters;
 
     /** where to put the data. */
     private File outputFile;
-    
+
+    /** Where idp.home is. */
+    @Nullable private String idpHome;
+
+    /** Ant level override for the encryption certificate. */
+    @Nullable private File encryptionCert;
+
+    /** Ant level override for the signing certificate. */
+    @Nullable private File signingCert;
+
+    /** Ant level override for the back channel certificate. */
+    @Nullable private File backchannelCert;
+
+    /** Ant level override for the entity ID. */
+    @Nullable private String entityID;
+
+    /** Ant level override for the DNS name. */
+    @Nullable private String dnsName;
+
+    /** Ant level override for the scope. */
+    @Nullable private String scope;
+
     /**
-     * Constructor.
+     * Where is idp.home.
+     * 
+     * @return Returns idpHome.
      */
-    public MetadataGeneratorTask() {
+    @Nullable public String getIdpHome() {
+        return idpHome;
+    }
 
-        final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
-
-        final ApplicationContextInitializer initializer = new IdPPropertiesApplicationContextInitializer();
-
-        final GenericApplicationContext context =
-                SpringSupport.newContext(MetadataGeneratorTask.class.getName(), Collections.singletonList(resource),
-                        Collections.<BeanPostProcessor> emptyList(), Collections.singletonList(initializer), null);
-
-        parameters = context.getBean("IdPConfiguration", MetadataGeneratorParameters.class);
+    /**
+     * Set where where is idp.home.
+     * 
+     * @param home The idpHome to set.
+     */
+    public void setIdpHome(@Nullable String home) {
+        idpHome = home;
     }
 
     /**
@@ -79,8 +104,7 @@ public class MetadataGeneratorTask extends Task {
      * @param file what to set.
      */
     public void setEncryptionCert(File file) {
-
-        parameters.setEncryptionCert(file);
+        encryptionCert = file;
     }
 
     /**
@@ -89,8 +113,7 @@ public class MetadataGeneratorTask extends Task {
      * @param file what to set.
      */
     public void setSigningCert(File file) {
-
-        parameters.setSigningCert(file);
+        signingCert = file;
     }
 
     /**
@@ -99,8 +122,7 @@ public class MetadataGeneratorTask extends Task {
      * @param file what to set.
      */
     public void setBackchannelCert(File file) {
-
-        parameters.setBackchannelCert(file);
+        backchannelCert = file;
     }
 
     /**
@@ -109,7 +131,7 @@ public class MetadataGeneratorTask extends Task {
      * @param id what to set.
      */
     public void setEntityID(String id) {
-        parameters.setEntityID(id);
+        entityID = id;
     }
 
     /**
@@ -118,7 +140,7 @@ public class MetadataGeneratorTask extends Task {
      * @param name what to set.
      */
     public void setDnsName(String name) {
-        parameters.setDnsName(name);
+        dnsName = name;
     }
 
     /**
@@ -127,13 +149,37 @@ public class MetadataGeneratorTask extends Task {
      * @param value what to set.
      */
     public void setScope(String value) {
-        parameters.setScope(value);
+        scope = value;
     }
 
     /** {@inheritDoc} */
+    // Checkstyle: CyclomaticComplexity OFF
     @Override public void execute() {
-
         try {
+            final MetadataGeneratorParameters parameters;
+
+            final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
+
+            final ApplicationContextInitializer initializer = new Initializer();
+
+            final GenericApplicationContext context =
+                    SpringSupport.newContext(MetadataGeneratorTask.class.getName(),
+                            Collections.singletonList(resource), Collections.<BeanPostProcessor> emptyList(),
+                            Collections.singletonList(initializer), null);
+
+            parameters = context.getBean("IdPConfiguration", MetadataGeneratorParameters.class);
+
+            if (encryptionCert != null) {
+                parameters.setEncryptionCert(encryptionCert);
+            }
+            if (signingCert != null) {
+                parameters.setSigningCert(signingCert);
+            }
+            if (backchannelCert != null) {
+                parameters.setBackchannelCert(backchannelCert);
+            }
+
+
             final MetadataGenerator generator = new MetadataGenerator(outputFile);
             final List<List<String>> signing = new ArrayList<>(2);
             List<String> value = parameters.getBackchannelCert();
@@ -149,15 +195,42 @@ public class MetadataGeneratorTask extends Task {
             if (null != value) {
                 generator.setEncryptionCerts(Collections.singletonList(value));
             }
-            generator.setDNSName(parameters.getDnsName());
-            generator.setEntityID(parameters.getEntityID());
-            generator.setScope(parameters.getScope());
+            if (dnsName != null) {
+                generator.setDNSName(dnsName);
+            } else {
+                generator.setDNSName(parameters.getDnsName());
+            }
+            if (entityID != null) {
+                generator.setEntityID(entityID);
+            } else {
+                generator.setEntityID(parameters.getEntityID());   
+            }
+            if (scope != null) {
+                generator.setScope(scope);
+            } else {
+                generator.setScope(parameters.getScope());
+            }
             generator.generate();
-            
+
         } catch (Exception e) {
             log("Build failed", e, Project.MSG_ERR);
             throw new BuildException(e);
         }
     }
+    // Checkstyle: CyclomaticComplexity ON
 
+    /**
+     * An initializer which knows about our idp.home.
+     * 
+     */
+    public class Initializer extends IdPPropertiesApplicationContextInitializer {
+        @Override @Nonnull public String[] getSearchLocations() {
+            if (null == idpHome) {
+                return super.getSearchLocations();
+            }
+            final String[] result = new String[1];
+            result[0] = idpHome;
+            return result;
+        }
+    }
 }
