@@ -15,24 +15,41 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.authn;
+package net.shibboleth.idp.cas.config;
 
-import java.security.GeneralSecurityException;
+import javax.annotation.Nonnull;
 
 /**
- * Strategy pattern component for authentication.
+ * CAS proxy ticket configuration modeled as an IdP profile.
  *
  * @author Marvin S. Addison
  */
-public interface Authenticator<CredentialType, ResultType> {
-    /**
-     * Authenticates the given credential.
-     *
-     * @param credential Credential to authenticate.
-     *
-     * @return An authentication result of the defined type.
-     *
-     * @throws java.security.GeneralSecurityException On authentication failure.
-     */
-    ResultType authenticate(CredentialType credential) throws GeneralSecurityException;
+public class ProxyTicketConfiguration extends AbstractTicketConfiguration {
+
+    /** Proxy ticket profile URI. */
+    public static final String PROFILE_ID = PROTOCOL_URI + "/pt";
+
+    /** Default ticket prefix. */
+    public static final String DEFAULT_TICKET_PREFIX = "PT";
+
+    /** Default ticket length (random part). */
+    public static final int DEFAULT_TICKET_LENGTH = 25;
+
+
+    /** Creates a new instance. */
+    public ProxyTicketConfiguration() {
+        super(PROFILE_ID);
+    }
+
+    @Override
+    @Nonnull
+    protected String getDefaultTicketPrefix() {
+        return DEFAULT_TICKET_PREFIX;
+    }
+
+    @Override
+    @Nonnull
+    protected int getDefaultTicketLength() {
+        return DEFAULT_TICKET_LENGTH;
+    }
 }

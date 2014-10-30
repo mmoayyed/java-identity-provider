@@ -94,8 +94,17 @@
         p:encryptionOptional="%{idp.encryption.optional:false}" />
     
     <bean id="Liberty.SSOS"
-        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />    
-    
+        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />
+
+    <bean id="CAS.ServiceTicketConfig" class="net.shibboleth.idp.cas.config.ServiceTicketConfiguration"
+          p:ticketValidityPeriod="PT15S" />
+
+    <bean id="CAS.ProxyTicketConfig" class="net.shibboleth.idp.cas.config.ProxyTicketConfiguration"
+          p:ticketValidityPeriod="PT15S" />
+
+    <bean id="CAS.ProxyGrantingTicketConfig" class="net.shibboleth.idp.cas.config.ProxyGrantingTicketConfiguration"
+          p:ticketValidityPeriod="PT12H" />
+
     <!-- Artifact Configuration Defaults -->
     
     <bean id="shibboleth.DefaultArtifactConfiguration"

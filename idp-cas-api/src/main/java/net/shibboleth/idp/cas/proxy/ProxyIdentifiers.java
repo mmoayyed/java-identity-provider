@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.authn;
+package net.shibboleth.idp.cas.proxy;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
