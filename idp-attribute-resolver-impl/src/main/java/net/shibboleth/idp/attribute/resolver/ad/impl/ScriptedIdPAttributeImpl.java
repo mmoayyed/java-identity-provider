@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.scripted.ScriptedIdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -43,13 +44,13 @@ import com.google.common.collect.Lists;
  * NOTE, the java signature for this class may and will change on minor version changes. However the Scripting interface
  * will remain the same (methods will never be removed).
  */
-public class ScriptedIdPAttribute {
+public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
 
     /** The {@link IdPAttribute} we are encapsulating. */
     private final IdPAttribute encapsulatedAttribute;
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(ScriptedIdPAttribute.class);
+    private final Logger log = LoggerFactory.getLogger(ScriptedIdPAttributeImpl.class);
 
     /** has method {@link #getNativeAttribute()} be called. */
     private boolean calledGetNativeAttribute;
@@ -70,7 +71,7 @@ public class ScriptedIdPAttribute {
      * @param attribute the attribute we are encapsulating.
      * @param prefix the log path from the definition.
      */
-    public ScriptedIdPAttribute(@Nonnull final IdPAttribute attribute, final String prefix) {
+    public ScriptedIdPAttributeImpl(@Nonnull final IdPAttribute attribute, final String prefix) {
         encapsulatedAttribute = attribute;
 
         logPrefix =
@@ -108,6 +109,7 @@ public class ScriptedIdPAttribute {
      * @return a modifiable collection of the string attributes (not the String
      * @throws ResolutionException if the script has called {@link #getNativeAttribute()}
      */
+    @Override
     @Nullable @NonnullElements public Collection<Object> getValues() throws ResolutionException {
         if (calledGetNativeAttribute) {
             throw new ResolutionException(getLogPrefix()
@@ -126,6 +128,7 @@ public class ScriptedIdPAttribute {
      * @return the attribute
      * @throws ResolutionException if the script has called getValues.
      */
+    @Override
     @Nonnull public IdPAttribute getNativeAttribute() throws ResolutionException {
         if (null != attributeValues) {
             throw new ResolutionException(getLogPrefix()
@@ -140,6 +143,7 @@ public class ScriptedIdPAttribute {
      * 
      * @return the id
      */
+    @Override
     @Nonnull @NotEmpty public String getId() {
         return encapsulatedAttribute.getId();
     }
@@ -180,6 +184,7 @@ public class ScriptedIdPAttribute {
      * @param what a {@link String} or a {@link IdPAttributeValue} to add.
      * @throws ResolutionException if the provided value is of the wrong type
      */
+    @Override
     public void addValue(@Nullable final Object what) throws ResolutionException {
         policeValueType(what);
 

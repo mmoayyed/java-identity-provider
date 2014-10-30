@@ -37,7 +37,7 @@ import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttribute;
+import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -155,7 +155,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());
             pseudoAttribute.setValues(dependencyAttribute.getValue());
 
-            scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedIdPAttribute(pseudoAttribute,
+            scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedIdPAttributeImpl(pseudoAttribute,
                     getLogPrefix()), ScriptContext.ENGINE_SCOPE);
         }
 

@@ -25,8 +25,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
@@ -81,6 +81,7 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -92,7 +93,7 @@ public class SAMLAttributeDataConnector extends AbstractDataConnector {
     }
 
     /**
-     * Method to convert a singled {@link XMLObject} into an {@link IdPAttributeValue} if possible. TODO for testing this
+     * Method to convert a singled {@link XMLObject} into an {@link IdPAttributeValue} if possible. For testing this
      * is hard-wired - strings become scoped or non scoped (with the scope delimiter being '@'), everything else an
      * {@link XMLObjectAttributeValue}
      * 

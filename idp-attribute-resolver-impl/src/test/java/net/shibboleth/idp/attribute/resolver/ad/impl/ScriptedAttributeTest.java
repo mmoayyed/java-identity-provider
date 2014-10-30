@@ -56,7 +56,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 
-/** test for {@link net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttribute}. */
+/** test for {@link net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl}. */
 public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     /** The name. */
@@ -212,7 +212,6 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     @Test public void fails() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
 
-        // TODO
         failureTest("fail1.script", "Unknown method", true);
         failureTest("fail2.script", "Bad output type", true);
         if (!isV8()) {
