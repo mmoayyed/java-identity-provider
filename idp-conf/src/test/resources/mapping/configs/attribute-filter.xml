@@ -43,15 +43,4 @@
 
 	</afp:AttributeFilterPolicy> 
 
-    <afp:AttributeFilterPolicy id="EANOTKFILTER">
-        <afp:PolicyRequirementRule id="prrEA2" xsi:type="saml:EntityAttributeExactMatch"
-            attributeName="http://macedir.org/entity-category"
-            attributeValue="http://example.org/category" />
-
-        <afp:AttributeRule attributeID="IdPNotOK">
-            <afp:PermitValueRule xsi:type="basic:ANY"/>
-        </afp:AttributeRule>
-
-    </afp:AttributeFilterPolicy> 
-
 </afp:AttributeFilterPolicyGroup>
