@@ -32,12 +32,6 @@ Part 1 of a two part attribute resolver.
         <dc:Attribute id="ra_1">
             <dc:Value>RA1</dc:Value>
         </dc:Attribute>
-        <dc:Attribute id="ea_1">
-            <dc:Value>http://refeds.org/category/research-and-scholarship</dc:Value>
-        </dc:Attribute>
-        <dc:Attribute id="ea_2">
-            <dc:Value>http://example.org/category/category</dc:Value>
-        </dc:Attribute>
         <dc:Attribute id="OK">
             <dc:Value>OK</dc:Value>
         </dc:Attribute>
@@ -47,20 +41,6 @@ Part 1 of a two part attribute resolver.
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="IdPRA1" sourceAttributeID="ra_1">
         <resolver:Dependency ref="staticAttributes" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:2.16.840.1.113730.3.1.241" nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" friendlyName="raOne" />
-    </resolver:AttributeDefinition>
-    
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="IdPEA1" sourceAttributeID="ea_1">
-        <resolver:Dependency ref="staticAttributes" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML2String" 
-            name="http://macedir.org/entity-category"
-            nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" friendlyName="eaOne" />
-    </resolver:AttributeDefinition>
-    
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="IdPEA2" sourceAttributeID="ea_2">
-        <resolver:Dependency ref="staticAttributes" />
-        <resolver:AttributeEncoder xsi:type="enc:SAML2String" 
-            name="http://macedir.org/entity-category"
-            nameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri" friendlyName="eaTwo" />
     </resolver:AttributeDefinition>
     
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="IdPOK" sourceAttributeID="OK">
