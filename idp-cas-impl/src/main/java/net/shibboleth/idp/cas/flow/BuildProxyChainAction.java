@@ -51,7 +51,8 @@ public class BuildProxyChainAction
     private final Logger log = LoggerFactory.getLogger(BuildProxyChainAction.class);
 
     /** Manages CAS tickets. */
-    @Nonnull private final TicketService ticketService;
+    @Nonnull
+    private final TicketService ticketService;
 
 
     /**

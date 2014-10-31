@@ -43,7 +43,7 @@ import javax.annotation.Nonnull;
  *     <li>{@link Events#Success success}</li>
  *     <li>{@link ProtocolError#TicketCreationError ticketCreationError}</li>
  * </ul>
- * In the success case a {@link net.shibboleth.idp.cas.protocol.ProxyTicketResponse} message is created and stored
+ * In the success case a {@link ProxyTicketResponse} message is created and stored
  * as request scope parameter under the key {@value FlowStateSupport#PROXY_TICKET_RESPONSE_KEY}.
  *
  * @author Marvin S. Addison

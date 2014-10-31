@@ -46,7 +46,7 @@ public class ConfigLookupFunction<T extends AbstractTicketConfiguration> impleme
     public T apply(@Nullable ProfileRequestContext profileRequestContext) {
         if (profileRequestContext != null) {
             final RelyingPartyContext rpContext = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
-            if (rpContext != null && configClass.isInstance(rpContext.getConfiguration())) {
+            if (rpContext != null && configClass.isInstance(rpContext.getProfileConfig())) {
                 return configClass.cast(rpContext.getProfileConfig());
             }
         }

@@ -37,7 +37,7 @@ import static org.testng.AssertJUnit.fail;
  * @author Marvin S. Addison
  */
 @ContextConfiguration(
-        locations = "/test/proxy-authn-test.xml",
+        locations = "/spring/proxy-authn-test.xml",
         initializers = IdPPropertiesApplicationContextInitializer.class)
 @WebAppConfiguration
 public class HttpClientProxyAuthenticatorTest extends AbstractTestNGSpringContextTests {
