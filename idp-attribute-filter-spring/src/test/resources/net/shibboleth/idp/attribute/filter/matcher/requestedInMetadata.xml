@@ -4,14 +4,14 @@
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd
                             urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd
                             urn:mace:shibboleth:2.0:afp:mf:saml http://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd">                            
-    <afp:PolicyRequirementRule xsi:type="saml:RequestedAttributeInMetadata"
+    <afp:PolicyRequirementRule xsi:type="saml:AttributeInMetadata"
                            id="PRR"
                            onlyIfRequired="true"
                            matchIfMetadataSilent="true"/>
                             
     <afp:AttributeRule attributeID="email">
 		
-		<afp:PermitValueRule xsi:type="saml:RequestedAttributeInMetadata"
+		<afp:PermitValueRule xsi:type="saml:AttributeInMetadata"
                      	     id="PermitRule"
 	                         onlyIfRequired="true"
 	                         matchIfMetadataSilent="true"

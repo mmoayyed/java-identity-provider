@@ -23,42 +23,19 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
-import net.shibboleth.utilities.java.support.xml.QNameSupport;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
-import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.common.messaging.context.navigate.AttributeConsumerServiceLookupFunction;
-import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import com.google.common.base.Functions;
 
 /**
  * Bean definition parser for {@link AttributeInMetadataMatcher}.
  */
 public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
-
     
     /** Schema type. */
     public static final QName ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeInMetadata");
-
-    /** Schema type. */
-    public static final QName ENTITY_ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "EntityAttributeInMetadata");
-
-    /** Schema type. */
-    public static final QName REQUESTED_ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
-            "RequestedAttributeInMetadata");
-
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(AttributeInMetadataRuleParser.class);
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeInMetadataMatcher> getNativeBeanClass() {
@@ -69,10 +46,6 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
     @Override protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
-        
-        if (ATTRIBUTE_IN_METADATA.equals(QNameSupport.getNodeQName(config))) {
-            log.info("AttributeInMetadata is deprecated and superseded by RequestedAttributeInMetadata");
-        }
 
         if (config.hasAttributeNS(null, "onlyIfRequired")) {
             builder.addPropertyValue("onlyIfRequired", config.getAttributeNS(null, "onlyIfRequired"));
@@ -82,13 +55,14 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
             builder.addPropertyValue("matchIfMetadataSilent", 
                     config.getAttributeNS(null, "matchIfMetadataSilent"));
         }
+        
+        if (config.hasAttributeNS(null, "attributeName")) {
+            builder.addPropertyValue("attributeName", config.getAttributeNS(null, "attributeName"));
+        }
 
-        if (ENTITY_ATTRIBUTE_IN_METADATA.equals(DOMTypeSupport.getXSIType(config))) {
-            builder.addPropertyValue("objectStrategy", new EntityDescriptorLookupFunction());
-        } else {
-            builder.addPropertyValue("objectStrategy", Functions.compose(new AttributeConsumerServiceLookupFunction(),
-                    new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
-                            AttributeConsumingServiceContext.class)));
+        if (config.hasAttributeNS(null, "attributeNameFormat")) {
+            builder.addPropertyValue("attributeNameFormat", config.getAttributeNS(null, "attributeNameFormat"));
         }
     }
+    
 }

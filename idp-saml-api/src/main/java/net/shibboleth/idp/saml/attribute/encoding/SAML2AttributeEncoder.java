@@ -19,15 +19,29 @@ package net.shibboleth.idp.saml.attribute.encoding;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+
 import org.opensaml.saml.saml2.core.Attribute;
 
 
 /**
- * Marker interface for encoders that produce a SAML 2 {@link Attribute}.
+ * Interface for encoders that produce a SAML 2 {@link Attribute}.
  * 
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
-public interface SAML2AttributeEncoder<EncodedType extends IdPAttributeValue> extends
-        AttributeEncoder<Attribute> {
+public interface SAML2AttributeEncoder<EncodedType extends IdPAttributeValue> extends AttributeEncoder<Attribute> {
 
+    /**
+     * Get the encoded Name of the attribute.
+     * 
+     * @return name of the attribute
+     */
+    @NonnullAfterInit String getName();
+ 
+    /**
+     * Get the encoded NameFormat of the attribute.
+     * 
+     * @return name format of the attribute
+     */
+    @NonnullAfterInit String getNameFormat();
 }

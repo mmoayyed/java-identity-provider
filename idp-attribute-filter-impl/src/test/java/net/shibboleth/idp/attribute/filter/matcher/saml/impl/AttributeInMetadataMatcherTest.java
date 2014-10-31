@@ -17,98 +17,120 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
-import net.shibboleth.idp.saml.attribute.mapping.AttributesMapContainer;
+import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.common.messaging.context.navigate.AttributeConsumerServiceLookupFunction;
-import org.opensaml.saml.saml2.metadata.impl.AttributeConsumingServiceBuilder;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeValue;
+import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
+import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Functions;
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 /**
  * Tests for {@link AttributeInMetadataMatcher}
  */
 public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
 
+    private SAMLObjectBuilder<AttributeConsumingService> acsBuilder;
+    private SAMLObjectBuilder<RequestedAttribute> reqAttributeBuilder;
+    private XMLObjectBuilder<XSString> valueBuilder;
+
+    @BeforeMethod public void setUp() {
+        acsBuilder = (SAMLObjectBuilder<AttributeConsumingService>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<AttributeConsumingService>getBuilderOrThrow(
+                        AttributeConsumingService.DEFAULT_ELEMENT_NAME);
+        reqAttributeBuilder = (SAMLObjectBuilder<RequestedAttribute>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<RequestedAttribute>getBuilderOrThrow(
+                        RequestedAttribute.DEFAULT_ELEMENT_NAME);
+        valueBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(XSString.TYPE_NAME);
+    }
+
     private IdPAttribute makeAttribute(String id, List<? extends IdPAttributeValue<?>> values) {
-        IdPAttribute attr = new IdPAttribute(id);
+        final IdPAttribute attr = new IdPAttribute(id);
         attr.setValues(values);
+        
+        final SAML2StringAttributeEncoder encoder = new SAML2StringAttributeEncoder();
+        encoder.setName(id);
+        encoder.setNameFormat(Attribute.BASIC);
+        
+        attr.setEncoders(Collections.<AttributeEncoder<?>>singleton(encoder));
         return attr;
     }
 
-    private AttributeInMetadataMatcher makeMatcher(String id, boolean matchIfMetadataSilent, boolean onlyIfRequired)
+    private AttributeInMetadataMatcher makeMatcher(String id, boolean matchIfMetadataSilent, boolean onlyIfRequired,
+            String name, String nameFormat)
             throws ComponentInitializationException {
         AttributeInMetadataMatcher matcher = new AttributeInMetadataMatcher();
         matcher.setMatchIfMetadataSilent(matchIfMetadataSilent);
         matcher.setOnlyIfRequired(onlyIfRequired);
+        matcher.setAttributeName(name);
+        matcher.setAttributeNameFormat(nameFormat);
         matcher.setId(id);
-        matcher.setObjectStrategy(Functions.compose(new AttributeConsumerServiceLookupFunction(),
-                new ChildContextLookup<SAMLMetadataContext, AttributeConsumingServiceContext>(
-                        AttributeConsumingServiceContext.class)));
         matcher.initialize();
         return matcher;
     }
 
     private void setRequestedAttributesInContext(final AttributeFilterContext context,
-            final Multimap<String, IdPRequestedAttribute> multimap) {
-        final AttributesMapContainer<IdPRequestedAttribute> container = new AttributesMapContainer<>(multimap);
+            final Collection<RequestedAttribute> attributes) {
         final SAMLMetadataContext samlMetadataContext = context.getSubcontext(SAMLMetadataContext.class, true);
         final AttributeConsumingServiceContext acsCtx =
                 samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true);
-        acsCtx.setAttributeConsumingService(new AttributeConsumingServiceBuilder().buildObject());
-        acsCtx.getAttributeConsumingService().getObjectMetadata().put(container);
-        context.setRequesterMetadataContextLookupStrategy(new ChildContextLookup<AttributeFilterContext, SAMLMetadataContext>(
-                SAMLMetadataContext.class));
+        acsCtx.setAttributeConsumingService(acsBuilder.buildObject());
+        acsCtx.getAttributeConsumingService().getRequestAttributes().addAll(attributes);
+        context.setRequesterMetadataContextLookupStrategy(
+                new ChildContextLookup<AttributeFilterContext,SAMLMetadataContext>(SAMLMetadataContext.class));
     }
 
-    private AttributeFilterContext makeContext(String attributeId, IdPRequestedAttribute attribute) {
-
+    private AttributeFilterContext makeContext(RequestedAttribute attribute) {
         final AttributeFilterContext context = new AttributeFilterContext();
-
-        if (null != attributeId) {
-            final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
-            multimap.put(attributeId, attribute);
-            setRequestedAttributesInContext(context, multimap);
+        if (attribute != null) {
+            setRequestedAttributesInContext(context, Collections.singletonList(attribute));
         }
         return context;
     }
 
-    private AttributeFilterContext makeContext(IdPRequestedAttribute attribute) {
-
-        if (null == attribute) {
-            return makeContext(null, null);
-        }
-        return makeContext(attribute.getId(), attribute);
-    }
-
     @Test public void getters() throws ComponentInitializationException {
-        AttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
+        AttributeInMetadataMatcher matcher = makeMatcher("test", true, true, null, null);
         Assert.assertTrue(matcher.getMatchIfMetadataSilent());
         Assert.assertTrue(matcher.getOnlyIfRequired());
-
-        matcher = makeMatcher("test", false, false);
+        Assert.assertNull(matcher.getAttributeName());
+        Assert.assertNull(matcher.getAttributeNameFormat());
+        
+        matcher = makeMatcher("test", false, false, null, null);
         Assert.assertFalse(matcher.getMatchIfMetadataSilent());
         Assert.assertFalse(matcher.getOnlyIfRequired());
-    }
+        Assert.assertNull(matcher.getAttributeName());
+        Assert.assertNull(matcher.getAttributeNameFormat());
+
+        matcher = makeMatcher("test", false, true, "foo", "bar");
+        Assert.assertFalse(matcher.getMatchIfMetadataSilent());
+        Assert.assertTrue(matcher.getOnlyIfRequired());
+        Assert.assertEquals(matcher.getAttributeName(), "foo");
+        Assert.assertEquals(matcher.getAttributeNameFormat(), "bar");
+}
 
     @Test public void noRequested() throws ComponentInitializationException {
 
@@ -116,13 +138,13 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
                 makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         Set<IdPAttributeValue<?>> result =
-                makeMatcher("test", true, true).getMatchingValues(attr, new AttributeFilterContext());
+                makeMatcher("test", true, true, null, null).getMatchingValues(attr, new AttributeFilterContext());
 
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
 
-        result = makeMatcher("test", false, true).getMatchingValues(attr, new AttributeFilterContext());
+        result = makeMatcher("test", false, true, null, null).getMatchingValues(attr, new AttributeFilterContext());
         Assert.assertTrue(result.isEmpty());
     }
 
@@ -131,34 +153,55 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        final AttributeInMetadataMatcher matcher = makeMatcher("test", true, true);
+        final AttributeInMetadataMatcher matcher = makeMatcher("test", true, false, null, null);
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
 
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
 
-        result = matcher.getMatchingValues(attr, makeContext(new IdPRequestedAttribute("wrongAttr")));
+        final RequestedAttribute wrongAttr = reqAttributeBuilder.buildObject();
+        wrongAttr.setName("wrongAttr");
+        wrongAttr.setNameFormat(Attribute.BASIC);
+        result = matcher.getMatchingValues(attr, makeContext(wrongAttr));
         Assert.assertTrue(result.isEmpty());
     }
 
+    @Test public void otherRequested() throws ComponentInitializationException {
+
+        final IdPAttribute attr =
+                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+
+        final AttributeInMetadataMatcher matcher = makeMatcher("test", false, false, "attr2", Attribute.BASIC);
+
+        final RequestedAttribute wrongAttr = reqAttributeBuilder.buildObject();
+        wrongAttr.setName("attr2");
+        wrongAttr.setNameFormat(Attribute.BASIC);
+        
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(wrongAttr));
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
+        Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
+
+    }
+    
     @Test public void isRequiredOnly() throws ComponentInitializationException {
 
         final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        IdPRequestedAttribute required = new IdPRequestedAttribute("attr");
-        required.setRequired(false);
+        final RequestedAttribute req = reqAttributeBuilder.buildObject();
+        req.setName("attr");
+        req.setNameFormat(Attribute.BASIC);
+        final AttributeFilterContext context = makeContext(req);
 
-        AttributeFilterContext context = makeContext(required);
-
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, false).getMatchingValues(attr, context);
+        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, false, null, null).getMatchingValues(attr, context);
 
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));
 
-        result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        result = makeMatcher("test", false, true, null, null).getMatchingValues(attr, context);
         Assert.assertTrue(result.isEmpty());
     }
 
@@ -167,49 +210,44 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
         final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        IdPRequestedAttribute required = new IdPRequestedAttribute("attr");
-        required.setRequired(true);
-        required.setValues(Collections.singleton(DataSources.STRING_VALUE));
+        final RequestedAttribute req = reqAttributeBuilder.buildObject();
+        req.setName("attr");
+        req.setNameFormat(Attribute.BASIC);
+        req.setIsRequired(true);
+        final XSString val = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        val.setValue(DataSources.STRING_VALUE.getValue());
+        req.getAttributeValues().add(val);
 
-        AttributeFilterContext context = makeContext(required);
+        final AttributeFilterContext context = makeContext(req);
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true, null, null).getMatchingValues(attr, context);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
     }
-
-    @Test public void valuesButNoConvert() throws ComponentInitializationException {
-
-        final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
-
-        AttributeFilterContext context = makeContext("attr", null);
-
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
-        Assert.assertTrue(result.isEmpty());
-    }
-
+    
     @Test public void multiValues() throws ComponentInitializationException {
 
         final IdPAttribute attr =
                 makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
-        IdPRequestedAttribute req1 = new IdPRequestedAttribute("attr");
-        req1.setRequired(true);
-        req1.setValues(Collections.singleton(DataSources.STRING_VALUE));
+        final RequestedAttribute req = reqAttributeBuilder.buildObject();
+        req.setName("attr");
+        req.setNameFormat(Attribute.BASIC);
+        req.setIsRequired(true);
 
-        IdPRequestedAttribute req2 = new IdPRequestedAttribute("attr");
-        req2.setRequired(true);
-        req2.setValues(Collections.singleton(DataSources.NON_MATCH_STRING_VALUE));
+        final XSString val1 = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        val1.setValue(DataSources.STRING_VALUE.getValue());
+        req.getAttributeValues().add(val1);
+
+        final XSString val2 = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        val2.setValue(DataSources.NON_MATCH_STRING_VALUE.getValue());
+        req.getAttributeValues().add(val2);
 
         final AttributeFilterContext context = new AttributeFilterContext();
 
-        final Multimap<String, IdPRequestedAttribute> multimap = ArrayListMultimap.create();
-        multimap.put(req1.getId(), req1);
-        multimap.put(req2.getId(), req2);
-        setRequestedAttributesInContext(context, multimap);
+        setRequestedAttributesInContext(context, Collections.singletonList(req));
 
-        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true).getMatchingValues(attr, context);
+        Set<IdPAttributeValue<?>> result = makeMatcher("test", false, true, null, null).getMatchingValues(attr, context);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(DataSources.STRING_VALUE));
         Assert.assertTrue(result.contains(DataSources.NON_MATCH_STRING_VALUE));

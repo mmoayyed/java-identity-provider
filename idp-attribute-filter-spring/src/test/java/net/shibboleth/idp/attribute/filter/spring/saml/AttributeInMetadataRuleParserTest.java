@@ -19,9 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
-import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
 import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
-import net.shibboleth.idp.attribute.filter.PolicyFromMatcherId;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
@@ -54,28 +52,6 @@ public class AttributeInMetadataRuleParserTest extends  BaseAttributeFilterParse
        Assert.assertTrue(matcher.getMatchIfMetadataSilent());
        Assert.assertTrue(matcher.getOnlyIfRequired());
        Assert.assertTrue(matcher.getId().endsWith(":PRR"));
-}
-
-    @Test public void entity() throws ComponentInitializationException {
-        GenericApplicationContext context = new FilesystemGenericApplicationContext();
-        context.setDisplayName("ApplicationContext: Matcher");
-        
-        final AttributeRule rule = getBean(MATCHER_PATH + "entityAttributeInMetadata.xml", AttributeRule.class, context);
-        rule.initialize();
-
-        MatcherFromPolicy mfp = (MatcherFromPolicy) rule.getMatcher();
-        PolicyFromMatcherId pfm = (PolicyFromMatcherId) mfp.getPolicyRequirementRule();
-        
-        AttributeInMetadataMatcher matcher = (AttributeInMetadataMatcher) pfm.getMatcher();
-        Assert.assertFalse(matcher.getMatchIfMetadataSilent());
-        Assert.assertFalse(matcher.getOnlyIfRequired());
-        Assert.assertTrue(matcher.getId().endsWith(":pvr"));
-        
-        final PolicyFromMatcherId policyRule = (PolicyFromMatcherId) getBean(PolicyRequirementRule.class, context);
-        matcher = (AttributeInMetadataMatcher) policyRule.getMatcher();
-        Assert.assertFalse(matcher.getMatchIfMetadataSilent());
-        Assert.assertFalse(matcher.getOnlyIfRequired());
-        Assert.assertTrue(matcher.getId().endsWith(":prr"));
-
     }
+    
 }

@@ -266,24 +266,24 @@
     <complexType name="AttributeInMetadataType" abstract="true">
         <annotation>
             <documentation>
-                Functions that evaluates to true if an attribute (or specific values) is specified by
-                the supplied metadata.
+                Functions that evaluate to true if an attribute (or specific values) is specified by
+                supplied metadata.
             </documentation>
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <attribute name="onlyIfRequired" type="string">
-                    <annotation>
-                        <documentation>
-                            A boolean flag indicating whether attributes noted as optional should match.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="attributeID" type="string">
                     <annotation>
                         <documentation>
                             The ID of the attribute whose value should be matched. If no attribute ID is specified the
                             ID of the containing attribute rule is assumed.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="onlyIfRequired" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether attributes noted as optional should match.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -303,37 +303,34 @@
         <annotation>
             <documentation>
                 A match function that evaluates to true if an attribute (or specific values) is specified by
-                the requesting entity's AttributeConsumingService SP metadata. Deprecated in V3.
-            </documentation>
-        </annotation>
-        <complexContent>
-            <extension base="saml:AttributeInMetadataType"/>
-        </complexContent>
-    </complexType>
-
-    <complexType name="RequestedAttributeInMetadata">
-        <annotation>
-            <documentation>
-                A match function that evaluates to true if an attribute (or specific values) is specified by
                 the requesting entity's AttributeConsumingService SP metadata.
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="saml:AttributeInMetadataType"/>
+            <extension base="saml:AttributeInMetadataType">
+                <attribute name="attributeName" type="string" use="optional">
+                    <annotation>
+                        <documentation>The name of a requested attribute to look for.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="attributeNameFormat" type="string" use="optional">
+                    <annotation>
+                        <documentation>The name format of a requested attribute to look for.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
         </complexContent>
     </complexType>
 
-    <complexType name="EntityAttributeInMetadata">
+    <complexType name="MappedAttributeInMetadata">
         <annotation>
             <documentation>
-                A match function that evaluates to true if an attribute (or specific values) is specified by
-                the EntityAttributes on the requesting entity's SP metadata.
-                
-                CURRENTLY DEPRECATED awaiting finalization of configurations
+                A match function that evaluates to true if a mapped attribute (or specific values) is specified by
+                the requesting entity's AttributeConsumingService SP metadata.
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="saml:AttributeInMetadataType"/>
+            <extension base="saml:AttributeInMetadataType" />
         </complexContent>
     </complexType>
 

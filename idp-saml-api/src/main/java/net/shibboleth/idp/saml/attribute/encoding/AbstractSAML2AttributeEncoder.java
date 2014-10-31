@@ -92,11 +92,8 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
         friendlyName = StringSupport.trimOrNull(attributeFriendlyName);
     }
 
-    /**
-     * Get the format of the attribute name.
-     * 
-     * @return format of the attribute name
-     */
+    /** {@inheritDoc} */
+    @Override
     @Nullable public String getNameFormat() {
         return format;
     }

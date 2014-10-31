@@ -72,12 +72,8 @@ public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttri
         return SAMLConstants.SAML11P_NS;
     }
 
-    /**
-     * Get the namespace in which the attribute name is interpreted.
-     * 
-     * @return namespace in which the attribute name is interpreted, never null after initialization
-     */
-    @NonnullAfterInit public String getNamespace() {
+    /** {@inheritDoc} */
+    @Override @NonnullAfterInit public String getNamespace() {
         return namespace;
     }
 
