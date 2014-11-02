@@ -63,6 +63,7 @@
         <webflow:flow-location id="security-policy/soap" path="../system/flows/saml/soap-security-flow.xml" />
 
         <!-- Master flow for authentication. -->
+        <webflow:flow-location id="authn.events" path="../conf/authn/authn-events-flow.xml" />
         <webflow:flow-location id="authn.abstract" path="../system/flows/authn/authn-abstract-flow.xml" />
         <webflow:flow-location id="authn-initial" path="../system/flows/authn/initial-authn-flow.xml" />
         <webflow:flow-location id="authn" path="../system/flows/authn/authn-flow.xml" />
@@ -77,6 +78,7 @@
         <webflow:flow-location id="authn/External" path="../system/flows/authn/external-authn-flow.xml" />
 
         <!-- Master flows for post-authn and SAML subject c14n. -->
+        <webflow:flow-location id="c14n.events" path="../conf/c14n/subject-c14n-events-flow.xml" />
         <webflow:flow-location id="c14n.abstract" path="../system/flows/c14n/subject-c14n-abstract-flow.xml" />
         <webflow:flow-location id="c14n/authn" path="../system/flows/c14n/subject-c14n-authn-flow.xml" />
         <webflow:flow-location id="c14n/saml" path="../system/flows/c14n/subject-c14n-saml-flow.xml" />
