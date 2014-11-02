@@ -101,6 +101,7 @@
         <webflow:flow-location id="c14n/LegacyPrincipalConnector" path="../system/flows/c14n/subject-c14n-saml-default-flow.xml" />
 
         <!-- Master intercept flow. -->
+        <webflow:flow-location id="intercept.events" path="../conf/intercept/intercept-events-flow.xml" />
         <webflow:flow-location id="intercept.abstract" path="../system/flows/intercept/intercept-abstract-flow.xml" />
         <webflow:flow-location id="intercept" path="../system/flows/intercept/intercept-flow.xml" />
 
