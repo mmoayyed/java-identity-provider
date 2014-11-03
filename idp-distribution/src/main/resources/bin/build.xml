@@ -79,14 +79,18 @@
 		<echo append="true" file="idp_ant.log">target: getkeystorepassword
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Key Store Password" addproperty="idp.keystore.password" />
+		<input message="Key Store Password" addproperty="idp.keystore.password">
+			<handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
+	    </input>
 	</target>
 
 	<target name="getsealerpassword" if="idp.ask.sealer.password" depends="checkproperties">
 		<echo append="true" file="idp_ant.log">target: getsealerpassword
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Sealer Password" addproperty="idp.sealer.password" />
+		<input message="Sealer Password" addproperty="idp.sealer.password">
+            <handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
+        </input>
         <echo file="${idp.merge.properties}" append="yes">
         	idp.sealer.storePassword=${idp.sealer.password}
         </echo>
