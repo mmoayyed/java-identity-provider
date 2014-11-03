@@ -55,16 +55,20 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
+        if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
+            return false;
+        }
+        
         // Detect a previous attempted flow, and move it to the intermediate collection.
-        // This will prevent re-selecting the same (probably failed) flow again.
+        // This will prevent re-selecting the same flow again.
         if (interceptorContext.getAttemptedFlow() != null) {
-            log.info("{} Moving incomplete flow {} to intermediate set, reselecting a different one", getLogPrefix(),
+            log.info("{} Moving completed flow {} to intermediate set, selecting next one", getLogPrefix(),
                     interceptorContext.getAttemptedFlow().getId());
             interceptorContext.getIntermediateFlows().put(interceptorContext.getAttemptedFlow().getId(),
                     interceptorContext.getAttemptedFlow());
         }
 
-        return super.doPreExecute(profileRequestContext, interceptorContext);
+        return true;
     }
 
     /** {@inheritDoc} */
