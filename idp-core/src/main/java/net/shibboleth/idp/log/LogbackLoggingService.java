@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.Version;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
@@ -87,8 +88,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setApplicationContext(ApplicationContext context) {
+    @Override public void setApplicationContext(ApplicationContext context) {
         applicationContext = context;
     }
 
@@ -177,6 +177,8 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
             configurator.setContext(loggerContext);
             configurator.doConfigure(loggingConfig);
             loggerContext.start();
+            LoggerFactory.getLogger(LogbackLoggingService.class)
+                    .info("Shibboleth IdP Version {}", Version.getVersion());
         } catch (JoranException e) {
             throw new ServiceException(e);
         }
