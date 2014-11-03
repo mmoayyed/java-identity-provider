@@ -132,6 +132,11 @@ public class MetadataGenerator {
      * The Scope.
      */
     private String scope;
+    
+    /**
+     * Whether to comment out the SAML2 AA port.
+     */
+    private boolean saml2AttributeQueryCommented = true;
 
     /**
      * The signing certificates.
@@ -276,12 +281,25 @@ public class MetadataGenerator {
         endpoints = Constraint.isNotNull(points, "supplied endpoints should not be null");
     }
 
+    /** Returns whether to comment the SAML2 AA endpoint.
+     * @return Returns when to comment the SAML2 AA endpoint.
+     */
+    public boolean isSAML2AttributeQueryCommented() {
+        return saml2AttributeQueryCommented;
+    }
+
+    /** Sets whether to comment the SAML2 AA endpoint.
+     * @param asComment whether to comment or not.
+     */
+    public void setSAML2AttributeQueryCommented(boolean asComment) {
+        saml2AttributeQueryCommented = asComment;
+    }
+
     /**
      * Generate the metadata.
      * 
      * @throws IOException if we have a failure.
      */
-
     public void generate() throws IOException {
         writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.newLine();
@@ -770,6 +788,9 @@ public class MetadataGenerator {
 
             case SAML2Query:
                 writer.write("        ");
+                if (isSAML2AttributeQueryCommented()) {
+                    writer.write("<!-- ");
+                }
                 writer.write("<");
                 writer.write(AttributeService.DEFAULT_ELEMENT_LOCAL_NAME);
                 writer.write(" Binding=\"");
@@ -777,6 +798,9 @@ public class MetadataGenerator {
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
                 writer.write(":8443/idp/profile/SAML2/SOAP/AttributeQuery\"/>");
+                if (isSAML2AttributeQueryCommented()) {
+                    writer.write(" -->");
+                }
                 writer.newLine();
                 break;
 

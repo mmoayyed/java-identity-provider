@@ -71,6 +71,11 @@ public class MetadataGeneratorTask extends Task {
     @Nullable private String scope;
 
     /**
+     * Whether to comment out the SAML2 AA port.
+     */
+    private boolean saml2AttributeQueryCommented = true;
+
+    /**
      * Where is idp.home.
      * 
      * @return Returns idpHome.
@@ -152,6 +157,20 @@ public class MetadataGeneratorTask extends Task {
         scope = value;
     }
 
+    /** Returns whether to comment the SAML2 AA endpoint.
+     * @return Returns when to comment the SAML2 AA endpoint.
+     */
+    public boolean isSAML2AttributeQueryCommented() {
+        return saml2AttributeQueryCommented;
+    }
+
+    /** Sets whether to comment the SAML2 AA endpoint.
+     * @param asComment whether to comment or not.
+     */
+    public void setSAML2AttributeQueryCommented(boolean asComment) {
+        saml2AttributeQueryCommented = asComment;
+    }
+
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     @Override public void execute() {
@@ -210,6 +229,7 @@ public class MetadataGeneratorTask extends Task {
             } else {
                 generator.setScope(parameters.getScope());
             }
+            generator.setSAML2AttributeQueryCommented(isSAML2AttributeQueryCommented());
             generator.generate();
 
         } catch (Exception e) {
