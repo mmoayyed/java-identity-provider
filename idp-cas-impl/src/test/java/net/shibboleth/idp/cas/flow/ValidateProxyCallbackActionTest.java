@@ -51,7 +51,11 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
         final ValidateProxyCallbackAction action = new ValidateProxyCallbackAction(
                 mockProxyAuthenticator(null), ticketService);
         action.initialize();
-        assertEquals(action.execute(newRequestContext("https://test.example.org/")).getId(), Events.Success.id());
+        final RequestContext context = newRequestContext("https://test.example.org/");
+        assertEquals(action.execute(context).getId(), Events.Success.id());
+        final TicketValidationResponse response = FlowStateSupport.getTicketValidationResponse(context);
+        assertNotNull(response);
+        assertNotNull(response.getPgtIou());
     }
 
     @Test

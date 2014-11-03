@@ -60,11 +60,16 @@ public class GrantProxyTicketAction extends AbstractProfileAction<ProxyTicketReq
 
     /** Manages CAS tickets. */
     @Nonnull
-    private TicketService ticketService;
+    private final TicketService ticketService;
 
 
-    public void setTicketService(@Nonnull final TicketService ticketService) {
-        this.ticketService = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
+    /**
+     * Creates a new instance.
+     *
+     * @param ticketService Ticket service component.
+     */
+    public GrantProxyTicketAction(final TicketService ticketService) {
+        this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -75,6 +80,10 @@ public class GrantProxyTicketAction extends AbstractProfileAction<ProxyTicketReq
             final @Nonnull ProfileRequestContext<ProxyTicketRequest, ProxyTicketResponse> profileRequestContext) {
 
         final ProxyTicketRequest request = FlowStateSupport.getProxyTicketRequest(springRequestContext);
+        if (request == null) {
+            log.info("ProxyTicketRequest not found in flow state.");
+            return ProtocolError.IllegalState.event(this);
+        }
         final TicketContext ticketContext = profileRequestContext.getSubcontext(TicketContext.class);
         if (ticketContext == null) {
             log.info("TicketContext not found in profile request context.");

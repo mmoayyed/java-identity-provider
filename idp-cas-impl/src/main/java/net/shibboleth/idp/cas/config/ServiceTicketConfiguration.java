@@ -69,6 +69,8 @@ public class ServiceTicketConfiguration extends AbstractTicketConfiguration
     /** Creates a new instance. */
     public ServiceTicketConfiguration() {
         super(PROFILE_ID);
+        // Service tickets valid for 15s by default
+        setTicketValidityPeriod(15000);
     }
 
     /** {@inheritDoc} */

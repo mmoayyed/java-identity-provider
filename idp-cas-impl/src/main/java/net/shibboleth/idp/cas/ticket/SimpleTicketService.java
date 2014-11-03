@@ -183,7 +183,7 @@ public class SimpleTicketService implements TicketService {
 
     private <T extends Ticket> void store(final T ticket) {
         final String context = context(ticket.getClass());
-        log.debug("Storing {} in context {}", ticket);
+        log.debug("Storing {} in context {}", ticket, context);
         try {
             if (!storageService.create(
                     context,
@@ -199,7 +199,6 @@ public class SimpleTicketService implements TicketService {
     }
 
     private <T extends Ticket> T delete(final String id, final Class<T> clazz) {
-        log.debug("Deleting {}", id);
         final T ticket = read(id, clazz);
         if (ticket == null) {
             return null;

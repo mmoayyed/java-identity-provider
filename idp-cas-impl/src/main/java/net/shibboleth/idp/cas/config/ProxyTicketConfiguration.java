@@ -39,6 +39,8 @@ public class ProxyTicketConfiguration extends AbstractTicketConfiguration {
     /** Creates a new instance. */
     public ProxyTicketConfiguration() {
         super(PROFILE_ID);
+        // Proxy tickets valid for 15s by default
+        setTicketValidityPeriod(15000);
     }
 
     @Override

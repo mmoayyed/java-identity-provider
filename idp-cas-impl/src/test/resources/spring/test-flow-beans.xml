@@ -97,6 +97,10 @@
     <bean id="checkProxyAuthorizationAction"
           class="net.shibboleth.idp.cas.flow.CheckProxyAuthorizationAction" />
 
+    <bean id="grantProxyTicketAction"
+          class="net.shibboleth.idp.cas.flow.GrantProxyTicketAction"
+          c:ticketService-ref="cas.ticketService" />
+
     <bean id="grantServiceTicketAction"
           class="net.shibboleth.idp.cas.flow.GrantServiceTicketAction"
           c:ticketService-ref="cas.ticketService" />

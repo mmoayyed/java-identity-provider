@@ -21,11 +21,9 @@ import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -42,8 +40,6 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
     @Autowired
     private GrantServiceTicketAction action;
 
-    private ServiceTicketConfiguration serviceTicketConfiguration;
-
 
     @DataProvider(name = "messages")
     public Object[][] provideMessages() {
@@ -55,18 +51,11 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
         };
     }
 
-    @BeforeTest
-    public void setUp() throws Exception {
-        serviceTicketConfiguration = new ServiceTicketConfiguration();
-        serviceTicketConfiguration.setTicketValidityPeriod(15000);
-        serviceTicketConfiguration.initialize();
-    }
-
     @Test(dataProvider = "messages")
     public void testExecute(final ServiceTicketRequest message) throws Exception {
         final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
                 .addSessionContext(mockSession("1234567890", true))
-                .addRelyingPartyContext(message.getService(), true, serviceTicketConfiguration)
+                .addRelyingPartyContext(message.getService(), true, new ServiceTicketConfiguration())
                 .build();
         FlowStateSupport.setServiceTicketRequest(context, message);
         final Event result = action.execute(context);
