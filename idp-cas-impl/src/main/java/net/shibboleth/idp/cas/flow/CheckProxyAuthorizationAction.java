@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
 
 /**
  * Checks the current {@link ServiceContext} to determine whether the service is authorized to proxy.
- * Raises {@link Events#Failure failure}</li> if not authorized.
+ * Raises {@link ProtocolError#ProxyNotAuthorized} if not authorized.
  *
  * @author Marvin S. Addison
  */
@@ -56,7 +56,7 @@ public class CheckProxyAuthorizationAction
         }
         if (!serviceContext.getService().isAuthorizedToProxy()) {
             log.info("{} is not authorized to proxy", serviceContext.getService().getName());
-            return Events.Failure.event(this);
+            return ProtocolError.ProxyNotAuthorized.event(this);
         }
         return ActionSupport.buildProceedEvent(this);
     }

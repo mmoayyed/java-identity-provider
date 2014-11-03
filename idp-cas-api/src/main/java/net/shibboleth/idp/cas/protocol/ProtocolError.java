@@ -39,6 +39,12 @@ public enum ProtocolError {
     /** Generic protocol violation error. */
     ProtocolViolation("INVALID_REQUEST", "E_PROTOCOL_VIOLATION"),
 
+    /** Proxy callback authentication failed. */
+    ProxyCallbackAuthenticationFailure("INVALID_REQUEST", "E_PROXY_CALLBACK_AUTH_FAILURE"),
+
+    /** Unauthorized attempt to request proxy-granting ticket. */
+    ProxyNotAuthorized("INVALID_REQUEST", "E_PROXY_NOT_AUTHORIZED"),
+
     /** Unsupported condition where a proxy ticket validation occurs with the renew flag set. */
     RenewIncompatibleWithProxy("INVALID_REQUEST", "E_RENEW_INCOMPATIBLE_WITH_PROXY"),
 
@@ -53,6 +59,7 @@ public enum ProtocolError {
 
     /** Error retrieving IdP session. */
     SessionRetrievalError("INVALID_TICKET", "E_SESSION_RETRIEVAL_ERROR"),
+
     /** Ticket parameter required but not specified. */
     TicketNotSpecified("INVALID_REQUEST", "E_TICKET_NOT_SPECIFIED"),
 

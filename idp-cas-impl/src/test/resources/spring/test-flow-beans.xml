@@ -94,6 +94,9 @@
     <bean id="checkAuthenticationRequiredAction"
           class="net.shibboleth.idp.cas.flow.CheckAuthenticationRequiredAction" />
 
+    <bean id="checkProxyAuthorizationAction"
+          class="net.shibboleth.idp.cas.flow.CheckProxyAuthorizationAction" />
+
     <bean id="grantServiceTicketAction"
           class="net.shibboleth.idp.cas.flow.GrantServiceTicketAction"
           c:ticketService-ref="cas.ticketService" />
@@ -101,6 +104,11 @@
     <bean id="validateIdPSessionAction"
           class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
           c:resolver-ref="shibboleth.SessionManager" />
+
+    <bean id="validateProxyCallbackAction"
+          class="net.shibboleth.idp.cas.flow.ValidateProxyCallbackAction"
+          c:proxyAuthenticator-ref="cas.proxyAuthenticator"
+          c:ticketService-ref="cas.ticketService" />
 
     <bean id="validateRenewAction"
           class="net.shibboleth.idp.cas.flow.ValidateRenewAction" />

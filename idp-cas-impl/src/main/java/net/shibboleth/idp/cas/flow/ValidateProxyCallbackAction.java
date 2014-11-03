@@ -49,7 +49,7 @@ import java.net.URISyntaxException;
  *
  * <ul>
  *     <li>{@link Events#Success success}</li>
- *     <li>{@link Events#Failure failure}</li>
+ *     <li>{@link ProtocolError#ProxyCallbackAuthenticationFailure}</li>
  * </ul>
  *
  * On success, the PGTIOU is accessible at {@link TicketValidationResponse#getPgtIou()}.
@@ -155,7 +155,7 @@ public class ValidateProxyCallbackAction
             response.setPgtIou(proxyIds.getPgtIou());
         } catch (Exception e) {
             log.info("Proxy authentication failed for " + request.getPgtUrl() + ": " + e);
-            return Events.Failure.event(this);
+            return ProtocolError.ProxyCallbackAuthenticationFailure.event(this);
         }
         return Events.Success.event(this);
     }
