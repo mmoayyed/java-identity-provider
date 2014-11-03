@@ -32,9 +32,9 @@
     <!-- TODO Per relying party condition will be moved elsewhere.
     <bean id="shibboleth.consent.Condition" parent="shibboleth.Conditions.RelyingPartyId">
         <constructor-arg>
-            <util:list>
+            <list>
                 <value>https://sp.example.org</value>
-            </util:list>
+            </list>
         </constructor-arg>
     </bean>
     -->
@@ -65,8 +65,29 @@
         c:regex="^exampleAttribute.*$" />
      -->
 
-    <!-- Condition to evaluate to interrupt SSO flows to check the state of the transaction before allowing. -->
-    <!-- TODO: turn into legit predicate checking attributes -->
-    <bean id="shibboleth.context-check.Condition" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
+    <!--
+    Condition to evaluate to interrupt SSO flows to check the state of the transaction before allowing.
+    
+    Typically the flow itself will be activated based on configuration in relying-party.xml, and this controls
+    whether to proceed if the flow is activated.
+    -->
+    <bean id="shibboleth.context-check.Condition" parent="shibboleth.Conditions.AND">
+        <constructor-arg>
+            <list>
+                <bean parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{ 'https://sp.example.org' }" />
+                <bean class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate">
+                    <property name="attributeValueMap">
+                        <map>
+                            <entry key="eppn">
+                                <list>
+                                    <value>*</value>
+                                </list>
+                            </entry>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
 
 </beans>
