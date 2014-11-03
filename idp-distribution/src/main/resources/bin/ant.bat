@@ -4,10 +4,13 @@ setlocal
 REM Find the necessary resources
 set ANT_HOME=%~dp0
 
-REM strip trailing backslash - it confuses java
-if "%ANT_HOME:~-1%" == "\" (
-  set ANT_HOME=%ANT_HOME:~0,-1%
+REM strip trailing backslash - it confuses java.
+REM do it like this because embedding the strip inside an if causes problems if the name has a ")" in it. 
+if "%ANT_HOME:~-1%" NEQ "\" (
+   goto nostrip
 )
+set ANT_HOME=%ANT_HOME:~0,-1%
+:nostrip
 
 REM We need a JVM
 if not defined JAVA_HOME  (
@@ -41,4 +44,4 @@ if exist %JAVA_HOME%\lib\classes.zip (
     set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_HOME%\lib\classes.zip
 )
 
-%JAVACMD% -cp "%LOCALCLASSPATH%" -Dant.home="%ANT_HOME%" %ANT_OPTS% org.apache.tools.ant.Main -e -q -f %ANT_HOME%/build.xml %*
+%JAVACMD% -cp "%LOCALCLASSPATH%" -Dant.home="%ANT_HOME%" %ANT_OPTS% org.apache.tools.ant.Main -e -q -f "%ANT_HOME%/build.xml" %*
