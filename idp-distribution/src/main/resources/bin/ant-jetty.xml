@@ -29,7 +29,7 @@
 
 	<taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
-	<target name="install" depends="init, properties, keystores, copyinis, tidy" />
+	<target name="install" depends="init, properties, keystores, copyinis, reprotect, tidy" />
 
 	<target name="init">
 		<tstamp />
@@ -82,6 +82,23 @@
 		<mkdir dir="jetty-base/start.d" />
 		<mergeproperties inFile="${idp.target.dir}/jetty-base/start.d.dist/idp.ini" outFile="${idp.target.dir}/jetty-base/start.d/idp.ini" mergeFile="${jetty.merge.properties}" />
 	</target>
+	
+   <target name="reprotect">
+       <chmod perm="600" dir="jetty-base/start.d" includes="**/*.key"/>
+       <chmod perm="444" dir="jetty-base/etc" includes="**/*"/>
+       <chmod perm="444" dir="jetty-base/lib" includes="**/*"/>
+       <chmod perm="444" dir="jetty-base/webapps" includes="**/*"/>
+       <attrib readonly="true">
+           <fileset dir="jetty-base/etc" includes="**/*"/>
+       </attrib>
+    <attrib readonly="true">
+        <fileset dir="jetty-base/lib" includes="**/*"/>
+    </attrib>
+    <attrib readonly="true">
+        <fileset dir="jetty-base/webapps" includes="**/*"/>
+    </attrib>
+    </target>
+
 
 	<target name="tidy" unless="jetty.no.tidy">
 		<delete file="${jetty.merge.properties}" failonerror="false" />
