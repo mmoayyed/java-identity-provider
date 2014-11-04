@@ -17,13 +17,8 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.protocol.ProtocolParam;
-import net.shibboleth.idp.cas.protocol.SamlParam;
-import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
-import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.cas.protocol.*;
 import net.shibboleth.idp.profile.ActionSupport;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
@@ -37,31 +32,29 @@ import javax.annotation.Nonnull;
  *     <li>{@link Events#Proceed proceed}</li>
  *     <li>{@link ProtocolError#ServiceNotSpecified serviceNotSpecified}</li>
  * </ul>
- * On success places a {@link ServiceTicketRequest} object in request scope under the key
- * {@value FlowStateSupport#SERVICE_TICKET_REQUEST_KEY}.
  *
  * @author Marvin S. Addison
  */
-public class InitializeLoginAction extends AbstractProfileAction<ServiceTicketRequest, Object> {
+public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
 
     @Nonnull
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<ServiceTicketRequest, Object> profileRequestContext) {
+            final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         String service = params.get(ProtocolParam.Service.id());
-        boolean isSaml = false;
+        boolean isSAML= false;
         if (service == null) {
             service = params.get(SamlParam.TARGET.name());
             if (service == null) {
                 return ProtocolError.ServiceNotSpecified.event(this);
             }
-            isSaml = true;
+            isSAML = true;
         }
         final ServiceTicketRequest serviceTicketRequest = new ServiceTicketRequest(service);
-        serviceTicketRequest.setSaml(isSaml);
+        serviceTicketRequest.setSAML(isSAML);
 
         final String renew = params.get(ProtocolParam.Renew.id());
         if (renew != null) {
@@ -75,10 +68,8 @@ public class InitializeLoginAction extends AbstractProfileAction<ServiceTicketRe
             serviceTicketRequest.setGateway(true);
         }
 
-        final MessageContext<ServiceTicketRequest> messageContext = new MessageContext<>();
-        messageContext.setMessage(serviceTicketRequest);
-        profileRequestContext.setInboundMessageContext(messageContext);
-        FlowStateSupport.setServiceTicketRequest(springRequestContext, serviceTicketRequest);
+        setCASRequest(profileRequestContext, serviceTicketRequest);
+
         return ActionSupport.buildProceedEvent(this);
     }
 }

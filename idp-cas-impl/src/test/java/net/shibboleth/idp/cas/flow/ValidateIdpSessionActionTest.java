@@ -47,10 +47,9 @@ public class ValidateIdpSessionActionTest extends AbstractFlowActionTest {
         springTestContextPrepareTestInstance();
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
         context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
                 .addTicketContext(ticket)
                 .build();
-        final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, ticket.getId());
-        FlowStateSupport.setTicketValidationRequest(context, request);
     }
 
     @Test

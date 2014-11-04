@@ -20,11 +20,7 @@ package net.shibboleth.idp.cas.flow;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
-import net.shibboleth.idp.cas.ticket.ProxyTicket;
-import net.shibboleth.idp.cas.ticket.TicketContext;
-import net.shibboleth.idp.cas.ticket.TicketService;
-import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.cas.ticket.*;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -45,7 +41,7 @@ import javax.annotation.Nonnull;
  * @author Marvin S. Addison
  */
 public class BuildProxyChainAction
-        extends AbstractProfileAction<TicketValidationRequest, TicketValidationResponse> {
+        extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BuildProxyChainAction.class);
@@ -70,21 +66,12 @@ public class BuildProxyChainAction
     final @Nonnull RequestContext springRequestContext,
     final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final TicketValidationResponse response =
-                FlowStateSupport.getTicketValidationResponse(springRequestContext);
-        if (response == null) {
-            log.info("TicketValidationResponse not found in flow state.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final TicketContext ticketContext = profileRequestContext.getSubcontext(TicketContext.class);
-        if (ticketContext == null) {
-            log.info("TicketContext not found in profile request context.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        if (!(ticketContext.getTicket() instanceof ProxyTicket)) {
+        final TicketValidationResponse response = getCASResponse(profileRequestContext);
+        final Ticket ticket = getCASTicket(profileRequestContext);
+        if (!(ticket instanceof ProxyTicket)) {
             return ProtocolError.InvalidTicketType.event(this);
         }
-        final ProxyTicket pt = (ProxyTicket) ticketContext.getTicket();
+        final ProxyTicket pt = (ProxyTicket) ticket;
         ProxyGrantingTicket pgt;
         String pgtId = pt.getPgtId();
         do {

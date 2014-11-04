@@ -18,8 +18,8 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.SessionResolver;
@@ -46,19 +46,18 @@ import javax.annotation.Nonnull;
  * <p>
  * Requires a {@link TicketContext} bound to the {@link ProfileRequestContext} that is provided to the action.
  * <p>
- * On success, adds the current {@link IdPSession} as request scope parameter under the key
- * {@value FlowStateSupport#IDP_SESSION_KEY} and also to a {@link SessionContext} that is a subcontext of the input
- * {@link ProfileRequestContext}.
+ * On success, adds a {@link SessionContext} to the profile request context.
  *
  * @author Marvin S. Addison
  */
-public class ValidateIdpSessionAction extends AbstractProfileAction {
+public class ValidateIdpSessionAction extends AbstractCASProtocolAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValidateIdpSessionAction.class);
 
     /** Looks up IdP sessions. */
-    @Nonnull private final SessionResolver sessionResolver;
+    @Nonnull
+    private final SessionResolver sessionResolver;
 
 
     /**
@@ -75,12 +74,8 @@ public class ValidateIdpSessionAction extends AbstractProfileAction {
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final TicketContext ticketContext = profileRequestContext.getSubcontext(TicketContext.class);
-        if (ticketContext == null) {
-            log.info("TicketContext not found in context tree.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final String sessionId = ticketContext.getTicket().getSessionId();
+        final Ticket ticket = getCASTicket(profileRequestContext);
+        final String sessionId = ticket.getSessionId();
         final IdPSession session;
         try {
             log.debug("Attempting to retrieve session {}", sessionId);
@@ -102,7 +97,6 @@ public class ValidateIdpSessionAction extends AbstractProfileAction {
         if (expired) {
             return ProtocolError.SessionExpired.event(this);
         }
-        FlowStateSupport.setIdpSession(springRequestContext, session);
         final SessionContext sessionContext = new SessionContext();
         sessionContext.setIdPSession(session);
         profileRequestContext.addSubcontext(sessionContext);

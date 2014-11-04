@@ -42,12 +42,12 @@ public class GrantProxyTicketActionTest extends AbstractFlowActionTest {
         final String service = "https://s.example.org/";
         final ProxyGrantingTicket pgt = createProxyGrantingTicket(createServiceTicket(service, false));
         final RequestContext context = new TestContextBuilder(ProxyTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new ProxyTicketRequest(pgt.getId(), service), null)
                 .addTicketContext(pgt)
                 .addRelyingPartyContext(service, true, new ProxyTicketConfiguration())
                 .build();
-        FlowStateSupport.setProxyTicketRequest(context, new ProxyTicketRequest(pgt.getId(), service));
         assertEquals(action.execute(context).getId(), Events.Success.id());
-        final ProxyTicketResponse response = FlowStateSupport.getProxyTicketResponse(context);
+        final ProxyTicketResponse response = action.getCASResponse(getProfileContext(context));
         assertNotNull(response);
         assertNotNull(response.getPt());
         final ProxyTicket pt = ticketService.removeProxyTicket(response.getPt());

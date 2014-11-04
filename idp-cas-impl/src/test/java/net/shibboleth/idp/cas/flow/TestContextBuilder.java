@@ -1,5 +1,6 @@
 package net.shibboleth.idp.cas.flow;
 
+import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
 import net.shibboleth.idp.cas.ticket.Ticket;
@@ -36,8 +37,17 @@ public class TestContextBuilder {
         return this;
     }
 
+    public TestContextBuilder addProtocolContext(final Object request, final Object response) {
+        final ProtocolContext context = new ProtocolContext();
+        context.setRequest(request);
+        context.setResponse(response);
+        profileRequestContext.addSubcontext(context);
+        return this;
+    }
+
     public TestContextBuilder addTicketContext(final Ticket ticket) {
-        profileRequestContext.addSubcontext(new TicketContext(ticket));
+        final ProtocolContext context = profileRequestContext.getSubcontext(ProtocolContext.class, true);
+        context.addSubcontext(new TicketContext(ticket));
         return this;
     }
 
@@ -52,7 +62,8 @@ public class TestContextBuilder {
     }
 
     public TestContextBuilder addServiceContext(final Service service) {
-        profileRequestContext.addSubcontext(new ServiceContext(service));
+        final ProtocolContext context = profileRequestContext.getSubcontext(ProtocolContext.class, true);
+        context.addSubcontext(new ServiceContext(service));
         return this;
     }
 

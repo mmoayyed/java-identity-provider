@@ -21,7 +21,7 @@ import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
-import net.shibboleth.idp.cas.service.ServiceContext;
+import net.shibboleth.idp.cas.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
@@ -36,42 +36,39 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
     @Test
     public void testExecuteFromServiceTicketRequest() {
         final String serviceURL = "https://serviceA.example.org:8443/landing";
-        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID).build();
-        FlowStateSupport.setServiceTicketRequest(requestContext, new ServiceTicketRequest(serviceURL));
+        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new ServiceTicketRequest(serviceURL), null)
+                .build();
         action.execute(requestContext);
-        final ServiceContext sc = getProfileContext(requestContext).getSubcontext(ServiceContext.class);
-        assertNotNull(sc);
-        assertNotNull(sc.getService());
-        assertEquals(serviceURL, sc.getService().getName());
-        assertEquals("allowedToProxy", sc.getService().getGroup());
-        assertTrue(sc.getService().isAuthorizedToProxy());
+        final Service service = action.getCASService(getProfileContext(requestContext));
+        assertEquals(serviceURL, service.getName());
+        assertEquals("allowedToProxy", service.getGroup());
+        assertTrue(service.isAuthorizedToProxy());
     }
 
     @Test
     public void testExecuteFromTicketValidationRequest() {
         final String serviceURL = "http://serviceB.example.org/";
-        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID).build();
-        FlowStateSupport.setTicketValidationRequest(requestContext, new TicketValidationRequest(serviceURL, "ST-123"));
+        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(serviceURL, "ST-123"), null)
+                .build();
         action.execute(requestContext);
-        final ServiceContext sc = getProfileContext(requestContext).getSubcontext(ServiceContext.class);
-        assertNotNull(sc);
-        assertNotNull(sc.getService());
-        assertEquals(serviceURL, sc.getService().getName());
-        assertEquals("notAllowedToProxy", sc.getService().getGroup());
-        assertFalse(sc.getService().isAuthorizedToProxy());
+        final Service service = action.getCASService(getProfileContext(requestContext));
+        assertEquals(serviceURL, service.getName());
+        assertEquals("notAllowedToProxy", service.getGroup());
+        assertFalse(service.isAuthorizedToProxy());
     }
 
     @Test
     public void testExecuteFromProxyTicketRequest() {
         final String serviceURL = "http://mallory.untrusted.org/";
-        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID).build();
-        FlowStateSupport.setProxyTicketRequest(requestContext, new ProxyTicketRequest("PGT-123", serviceURL));
+        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new ProxyTicketRequest("PGT-123", serviceURL), null)
+                .build();
         action.execute(requestContext);
-        final ServiceContext sc = getProfileContext(requestContext).getSubcontext(ServiceContext.class);
-        assertNotNull(sc);
-        assertNotNull(sc.getService());
-        assertEquals(serviceURL, sc.getService().getName());
-        assertEquals(BuildRelyingPartyContextAction.UNVERIFIED_GROUP, sc.getService().getGroup());
-        assertFalse(sc.getService().isAuthorizedToProxy());
+        final Service service = action.getCASService(getProfileContext(requestContext));
+        assertEquals(serviceURL, service.getName());
+        assertEquals(BuildRelyingPartyContextAction.UNVERIFIED_GROUP, service.getGroup());
+        assertFalse(service.isAuthorizedToProxy());
     }
 }

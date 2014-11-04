@@ -24,9 +24,7 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
-import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.cas.ticket.TicketService;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -43,12 +41,10 @@ import javax.annotation.Nonnull;
  *     <li>{@link Events#Success success}</li>
  *     <li>{@link ProtocolError#TicketCreationError ticketCreationError}</li>
  * </ul>
- * In the success case a {@link ProxyTicketResponse} message is created and stored
- * as request scope parameter under the key {@value FlowStateSupport#PROXY_TICKET_RESPONSE_KEY}.
  *
  * @author Marvin S. Addison
  */
-public class GrantProxyTicketAction extends AbstractProfileAction<ProxyTicketRequest, ProxyTicketResponse> {
+public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicketRequest, ProxyTicketResponse> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(GrantProxyTicketAction.class);
@@ -77,19 +73,10 @@ public class GrantProxyTicketAction extends AbstractProfileAction<ProxyTicketReq
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<ProxyTicketRequest, ProxyTicketResponse> profileRequestContext) {
+            final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final ProxyTicketRequest request = FlowStateSupport.getProxyTicketRequest(springRequestContext);
-        if (request == null) {
-            log.info("ProxyTicketRequest not found in flow state.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final TicketContext ticketContext = profileRequestContext.getSubcontext(TicketContext.class);
-        if (ticketContext == null) {
-            log.info("TicketContext not found in profile request context.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final ProxyGrantingTicket pgt = (ProxyGrantingTicket) ticketContext.getTicket();
+        final ProxyTicketRequest request = getCASRequest(profileRequestContext);
+        final ProxyGrantingTicket pgt = (ProxyGrantingTicket) getCASTicket(profileRequestContext);
         final ProxyTicketConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
             log.info("Proxy ticket configuration undefined");
@@ -112,7 +99,7 @@ public class GrantProxyTicketAction extends AbstractProfileAction<ProxyTicketReq
             return ProtocolError.TicketCreationError.event(this);
         }
         log.info("Granted proxy ticket for {}", request.getTargetService());
-        FlowStateSupport.setProxyTicketResponse(springRequestContext, new ProxyTicketResponse(pt.getId()));
+        setCASResponse(profileRequestContext, new ProxyTicketResponse(pt.getId()));
         return Events.Success.event(this);
     }
 }

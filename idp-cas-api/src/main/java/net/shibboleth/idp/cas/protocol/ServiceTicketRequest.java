@@ -63,11 +63,11 @@ public class ServiceTicketRequest {
         this.gateway = gateway;
     }
 
-    public boolean isSaml() {
+    public boolean isSAML() {
         return saml;
     }
 
-    public void setSaml(final boolean saml) {
+    public void setSAML(final boolean saml) {
         this.saml = saml;
     }
 }

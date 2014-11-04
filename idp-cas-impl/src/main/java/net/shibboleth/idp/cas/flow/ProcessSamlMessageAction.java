@@ -17,10 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.protocol.ProtocolParam;
-import net.shibboleth.idp.cas.protocol.SamlParam;
-import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
+import net.shibboleth.idp.cas.protocol.*;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -40,7 +37,8 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class ProcessSamlMessageAction extends AbstractProfileAction<SAMLObject, Object> {
+public class ProcessSamlMessageAction extends
+        AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessSamlMessageAction.class);
@@ -49,7 +47,7 @@ public class ProcessSamlMessageAction extends AbstractProfileAction<SAMLObject, 
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<SAMLObject, Object> profileRequestContext) {
+            final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         final String service = params.get(SamlParam.TARGET.name());
@@ -80,7 +78,8 @@ public class ProcessSamlMessageAction extends AbstractProfileAction<SAMLObject, 
             ticketValidationRequest.setRenew(true);
         }
 
-        FlowStateSupport.setTicketValidationRequest(springRequestContext, ticketValidationRequest);
+        setCASRequest(profileRequestContext, ticketValidationRequest);
+
         return Events.Proceed.event(this);
     }
 }

@@ -52,18 +52,20 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
     }
 
     @Test(dataProvider = "messages")
-    public void testExecute(final ServiceTicketRequest message) throws Exception {
+    public void testExecute(final ServiceTicketRequest request) throws Exception {
         final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(request, null)
                 .addSessionContext(mockSession("1234567890", true))
-                .addRelyingPartyContext(message.getService(), true, new ServiceTicketConfiguration())
+                .addRelyingPartyContext(request.getService(), true, new ServiceTicketConfiguration())
                 .build();
-        FlowStateSupport.setServiceTicketRequest(context, message);
-        final Event result = action.execute(context);
-        assertEquals(result.getId(), Events.Success.id());
-        final ServiceTicketResponse response = FlowStateSupport.getServiceTicketResponse(context);
+        assertEquals(action.execute(context).getId(), Events.Success.id());
+        final ServiceTicketResponse response = action.getCASResponse(getProfileContext(context));
+        assertNotNull(response);
+        assertNotNull(response.getTicket());
+        assertEquals(response.getService(), request.getService());
         final ServiceTicket ticket = ticketService.removeServiceTicket(response.getTicket());
         assertNotNull(ticket);
-        assertEquals(ticket.isRenew(), message.isRenew());
+        assertEquals(ticket.isRenew(), request.isRenew());
         assertEquals(ticket.getId(), response.getTicket());
         assertEquals(ticket.getService(), response.getService());
     }

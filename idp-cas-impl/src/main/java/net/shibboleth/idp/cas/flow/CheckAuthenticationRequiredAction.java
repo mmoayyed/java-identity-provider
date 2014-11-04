@@ -18,10 +18,9 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
-import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
-import net.shibboleth.idp.session.context.SessionContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +42,8 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class CheckAuthenticationRequiredAction extends AbstractProfileAction<ServiceTicketRequest, Object> {
+public class CheckAuthenticationRequiredAction extends
+        AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(CheckAuthenticationRequiredAction.class);
@@ -53,9 +53,9 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction<Ser
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<ServiceTicketRequest, Object> profileRequestContext) {
+            final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final ServiceTicketRequest request = FlowStateSupport.getServiceTicketRequest(springRequestContext);
+        final ServiceTicketRequest request = getCASRequest(profileRequestContext);
 
         // Per http://www.jasig.org/cas/protocol section 2.1.1
         // It is RECOMMENDED that renew supersede gateway
@@ -67,32 +67,20 @@ public class CheckAuthenticationRequiredAction extends AbstractProfileAction<Ser
             return new Event(this, Events.GatewayRequested.id());
         }
 
-        final SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
-        Events result;
-        if (sessionCtx != null) {
-            final IdPSession session = sessionCtx.getIdPSession();
-            if (session != null) {
-                log.debug("Found session ID {}", session.getId());
-                try {
-                    // Timeout check updates session lastActivityInstant field
-                    if (session.checkTimeout()) {
-                        result = Events.SessionFound;
-                    } else {
-                        result = Events.SessionNotFound;
-                    }
-                } catch (SessionException e) {
-                    log.debug("Error performing session timeout check. Assuming session has expired.", e);
-                    result = Events.SessionNotFound;
+        try {
+            final IdPSession session = getIdPSession(profileRequestContext);
+            log.debug("Found session ID {}", session.getId());
+            try {
+                // Timeout check updates session lastActivityInstant field
+                if (session.checkTimeout()) {
+                    return Events.SessionFound.event(this);
                 }
-            } else {
-                log.debug("Session not found.");
-                result = Events.SessionNotFound;
-
+            } catch (SessionException e) {
+                log.debug("Error performing session timeout check. Assuming session has expired.", e);
             }
-        } else {
-            log.debug("Session context not found.");
-            result = Events.SessionNotFound;
+        } catch (IllegalStateException e) {
+            log.debug("IdP session not found");
         }
-        return result.event(this);
+        return Events.SessionNotFound.event(this);
     }
 }

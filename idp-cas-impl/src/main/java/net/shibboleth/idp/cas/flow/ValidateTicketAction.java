@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.cas.flow;
 
+import net.shibboleth.idp.cas.config.ProxyTicketConfiguration;
+import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
-import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.cas.ticket.TicketService;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -46,20 +46,16 @@ import javax.annotation.Nonnull;
  *     <li>{@link ProtocolError#TicketRetrievalError ticketRetrievalError}</li>
  * </ul>
  *
- * <p>
- * In the success case a {@link TicketValidationResponse} message is created and stored
- * as request scope parameter under the key {@value FlowStateSupport#TICKET_VALIDATION_RESPONSE_KEY}.
- *
  * @author Marvin S. Addison
  */
-public class ValidateTicketAction
-        extends AbstractProfileAction<TicketValidationRequest, TicketValidationResponse> {
+public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValidateTicketAction.class);
 
     /** Manages CAS tickets. */
-    @Nonnull private final TicketService ticketService;
+    @Nonnull
+    private final TicketService ticketService;
 
 
     /**
@@ -77,19 +73,14 @@ public class ValidateTicketAction
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final TicketValidationRequest request = FlowStateSupport.getTicketValidationRequest(springRequestContext);
-        if (request == null) {
-            log.info("TicketValidationRequest not found in flow state.");
-            return ProtocolError.IllegalState.event(this);
-        }
-
+        final TicketValidationRequest request = getCASRequest(profileRequestContext);
         final Ticket ticket;
         try {
             final String ticketId = request.getTicket();
             log.debug("Attempting to validate {}", ticketId);
-            if (ticketId.startsWith("ST-")) {
+            if (ticketId.startsWith(ServiceTicketConfiguration.DEFAULT_TICKET_PREFIX)) {
                 ticket = ticketService.removeServiceTicket(request.getTicket());
-            } else if (ticketId.startsWith("PT-")) {
+            } else if (ticketId.startsWith(ProxyTicketConfiguration.DEFAULT_TICKET_PREFIX)) {
                 ticket = ticketService.removeProxyTicket(ticketId);
             } else {
                 return ProtocolError.InvalidTicketFormat.event(this);
@@ -111,12 +102,12 @@ public class ValidateTicketAction
             return ProtocolError.ServiceMismatch.event(this);
         }
 
-        profileRequestContext.addSubcontext(new TicketContext(ticket));
-        FlowStateSupport.setTicketValidationResponse(springRequestContext, new TicketValidationResponse());
         log.info("Successfully validated {} for {}", request.getTicket(), request.getService());
-        if (ticket instanceof ServiceTicket) {
-            return Events.ServiceTicketValidated.event(this);
+        setCASResponse(profileRequestContext, new TicketValidationResponse());
+        setCASTicket(profileRequestContext, ticket);
+        if (ticket instanceof ProxyTicket) {
+            return Events.ProxyTicketValidated.event(this);
         }
-        return Events.ProxyTicketValidated.event(this);
+        return Events.ServiceTicketValidated.event(this);
     }
 }

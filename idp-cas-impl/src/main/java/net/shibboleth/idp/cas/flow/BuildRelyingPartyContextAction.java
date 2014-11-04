@@ -17,13 +17,9 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
-import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.idp.cas.protocol.*;
 import net.shibboleth.idp.cas.service.Service;
-import net.shibboleth.idp.cas.service.ServiceContext;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -40,8 +36,7 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class BuildRelyingPartyContextAction
-        extends AbstractProfileAction<TicketValidationRequest, TicketValidationResponse> {
+public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
 
     /** Name of group to which unverified services belong. */
     public static final String UNVERIFIED_GROUP = "unverified";
@@ -66,15 +61,16 @@ public class BuildRelyingPartyContextAction
     @Override
     protected Event doExecute(
         final @Nonnull RequestContext springRequestContext,
-        final @Nonnull ProfileRequestContext<TicketValidationRequest, TicketValidationResponse> profileRequestContext) {
+        final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final String serviceURL;
-        if (FlowStateSupport.getServiceTicketRequest(springRequestContext) != null) {
-            serviceURL = FlowStateSupport.getServiceTicketRequest(springRequestContext).getService();
-        } else if (FlowStateSupport.getProxyTicketRequest(springRequestContext) != null) {
-            serviceURL = FlowStateSupport.getProxyTicketRequest(springRequestContext).getTargetService();
-        } else if (FlowStateSupport.getTicketValidationRequest(springRequestContext) != null) {
-            serviceURL = FlowStateSupport.getTicketValidationRequest(springRequestContext).getService();
+        final Object request = getCASRequest(profileRequestContext);
+        if (request instanceof ServiceTicketRequest) {
+            serviceURL = ((ServiceTicketRequest) request).getService();
+        } else if (request instanceof ProxyTicketRequest) {
+            serviceURL = ((ProxyTicketRequest) request).getTargetService();
+        } else if (request instanceof TicketValidationRequest) {
+            serviceURL = ((TicketValidationRequest) request).getService();
         } else {
             log.info("Service URL not found in flow state");
             return ProtocolError.IllegalState.event(this);
@@ -87,7 +83,7 @@ public class BuildRelyingPartyContextAction
             service = new Service(serviceURL, UNVERIFIED_GROUP, false);
         }
         profileRequestContext.addSubcontext(rpc);
-        profileRequestContext.addSubcontext(new ServiceContext(service));
+        setCASService(profileRequestContext, service);
         return ActionSupport.buildProceedEvent(this);
     }
 }

@@ -105,6 +105,9 @@
           class="net.shibboleth.idp.cas.flow.GrantServiceTicketAction"
           c:ticketService-ref="cas.ticketService" />
 
+    <bean id="publishProtocolResponseAction"
+          class="net.shibboleth.idp.cas.flow.PublishProtocolResponseAction" />
+
     <bean id="validateIdPSessionAction"
           class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
           c:resolver-ref="shibboleth.SessionManager" />

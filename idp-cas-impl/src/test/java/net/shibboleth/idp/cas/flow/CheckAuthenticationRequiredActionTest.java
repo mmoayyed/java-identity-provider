@@ -37,49 +37,48 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
 
     @Test
     public void testGatewayRequested() throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID).build();
         final ServiceTicketRequest request = new ServiceTicketRequest("a");
         request.setGateway(true);
-        FlowStateSupport.setServiceTicketRequest(context, request);
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(request, null)
+                .build();
         assertEquals(action.execute(context).getId(), Events.GatewayRequested.id());
     }
 
     @Test
     public void testSessionNotFound() throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID).build();
-        final ServiceTicketRequest request = new ServiceTicketRequest("b");
-        FlowStateSupport.setServiceTicketRequest(context, request);
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new ServiceTicketRequest("b"), null)
+                .build();
         assertEquals(action.execute(context).getId(), Events.SessionNotFound.id());
     }
 
     @Test
     public void testSessionExpired() throws Exception {
         final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new ServiceTicketRequest("c"), null)
                 .addSessionContext(mockSession("ABCDE", false))
                 .build();
-        final ServiceTicketRequest request = new ServiceTicketRequest("b");
-        FlowStateSupport.setServiceTicketRequest(context, request);
         assertEquals(action.execute(context).getId(), Events.SessionNotFound.id());
     }
 
     @Test
     public void testSessionFound() throws Exception {
         final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new ServiceTicketRequest("d"), null)
                 .addSessionContext(mockSession("12345", true))
                 .build();
-        final ServiceTicketRequest request = new ServiceTicketRequest("c");
-        FlowStateSupport.setServiceTicketRequest(context, request);
         assertEquals(action.execute(context).getId(), Events.SessionFound.id());
     }
 
     @Test
     public void testRenewRequested() throws Exception {
+        final ServiceTicketRequest request = new ServiceTicketRequest("e");
+        request.setRenew(true);
         final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(request, null)
                 .addSessionContext(mockSession("98765", true))
                 .build();
-        final ServiceTicketRequest request = new ServiceTicketRequest("d");
-        request.setRenew(true);
-        FlowStateSupport.setServiceTicketRequest(context, request);
         assertEquals(action.execute(context).getId(), Events.RenewRequested.id());
     }
 }

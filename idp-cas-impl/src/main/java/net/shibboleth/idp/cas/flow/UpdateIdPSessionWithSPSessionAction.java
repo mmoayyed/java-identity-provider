@@ -18,9 +18,12 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.session.CASSPSession;
+import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
 import net.shibboleth.idp.session.context.SessionContext;
@@ -46,7 +49,7 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class UpdateIdPSessionWithSPSessionAction extends AbstractProfileAction {
+public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(UpdateIdPSessionWithSPSessionAction.class);
@@ -74,26 +77,17 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractProfileAction {
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final TicketContext ticketContext = profileRequestContext.getSubcontext(TicketContext.class);
-        if (ticketContext == null) {
-            log.debug("Cannot create CAS SP session since no TicketContext found.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final SessionContext sessionContext = profileRequestContext.getSubcontext(SessionContext.class);
-        if (sessionContext == null) {
-            log.debug("Cannot create CAS SP session since no SessionContext found.");
-            return ProtocolError.IllegalState.event(this);
-        }
-
+        final Ticket ticket = getCASTicket(profileRequestContext);
+        final IdPSession session = getIdPSession(profileRequestContext);
         final long now = System.currentTimeMillis();
         final SPSession sps = new CASSPSession(
-                ticketContext.getTicket().getService(),
+                ticket.getService(),
                 now,
                 now + sessionLifetime,
-                ticketContext.getTicket().getId());
+                ticket.getId());
         log.debug("Created SP session {}", sps);
         try {
-            sessionContext.getIdPSession().addSPSession(sps);
+            session.addSPSession(sps);
         } catch (SessionException e) {
             log.warn("Failed updating IdP session with CAS SP session: {}", e.getMessage());
             return ProtocolError.IllegalState.event(this);

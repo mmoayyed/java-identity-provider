@@ -18,10 +18,8 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
-import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -37,25 +35,19 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class CheckProxyAuthorizationAction
-    extends AbstractProfileAction<TicketValidationRequest, TicketValidationResponse> {
+public class CheckProxyAuthorizationAction extends AbstractCASProtocolAction {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(CheckProxyAuthorizationAction.class);
 
-    @Nonnull
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final ServiceContext serviceContext = profileRequestContext.getSubcontext(ServiceContext.class);
-        if (serviceContext == null) {
-            log.info("ServiceContext not found in profile request context.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        if (!serviceContext.getService().isAuthorizedToProxy()) {
-            log.info("{} is not authorized to proxy", serviceContext.getService().getName());
+        final Service service = getCASService(profileRequestContext);
+        if (!service.isAuthorizedToProxy()) {
+            log.info("{} is not authorized to proxy", service.getName());
             return ProtocolError.ProxyNotAuthorized.event(this);
         }
         return ActionSupport.buildProceedEvent(this);

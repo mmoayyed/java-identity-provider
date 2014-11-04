@@ -57,7 +57,7 @@ import java.net.URISyntaxException;
  * @author Marvin S. Addison
  */
 public class ValidateProxyCallbackAction
-    extends AbstractProfileAction<TicketValidationRequest, TicketValidationResponse> {
+    extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValidateProxyCallbackAction.class);
@@ -94,22 +94,9 @@ public class ValidateProxyCallbackAction
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final TicketValidationRequest request = FlowStateSupport.getTicketValidationRequest(springRequestContext);
-        if (request == null) {
-            log.info("TicketValidationRequest not found in flow state.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final TicketValidationResponse response =
-                FlowStateSupport.getTicketValidationResponse(springRequestContext);
-        if (response == null) {
-            log.info("TicketValidationResponse not found in flow state.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final TicketContext ticketContext = profileRequestContext.getSubcontext(TicketContext.class);
-        if (ticketContext == null) {
-            log.info("TicketContext not found in profile request context.");
-            return ProtocolError.IllegalState.event(this);
-        }
+        final TicketValidationRequest request = getCASRequest(profileRequestContext);
+        final TicketValidationResponse response = getCASResponse(profileRequestContext);
+        final Ticket ticket = getCASTicket(profileRequestContext);
         final ProxyGrantingTicketConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
             log.info("Proxy-granting ticket configuration undefined");
@@ -123,7 +110,6 @@ public class ValidateProxyCallbackAction
             log.info("Invalid proxy-granting ticket configuration: PGTIOUGenerator undefined");
             return ProtocolError.IllegalState.event(this);
         }
-        final Ticket ticket = ticketContext.getTicket();
         final ProxyIdentifiers proxyIds = new ProxyIdentifiers(
                 config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
                 config.getPGTIOUGenerator().generateIdentifier());

@@ -21,7 +21,6 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import org.joda.time.DateTime;
@@ -86,24 +85,9 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
 
         final DateTime now = DateTime.now();
 
-        final TicketValidationRequest request = FlowStateSupport.getTicketValidationRequest(springRequestContext);
-        if (request == null) {
-            log.info("TicketValidationRequest not found in flow state.");
-            throw new IllegalStateException("TicketValidationRequest not found in flow state.");
-        }
-
-        final TicketValidationResponse ticketResponse = FlowStateSupport.getTicketValidationResponse(springRequestContext);
-        if (ticketResponse == null) {
-            log.info("TicketValidationResponse not found in flow state.");
-            throw new IllegalStateException("TicketValidationResponse not found in flow state.");
-        }
-
-        final SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
-        if (sessionCtx == null || sessionCtx.getIdPSession() == null) {
-            log.info("Cannot locate IdP session");
-            throw new IllegalStateException("Cannot locate IdP session");
-        }
-        final IdPSession session = sessionCtx.getIdPSession();
+        final TicketValidationRequest request = getCASRequest(profileRequestContext);
+        final TicketValidationResponse ticketResponse = getCASResponse(profileRequestContext);
+        final IdPSession session = getIdPSession(profileRequestContext);
 
         final Response response = newSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
         final Status status = newSAMLObject(Status.class, Status.DEFAULT_ELEMENT_NAME);

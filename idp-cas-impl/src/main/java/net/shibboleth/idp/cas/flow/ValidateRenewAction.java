@@ -43,7 +43,7 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class ValidateRenewAction extends AbstractProfileAction<TicketValidationRequest, TicketValidationResponse> {
+public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValidateRenewAction.class);
@@ -55,17 +55,8 @@ public class ValidateRenewAction extends AbstractProfileAction<TicketValidationR
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final TicketValidationRequest request = FlowStateSupport.getTicketValidationRequest(springRequestContext);
-        if (request == null) {
-            log.info("TicketValidationRequest not found in flow state.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final TicketContext ticketContext = profileRequestContext.getSubcontext(TicketContext.class);
-        if (ticketContext == null) {
-            log.info("TicketContext not found in profile request context.");
-            return ProtocolError.IllegalState.event(this);
-        }
-        final Ticket ticket = ticketContext.getTicket();
+        final TicketValidationRequest request = getCASRequest(profileRequestContext);
+        final Ticket ticket = getCASTicket(profileRequestContext);
         if (ticket instanceof ServiceTicket) {
             if (request.isRenew() != ((ServiceTicket) ticket).isRenew()) {
                 log.debug("Renew=true requested at validation time but ticket not issued with renew=true.");

@@ -18,14 +18,8 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
-import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -42,26 +36,15 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class BuildAttributeContextAction
-        extends AbstractProfileAction<TicketValidationRequest, TicketValidationResponse> {
+public class BuildAttributeContextAction extends AbstractCASProtocolAction{
 
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BuildAttributeContextAction.class);
-
-    @Nonnull
     @Override
     protected Event doExecute(
         final @Nonnull RequestContext springRequestContext,
-        final @Nonnull ProfileRequestContext<TicketValidationRequest, TicketValidationResponse> profileRequestContext) {
-
-        final SessionContext sessionContext = profileRequestContext.getSubcontext(SessionContext.class);
-        if (sessionContext == null || sessionContext.getIdPSession() == null) {
-            log.info("Cannot locate IdP session");
-            return ProtocolError.IllegalState.event(this);
-        }
+        final @Nonnull ProfileRequestContext profileRequestContext) {
         final SubjectContext sc = new SubjectContext();
-        sc.setPrincipalName(sessionContext.getIdPSession().getPrincipalName());
+        sc.setPrincipalName(getIdPSession(profileRequestContext).getPrincipalName());
         profileRequestContext.addSubcontext(sc);
-        return Events.Proceed.event(this);
+        return ActionSupport.buildProceedEvent(this);
     }
 }

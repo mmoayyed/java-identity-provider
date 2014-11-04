@@ -20,6 +20,9 @@ package net.shibboleth.idp.cas.flow;
 import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
+import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
+import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -41,33 +44,29 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
 
     private static final String TEST_SERVICE = "https://example.com/widget";
 
-    private RequestContext context;
-
-    @BeforeTest
-    public void setUp() throws Exception {
-        context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID).build();
-    }
-
     @Test
     public void testInvalidTicketFormat() throws Exception {
-        final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, "AB-1234-012346abcdef");
-        FlowStateSupport.setTicketValidationRequest(context, request);
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, "AB-1234-012346abcdef"), null)
+                .build();
         assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.InvalidTicketFormat.id());
     }
 
     @Test
     public void testServiceMismatch() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
-        final TicketValidationRequest request = new TicketValidationRequest("mismatch", ticket.getId());
-        FlowStateSupport.setTicketValidationRequest(context, request);
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest("mismatch", ticket.getId()), null)
+                .build();
         assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.ServiceMismatch.id());
     }
 
     @Test
     public void testTicketExpired() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
-        final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, ticket.getId());
-        FlowStateSupport.setTicketValidationRequest(context, request);
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
+                .build();
         // Remove the ticket prior to validation to simulate expiration
         ticketService.removeServiceTicket(ticket.getId());
         assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.TicketExpired.id());
@@ -77,20 +76,37 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
     public void testTicketRetrievalError() throws Exception {
         final TicketService throwingTicketService = mock(TicketService.class);
         when(throwingTicketService.removeServiceTicket(any(String.class))).thenThrow(new RuntimeException("Broken"));
-        final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, "ST-12345");
-        FlowStateSupport.setTicketValidationRequest(context, request);
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, "ST-12345"), null)
+                .build();
         assertEquals(
                 newAction(throwingTicketService).execute(context).getId(),
                 ProtocolError.TicketRetrievalError.id());
     }
 
     @Test
-    public void testSuccess() throws Exception {
+    public void testServiceTicketValidateSuccess() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
-        final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, ticket.getId());
-        FlowStateSupport.setTicketValidationRequest(context, request);
-        assertEquals(newAction(ticketService).execute(context).getId(), Events.ServiceTicketValidated.id());
-        assertNotNull(FlowStateSupport.getTicketValidationResponse(context));
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
+                .build();
+        final ValidateTicketAction action = newAction(ticketService);
+        assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.id());
+        assertNotNull(action.getCASResponse(getProfileContext(context)));
+    }
+
+
+    @Test
+    public void testProxyTicketValidateSuccess() throws Exception {
+        final ServiceTicket st = createServiceTicket(TEST_SERVICE, false);
+        final ProxyGrantingTicket pgt = createProxyGrantingTicket(st);
+        final ProxyTicket pt = createProxyTicket(pgt, "proxyA");
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest("proxyA", pt.getId()), null)
+                .build();
+        final ValidateTicketAction action = newAction(ticketService);
+        assertEquals(action.execute(context).getId(), Events.ProxyTicketValidated.id());
+        assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 
     private static ValidateTicketAction newAction(final TicketService service) {

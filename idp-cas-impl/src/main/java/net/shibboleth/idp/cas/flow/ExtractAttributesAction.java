@@ -25,7 +25,6 @@ import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -42,8 +41,8 @@ import javax.annotation.Nonnull;
  *
  * @author Marvin S. Addison
  */
-public class ExtractAttributesAction
-        extends AbstractProfileAction<TicketValidationRequest, TicketValidationResponse> {
+public class ExtractAttributesAction extends
+        AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ExtractAttributesAction.class);
@@ -59,7 +58,7 @@ public class ExtractAttributesAction
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<TicketValidationRequest, TicketValidationResponse> profileRequestContext) {
+            final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final AttributeContext ac = attributeContextFunction.apply(profileRequestContext);
         if (ac == null) {
@@ -67,12 +66,7 @@ public class ExtractAttributesAction
             return ProtocolError.IllegalState.event(this);
         }
 
-        final TicketValidationResponse response = FlowStateSupport.getTicketValidationResponse(springRequestContext);
-        if (response == null) {
-            log.info("TicketValidationResponse not found in request scope.");
-            return ProtocolError.IllegalState.event(this);
-        }
-
+        final TicketValidationResponse response = getCASResponse(profileRequestContext);
         for (IdPAttribute attribute : ac.getIdPAttributes().values()) {
             log.debug("Processing {}", attribute);
             for (IdPAttributeValue<?> value : attribute.getValues()) {

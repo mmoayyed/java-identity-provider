@@ -53,7 +53,7 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
         action.initialize();
         final RequestContext context = newRequestContext("https://test.example.org/");
         assertEquals(action.execute(context).getId(), Events.Success.id());
-        final TicketValidationResponse response = FlowStateSupport.getTicketValidationResponse(context);
+        final TicketValidationResponse response = action.getCASResponse(getProfileContext(context));
         assertNotNull(response);
         assertNotNull(response.getPgtIou());
     }
@@ -80,14 +80,13 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
     private static RequestContext newRequestContext(final String pgtURL) {
         final String service = "https://test.example.com/";
         final String ticket = "ST-123-ABCCEF";
+        final TicketValidationRequest request = new TicketValidationRequest(service, ticket);
+        request.setPgtUrl(pgtURL);
         final RequestContext context = new TestContextBuilder(ProxyGrantingTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(request, new TicketValidationResponse())
                 .addTicketContext(new ServiceTicket(ticket, "SessionID-123", service, Instant.now(), false))
                 .addRelyingPartyContext(service, true, new ProxyGrantingTicketConfiguration())
                 .build();
-        final TicketValidationRequest request = new TicketValidationRequest(service, ticket);
-        request.setPgtUrl(pgtURL);
-        FlowStateSupport.setTicketValidationRequest(context, request);
-        FlowStateSupport.setTicketValidationResponse(context, new TicketValidationResponse());
         return context;
     }
 }

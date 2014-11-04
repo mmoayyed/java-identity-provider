@@ -18,7 +18,10 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
+import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -38,7 +41,8 @@ import javax.xml.namespace.QName;
  *
  * @author Marvin S. Addison
  */
-public abstract class AbstractOutgoingSamlMessageAction extends AbstractProfileAction<SAMLObject, SAMLObject> {
+public abstract class AbstractOutgoingSamlMessageAction extends
+        AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** CAS namespace. */
     protected static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
@@ -49,11 +53,10 @@ public abstract class AbstractOutgoingSamlMessageAction extends AbstractProfileA
         return builder.buildObject();
     }
 
-    @Nonnull
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
+            final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final MessageContext<SAMLObject> msgContext = new MessageContext<>();
         try {
@@ -66,8 +69,7 @@ public abstract class AbstractOutgoingSamlMessageAction extends AbstractProfileA
         msgContext.addSubcontext(bindingContext);
         profileRequestContext.setOutboundMessageContext(msgContext);
 
-        // Return null to signal that other actions must follow this one before proceeding to next state
-        return null;
+        return ActionSupport.buildProceedEvent(this);
     }
 
     protected abstract Response buildSamlResponse(

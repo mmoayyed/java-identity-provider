@@ -17,35 +17,36 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
-import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.webflow.execution.Event;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
+import org.testng.annotations.Test;
 
-import javax.annotation.Nonnull;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
- * Builds an authentication context message from an incoming {@link ServiceTicketRequest} message.
+ * Unit test for {@link PublishProtocolResponseAction}.
  *
  * @author Marvin S. Addison
  */
-public class BuildAuthenticationContextAction extends
-        AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
+public class PublishProtocolResponseActionTest extends AbstractFlowActionTest {
 
-    @Nonnull
-    @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext){
+    @Autowired
+    private PublishProtocolResponseAction action;
 
-        final AuthenticationContext ac = new AuthenticationContext();
-        ac.setForceAuthn(getCASRequest(profileRequestContext).isRenew());
-        ac.setIsPassive(false);
-
-        profileRequestContext.addSubcontext(ac, true);
-        profileRequestContext.setBrowserProfile(true);
-        return Events.Proceed.event(this);
+    @Test
+    public void testPublishResponse() throws Exception {
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new ServiceTicketRequest("A"), new ServiceTicketResponse("A", "B"))
+                .build();
+        action.execute(context);
+        final ServiceTicketResponse response = (ServiceTicketResponse) context.getRequestScope().get(
+                "serviceTicketResponse");
+        assertNotNull(response);
+        assertEquals(response.getTicket(), "B");
     }
+
 }

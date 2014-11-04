@@ -23,7 +23,6 @@ import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
@@ -46,13 +45,12 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
         final ProxyTicket ptA = createProxyTicket(pgtA, "proxiedByA");
         final ProxyGrantingTicket pgtB = createProxyGrantingTicket(ptA);
         final ProxyTicket ptB = createProxyTicket(pgtB, "proxiedByB");
-        final RequestContext context = new TestContextBuilder(ProxyTicketConfiguration.PROFILE_ID)
-                .addTicketContext(ptB)
-                .build();
         final TicketValidationRequest request = new TicketValidationRequest("proxiedByB", ptB.getId());
         final TicketValidationResponse response = new TicketValidationResponse();
-        FlowStateSupport.setTicketValidationRequest(context, request);
-        FlowStateSupport.setTicketValidationResponse(context, response);
+        final RequestContext context = new TestContextBuilder(ProxyTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(request, response)
+                .addTicketContext(ptB)
+                .build();
         assertEquals(action.execute(context).getId(), Events.Proceed.id());
         assertEquals(response.getProxies().size(), 2);
         assertEquals(response.getProxies().get(0), "proxiedByA");

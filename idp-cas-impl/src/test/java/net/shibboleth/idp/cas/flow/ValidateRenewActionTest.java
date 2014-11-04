@@ -49,10 +49,9 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
     public void testTicketNotFromRenew() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, true);
         final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
                 .addTicketContext(ticket)
                 .build();
-        final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, ticket.getId());
-        FlowStateSupport.setTicketValidationRequest(context, request);
         assertEquals(action.execute(context).getId(), ProtocolError.TicketNotFromRenew.id());
     }
 
@@ -61,24 +60,24 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
         final ServiceTicket st = createServiceTicket(TEST_SERVICE, false);
         final ProxyGrantingTicket pgt = createProxyGrantingTicket(st);
         final ProxyTicket pt = createProxyTicket(pgt, "https://foo.example.org");
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
-                .addTicketContext(pt)
-                .build();
         final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, pt.getId());
         request.setRenew(true);
-        FlowStateSupport.setTicketValidationRequest(context, request);
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(request, null)
+                .addTicketContext(pt)
+                .build();
         assertEquals(action.execute(context).getId(), ProtocolError.RenewIncompatibleWithProxy.id());
     }
 
     @Test
     public void testSuccessWithRenewAndServiceTicket() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, true);
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
-                .addTicketContext(ticket)
-                .build();
         final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, ticket.getId());
         request.setRenew(true);
-        FlowStateSupport.setTicketValidationRequest(context, request);
+        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(request, null)
+                .addTicketContext(ticket)
+                .build();
         assertEquals(action.execute(context).getId(), Events.Success.id());
     }
 
@@ -88,10 +87,9 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
         final ProxyGrantingTicket pgt = createProxyGrantingTicket(st);
         final ProxyTicket pt = createProxyTicket(pgt, "https://foo.example.org");
         final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, pt.getId()), null)
                 .addTicketContext(pt)
                 .build();
-        final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, pt.getId());
-        FlowStateSupport.setTicketValidationRequest(context, request);
         assertEquals(action.execute(context).getId(), Events.Success.id());
     }
 }

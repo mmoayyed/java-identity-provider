@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.flow;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
+import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.messaging.context.MessageContext;
@@ -39,12 +40,10 @@ import javax.annotation.Nonnull;
  *     <li>{@link ProtocolError#TicketNotSpecified ticketNotSpecified}</li>
  * </ul>
  *
- * On proceed places a {@link net.shibboleth.idp.cas.protocol.TicketValidationRequest} object in request scope under the key
- * {@value FlowStateSupport#TICKET_VALIDATION_REQUEST_KEY}.
- *
  * @author Marvin S. Addison
  */
-public class InitializeValidateAction extends AbstractProfileAction {
+public class InitializeValidateAction extends
+        AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
     @Nonnull
     @Override
     protected Event doExecute(
@@ -68,10 +67,8 @@ public class InitializeValidateAction extends AbstractProfileAction {
         }
         ticketValidationRequest.setPgtUrl(params.get(ProtocolParam.PgtUrl.id()));
 
-        final MessageContext messageContext = new MessageContext();
-        messageContext.setMessage(ticketValidationRequest);
-        profileRequestContext.setInboundMessageContext(messageContext);
-        FlowStateSupport.setTicketValidationRequest(springRequestContext, ticketValidationRequest);
+        setCASRequest(profileRequestContext, ticketValidationRequest);
+
         return ActionSupport.buildProceedEvent(this);
     }
 }

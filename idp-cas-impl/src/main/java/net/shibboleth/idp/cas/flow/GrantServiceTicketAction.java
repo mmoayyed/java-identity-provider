@@ -24,7 +24,7 @@ import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
-import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
@@ -42,12 +42,10 @@ import javax.annotation.Nonnull;
  *     <li>{@link Events#Success success}</li>
  *     <li>{@link ProtocolError#TicketCreationError ticketCreationError}</li>
  * </ul>
- * In the success case a {@link ServiceTicketResponse} message is created and stored
- * as request scope parameter under the key {@value FlowStateSupport#SERVICE_TICKET_RESPONSE_KEY}.
  *
  * @author Marvin S. Addison
  */
-public class GrantServiceTicketAction extends AbstractProfileAction<ServiceTicketRequest, ServiceTicketRequest> {
+public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceTicketRequest, ServiceTicketResponse> {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(GrantServiceTicketAction.class);
@@ -75,14 +73,10 @@ public class GrantServiceTicketAction extends AbstractProfileAction<ServiceTicke
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<ServiceTicketRequest, ServiceTicketRequest> profileRequestContext) {
+            final @Nonnull ProfileRequestContext profileRequestContext) {
 
-        final ServiceTicketRequest request = FlowStateSupport.getServiceTicketRequest(springRequestContext);
-        final SessionContext sessionCtx = profileRequestContext.getSubcontext(SessionContext.class, false);
-        if (sessionCtx == null || sessionCtx.getIdPSession() == null) {
-            log.info("Cannot locate IdP session");
-            return ProtocolError.IllegalState.event(this);
-        }
+        final ServiceTicketRequest request = getCASRequest(profileRequestContext);
+        final IdPSession session = getIdPSession(profileRequestContext);
         final ServiceTicketConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
             log.info("Service ticket configuration undefined");
@@ -98,7 +92,7 @@ public class GrantServiceTicketAction extends AbstractProfileAction<ServiceTicke
             ticket = ticketService.createServiceTicket(
                     config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
                     DateTime.now().plus(config.getTicketValidityPeriod()).toInstant(),
-                    sessionCtx.getIdPSession().getId(),
+                    session.getId(),
                     request.getService(),
                     request.isRenew());
         } catch (RuntimeException e) {
@@ -107,10 +101,10 @@ public class GrantServiceTicketAction extends AbstractProfileAction<ServiceTicke
         }
         log.info("Granted service ticket for {}", request.getService());
         final ServiceTicketResponse response = new ServiceTicketResponse(request.getService(), ticket.getId());
-        if (request.isSaml()) {
+        if (request.isSAML()) {
             response.setSaml(true);
         }
-        FlowStateSupport.setServiceTicketResponse(springRequestContext, response);
+        setCASResponse(profileRequestContext, response);
         return Events.Success.event(this);
     }
 }
