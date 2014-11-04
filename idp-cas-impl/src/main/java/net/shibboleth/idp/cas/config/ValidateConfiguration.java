@@ -24,14 +24,19 @@ import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrate
 import javax.annotation.Nonnull;
 
 /**
- * CAS proxy-granting ticket configuration modeled as an IdP profile.
+ * CAS protocol configuration that applies to the following ticket validation URIs:
+ *
+ * <ul>
+ *     <li><code>/proxyValidate</code></li>
+ *     <li><code>/serviceValidate</code></li>
+ * </ul>
  *
  * @author Marvin S. Addison
  */
-public class ProxyGrantingTicketConfiguration extends AbstractTicketConfiguration {
+public class ValidateConfiguration extends AbstractProtocolConfiguration {
 
-    /** Proxy ticket profile URI. */
-    public static final String PROFILE_ID = PROTOCOL_URI + "/pgt";
+    /** Ticket validation profile ID. */
+    public static final String PROFILE_ID = PROTOCOL_URI + "/serviceValidate";
 
     /** Default ticket prefix. */
     public static final String DEFAULT_TICKET_PREFIX = "PGT";
@@ -46,7 +51,7 @@ public class ProxyGrantingTicketConfiguration extends AbstractTicketConfiguratio
 
 
     /** Creates a new instance. */
-    public ProxyGrantingTicketConfiguration() {
+    public ValidateConfiguration() {
         super(PROFILE_ID);
     }
 

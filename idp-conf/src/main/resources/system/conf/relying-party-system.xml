@@ -96,13 +96,15 @@
     <bean id="Liberty.SSOS"
         class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />
 
-    <bean id="CAS.ServiceTicketConfig" class="net.shibboleth.idp.cas.config.ServiceTicketConfiguration"
-          p:ticketValidityPeriod="PT15S" />
+    <bean id="CAS.LoginConfiguration"
+          class="net.shibboleth.idp.cas.config.LoginConfiguration" />
 
-    <bean id="CAS.ProxyTicketConfig" class="net.shibboleth.idp.cas.config.ProxyTicketConfiguration"
-          p:ticketValidityPeriod="PT15S" />
+    <bean id="CAS.ProxyConfiguration"
+          class="net.shibboleth.idp.cas.config.ProxyConfiguration" />
 
-    <bean id="CAS.ProxyGrantingTicketConfig" class="net.shibboleth.idp.cas.config.ProxyGrantingTicketConfiguration"
+    <!-- Ticket validity period applies to proxy-granting tickets created upon successful proxy callback validation -->
+    <bean id="CAS.ValidateConfiguration"
+          class="net.shibboleth.idp.cas.config.ValidateConfiguration"
           p:ticketValidityPeriod="PT12H" />
 
     <!-- Artifact Configuration Defaults -->

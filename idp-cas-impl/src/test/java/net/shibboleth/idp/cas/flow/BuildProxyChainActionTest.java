@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ProxyTicketConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
@@ -47,7 +47,7 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
         final ProxyTicket ptB = createProxyTicket(pgtB, "proxiedByB");
         final TicketValidationRequest request = new TicketValidationRequest("proxiedByB", ptB.getId());
         final TicketValidationResponse response = new TicketValidationResponse();
-        final RequestContext context = new TestContextBuilder(ProxyTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ProxyConfiguration.PROFILE_ID)
                 .addProtocolContext(request, response)
                 .addTicketContext(ptB)
                 .build();

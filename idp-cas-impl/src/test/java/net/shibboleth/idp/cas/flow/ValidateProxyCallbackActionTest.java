@@ -16,7 +16,7 @@
  */
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ProxyGrantingTicketConfiguration;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
@@ -82,10 +82,10 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
         final String ticket = "ST-123-ABCCEF";
         final TicketValidationRequest request = new TicketValidationRequest(service, ticket);
         request.setPgtUrl(pgtURL);
-        final RequestContext context = new TestContextBuilder(ProxyGrantingTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(request, new TicketValidationResponse())
                 .addTicketContext(new ServiceTicket(ticket, "SessionID-123", service, Instant.now(), false))
-                .addRelyingPartyContext(service, true, new ProxyGrantingTicketConfiguration())
+                .addRelyingPartyContext(service, true, new ValidateConfiguration())
                 .build();
         return context;
     }

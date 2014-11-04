@@ -20,14 +20,14 @@ package net.shibboleth.idp.cas.config;
 import javax.annotation.Nonnull;
 
 /**
- * CAS proxy ticket configuration modeled as an IdP profile.
+ * CAS protocol configuration that applies to the <code>/proxy</code> URI.
  *
  * @author Marvin S. Addison
  */
-public class ProxyTicketConfiguration extends AbstractTicketConfiguration {
+public class ProxyConfiguration extends AbstractProtocolConfiguration {
 
     /** Proxy ticket profile URI. */
-    public static final String PROFILE_ID = PROTOCOL_URI + "/pt";
+    public static final String PROFILE_ID = PROTOCOL_URI + "/proxy";
 
     /** Default ticket prefix. */
     public static final String DEFAULT_TICKET_PREFIX = "PT";
@@ -37,7 +37,7 @@ public class ProxyTicketConfiguration extends AbstractTicketConfiguration {
 
 
     /** Creates a new instance. */
-    public ProxyTicketConfiguration() {
+    public ProxyConfiguration() {
         super(PROFILE_ID);
         // Proxy tickets valid for 15s by default
         setTicketValidityPeriod(15000);

@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
@@ -46,7 +46,7 @@ public class ValidateIdpSessionActionTest extends AbstractFlowActionTest {
     public void setUp() throws Exception {
         springTestContextPrepareTestInstance();
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
-        context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
                 .addTicketContext(ticket)
                 .build();

@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.cas.ticket;
 
-import net.shibboleth.idp.cas.config.ProxyGrantingTicketConfiguration;
-import net.shibboleth.idp.cas.config.ProxyTicketConfiguration;
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.ticket.serialization.ProxyGrantingTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.ProxyTicketSerializer;
 import net.shibboleth.idp.cas.ticket.serialization.ServiceTicketSerializer;
@@ -64,9 +64,9 @@ public class SimpleTicketService implements TicketService {
     private final StorageService storageService;
 
     static {
-        CONTEXT_CLASS_MAP.put(ServiceTicket.class, ServiceTicketConfiguration.PROFILE_ID);
-        CONTEXT_CLASS_MAP.put(ProxyTicket.class, ProxyTicketConfiguration.PROFILE_ID);
-        CONTEXT_CLASS_MAP.put(ProxyGrantingTicket.class, ProxyGrantingTicketConfiguration.PROFILE_ID);
+        CONTEXT_CLASS_MAP.put(ServiceTicket.class, LoginConfiguration.PROFILE_ID);
+        CONTEXT_CLASS_MAP.put(ProxyTicket.class, ProxyConfiguration.PROFILE_ID);
+        CONTEXT_CLASS_MAP.put(ProxyGrantingTicket.class, ValidateConfiguration.PROFILE_ID);
         SERIALIZER_MAP.put(ServiceTicket.class, ST_SERIALIZER);
         SERIALIZER_MAP.put(ProxyTicket.class, PT_SERIALIZER);
         SERIALIZER_MAP.put(ProxyGrantingTicket.class, PGT_SERIALIZER);

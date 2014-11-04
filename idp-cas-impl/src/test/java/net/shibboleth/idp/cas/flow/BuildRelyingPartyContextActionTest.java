@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -36,7 +36,7 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
     @Test
     public void testExecuteFromServiceTicketRequest() {
         final String serviceURL = "https://serviceA.example.org:8443/landing";
-        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest(serviceURL), null)
                 .build();
         action.execute(requestContext);
@@ -49,7 +49,7 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
     @Test
     public void testExecuteFromTicketValidationRequest() {
         final String serviceURL = "http://serviceB.example.org/";
-        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(serviceURL, "ST-123"), null)
                 .build();
         action.execute(requestContext);
@@ -62,7 +62,7 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
     @Test
     public void testExecuteFromProxyTicketRequest() {
         final String serviceURL = "http://mallory.untrusted.org/";
-        final RequestContext requestContext = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ProxyTicketRequest("PGT-123", serviceURL), null)
                 .build();
         action.execute(requestContext);

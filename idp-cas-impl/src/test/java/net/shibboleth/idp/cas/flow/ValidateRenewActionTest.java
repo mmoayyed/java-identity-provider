@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
@@ -48,7 +48,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
     @Test
     public void testTicketNotFromRenew() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, true);
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
                 .addTicketContext(ticket)
                 .build();
@@ -62,7 +62,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
         final ProxyTicket pt = createProxyTicket(pgt, "https://foo.example.org");
         final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, pt.getId());
         request.setRenew(true);
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(request, null)
                 .addTicketContext(pt)
                 .build();
@@ -74,7 +74,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, true);
         final TicketValidationRequest request = new TicketValidationRequest(TEST_SERVICE, ticket.getId());
         request.setRenew(true);
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(request, null)
                 .addTicketContext(ticket)
                 .build();
@@ -86,7 +86,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
         final ServiceTicket st = createServiceTicket(TEST_SERVICE, false);
         final ProxyGrantingTicket pgt = createProxyGrantingTicket(st);
         final ProxyTicket pt = createProxyTicket(pgt, "https://foo.example.org");
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, pt.getId()), null)
                 .addTicketContext(pt)
                 .build();

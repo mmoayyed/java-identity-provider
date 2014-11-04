@@ -18,14 +18,13 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.config.ConfigLookupFunction;
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -51,8 +50,8 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     private final Logger log = LoggerFactory.getLogger(GrantServiceTicketAction.class);
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<ServiceTicketConfiguration> configLookupFunction =
-            new ConfigLookupFunction<>(ServiceTicketConfiguration.class);
+    private final ConfigLookupFunction<LoginConfiguration> configLookupFunction =
+            new ConfigLookupFunction<>(LoginConfiguration.class);
 
     /** Manages CAS tickets. */
     @Nonnull
@@ -77,7 +76,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
 
         final ServiceTicketRequest request = getCASRequest(profileRequestContext);
         final IdPSession session = getIdPSession(profileRequestContext);
-        final ServiceTicketConfiguration config = configLookupFunction.apply(profileRequestContext);
+        final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
             log.info("Service ticket configuration undefined");
             return ProtocolError.IllegalState.event(this);

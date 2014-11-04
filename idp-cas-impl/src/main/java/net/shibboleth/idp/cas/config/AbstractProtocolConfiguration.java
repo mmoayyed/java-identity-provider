@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Marvin S. Addison
  */
-public abstract class AbstractTicketConfiguration extends AbstractProfileConfiguration
+public abstract class AbstractProtocolConfiguration extends AbstractProfileConfiguration
         implements InitializableComponent {
 
     /** CAS base protocol URI. */
@@ -54,7 +54,7 @@ public abstract class AbstractTicketConfiguration extends AbstractProfileConfigu
      *
      * @param profileId Unique profile identifier.
      */
-    public AbstractTicketConfiguration(@Nonnull @NotEmpty final String profileId) {
+    public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         setSecurityConfiguration(
                 new SecurityConfiguration(

@@ -16,7 +16,7 @@
  */
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ProxyTicketConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
@@ -41,10 +41,10 @@ public class GrantProxyTicketActionTest extends AbstractFlowActionTest {
     public void testGrantProxyTicketSuccess() throws Exception {
         final String service = "https://s.example.org/";
         final ProxyGrantingTicket pgt = createProxyGrantingTicket(createServiceTicket(service, false));
-        final RequestContext context = new TestContextBuilder(ProxyTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ProxyConfiguration.PROFILE_ID)
                 .addProtocolContext(new ProxyTicketRequest(pgt.getId(), service), null)
                 .addTicketContext(pgt)
-                .addRelyingPartyContext(service, true, new ProxyTicketConfiguration())
+                .addRelyingPartyContext(service, true, new ProxyConfiguration())
                 .build();
         assertEquals(action.execute(context).getId(), Events.Success.id());
         final ProxyTicketResponse response = action.getCASResponse(getProfileContext(context));

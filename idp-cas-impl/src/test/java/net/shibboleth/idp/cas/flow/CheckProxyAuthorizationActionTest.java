@@ -16,7 +16,7 @@
  */
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class CheckProxyAuthorizationActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testProxyAuthorizationSuccess() throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addServiceContext(new Service("https://serviceA.example.org/", "proxying", true))
                 .build();
         assertNull(action.execute(context));
@@ -45,7 +45,7 @@ public class CheckProxyAuthorizationActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testProxyAuthorizationFailure() throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addServiceContext(new Service("https://serviceB.example.org/", "no-proxy", false))
                 .build();
         assertEquals(action.execute(context).getId(), ProtocolError.ProxyNotAuthorized.id());

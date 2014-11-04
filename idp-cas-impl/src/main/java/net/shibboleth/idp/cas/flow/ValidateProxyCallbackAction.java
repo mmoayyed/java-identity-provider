@@ -18,15 +18,14 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.config.ConfigLookupFunction;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
 import net.shibboleth.idp.cas.proxy.ProxyIdentifiers;
-import net.shibboleth.idp.cas.config.ProxyGrantingTicketConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.*;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTime;
@@ -63,8 +62,8 @@ public class ValidateProxyCallbackAction
     private final Logger log = LoggerFactory.getLogger(ValidateProxyCallbackAction.class);
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<ProxyGrantingTicketConfiguration> configLookupFunction =
-            new ConfigLookupFunction<>(ProxyGrantingTicketConfiguration.class);
+    private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction =
+            new ConfigLookupFunction<>(ValidateConfiguration.class);
 
     /** Validates the proxy callback endpoint. */
     @Nonnull
@@ -97,7 +96,7 @@ public class ValidateProxyCallbackAction
         final TicketValidationRequest request = getCASRequest(profileRequestContext);
         final TicketValidationResponse response = getCASResponse(profileRequestContext);
         final Ticket ticket = getCASTicket(profileRequestContext);
-        final ProxyGrantingTicketConfiguration config = configLookupFunction.apply(profileRequestContext);
+        final ValidateConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
             log.info("Proxy-granting ticket configuration undefined");
             return ProtocolError.IllegalState.event(this);

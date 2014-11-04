@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
@@ -39,7 +39,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
     public void testGatewayRequested() throws Exception {
         final ServiceTicketRequest request = new ServiceTicketRequest("a");
         request.setGateway(true);
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(request, null)
                 .build();
         assertEquals(action.execute(context).getId(), Events.GatewayRequested.id());
@@ -47,7 +47,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
 
     @Test
     public void testSessionNotFound() throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("b"), null)
                 .build();
         assertEquals(action.execute(context).getId(), Events.SessionNotFound.id());
@@ -55,7 +55,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
 
     @Test
     public void testSessionExpired() throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("c"), null)
                 .addSessionContext(mockSession("ABCDE", false))
                 .build();
@@ -64,7 +64,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
 
     @Test
     public void testSessionFound() throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("d"), null)
                 .addSessionContext(mockSession("12345", true))
                 .build();
@@ -75,7 +75,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
     public void testRenewRequested() throws Exception {
         final ServiceTicketRequest request = new ServiceTicketRequest("e");
         request.setRenew(true);
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(request, null)
                 .addSessionContext(mockSession("98765", true))
                 .build();

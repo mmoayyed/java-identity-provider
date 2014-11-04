@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class PublishProtocolResponseActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testPublishResponse() throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("A"), new ServiceTicketResponse("A", "B"))
                 .build();
         action.execute(context);

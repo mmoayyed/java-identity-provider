@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ProxyTicketConfiguration;
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
@@ -78,9 +78,9 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
         try {
             final String ticketId = request.getTicket();
             log.debug("Attempting to validate {}", ticketId);
-            if (ticketId.startsWith(ServiceTicketConfiguration.DEFAULT_TICKET_PREFIX)) {
+            if (ticketId.startsWith(LoginConfiguration.DEFAULT_TICKET_PREFIX)) {
                 ticket = ticketService.removeServiceTicket(request.getTicket());
-            } else if (ticketId.startsWith(ProxyTicketConfiguration.DEFAULT_TICKET_PREFIX)) {
+            } else if (ticketId.startsWith(ProxyConfiguration.DEFAULT_TICKET_PREFIX)) {
                 ticket = ticketService.removeProxyTicket(ticketId);
             } else {
                 return ProtocolError.InvalidTicketFormat.event(this);

@@ -34,15 +34,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * CAS service ticket configuration modeled as an IdP profile.
+ * CAS protocol configuration that applies to the <code>/login</code> URI.
  *
  * @author Marvin S. Addison
  */
-public class ServiceTicketConfiguration extends AbstractTicketConfiguration
+public class LoginConfiguration extends AbstractProtocolConfiguration
         implements AuthenticationProfileConfiguration {
 
     /** Proxy ticket profile URI. */
-    public static final String PROFILE_ID = PROTOCOL_URI + "/st";
+    public static final String PROFILE_ID = PROTOCOL_URI + "/login";
 
     /** Default ticket prefix. */
     public static final String DEFAULT_TICKET_PREFIX = "ST";
@@ -67,7 +67,7 @@ public class ServiceTicketConfiguration extends AbstractTicketConfiguration
 
 
     /** Creates a new instance. */
-    public ServiceTicketConfiguration() {
+    public LoginConfiguration() {
         super(PROFILE_ID);
         // Service tickets valid for 15s by default
         setTicketValidityPeriod(15000);

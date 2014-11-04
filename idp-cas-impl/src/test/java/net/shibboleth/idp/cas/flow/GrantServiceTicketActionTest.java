@@ -17,12 +17,11 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ServiceTicketConfiguration;
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -53,10 +52,10 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
 
     @Test(dataProvider = "messages")
     public void testExecute(final ServiceTicketRequest request) throws Exception {
-        final RequestContext context = new TestContextBuilder(ServiceTicketConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(request, null)
                 .addSessionContext(mockSession("1234567890", true))
-                .addRelyingPartyContext(request.getService(), true, new ServiceTicketConfiguration())
+                .addRelyingPartyContext(request.getService(), true, new LoginConfiguration())
                 .build();
         assertEquals(action.execute(context).getId(), Events.Success.id());
         final ServiceTicketResponse response = action.getCASResponse(getProfileContext(context));

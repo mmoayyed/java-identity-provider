@@ -18,7 +18,7 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.config.ConfigLookupFunction;
-import net.shibboleth.idp.cas.config.ProxyTicketConfiguration;
+import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
@@ -51,8 +51,8 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
 
 
     /** Profile configuration lookup function. */
-    private final ConfigLookupFunction<ProxyTicketConfiguration> configLookupFunction =
-            new ConfigLookupFunction<>(ProxyTicketConfiguration.class);
+    private final ConfigLookupFunction<ProxyConfiguration> configLookupFunction =
+            new ConfigLookupFunction<>(ProxyConfiguration.class);
 
     /** Manages CAS tickets. */
     @Nonnull
@@ -77,7 +77,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
 
         final ProxyTicketRequest request = getCASRequest(profileRequestContext);
         final ProxyGrantingTicket pgt = (ProxyGrantingTicket) getCASTicket(profileRequestContext);
-        final ProxyTicketConfiguration config = configLookupFunction.apply(profileRequestContext);
+        final ProxyConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
             log.info("Proxy ticket configuration undefined");
             return ProtocolError.IllegalState.event(this);

@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
  *
  * @author Marvin S. Addison
  */
-public class ConfigLookupFunction<T extends AbstractTicketConfiguration> implements Function<ProfileRequestContext, T> {
+public class ConfigLookupFunction<T extends AbstractProtocolConfiguration> implements Function<ProfileRequestContext, T> {
 
     /** Type of profile configuration class. */
     private final Class<T> configClass;
