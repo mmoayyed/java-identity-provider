@@ -36,20 +36,20 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
      * 
      * @return  default authentication methods to use
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<Principal> getDefaultAuthenticationMethods();
     
     /**
      * Get the allowable authentication flows for this profile.
      * 
      * @return  a set of authentication flow IDs to allow 
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAuthenticationFlows();
 
     /**
      * Get the name identifier formats to use with this relying party, in order of preference.
      * 
      * @return  name identifier formats to use
      */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getNameIDFormatPrecedence();
 
 }
