@@ -19,7 +19,7 @@ package net.shibboleth.idp.cas.config;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
-import net.shibboleth.idp.profile.config.AuthenticationProfileConfiguration;
+import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;

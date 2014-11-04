@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.config;
+package net.shibboleth.idp.authn.config;
 
 import java.security.Principal;
 import java.util.List;
@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
