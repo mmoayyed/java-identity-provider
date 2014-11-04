@@ -112,6 +112,14 @@
         <webflow:flow-location id="intercept/terms-of-use" path="../system/flows/intercept/terms-of-use-flow.xml" />
         <webflow:flow-location id="intercept/attribute-release" path="../system/flows/intercept/attribute-release-flow.xml" />
 
+        <!-- CAS protocol flows. -->
+        <webflow:flow-location id="cas/login" path="../system/flows/cas/login/login-flow.xml" />
+        <webflow:flow-location id="cas/proxy" path="../system/flows/cas/proxy/proxy-flow.xml" />
+        <webflow:flow-location id="cas.abstractValidate" path="../system/flows/cas/abstractValidate/abstractValidate-flow.xml" />
+        <webflow:flow-location id="cas/serviceValidate" path="../system/flows/cas/serviceValidate/serviceValidate-flow.xml" />
+        <webflow:flow-location id="cas/proxyValidate" path="../system/flows/cas/proxyValidate/proxyValidate-flow.xml" />
+        <webflow:flow-location id="cas/samlValidate" path="../system/flows/cas/samlValidate/samlValidate-flow.xml" />
+
     </webflow:flow-registry>
 
     <webflow:flow-executor id="flowExecutor">

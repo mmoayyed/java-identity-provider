@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
@@ -49,6 +50,8 @@ public class InitializeValidateAction extends
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
+
+        profileRequestContext.setProfileId(ValidateConfiguration.PROFILE_ID);
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         final String service = params.get(ProtocolParam.Service.id());

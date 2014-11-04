@@ -51,7 +51,7 @@
     <!-- ViewResolvers -->
     
     <bean id="shibboleth.VelocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-        <property name="resourceLoaderPath" value="%{idp.views:%{idp.home}/views}" />
+        <property name="resourceLoaderPath" value="%{idp.views:%{idp.home}/views},%{idp.home}/system/views" />
         <property name="velocityProperties">
             <props>
                 <prop key="runtime.log.logsystem.class">net.shibboleth.utilities.java.support.velocity.SLF4JLogChute</prop>

@@ -19,6 +19,7 @@ package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.protocol.*;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -41,9 +42,10 @@ public class ProcessSamlMessageAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessSamlMessageAction.class);
-
     @Nonnull
+    private final Logger log = LoggerFactory.getLogger(ProcessSamlMessageAction.class);
+
+
     @Override
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
@@ -80,6 +82,6 @@ public class ProcessSamlMessageAction extends
 
         setCASRequest(profileRequestContext, ticketValidationRequest);
 
-        return Events.Proceed.event(this);
+        return ActionSupport.buildProceedEvent(this);
     }
 }

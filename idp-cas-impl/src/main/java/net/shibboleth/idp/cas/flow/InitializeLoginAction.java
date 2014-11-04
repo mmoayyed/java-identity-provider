@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.*;
 import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -42,6 +43,8 @@ public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTick
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
+
+        profileRequestContext.setProfileId(LoginConfiguration.PROFILE_ID);
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         String service = params.get(ProtocolParam.Service.id());

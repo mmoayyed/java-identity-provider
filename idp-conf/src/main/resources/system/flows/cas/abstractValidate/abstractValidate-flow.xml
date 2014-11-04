@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  ~ See LICENSE for licensing and NOTICE for copyright.
+  -->
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+          http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
+      abstract="true">
+
+    <action-state id="initializeValidate">
+        <evaluate expression="initProfileRequestContext"/>
+        <evaluate expression="initializeValidateAction" />
+        <evaluate expression="buildRelyingPartyContextAction" />
+        <evaluate expression="selectProfileConfiguration" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="validateTicket" />
+    </action-state>
+
+    <action-state id="validateTicket">
+        <evaluate expression="validateTicketAction" />
+        <transition on="invalidTicketFormat" to="serviceValidateFailure" />
+        <transition on="serviceMismatch" to="serviceValidateFailure" />
+        <transition on="ticketExpired" to="serviceValidateFailure" />
+        <transition on="ticketRetrievalError" to="serviceValidateFailure" />
+        <transition on="serviceTicketValidated" to="validateIdPSession" />
+        <transition on="proxyTicketValidated" to="handleValidProxyTicket" />
+    </action-state>
+
+    <action-state id="validateIdPSession">
+        <evaluate expression="validateIdPSessionAction" />
+        <transition on="sessionRetrievalError" to="serviceValidateFailure" />
+        <transition on="sessionExpired" to="serviceValidateFailure" />
+        <transition on="success" to="validateRenew" />
+    </action-state>
+
+    <action-state id="validateRenew">
+        <evaluate expression="validateRenewAction" />
+        <transition on="ticketNotFromRenew" to="serviceValidateFailure" />
+        <transition on="renewIncompatibleWithProxy" to="serviceValidateFailure" />
+        <transition on="success" to="checkForProxy" />
+    </action-state>
+
+    <decision-state id="checkForProxy">
+        <if test="requestScope.ticketValidationRequest.pgtUrl != null"
+            then="validateProxyCallback"
+            else="resolveAttributes"/>
+    </decision-state>
+
+    <action-state id="validateProxyCallback">
+        <evaluate expression="checkProxyAuthorizationAction" />
+        <evaluate expression="validateProxyCallbackAction" />
+        <transition on="success" to="resolveAttributes" />
+        <transition on="failure" to="resolveAttributes" />
+    </action-state>
+
+    <action-state id="resolveAttributes">
+        <evaluate expression="buildAttributeContextAction" />
+        <evaluate expression="resolveAttributes" />
+        <evaluate expression="filterAttributes" />
+        <evaluate expression="extractAttributesAction" />
+        <evaluate expression="'finished'" />
+        <transition on="finished" to="updateIdPSessionWithSPSession" />
+    </action-state>
+
+    <action-state id="updateIdPSessionWithSPSession">
+        <evaluate expression="updateIdPSessionWithSPSessionAction" />
+        <transition on="success" to="serviceValidateSuccess" />
+    </action-state>
+
+    <!-- View end states -->
+    <end-state id="serviceValidateSuccess" view="cas/serviceValidateSuccess">
+        <on-entry>
+            <evaluate expression="publishProtocolResponseAction" />
+            <set name="flashScope.userName" value="requestScope.ticketValidationResponse.userName" />
+            <set name="flashScope.attributes" value="requestScope.ticketValidationResponse.attributes" />
+            <set name="flashScope.pgtIou" value="requestScope.ticketValidationResponse.pgtIou" />
+            <set name="flashScope.proxies" value="requestScope.ticketValidationResponse.proxies" />
+            <set name="flashScope.escapeUtils" value="T(org.apache.commons.lang.StringEscapeUtils)" />
+        </on-entry>
+    </end-state>
+    <end-state id="serviceValidateFailure" view="cas/serviceValidateFailure">
+        <on-entry>
+            <set name="flashScope.code" value="currentEvent.attributes.code" />
+            <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode" />
+        </on-entry>
+    </end-state>
+
+    <global-transitions>
+        <transition on-exception="java.lang.IllegalStateException" to="serviceValidateFailure">
+            <evaluate expression="T(net.shibboleth.idp.cas.protocol.ProtocolError).IllegalState.event(this)" />
+        </transition>
+        <transition on="illegalState" to="serviceValidateFailure" />
+        <transition on="protocolViolation" to="serviceValidateFailure" />
+    </global-transitions>
+</flow>
