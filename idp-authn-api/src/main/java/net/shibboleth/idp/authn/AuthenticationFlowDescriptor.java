@@ -58,6 +58,9 @@ import com.google.common.collect.Collections2;
 public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializableComponent implements
         PrincipalSupportingComponent, Predicate<ProfileRequestContext>, StorageSerializer<AuthenticationResult> {
 
+    /** Prefix convention for flow IDs. */
+    @Nonnull @NotEmpty public static final String FLOW_ID_PREFIX = "authn/";
+
     /** Additional allowance for storage of result records to avoid race conditions during use. */
     public static final long STORAGE_EXPIRATION_OFFSET;
 

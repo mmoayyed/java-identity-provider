@@ -24,16 +24,13 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
-import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
+import net.shibboleth.idp.authn.config.navigate.AuthenticationFlowsLookupFunction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
-import net.shibboleth.idp.profile.config.ProfileConfiguration;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +42,10 @@ import com.google.common.collect.Lists;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
- * objects configured into the IdP, and optionally a customized {@link PrincipalEvalPredicateFactoryRegistry}.
+ * objects configured into the IdP, filtered by flow IDs from a lookup function, and optionally a customized
+ * {@link PrincipalEvalPredicateFactoryRegistry}.
  * 
- * <p>The set of flows will be filtered by {@link AuthenticationProfileConfiguration#getAuthenticationFlows()}
- * if such a configuration is available from a {@link RelyingPartyContext} obtained via a lookup strategy,
- * by default the child of the {@link ProfileRequestContext}. Each flow's attached predicate is also
- * applied.</p>
+ * <p>The flow IDs used for filtering must omit the {@link AuthenticationFlowDescriptor#FLOW_ID_PREFIX} prefix.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
@@ -64,21 +59,16 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** The flows to make available for possible use. */
     @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> availableFlows;
     
+    /** Lookup function for the flow IDs to activate from within the available set. */
+    @Nonnull private Function<ProfileRequestContext,Collection<String>> activeFlowsLookupStrategy;
+
     /** The registry of predicate factories for custom principal evaluation. */
     @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
-
-    /**
-     * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
-     */
-    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
-    
-    /** Profile configuration source for requested principals. */
-    @Nullable private AuthenticationProfileConfiguration authenticationProfileConfig;
     
     /** Constructor. */
     PopulateAuthenticationContext() {
         availableFlows = Lists.newArrayList();
-        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+        activeFlowsLookupStrategy = new AuthenticationFlowsLookupFunction();
     }
     
     /**
@@ -92,6 +82,17 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         
         availableFlows.clear();
         availableFlows.addAll(Collections2.filter(flows, Predicates.notNull()));
+    }
+    
+    /**
+     * Set the lookup strategy to use for the authentication flows to activate.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setActiveFlowsLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        activeFlowsLookupStrategy = Constraint.isNotNull(strategy, "Flow lookup strategy cannot be null");
     }
     
     /**
@@ -115,38 +116,6 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
     }
     
-    /**
-     * Set the strategy used to locate the {@link RelyingPartyContext} associated with a given
-     * {@link ProfileRequestContext}.
-     * 
-     * @param strategy strategy used to locate the {@link RelyingPartyContext} associated with a given
-     *            {@link ProfileRequestContext}
-     */
-    public void setRelyingPartyContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        relyingPartyContextLookupStrategy =
-                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
-        if (rpCtx != null) {
-            final ProfileConfiguration config = rpCtx.getProfileConfig();
-            if (config != null) {
-                if (config instanceof AuthenticationProfileConfiguration) {
-                    authenticationProfileConfig = (AuthenticationProfileConfiguration) config;
-                }
-            }
-        }
-        
-        return super.doPreExecute(profileRequestContext, authenticationContext);
-    }
-    
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -158,10 +127,12 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
             authenticationContext.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
         }
 
-        if (authenticationProfileConfig != null
-                && !authenticationProfileConfig.getAuthenticationFlows().isEmpty()) {
+        final Collection<String> activeFlows = activeFlowsLookupStrategy.apply(profileRequestContext);
+
+        if (activeFlows != null && !activeFlows.isEmpty()) {
             for (final AuthenticationFlowDescriptor desc : availableFlows) {
-                if (authenticationProfileConfig.getAuthenticationFlows().contains(desc.getId())) {
+                final String flowId = desc.getId().substring(desc.getId().indexOf('/') + 1);
+                if (activeFlows.contains(flowId)) {
                     if (desc.apply(profileRequestContext)) {
                         authenticationContext.getPotentialFlows().put(desc.getId(), desc);
                     } else {

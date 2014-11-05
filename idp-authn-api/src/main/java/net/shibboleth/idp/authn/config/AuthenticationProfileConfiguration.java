@@ -41,6 +41,10 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
     /**
      * Get the allowable authentication flows for this profile.
      * 
+     * <p>The flow IDs returned MUST NOT contain the
+     * {@link net.shibboleth.idp.authn.AuthenticationFlowDescriptor#FLOW_ID_PREFIX}
+     * prefix common to all interceptor flows.</p>
+     * 
      * @return  a set of authentication flow IDs to allow 
      */
     @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAuthenticationFlows();
@@ -48,7 +52,9 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
     /**
      * Get an ordered list of post-authentication interceptor flows to run for this profile.
      * 
-     * <p>The flow IDs returned MUST NOT contain the "intercept/" prefix common to all interceptor flows.</p>
+     * <p>The flow IDs returned MUST NOT contain the
+     * {@link net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX}
+     * prefix common to all interceptor flows.</p>
      * 
      * @return  a set of interceptor flow IDs to enable
      */
