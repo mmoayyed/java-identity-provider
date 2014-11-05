@@ -59,6 +59,7 @@
     <action-state id="AttributeResolution">
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="FilterAttributes" />
+        <evaluate expression="PopulatePostAuthnInterceptContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="DoInterceptSubflow" />

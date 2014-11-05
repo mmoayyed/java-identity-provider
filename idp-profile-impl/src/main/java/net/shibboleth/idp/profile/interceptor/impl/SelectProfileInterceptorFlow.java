@@ -62,10 +62,10 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same flow again.
         if (interceptorContext.getAttemptedFlow() != null) {
-            log.info("{} Moving completed flow {} to intermediate set, selecting next one", getLogPrefix(),
+            log.info("{} Moving completed flow {} to completed set, selecting next one", getLogPrefix(),
                     interceptorContext.getAttemptedFlow().getId());
-            interceptorContext.getIntermediateFlows().put(interceptorContext.getAttemptedFlow().getId(),
-                    interceptorContext.getAttemptedFlow());
+            interceptorContext.getAvailableFlows().remove(interceptorContext.getAttemptedFlow());
+            interceptorContext.setAttemptedFlow(null);
         }
 
         return true;
@@ -86,7 +86,7 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
     }
 
     /**
-     * Select the first potential flow not found in the intermediate flows collection, and that is applicable to the
+     * Select the first potential flow not found in the completed flows collection, and that is applicable to the
      * context.
      * 
      * @param profileRequestContext the current IdP profile request context
@@ -97,18 +97,16 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        for (final ProfileInterceptorFlowDescriptor flow : interceptorContext.getAvailableFlows().values()) {
-            if (!interceptorContext.getIntermediateFlows().containsKey(flow.getId())) {
-                log.debug("{} Checking flow {} for applicability...", getLogPrefix(), flow.getId());
+        for (final ProfileInterceptorFlowDescriptor flow : interceptorContext.getAvailableFlows()) {
+            log.debug("{} Checking flow {} for applicability...", getLogPrefix(), flow.getId());
+            if (flow.apply(profileRequestContext)) {
                 interceptorContext.setAttemptedFlow(flow);
-                if (flow.apply(profileRequestContext)) {
-                    return flow;
-                }
-                log.debug("{} Flow {} was not applicable to this request", getLogPrefix(), flow.getId());
-
-                // Note that we don't exclude this flow from possible future selection, since one flow
-                // could in theory do partial work and change the context such that this flow then applies.
+                return flow;
             }
+            log.debug("{} Flow {} was not applicable to this request", getLogPrefix(), flow.getId());
+
+            // Note that we don't exclude this flow from possible future selection, since one flow
+            // could in theory do partial work and change the context such that this flow then applies.
         }
 
         return null;

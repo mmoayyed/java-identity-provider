@@ -19,14 +19,17 @@ package net.shibboleth.idp.cas.config;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.*;
+
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import javax.annotation.Nonnull;
+
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,6 +58,11 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     @NonnullElements
     private Set<String> authenticationFlows = Collections.emptySet();
 
+    /** Enables post-authentication interceptor flows. */
+    @Nonnull
+    @NonnullElements
+    private List<String> postAuthenticationFlows = Collections.emptyList();
+    
     /** Selects, and limits, the authentication contexts to use for requests. */
     @Nonnull
     @NonnullElements
@@ -119,6 +127,26 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     @Nonnull @NonnullElements
     @NotLive
     @Unmodifiable
+    public List<String> getPostAuthenticationFlows() {
+        return postAuthenticationFlows;
+    }
+
+    /**
+     * Set the ordered collection of post-authentication interceptor flows to enable.
+     * 
+     * @param flows   flow identifiers to enable
+     */
+    public void setPostAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
+        Constraint.isNotNull(flows, "Collection of flows cannot be null");
+        
+        postAuthenticationFlows = Lists.newArrayList(StringSupport.normalizeStringCollection(flows));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NonnullElements
+    @NotLive
+    @Unmodifiable
     public List<String> getNameIDFormatPrecedence() {
         return ImmutableList.copyOf(nameIDFormatPrecedence);
     }
@@ -133,7 +161,7 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
 
         nameIDFormatPrecedence = Lists.newArrayList(Collections2.filter(formats, Predicates.notNull()));
     }
-
+    
     @Override
     @Nonnull
     protected String getDefaultTicketPrefix() {

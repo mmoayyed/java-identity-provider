@@ -46,6 +46,15 @@ public interface AuthenticationProfileConfiguration extends ProfileConfiguration
     @Nonnull @NonnullElements @NotLive @Unmodifiable Set<String> getAuthenticationFlows();
 
     /**
+     * Get an ordered list of post-authentication interceptor flows to run for this profile.
+     * 
+     * <p>The flow IDs returned MUST NOT contain the "intercept/" prefix common to all interceptor flows.</p>
+     * 
+     * @return  a set of interceptor flow IDs to enable
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getPostAuthenticationFlows();
+
+    /**
      * Get the name identifier formats to use with this relying party, in order of preference.
      * 
      * @return  name identifier formats to use

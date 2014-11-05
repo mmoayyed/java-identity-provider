@@ -28,7 +28,6 @@ public class ProfileInterceptorContextTest {
     @Test public void testInstantiation() {
         final ProfileInterceptorContext context = new ProfileInterceptorContext();
         Assert.assertNull(context.getAttemptedFlow());
-        Assert.assertTrue(context.getIntermediateFlows().isEmpty());
         Assert.assertTrue(context.getAvailableFlows().isEmpty());
     }
 
@@ -39,4 +38,5 @@ public class ProfileInterceptorContextTest {
         context.setAttemptedFlow(descriptor);
         Assert.assertEquals(descriptor, context.getAttemptedFlow());
     }
+    
 }

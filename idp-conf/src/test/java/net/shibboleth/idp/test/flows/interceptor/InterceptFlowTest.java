@@ -41,15 +41,14 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 
 /** Tests for the profile interceptor flow. */
-@ContextConfiguration(locations = {"classpath:/intercept/test-webflow-config.xml",},
-        initializers = InterceptAppCtxInitializer.class)
+@ContextConfiguration(locations = {"classpath:/intercept/test-webflow-config.xml",})
 public class InterceptFlowTest extends AbstractFlowTest {
 
     /** Flow id. */
     @Nonnull public final static String TEST_PROFILE_FLOW_ID = "test-intercept-flow";
 
     /** Bean ID of user configured intercept flows. */
-    @Nonnull public final static String INTERCEPT_FLOWS_BEAN_ID = "shibboleth.InterceptFlows";
+    @Nonnull public final static String INTERCEPT_FLOWS_BEAN_ID = "shibboleth.AvailableInterceptFlows";
 
     @Nonnull public final static String TEST_FLOW_REGISTRY_ID = "testFlowRegistry";
 
@@ -84,9 +83,8 @@ public class InterceptFlowTest extends AbstractFlowTest {
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
         Assert.assertNotNull(prc);
 
-        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
         Assert.assertTrue(interceptorCtx.getAvailableFlows().isEmpty());
-        Assert.assertTrue(interceptorCtx.getIntermediateFlows().isEmpty());
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), false);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), false);
     }
@@ -109,11 +107,8 @@ public class InterceptFlowTest extends AbstractFlowTest {
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
         Assert.assertNotNull(prc);
 
-        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class, false);
-        Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 1);
-        Assert.assertEquals(interceptorCtx.getIntermediateFlows().size(), 1);
-        Assert.assertEquals(interceptorCtx.getAvailableFlows().values().iterator().next(), flowDescriptor);
-        Assert.assertEquals(interceptorCtx.getIntermediateFlows().values().iterator().next(), flowDescriptor);
+        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 0);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), true);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), false);
     }
@@ -140,13 +135,8 @@ public class InterceptFlowTest extends AbstractFlowTest {
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
         Assert.assertNotNull(prc);
 
-        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class, false);
-        Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 2);
-        Assert.assertTrue(interceptorCtx.getAvailableFlows().values().contains(flowDescriptor1));
-        Assert.assertTrue(interceptorCtx.getAvailableFlows().values().contains(flowDescriptor2));
-        Assert.assertEquals(interceptorCtx.getIntermediateFlows().size(), 2);
-        Assert.assertTrue(interceptorCtx.getIntermediateFlows().values().contains(flowDescriptor1));
-        Assert.assertTrue(interceptorCtx.getIntermediateFlows().values().contains(flowDescriptor2));
+        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 0);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), true);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), true);
     }
@@ -169,10 +159,8 @@ public class InterceptFlowTest extends AbstractFlowTest {
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
         Assert.assertNotNull(prc);
 
-        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
         Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 1);
-        Assert.assertTrue(interceptorCtx.getAvailableFlows().values().contains(flowDescriptor1));
-        Assert.assertEquals(interceptorCtx.getIntermediateFlows().size(), 0);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), false);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), false);
     }
@@ -199,12 +187,8 @@ public class InterceptFlowTest extends AbstractFlowTest {
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
         Assert.assertNotNull(prc);
 
-        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class, false);
-        Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 2);
-        Assert.assertTrue(interceptorCtx.getAvailableFlows().values().contains(flowDescriptor1));
-        Assert.assertTrue(interceptorCtx.getAvailableFlows().values().contains(flowDescriptor2));
-        Assert.assertEquals(interceptorCtx.getIntermediateFlows().size(), 1);
-        Assert.assertTrue(interceptorCtx.getIntermediateFlows().values().contains(flowDescriptor1));
+        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 1);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), true);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), false);
     }
@@ -232,13 +216,8 @@ public class InterceptFlowTest extends AbstractFlowTest {
         final ProfileRequestContext prc = retrieveProfileRequestContext(result);
         Assert.assertNotNull(prc);
 
-        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class, false);
-        Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 2);
-        Assert.assertTrue(interceptorCtx.getAvailableFlows().values().contains(flowDescriptor1));
-        Assert.assertTrue(interceptorCtx.getAvailableFlows().values().contains(flowDescriptor2));
-        Assert.assertEquals(interceptorCtx.getIntermediateFlows().size(), 2);
-        Assert.assertTrue(interceptorCtx.getIntermediateFlows().values().contains(flowDescriptor1));
-        Assert.assertTrue(interceptorCtx.getIntermediateFlows().values().contains(flowDescriptor2));
+        final ProfileInterceptorContext interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
+        Assert.assertEquals(interceptorCtx.getAvailableFlows().size(), 0);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed1"), true);
         Assert.assertEquals(result.getOutcome().getOutput().get("testProceed2"), true);
     }

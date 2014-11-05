@@ -12,8 +12,13 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- Flows executed after authentication. -->
-    <util:list id="shibboleth.InterceptFlows">
+    <!--
+    Intercept flows are used at various injection points to modify processing. This is the master list
+    of flows available, but flows are enabled by specifying them in various profile configuration beans
+    via relying-party.xml 
+    -->
+    
+    <util:list id="shibboleth.AvailableInterceptFlows">
 
         <bean id="intercept/context-check" parent="shibboleth.InterceptFlow" />
 
@@ -25,6 +30,31 @@
              p:perAttributeConsentEnabled="true" />
 
     </util:list>
+    
+    <!--
+    Condition to evaluate to interrupt SSO flows to check the state of the transaction before allowing.
+    
+    Typically the flow itself will be activated based on configuration in relying-party.xml, and this controls
+    whether to proceed if the flow is activated.
+    -->
+    <bean id="shibboleth.context-check.Condition" parent="shibboleth.Conditions.AND">
+        <constructor-arg>
+            <list>
+                <bean parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{ 'https://sp.example.org' }" />
+                <bean class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate">
+                    <property name="attributeValueMap">
+                        <map>
+                            <entry key="eppn">
+                                <list>
+                                    <value>*</value>
+                                </list>
+                            </entry>
+                        </map>
+                    </property>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
 
     <!-- Condition to evaluate to interrupt SSO flows to obtain consent. -->
     <bean id="shibboleth.consent.Condition" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
@@ -64,30 +94,5 @@
     <bean id="shibboleth.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 
         c:regex="^exampleAttribute.*$" />
      -->
-
-    <!--
-    Condition to evaluate to interrupt SSO flows to check the state of the transaction before allowing.
-    
-    Typically the flow itself will be activated based on configuration in relying-party.xml, and this controls
-    whether to proceed if the flow is activated.
-    -->
-    <bean id="shibboleth.context-check.Condition" parent="shibboleth.Conditions.AND">
-        <constructor-arg>
-            <list>
-                <bean parent="shibboleth.Conditions.RelyingPartyId" c:candidates="#{ 'https://sp.example.org' }" />
-                <bean class="net.shibboleth.idp.profile.logic.SimpleAttributePredicate">
-                    <property name="attributeValueMap">
-                        <map>
-                            <entry key="eppn">
-                                <list>
-                                    <value>*</value>
-                                </list>
-                            </entry>
-                        </map>
-                    </property>
-                </bean>
-            </list>
-        </constructor-arg>
-    </bean>
 
 </beans>

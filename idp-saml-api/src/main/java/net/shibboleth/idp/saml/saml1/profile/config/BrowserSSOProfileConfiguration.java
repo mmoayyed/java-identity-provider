@@ -45,6 +45,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Configuration for SAML 1 Browser SSO profile requests. */
 public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfiguration
@@ -77,6 +78,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     /** Filters the usable authentication flows. */
     @Nonnull @NonnullElements private Set<String> authenticationFlows;
     
+    /** Enables post-authentication interceptor flows. */
+    @Nonnull @NonnullElements private List<String> postAuthenticationFlows;
+    
     /** Precedence of name identifier formats to use for requests. */
     @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
     
@@ -97,6 +101,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
         includeAttributeStatement = false;
         defaultAuthenticationMethods = Collections.emptyList();
         authenticationFlows = Collections.emptySet();
+        postAuthenticationFlows = Collections.emptyList();
         nameIDFormatPrecedence = Collections.emptyList();
     }
 
@@ -182,7 +187,24 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     public void setAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        authenticationFlows = Sets.newHashSet(Collections2.filter(flows, Predicates.notNull()));
+        authenticationFlows = Sets.newHashSet(StringSupport.normalizeStringCollection(flows));
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows() {
+        return postAuthenticationFlows;
+    }
+
+    /**
+     * Set the ordered collection of post-authentication interceptor flows to enable.
+     * 
+     * @param flows   flow identifiers to enable
+     */
+    public void setPostAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
+        Constraint.isNotNull(flows, "Collection of flows cannot be null");
+        
+        postAuthenticationFlows = Lists.newArrayList(StringSupport.normalizeStringCollection(flows));
     }
     
     /** {@inheritDoc} */
@@ -199,7 +221,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
         
-        nameIDFormatPrecedence = Lists.newArrayList(Collections2.filter(formats, Predicates.notNull()));
+        nameIDFormatPrecedence = Lists.newArrayList(StringSupport.normalizeStringCollection(formats));
     }
 
 }

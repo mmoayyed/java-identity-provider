@@ -201,6 +201,14 @@
     <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
         c:filterService-ref="shibboleth.AttributeFilterService" />
 
+    <bean id="PopulatePostAuthnInterceptContext"
+            class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+            p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
+        </property>
+    </bean>
+
     <bean id="AddInResponseToToResponse"
             class="org.opensaml.saml.common.profile.impl.AddInResponseToToResponse" scope="prototype">
         <property name="requestIdLookupStrategy">

@@ -17,14 +17,15 @@
 
 package net.shibboleth.idp.profile.interceptor;
 
-import javax.security.auth.Subject;
+import java.util.Arrays;
+import java.util.Collection;
 
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -47,7 +48,6 @@ public class PopulateProfileInterceptorContextTest {
     @BeforeMethod public void setUp() throws Exception {
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setSubject(new Subject());
 
         interceptorFlows =
                 ImmutableList.of(new ProfileInterceptorFlowDescriptor(), new ProfileInterceptorFlowDescriptor(),
@@ -58,6 +58,8 @@ public class PopulateProfileInterceptorContextTest {
 
         final PopulateProfileInterceptorContext action = new PopulateProfileInterceptorContext();
         action.setAvailableFlows(interceptorFlows);
+        action.setActiveFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
+                Arrays.asList("test1", "test2", "test3")));
         action.initialize();
 
         action.execute(src);
@@ -66,12 +68,12 @@ public class PopulateProfileInterceptorContextTest {
     /** Test that the context is properly added. */
     @Test public void testAction() throws Exception {
         ActionTestingSupport.assertProceedEvent(prc);
-        final ProfileInterceptorContext interceptorContext = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        final ProfileInterceptorContext interceptorContext = prc.getSubcontext(ProfileInterceptorContext.class);
         Assert.assertNotNull(interceptorContext);
         Assert.assertEquals(interceptorContext.getAvailableFlows().size(), 3);
-        Assert.assertNotNull(interceptorContext.getAvailableFlows().get("test1"));
-        Assert.assertNotNull(interceptorContext.getAvailableFlows().get("test2"));
-        Assert.assertNotNull(interceptorContext.getAvailableFlows().get("test3"));
+        Assert.assertEquals(interceptorContext.getAvailableFlows().get(0).getId(), "test1");
+        Assert.assertEquals(interceptorContext.getAvailableFlows().get(1).getId(), "test2");
+        Assert.assertEquals(interceptorContext.getAvailableFlows().get(2).getId(), "test3");
     }
 
 }

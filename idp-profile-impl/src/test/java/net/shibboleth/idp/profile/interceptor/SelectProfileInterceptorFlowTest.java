@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.interceptor;
 
+import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.impl.SelectProfileInterceptorFlow;
 
@@ -41,34 +42,35 @@ public class SelectProfileInterceptorFlowTest extends PopulateProfileInterceptor
         action = new SelectProfileInterceptorFlow();
         action.initialize();
 
-        interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        interceptorCtx = prc.getSubcontext(ProfileInterceptorContext.class);
     }
 
     @Test public void testSelect() {
 
         final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test1");
 
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(event.getId()));
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), "test1");
+        Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(0));
+        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());
     }
 
     @Test public void testIncompleteFlows() {
-        interceptorCtx.getIntermediateFlows().put("test1", interceptorCtx.getAvailableFlows().get("test1"));
-
+        action.execute(src);
         final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test2");
 
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(event.getId()));
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), "test2");
+        Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(0));
+        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());
     }
 
     @Test public void testPredicate() {
-        interceptorCtx.getAvailableFlows().get("test1")
-                .setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
+        interceptorCtx.getAvailableFlows().get(0).setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
 
         final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test2");
 
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(event.getId()));
-        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), "test2");
+        Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(1));
+        Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());
     }
 
 }

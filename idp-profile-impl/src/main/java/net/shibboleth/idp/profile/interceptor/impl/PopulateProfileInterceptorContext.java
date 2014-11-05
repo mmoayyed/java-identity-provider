@@ -18,13 +18,16 @@
 package net.shibboleth.idp.profile.interceptor.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -32,16 +35,21 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * An action that populates a {@link ProfileInterceptorContext} with the {@link ProfileInterceptorFlowDescriptor}
- * objects configured into the IdP.
+ * An action that populates a {@link ProfileInterceptorContext} with {@link ProfileInterceptorFlowDescriptor}
+ * objects filtered by flow IDs from a lookup function.
+ * 
+ * <p>The flow IDs used for filtering must omit the "intercept/" prefix.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @pre <pre>ProfileRequestContext.getSubcontext(ProfileInterceptorContext.class, true) != null</pre>
  * @post The ProfileInterceptorContext is modified as above.
  */
 public class PopulateProfileInterceptorContext extends AbstractProfileInterceptorAction {
@@ -52,9 +60,12 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
     /** The flows to make available for possible use. */
     @Nonnull @NonnullElements private Collection<ProfileInterceptorFlowDescriptor> availableFlows;
 
+    /** Lookup function for the flow IDs to activate from within the available set. */
+    @NonnullAfterInit private Function<ProfileRequestContext,Collection<String>> activeFlowsLookupStrategy;
+    
     /** Constructor. */
     public PopulateProfileInterceptorContext() {
-        availableFlows = Lists.newArrayList();
+        availableFlows = Collections.emptyList();
     }
 
     /**
@@ -66,16 +77,56 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(flows, "Flow collection cannot be null");
 
-        availableFlows.clear();
-        availableFlows.addAll(Collections2.filter(flows, Predicates.notNull()));
+        availableFlows = Lists.newArrayList(Collections2.filter(flows, Predicates.notNull()));
+    }
+    
+    /**
+     * Set the lookup strategy to use for the interceptor flows to activate.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setActiveFlowsLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        activeFlowsLookupStrategy = Constraint.isNotNull(strategy, "Flow lookup strategy cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (activeFlowsLookupStrategy == null) {
+            throw new ComponentInitializationException("Flow lookup strategy cannot be null");
+        }
     }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
-        log.debug("{} Installing {} flows into interceptor context", getLogPrefix(), availableFlows.size());
-        for (final ProfileInterceptorFlowDescriptor desc : availableFlows) {
-            interceptorContext.getAvailableFlows().put(desc.getId(), desc);
+        
+        interceptorContext.getAvailableFlows().clear();
+        interceptorContext.setAttemptedFlow(null);
+        
+        final Collection<String> activeFlows = activeFlowsLookupStrategy.apply(profileRequestContext);
+        if (activeFlows != null) {
+            for (final String id : activeFlows) {
+                final String flowId = "intercept/" + id;
+                final Optional<ProfileInterceptorFlowDescriptor> flow = Iterables.tryFind(availableFlows,
+                        new Predicate<ProfileInterceptorFlowDescriptor>() {
+                            public boolean apply(ProfileInterceptorFlowDescriptor input) {
+                                return input.getId().equals(flowId);
+                            }
+                });
+                
+                if (flow.isPresent()) {
+                    log.debug("{} Installing flow {} into interceptor context", getLogPrefix(), flowId);
+                    interceptorContext.getAvailableFlows().add(flow.get());
+                } else {
+                    log.warn("{} Configured interceptor flow {} not available for use", getLogPrefix(), flowId);
+                }
+            }
         }
     }
+    
 }

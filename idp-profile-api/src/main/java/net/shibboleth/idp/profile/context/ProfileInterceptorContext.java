@@ -17,8 +17,7 @@
 
 package net.shibboleth.idp.profile.context;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,29 +30,26 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
+import com.google.common.collect.Lists;
+
 /**
- * A {@link BaseContext} which holds flows that are available to be executed, flows which were executed but did not
- * complete, and the last flow attempted.
+ * A {@link BaseContext} which holds flows that are available to be executed, the last flow attempted,
+ * and any flow result.
  */
 public class ProfileInterceptorContext extends BaseContext {
 
     /** The last flow attempted. */
     @Nullable private ProfileInterceptorFlowDescriptor attemptedFlow;
 
-    /** Flows that are available to be executed. */
-    @Nonnull @NonnullElements private final Map<String, ProfileInterceptorFlowDescriptor> availableFlows;
-
-    /** Flows that have been attempted, successfully or otherwise, without producing a completed result. */
-    @Nonnull @NonnullElements private final Map<String, ProfileInterceptorFlowDescriptor> intermediateFlows;
+    /** Flows that need to be executed. */
+    @Nonnull @NonnullElements private final List<ProfileInterceptorFlowDescriptor> availableFlows;
 
     /** The result of the flow. */
     @Nullable private ProfileInterceptorResult result;
 
     /** Constructor. */
     public ProfileInterceptorContext() {
-        // TODO nonnull element constraints
-        intermediateFlows = new LinkedHashMap<>();
-        availableFlows = new LinkedHashMap<>();
+        availableFlows = Lists.newArrayList();
     }
 
     /**
@@ -79,17 +75,8 @@ public class ProfileInterceptorContext extends BaseContext {
      * 
      * @return the available flows
      */
-    @Nonnull @NonnullElements @Live public Map<String, ProfileInterceptorFlowDescriptor> getAvailableFlows() {
+    @Nonnull @NonnullElements @Live public List<ProfileInterceptorFlowDescriptor> getAvailableFlows() {
         return availableFlows;
-    }
-
-    /**
-     * Get the flows that have been executed, successfully or otherwise, without producing a completed result.
-     * 
-     * @return the intermediately executed flows
-     */
-    @Nonnull @NonnullElements @Live public Map<String, ProfileInterceptorFlowDescriptor> getIntermediateFlows() {
-        return intermediateFlows;
     }
 
     /**
@@ -109,4 +96,5 @@ public class ProfileInterceptorContext extends BaseContext {
     public void setResult(@Nonnull final ProfileInterceptorResult interceptorResult) {
         result = Constraint.isNotNull(interceptorResult, "Interceptor result cannot be null");
     }
+    
 }

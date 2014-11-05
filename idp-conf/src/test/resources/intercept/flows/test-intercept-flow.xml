@@ -9,6 +9,13 @@
         <set name="conversationScope.testProceed2" value="false" />
     </on-start>
 
+    <action-state id="PopulateInterceptContext">
+        <evaluate expression="PopulateInterceptContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="DoInterceptSubflow" />
+    </action-state>
+
     <subflow-state id="DoInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="end" />
