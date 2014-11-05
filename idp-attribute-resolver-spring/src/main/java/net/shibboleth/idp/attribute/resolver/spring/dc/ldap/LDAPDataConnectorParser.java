@@ -513,6 +513,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             pool.addPropertyValue("validator", validator.getBeanDefinition());
 
             pool.addPropertyValue("connectionFactory", connectionFactory);
+            final String failFastInitialize =
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("failFastInitialize"));
+            if (failFastInitialize != null) {
+                pool.addPropertyValue("failFastInitialize", failFastInitialize);
+            }
             pool.setInitMethodName("initialize");
             return pool.getBeanDefinition();
         }

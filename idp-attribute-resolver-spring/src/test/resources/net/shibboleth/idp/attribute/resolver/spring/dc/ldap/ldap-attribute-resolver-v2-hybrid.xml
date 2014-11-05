@@ -32,7 +32,7 @@
             </security:Certificate>
         </dc:StartTLSTrustCredential>
         <dc:ConnectionPool minPoolSize="5" maxPoolSize="10" blockWaitTime="PT5S" expirationTime="PT10M"
-            validatePeriodically="true" validateTimerPeriod="PT15M" validateDN="dc=shibboleth,dc=net" validateFilter="(ou=people)" />
+            validatePeriodically="true" validateTimerPeriod="PT15M" validateDN="dc=shibboleth,dc=net" validateFilter="(ou=people)" failFastInitialize="false" />
         <dc:Column columnName="homephone" attributeID="phonenumber" />
         <dc:ResultCacheBean>cache</dc:ResultCacheBean>
     </resolver:DataConnector>

@@ -248,8 +248,9 @@ public class LDAPDataConnectorParserTest {
         AssertJUnit.assertNotNull(poolConfig);
         AssertJUnit.assertEquals(5, poolConfig.getMinPoolSize());
         AssertJUnit.assertEquals(10, poolConfig.getMaxPoolSize());
-        AssertJUnit.assertEquals(true, poolConfig.isValidatePeriodically());
+        AssertJUnit.assertTrue(poolConfig.isValidatePeriodically());
         AssertJUnit.assertEquals(900, poolConfig.getValidatePeriod());
+        AssertJUnit.assertFalse(connPool.getFailFastInitialize());
 
         SearchValidator searchValidator = (SearchValidator) connPool.getValidator();
         AssertJUnit.assertNotNull(searchValidator);

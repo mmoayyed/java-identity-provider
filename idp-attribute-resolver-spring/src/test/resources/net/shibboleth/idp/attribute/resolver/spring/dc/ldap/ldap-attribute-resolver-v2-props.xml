@@ -49,7 +49,8 @@
             validatePeriodically="${connectionPool.validatePeriodically}"
             validateTimerPeriod="${connectionPool.validatePeriod}"
             validateDN="${connectionPool.validator.baseDn}"
-            validateFilter="${connectionPool.validator.filter}"/>
+            validateFilter="${connectionPool.validator.filter}"
+            failFastInitialize="${connectionPool.failFastInitialize}"/>
         <dc:ResultCache
             elementTimeToLive="${cache.TTL}"
             maximumCachedElements="${cache.maxSize}"/>

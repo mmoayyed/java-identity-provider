@@ -788,6 +788,14 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="failFastInitialize" type="string">
+            <annotation>
+                <documentation>
+                    A boolean flag indicating whether pool initialization should fail if configuration criteria is not met.
+                    Default value is true.
+                </documentation>
+            </annotation>
+        </attribute>
     </complexType>
 
     <complexType name="CacheConfigType">
