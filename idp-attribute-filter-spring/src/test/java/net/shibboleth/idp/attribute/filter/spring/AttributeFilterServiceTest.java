@@ -41,8 +41,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.Sets;
 
-/** A work in progress to test the attribute resolver service. */
-// TODO incomplete
+/** Test the attribute resolver service. */
 public class AttributeFilterServiceTest {
 
     /** The attributes to be filtered. */

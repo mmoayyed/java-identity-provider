@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
-// TODO TEST
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
