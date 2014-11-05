@@ -26,7 +26,6 @@ import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
@@ -294,8 +293,10 @@ public class LDAPDataConnectorParserTest {
         ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
         AssertJUnit.assertNotNull(searchBuilder);
 
-        MappingStrategy mappingStrategy = dataConnector.getMappingStrategy();
+        StringAttributeValueMappingStrategy mappingStrategy = (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
         AssertJUnit.assertNotNull(mappingStrategy);
+        AssertJUnit.assertTrue(mappingStrategy.isNoResultAnError());
+        AssertJUnit.assertTrue(mappingStrategy.isMultipleResultsAnError());
 
         Cache<String, Map<String, IdPAttribute>> resultCache = dataConnector.getResultsCache();
         AssertJUnit.assertNotNull(resultCache);

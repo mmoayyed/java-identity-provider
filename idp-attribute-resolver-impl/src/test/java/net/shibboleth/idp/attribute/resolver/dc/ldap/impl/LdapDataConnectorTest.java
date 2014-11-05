@@ -381,8 +381,9 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoResultIsError()
             throws ComponentInitializationException, ResolutionException {
-        LDAPDataConnector connector = createLdapDataConnector(null, null);
-        connector.setNoResultAnError(true);
+        final StringAttributeValueMappingStrategy mappingStrategy = new StringAttributeValueMappingStrategy();
+        mappingStrategy.setNoResultAnError(true);
+        final LDAPDataConnector connector = createLdapDataConnector(null, mappingStrategy);
         connector.initialize();
 
         AttributeResolutionContext context =
@@ -397,6 +398,29 @@ public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         context =
                 TestSources.createResolutionContext("NOT_A_PRINCIPAL", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        connector.resolve(context);
+    }
+
+    @Test(expectedExceptions = ResolutionException.class) public void resolveMultipleResultsIsError()
+            throws ComponentInitializationException, ResolutionException {
+        final StringAttributeValueMappingStrategy mappingStrategy = new StringAttributeValueMappingStrategy();
+        mappingStrategy.setMultipleResultsAnError(true);
+        final LDAPDataConnector connector = createLdapDataConnector(new ParameterizedExecutableSearchFilterBuilder("(sn={principalName})"), mappingStrategy);
+        connector.initialize();
+
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext("NOT_A_PRINCIPAL", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        try {
+            Map<String, IdPAttribute> res = connector.resolve(context);
+            Assert.assertNull(res);
+        } catch (ResolutionException e) {
+            Assert.fail("Resolution exception occurred", e);
+        }
+
+        context =
+                TestSources.createResolutionContext("PRINCIPAL", TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         connector.resolve(context);
     }

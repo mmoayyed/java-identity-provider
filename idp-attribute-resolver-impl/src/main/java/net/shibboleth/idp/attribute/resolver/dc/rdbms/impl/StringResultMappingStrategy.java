@@ -58,6 +58,9 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
         try {
             if (!results.next()) {
                 log.debug("Result set did not contain any rows, nothing to map");
+                if (isNoResultAnError()) {
+                    throw new ResolutionException("No rows returned from query");
+                }
                 return null;
             }
             
@@ -68,7 +71,12 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
             
             final Map<String,String> aliases = getResultRenamingMap();
 
+            int rowCount = 0;
             do {
+                rowCount++;
+                if (rowCount > 1 && isMultipleResultsAnError()) {
+                    throw new ResolutionException("Multiple rows returned from query");
+                }
                 for (int i = 1; i <= resultMetadata.getColumnCount(); i++) {
                     
                     final String originalId = resultMetadata.getColumnName(i);

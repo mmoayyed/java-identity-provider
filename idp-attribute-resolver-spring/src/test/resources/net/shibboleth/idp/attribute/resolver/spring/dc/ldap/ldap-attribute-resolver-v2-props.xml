@@ -12,7 +12,9 @@
         baseDN="${search.baseDn}" 
         principal="${connectionConfig.bindDn}"
         principalCredential="${connectionConfig.bindCredential}"
-        useStartTLS="${connectionConfig.useStartTLS}">
+        useStartTLS="${connectionConfig.useStartTLS}"
+        noResultIsError="${noResultIsError}"
+        multipleResultsIsError="${multipleResultsIsError}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${resolutionContext.principal})

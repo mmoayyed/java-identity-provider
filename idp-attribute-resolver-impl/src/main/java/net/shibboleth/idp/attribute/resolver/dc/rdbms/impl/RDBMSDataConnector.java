@@ -142,14 +142,6 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
             }
             queryResult = statement.execute(connection);
             log.trace("Data connector '{}': search returned {}", getId(), queryResult);
-
-            if (!queryResult.isBeforeFirst()) {
-                if (isNoResultAnError()) {
-                    throw new ResolutionException("No attributes returned from query");
-                } else {
-                    return null;
-                }
-            }
             return getMappingStrategy().map(queryResult);
         } catch (SQLException e) {
             throw new ResolutionException("Unable to execute SQL query", e);

@@ -247,6 +247,17 @@
                             A boolean flag indicating whether a query returning no results should be considered an error. If
                             an error is raised and a failover dependency is defined for this connector the failover will
                             be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="multipleResultsIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning more than one result should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -606,10 +617,7 @@
                 <attribute name="mergeResults" type="string">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating that if multiple results are returned they should be merged into
-                            a single result that contains the combined attributes and values of all the results. If more
-                            than one result is returned and this is set to false the first result is used.
-                            Default value is false.
+                            No longer supported.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -617,6 +625,16 @@
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a query returning no results should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="multipleResultsIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning more than one result should be considered an error. If
                             an error is raised and a failover dependency is defined for this connector the failover will
                             be invoked.
                             Default value is false.

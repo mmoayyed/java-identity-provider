@@ -49,10 +49,21 @@ public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StringAttributeValueMappingStrategy.class);
 
+ // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override @Nullable public Map<String,IdPAttribute> map(@Nonnull final SearchResult results)
             throws ResolutionException {
         Constraint.isNotNull(results, "Results can not be null");
+
+        if (results.size() == 0) {
+            log.debug("Results did not contain any entries, nothing to map");
+            if (isNoResultAnError()) {
+                throw new ResolutionException("No entries returned from search");
+            }
+            return null;
+        } else if (results.size() > 1 && isMultipleResultsAnError()) {
+            throw new ResolutionException("Multiple entries returned from search");
+        }
 
         final Map<String,IdPAttribute> attributes = Maps.newHashMapWithExpectedSize(results.size());
         
@@ -94,5 +105,6 @@ public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy
             return attributes;
         }
     }
+ // Checkstyle: CyclomaticComplexity ON
     
 }

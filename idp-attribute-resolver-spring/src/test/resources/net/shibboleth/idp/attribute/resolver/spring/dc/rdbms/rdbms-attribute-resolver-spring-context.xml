@@ -13,7 +13,8 @@
     <bean class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.FormatExecutableStatementBuilder">
         <constructor-arg index="0" value="SELECT * FROM people WHERE userid='%s'" />
     </bean>
-    <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy">
+    <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy"
+        p:noResultAnError="true" p:multipleResultsAnError="true">
         <property name="resultRenamingMap">
             <map>
                 <entry key="homephone" value="phonenumber" />

@@ -7,7 +7,7 @@
             xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
                                 urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
 
-    <resolver:DataConnector id="myDatabase" xsi:type="dc:RelationalDatabase">
+    <resolver:DataConnector id="myDatabase" xsi:type="dc:RelationalDatabase" noResultIsError="true" multipleResultsIsError="true">
       <dc:ApplicationManagedConnection
         jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
         jdbcURL="jdbc:hsqldb:mem:RDBMSDataConnectorStore"

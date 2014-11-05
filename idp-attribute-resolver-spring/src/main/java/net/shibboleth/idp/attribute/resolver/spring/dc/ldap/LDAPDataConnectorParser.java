@@ -46,7 +46,6 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
-import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -69,9 +68,9 @@ import org.w3c.dom.Element;
 
 import com.google.common.collect.Lists;
 
-/** Bean definition Parser for a {@link LDAPDataConnector}.
- * <em>Note</em> That parsing the V2 configuration will set some beans with hard wired defaults.
- * See {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
+/**
+ * Bean definition Parser for a {@link LDAPDataConnector}. <em>Note</em> That parsing the V2 configuration will set some
+ * beans with hard wired defaults. See {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
  */
 public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
@@ -116,34 +115,26 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             @Nonnull final BeanDefinitionBuilder builder) {
 
         addPropertyDescriptorValues(builder, beanFactory, LDAPDataConnector.class);
-
-        final String noResultAnError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
-        log.debug("parsed noResultAnError {}", noResultAnError);
-        if (noResultAnError != null) {
-            builder.addPropertyValue("noResultAnError", noResultAnError);
-        }
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
 
-// CheckStyle: MethodLength OFF
+    // CheckStyle: MethodLength OFF
     /**
-     * Parses a version 2 configuration.
-     * <br/>
+     * Parses a version 2 configuration. <br/>
      * The following automatically created & injected beans acquire hard wired defaults:
      * <ul>
-     * <li> {@link SearchExecutor#setTimeLimit(long)} defaults to 3000, 
-     *          overridden by the "searchTimeLimit" attribute.</li>
+     * <li> {@link SearchExecutor#setTimeLimit(long)} defaults to 3000, overridden by the "searchTimeLimit" attribute.</li>
      * <li> {@link SearchExecutor#setSizeLimit(long)} defaults to 1, overridden by the "maxResultSize" attribute.</li>
      * <li> {@link SearchRequest#setBaseDn(String)} default to "", overridden by the "validateDN" attribute.</li>
-     * <li> {@link SearchFilter#SearchFilter(String)} defaults to "(objectClass=*)",
-     *          overridden by the "validateFilter" attribute.</li>
-     * <li> {@link PoolConfig#setMinPoolSize(int)} defaults to 0 if neither the attribute "poolInitialSize"
-     *          nor the attribute "minPoolSize" are set.</li>
-     * <li> {@link PoolConfig#setMaxPoolSize(int)} defaults to 3 if neither the attribute "poolMaxIdleSize"
-     *          nor the attribute "maxPoolSize" are set.</li>
-     * <li> {@link PoolConfig#setValidatePeriod(long)} defaults to 1800,
-     *          overridden by the attribute "validateTimerPeriod"</li>
+     * <li> {@link SearchFilter#SearchFilter(String)} defaults to "(objectClass=*)", overridden by the "validateFilter"
+     * attribute.</li>
+     * <li> {@link PoolConfig#setMinPoolSize(int)} defaults to 0 if neither the attribute "poolInitialSize" nor the
+     * attribute "minPoolSize" are set.</li>
+     * <li> {@link PoolConfig#setMaxPoolSize(int)} defaults to 3 if neither the attribute "poolMaxIdleSize" nor the
+     * attribute "maxPoolSize" are set.</li>
+     * <li> {@link PoolConfig#setValidatePeriod(long)} defaults to 1800, overridden by the attribute
+     * "validateTimerPeriod"</li>
      * </ul>
      * 
      * @param config LDAPDirectory containing v2 configuration
@@ -225,30 +216,27 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         final Element resultCacheBean =
-                ElementSupport.getFirstChildElement(config, new QName(
-                        DataConnectorNamespaceHandler.NAMESPACE, "ResultCacheBean"));
+                ElementSupport.getFirstChildElement(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                        "ResultCacheBean"));
         if (resultCacheBean != null) {
             builder.addPropertyReference("resultsCache", resultCacheBean.getTextContent().trim());
         } else {
             builder.addPropertyValue("resultsCache", v2Parser.createCache());
         }
 
-        final String noResultIsError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
-        if (noResultIsError != null) {
-            builder.addPropertyValue("noResultAnError", noResultIsError);
-        }
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
+
     // CheckStyle: MethodLength ON
-    
+
     /**
      * Utility class for parsing v2 schema configuration.
-     *
-     * <em>Note</em> That parsing the V2 configuration will set some beans with hard wired defaults.
-     * See {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
+     * 
+     * <em>Note</em> That parsing the V2 configuration will set some beans with hard wired defaults. See
+     * {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
      */
-    
+
     protected static class V2Parser {
 
         /** LDAPDirectory XML element. */
@@ -265,6 +253,10 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         public V2Parser(@Nonnull final Element config) {
             Constraint.isNotNull(config, "LDAPDirectory element cannot be null");
             configElement = config;
+            // warn about deprecated schema
+            if (AttributeSupport.hasAttribute(config, new QName("mergeResults"))) {
+                log.warn("mergeResults property no longer supported and should be removed");
+            }
         }
 
         /**
@@ -397,7 +389,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final String searchTimeLimit =
                     AttributeSupport.getAttributeValue(configElement, new QName("searchTimeLimit"));
             final String maxResultSize = AttributeSupport.getAttributeValue(configElement, new QName("maxResultSize"));
-            final String mergeResults = AttributeSupport.getAttributeValue(configElement, new QName("mergeResults"));
             final String lowercaseAttributeNames =
                     AttributeSupport.getAttributeValue(configElement, new QName("lowercaseAttributeNames"));
 
@@ -420,7 +411,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             final BeanDefinitionBuilder handlers =
                     BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildSearchEntryHandlers");
-            handlers.addConstructorArgValue(mergeResults);
             handlers.addConstructorArgValue(lowercaseAttributeNames);
             searchExecutor.addPropertyValue("searchEntryHandlers", handlers.getBeanDefinition());
 
@@ -584,41 +574,50 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
             return poolConfig.getBeanDefinition();
         }
-        
+
         /**
          * Create the result mapping strategy. See {@link net.shibboleth.idp.attribute.resolver.dc.MappingStrategy}.
          * 
          * @return mapping strategy
          */
         @Nullable public BeanDefinition createMappingStrategy() {
-            
-            final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
-                    DataConnectorNamespaceHandler.NAMESPACE, "Column");
-            if (columns.isEmpty()) {
-                return null;
-            }
-            
-            final ManagedMap renamingMap = new ManagedMap();
-            for (final Element column : columns) {
-                final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
-                final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeID");
-                if (columnName != null && attributeId != null) {
-                    renamingMap.put(columnName, attributeId);
-                }
-                
-                if (AttributeSupport.hasAttribute(column, new QName("type"))) {
-                    LoggerFactory.getLogger(LDAPDataConnectorParser.class).warn(
-                            "dc:Column type attribute not supported for LDAP results");
-                }
-            }
 
             final BeanDefinitionBuilder mapper =
                     BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValueMappingStrategy.class);
-            mapper.addPropertyValue("resultRenamingMap", renamingMap);
-            
+            final List<Element> columns =
+                    ElementSupport.getChildElementsByTagNameNS(configElement, DataConnectorNamespaceHandler.NAMESPACE,
+                            "Column");
+            if (!columns.isEmpty()) {
+                final ManagedMap renamingMap = new ManagedMap();
+                for (final Element column : columns) {
+                    final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
+                    final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeID");
+                    if (columnName != null && attributeId != null) {
+                        renamingMap.put(columnName, attributeId);
+                    }
+
+                    if (AttributeSupport.hasAttribute(column, new QName("type"))) {
+                        LoggerFactory.getLogger(LDAPDataConnectorParser.class).warn(
+                                "dc:Column type attribute not supported for LDAP results");
+                    }
+                }
+                mapper.addPropertyValue("resultRenamingMap", renamingMap);
+            }
+
+            final String noResultIsError =
+                    AttributeSupport.getAttributeValue(configElement, new QName("noResultIsError"));
+            if (noResultIsError != null) {
+                mapper.addPropertyValue("noResultAnError", noResultIsError);
+            }
+
+            final String multipleResultsIsError =
+                    AttributeSupport.getAttributeValue(configElement, new QName("multipleResultsIsError"));
+            if (multipleResultsIsError != null) {
+                mapper.addPropertyValue("multipleResultsAnError", multipleResultsIsError);
+            }
             return mapper.getBeanDefinition();
         }
-        
+
         /**
          * Create a results cache bean definition. See {@link CacheConfigParser}.
          * 
@@ -662,16 +661,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         /**
          * Factory method for handling spring property replacement.
          * 
-         * @param mergeResults boolean string value
          * @param lowercaseAttributeNames boolean string value
          * @return possibly empty list of search entry handlers
          */
-        public static List<SearchEntryHandler> buildSearchEntryHandlers(final String mergeResults,
-                final String lowercaseAttributeNames) {
+        public static List<SearchEntryHandler> buildSearchEntryHandlers(final String lowercaseAttributeNames) {
             final List<SearchEntryHandler> handlers = Lists.newArrayList();
-            if (Boolean.valueOf(mergeResults)) {
-                handlers.add(new MergeAttributeEntryHandler());
-            }
             if (Boolean.valueOf(lowercaseAttributeNames)) {
                 final CaseChangeEntryHandler entryHandler = new CaseChangeEntryHandler();
                 entryHandler.setAttributeNameCaseChange(CaseChange.LOWER);

@@ -12,7 +12,9 @@
         baseDN="ou=people,dc=shibboleth,dc=net" 
         principal="cn=Directory Manager"
         principalCredential="password"
-        useStartTLS="true">
+        useStartTLS="true"
+        noResultIsError="true"
+        multipleResultsIsError="true">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${resolutionContext.principal})

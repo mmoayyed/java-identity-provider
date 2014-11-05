@@ -41,6 +41,12 @@ public abstract class AbstractMappingStrategy<T> implements MappingStrategy<T> {
     /** A map to rename result fields. */
     @Nonnull @NonnullElements private Map<String,String> resultRenamingMap;
     
+    /** Whether an empty result set is an error. */
+    private boolean noResultAnError;
+
+    /** Whether a result set with more than one result is an error. */
+    private boolean multipleResultsAnError;
+
     /** Constructor. */
     public AbstractMappingStrategy() {
         resultRenamingMap = Collections.emptyMap();
@@ -71,4 +77,39 @@ public abstract class AbstractMappingStrategy<T> implements MappingStrategy<T> {
         }
     }
     
+    /**
+     * Gets whether an empty result set is treated as an error.
+     * 
+     * @return whether an empty result set is treated as an error
+     */
+    public boolean isNoResultAnError() {
+        return noResultAnError;
+    }
+
+    /**
+     * Sets whether an empty result set is treated as an error.
+     * 
+     * @param isAnError whether an empty result set is treated as an error
+     */
+    public void setNoResultAnError(final boolean isAnError) {
+        noResultAnError = isAnError;
+    }
+
+    /**
+     * Gets whether multiple results is treated as an error.
+     * 
+     * @return whether multiple results is treated as an error
+     */
+    public boolean isMultipleResultsAnError() {
+        return multipleResultsAnError;
+    }
+
+    /**
+     * Sets whether multiple results is treated as an error.
+     * 
+     * @param isAnError whether multiple results is treated as an error
+     */
+    public void setMultipleResultsAnError(final boolean isAnError) {
+        multipleResultsAnError = isAnError;
+    }
 }

@@ -37,6 +37,7 @@ import net.shibboleth.utilities.java.support.service.ServiceException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
+import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -150,6 +151,11 @@ public class RDBMSDataConnectorParserTest {
 
         final ExecutableSearchBuilder<ExecutableStatement> searchBuilder = dataConnector.getExecutableSearchBuilder();
         Assert.assertNotNull(searchBuilder);
+
+        final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
+        AssertJUnit.assertNotNull(mappingStrategy);
+        AssertJUnit.assertTrue(mappingStrategy.isNoResultAnError());
+        AssertJUnit.assertTrue(mappingStrategy.isMultipleResultsAnError());
 
         final Cache<String, Map<String, IdPAttribute>> resultCache = dataConnector.getResultsCache();
         Assert.assertNotNull(resultCache);

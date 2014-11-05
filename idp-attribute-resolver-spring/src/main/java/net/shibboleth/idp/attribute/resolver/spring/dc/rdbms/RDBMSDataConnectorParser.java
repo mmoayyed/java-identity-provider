@@ -88,12 +88,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             @Nonnull final BeanDefinitionBuilder builder) {
 
         addPropertyDescriptorValues(builder, beanFactory, RDBMSDataConnector.class);
-
-        if (config.hasAttributeNS(null, "noResultIsError")) {
-            final String noResultAnError = config.getAttributeNS(null, "noResultIsError");
-            log.debug("parsed noResultAnError {}", noResultAnError);
-            builder.addPropertyValue("noResultAnError", noResultAnError);
-        }
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
@@ -136,15 +130,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             builder.addPropertyValue("resultsCache", v2Parser.createCache());
         }
 
-        final String noResultIsError = AttributeSupport.getAttributeValue(config, new QName("noResultIsError"));
-        if (noResultIsError != null) {
-            builder.addPropertyValue("noResultAnError", noResultIsError);
-        }
-        
-        if (AttributeSupport.hasAttribute(config, new QName("queryUsesStoredProcedure"))) {
-            log.warn("queryUsesStoredProcedure property no longer supported and should be removed");
-        }
-        
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
@@ -158,6 +143,9 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         /** Base XML element. */
         private final Element configElement;
 
+        /** Class logger. */
+        private final Logger log = LoggerFactory.getLogger(V2Parser.class);
+
         /**
          * Creates a new V2Parser with the supplied RelationalDatabase element.
          * 
@@ -166,6 +154,10 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         public V2Parser(@Nonnull final Element config) {
             Constraint.isNotNull(config, "RelationalDatabase element cannot be null");
             configElement = config;
+            // warn about deprecated schema
+            if (AttributeSupport.hasAttribute(config, new QName("queryUsesStoredProcedure"))) {
+                log.warn("queryUsesStoredProcedure property no longer supported and should be removed");
+            }
         }
 
         /**
@@ -247,30 +239,38 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
          */
         @Nullable public BeanDefinition createMappingStrategy() {
             
-            final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
-                    DataConnectorNamespaceHandler.NAMESPACE, "Column");
-            if (columns.isEmpty()) {
-                return null;
-            }
-            
-            final ManagedMap renamingMap = new ManagedMap();
-            for (final Element column : columns) {
-                final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
-                final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeID");
-                if (columnName != null && attributeId != null) {
-                    renamingMap.put(columnName, attributeId);
-                }
-                
-                if (AttributeSupport.hasAttribute(column, new QName("type"))) {
-                    LoggerFactory.getLogger(RDBMSDataConnectorParser.class).warn(
-                            "dc:Column type attribute is no longer supported");
-                }
-            }
-
             final BeanDefinitionBuilder mapper =
                     BeanDefinitionBuilder.genericBeanDefinition(StringResultMappingStrategy.class);
-            mapper.addPropertyValue("resultRenamingMap", renamingMap);
-            
+            final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
+                    DataConnectorNamespaceHandler.NAMESPACE, "Column");
+            if (!columns.isEmpty()) {
+                final ManagedMap renamingMap = new ManagedMap();
+                for (final Element column : columns) {
+                    final String columnName = AttributeSupport.getAttributeValue(column, null, "columnName");
+                    final String attributeId = AttributeSupport.getAttributeValue(column, null, "attributeID");
+                    if (columnName != null && attributeId != null) {
+                        renamingMap.put(columnName, attributeId);
+                    }
+                    
+                    if (AttributeSupport.hasAttribute(column, new QName("type"))) {
+                        LoggerFactory.getLogger(RDBMSDataConnectorParser.class).warn(
+                                "dc:Column type attribute is no longer supported");
+                    }
+                }
+                mapper.addPropertyValue("resultRenamingMap", renamingMap);
+            }
+                        
+            final String noResultIsError =
+                    AttributeSupport.getAttributeValue(configElement, new QName("noResultIsError"));
+            if (noResultIsError != null) {
+                mapper.addPropertyValue("noResultAnError", noResultIsError);
+            }
+
+            final String multipleResultsIsError =
+                    AttributeSupport.getAttributeValue(configElement, new QName("multipleResultsIsError"));
+            if (multipleResultsIsError != null) {
+                mapper.addPropertyValue("multipleResultsAnError", multipleResultsIsError);
+            }
             return mapper.getBeanDefinition();
         }
         

@@ -146,13 +146,6 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         try {
             final SearchResult result = filter.execute(searchExecutor, connectionFactory);
             log.trace("Data connector '{}': search returned {}", getId(), result);
-            if (result.size() == 0) {
-                if (isNoResultAnError()) {
-                    throw new ResolutionException("No attributes returned from search");
-                } else {
-                    return null;
-                }
-            }
             return getMappingStrategy().map(result);
         } catch (LdapException e) {
             throw new ResolutionException("Unable to execute LDAP search", e);

@@ -60,9 +60,6 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
     /** Strategy for mapping search results to a collection of {@link IdPAttribute}s. */
     private MappingStrategy mappingStrategy;
 
-    /** Whether an empty result set is an error. */
-    private boolean noResultAnError;
-
     /** Query result cache. */
     private Cache<String, Map<String, IdPAttribute>> resultsCache;
 
@@ -127,27 +124,6 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         mappingStrategy = Constraint.isNotNull(strategy, "Mapping strategy can not be null");
-    }
-
-    /**
-     * Gets whether an empty result set is treated as an error.
-     * 
-     * @return whether an empty result set is treated as an error
-     */
-    public boolean isNoResultAnError() {
-        return noResultAnError;
-    }
-
-    /**
-     * Sets whether an empty result set is treated as an error.
-     * 
-     * @param isAnError whether an empty result set is treated as an error
-     */
-    public void setNoResultAnError(final boolean isAnError) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        noResultAnError = isAnError;
     }
 
     /**

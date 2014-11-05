@@ -260,8 +260,9 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoResultIsError()
             throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
-        connector.setNoResultAnError(true);
+        final StringResultMappingStrategy mappingStrategy = new StringResultMappingStrategy();
+        mappingStrategy.setNoResultAnError(true);
+        final RDBMSDataConnector connector = createUserRdbmsDataConnector(null, mappingStrategy);
         connector.initialize();
 
         AttributeResolutionContext context =
@@ -275,6 +276,28 @@ public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
         context =
                 TestSources.createResolutionContext("NOT_A_PRINCIPAL", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        connector.resolve(context);
+    }
+
+    @Test(enabled = false, expectedExceptions = ResolutionException.class) public void resolveMultipleResultsIsError()
+            throws ComponentInitializationException, ResolutionException {
+        final StringResultMappingStrategy mappingStrategy = new StringResultMappingStrategy();
+        mappingStrategy.setMultipleResultsAnError(true);
+        final RDBMSDataConnector connector = createGroupRdbmsDataConnector(null, mappingStrategy);
+        connector.initialize();
+
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext("NOT_A_PRINCIPAL", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        try {
+            Assert.assertNull(connector.resolve(context));
+        } catch (ResolutionException e) {
+            Assert.fail("Resolution exception occurred", e);
+        }
+
+        context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         connector.resolve(context);
     }
