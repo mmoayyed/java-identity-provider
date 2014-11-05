@@ -40,7 +40,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.includeConditionsNotBefore());
 
         Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/soap");
-        Assert.assertNull(profile.getOutboundSubflowId());
+        Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         Assert.assertNull(profile.getSecurityConfiguration());
     }
 
@@ -61,7 +61,7 @@ public class SAML1ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertFalse(profile.includeConditionsNotBefore());
 
         Assert.assertEquals(profile.getInboundSubflowId(), "artifactibfid");
-        Assert.assertEquals(profile.getOutboundSubflowId(), "artifactobfid");
+        Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         Assert.assertNotNull(profile.getSecurityConfiguration());
     }
 

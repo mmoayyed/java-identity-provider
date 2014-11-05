@@ -13,7 +13,7 @@
     
     assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" artifactType="765" 
     signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
-    inboundFlowId="attribute2ibfid" outboundFlowId="attribute2obfid">
+    inboundFlowId="attribute2ibfid">
     <saml:Audience>${prop.String1}</saml:Audience>
     <saml:Audience>Audience2</saml:Audience>
     <saml:ProxyAudience>ProxyAudience1</saml:ProxyAudience>

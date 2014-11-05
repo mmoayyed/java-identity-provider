@@ -36,8 +36,10 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
+ * TODO: replace this with extensible interceptor approach
+ * 
  * Action that checks a {@link net.shibboleth.idp.profile.config.ProfileConfiguration} for an inbound
- * or outbound subflow ID and signals it as the action's event.
+ * subflow ID and signals it as the action's event.
  * 
  * <p>The profile configuration is obtained from a {@link RelyingPartyContext} obtained from a lookup
  * function, by default a child of the profile request context.</p>
@@ -137,10 +139,6 @@ public class CheckForProfileSubflow extends AbstractProfileAction {
             log.debug("{} Found inbound subflow in profile configuration: {}",
                     getLogPrefix(), rpCtx.getProfileConfig().getInboundSubflowId());
             ActionSupport.buildEvent(profileRequestContext, rpCtx.getProfileConfig().getInboundSubflowId());
-        } else if (direction == Direction.OUTBOUND && rpCtx.getProfileConfig().getOutboundSubflowId() != null) {
-            log.debug("{} Found outbound subflow in profile configuration: {}",
-                    getLogPrefix(), rpCtx.getProfileConfig().getOutboundSubflowId());
-            ActionSupport.buildEvent(profileRequestContext, rpCtx.getProfileConfig().getOutboundSubflowId());
         }
     }
     

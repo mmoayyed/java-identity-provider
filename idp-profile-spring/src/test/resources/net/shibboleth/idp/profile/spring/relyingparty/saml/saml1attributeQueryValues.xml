@@ -9,8 +9,7 @@
     
     assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" artifactType="${prop.artifactType}1" 
     signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
-    inboundFlowId="attributeibfid" outboundFlowId="attributeobfid"
->
+    inboundFlowId="attributeibfid">
     <saml:Audience>${prop.String1}${prop.String1}</saml:Audience>
     <saml:Audience>${prop.String1}</saml:Audience>
 </rp:ProfileConfiguration>

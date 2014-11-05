@@ -10,7 +10,6 @@
 	<rp:ProfileConfiguration xsi:type="saml:ShibbolethSSOProfile"
 		includeAttributeStatement="true" securityPolicyRef="ignore"
 		artifactType="32767" inboundFlowId="shibssoibfid"
-		signRequests="conditional"
-		outboundFlowId="shibssoobfid" />
+		signRequests="conditional"/>
 </rp:RelyingParty>
 

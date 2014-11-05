@@ -53,15 +53,9 @@
         
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="CallErrorSubflow" />
-        <transition to="HandleErrorWithView" />
-    </action-state>
-
-    <subflow-state id="CallErrorSubflow" subflow="error/saml-backchannel">
-        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="ReturnToParentFlow" />
         <transition to="HandleErrorWithView" />
-    </subflow-state>
+    </action-state>
     
     <bean-import resource="attribute-query-beans.xml" />
 

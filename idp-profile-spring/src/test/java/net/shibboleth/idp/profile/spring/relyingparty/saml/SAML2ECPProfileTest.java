@@ -53,7 +53,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/saml2-sso");
-        Assert.assertNull(profile.getOutboundSubflowId());
+        Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
 
         Assert.assertNull(profile.getArtifactConfiguration());
     }
@@ -80,7 +80,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertEquals(profile.getInboundSubflowId(), "ecpibfid");
-        Assert.assertEquals(profile.getOutboundSubflowId(), "ecpobfid");
+        Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
 
         Assert.assertNull(profile.getArtifactConfiguration());
 

@@ -99,18 +99,19 @@
     -->
 
     <action-state id="ReturnToParentFlow">
-        <evaluate expression="CheckForOutboundSubflow" />
-        
+        <evaluate expression="PopulateOutboundInterceptContext" />        
         <evaluate expression="'proceed'" />
-
-        <!-- proceed indicates no flow to call -->
-        <transition on="proceed" to="HandleOutboundMessage" />
         
-        <!-- Call a subflow with the same ID as the event. -->
-        <transition to="CallOutboundSubflow" />
+        <transition on="proceed" to="CheckOutboundInterceptContext" />
+        <transition to="HandleErrorWithView" />
     </action-state>
-    
-    <subflow-state id="CallOutboundSubflow" subflow="#{currentEvent.id}">
+
+    <decision-state id="CheckOutboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="HandleOutboundMessage" else="DoOutboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoOutboundInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="HandleOutboundMessage" />
         <transition to="HandleErrorWithView" />

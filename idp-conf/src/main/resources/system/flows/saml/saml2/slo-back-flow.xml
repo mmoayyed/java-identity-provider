@@ -78,7 +78,9 @@
 
     <!-- Error Response Generation -->
 
-    <decision-state id="HandleError">
+    <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
+
+    <action-state id="HandleError">
         <evaluate expression="InitializeOutboundMessageContextForError" />
         <evaluate expression="AddLogoutResponse" />
         <evaluate expression="AddInResponseToToResponse" />
@@ -88,17 +90,9 @@
         
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="CallErrorSubflow" />
-        <transition to="HandleErrorWithView" />
-    </decision-state>
-
-    <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->
-
-    <subflow-state id="CallErrorSubflow" subflow="error/saml-backchannel">
-        <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="ReturnToParentFlow" />
         <transition to="HandleErrorWithView" />
-    </subflow-state>
+    </action-state>
 
     <bean-import resource="slo-back-beans.xml" />
 

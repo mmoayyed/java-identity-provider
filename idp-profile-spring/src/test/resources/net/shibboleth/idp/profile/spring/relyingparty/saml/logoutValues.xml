@@ -10,7 +10,7 @@
     encryptNameIds="never"  encryptAssertions="always" assertionProxyCount="98"
     assertionLifetime="PT8M" includeConditionsNotBefore="true" artifactType="7" 
     signAssertions="${prop.never}" signRequests="conditional" signResponses="never"
-    inboundFlowId="logoutibfid" outboundFlowId="logoutobfid">
+    inboundFlowId="logoutibfid">
     <saml:ProxyAudience>${prop.String1}</saml:ProxyAudience>
 </rp:ProfileConfiguration>
 

@@ -285,13 +285,6 @@
                         <documentation>Deprecated in V3.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="outboundFlowId" type="string">
-                    <annotation>
-                        <documentation>
-                            The subflow ID to execute after mainline profile processing.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="securityPolicyRef" type="string">
                     <annotation>
                         <documentation>

@@ -17,8 +17,14 @@
 
 package net.shibboleth.idp.profile.config;
 
+import java.util.List;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /** Represents the configuration of a particular communication profile. */
@@ -32,11 +38,16 @@ public interface ProfileConfiguration extends IdentifiedComponent {
     @Nullable String getInboundSubflowId();
     
     /**
-     * Get the subflow ID to execute after mainline profile processing.
+     * Get an ordered list of interceptor flows to run for this profile before a final response is
+     * generated.
      * 
-     * @return  a subflow ID, or null
+     * <p>The flow IDs returned MUST NOT contain the
+     * {@link net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX}
+     * prefix common to all interceptor flows.</p>
+     * 
+     * @return  a set of interceptor flow IDs to enable
      */
-    @Nullable String getOutboundSubflowId();
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getOutboundInterceptorFlows();
     
     /**
      * Get the {@link SecurityConfiguration} to use with this profile.

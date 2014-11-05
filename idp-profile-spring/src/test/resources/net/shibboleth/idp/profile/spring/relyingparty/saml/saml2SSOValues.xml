@@ -18,7 +18,7 @@
 			encryptAttributes="always" allowDelegation="true" encryptAssertions="conditional"
 			signRequests="conditional" signAssertions="always" signResponses="never"
 			skipEndpointValidationWhenSigned="true" artifactType="7654"
-			inboundFlowId="sso2ibfid" outboundFlowId="sso2obfid">
+			inboundFlowId="sso2ibfid">
 		</rp:ProfileConfiguration>
 
 	</rp:RelyingParty>

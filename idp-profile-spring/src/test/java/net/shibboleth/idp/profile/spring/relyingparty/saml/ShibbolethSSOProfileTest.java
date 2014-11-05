@@ -42,7 +42,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/shibboleth-sso");
-        Assert.assertNull(profile.getOutboundSubflowId());
+        Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertNull(artifact.getArtifactType());
@@ -62,7 +62,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertEquals(profile.getInboundSubflowId(), "shibssoibfid");
-        Assert.assertEquals(profile.getOutboundSubflowId(), "shibssoobfid");
+        Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
         Assert.assertEquals(artifact.getArtifactType(), BigInteger.valueOf(32767).toByteArray());

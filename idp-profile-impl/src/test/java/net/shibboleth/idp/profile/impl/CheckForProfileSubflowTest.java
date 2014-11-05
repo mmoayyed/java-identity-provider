@@ -85,17 +85,5 @@ public class CheckForProfileSubflowTest {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "foo");
     }
-    
-    @Test public void testOutboundFlow() throws Exception {
-        final MockProfileConfiguration mock = new MockProfileConfiguration("test");
-        mock.setOutboundSubflowId("foo");
-        prc.getSubcontext(RelyingPartyContext.class).setProfileConfig(mock);
-        
-        action.setDirection(CheckForProfileSubflow.Direction.OUTBOUND);
-        action.initialize();
-        
-        final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, "foo");
-    }
 
 }

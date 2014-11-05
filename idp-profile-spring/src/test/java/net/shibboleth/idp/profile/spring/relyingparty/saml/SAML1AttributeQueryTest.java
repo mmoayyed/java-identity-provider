@@ -41,7 +41,7 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/soap");
-        Assert.assertNull(profile.getOutboundSubflowId());
+        Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         Assert.assertNull(profile.getSecurityConfiguration());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
@@ -66,7 +66,7 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
 
         Assert.assertFalse(profile.includeConditionsNotBefore());
         Assert.assertEquals(profile.getInboundSubflowId(), "attributeibfid");
-        Assert.assertEquals(profile.getOutboundSubflowId(), "attributeobfid");
+        Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         Assert.assertNull(profile.getSecurityConfiguration());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();

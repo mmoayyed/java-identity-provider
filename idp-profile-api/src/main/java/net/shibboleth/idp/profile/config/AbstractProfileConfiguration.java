@@ -17,12 +17,20 @@
 
 package net.shibboleth.idp.profile.config;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Lists;
+
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -35,8 +43,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     /** Inbound flow ID. */
     @Nullable private String inboundFlowId;
 
-    /** Outbound flow ID. */
-    @Nullable private String outboundFlowId;
+    /** Enables outbound interceptor flows. */
+    @Nonnull @NonnullElements private List<String> outboundFlows;
     
     /** The security configuration for this profile. */
     @Nullable private SecurityConfiguration securityConfiguration;
@@ -48,6 +56,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      */
     public AbstractProfileConfiguration(@Nonnull @NotEmpty final String id) {
         profileId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Profile identifier cannot be null or empty");
+        outboundFlows = Collections.emptyList();
     }
 
     /** {@inheritDoc} */
@@ -88,17 +97,19 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public String getOutboundSubflowId() {
-        return outboundFlowId;
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows() {
+        return outboundFlows;
     }
 
     /**
-     * Set the subflow ID to execute after mainline profile processing.
+     * Set the ordered collection of outbound interceptor flows to enable.
      * 
-     * @param id subflow ID
+     * @param flows   flow identifiers to enable
      */
-    public void setOutboundSubflowId(@Nullable final String id) {
-        outboundFlowId = StringSupport.trimOrNull(id);
+    public void setOutboundInterceptorFlows(@Nonnull @NonnullElements final Collection<String> flows) {
+        Constraint.isNotNull(flows, "Collection of flows cannot be null");
+        
+        outboundFlows = Lists.newArrayList(StringSupport.normalizeStringCollection(flows));
     }
 
     /** {@inheritDoc} */
