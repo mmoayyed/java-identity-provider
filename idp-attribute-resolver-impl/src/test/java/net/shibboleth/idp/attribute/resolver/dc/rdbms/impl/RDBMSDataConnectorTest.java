@@ -50,7 +50,7 @@ import com.google.common.collect.Maps;
 /**
  * Tests for {@link RDBMSDataConnector}
  */
-public class RdbmsDataConnectorTest extends OpenSAMLInitBaseTestCase {
+public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     /** The connector name. */
     private static final String TEST_CONNECTOR_NAME = "rdbmsAttributeConnector";

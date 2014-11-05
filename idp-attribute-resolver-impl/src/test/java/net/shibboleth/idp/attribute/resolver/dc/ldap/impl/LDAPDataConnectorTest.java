@@ -55,7 +55,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 /**
  * Tests for {@link LDAPDataConnector}
  */
-public class LdapDataConnectorTest extends OpenSAMLInitBaseTestCase {
+public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     /** The connector name. */
     private static final String TEST_CONNECTOR_NAME = "ldapAttributeConnector";
