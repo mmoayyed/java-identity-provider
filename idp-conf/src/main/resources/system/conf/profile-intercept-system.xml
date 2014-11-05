@@ -21,7 +21,6 @@
     <!-- Parent bean for attribute release consent flows. -->
     <bean id="shibboleth.consent.AttributeReleaseFlow" abstract="true"
         class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"
-        p:activationCondition-ref="shibboleth.consent.Condition"
         p:storageService-ref="shibboleth.ClientStorageService"
         p:doNotRememberConsentAllowed="false"
         p:globalConsentAllowed="false"
@@ -33,7 +32,6 @@
     <!-- Parent bean for terms of use consent flows. -->
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
         class="net.shibboleth.idp.consent.flow.ConsentFlowDescriptor"
-        p:activationCondition-ref="shibboleth.consent.Condition"
         p:storageService-ref="shibboleth.ClientStorageService"
         p:compareValues="true"
         p:lifetime="P1Y"

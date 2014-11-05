@@ -35,7 +35,8 @@
     Condition to evaluate to interrupt SSO flows to check the state of the transaction before allowing.
     
     Typically the flow itself will be activated based on configuration in relying-party.xml, and this controls
-    whether to proceed if the flow is activated.
+    whether to proceed if the flow is activated. The most common use for this flow is to check the set of
+    resolved/filtered attributes and values to see if the user is authorized or provisioned into a service.
     -->
     <bean id="shibboleth.context-check.Condition" parent="shibboleth.Conditions.AND">
         <constructor-arg>
@@ -55,19 +56,6 @@
             </list>
         </constructor-arg>
     </bean>
-
-    <!-- Condition to evaluate to interrupt SSO flows to obtain consent. -->
-    <bean id="shibboleth.consent.Condition" class="com.google.common.base.Predicates" factory-method="alwaysTrue" />
-    
-    <!-- TODO Per relying party condition will be moved elsewhere.
-    <bean id="shibboleth.consent.Condition" parent="shibboleth.Conditions.RelyingPartyId">
-        <constructor-arg>
-            <list>
-                <value>https://sp.example.org</value>
-            </list>
-        </constructor-arg>
-    </bean>
-    -->
 
     <!-- The ID of the attribute to be used as the user identifier when storing consent records. -->
     <!-- TODO add property to properties file -->
