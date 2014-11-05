@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -43,6 +44,9 @@ import com.google.common.base.Predicates;
  */
 public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitializableComponent implements
         Predicate<ProfileRequestContext> {
+    
+    /** Prefix convention for flow IDs. */
+    @Nonnull @NotEmpty public static final String FLOW_ID_PREFIX = "intercept/";
 
     /** Predicate that must be true for this flow to be usable for a given request. */
     @Nonnull private Predicate<ProfileRequestContext> activationCondition;

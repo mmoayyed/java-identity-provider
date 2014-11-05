@@ -47,7 +47,7 @@ import com.google.common.collect.Lists;
  * An action that populates a {@link ProfileInterceptorContext} with {@link ProfileInterceptorFlowDescriptor}
  * objects filtered by flow IDs from a lookup function.
  * 
- * <p>The flow IDs used for filtering must omit the "intercept/" prefix.</p>
+ * <p>The flow IDs used for filtering must omit the {@link ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX} prefix.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @post The ProfileInterceptorContext is modified as above.
@@ -111,7 +111,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
         final Collection<String> activeFlows = activeFlowsLookupStrategy.apply(profileRequestContext);
         if (activeFlows != null) {
             for (final String id : activeFlows) {
-                final String flowId = "intercept/" + id;
+                final String flowId = ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + id;
                 final Optional<ProfileInterceptorFlowDescriptor> flow = Iterables.tryFind(availableFlows,
                         new Predicate<ProfileInterceptorFlowDescriptor>() {
                             public boolean apply(ProfileInterceptorFlowDescriptor input) {

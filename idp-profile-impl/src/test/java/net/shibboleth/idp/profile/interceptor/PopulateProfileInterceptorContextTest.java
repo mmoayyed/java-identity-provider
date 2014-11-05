@@ -52,9 +52,9 @@ public class PopulateProfileInterceptorContextTest {
         interceptorFlows =
                 ImmutableList.of(new ProfileInterceptorFlowDescriptor(), new ProfileInterceptorFlowDescriptor(),
                         new ProfileInterceptorFlowDescriptor());
-        interceptorFlows.get(0).setId("test1");
-        interceptorFlows.get(1).setId("test2");
-        interceptorFlows.get(2).setId("test3");
+        interceptorFlows.get(0).setId("intercept/test1");
+        interceptorFlows.get(1).setId("intercept/test2");
+        interceptorFlows.get(2).setId("intercept/test3");
 
         final PopulateProfileInterceptorContext action = new PopulateProfileInterceptorContext();
         action.setAvailableFlows(interceptorFlows);
@@ -71,9 +71,9 @@ public class PopulateProfileInterceptorContextTest {
         final ProfileInterceptorContext interceptorContext = prc.getSubcontext(ProfileInterceptorContext.class);
         Assert.assertNotNull(interceptorContext);
         Assert.assertEquals(interceptorContext.getAvailableFlows().size(), 3);
-        Assert.assertEquals(interceptorContext.getAvailableFlows().get(0).getId(), "test1");
-        Assert.assertEquals(interceptorContext.getAvailableFlows().get(1).getId(), "test2");
-        Assert.assertEquals(interceptorContext.getAvailableFlows().get(2).getId(), "test3");
+        Assert.assertEquals(interceptorContext.getAvailableFlows().get(0).getId(), "intercept/test1");
+        Assert.assertEquals(interceptorContext.getAvailableFlows().get(1).getId(), "intercept/test2");
+        Assert.assertEquals(interceptorContext.getAvailableFlows().get(2).getId(), "intercept/test3");
     }
 
 }

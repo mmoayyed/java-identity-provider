@@ -48,7 +48,7 @@ public class SelectProfileInterceptorFlowTest extends PopulateProfileInterceptor
     @Test public void testSelect() {
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, "test1");
+        ActionTestingSupport.assertEvent(event, ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test1");
 
         Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(0));
         Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());
@@ -57,7 +57,7 @@ public class SelectProfileInterceptorFlowTest extends PopulateProfileInterceptor
     @Test public void testIncompleteFlows() {
         action.execute(src);
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, "test2");
+        ActionTestingSupport.assertEvent(event, ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test2");
 
         Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(0));
         Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());
@@ -67,7 +67,7 @@ public class SelectProfileInterceptorFlowTest extends PopulateProfileInterceptor
         interceptorCtx.getAvailableFlows().get(0).setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, "test2");
+        ActionTestingSupport.assertEvent(event, ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test2");
 
         Assert.assertEquals(interceptorCtx.getAttemptedFlow(), interceptorCtx.getAvailableFlows().get(1));
         Assert.assertEquals(interceptorCtx.getAttemptedFlow().getId(), event.getId());

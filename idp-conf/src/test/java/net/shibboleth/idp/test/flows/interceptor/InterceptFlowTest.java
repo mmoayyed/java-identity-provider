@@ -68,9 +68,9 @@ public class InterceptFlowTest extends AbstractFlowTest {
      * Register test flows in parent registry so they can be called by the 'intercept' flow in the parent registry.
      */
     @BeforeMethod public void registerFlowsInParentRegistry() {
-        registerFlowsInParentRegistry("intercept/test-error-flow", TEST_FLOW_REGISTRY_ID);
-        registerFlowsInParentRegistry("intercept/test-proceed-1-flow", TEST_FLOW_REGISTRY_ID);
-        registerFlowsInParentRegistry("intercept/test-proceed-2-flow", TEST_FLOW_REGISTRY_ID);
+        registerFlowsInParentRegistry(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-error-flow", TEST_FLOW_REGISTRY_ID);
+        registerFlowsInParentRegistry(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-proceed-1-flow", TEST_FLOW_REGISTRY_ID);
+        registerFlowsInParentRegistry(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-proceed-2-flow", TEST_FLOW_REGISTRY_ID);
     }
 
     @Test public void testNoAvailableFlows() {
@@ -116,10 +116,10 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Test public void testTwoAvailableFlows() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor1.setId("intercept/test-proceed-1-flow");
+        flowDescriptor1.setId(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-proceed-1-flow");
 
         final ProfileInterceptorFlowDescriptor flowDescriptor2 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor2.setId("intercept/test-proceed-2-flow");
+        flowDescriptor2.setId(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-proceed-2-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
@@ -144,7 +144,7 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Test public void testErrorFlow() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor1.setId("intercept/test-error-flow");
+        flowDescriptor1.setId(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-error-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
@@ -168,10 +168,10 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Test public void testProceedThenErrorFlow() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor1.setId("intercept/test-proceed-1-flow");
+        flowDescriptor1.setId(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-proceed-1-flow");
 
         final ProfileInterceptorFlowDescriptor flowDescriptor2 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor2.setId("intercept/test-error-flow");
+        flowDescriptor2.setId(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-error-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
@@ -196,11 +196,11 @@ public class InterceptFlowTest extends AbstractFlowTest {
     @Test public void testAttemptedFlow() {
 
         final ProfileInterceptorFlowDescriptor flowDescriptor1 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor1.setId("intercept/test-proceed-1-flow");
+        flowDescriptor1.setId(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-proceed-1-flow");
         flowDescriptor1.setActivationCondition(new ConversationScopeAttributeCondition("testProceed2"));
 
         final ProfileInterceptorFlowDescriptor flowDescriptor2 = new ProfileInterceptorFlowDescriptor();
-        flowDescriptor2.setId("intercept/test-proceed-2-flow");
+        flowDescriptor2.setId(ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + "test-proceed-2-flow");
 
         final Flow flow = getFlow(TEST_PROFILE_FLOW_ID);
 
