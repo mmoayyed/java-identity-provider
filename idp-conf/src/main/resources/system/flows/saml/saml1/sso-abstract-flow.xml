@@ -57,10 +57,15 @@
         <evaluate expression="PopulatePostAuthnInterceptContext" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="DoInterceptSubflow" />
+        <transition on="proceed" to="CheckPostAuthnInterceptContext" />
     </action-state>
 
-    <subflow-state id="DoInterceptSubflow" subflow="intercept">
+    <decision-state id="CheckPostAuthnInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="BuildResponse" else="DoPostAuthnInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="BuildResponse" />
     </subflow-state>
