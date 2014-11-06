@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
@@ -31,6 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +47,12 @@ import com.google.common.collect.Lists;
 
 /**
  * An action that populates a {@link ProfileInterceptorContext} with {@link ProfileInterceptorFlowDescriptor}
- * objects filtered by flow IDs from a lookup function.
+ * objects based on flow IDs from a lookup function.
  * 
  * <p>The flow IDs used for filtering must omit the {@link ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX} prefix.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
  * @post The ProfileInterceptorContext is modified as above.
  */
 public class PopulateProfileInterceptorContext extends AbstractProfileInterceptorAction {
@@ -123,7 +126,9 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
                     log.debug("{} Installing flow {} into interceptor context", getLogPrefix(), flowId);
                     interceptorContext.getAvailableFlows().add(flow.get());
                 } else {
-                    log.warn("{} Configured interceptor flow {} not available for use", getLogPrefix(), flowId);
+                    log.error("{} Configured interceptor flow {} not available for use", getLogPrefix(), flowId);
+                    ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+                    return;
                 }
             }
         }
