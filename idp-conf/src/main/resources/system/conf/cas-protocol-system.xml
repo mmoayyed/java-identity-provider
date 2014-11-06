@@ -9,35 +9,10 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-          p:placeholderPrefix="%{"
-          p:placeholderSuffix="}" />
-
     <bean id="cas.ticketService" class="net.shibboleth.idp.cas.ticket.SimpleTicketService"
           c:service-ref="shibboleth.StorageService" />
 
     <bean id="cas.proxyAuthenticator" class="net.shibboleth.idp.cas.proxy.HttpClientProxyAuthenticator" />
-
-    <!-- Adapt ProfileAction beans to Webflow Actions. -->
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
-
-    <!-- Webflow actions common to two or more flows. -->
-    <bean id="buildRelyingPartyContextAction"
-          class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
-          c:registry-ref="cas.serviceRegistry"/>
-
-    <bean id="initProfileRequestContext"
-          class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" />
-
-    <bean id="publishProtocolResponseAction"
-          class="net.shibboleth.idp.cas.flow.PublishProtocolResponseAction" />
-
-    <bean id="selectProfileConfiguration"
-          class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" />
-
-    <bean id="validateIdPSessionAction"
-          class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
-          c:resolver-ref="shibboleth.SessionManager" />
 
     <import resource="../../conf/cas-protocol.xml" />
 </beans>

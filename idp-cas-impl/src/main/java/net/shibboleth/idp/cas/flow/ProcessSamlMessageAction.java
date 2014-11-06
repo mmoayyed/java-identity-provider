@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.*;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
@@ -50,6 +51,8 @@ public class ProcessSamlMessageAction extends
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
+
+        profileRequestContext.setProfileId(ValidateConfiguration.PROFILE_ID);
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         final String service = params.get(SamlParam.TARGET.name());

@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-  ~ See LICENSE for licensing and NOTICE for copyright.
-  -->
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="
@@ -13,16 +10,10 @@
         <evaluate expression="initProfileRequestContext"/>
         <evaluate expression="decodeMessage" />
         <evaluate expression="processSamlMessageAction" />
-        <evaluate expression="buildRelyingPartyContextAction" />
-        <evaluate expression="selectProfileConfiguration" />
         <evaluate expression="'proceed'" />
         <transition on="serviceNotSpecified" to="serviceValidateFailure" />
         <transition on="ticketNotSpecified" to="serviceValidateFailure" />
-        <transition on="UnableToDecode" to="serviceValidateFailure">
-            <set name="flashScope.code" value="INVALID_REQUEST" />
-            <set name="flashScope.detailCode" value="E_PROTOCOL_VIOLATION" />
-        </transition>
-        <transition on="proceed" to="validateTicket" />
+        <transition on="proceed" to="initializeRelyingParty" />
     </action-state>
 
     <!-- End states that render the SAML message in the outgoing message context -->
@@ -35,8 +26,6 @@
     </end-state>
     <end-state id="serviceValidateFailure">
         <on-entry>
-            <set name="flashScope.code" value="currentEvent.attributes.code?:flashScope.code" />
-            <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode?:flashScope.detailCode" />
             <evaluate expression="buildSamlValidationFailureMessageAction" />
             <evaluate expression="encodeMessage" />
             <evaluate expression="recordResponseComplete" />

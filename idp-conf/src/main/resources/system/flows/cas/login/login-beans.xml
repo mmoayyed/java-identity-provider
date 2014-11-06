@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ See LICENSE for licensing and NOTICE for copyright.
-  -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
@@ -10,7 +7,7 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-init-method="initialize">
 
-    <import resource="../../../conf/cas-protocol-system.xml" />
+    <import resource="../common-beans.xml" />
 
     <!-- Action beans -->
     <bean id="initializeLoginAction"

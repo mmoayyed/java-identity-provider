@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!--
-  ~ See LICENSE for licensing and NOTICE for copyright.
-  -->
 <flow xmlns="http://www.springframework.org/schema/webflow"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="
@@ -12,6 +9,7 @@
         <evaluate expression="initializeProxyAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
         <evaluate expression="selectProfileConfiguration" />
+        <evaluate expression="publishProtocolRequestAction" />
         <evaluate expression="'proceed'" />
         <transition on="serviceNotSpecified" to="proxyFailure" />
         <transition on="ticketNotSpecified" to="proxyFailure" />

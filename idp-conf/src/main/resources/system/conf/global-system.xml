@@ -18,13 +18,13 @@
     <!-- This bean MUST be called "conversionService" to work properly. -->
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
-            <list>
+            <set>
                 <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter" />
                 <bean class="net.shibboleth.ext.spring.config.BooleanToPredicateConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringBooleanToPredicateConverter" />
                 <bean class="net.shibboleth.ext.spring.config.StringToResourceConverter" />
-            </list>
+            </set>
         </property>
     </bean>
 
@@ -42,6 +42,7 @@
     <import resource="saml-binding-config.xml" />
     <import resource="subject-c14n-system.xml" />
     <import resource="profile-intercept-system.xml" />
+    <import resource="cas-protocol-system.xml" />
     <import resource="utilities.xml" />
     <import resource="../../conf/global.xml" />
     

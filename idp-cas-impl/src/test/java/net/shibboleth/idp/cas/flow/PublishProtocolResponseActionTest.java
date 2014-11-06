@@ -28,17 +28,30 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 /**
- * Unit test for {@link PublishProtocolResponseAction}.
+ * Unit test for {@link PublishProtocolMessageAction}.
  *
  * @author Marvin S. Addison
  */
 public class PublishProtocolResponseActionTest extends AbstractFlowActionTest {
 
-    @Autowired
-    private PublishProtocolResponseAction action;
+    @Test
+    public void testPublishRequest() throws Exception {
+        final PublishProtocolMessageAction action = new PublishProtocolMessageAction(true);
+        action.initialize();
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
+                .addProtocolContext(new ServiceTicketRequest("A"), new ServiceTicketResponse("A", "B"))
+                .build();
+        action.execute(context);
+        final ServiceTicketRequest request = (ServiceTicketRequest) context.getRequestScope().get(
+                "serviceTicketRequest");
+        assertNotNull(request);
+        assertEquals(request.getService(), "A");
+    }
 
     @Test
     public void testPublishResponse() throws Exception {
+        final PublishProtocolMessageAction action = new PublishProtocolMessageAction(false);
+        action.initialize();
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("A"), new ServiceTicketResponse("A", "B"))
                 .build();
