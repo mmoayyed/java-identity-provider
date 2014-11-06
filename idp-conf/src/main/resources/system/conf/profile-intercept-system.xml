@@ -18,6 +18,20 @@
     <bean id="shibboleth.InterceptFlow" abstract="true"
         class="net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor" />
 
+    <!-- Parent bean defining built-in interceptors used for SAML security policy handling. -->
+    <bean id="shibboleth.DefaultInterceptFlows"
+            class="org.springframework.beans.factory.config.ListFactoryBean" abstract="true">
+        <property name="sourceList">
+            <list>
+                <bean id="intercept/security-policy/shibboleth-sso" parent="shibboleth.InterceptFlow" />
+                <bean id="intercept/security-policy/saml2-sso" parent="shibboleth.InterceptFlow" />
+                <bean id="intercept/security-policy/saml2-ecp" parent="shibboleth.InterceptFlow" />
+                <bean id="intercept/security-policy/saml2-slo" parent="shibboleth.InterceptFlow" />
+                <bean id="intercept/security-policy/saml-soap" parent="shibboleth.InterceptFlow" />
+            </list>
+        </property>
+    </bean>
+
     <!-- Parent bean for attribute release consent flows. -->
     <bean id="shibboleth.consent.AttributeReleaseFlow" abstract="true"
         class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"

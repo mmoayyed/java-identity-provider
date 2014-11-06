@@ -265,13 +265,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="inboundFlowId" type="string">
-                    <annotation>
-                        <documentation>
-                            The subflow ID to execute prior to mainline profile processing.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="includeConditionsNotBefore" type="string">
                     <annotation>
                         <documentation>

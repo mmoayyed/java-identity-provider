@@ -13,6 +13,9 @@
 
     <!-- Error events to reflect back from this subflow. -->
     <end-state id="InvalidProfileContext" />
+    <end-state id="MessageExpired" />
+    <end-state id="MessageReplay" />
+    <end-state id="MessageAuthenticationError" />
     <end-state id="ContextCheckDenied" />
 
     <!-- Default is to turn any event into its own end-state. -->

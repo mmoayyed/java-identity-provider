@@ -40,7 +40,8 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/soap");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml-soap");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         Assert.assertNull(profile.getSecurityConfiguration());
 
@@ -65,7 +66,8 @@ public class SAML1AttributeQueryTest extends BaseSAMLProfileTest {
         Assert.assertTrue(audiences.contains("NibbleAHappyWarthog"));
 
         Assert.assertFalse(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "attributeibfid");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml-soap");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         Assert.assertNull(profile.getSecurityConfiguration());
 

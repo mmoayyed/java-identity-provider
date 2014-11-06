@@ -47,7 +47,8 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/soap");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml-soap");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         Assert.assertNull(profile.getSecurityConfiguration());
     }
@@ -69,7 +70,8 @@ public class SAML2ArtifactTest extends BaseSAMLProfileTest {
         assertFalsePredicate(profile.getSignAssertions());
         assertConditionalPredicate(profile.getSignResponses());
         
-        Assert.assertEquals(profile.getInboundSubflowId(), "artifact2ibfid");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml-soap");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         Assert.assertNull(profile.getSecurityConfiguration());
 

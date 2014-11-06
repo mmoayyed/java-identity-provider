@@ -9,7 +9,7 @@
 	<rp:ProfileConfiguration xsi:type="saml:SAML2ECPProfile"
 		includeAttributeStatement="false" securityPolicyRef="ignore"
 		maximumSPSessionLifetime="1" skipEndpointValidationWhenSigned="true"
-		artifactType="5437" inboundFlowId="ecpibfid">
+		artifactType="5437">
 	</rp:ProfileConfiguration>
 
 </rp:RelyingParty>

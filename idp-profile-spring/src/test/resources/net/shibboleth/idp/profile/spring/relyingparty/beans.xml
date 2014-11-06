@@ -19,17 +19,17 @@
 
     <!--  SAML2 -->
     <bean id="shibboleth.SAML2.Artifact.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/soap" /><!-- TODO -->
+        c:_0="security-policy/saml-soap" />
 		
 	<bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
 		c:_0="3214" />
     <bean id="shibboleth.SAML2.Logout.InboundFlowId" class="java.lang.String"
-        c:_0="SecurityPolicy.SAML2Logout" /><!-- TODO -->
+        c:_0="security-policy/saml2-slo" />
 
     <bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
         c:_0="2143" />
     <bean id="shibboleth.SAML2.AttributeQuery.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/soap" />
+        c:_0="security-policy/saml-soap" />
 
 	<bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
 		c:_0="1111" />
@@ -37,7 +37,7 @@
         c:_0="security-policy/saml2-sso" />
 		
     <bean id="shibboleth.SAML2.ECP.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/saml2-sso" />
+        c:_0="security-policy/saml2-ecp" />
 
     <!--  SAML2 - Liberty -->
     <bean id="shibboleth.SAML2.SSOS.InboundFlowId" class="java.lang.String"
@@ -45,12 +45,12 @@
 
     <!--  SAML1 -->
     <bean id="shibboleth.SAML1.Artifact.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/soap" /><!-- TODO -->
+        c:_0="security-policy/saml-soap" />
 		
     <bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
         c:_0="432100" />
     <bean id="shibboleth.SAML1.AttributeQuery.InboundFlowId" class="java.lang.String"
-        c:_0="security-policy/soap" />
+        c:_0="security-policy/saml-soap" />
 		
 	<bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
 		c:_0="1111" />

@@ -12,8 +12,7 @@
     encryptNameIds="always"	 encryptAssertions="${prop.never}" assertionProxyCount="99" attributeAuthority="wibble"
     
     assertionLifetime="${prop.tenMins}" includeConditionsNotBefore="${prop.false}" 
-    signAssertions="${prop.never}" signRequests="never" signResponses="conditional"
-        inboundFlowId="artifact2ibfid">
+    signAssertions="${prop.never}" signRequests="never" signResponses="conditional">
     <saml:Audience>${prop.String1}</saml:Audience>
     <saml:ProxyAudience>ProxyAudience1</saml:ProxyAudience>
     <saml:ProxyAudience>ProxyAudience2</saml:ProxyAudience>

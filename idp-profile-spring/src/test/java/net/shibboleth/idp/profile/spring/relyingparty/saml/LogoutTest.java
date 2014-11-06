@@ -45,7 +45,8 @@ public class LogoutTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         
-        Assert.assertEquals(profile.getInboundSubflowId(), "SecurityPolicy.SAML2Logout");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml2-slo");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
@@ -77,7 +78,8 @@ public class LogoutTest extends BaseSAMLProfileTest {
 
         Assert.assertTrue(profile.includeConditionsNotBefore());
 
-        Assert.assertEquals(profile.getInboundSubflowId(), "logoutibfid");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml2-slo");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
         
 

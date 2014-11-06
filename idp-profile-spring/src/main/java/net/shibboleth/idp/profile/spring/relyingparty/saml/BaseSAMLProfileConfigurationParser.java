@@ -232,11 +232,9 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                     element.getAttributeNS(null, "outboundArtifactType"));
         }
 
-        if (element.hasAttributeNS(null, "inboundFlowId")) {
-            builder.addPropertyValue("inboundSubflowId", element.getAttributeNS(null, "inboundFlowId"));
-        } else {
-            builder.addPropertyReference("inboundSubflowId", getProfileBeanNamePrefix() + "InboundFlowId");
-        }
+        // Install a defaulted flow ID for inbound security policy handling.
+        // TODO: is there a better way to install a list containing a bean reference?
+        builder.addPropertyReference("inboundInterceptorFlows", getProfileBeanNamePrefix() + "InboundFlowId");
 
         if (element.hasAttributeNS(null, "signAssertions")) {
             builder.addPropertyValue("signAssertions",

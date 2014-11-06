@@ -52,7 +52,8 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/saml2-sso");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml2-ecp");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
 
         Assert.assertNull(profile.getArtifactConfiguration());
@@ -79,7 +80,8 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "ecpibfid");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml2-ecp");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
 
         Assert.assertNull(profile.getArtifactConfiguration());
@@ -104,4 +106,5 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
     @Test(expectedExceptions = {BeanDefinitionParsingException.class,}) public void localityDnsname() {
         getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/ecpLocalityDNSName.xml");
     }
+    
 }

@@ -40,8 +40,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     /** ID of the profile configured. */
     @Nonnull @NotEmpty private final String profileId;
 
-    /** Inbound flow ID. */
-    @Nullable private String inboundFlowId;
+    /** Enables inbound interceptor flows. */
+    @Nonnull @NonnullElements private List<String> inboundFlows;
 
     /** Enables outbound interceptor flows. */
     @Nonnull @NonnullElements private List<String> outboundFlows;
@@ -82,19 +82,21 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public String getInboundSubflowId() {
-        return inboundFlowId;
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows() {
+        return inboundFlows;
     }
 
     /**
-     * Set the subflow ID to execute prior to mainline profile processing.
+     * Set the ordered collection of inbound interceptor flows to enable.
      * 
-     * @param id subflow ID
+     * @param flows   flow identifiers to enable
      */
-    public void setInboundSubflowId(@Nullable final String id) {
-        inboundFlowId = StringSupport.trimOrNull(id);
+    public void setInboundInterceptorFlows(@Nonnull @NonnullElements final Collection<String> flows) {
+        Constraint.isNotNull(flows, "Collection of flows cannot be null");
+        
+        inboundFlows = Lists.newArrayList(StringSupport.normalizeStringCollection(flows));
     }
-
+    
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows() {

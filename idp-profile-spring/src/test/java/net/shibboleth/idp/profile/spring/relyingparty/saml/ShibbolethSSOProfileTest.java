@@ -41,7 +41,8 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "security-policy/shibboleth-sso");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/shibboleth-sso");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
@@ -61,7 +62,8 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertEquals(profile.getInboundSubflowId(), "shibssoibfid");
+        Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
+        Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/shibboleth-sso");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
 
         final SAMLArtifactConfiguration artifact = profile.getArtifactConfiguration();
@@ -80,4 +82,5 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(nameIDPrefs.contains("four"));
 
     }
+    
 }

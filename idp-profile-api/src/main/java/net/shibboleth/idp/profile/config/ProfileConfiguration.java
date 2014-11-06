@@ -29,17 +29,22 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /** Represents the configuration of a particular communication profile. */
 public interface ProfileConfiguration extends IdentifiedComponent {
-    
+
     /**
-     * Get the subflow ID to execute prior to mainline profile processing.
+     * Get an ordered list of interceptor flows to run for this profile after an inbound message is
+     * decoded.
      * 
-     * @return  a subflow ID, or null
+     * <p>The flow IDs returned MUST NOT contain the
+     * {@link net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX}
+     * prefix common to all interceptor flows.</p>
+     * 
+     * @return  a set of interceptor flow IDs to enable
      */
-    @Nullable String getInboundSubflowId();
-    
+    @Nonnull @NonnullElements @NotLive @Unmodifiable List<String> getInboundInterceptorFlows();
+
     /**
-     * Get an ordered list of interceptor flows to run for this profile before a final response is
-     * generated.
+     * Get an ordered list of interceptor flows to run for this profile before a final outbound
+     * message is generated.
      * 
      * <p>The flow IDs returned MUST NOT contain the
      * {@link net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX}
