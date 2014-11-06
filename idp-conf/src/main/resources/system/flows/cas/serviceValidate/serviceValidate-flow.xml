@@ -10,14 +10,14 @@
         <evaluate expression="initProfileRequestContext"/>
         <evaluate expression="initializeValidateAction" />
         <evaluate expression="'proceed'" />
-        <transition on="serviceNotSpecified" to="serviceValidateFailure" />
-        <transition on="ticketNotSpecified" to="serviceValidateFailure" />
+        <transition on="serviceNotSpecified" to="validateFailure" />
+        <transition on="ticketNotSpecified" to="validateFailure" />
         <transition on="proceed" to="initializeRelyingParty" />
     </action-state>
 
     <action-state id="handleValidProxyTicket">
         <evaluate expression="T(net.shibboleth.idp.cas.protocol.ProtocolError).InvalidTicketType.event(flowRequestContext.currentState)" />
-        <transition to="serviceValidateFailure" />
+        <transition to="validateFailure" />
     </action-state>
 
     <bean-import resource="serviceValidate-beans.xml" />

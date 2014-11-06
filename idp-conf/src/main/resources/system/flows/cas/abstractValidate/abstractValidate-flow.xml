@@ -16,25 +16,25 @@
 
     <action-state id="validateTicket">
         <evaluate expression="validateTicketAction" />
-        <transition on="invalidTicketFormat" to="serviceValidateFailure" />
-        <transition on="serviceMismatch" to="serviceValidateFailure" />
-        <transition on="ticketExpired" to="serviceValidateFailure" />
-        <transition on="ticketRetrievalError" to="serviceValidateFailure" />
+        <transition on="invalidTicketFormat" to="validateFailure" />
+        <transition on="serviceMismatch" to="validateFailure" />
+        <transition on="ticketExpired" to="validateFailure" />
+        <transition on="ticketRetrievalError" to="validateFailure" />
         <transition on="serviceTicketValidated" to="validateIdPSession" />
         <transition on="proxyTicketValidated" to="handleValidProxyTicket" />
     </action-state>
 
     <action-state id="validateIdPSession">
         <evaluate expression="validateIdPSessionAction" />
-        <transition on="sessionRetrievalError" to="serviceValidateFailure" />
-        <transition on="sessionExpired" to="serviceValidateFailure" />
+        <transition on="sessionRetrievalError" to="validateFailure" />
+        <transition on="sessionExpired" to="validateFailure" />
         <transition on="success" to="validateRenew" />
     </action-state>
 
     <action-state id="validateRenew">
         <evaluate expression="validateRenewAction" />
-        <transition on="ticketNotFromRenew" to="serviceValidateFailure" />
-        <transition on="renewIncompatibleWithProxy" to="serviceValidateFailure" />
+        <transition on="ticketNotFromRenew" to="validateFailure" />
+        <transition on="renewIncompatibleWithProxy" to="validateFailure" />
         <transition on="success" to="checkForProxy" />
     </action-state>
 
@@ -48,7 +48,8 @@
         <evaluate expression="checkProxyAuthorizationAction" />
         <evaluate expression="validateProxyCallbackAction" />
         <transition on="success" to="resolveAttributes" />
-        <transition on="failure" to="resolveAttributes" />
+        <transition on="proxyCallbackAuthenticationFailure" to="validateFailure" />
+        <transition on="ticketCreationError" to="validateFailure" />
     </action-state>
 
     <action-state id="resolveAttributes">
@@ -62,11 +63,11 @@
 
     <action-state id="updateIdPSessionWithSPSession">
         <evaluate expression="updateIdPSessionWithSPSessionAction" />
-        <transition on="success" to="serviceValidateSuccess" />
+        <transition on="success" to="validateSuccess" />
     </action-state>
 
     <!-- View end states -->
-    <end-state id="serviceValidateSuccess" view="cas/serviceValidateSuccess">
+    <end-state id="validateSuccess" view="cas/validateSuccess">
         <on-entry>
             <evaluate expression="publishProtocolResponseAction" />
             <set name="flashScope.userName" value="requestScope.ticketValidationResponse.userName" />
@@ -76,7 +77,7 @@
             <set name="flashScope.escapeUtils" value="T(org.apache.commons.lang.StringEscapeUtils)" />
         </on-entry>
     </end-state>
-    <end-state id="serviceValidateFailure" view="cas/serviceValidateFailure">
+    <end-state id="validateFailure" view="cas/validateFailure">
         <on-entry>
             <set name="flashScope.code" value="currentEvent.attributes.code?:'INTERNAL_ERROR'" />
             <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode?:'E_ILLEGAL_STATE'" />
@@ -84,10 +85,10 @@
     </end-state>
 
     <global-transitions>
-        <transition on-exception="java.lang.IllegalStateException" to="serviceValidateFailure" />
+        <transition on-exception="java.lang.IllegalStateException" to="validateFailure" />
         <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
-                    to="serviceValidateFailure" />
-        <transition on="illegalState" to="serviceValidateFailure" />
-        <transition on="protocolViolation" to="serviceValidateFailure" />
+                    to="validateFailure" />
+        <transition on="illegalState" to="validateFailure" />
+        <transition on="protocolViolation" to="validateFailure" />
     </global-transitions>
 </flow>

@@ -130,14 +130,14 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
             response = httpClient.execute(request);
             return response.getStatusLine().getStatusCode();
         } catch (ClientProtocolException e) {
-            throw new RuntimeException("HTTP protocol error", e);
+            throw new GeneralSecurityException("HTTP protocol error", e);
         } catch (SSLException e) {
             if (e.getCause() instanceof CertificateException) {
                 throw (CertificateException) e.getCause();
             }
             throw new GeneralSecurityException("SSL connection error", e);
         } catch (IOException e) {
-            throw new RuntimeException("IO error", e);
+            throw new GeneralSecurityException("IO error", e);
         } finally {
             close(response);
             close(httpClient);

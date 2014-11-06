@@ -1,5 +1,18 @@
 /*
- * See LICENSE for licensing and NOTICE for copyright.
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements.  See the
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package net.shibboleth.idp.test.flows.cas;
@@ -19,8 +32,7 @@ import org.testng.annotations.Test;
 
 import javax.annotation.Nonnull;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * Tests the flow behind the <code>/samlValidate</code> endpoint.
@@ -54,7 +66,6 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     @Test
     public void testSuccess() throws Exception {
         final String principal = "john";
-        final String service = "https://test.example.org/";
         final IdPSession session = sessionManager.createSession(principal);
         session.addAuthenticationResult(
                 new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
@@ -62,56 +73,52 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
                 session.getId(),
-                service,
+                "https://test.example.org/",
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");
         request.setContent(requestBody.getBytes("UTF-8"));
-        externalContext.getMockRequestParameterMap().put("TARGET", service);
+        externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "serviceValidateSuccess");
+        assertEquals(result.getOutcome().getId(), "validateSuccess");
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"saml1p:Success\"/>"));
         assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
     }
 
-    @Test(enabled = false)
+    @Test
     public void testFailureTicketExpired() throws Exception {
-        final String principal = "john";
-        final String service = "https://test.example.org/";
-        sessionManager.createSession(principal);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", "ST-123-abcdefg");
         request.setMethod("POST");
         request.setContent(requestBody.getBytes("UTF-8"));
-        externalContext.getMockRequestParameterMap().put("TARGET", service);
+        externalContext.getMockRequestParameterMap().put("TARGET", "https://test.example.org/");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "serviceValidateFailure");
+        assertEquals(result.getOutcome().getId(), "validateFailure");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("<saml1p:StatusMessage>E_TICKET_EXPIRED</saml1p:StatusMessage>"));
     }
 
-    @Test(enabled = false)
+    @Test
     public void testFailureSessionExpired() throws Exception {
-        final String service = "https://test.example.org/";
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133227-o5ly5eArKccYkb2P+80uRE7Gq9xSAqWtOg",
                 DateTime.now().plusSeconds(5).toInstant(),
                 "No-Such-Session-Id",
-                service,
+                "https://test.example.org/",
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");
         request.setContent(requestBody.getBytes("UTF-8"));
-        externalContext.getMockRequestParameterMap().put("TARGET", service);
+        externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "serviceValidateFailure");
+        assertEquals(result.getOutcome().getId(), "validateFailure");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("<saml1p:StatusMessage>E_SESSION_EXPIRED</saml1p:StatusMessage>"));
