@@ -18,16 +18,14 @@
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
             p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
         <property name="activeFlowsLookupStrategy">
-            <bean class="com.google.common.base.Functions" factory-method="constant">
-                <constructor-arg>
-                    <list>
-                        <value>test-proceed-1-flow</value>
-                        <value>test-proceed-2-flow</value>
-                        <value>test-error-flow</value>
-                    </list>
-                </constructor-arg>
-            </bean>
+            <bean class="com.google.common.base.Functions" factory-method="constant" c:_0-ref="ActivatedFlows" />
         </property>
     </bean>
+
+    <util:list id="ActivatedFlows">
+        <value>test-proceed-1-flow</value>
+        <value>test-proceed-2-flow</value>
+        <value>test-error-flow</value>
+    </util:list>
 
 </beans>
