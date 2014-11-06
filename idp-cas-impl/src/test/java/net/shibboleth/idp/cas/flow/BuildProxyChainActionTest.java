@@ -18,6 +18,7 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.config.ProxyConfiguration;
+import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
@@ -55,5 +56,26 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
         assertEquals(response.getProxies().size(), 2);
         assertEquals(response.getProxies().get(0), "proxiedByA");
         assertEquals(response.getProxies().get(1), "proxyA");
+    }
+
+
+    @Test
+    public void testBrokenProxyChain() throws Exception {
+        final ServiceTicket st = createServiceTicket("proxyA", true);
+        final ProxyGrantingTicket pgtA = createProxyGrantingTicket(st);
+        final ProxyTicket ptA = createProxyTicket(pgtA, "proxiedByA");
+        final ProxyGrantingTicket pgtB = createProxyGrantingTicket(ptA);
+        final ProxyTicket ptB = createProxyTicket(pgtB, "proxiedByB");
+        final TicketValidationRequest request = new TicketValidationRequest("proxiedByB", ptB.getId());
+        final TicketValidationResponse response = new TicketValidationResponse();
+
+        // Remove first proxy-granting ticket to break chain
+        ticketService.removeProxyGrantingTicket(pgtA.getId());
+
+        final RequestContext context = new TestContextBuilder(ProxyConfiguration.PROFILE_ID)
+                .addProtocolContext(request, response)
+                .addTicketContext(ptB)
+                .build();
+        assertEquals(action.execute(context).getId(), ProtocolError.BrokenProxyChain.id());
     }
 }

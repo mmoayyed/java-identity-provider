@@ -166,6 +166,28 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("E_PROXY_CALLBACK_AUTH_FAILURE"));
     }
 
+    @Test
+    public void testFailureBrokenProxyChain() throws Exception {
+        final String principal = "john";
+        final IdPSession session = sessionManager.createSession(principal);
+        session.addAuthenticationResult(
+                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
+
+        final ProxyTicket ticket = createProxyTicket(session.getId());
+
+        ticketService.removeProxyGrantingTicket(ticket.getPgtId());
+
+        externalContext.getMockRequestParameterMap().put("service", ticket.getService());
+        externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
+        assertTrue(responseBody.contains("E_BROKEN_PROXY_CHAIN"));
+    }
+
     private ProxyTicket createProxyTicket(final String sessionId) {
         final ServiceTicket st = ticketService.createServiceTicket(
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),

@@ -35,7 +35,8 @@ import javax.annotation.Nonnull;
  *
  * <ul>
  *     <li>{@link Events#Proceed proceed}</li>
- *     <li>{@link ProtocolError#InvalidTicketType invalidTicketTypew}</li>
+ *     <li>{@link ProtocolError#BrokenProxyChain brokenProxyChain}</li>
+ *     <li>{@link ProtocolError#InvalidTicketType invalidTicketType}</li>
  * </ul>
  *
  * @author Marvin S. Addison
@@ -63,8 +64,8 @@ public class BuildProxyChainAction
     @Nonnull
     @Override
     protected Event doExecute(
-    final @Nonnull RequestContext springRequestContext,
-    final @Nonnull ProfileRequestContext profileRequestContext) {
+        final @Nonnull RequestContext springRequestContext,
+        final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final TicketValidationResponse response = getCASResponse(profileRequestContext);
         final Ticket ticket = getCASTicket(profileRequestContext);
@@ -76,6 +77,9 @@ public class BuildProxyChainAction
         String pgtId = pt.getPgtId();
         do {
             pgt = ticketService.fetchProxyGrantingTicket(pgtId);
+            if (pgt == null) {
+                return ProtocolError.BrokenProxyChain.event(this);
+            }
             response.addProxy(pgt.getService());
             pgtId = pgt.getParentId();
         } while (pgtId != null);

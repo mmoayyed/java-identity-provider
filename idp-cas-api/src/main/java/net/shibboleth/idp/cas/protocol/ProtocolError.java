@@ -27,6 +27,9 @@ import org.springframework.webflow.execution.Event;
  */
 public enum ProtocolError {
 
+    /** One or more proxy-granting tickets in proxy chain have expired. */
+    BrokenProxyChain("INVALID_TICKET", "E_BROKEN_PROXY_CHAIN"),
+
     /** Illegal state error. */
     IllegalState("INTERNAL_ERROR", "E_ILLEGAL_STATE"),
 

@@ -17,6 +17,7 @@
 
     <action-state id="handleValidProxyTicket">
         <evaluate expression="buildProxyChainAction" />
+        <transition on="brokenProxyChain" to="validateFailure" />
         <transition on="invalidTicketType" to="validateFailure" />
         <transition on="proceed" to="validateIdPSession" />
     </action-state>
