@@ -76,4 +76,9 @@ public class Service implements Principal {
     public boolean isAuthorizedToProxy() {
         return authorizedToProxy;
     }
+
+    @Override
+    public String toString() {
+        return serviceURL;
+    }
 }

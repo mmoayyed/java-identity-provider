@@ -79,8 +79,11 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
         final RelyingPartyContext rpc = new RelyingPartyContext();
         rpc.setVerified(service != null);
         rpc.setRelyingPartyId(serviceURL);
-        if (service == null) {
+        if (service != null) {
+            log.debug("Setting up RP context for verified relying party {}", service);
+        } else {
             service = new Service(serviceURL, UNVERIFIED_GROUP, false);
+            log.debug("Setting up RP context for unverified relying party {}", service);
         }
         profileRequestContext.addSubcontext(rpc);
         setCASService(profileRequestContext, service);

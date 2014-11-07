@@ -22,12 +22,11 @@ import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
+import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.cas.ticket.TicketService;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +41,16 @@ import javax.annotation.Nonnull;
  * <ul>
  *     <li>{@link Events#Proceed proceed}</li>
  *     <li>{@link ProtocolError#ServiceNotSpecified serviceNotSpecified}</li>
+ *     <li>{@link ProtocolError#TicketExpired ticketExpired}</li>
  *     <li>{@link ProtocolError#TicketNotSpecified ticketNotSpecified}</li>
  *     <li>{@link ProtocolError#TicketRetrievalError ticketRetrievalError}</li>
  * </ul>
  * <p>
- * Creates a {@link TicketContext} containing the PGT provided to the <code>/proxy</code> endpoint and places it under
- * the {@link ProfileRequestContext}.
+ * Creates the following contexts on success:
+ * <ul>
+ *     <li><code>ProfileRequestContext</code> -&gt; {@link net.shibboleth.idp.cas.protocol.ProtocolContext}</li>
+ *     <li><code>ProfileRequestContext</code> -&gt; <code>ProtocolContext</code> -&gt; {@link TicketContext}</li>
+ * </ul>
  *
  * @author Marvin S. Addison
  */
@@ -57,10 +60,11 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
     private final Logger log = LoggerFactory.getLogger(InitializeProxyAction.class);
 
     /** Manages CAS tickets. */
-    @Nonnull private TicketService ticketService;
+    @Nonnull
+    private final TicketService ticketService;
 
 
-    public void setTicketService(@Nonnull final TicketService ticketService) {
+    public InitializeProxyAction(@Nonnull final TicketService ticketService) {
         this.ticketService = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
     }
 
@@ -85,8 +89,11 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
         setCASRequest(profileRequestContext, proxyTicketRequest);
         try {
             log.debug("Fetching proxy-granting ticket {}", proxyTicketRequest.getPgt());
-            profileRequestContext.addSubcontext(
-                    new TicketContext(ticketService.fetchProxyGrantingTicket(proxyTicketRequest.getPgt())));
+            final ProxyGrantingTicket pgt = ticketService.fetchProxyGrantingTicket(proxyTicketRequest.getPgt());
+            if (pgt == null) {
+                return ProtocolError.TicketExpired.event(this);
+            }
+            setCASTicket(profileRequestContext, pgt);
         } catch (RuntimeException e) {
             log.error("Failed looking up " + proxyTicketRequest.getPgt(), e);
             return ProtocolError.TicketRetrievalError.event(this);

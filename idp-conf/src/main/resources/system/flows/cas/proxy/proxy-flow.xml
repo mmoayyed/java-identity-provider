@@ -8,12 +8,14 @@
         <evaluate expression="initProfileRequestContext"/>
         <evaluate expression="initializeProxyAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
+        <evaluate expression="selectRelyingPartyConfiguration" />
         <evaluate expression="selectProfileConfiguration" />
         <evaluate expression="publishProtocolRequestAction" />
         <evaluate expression="'proceed'" />
         <transition on="serviceNotSpecified" to="proxyFailure" />
         <transition on="ticketNotSpecified" to="proxyFailure" />
         <transition on="ticketRetrievalError" to="proxyFailure" />
+        <transition on="ticketExpired" to="proxyFailure" />
         <transition on="proceed" to="validateIdPSession" />
     </action-state>
 
@@ -40,11 +42,18 @@
     </end-state>
     <end-state id="proxyFailure" view="cas/proxyFailure">
         <on-entry>
-            <evaluate expression="publishProtocolResponseAction" />
-            <set name="flashScope.code" value="currentEvent.attributes.code" />
-            <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode" />
+            <set name="flashScope.code" value="currentEvent.attributes.code?:'INTERNAL_ERROR'" />
+            <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode?:'E_ILLEGAL_STATE'" />
         </on-entry>
     </end-state>
+
+    <global-transitions>
+        <transition on-exception="java.lang.IllegalStateException" to="proxyFailure" />
+        <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
+                    to="proxyFailure" />
+        <transition on="illegalState" to="proxyFailure" />
+        <transition on="protocolViolation" to="proxyFailure" />
+    </global-transitions>
 
     <bean-import resource="proxy-beans.xml" />
 
