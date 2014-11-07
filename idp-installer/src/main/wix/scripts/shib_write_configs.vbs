@@ -45,7 +45,7 @@ KeyStorePassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
 SealerPassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
 SsoStorePassword=left(CreateObject("Scriptlet.TypeLib").Guid, 38)
 
-set AntFile=FileSystemObj.OpenTextFile(InstallDir & "\IdP\idp.install.properties" , 2, True)
+set AntFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.properties" , 2, True)
 if (Err.Number = 0 ) then
     AntFile.WriteLine "#"
     AntFile.WriteLine "# File with properties for ANT"
@@ -55,7 +55,7 @@ if (Err.Number = 0 ) then
     AntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/idp/shibboleth"
     AntFile.WriteLine "idp.keystore.password=" & KeyStorePassword
     AntFile.WriteLine "idp.sealer.password=" & SealerPassword
-    AntFile.WriteLine "idp.target.dir=" & InstallDirJava & "/IdP"
+    AntFile.WriteLine "idp.target.dir=" & InstallDirJava 
     AntFile.WriteLine "idp.merge.properties=idp.install.replace.properties"
     if (IdPScope <> "") then
        AntFile.WriteLine "idp.scope=" & IdPScope
@@ -74,7 +74,7 @@ if (Err.Number = 0 ) then
     AntFile.Close
 end if
 
-set PropsFile=FileSystemObj.OpenTextFile(InstallDir & "\IdP\idp.install.replace.properties" , 2, True)
+set PropsFile=FileSystemObj.OpenTextFile(InstallDir & "\idp.install.replace.properties" , 2, True)
 if (Err.Number = 0 ) then
     PropsFile.WriteLine "#"
     PropsFile.WriteLine "# File to be merged into idp.properties"
@@ -91,16 +91,16 @@ else
 end if
 
 if (InstallJetty <> "") then
-    set JettyAntFile=FileSystemObj.OpenTextFile(InstallDir & "\IdP\jetty.install.properties" , 2, True)
+    set JettyAntFile=FileSystemObj.OpenTextFile(InstallDir & "\jetty.install.properties" , 2, True)
     if (Err.Number = 0 ) then
 	JettyAntFile.WriteLine "#"
 	JettyAntFile.WriteLine "# File with properties for ANT"
 	JettyAntFile.WriteLine "#"
-	JettyAntFile.WriteLine "jetty.merge.properties="& InstallDirJava & "/IdP/jetty.install.replace.properties"
+	JettyAntFile.WriteLine "jetty.merge.properties="& InstallDirJava & "/jetty.install.replace.properties"
 	JettyAntFile.WriteLine "idp.host.name=" & IdpHostName
 	JettyAntFile.WriteLine "idp.keystore.password=" & SsoStorePassword
 	JettyAntFile.WriteLine "idp.uri.subject.alt.name=https://" & IdpHostName & "/idp/shibboleth"
-	JettyAntFile.WriteLine "idp.target.dir=" & InstallDirJava & "/IdP"
+	JettyAntFile.WriteLine "idp.target.dir=" & InstallDirJava 
         if (DebugInstall <> "") then
 	    JettyAntFile.WriteLine "jetty.no.tidy=true"
 	else 
@@ -111,7 +111,7 @@ if (InstallJetty <> "") then
 	LogFile.Writeline "jettyAnt failed " & Err
     end if
 
-    set JettyFile=FileSystemObj.OpenTextFile(InstallDir & "\IdP\jetty.install.replace.properties" , 2, True)
+    set JettyFile=FileSystemObj.OpenTextFile(InstallDir & "\jetty.install.replace.properties" , 2, True)
     if (Err.Number = 0 ) then
 	JettyFile.WriteLine "#"
 	JettyFile.WriteLine "# File to be merged into jetty's idp.ini file"
@@ -120,14 +120,14 @@ if (InstallJetty <> "") then
 	JettyFile.WriteLine "jetty.host=0.0.0.0"
 	JettyFile.WriteLine "jetty.https.port=443"
 	JettyFile.WriteLine "jetty.backchannel.port=8443"
-	JettyFile.WriteLine "jetty.backchannel.keystore.path=" & InstallDirJava & "/IdP/credentials/idp-backchannel.p12"
-	JettyFile.WriteLine "jetty.browser.keystore.path=" & InstallDirJava & "/IdP/credentials/idp-userfacing.p12"
+	JettyFile.WriteLine "jetty.backchannel.keystore.path=" & InstallDirJava & "/credentials/idp-backchannel.p12"
+	JettyFile.WriteLine "jetty.browser.keystore.path=" & InstallDirJava & "/credentials/idp-userfacing.p12"
 	JettyFile.WriteLine "jetty.backchannel.keystore.password=" & KeyStorePassword
 	JettyFile.WriteLine "jetty.browser.keystore.password=" & SsoStorePassword
 	JettyFile.WriteLine "jetty.backchannel.keystore.type=PKCS12"
 	JettyFile.WriteLine "jetty.browser.keystore.type=PKCS12"
-	JettyFile.WriteLine "jetty.war.path=" & InstallDirJava & "/IdP/war/idp.war"
-	JettyFile.WriteLine "jetty.jaas.path=" & InstallDirJava & "/IdP/conf/authn/jaas.config"
+	JettyFile.WriteLine "jetty.war.path=" & InstallDirJava & "/war/idp.war"
+	JettyFile.WriteLine "jetty.jaas.path=" & InstallDirJava & "/conf/authn/jaas.config"
 	JettyFile.Close
     else
 	LogFile.Writeline "jetty failed " & Err
@@ -146,7 +146,7 @@ if ConfigureAd = "true" then
         LDAPSearchPath="CN=Users, DC=" &Replace(AdDomain, ".", ", DC=")
     end if
 
-    set LDAPFile=FileSystemObj.OpenTextFile(InstallDir & "\IdP\ldap.mergeProperties" , 2, True)
+    set LDAPFile=FileSystemObj.OpenTextFile(InstallDir & "\ldap.mergeProperties" , 2, True)
     if (Err.Number = 0 ) then
         LDAPFile.Writeline "idp.authn.LDAP.authenticator= adAuthenticator"
         LDAPFile.Writeline "idp.authn.LDAP.ldapURL=ldap://" & AdDomain & ":" & LDAPPort

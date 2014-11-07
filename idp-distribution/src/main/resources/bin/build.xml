@@ -653,6 +653,7 @@ A V2 Installation has been detected. Configuration will be preserved into
 		<delete file="${idp.merge.properties}" failonerror="false" />
 		<delete file="${services.merge.properties}" failonerror="false" />
         <delete file="${idp.property.file}" failonerror="false" />
+        <delete file="${ldap.merge.properties}" failonerror="false" />
 	</target>
 	
 </project>

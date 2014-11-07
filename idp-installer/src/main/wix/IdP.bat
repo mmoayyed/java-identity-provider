@@ -125,7 +125,7 @@ cd ..
 
 
 
-"%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr IdPFolder -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
+"%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr INSTALLDIR -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
 if ERRORLEVEL 1 goto done
 
 REM Build
