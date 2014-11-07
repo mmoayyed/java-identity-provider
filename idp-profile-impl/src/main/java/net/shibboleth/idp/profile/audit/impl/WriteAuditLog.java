@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.audit.impl;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +35,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
@@ -50,12 +50,12 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
- * Action that produces an audit log entry based on an {@link AuditContext} and a formatting string. 
+ * Action that produces audit log entries based on an {@link AuditContext} and one or more formatting strings. 
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  */
@@ -70,11 +70,8 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Strategy used to locate the {@link AuditContext} associated with a given {@link ProfileRequestContext}. */
     @Nonnull private Function<ProfileRequestContext,AuditContext> auditContextLookupStrategy;
     
-    /** Base of category for log entries. */
-    @Nonnull @NotEmpty private String categoryBase;
-    
-    /** Sequence of formatting tokens and literals to output. */
-    @Nonnull @NonnullElements private List<String> format;
+    /** Map of log category to formatting tokens and literals to output. */
+    @Nonnull @NotEmpty private Map<String,List<String>> formattingMap;
 
     /** The Spring RequestContext to operate on. */
     @Nullable private RequestContext requestContext;
@@ -88,8 +85,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Constructor. */
     public WriteAuditLog() {
         auditContextLookupStrategy = new ChildContextLookup<>(AuditContext.class);
-        categoryBase = "Shibboleth-Audit.";
-        format = Collections.emptyList();
+        formattingMap = Collections.emptyMap();
     }
 
     /**
@@ -105,69 +101,69 @@ public class WriteAuditLog extends AbstractProfileAction {
     }
     
     /**
-     * Set the base of the logging category to use.
+     * Get the map of logging category to formatting tokens for log entries.
      * 
-     * @param base  base prefix for logging category
+     * @return map of formatting tokens
      */
-    public void setCategoryBase(@Nonnull @NotEmpty final String base) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        categoryBase = Constraint.isNotNull(StringSupport.trimOrNull(base),
-                "Logging category base cannot be null or empty");
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<String,List<String>> getFormattingMap() {
+        return ImmutableMap.copyOf(formattingMap);
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /**
-     * Get the list of formatting tokens for log entries.
-     * 
-     * @return list of formatting tokens
-     */
-    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getFormat() {
-        return ImmutableList.copyOf(format);
-    }
-    
-    /**
-     * Set the formatting string to use.
+     * Set the map of logging category to formatting strings for log entries.
      * 
      * <p>A formatting string consists of tokens prefixed by '%' separated by any non-alphanumeric or whitespace.
      * Tokens can contain any letter or number or a hypen. Anything other than a token, including whitespace, is
      * a literal.</p>
      * 
-     * @param s formatting string
+     * @param map map of categories to formatting strings
      */
-    public void setFormat(@Nonnull @NotEmpty final String s) {
+    public void setFormattingMap(@Nonnull @NonnullElements final Map<String,String> map) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        if (Strings.isNullOrEmpty(s)) {
-            throw new ConstraintViolationException("Formatting string cannot be null or empty");
-        }
+        Constraint.isNotNull(map, "Audit formatting map cannot be null");
         
-        format = Lists.newArrayListWithExpectedSize(10);
+        formattingMap = Maps.newHashMapWithExpectedSize(map.size());
         
-        int len = s.length();
-        boolean inToken = false;
-        StringBuilder field = new StringBuilder();
-        for (int pos = 0; pos < len; ++pos) {
-            char ch = s.charAt(pos);
-            if (inToken) {
-                if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
-                    format.add(field.toString());
-                    field.setLength(0);
-                    inToken = false;
-                }
-            } else if (ch == '%') {
-                if (field.length() > 0) {
-                    format.add(field.toString());
-                    field.setLength(0);
-                }
-                inToken = true;
+        for (final Map.Entry<String,String> entry : map.entrySet()) {
+            final String category = StringSupport.trimOrNull(entry.getKey());
+            final String s = StringSupport.trimOrNull(entry.getValue());
+            if (category == null || s == null) {
+                continue;
             }
             
-            field.append(ch);
-        }
-        
-        if (field.length() > 0) {
-            format.add(field.toString());
+            int len = s.length();
+            boolean inToken = false;
+            final List<String> format = Lists.newArrayList();
+            final StringBuilder field = new StringBuilder();
+            for (int pos = 0; pos < len; ++pos) {
+                char ch = s.charAt(pos);
+                if (inToken) {
+                    if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
+                        format.add(field.toString());
+                        field.setLength(0);
+                        inToken = false;
+                    }
+                } else if (ch == '%') {
+                    if (field.length() > 0) {
+                        format.add(field.toString());
+                        field.setLength(0);
+                    }
+                    inToken = true;
+                }
+                
+                field.append(ch);
+            }
+            
+            if (field.length() > 0) {
+                format.add(field.toString());
+            }
+            
+            formattingMap.put(category, format);
         }
     }
+// Checkstyle: CyclomaticComplexity ON
+
 
     /** {@inheritDoc} */
     @Override
@@ -182,7 +178,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
-        } else if (format.isEmpty()) {
+        } else if (formattingMap.isEmpty()) {
             log.debug("No formatting for audit records supplied, nothing to do");
             return false;
         }
@@ -196,51 +192,55 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        
-        final StringBuilder entry = new StringBuilder();
 
-        for (final String token : format) {
-            if (token.startsWith("%")) {
-                if (token.length() == 1 || token.charAt(1) == '%') {
-                    entry.append('%');
-                } else {
-                    final String field = token.substring(1);
-                    
-                    if (IdPAuditFields.EVENT_TIME.equals(field)) {
-                        entry.append(new DateTime().toString(v2Formatter.withZone(DateTimeZone.UTC)));
-                    } else if (IdPAuditFields.EVENT_TYPE.equals(field)) {
-                        final Event event = requestContext.getCurrentEvent();
-                        if (event != null && !event.getId().equals(EventIds.PROCEED_EVENT_ID)) {
-                            entry.append(event.getId());
-                        }
-                    } else if (IdPAuditFields.PROFILE.equals(field)) {
-                        entry.append(profileRequestContext.getProfileId());
-                    } else if (IdPAuditFields.REMOTE_ADDR.equals(field) && httpRequest != null) {
-                        entry.append(httpRequest.getRemoteAddr());
-                    } else if (IdPAuditFields.URI.equals(field) && httpRequest != null) {
-                        entry.append(httpRequest.getRequestURI());
-                    } else if (IdPAuditFields.URL.equals(field) && httpRequest != null) {
-                        entry.append(httpRequest.getRequestURL());
-                    } else if (IdPAuditFields.USER_AGENT.equals(field) && httpRequest != null) {
-                        entry.append(httpRequest.getHeader("User-Agent"));
-                    } else if (auditCtx != null) {
-                        final Iterator<String> iter = auditCtx.getFieldValues(field).iterator();
-                        while (iter.hasNext()) {
-                            entry.append(iter.next());
-                            if (iter.hasNext()) {
-                                entry.append(',');
+        for (Map.Entry<String,List<String>> entry : formattingMap.entrySet()) {
+        
+            final StringBuilder record = new StringBuilder();
+    
+            for (final String token : entry.getValue()) {
+                if (token.startsWith("%")) {
+                    if (token.length() == 1 || token.charAt(1) == '%') {
+                        record.append('%');
+                    } else {
+                        final String field = token.substring(1);
+                        
+                        if (IdPAuditFields.EVENT_TIME.equals(field)) {
+                            record.append(new DateTime().toString(v2Formatter.withZone(DateTimeZone.UTC)));
+                        } else if (IdPAuditFields.EVENT_TYPE.equals(field)) {
+                            final Event event = requestContext.getCurrentEvent();
+                            if (event != null && !event.getId().equals(EventIds.PROCEED_EVENT_ID)) {
+                                record.append(event.getId());
+                            }
+                        } else if (IdPAuditFields.PROFILE.equals(field)) {
+                            record.append(profileRequestContext.getProfileId());
+                        } else if (IdPAuditFields.REMOTE_ADDR.equals(field) && httpRequest != null) {
+                            record.append(httpRequest.getRemoteAddr());
+                        } else if (IdPAuditFields.URI.equals(field) && httpRequest != null) {
+                            record.append(httpRequest.getRequestURI());
+                        } else if (IdPAuditFields.URL.equals(field) && httpRequest != null) {
+                            record.append(httpRequest.getRequestURL());
+                        } else if (IdPAuditFields.USER_AGENT.equals(field) && httpRequest != null) {
+                            record.append(httpRequest.getHeader("User-Agent"));
+                        } else if (auditCtx != null) {
+                            final Iterator<String> iter = auditCtx.getFieldValues(field).iterator();
+                            while (iter.hasNext()) {
+                                record.append(iter.next());
+                                if (iter.hasNext()) {
+                                    record.append(',');
+                                }
                             }
                         }
                     }
+                } else {
+                    record.append(token);
                 }
-            } else {
-                entry.append(token);
             }
+            
+            filter(record);
+            
+            LoggerFactory.getLogger(entry.getKey() + '.'
+                    + profileRequestContext.getLoggingId()).info(record.toString());
         }
-        
-        filter(entry);
-        
-        LoggerFactory.getLogger(categoryBase + profileRequestContext.getLoggingId()).info(entry.toString());
     }
 // Checkstyle: CyclomaticComplexity ON
     

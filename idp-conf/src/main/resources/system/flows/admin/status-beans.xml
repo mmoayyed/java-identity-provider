@@ -44,11 +44,11 @@
     
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:activationCondition-ref="shibboleth.ProfileAuditingCondition"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="WriteAuditLogForLocalError" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:activationCondition="%{idp.logging.auditLocalErrors:false}"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
     
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"

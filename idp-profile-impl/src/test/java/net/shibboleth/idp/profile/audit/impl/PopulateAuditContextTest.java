@@ -100,7 +100,7 @@ public class PopulateAuditContextTest {
         map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
         
         action.setFieldExtractors(map);
-        action.setFormat("%A - %b %%");
+        action.setFormattingMap(Collections.singletonMap("foo", "%A - %b %%"));
         action.initialize();
         
         final Event event = action.execute(src);

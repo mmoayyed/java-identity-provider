@@ -26,7 +26,7 @@
     <bean id="PostDecodePopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="CheckMessageVersion"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
@@ -90,7 +90,7 @@
     <bean id="PostLookupPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
@@ -254,12 +254,12 @@
     <bean id="PostAssertionPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="PostResponsePopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="PopulateOutboundInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
@@ -288,7 +288,7 @@
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
 
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="LocalErrorPredicate"
             class="org.opensaml.saml.common.profile.logic.DefaultLocalErrorPredicate"
@@ -307,10 +307,10 @@
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:activationCondition="%{idp.logging.auditLocalErrors:false}"
         p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="WriteAuditLogForLocalError" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:activationCondition="%{idp.logging.auditLocalErrors:false}"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
     
 </beans>

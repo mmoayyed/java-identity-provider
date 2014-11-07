@@ -50,7 +50,7 @@
     <bean id="LogoutPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
-        p:format="%{idp.logging.audit:%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i}" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
     
     <!--
     TODO: will be used when logout propagation is enabled

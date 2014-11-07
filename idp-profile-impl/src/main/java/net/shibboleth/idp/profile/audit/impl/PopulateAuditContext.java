@@ -31,7 +31,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
@@ -43,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -54,6 +52,9 @@ import com.google.common.collect.Sets;
  *  is added to that field in the context's map. This reduces the code footprint required to
  *  implement, and extend, the fields logged, instead of requiring a dedicated action for
  *  a particular field or set of fields.</p>
+ *  
+ *  <p>The eventual map of formatting strings is also provided in order to recognize which
+ *  extractors actually need to be run.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
@@ -117,46 +118,43 @@ public class PopulateAuditContext extends AbstractProfileAction {
     }
     
     /**
-     * Set the formatting string in use.
+     * Set the map of logging category to formatting strings for log entries.
      * 
      * <p>A formatting string consists of tokens prefixed by '%' separated by any non-alphanumeric or whitespace.
      * Tokens can contain any letter or number or a hypen. Anything other than a token, including whitespace, is
      * a literal.</p>
      * 
-     * <p>The string is parsed to determine what fields will eventually need to be audited, to skip extraction of
-     * unused fields.</p>
-     * 
-     * @param s formatting string
+     * @param map map of categories to formatting strings
      */
-    public void setFormat(@Nonnull @NotEmpty final String s) {
+    public void setFormattingMap(@Nonnull @NonnullElements final Map<String,String> map) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        if (Strings.isNullOrEmpty(s)) {
-            throw new ConstraintViolationException("Formatting string cannot be null or empty");
-        }
+        Constraint.isNotNull(map, "Audit formatting map cannot be null");
         
         fieldsToExtract = Sets.newHashSetWithExpectedSize(10);
         
-        int len = s.length();
-        boolean inToken = false;
-        StringBuilder field = new StringBuilder();
-        for (int pos = 0; pos < len; ++pos) {
-            char ch = s.charAt(pos);
-            if (inToken) {
-                if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
-                    fieldsToExtract.add(field.substring(1));
+        for (final String s : map.values()) {
+            int len = s.length();
+            boolean inToken = false;
+            StringBuilder field = new StringBuilder();
+            for (int pos = 0; pos < len; ++pos) {
+                char ch = s.charAt(pos);
+                if (inToken) {
+                    if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
+                        fieldsToExtract.add(field.substring(1));
+                        field.setLength(0);
+                        inToken = false;
+                    }
+                } else if (ch == '%') {
                     field.setLength(0);
-                    inToken = false;
+                    inToken = true;
                 }
-            } else if (ch == '%') {
-                field.setLength(0);
-                inToken = true;
+                
+                field.append(ch);
             }
             
-            field.append(ch);
-        }
-        
-        if (field.length() > 0 && inToken) {
-            fieldsToExtract.add(field.substring(1));
+            if (field.length() > 0 && inToken) {
+                fieldsToExtract.add(field.substring(1));
+            }
         }
     }
 
