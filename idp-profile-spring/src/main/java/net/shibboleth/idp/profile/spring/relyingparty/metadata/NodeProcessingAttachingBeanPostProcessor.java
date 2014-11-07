@@ -69,6 +69,7 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
     @Override public Object postProcessBeforeInitialization(Object bean, String beanName) {
         if (!(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver
                 || bean instanceof RelyingPartyMetadataProvider) {
+            // Do not attach to beans which just include other ones.
             return bean;
         }
 
