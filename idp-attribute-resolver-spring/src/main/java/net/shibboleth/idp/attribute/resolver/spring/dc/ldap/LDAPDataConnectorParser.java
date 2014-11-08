@@ -124,7 +124,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
      * Parses a version 2 configuration. <br/>
      * The following automatically created & injected beans acquire hard wired defaults:
      * <ul>
-     * <li> {@link SearchExecutor#setTimeLimit(long)} defaults to 3000, overridden by the "searchTimeLimit" attribute.</li>
+     * <li> {@link SearchExecutor#setTimeLimit(long)} defaults to 3000, overridden by the "searchTimeLimit" 
+     * attribute.</li>
      * <li> {@link SearchExecutor#setSizeLimit(long)} defaults to 1, overridden by the "maxResultSize" attribute.</li>
      * <li> {@link SearchRequest#setBaseDn(String)} default to "", overridden by the "validateDN" attribute.</li>
      * <li> {@link SearchFilter#SearchFilter(String)} defaults to "(objectClass=*)", overridden by the "validateFilter"
@@ -447,6 +448,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * 
          * @return connection pool bean definition
          */
+        // CheckStyle: MethodLength OFF
         @Nullable public BeanDefinition createConnectionPool(final BeanDefinition connectionFactory) {
             final Element poolConfigElement =
                     ElementSupport.getFirstChildElement(configElement, new QName(
@@ -521,6 +523,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             pool.setInitMethodName("initialize");
             return pool.getBeanDefinition();
         }
+        // CheckStyle: MethodLength ON
 
         /**
          * Creates a new pool config bean definition from a v2 XML configuration.
