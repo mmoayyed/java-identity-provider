@@ -39,14 +39,13 @@
 	<target name="properties">
 		<property file="${jetty.property.file}" />
 		<available property="idp.ini.present" file="${idp.target.dir}/jetty-base/start.d/idp.ini" />
-		<available property="idp.backchannel.jks.present" file="${idp.target.dir}/credentials/idp-backchannel.jks" />
-		<available property="idp.userfacing.jks.present" file="${idp.target.dir}/credentials/idp-userfacing.jks" />
+		<available property="idp.jks.present" file="${idp.target.dir}/credentials/idp.jks" />
 		<available property="idp.userfacing.p12.present" file="${idp.target.dir}/credentials/idp-userfacing.p12" />
 		<condition property="generate.userfacing.p12">
 			<!-- Generate the pkcs12 keystore if neither the JKS nor the P12 exist -->
 			<not>
 				<or>
-					<istrue value="${idp.userfacing.jks.present}" />
+					<istrue value="${idp.jks.present}" />
 					<istrue value="${idp.userfacing.p12.present}" />
 				</or>
 			</not>
@@ -54,18 +53,18 @@
 	</target>
 
 	<!-- Handle keystores -->
-	<target name="keystores" depends="backchannel-jks, userfacing-jks, gen-userfacing" />
+	<target name="keystores" depends="jks, gen-userfacing" />
 
-	<target name="backchannel-jks" if="idp.backchannel.jks.present">
-		<echo file="${jetty.merge.properties}" append="yes">
-    		jetty.backchannel.keystore.type=JKS
-    	</echo>
-	</target>
-
-	<target name="userfacing-jks" if="idp.userfacing.jks.present">
-		<echo append="true" file="${jetty.merge.properties}">
+	<target name="jks" if="idp.jks.present">
+	  <!-- Note that this password is the old default for QI.  This will overwrite what we may have put in when the merge file was created. -->
+	  <echo file="${jetty.merge.properties}" append="yes">
+    	    jetty.backchannel.keystore.type=JKS
             jetty.browser.keystore.type=JKS
-        </echo>
+	    jetty.backchannel.keystore.password= SeCrEt
+	    jetty.browser.keystore.password= SeCrEt
+	    jetty.backchannel.keystore.path= ${idp.target.dir}/credentials/idp.jks
+	    jetty.browser.keystore.path= ${idp.target.dir}/credentials/idp.jks
+    	</echo>
 	</target>
 
 	<target name="gen-userfacing" if="generate.userfacing.p12">

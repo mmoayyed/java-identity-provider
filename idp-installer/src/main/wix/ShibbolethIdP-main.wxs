@@ -19,8 +19,8 @@
 
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Shibboleth IdP V3" Language="1033" Version="3.0.0.3" Manufacturer="Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
-    <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="$(var.msitype)" Description="Shibboleth IdP V3" Manufacturer="Shibboleth Consortium"/>
+  <Product Id="*" Name="Shibboleth IdP V3" Language="1033" Version="3.0.0.4" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+    <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="$(var.msitype)" Description="Shibboleth IdP V3.0" Manufacturer="The Shibboleth Consortium"/>
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes"
                   Schedule="afterInstallInitialize" />
@@ -34,6 +34,7 @@
     <Property Id="ARPHELPLINK" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
     <Property Id="ARPURLUPDATEINFO" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
     <Property Id="ARPURLINFOABOUT" Value="http://shibboleth.net/" />
+    <Property Id="ARPNOMODIFY" Value="TRUE"/>
 
     <Feature Id="ProductFeature" Title="IdP" Level="1">
       <Feature Id="InstallJetty" Title="Jetty">
@@ -75,14 +76,6 @@
       </Directory>
     </Directory>
 
-    <Property Id="QI_INSTALLDIR" Secure="yes">
-      <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files\Internet2\ShibIdP"/>
-    </Property>
-
-    <Property Id="QI_INSTALLDIR64" Secure="yes">
-      <DirectorySearch Id="QiSearch" Depth="1" Path="C:\Program Files (x86)\Internet2\ShibIdP"/>
-    </Property>
-
     <Property Id="JAVA_EXECUTABLE" Secure="yes">
       <DirectorySearch Id="JavaBinSearch" Depth="0" Path="[%JAVA_HOME]\bin">
         <FileSearch Id="JavaBinSearch" Name="java.exe"/>
@@ -93,9 +86,12 @@
 
     <!-- Inherit the setup, if they were. -->
     <CustomAction Id="InheritInstallDir" Property="INSTALLDIR" Value="[OLD_INSTALLDIR]" />
+    <CustomAction Id="InheritQIInstallDir" Property="INSTALLDIR" Value="[QI_INSTALL_DIR]\Shib2IdP" />
     <CustomAction Id="InheritInstallJetty" Property="INSTALL_JETTY" Value="[OLD_INSTALL_JETTY]" />
+    <CustomAction Id="InheritQIInstallJetty" Property="INSTALL_JETTY" Value="TRUE" />
+    <CustomAction Id="InheritQIConfigAd" Property="CONFIGURE_AD"  Value="TRUE" />
 
-    <!-- Other propetrties -->
+    <!-- Other properties -->
     <CustomAction  Id="SetDNSName" Property="DNSNAME" Value="[ComputerName]"/>
 
     <Binary Id="WriteConfigFilesSrc" SourceFile="scripts\shib_write_configs.vbs" />
@@ -118,14 +114,15 @@
     <InstallUISequence>
 
       <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
-      <Custom Action="InheritInstallDir" After="AppSearch">
-        OLD_INSTALLDIR
-      </Custom>
+      <Custom Action="InheritQIInstallDir" After="AppSearch">QI_INSTALL_DIR</Custom>
+      <Custom Action="InheritInstallDir" After="InheritQIInstallDir">OLD_INSTALLDIR</Custom>
+	
+      <!-- Set up defaults for AD and Jetty if we are a QI upgrade -->
+      <Custom Action="InheritQIInstallJetty" After="AppSearch">QI_INSTALLED</Custom>
+      <Custom Action="InheritQIConfigAd" After="AppSearch">QI_INSTALLED</Custom>
 
       <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
-      <Custom Action="InheritInstallJetty" After="AppSearch">
-        OLD_INSTALL_JETTY AND NOT INSTALL_JETTY
-      </Custom>
+      <Custom Action="InheritInstallJetty" After="AppSearch">OLD_INSTALL_JETTY AND NOT INSTALL_JETTY</Custom>
       
       <!-- Could we find JAVA.EXE ?-->
       <Custom Action="NoJavaBin" After="AppSearch">
@@ -140,15 +137,16 @@
 
     <InstallExecuteSequence>
 
-      <!-- Duplicate actions from the UI case -->
+      <!-- Duplicate actions from the UI case - but only for auto 3->3 upgrades -->
       <Custom Action="InheritInstallDir" After="AppSearch">
         OLD_INSTALLDIR
       </Custom>
 
-      <!-- inherit JETTY_INSTALL if there is something to inherit AND JETTY_INSTALL was not passed in -->
       <Custom Action="InheritInstallJetty" After="AppSearch">
         OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
       </Custom>
+	
+      <!-- Setup JAVA_IDP_HOME before we use it -->
 
       <Custom Action="SetJavaIdpHome" Before="SetIdpAnt"/>
 
@@ -172,6 +170,11 @@
 
     <Upgrade Id="$(var.UpgradeUUID)">
       <UpgradeVersion ExcludeLanguages="yes" IncludeMaximum="yes" Maximum="127.255.255" Minimum="0.0.1" OnlyDetect="yes" Property="ALREADYINSTALLED"/>
+    </Upgrade>
+
+    <!-- Uninstall the Quick Installer if it was used previously. -->
+    <Upgrade Id="{2F478CCE-0E4A-4427-BDFE-E426D5F831DB}">
+      <UpgradeVersion ExcludeLanguages="yes" IncludeMaximum="yes" Maximum="127.255.255" Minimum="0.0.1" Property="QI_INSTALLED"/>
     </Upgrade>
 
     <UIRef Id="ShibbolethInstallDir"/>
