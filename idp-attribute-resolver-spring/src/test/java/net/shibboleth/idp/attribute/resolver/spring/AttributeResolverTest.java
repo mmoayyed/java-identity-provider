@@ -105,19 +105,25 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     @AfterTest public void teardownDataConnectors() {
         directoryServer.shutDown(true);
     }
-
-    @Test public void one() throws ComponentInitializationException, ServiceException, ResolutionException {
-
+    
+    private ReloadableService<AttributeResolver> getResolver(String file) {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/service.xml");
+        beanDefinitionReader.loadBeanDefinitions(file);
         context.refresh();
 
-        final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
+        return context.getBean(ReloadableService.class);
+
+        
+    }
+
+    @Test public void one() throws ComponentInitializationException, ServiceException, ResolutionException {
+
+        final ReloadableService<AttributeResolver> attributeResolverService = getResolver("net/shibboleth/idp/attribute/resolver/spring/service.xml");
 
         attributeResolverService.initialize();
 
@@ -249,16 +255,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void id() throws ComponentInitializationException, ServiceException, ResolutionException {
 
-        GenericApplicationContext context = new GenericApplicationContext();
-        context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
-
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/service2.xml");
-        context.refresh();
-
-        final ReloadableService<AttributeResolver> attributeResolverService = context.getBean(ReloadableService.class);
+        final ReloadableService<AttributeResolver> attributeResolverService = getResolver("net/shibboleth/idp/attribute/resolver/spring/service2.xml");
 
         attributeResolverService.initialize();
 
@@ -370,6 +367,28 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
     }
     
+    @Test(enabled=false) public void multiFile() throws ResolutionException {
+        final ReloadableService<AttributeResolver> attributeResolverService = getResolver("net/shibboleth/idp/attribute/resolver/spring/multiFileService.xml");
+        
+        final AttributeResolutionContext resolutionContext =
+                TestSources.createResolutionContext("PETER_THE_PRINCIPAL", "issuer", "recipient");
+
+        ServiceableComponent<AttributeResolver> serviceableComponent = null;
+        try {
+            serviceableComponent = attributeResolverService.getServiceableComponent();
+
+            final AttributeResolver resolver = serviceableComponent.getComponent();
+            Assert.assertEquals(resolver.getId(), "MultiFileResolver");
+            resolver.resolveAttributes(resolutionContext);
+        } finally {
+            if (null != serviceableComponent) {
+                serviceableComponent.unpinComponent();
+            }
+        }
+        
+        Assert.assertNotNull(resolutionContext.getResolvedIdPAttributes().get("eduPersonAffiliation2"));
+
+    }
     
     static class TestPredicate implements Predicate<ProfileRequestContext> {
 
