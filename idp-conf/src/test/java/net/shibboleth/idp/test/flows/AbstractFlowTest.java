@@ -385,6 +385,9 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * bean.
      */
     @BeforeMethod(dependsOnMethods = {"initializeFlowExecutor"}) public void overrideIPBasedAuthn() {
+        
+        System.setProperty("idp.authn.flows", "IPAddress|Password");
+        
         final Flow flow = getFlow(IP_ADDRESS_AUTHN_FLOW_ID);
 
         final Map map = flow.getApplicationContext().getBean(IP_ADDRESS_AUTHN_MAP_BEAN_NAME, Map.class);
