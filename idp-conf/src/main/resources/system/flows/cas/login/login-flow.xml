@@ -6,12 +6,15 @@
 
     <action-state id="initializeLogin">
         <evaluate expression="initProfileRequestContext"/>
+        <evaluate expression="populateSessionContext"/>
         <evaluate expression="initializeLoginAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
+        <evaluate expression="selectRelyingPartyConfiguration" />
         <evaluate expression="selectProfileConfiguration" />
         <evaluate expression="publishProtocolRequestAction" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="checkAuthenticationRequired" />
+        <transition on="serviceNotSpecified" to="error" />
     </action-state>
 
     <action-state id="checkAuthenticationRequired">
@@ -44,11 +47,23 @@
             <evaluate expression="publishProtocolResponseAction" />
         </on-entry>
     </end-state>
-    <end-state id="gatewayRedirect" view="externalRedirect:#{requestScope.serviceTicketRequest.service}">
+    <end-state id="gatewayRedirect" view="externalRedirect:#{requestScope.serviceTicketRequest.service}" />
+    <end-state id="error" view="error">
         <on-entry>
-            <evaluate expression="publishProtocolResponseAction" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
         </on-entry>
     </end-state>
+
+    <global-transitions>
+        <transition on-exception="java.lang.IllegalStateException" to="error" />
+        <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
+                    to="error" />
+        <transition on="illegalState" to="error" />
+        <transition on="protocolViolation" to="error" />
+    </global-transitions>
 
     <bean-import resource="login-beans.xml" />
 
