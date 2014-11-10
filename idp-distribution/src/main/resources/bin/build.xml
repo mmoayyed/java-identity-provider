@@ -35,9 +35,10 @@
             - if idp.sealer.password is set, then this file should contain a line setting idp.sealer.storePassword and idp.sealer.keyPassword
             - if idp.scope is present, then this file should contain a line setting idp.scope
         services.merge.properties: The name of a property file to merge with services.properties
-        	- if idp.is.V2 is set, then this file should contain a line setting idp.service.relyingparty.legacy=true
+            - if idp.is.V2 is set, then this file should contain a line setting
+                idp.service.relyingparty.resources=shibboleth.LegacyRelyingPartyResolverResources
         nameid.merge.properties: The name of a property file to merge with saml-nameid.properties
-        	- if idp.is.V2 is set, then this file should contain lines enabling legacy nameid generation
+            - if idp.is.V2 is set, then this file should contain lines enabling legacy nameid generation
         idp.property.file: The name of a property file to fill in some or all of the above. This file is deleted after processing.
         idp.no.tidy: Do not delete the two above files (debug only)
         idp.jetty.config: Copy jetty configuration from distribution (Unsupported)
@@ -630,7 +631,7 @@ A V2 Installation has been detected. Configuration will be preserved into
 
 		<!-- Signal we're a legacy RP config -->
         <echo file="${services.merge.properties}" append="yes">
-        	idp.service.relyingparty.legacy=true
+        	idp.service.relyingparty.resources = shibboleth.LegacyRelyingPartyResolverResources
         </echo>
 	    <echo file="${nameid.merge.properties}" append="yes">
 	    	idp.nameid.saml2.legacyGenerator = shibboleth.LegacySAML2NameIDGenerator

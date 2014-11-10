@@ -59,16 +59,14 @@
     property sources.
     -->
 
+    <!-- This set of resources supports a native Spring relying-party.xml file. -->
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>%{idp.home}/conf/relying-party.xml</value>
         <value>%{idp.home}/conf/credentials.xml</value>
         <value>%{idp.home}/system/conf/relying-party-system.xml</value>
     </util:list>
 
-    <!--
-    This set of resources loads a legacy 2.x relying-party.xml file
-    when idp.service.relyingparty.legacy=true
-    -->
+    <!-- This set of resources supports a legacy 2.x relying-party.xml file. -->
     <util:list id="shibboleth.LegacyRelyingPartyResolverResources">
         <value>%{idp.home}/conf/relying-party.xml</value>
         <value>%{idp.home}/conf/property-placeholder.xml</value>
