@@ -367,7 +367,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(resolutionContext.getResolvedIdPAttributes().isEmpty());
     }
     
-    @Test(enabled=false) public void multiFile() throws ResolutionException {
+    @Test public void multiFile() throws ResolutionException {
         final ReloadableService<AttributeResolver> attributeResolverService = getResolver("net/shibboleth/idp/attribute/resolver/spring/multiFileService.xml");
         
         final AttributeResolutionContext resolutionContext =

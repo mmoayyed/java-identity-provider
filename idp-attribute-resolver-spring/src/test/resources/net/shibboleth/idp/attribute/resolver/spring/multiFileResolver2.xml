@@ -15,7 +15,7 @@
     <!-- ========================================== -->
 
     <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="eduPersonAffiliation2" sourceAttributeID="eduPersonAffiliation">
-        <resolver:Dependency ref="eduPersonAffiliation56" />
+        <resolver:Dependency ref="eduPersonAffiliation" />
     </resolver:AttributeDefinition>
     
 </resolver:AttributeResolver>

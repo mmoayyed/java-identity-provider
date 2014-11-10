@@ -16,25 +16,6 @@
 			<documentation>Root of the attribute resolver configuration file.
 			</documentation>
 		</annotation>
-		<keyref name="AttributeDefinitionAttributeDefinitionDependencyRef"
-			refer="resolver:PluginDependencyKey">
-			<selector xpath="./resolver:AttributeDefinition/resolver:Dependency" />
-			<field xpath="@ref" />
-		</keyref>
-		<keyref name="DataConnectorAttributeDefinitionDependencyRef"
-			refer="resolver:PluginDependencyKey">
-			<selector xpath="./resolver:DataConnector/resolver:Dependency" />
-			<field xpath="@ref" />
-		</keyref>
-		<keyref name="PrincipalConnectorAttributeDefinitionDependencyRef"
-			refer="resolver:PluginDependencyKey">
-			<selector xpath="./resolver:PrincipalConnector/resolver:Dependency" />
-			<field xpath="@ref" />
-		</keyref>
-		<key name="PluginDependencyKey">
-			<selector xpath="./resolver:AttributeDefinition|./resolver:DataConnector" />
-			<field xpath="@id" />
-		</key>
 	</element>
 	<complexType name="AttributeResolverType">
 		<choice minOccurs="0" maxOccurs="unbounded">
