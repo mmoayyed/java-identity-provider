@@ -27,7 +27,6 @@ import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
-import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration;
@@ -44,7 +43,9 @@ import org.w3c.dom.Element;
  * Parser for &lt;RelyingPartyGroup&gt;
  * 
  * <p>This parser summons up two beans: a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
- * RelyingParty bit of the file, and a series of {@link RelyingPartyMetadataProvider}s which deal with the metadata
+ * RelyingParty bit of the file, and a series of 
+ * {@link RelyingPartyGroupParser.ELEMENT_NAME.getNamespaceURI().equals(parent.getNamespaceURI());}s which 
+ * deal with the metadata
  * configuration.</p>
  */
 public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser {
@@ -91,27 +92,8 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         builder.addPropertyValue("unverifiedConfiguration", anonRps.get(0));
         
         // Metadata
-
-        final List<BeanDefinition> metadataProviders =
-                SpringSupport.parseCustomElements(configChildren.get(MetadataNamespaceHandler.METADATA_ELEMENT_NAME),
-                        parserContext);
-
-        if (metadataProviders != null && metadataProviders.size() > 0) {
-            for (BeanDefinition metadataProvider : metadataProviders) {
-                final BeanDefinitionBuilder metadataBuilder =
-                        BeanDefinitionBuilder.genericBeanDefinition(RelyingPartyMetadataProvider.class);
-                metadataBuilder.setLazyInit(true);
-                metadataBuilder.setInitMethodName("initialize");
-                metadataBuilder.setDestroyMethodName("destroy");
-
-                metadataBuilder.setInitMethodName("initialize");
-                metadataBuilder.setDestroyMethodName("destroy");
-                metadataBuilder.addConstructorArgValue(metadataProvider);
-                BeanDefinition rpDefinition = metadataBuilder.getBeanDefinition();
-                parserContext.getRegistry().registerBeanDefinition(
-                        parserContext.getReaderContext().generateBeanName(rpDefinition), rpDefinition);
-            }
-        }
+        SpringSupport.parseCustomElements(configChildren.get(MetadataNamespaceHandler.METADATA_ELEMENT_NAME),
+                parserContext);
 
         // <Credential> (for metadata & signing)
         SpringSupport.parseCustomElements(configChildren.get(SecurityNamespaceHandler.CREDENTIAL_ELEMENT_NAME),

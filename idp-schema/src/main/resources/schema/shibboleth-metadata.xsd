@@ -288,6 +288,15 @@
                 </documentation>
             </annotation>
         </attribute>
+        <attribute name="sortKey" type="string">
+            <annotation>
+                <documentation>This Integer value determines the processing order for top level Metadata providers.  A top level metadata provider 
+                   is either the topmost element in a file or the single metadata provider inside a RelyinPartyGroup.  The metadata processing
+                   consults the provider tree with the lowest sortKey first. 
+                </documentation>
+            </annotation>
+        
+        </attribute> 
     </complexType>
 
     <element name="MetadataFilter" type="shibmd:MetadataFilterType">

@@ -25,6 +25,7 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -43,8 +44,12 @@ public class MultiSourceFileTest extends AbstractMetadataParserTest {
         final ServiceableComponent<RefreshableMetadataResolver> component = service.getServiceableComponent();
         try {
           final  RefreshableMetadataResolver resolver = component.getComponent();
-              Assert.assertNotNull(resolver.resolveSingle(criteriaFor("https://idp.example.org/idp2/shibboleth"))); 
-              Assert.assertNotNull(resolver.resolveSingle(criteriaFor("https://idp.example.org/idp/shibboleth"))); 
+          final EntityDescriptor e2 = resolver.resolveSingle(criteriaFor("https://idp.example.org/idp2/shibboleth"));
+          Assert.assertNotNull(e2);
+          Assert.assertEquals(e2.getIDPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol").getSingleSignOnServices().get(0).getLocation(), "https://idp.example.org/idpc0/profile/SAML2/Redirect/SSO");
+          final EntityDescriptor e1 = resolver.resolveSingle(criteriaFor("https://idp.example.org/idp/shibboleth")); 
+          Assert.assertNotNull(e1);
+          Assert.assertEquals(e1.getIDPSSODescriptor("urn:oasis:names:tc:SAML:2.0:protocol").getSingleSignOnServices().get(0).getLocation(), "https://idp.example.org/idpc1/profile/SAML2/Redirect/SSO");
         } finally {
             if (component != null) {
                 component.unpinComponent();

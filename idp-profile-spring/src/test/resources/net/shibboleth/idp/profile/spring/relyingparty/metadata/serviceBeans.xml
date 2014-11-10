@@ -19,8 +19,9 @@
         p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
         
         <util:list id="resources">
-            <value>classpath:/net/shibboleth/idp/profile/spring/relyingparty/metadata/inLineEntity2.xml</value>
             <value>classpath:/net/shibboleth/idp/profile/spring/relyingparty/metadata/inLineEntity.xml</value>
+            <value>classpath:/net/shibboleth/idp/profile/spring/relyingparty/metadata/inLineChain.xml</value>
+            <value>classpath:/net/shibboleth/idp/profile/spring/relyingparty/metadata/inLineEntities2.xml</value>
         </util:list>
         
 	<bean id="shibboleth.MetadataResolverService"

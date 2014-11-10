@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.RelyingPartyGroupParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
@@ -77,14 +78,24 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     }
 
     /**
-     * Is this the element at the top of the file?
+     * Is this the element at the top of the file? Yes, if it has no parent or if the parent is a RelyingPartyGroup. In
+     * this situation we need to wrap the element in a {@link RelyingPartyMetadataProvider}.
      * 
      * @param element the element.
      * @return whether it is the outmost element.
      */
-    private boolean isOuterElement(@Nonnull Element element) {
-        return element.getParentNode().getNodeType() == Node.DOCUMENT_NODE;
+    private boolean isTopMost(@Nonnull Element element) {
+        final Node parent = element.getParentNode();
 
+        if (parent.getNodeType() == Node.DOCUMENT_NODE) {
+            return true;
+        }
+
+        if (parent.getNodeType() != Node.ELEMENT_NODE) {
+            return false;
+        }
+        return RelyingPartyGroupParser.ELEMENT_NAME.getLocalPart().equals(parent.getLocalName())
+                && RelyingPartyGroupParser.ELEMENT_NAME.getNamespaceURI().equals(parent.getNamespaceURI());
     }
 
     /**
@@ -101,7 +112,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
     /** {@inheritDoc} */
     @Override protected final Class<? extends MetadataResolver> getBeanClass(Element element) {
-        if (isOuterElement(element)) {
+        if (isTopMost(element)) {
             return RelyingPartyMetadataProvider.class;
         }
         return getNativeBeanClass(element);
@@ -111,13 +122,23 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     @Override protected final void doParse(Element element, ParserContext parserContext, 
             BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        if (isOuterElement(element)) {
+        if (isTopMost(element)) {
+            builder.setLazyInit(true);
             BeanDefinitionBuilder childBeanDefinitionBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass(element));
             doNativeParse(element, parserContext, childBeanDefinitionBuilder);
 
             builder.addConstructorArgValue(childBeanDefinitionBuilder.getBeanDefinition());
+            
+            if (element.hasAttributeNS(null, "sortKey")) {
+                builder.addPropertyValue("sortKey", element.getAttributeNS(null, "sortKey"));
+            }
+            
         } else {
+            if (element.hasAttributeNS(null, "sortKey")) {
+                log.warn("{} sortKey is only valid on 'top level' MetadataProviders", 
+                        parserContext.getReaderContext().getResource().getDescription());
+            }
             doNativeParse(element, parserContext, builder);
         }
     }

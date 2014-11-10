@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -32,6 +33,7 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.ApplicationContext;
 
 import com.google.common.base.Function;
@@ -60,9 +62,18 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
             // done
             return resolvers.iterator().next();
         }
-        // cast to a list - the deployer didn't care about order so we don't
-        final List<MetadataResolver> resolverList = new ArrayList<>(resolvers.size());
+        // initialize so we can sort
+        for (RelyingPartyMetadataProvider resolver:resolvers) {
+            try {
+                resolver.initialize();
+            } catch (ComponentInitializationException e) {
+                throw new BeanCreationException("could not preinitialize , metadata provider " + resolver.getId(), e);
+            }
+        }
+        
+        final List<RelyingPartyMetadataProvider> resolverList = new ArrayList<>(resolvers.size());
         resolverList.addAll(resolvers);
+        Collections.sort(resolverList); 
         final ChainingMetadataResolver chain = new ChainingMetadataResolver();
         try {
             chain.setResolvers(resolverList);

@@ -21,7 +21,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
@@ -30,16 +32,29 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Objects;
 
 /**
  * This class exists primarily to allow the parsing of relying-party.xml to create a serviceable implementation of
  * {@link MetadataResolver}.
  */
-public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<MetadataResolver>
-        implements RefreshableMetadataResolver {
+public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<MetadataResolver> implements
+        RefreshableMetadataResolver, Comparable<RelyingPartyMetadataProvider> {
+
+    /** If we autogenerate a sort key it comes from this count. */
+    private static int sortKeyValue;
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(RelyingPartyMetadataProvider.class);
 
     /** The embedded resolver. */
     @Nonnull private final MetadataResolver resolver;
+
+    /** The key by which we sort the provider. */
+    @NonnullAfterInit private Integer sortKey;
 
     /**
      * Constructor.
@@ -48,6 +63,16 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
      */
     public RelyingPartyMetadataProvider(@Nonnull final MetadataResolver child) {
         resolver = Constraint.isNotNull(child, "MetadataResolver cannot be null");
+    }
+
+    /**
+     * Set the sort key.
+     * 
+     * @param key what to set
+     */
+    public void setSortKey(int key) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        sortKey = new Integer(key);
     }
 
     /**
@@ -60,15 +85,15 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull public Iterable<EntityDescriptor> resolve(@Nullable final CriteriaSet criteria) throws ResolverException {
+    @Override @Nonnull public Iterable<EntityDescriptor> resolve(@Nullable final CriteriaSet criteria)
+            throws ResolverException {
 
         return resolver.resolve(criteria);
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public EntityDescriptor resolveSingle(@Nullable final CriteriaSet criteria) throws ResolverException {
+    @Override @Nullable public EntityDescriptor resolveSingle(@Nullable final CriteriaSet criteria)
+            throws ResolverException {
 
         return resolver.resolveSingle(criteria);
     }
@@ -93,6 +118,13 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     @Override protected void doInitialize() throws ComponentInitializationException {
         setId(resolver.getId());
         super.doInitialize();
+        if (null == sortKey) {
+            synchronized (this) {
+                sortKeyValue++;
+                sortKey = new Integer(sortKeyValue);
+            }
+            log.info("Top level Metadata Provider '{}' did not have a sort key giving it value {}");
+        }
     }
 
     /** {@inheritDoc} */
@@ -112,5 +144,38 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
 
         }
     }
-    
+
+    /** {@inheritDoc} */
+    @Override public int compareTo(RelyingPartyMetadataProvider other) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        int result = sortKey.compareTo(other.sortKey);
+        if (result != 0) {
+            return result;
+        }
+        if (equals(other)) {
+            return 0;
+        }
+        return getId().compareTo(other.getId());
+    }
+
+    /**
+     * {@inheritDoc}. We are within a spring context and so equality can be determined by ID, however we also test by
+     * sortKey just in case.
+     */
+    @Override public boolean equals(Object other) {
+        if (null == other) {
+            return false;
+        }
+        if (!(other instanceof RelyingPartyMetadataProvider)) {
+            return false;
+        }
+        final RelyingPartyMetadataProvider otherRp = (RelyingPartyMetadataProvider) other;
+        
+        return Objects.equal(otherRp.sortKey, sortKey) && Objects.equal(getId(), otherRp.getId());
+    }
+
+    /** {@inheritDoc} */
+    @Override public int hashCode() {
+        return Objects.hashCode(sortKey, getId());
+    }
 }
