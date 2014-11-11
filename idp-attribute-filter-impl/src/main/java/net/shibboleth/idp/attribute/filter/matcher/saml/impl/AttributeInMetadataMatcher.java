@@ -33,7 +33,6 @@ import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.saml.attribute.encoding.SAML1AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SAML2AttributeEncoder;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -56,7 +55,6 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 
@@ -83,9 +81,6 @@ public class AttributeInMetadataMatcher extends AbstractIdentifiableInitializabl
     
     /** The String used to prefix log message. */
     private String logPrefix;
-
-    /** The strategy to get the appropriate XMLObject from the context. */
-    @NonnullAfterInit private Function<SAMLMetadataContext, ? extends XMLObject> objectStrategy;
 
     /**
      * Gets whether optionally requested attributes should be matched.
