@@ -17,8 +17,11 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.LoginConfiguration;
-import net.shibboleth.idp.cas.protocol.*;
+import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.protocol.ProtocolParam;
+import net.shibboleth.idp.cas.protocol.SamlParam;
+import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
+import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.core.collection.ParameterMap;
@@ -43,8 +46,6 @@ public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTick
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
-
-        profileRequestContext.setProfileId(LoginConfiguration.PROFILE_ID);
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         String service = params.get(ProtocolParam.Service.id());

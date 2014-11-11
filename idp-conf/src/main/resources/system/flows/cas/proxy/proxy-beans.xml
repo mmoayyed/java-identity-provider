@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd"
@@ -10,6 +11,12 @@
     <import resource="../common-beans.xml" />
 
     <!-- Action beans -->
+    <bean id="initializeProfileRequestContext"
+          class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+          p:profileId="#{T(net.shibboleth.idp.cas.config.ProxyConfiguration).PROFILE_ID}"
+          p:loggingId="%{idp.service.logging.cas:SSO}"
+          p:browserProfile="false" />
+
     <bean id="initializeProxyAction"
           class="net.shibboleth.idp.cas.flow.InitializeProxyAction"
           c:ticketService-ref="cas.ticketService" />

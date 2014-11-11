@@ -17,14 +17,11 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
@@ -50,8 +47,6 @@ public class InitializeValidateAction extends
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
-
-        profileRequestContext.setProfileId(ValidateConfiguration.PROFILE_ID);
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         final String service = params.get(ProtocolParam.Service.id());

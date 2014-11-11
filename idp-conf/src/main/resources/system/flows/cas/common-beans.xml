@@ -19,9 +19,6 @@
           class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
           c:registry-ref="cas.serviceRegistry"/>
 
-    <bean id="initProfileRequestContext"
-          class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" />
-
     <bean id="publishProtocolRequestAction"
           class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
           c:isRequest="true" />

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.ProxyConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
@@ -73,8 +72,6 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
-
-        profileRequestContext.setProfileId(ProxyConfiguration.PROFILE_ID);
 
         final ParameterMap params = springRequestContext.getRequestParameters();
         final String service = params.get(ProtocolParam.TargetService.id());

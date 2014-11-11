@@ -5,7 +5,7 @@
           http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
     <action-state id="initializeLogin">
-        <evaluate expression="initProfileRequestContext"/>
+        <evaluate expression="initializeProfileRequestContext"/>
         <evaluate expression="populateSessionContext"/>
         <evaluate expression="initializeLoginAction" />
         <evaluate expression="buildRelyingPartyContextAction" />

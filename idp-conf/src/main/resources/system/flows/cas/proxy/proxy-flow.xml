@@ -5,7 +5,7 @@
           http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
     <action-state id="initializeProxy">
-        <evaluate expression="initProfileRequestContext"/>
+        <evaluate expression="initializeProfileRequestContext"/>
         <evaluate expression="initializeProxyAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
         <evaluate expression="selectRelyingPartyConfiguration" />
