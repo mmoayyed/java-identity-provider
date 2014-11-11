@@ -56,8 +56,8 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
     /** Strategy used to find the {@link AttributeReleaseContext} from the {@link ProfileRequestContext}. */
     @Nonnull private Function<ProfileRequestContext, AttributeReleaseContext> attributeReleaseContextLookupStrategy;
 
-    /** Function used to create a hash of attribute values. */
-    @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> hashFunction;
+    /** Function used to compute the hash of an attribute's values. */
+    @Nonnull private Function<Collection<IdPAttributeValue<?>>, String> attributeValuesHashFunction;
 
     /** Constructor. */
     public AttributeReleaseConsentFunction() {
@@ -65,51 +65,49 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
         consentFlowDescriptorLookupStrategy =
                 new FlowDescriptorLookup<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
         attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class, false);
-        hashFunction = new AttributeValuesHashFunction();
+        attributeValuesHashFunction = new AttributeValuesHashFunction();
     }
 
     /**
-     * Set the ConsentContextLookupStrategy.
+     * Set the consent context lookup strategy.
      * 
-     * @param what what to set.
+     * @param strategy the consent context lookup strategy
      */
-    public void setConsentContextLookupStrategy(
-            @Nonnull Function<ProfileRequestContext, ConsentContext> what) {
-        consentContextLookupStrategy =
-                Constraint.isNotNull(what, "ConsentContextLookupStrategy must be non-null");
+    public void
+            setConsentContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, ConsentContext> strategy) {
+        consentContextLookupStrategy = Constraint.isNotNull(strategy, "Consent context lookup strategy cannot be null");
     }
 
     /**
-     * Set the ConsentFlowDescriptorLookupStrategy.
+     * Set the consent flow descriptor lookup strategy.
      * 
-     * @param what what to set.
+     * @param strategy the consent flow descriptor lookup strategy
      */
     public void setConsentFlowDescriptorLookupStrategy(
-            @Nonnull Function<ProfileRequestContext, ConsentFlowDescriptor> what) {
+            @Nonnull final Function<ProfileRequestContext, ConsentFlowDescriptor> strategy) {
         consentFlowDescriptorLookupStrategy =
-                Constraint.isNotNull(what, "ConsentFlowDescriptorLookupStrategy must be non-null");
+                Constraint.isNotNull(strategy, "Consent flow descriptor lookup strategy cannot be null");
     }
-    
+
     /**
-     * Set the AttributeReleaseContextLookupStrategy.
+     * Set the attribute release context lookup strategy.
      * 
-     * @param what what to set.
+     * @param strategy the attribute release context lookup strategy
      */
     public void setAttributeReleaseContextLookupStrategy(
-            @Nonnull Function<ProfileRequestContext, AttributeReleaseContext> what) {
+            @Nonnull final Function<ProfileRequestContext, AttributeReleaseContext> strategy) {
         attributeReleaseContextLookupStrategy =
-                Constraint.isNotNull(what, "AttributeReleaseContextLookupStrategy must be non-null");
+                Constraint.isNotNull(strategy, "Attribute release context lookup strategy cannot be null");
     }
-    
+
     /**
-     * Set the HashFunction.
+     * Set the function used to compute the hash of an attribute's values.
      * 
-     * @param what what to set.
+     * @param function the function used to compute the hash of an attribute's values
      */
-    public void setHashFunction(
-            @Nonnull Function<Collection<IdPAttributeValue<?>>, String> what) {
-        hashFunction =
-                Constraint.isNotNull(what, "HashFunction must be non-null");
+    public void setAttributeValuesHashFunction(
+            @Nonnull final Function<Collection<IdPAttributeValue<?>>, String> function) {
+        attributeValuesHashFunction = Constraint.isNotNull(function, "Hash function cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -142,7 +140,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
             consent.setId(attribute.getId());
 
             if (consentFlowDescriptor.compareValues()) {
-                consent.setValue(hashFunction.apply(attribute.getValues()));
+                consent.setValue(attributeValuesHashFunction.apply(attribute.getValues()));
             }
 
             // Remember previous choice.
