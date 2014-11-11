@@ -128,6 +128,9 @@ if (InstallJetty <> "") then
 	JettyFile.WriteLine "jetty.browser.keystore.type=PKCS12"
 	JettyFile.WriteLine "jetty.war.path=" & InstallDirJava & "/war/idp.war"
 	JettyFile.WriteLine "jetty.jaas.path=" & InstallDirJava & "/conf/authn/jaas.config"
+	JettyFile.WriteLine "jetty.nonhttps.host=localhost"
+	JettyFile.WriteLine "jetty.nonhttps.port=80"
+
 	JettyFile.Close
     else
 	LogFile.Writeline "jetty failed " & Err
