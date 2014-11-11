@@ -33,6 +33,7 @@ import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.logic.AttributeValuesHashFunction;
 import net.shibboleth.idp.consent.logic.FlowDescriptorLookup;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -67,8 +68,52 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
         hashFunction = new AttributeValuesHashFunction();
     }
 
+    /**
+     * Set the ConsentContextLookupStrategy.
+     * 
+     * @param what what to set.
+     */
+    public void setConsentContextLookupStrategy(
+            @Nonnull Function<ProfileRequestContext, ConsentContext> what) {
+        consentContextLookupStrategy =
+                Constraint.isNotNull(what, "ConsentContextLookupStrategy must be non-null");
+    }
+
+    /**
+     * Set the ConsentFlowDescriptorLookupStrategy.
+     * 
+     * @param what what to set.
+     */
+    public void setConsentFlowDescriptorLookupStrategy(
+            @Nonnull Function<ProfileRequestContext, ConsentFlowDescriptor> what) {
+        consentFlowDescriptorLookupStrategy =
+                Constraint.isNotNull(what, "ConsentFlowDescriptorLookupStrategy must be non-null");
+    }
+    
+    /**
+     * Set the AttributeReleaseContextLookupStrategy.
+     * 
+     * @param what what to set.
+     */
+    public void setAttributeReleaseContextLookupStrategy(
+            @Nonnull Function<ProfileRequestContext, AttributeReleaseContext> what) {
+        attributeReleaseContextLookupStrategy =
+                Constraint.isNotNull(what, "AttributeReleaseContextLookupStrategy must be non-null");
+    }
+    
+    /**
+     * Set the HashFunction.
+     * 
+     * @param what what to set.
+     */
+    public void setHashFunction(
+            @Nonnull Function<Collection<IdPAttributeValue<?>>, String> what) {
+        hashFunction =
+                Constraint.isNotNull(what, "HashFunction must be non-null");
+    }
+
     /** {@inheritDoc} */
-    @Nullable public Map<String, Consent> apply(@Nullable final ProfileRequestContext input) {
+    @Override @Nullable public Map<String, Consent> apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }
