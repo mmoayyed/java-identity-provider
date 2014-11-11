@@ -94,7 +94,7 @@
 					<property name="id" value="eduPersonTargetedID"/>
 					<property name="valueMapper">
 						<bean
-							class="net.shibboleth.idp.saml.attribute.mapping.impl.XmlObjectAttributeValueMapper" />
+							class="net.shibboleth.idp.saml.attribute.mapping.impl.XMLObjectAttributeValueMapper" />
 					</property>
 					<property name="attributeIds">
 						<list>

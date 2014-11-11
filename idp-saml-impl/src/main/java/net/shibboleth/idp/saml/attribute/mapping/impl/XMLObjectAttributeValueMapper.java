@@ -37,10 +37,10 @@ import com.google.common.base.Objects;
 /**
  * Decoder for {@link XMLObject} into {@link XMLObjectAttributeValue}.
  */
-public class XmlObjectAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
+public class XMLObjectAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** logger . */
-    private Logger log = LoggerFactory.getLogger(XmlObjectAttributeValueMapper.class);
+    private Logger log = LoggerFactory.getLogger(XMLObjectAttributeValueMapper.class);
     
     /** Do we treat the entire AttributeValue as the object to be embedded. */
     private boolean includeAttributeValue;
@@ -98,8 +98,8 @@ public class XmlObjectAttributeValueMapper extends AbstractSAMLAttributeValueMap
             return true;
         }
         
-        if (obj instanceof XmlObjectAttributeValueMapper) {
-            XmlObjectAttributeValueMapper other = (XmlObjectAttributeValueMapper) obj;
+        if (obj instanceof XMLObjectAttributeValueMapper) {
+            XMLObjectAttributeValueMapper other = (XMLObjectAttributeValueMapper) obj;
             return isIncludeAttributeValue() == other.isIncludeAttributeValue(); 
         }
         return false;

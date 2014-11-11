@@ -28,7 +28,7 @@ import net.shibboleth.idp.saml.attribute.mapping.AttributeMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.RequestedAttributesMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.ScopedStringAttributeValueMapper;
 import net.shibboleth.idp.saml.attribute.mapping.impl.StringAttributeValueMapper;
-import net.shibboleth.idp.saml.attribute.mapping.impl.XmlObjectAttributeValueMapper;
+import net.shibboleth.idp.saml.attribute.mapping.impl.XMLObjectAttributeValueMapper;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
@@ -107,7 +107,7 @@ public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
                 Assert.assertEquals(sMappers.getAttributeFormat(), Attribute.URI_REFERENCE);
                 Assert.assertEquals(sMappers.getAttributeIds().size(), 1);
                 Assert.assertEquals(sMappers.getAttributeIds().get(0), "eduPersonTID");
-                Assert.assertTrue(sMappers.getValueMapper() instanceof XmlObjectAttributeValueMapper);
+                Assert.assertTrue(sMappers.getValueMapper() instanceof XMLObjectAttributeValueMapper);
             } else {
                 Assert.fail();
             }

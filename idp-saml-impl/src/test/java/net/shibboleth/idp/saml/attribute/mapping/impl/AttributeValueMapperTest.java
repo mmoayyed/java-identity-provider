@@ -124,7 +124,7 @@ public class AttributeValueMapperTest extends MappingTests {
     
     @Test public void testXMLObject() throws ComponentInitializationException {
 
-        XmlObjectAttributeValueMapper mapper = new XmlObjectAttributeValueMapper();
+        XMLObjectAttributeValueMapper mapper = new XMLObjectAttributeValueMapper();
         
         mapper.setLogPrefix("testXMLObject");
         mapper.initialize();

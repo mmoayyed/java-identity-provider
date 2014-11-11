@@ -29,7 +29,7 @@ import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
 import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
-import net.shibboleth.idp.saml.attribute.mapping.impl.XmlObjectAttributeValueMapper;
+import net.shibboleth.idp.saml.attribute.mapping.impl.XMLObjectAttributeValueMapper;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AttributeValue;
@@ -62,7 +62,7 @@ public class SAML2XMLObjectAttributeEncoder extends AbstractSAML2AttributeEncode
         mapper.setAttributeFormat(getNameFormat());
         mapper.setId(getMapperId());
         mapper.setSAMLName(getName());
-        mapper.setValueMapper(new XmlObjectAttributeValueMapper());
+        mapper.setValueMapper(new XMLObjectAttributeValueMapper());
 
     }
 
