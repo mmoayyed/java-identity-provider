@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -32,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -44,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
@@ -58,20 +61,18 @@ import com.google.common.collect.Multimap;
 public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, OutType extends IdPAttribute> extends
         AbstractIdentifiableInitializableComponent implements AttributesMapper<InType, OutType> {
 
-    /** Log. */
-    private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributesMapper.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributesMapper.class);
 
     /** The mappers we can apply. */
-    private Collection<AttributeMapper<InType, OutType>> mappers = Collections.EMPTY_LIST;
+    @Nonnull @NonnullElements private Collection<AttributeMapper<InType,OutType>> mappers = Collections.EMPTY_LIST;
 
     /** The String used to prefix log message. */
-    private String logPrefix;
+    @Nullable private String logPrefix;
 
-    /**
-     * Default Constructor.
-     *
-     */
+    /** Default Constructor. */
     public AbstractSAMLAttributesMapper() {
+        
     }
     
     /**
@@ -88,22 +89,21 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
      * @param id The it
      * @param mapperFactory A factory to generate new mappers of the correct type.
      */
-    public AbstractSAMLAttributesMapper(final AttributeResolver resolver, final String id,
-            Supplier<AbstractSAMLAttributeMapper<InType, OutType>> mapperFactory) {
+    public AbstractSAMLAttributesMapper(@Nonnull final AttributeResolver resolver, @Nonnull @NotEmpty final String id,
+            @Nonnull final Supplier<AbstractSAMLAttributeMapper<InType,OutType>> mapperFactory) {
 
-        super();
         setId(id); 
 
-        final Multimap<AbstractSAMLAttributeMapper<InType, OutType>, String> theMappers;
+        final Multimap<AbstractSAMLAttributeMapper<InType,OutType>,String> theMappers;
 
         theMappers = HashMultimap.create();
 
-        for (AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
-            for (AttributeEncoder encode : attributeDef.getAttributeEncoders()) {
+        for (final AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
+            for (final AttributeEncoder encode : attributeDef.getAttributeEncoders()) {
                 if (encode instanceof AttributeMapperProcessor) {
                     // There is an appropriate reverse mappers
-                    AttributeMapperProcessor factory = (AttributeMapperProcessor) encode;
-                    AbstractSAMLAttributeMapper<InType, OutType> mapper = mapperFactory.get();
+                    final AttributeMapperProcessor factory = (AttributeMapperProcessor) encode;
+                    final AbstractSAMLAttributeMapper<InType,OutType> mapper = mapperFactory.get();
                     factory.populateAttributeMapper(mapper);
 
                     theMappers.put(mapper, attributeDef.getId());
@@ -111,12 +111,12 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
             }
         }
 
-        mappers = new ArrayList<AttributeMapper<InType, OutType>>(theMappers.values().size());
+        mappers = Lists.newArrayListWithExpectedSize(theMappers.values().size());
 
-        for (Entry<AbstractSAMLAttributeMapper<InType, OutType>, Collection<String>> entry : theMappers.asMap()
+        for (final Entry<AbstractSAMLAttributeMapper<InType,OutType>,Collection<String>> entry : theMappers.asMap()
                 .entrySet()) {
 
-            AbstractSAMLAttributeMapper<InType, OutType> mapper = entry.getKey();
+            final AbstractSAMLAttributeMapper<InType, OutType> mapper = entry.getKey();
             mapper.setAttributeIds(new ArrayList<String>(entry.getValue()));
             mappers.add(mapper);
         }
@@ -127,7 +127,7 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
      * 
      * @return Returns the mappers.
      */
-    @Nonnull public Collection<AttributeMapper<InType, OutType>> getMappers() {
+    @Nonnull @NonnullElements public Collection<AttributeMapper<InType,OutType>> getMappers() {
         return mappers;
     }
 
@@ -136,29 +136,26 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
      * 
      * @param theMappers The mappers to set.
      */
-    public void setMappers(@Nonnull Collection<AttributeMapper<InType, OutType>> theMappers) {
+    public void setMappers(@Nonnull Collection<AttributeMapper<InType,OutType>> theMappers) {
         mappers = Constraint.isNotNull(theMappers, "mappers list must be non null");
     }
 
-    /**
-     * Map the SAML attributes into IdP attributes.
-     * 
-     * @param prototypes the SAML attributes
-     * @return a map from IdP AttributeId to RequestedAttributes (or NULL).
-     */
-    @Override public Multimap<String, OutType> mapAttributes(@Nonnull @NonnullElements List<InType> prototypes) {
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NonnullElements public Multimap<String,OutType> mapAttributes(
+            @Nonnull @NonnullElements final List<InType> prototypes) {
 
-        final Multimap<String, OutType> result = ArrayListMultimap.create();
+        final Multimap<String,OutType> result = ArrayListMultimap.create();
 
-        for (InType prototype : prototypes) {
-            for (AttributeMapper<InType, OutType> mapper : mappers) {
+        for (final InType prototype : prototypes) {
+            for (final AttributeMapper<InType,OutType> mapper : mappers) {
 
-                final Map<String, OutType> mappedAttributes = mapper.mapAttribute(prototype);
+                final Map<String,OutType> mappedAttributes = mapper.mapAttribute(prototype);
 
                 log.debug("{} SAML attribute '{}' mapped to {} attributes by mapper '{}'", getLogPrefix(),
                         prototype.getName(), mappedAttributes.size(), mapper.getId());
 
-                for (Entry<String, OutType> entry : mappedAttributes.entrySet()) {
+                for (final Entry<String,OutType> entry : mappedAttributes.entrySet()) {
                     result.put(entry.getKey(), entry.getValue());
                 }
             }
@@ -170,7 +167,7 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         logPrefix = null;
-        for (AttributeMapper mapper : mappers) {
+        for (final AttributeMapper mapper : mappers) {
             ComponentSupport.initialize(mapper);
         }
     }
@@ -180,7 +177,7 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
      * 
      * @return "Attribute Mappers '<ID>' :"
      */
-    private Object getLogPrefix() {
+    @Nonnull @NotEmpty private String getLogPrefix() {
         String s = logPrefix;
         if (null == s) {
             s = new StringBuilder("Attribute Mappers : '").append(getId()).append("':").toString();

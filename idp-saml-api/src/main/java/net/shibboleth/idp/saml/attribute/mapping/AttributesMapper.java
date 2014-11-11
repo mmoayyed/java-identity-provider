@@ -34,13 +34,16 @@ import com.google.common.collect.Multimap;
  * @param <InType> the type which is to be inspected and mapped
  * @param <OutType> some sort of representation of an IdP attribute
  */
-public interface AttributesMapper<InType, OutType extends IdPAttribute> {
+public interface AttributesMapper<InType,OutType extends IdPAttribute> {
 
     /**
      * Map the input objects into IdP attributes.
      * 
      * @param prototypes the SAML attributes
-     * @return a map from IdP AttributeId to RequestedAttributes (or NULL).
+     * 
+     * @return a map from IdP AttributeId to RequestedAttributes
      */
-    Multimap<String, OutType> mapAttributes(@Nonnull @NonnullElements List<InType> prototypes);
+    @Nonnull @NonnullElements Multimap<String,OutType> mapAttributes(
+            @Nonnull @NonnullElements final List<InType> prototypes);
+    
 }
