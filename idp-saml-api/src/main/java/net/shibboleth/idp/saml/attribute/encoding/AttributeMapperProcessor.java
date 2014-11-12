@@ -30,7 +30,7 @@ import org.opensaml.saml.saml2.core.Attribute;
  * @param <S> The SAML Type
  * @param <I> The IdP Type
  */
-public interface AttributeMapperProcessor<S extends Attribute, I extends IdPAttribute> {
+public interface AttributeMapperProcessor<S extends Attribute,I extends IdPAttribute> {
 
     /**
      * This populates the attribute mapper to go from a SAML Attribute (or derivative) to an IdP Attribute (or
@@ -42,6 +42,6 @@ public interface AttributeMapperProcessor<S extends Attribute, I extends IdPAttr
      * 
      * @param mapper the mapper.
      */
-    @Nonnull public void populateAttributeMapper(AbstractSAMLAttributeMapper<S, I> mapper);
+    @Nonnull void populateAttributeMapper(@Nonnull final AbstractSAMLAttributeMapper<S, I> mapper);
 
 }

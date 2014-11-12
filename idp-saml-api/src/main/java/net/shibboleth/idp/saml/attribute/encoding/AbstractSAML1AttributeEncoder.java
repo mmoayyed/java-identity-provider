@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeDesignatorMapper;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -46,8 +47,9 @@ import com.google.common.base.Objects;
  * 
  * @param <EncodedType> the type of data that can be encoded by the encoder
  */
-public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttributeValue> extends
-        AbstractSAMLAttributeEncoder<Attribute, EncodedType> implements SAML1AttributeEncoder<EncodedType> {
+public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttributeValue>
+        extends AbstractSAMLAttributeEncoder<Attribute, EncodedType>
+        implements SAML1AttributeEncoder<EncodedType>, AttributeDesignatorMapperProcessor<IdPAttribute> {
 
     /** Builder used to construct {@link Attribute} objects. */
     @Nonnull private final SAMLObjectBuilder<Attribute> attributeBuilder;
@@ -111,6 +113,15 @@ public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttri
 
         return samlAttribute;
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull public void populateAttributeMapper(
+            @Nonnull final AbstractSAMLAttributeDesignatorMapper<IdPAttribute> mapper) {
+        mapper.setAttributeNamespace(getNamespace());
+        mapper.setId(getMapperId());
+        mapper.setSAMLName(getName());
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -134,4 +145,14 @@ public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttri
         return Objects.hashCode(super.hashCode(), getNamespace());
     }
 
+    /**
+     * Generate an Id suitable for the mapper.
+     * 
+     * @return a suitable Id for the mapper
+     */
+    @Nonnull @NotEmpty private String getMapperId() {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        return "MapperForAttribute" + getName();
+    }
+    
 }

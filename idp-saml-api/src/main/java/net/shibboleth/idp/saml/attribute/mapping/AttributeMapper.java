@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
  * @param <InType> the type which is to be inspected and mapped
  * @param <OutType> some sort of representation of an IdP attribute
  */
-public interface AttributeMapper<InType, OutType extends IdPAttribute> extends IdentifiedComponent{
+public interface AttributeMapper<InType,OutType extends IdPAttribute> extends IdentifiedComponent{
 
     /**
      * Map the input attribute to the required output type. Be careful about handling attributes types, if the input 
@@ -43,6 +43,6 @@ public interface AttributeMapper<InType, OutType extends IdPAttribute> extends I
      * @return the appropriate  map of names to the output type.
      * 
      */
-    @Nonnull @NullableElements Map<String, OutType> mapAttribute(@Nonnull InType input);
+    @Nonnull @NullableElements Map<String,OutType> mapAttribute(@Nonnull final InType input);
 
 }

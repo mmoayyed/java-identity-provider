@@ -141,7 +141,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
         if (null != getFriendlyName()) {
             return "MapperFor" + getFriendlyName();
         }
-        return "MapperForAttribute" + getFriendlyName();
+        return "MapperForAttribute" + getName();
     }
 
     /** {@inheritDoc} */

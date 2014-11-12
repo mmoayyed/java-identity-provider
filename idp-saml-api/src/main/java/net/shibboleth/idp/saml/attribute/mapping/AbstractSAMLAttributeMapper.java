@@ -43,8 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -56,26 +54,26 @@ import com.google.common.collect.ImmutableList;
 public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutType extends IdPAttribute> extends
         AbstractIdentifiableInitializableComponent implements AttributeMapper<InType, OutType> {
 
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeMapper.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeMapper.class);
 
     /** The internal names to generate. */
-    private List<String> attributeIds = Collections.EMPTY_LIST;
+    @Nonnull @NonnullElements private List<String> attributeIds = Collections.EMPTY_LIST;
 
     /** The attribute format. */
-    private String attributeFormat;
+    @Nullable private String attributeFormat;
 
     /** the (SAML) attribute name. */
-    private String theSAMLName;
+    @NonnullAfterInit private String theSAMLName;
 
     /** The String used to prefix log message. */
-    private String logPrefix;
+    @Nullable private String logPrefix;
 
     /** The value mapper. */
-    private AbstractSAMLAttributeValueMapper valueMapper;
+    @NonnullAfterInit private AbstractSAMLAttributeValueMapper valueMapper;
 
     /**
-     * Sets the list of internal identifiers.
+     * Set the list of internal identifiers.
      * 
      * @param theIds the list
      */
@@ -85,11 +83,11 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
             return;
         }
 
-        attributeIds = ImmutableList.copyOf(Collections2.filter(theIds, Predicates.notNull()));
+        attributeIds = ImmutableList.copyOf(StringSupport.normalizeStringCollection(theIds));
     }
 
     /**
-     * Gets the list of internal identifiers.
+     * Get the list of internal identifiers.
      * 
      * @return the identifiers
      */
@@ -98,17 +96,17 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
     }
 
     /**
-     * Sets the SAML attribute name.
+     * Set the SAML attribute name.
      * 
      * @param name the name
      */
-    @Nullable public void setSAMLName(final String name) {
+    public void setSAMLName(@Nullable final String name) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         theSAMLName = StringSupport.trimOrNull(name);
     }
 
     /**
-     * Gets the SAML attribute name.
+     * Get the SAML attribute name.
      * 
      * @return the name
      */
@@ -121,7 +119,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
      * 
      * @param mapper The valueMapper to set.
      */
-    public void setValueMapper(AbstractSAMLAttributeValueMapper mapper) {
+    public void setValueMapper(@Nullable final AbstractSAMLAttributeValueMapper mapper) {
         valueMapper = mapper;
     }
 
@@ -135,9 +133,9 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
     }
 
     /**
-     * Sets the (optional) attribute format.
+     * Set the (optional) attribute format.
      * 
-     * @param format The attributeFormat to set.
+     * @param format the format
      */
     public void setAttributeFormat(@Nullable final String format) {
         attributeFormat = StringSupport.trimOrNull(format);
@@ -146,7 +144,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
     /**
      * Get the (optional) attribute format.
      * 
-     * @return Returns the format.
+     * @return the format
      */
     @Nullable public String getAttributeFormat() {
         return attributeFormat;
@@ -179,14 +177,14 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
      * @param otherSAMLFormat the format to compare against
      * @return whether there is a match.
      */
-    protected boolean matches(final String otherSAMLName, final String otherSAMLFormat) {
+    protected boolean matches(@Nonnull @NotEmpty final String otherSAMLName, @Nullable final String otherSAMLFormat) {
         if (!otherSAMLName.equals(theSAMLName)) {
             log.debug("{} SAML attribute name {} does not match {}", getLogPrefix(), otherSAMLName, getId());
             return false;
         }
 
         String format = otherSAMLFormat;
-        if (Attribute.UNSPECIFIED.equals(format)) {
+        if (format != null && Attribute.UNSPECIFIED.equals(format)) {
             format = null;
         }
 
@@ -205,7 +203,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
      * @param attribute the attribute to consider
      * @return whether it matches.
      */
-    protected boolean attributeMatches(@Nonnull InType attribute) {
+    protected boolean attributeMatches(@Nonnull final InType attribute) {
         return matches(attribute.getName(), attribute.getNameFormat());
     }
 
@@ -218,7 +216,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
      * @return the appropriate map of names to output type
      * 
      */
-    @Override @Nonnull @NullableElements public Map<String, OutType> mapAttribute(@Nonnull InType prototype) {
+    @Override @Nonnull @NullableElements public Map<String,OutType> mapAttribute(@Nonnull final InType prototype) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -260,7 +258,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
      * 
      * @return "<type> Attribute Mapper '<mapper ID>' :"
      */
-    protected String getLogPrefix() {
+    @Nonnull @NotEmpty protected String getLogPrefix() {
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
@@ -319,6 +317,6 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
      * @param id the identifier of the new attribute.
      * @return an output, suitable set up with per object information.
      */
-    protected abstract OutType newAttribute(@Nonnull InType input, @Nonnull @NotEmpty String id);
+    @Nonnull protected abstract OutType newAttribute(@Nonnull final InType input, @Nonnull @NotEmpty final String id);
 
 }

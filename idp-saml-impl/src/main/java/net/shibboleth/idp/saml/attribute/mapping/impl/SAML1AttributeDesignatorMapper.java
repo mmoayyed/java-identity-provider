@@ -20,17 +20,18 @@ package net.shibboleth.idp.saml.attribute.mapping.impl;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
+import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeDesignatorMapper;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
-import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml1.core.AttributeDesignator;
 
-/** A class that maps a SAML2 {@link Attribute} into an IdP {@link IdPAttribute}. */
-public class SAML2AttributeMapper extends AbstractSAMLAttributeMapper<Attribute, IdPAttribute> {
+/** A class that maps a SAML1 {@link AttributeDesignator} into an IdP {@link IdPAttribute}. */
+public class SAML1AttributeDesignatorMapper extends AbstractSAMLAttributeDesignatorMapper<IdPAttribute> {
     
     /** {@inheritDoc} */
     @Override
-    @Nonnull protected IdPAttribute newAttribute(@Nonnull final Attribute input, @Nonnull @NotEmpty final String id) {
+    @Nonnull protected IdPAttribute newAttribute(@Nonnull final AttributeDesignator input,
+            @Nonnull @NotEmpty final String id) {
         return new IdPAttribute(id);
     }
     
