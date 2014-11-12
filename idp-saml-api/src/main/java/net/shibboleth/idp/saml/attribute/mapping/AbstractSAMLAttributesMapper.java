@@ -101,7 +101,7 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
         for (final AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
             for (final AttributeEncoder encode : attributeDef.getAttributeEncoders()) {
                 if (encode instanceof AttributeMapperProcessor) {
-                    // There is an appropriate reverse mappers
+                    // There is an appropriate reverse mapper
                     final AttributeMapperProcessor factory = (AttributeMapperProcessor) encode;
                     final AbstractSAMLAttributeMapper<InType,OutType> mapper = mapperFactory.get();
                     factory.populateAttributeMapper(mapper);

@@ -53,7 +53,7 @@ import com.google.common.collect.Multimap;
 /**
  * The class contains the mechanics to go from a list of {@link AttributeDesignator}s to a {@link Multimap} of
  * {@link String},{@link IdPAttribute} (or derived, or null). The representation as a {@link Multimap} is useful for
- * filtering situations and is exploited by AttributeInMetadata filter.
+ * filtering situations and is exploited by the AttributeInMetadata filter.
  * 
  * @param <OutType> some sort of representation of an IdP attribute
  */
