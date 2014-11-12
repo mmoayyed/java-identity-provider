@@ -36,6 +36,11 @@ import com.google.common.base.Supplier;
  */
 public class SAML2AttributesMapper extends AbstractSAMLAttributesMapper<Attribute, IdPAttribute> {
 
+    /** Default constructor. */
+    public SAML2AttributesMapper() {
+        
+    }
+
     /**
      * Generate a specific mapper to go from {@link Attribute} to {@link IdPAttribute} by inverting
      * the function of the mappers in the profiled {@link AttributeResolver}.

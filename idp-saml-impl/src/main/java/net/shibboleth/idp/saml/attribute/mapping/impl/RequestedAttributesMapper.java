@@ -35,6 +35,11 @@ import com.google.common.base.Supplier;
  * 
  */
 public class RequestedAttributesMapper extends AbstractSAMLAttributesMapper<RequestedAttribute, IdPRequestedAttribute> {
+    
+    /** Default constructor. */
+    public RequestedAttributesMapper() {
+        
+    }
 
     /**
      * Generate a specific mapper to go from {@link RequestedAttribute} to {@link IdPRequestedAttribute} by inverting

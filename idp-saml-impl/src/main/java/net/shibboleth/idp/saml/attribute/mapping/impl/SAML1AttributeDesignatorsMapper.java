@@ -34,6 +34,11 @@ import com.google.common.base.Supplier;
  */
 public class SAML1AttributeDesignatorsMapper extends AbstractSAMLAttributeDesignatorsMapper<IdPAttribute> {
 
+    /** Default constructor. */
+    public SAML1AttributeDesignatorsMapper() {
+        
+    }
+
     /**
      * Generate a specific mapper to go from {@link org.opensaml.saml.saml1.core.AttributeDesignator} to
      * {@link IdPAttribute} by inverting the function of the mappers in the profiled {@link AttributeResolver}.
