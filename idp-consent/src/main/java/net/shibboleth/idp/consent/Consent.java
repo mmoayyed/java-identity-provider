@@ -32,7 +32,8 @@ import com.google.common.base.MoreObjects;
 /**
  * Represents consent.
  * 
- * TODO details
+ * A consent object consists of an identifier, a value (usually a hash) representing the thing being consented to, and a
+ * boolean which indicates whether consent is approved or denied.
  */
 public class Consent extends AbstractIdentifiableInitializableComponent {
 

@@ -89,7 +89,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
             final JsonStructure st = reader.read();
 
             if (!(st instanceof JsonArray)) {
-                throw new IOException("Found invalid data structure while parsing AttributeConsent");
+                throw new IOException("Found invalid data structure while parsing consent");
             }
             final JsonArray array = (JsonArray) st;
 
@@ -134,7 +134,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
         final JsonGenerator gen = generatorFactory.createGenerator(sink);
 
         gen.writeStartArray();
-        for (Consent consent : consents.values()) {
+        for (final Consent consent : consents.values()) {
             gen.writeStartObject();
             gen.write(ID_FIELD, consent.getId());
             if (consent.getValue() != null) {
