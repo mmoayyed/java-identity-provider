@@ -18,6 +18,7 @@
 package net.shibboleth.idp.test;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import javax.annotation.Nonnull;
 
@@ -30,6 +31,8 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
+import com.unboundid.util.ssl.KeyStoreKeyManager;
+import com.unboundid.util.ssl.SSLUtil;
 
 /**
  * Manages an instance of the in-memory directory server.
@@ -43,14 +46,24 @@ public class InMemoryDirectory {
      * Default constructor.
      * 
      * @param ldif the LDIF resource to be imported
+     * @param keystore to use for startTLS
      * 
      * @throws LDAPException if the in-memory directory server cannot be created
      * @throws IOException if the LDIF resource cannot be imported
      */
-    public InMemoryDirectory(@Nonnull final Resource ldif) throws LDAPException, IOException {
+    public InMemoryDirectory(@Nonnull final Resource ldif, @Nonnull final Resource keystore) throws LDAPException,
+            IOException {
         Constraint.isNotNull(ldif, "LDIF resource cannot be null");
-        final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=example,dc=org", "ou=system");
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
+        final InMemoryDirectoryServerConfig config =
+                new InMemoryDirectoryServerConfig("dc=example,dc=org", "ou=system");
+        try {
+            final SSLUtil sslUtil =
+                    new SSLUtil(new KeyStoreKeyManager(keystore.getFile(), "changeit".toCharArray()), null);
+            config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, 10389,
+                    sslUtil.createSSLSocketFactory()));
+        } catch (GeneralSecurityException e) {
+            throw new IOException("Error reading keystore", e);
+        }
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
         directoryServer = new InMemoryDirectoryServer(config);
         directoryServer.importFromLDIF(true, new LDIFReader(ldif.getInputStream()));

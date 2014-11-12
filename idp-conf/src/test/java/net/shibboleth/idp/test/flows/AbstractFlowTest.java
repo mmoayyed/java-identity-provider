@@ -101,6 +101,9 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     /** Path to LDIF file to be imported into directory server. */
     @Nonnull public final static String LDIF_FILE = "/test/test-ldap.ldif";
 
+    /** Path to keystore file to be used by the directory server. */
+    @Nonnull public final static String KEYSTORE_FILE = "/test/test-ldap.keystore";
+
     /** The IDP entity ID. */
     @Nonnull public final static String IDP_ENTITY_ID = "https://idp.example.org";
 
@@ -235,7 +238,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * @throws IOException if the LDIF resource cannot be imported
      */
     @BeforeTest public void setupDirectoryServer() throws LDAPException, IOException {
-        directoryServer = new InMemoryDirectory(new ClassPathResource(LDIF_FILE));
+        directoryServer = new InMemoryDirectory(new ClassPathResource(LDIF_FILE), new ClassPathResource(KEYSTORE_FILE));
         directoryServer.start();
     }
 
