@@ -31,7 +31,7 @@ public class RequestedAttributeMapper extends AbstractSAMLAttributeMapper<Reques
     /** {@inheritDoc} */
     @Override
     @Nonnull protected IdPRequestedAttribute newAttribute(@Nonnull final RequestedAttribute input,
-            @Nonnull @NotEmpty String id) {
+            @Nonnull @NotEmpty final String id) {
         final IdPRequestedAttribute output = new IdPRequestedAttribute(id);
         output.setRequired(input.isRequired());
         return output;
