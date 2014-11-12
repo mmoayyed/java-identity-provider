@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.attribute.mapping.impl;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
@@ -29,26 +31,18 @@ import com.google.common.base.Supplier;
 /**
  * This class conceptually represents the content of a attribute-map file, hence it describes (and then does) the
  * mappings from a {@link java.util.List} of SAML2 {@link RequestedAttribute} into a
- * {@link com.google.common.collect.Multimap} going from (SAML2) attributeId to {@link IdPRequestedAttribute}s (or null
- * if the mapping failed for type reasons).
+ * {@link com.google.common.collect.Multimap} going from (SAML2) attributeId to {@link IdPRequestedAttribute}s.
  * 
  */
 public class RequestedAttributesMapper extends AbstractSAMLAttributesMapper<RequestedAttribute, IdPRequestedAttribute> {
 
     /**
-     * Default Constructor.
-     * 
-     */
-    public RequestedAttributesMapper() {
-    }
-
-    /**
      * Generate a specific mapper to go from {@link RequestedAttribute} to {@link IdPRequestedAttribute} by inverting
      * the function of the mappers in the profiled {@link AttributeResolver}.
      * 
-     * @param resolver The resolver to invert.
+     * @param resolver resolver to invert
      */
-    public RequestedAttributesMapper(AttributeResolver resolver) {
+    public RequestedAttributesMapper(@Nonnull final AttributeResolver resolver) {
         super(resolver, "RequestedMapper<" + resolver.getId() + ">",
                 new Supplier<AbstractSAMLAttributeMapper<RequestedAttribute, IdPRequestedAttribute>>() {
 

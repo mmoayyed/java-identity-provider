@@ -21,33 +21,31 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
-import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeMapper;
-import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributesMapper;
-
-import org.opensaml.saml.saml2.core.Attribute;
+import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeDesignatorMapper;
+import net.shibboleth.idp.saml.attribute.mapping.AbstractSAMLAttributeDesignatorsMapper;
 
 import com.google.common.base.Supplier;
 
 /**
  * This class conceptually represents the content of a attribute-map file, hence it describes (and then does) the
- * mappings from a {@link java.util.List} of SAML2 {@link Attribute} into a {@link com.google.common.collect.Multimap}
- * going from (SAML2) attributeId to {@link IdPAttribute}s.
+ * mappings from a {@link java.util.List} of SAML1 {@link org.opensaml.saml.saml1.core.AttributeDesignator} into a
+ * {@link com.google.common.collect.Multimap} going from (SAML1) attributeId to {@link IdPAttribute}s.
  * 
  */
-public class SAML2AttributesMapper extends AbstractSAMLAttributesMapper<Attribute, IdPAttribute> {
+public class SAML1AttributeDesignatorsMapper extends AbstractSAMLAttributeDesignatorsMapper<IdPAttribute> {
 
     /**
-     * Generate a specific mapper to go from {@link Attribute} to {@link IdPAttribute} by inverting
-     * the function of the mappers in the profiled {@link AttributeResolver}.
+     * Generate a specific mapper to go from {@link org.opensaml.saml.saml1.core.AttributeDesignator} to
+     * {@link IdPAttribute} by inverting the function of the mappers in the profiled {@link AttributeResolver}.
      * 
      * @param resolver resolver to invert
      */
-    public SAML2AttributesMapper(@Nonnull final AttributeResolver resolver) {
+    public SAML1AttributeDesignatorsMapper(@Nonnull final AttributeResolver resolver) {
         super(resolver, "Mapper<" + resolver.getId() + ">",
-                new Supplier<AbstractSAMLAttributeMapper<Attribute, IdPAttribute>>() {
+                new Supplier<AbstractSAMLAttributeDesignatorMapper<IdPAttribute>>() {
 
-            @Override public SAML2AttributeMapper get() {
-                return new SAML2AttributeMapper();
+            @Override public SAML1AttributeDesignatorMapper get() {
+                return new SAML1AttributeDesignatorMapper();
             }
         });
     }
