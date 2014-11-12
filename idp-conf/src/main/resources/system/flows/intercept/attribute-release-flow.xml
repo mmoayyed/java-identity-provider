@@ -96,6 +96,7 @@
 
     <action-state id="GlobalConsent">
         <evaluate expression="CreateGlobalAttributeConsentResult" />
+        <evaluate expression="UpdateStorageIndex" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="proceed" />
     </action-state>
@@ -140,6 +141,7 @@
     
     <action-state id="CreateResult">
         <evaluate expression="CreateResult" />
+        <evaluate expression="UpdateStorageIndex" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="ReleaseAttributes" />
     </action-state>

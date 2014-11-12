@@ -17,12 +17,9 @@
 
 package net.shibboleth.idp.consent.flow.storage;
 
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.AbstractConsentAction;
 import net.shibboleth.idp.consent.logic.FlowIdLookupFunction;
 import net.shibboleth.idp.consent.storage.ConsentSerializer;
@@ -56,8 +53,8 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     /** Strategy used to determine the storage key. */
     @Nullable private Function<ProfileRequestContext, String> storageKeyLookupStrategy;
 
-    /** Storage serializer for map of consent objects keyed by consent id. */
-    @Nonnull private StorageSerializer<Map<String, Consent>> consentSerializer;
+    /** Storage serializer. */
+    @Nonnull private StorageSerializer storageSerializer;
 
     /** Storage service from the {@link ProfileInterceptorFlowDescriptor}. */
     @Nullable private StorageService storageService;
@@ -71,7 +68,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     /** Constructor. */
     public AbstractConsentStorageAction() {
         setStorageContextLookupStrategy(new FlowIdLookupFunction());
-        setConsentSerializer(new ConsentSerializer());
+        setStorageSerializer(new ConsentSerializer());
     }
 
     /**
@@ -93,23 +90,23 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     }
 
     /**
-     * Get the consent serializer.
+     * Get the storage serializer.
      * 
-     * @return the consent serializer
+     * @return the storage serializer
      */
-    public StorageSerializer<Map<String, Consent>> getConsentSerializer() {
-        return consentSerializer;
+    public StorageSerializer getStorageSerializer() {
+        return storageSerializer;
     }
 
     /**
-     * Set the consent serializer.
+     * Set the storage serializer.
      * 
-     * @param serializer consent serializer
+     * @param serializer storage serializer
      */
-    public void setConsentSerializer(@Nonnull final StorageSerializer<Map<String, Consent>> serializer) {
+    public void setStorageSerializer(@Nonnull final StorageSerializer serializer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        consentSerializer = Constraint.isNotNull(serializer, "Consent serializer cannot be null");
+        storageSerializer = Constraint.isNotNull(serializer, "Storage serializer cannot be null");
     }
 
     /**
@@ -186,9 +183,9 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
             return false;
         }
 
-        log.trace("{} Consent serializer '{}'", getLogPrefix(), consentSerializer);
-        if (consentSerializer == null) {
-            log.debug("{} No consent serializer available from consent flow descriptor", getLogPrefix());
+        log.trace("{} Storage serializer '{}'", getLogPrefix(), storageSerializer);
+        if (storageSerializer == null) {
+            log.debug("{} No storage serializer available", getLogPrefix());
             return false;
         }
 

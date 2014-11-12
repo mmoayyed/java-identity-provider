@@ -34,4 +34,7 @@
     <bean id="CreateResult" class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
+    <bean id="UpdateStorageIndex" class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
+
 </beans>

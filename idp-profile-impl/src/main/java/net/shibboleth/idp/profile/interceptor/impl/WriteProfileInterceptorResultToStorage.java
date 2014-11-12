@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.interceptor.impl;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,8 +49,8 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
     /** Flow descriptor. */
     @Nullable private ProfileInterceptorFlowDescriptor flowDescriptor;
 
-    /** Result to be stored. */
-    @Nullable private ProfileInterceptorResult result;
+    /** Results to be stored. */
+    @Nullable private List<ProfileInterceptorResult> results;
 
     /** Storage service. */
     @Nullable private StorageService storageService;
@@ -72,9 +73,9 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
             return false;
         }
 
-        result = interceptorContext.getResult();
-        if (result == null) {
-            log.debug("{} No result available from interceptor context, nothing to store", getLogPrefix());
+        results = interceptorContext.getResults();
+        if (results.isEmpty()) {
+            log.debug("{} No results available from interceptor context, nothing to store", getLogPrefix());
             return false;
         }
 
@@ -85,29 +86,43 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
+        try {
+            for (final ProfileInterceptorResult result : results) {
+                store(result);
+            }
+        } catch (final IOException e) {
+            log.error("{} Unable to write results '{}' to storage", getLogPrefix(), results, e);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+        }
+    }
+
+    /**
+     * Store a profile interceptor result.
+     * 
+     * @param result the profile interceptor result to be stored
+     * @throws IOException if an error occurs
+     */
+    protected void store(@Nonnull final ProfileInterceptorResult result) throws IOException {
         final String context = result.getStorageContext();
         final String key = result.getStorageKey();
         final String value = result.getStorageValue();
         final Long expiration = result.getStorageExpiration();
-        
-        try {
-            // Create / update loop until we succeed or exhaust attempts.
-            int attempts = 10;
-            boolean success = false;
-            do {
-                success = storageService.create(context, key, value, expiration);
-                if (!success) {
-                    // The record already exists, so we need to overwrite via an update.
-                    success = storageService.update(context, key, value, expiration);
-                }
-            } while (!success && attempts-- > 0);
 
+        // Create / update loop until we succeed or exhaust attempts.
+        int attempts = 10;
+        boolean success = false;
+        do {
+            success = storageService.create(context, key, value, expiration);
             if (!success) {
-                log.error("{} Exhausted retry attempts storing result '{}'", getLogPrefix(), result);
+                // The record already exists, so we need to overwrite via an update.
+                success = storageService.update(context, key, value, expiration);
             }
-        } catch (final IOException e) {
-            log.error("{} Unable to write result '{}' to storage", getLogPrefix(), result, e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+        } while (!success && attempts-- > 0);
+
+        if (!success) {
+            log.error("{} Exhausted retry attempts storing result '{}'", getLogPrefix(), result);
         }
+
     }
+
 }

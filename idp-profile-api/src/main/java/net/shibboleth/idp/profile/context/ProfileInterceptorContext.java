@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -26,15 +27,12 @@ import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.collect.Lists;
-
 /**
- * A {@link BaseContext} which holds flows that are available to be executed, the last flow attempted,
- * and any flow result.
+ * A {@link BaseContext} which holds flows that are available to be executed, the last flow attempted, and any flow
+ * result.
  */
 public class ProfileInterceptorContext extends BaseContext {
 
@@ -44,12 +42,13 @@ public class ProfileInterceptorContext extends BaseContext {
     /** Flows that need to be executed. */
     @Nonnull @NonnullElements private final List<ProfileInterceptorFlowDescriptor> availableFlows;
 
-    /** The result of the flow. */
-    @Nullable private ProfileInterceptorResult result;
+    /** Results of the flow to be written to storage. */
+    @Nonnull @NonnullElements private final List<ProfileInterceptorResult> results;
 
     /** Constructor. */
     public ProfileInterceptorContext() {
-        availableFlows = Lists.newArrayList();
+        availableFlows = new ArrayList<>();
+        results = new ArrayList<>();
     }
 
     /**
@@ -80,21 +79,11 @@ public class ProfileInterceptorContext extends BaseContext {
     }
 
     /**
-     * Get the result.
+     * Get the results of the flow to be written to storage.
      * 
-     * @return the result
+     * @return the results of the flow to be written to storage
      */
-    @Nullable public ProfileInterceptorResult getResult() {
-        return result;
+    @Nonnull @NonnullElements @Live public List<ProfileInterceptorResult> getResults() {
+        return results;
     }
-
-    /**
-     * Set the result.
-     * 
-     * @param interceptorResult the result
-     */
-    public void setResult(@Nonnull final ProfileInterceptorResult interceptorResult) {
-        result = Constraint.isNotNull(interceptorResult, "Interceptor result cannot be null");
-    }
-    
 }

@@ -51,6 +51,7 @@
     <action-state id="ExtractConsent">
         <evaluate expression="ExtractConsent" />
         <evaluate expression="CreateResult" />
+        <evaluate expression="UpdateStorageIndex" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="proceed" />
     </action-state>

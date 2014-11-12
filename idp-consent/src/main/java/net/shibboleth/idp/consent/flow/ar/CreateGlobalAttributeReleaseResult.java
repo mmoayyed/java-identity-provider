@@ -54,7 +54,7 @@ public class CreateGlobalAttributeReleaseResult extends AbstractConsentStorageAc
             globalConsent.setApproved(true);
 
             final String value =
-                    getConsentSerializer().serialize(Collections.singletonMap(globalConsent.getId(), globalConsent));
+                    getStorageSerializer().serialize(Collections.singletonMap(globalConsent.getId(), globalConsent));
 
             final Long lifetime = getConsentFlowDescriptor().getLifetime();
             Long expiration = null;
@@ -66,7 +66,7 @@ public class CreateGlobalAttributeReleaseResult extends AbstractConsentStorageAc
 
             log.debug("{} Created global consent result '{}'", getLogPrefix(), result);
 
-            interceptorContext.setResult(result);
+            interceptorContext.getResults().add(result);
 
         } catch (IOException e) {
             log.debug("{} Unable to serialize consent", getLogPrefix(), e);

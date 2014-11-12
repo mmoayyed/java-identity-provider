@@ -58,4 +58,7 @@
 
     <bean id="ReleaseAttributes" class="net.shibboleth.idp.consent.flow.ar.ReleaseAttributes" scope="prototype" />
 
+    <bean id="UpdateStorageIndex" class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
+
 </beans>

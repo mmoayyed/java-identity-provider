@@ -60,7 +60,7 @@ public class CreateResult extends AbstractConsentStorageAction {
 
         try {
             final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
-            final String value = getConsentSerializer().serialize(currentConsents);
+            final String value = getStorageSerializer().serialize(currentConsents);
 
             final Long lifetime = getConsentFlowDescriptor().getLifetime();
             Long expiration = null;
@@ -72,7 +72,7 @@ public class CreateResult extends AbstractConsentStorageAction {
 
             log.debug("{} Created consent result '{}'", getLogPrefix(), result);
 
-            interceptorContext.setResult(result);
+            interceptorContext.getResults().add(result);
 
         } catch (IOException e) {
             log.debug("{} Unable to serialize consent", getLogPrefix(), e);
