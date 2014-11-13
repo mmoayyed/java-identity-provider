@@ -153,7 +153,7 @@ public abstract class AbstractSAMLAttributeDesignatorMapper<OutType extends IdPA
         if (!otherSAMLName.equals(theSAMLName)) {
             log.debug("{} SAML attribute name {} does not match {}", getLogPrefix(), otherSAMLName, getId());
             return false;
-        } else if (java.util.Objects.equals(otherSAMLNamespace, getAttributeNamespace())) {
+        } else if (!java.util.Objects.equals(otherSAMLNamespace, getAttributeNamespace())) {
             log.debug("{} SAML attribute namespace {} does not match {}", getLogPrefix(), otherSAMLNamespace,
                     getAttributeNamespace());
             return false;
@@ -186,7 +186,7 @@ public abstract class AbstractSAMLAttributeDesignatorMapper<OutType extends IdPA
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if (!attributeMatches(prototype)) {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
         final Map<String,OutType> output = Maps.newHashMap();

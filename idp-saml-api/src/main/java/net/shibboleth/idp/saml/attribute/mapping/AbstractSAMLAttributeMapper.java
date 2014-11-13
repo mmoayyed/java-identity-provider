@@ -221,7 +221,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if (!attributeMatches(prototype)) {
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
         final List<XMLObject> inputValues = prototype.getAttributeValues();

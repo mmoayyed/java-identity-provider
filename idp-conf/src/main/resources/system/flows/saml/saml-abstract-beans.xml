@@ -205,6 +205,10 @@
     <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
         c:filterService-ref="shibboleth.AttributeFilterService" />
 
+    <bean id="FilterByQueriedAttributeDesignators"
+        class="net.shibboleth.idp.saml.saml1.profile.impl.FilterByQueriedAttributeDesignators" scope="prototype"
+        c:mapper-ref="shibboleth.SAML1AttributeDesignatorsMapperService" />
+
     <bean id="PopulatePostAuthnInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
             p:availableFlows-ref="shibboleth.AvailableInterceptFlows">

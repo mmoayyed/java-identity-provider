@@ -32,7 +32,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeDesignatorMapperProcessor;
-import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
@@ -100,7 +99,7 @@ public abstract class AbstractSAMLAttributeDesignatorsMapper<OutType extends IdP
 
         for (final AttributeDefinition attributeDef : resolver.getAttributeDefinitions().values()) {
             for (final AttributeEncoder encoder : attributeDef.getAttributeEncoders()) {
-                if (encoder instanceof AttributeMapperProcessor) {
+                if (encoder instanceof AttributeDesignatorMapperProcessor) {
                     // There is an appropriate reverse mapper.
                     final AttributeDesignatorMapperProcessor factory = (AttributeDesignatorMapperProcessor) encoder;
                     final AbstractSAMLAttributeDesignatorMapper<OutType> mapper = mapperFactory.get();

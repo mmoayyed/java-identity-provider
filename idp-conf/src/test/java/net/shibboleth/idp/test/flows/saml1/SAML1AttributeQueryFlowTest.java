@@ -22,9 +22,13 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.saml.xml.SAMLConstants;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.joda.time.DateTime;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.saml1.core.AttributeDesignator;
 import org.opensaml.saml.saml1.core.ConfirmationMethod;
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.Request;
@@ -71,7 +75,26 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
      */
     @Test public void testSAML1AttributeQueryFlow() throws Exception {
 
-        buildRequest();
+        buildRequest(false);
+
+        request.setAttribute(ServletRequestX509CredentialAdapter.X509_CERT_REQUEST_ATTRIBUTE,
+                new X509Certificate[] {certFactoryBean.getObject()});
+
+        overrideEndStateOutput(FLOW_ID);
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        validateResult(result, FLOW_ID, validator);
+    }
+
+    /**
+     * Test the SAML1 Attribute Query flow with designators included.
+     * 
+     * @throws Exception if an error occurs
+     */
+    @Test public void testSAML1AttributeQueryFlowWithDesignators() throws Exception {
+
+        buildRequest(true);
 
         request.setAttribute(ServletRequestX509CredentialAdapter.X509_CERT_REQUEST_ATTRIBUTE,
                 new X509Certificate[] {certFactoryBean.getObject()});
@@ -90,7 +113,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
      */
     @Test public void testSAML1AttributeQueryFlowNoCredential() throws Exception {
 
-        buildRequest();
+        buildRequest(false);
 
         overrideEndStateOutput(FLOW_ID);
 
@@ -106,13 +129,34 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
      * 
      * @throws Exception if an error occurs
      */
-    public void buildRequest() throws Exception {
+    public void buildRequest(final boolean includeDesignators) throws Exception {
         final Subject subject = SAML1ActionTestingSupport.buildSubject("jdoe");
 
         final Request attributeQuery = SAML1ActionTestingSupport.buildAttributeQueryRequest(subject);
         attributeQuery.setIssueInstant(new DateTime());
         attributeQuery.getAttributeQuery().setResource(SP_ENTITY_ID);
         attributeQuery.setID("TESTID");
+        
+        if (includeDesignators) {
+            final SAMLObjectBuilder<AttributeDesignator> designatorBuilder = (SAMLObjectBuilder<AttributeDesignator>)
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<AttributeDesignator>getBuilderOrThrow(
+                            AttributeDesignator.DEFAULT_ELEMENT_NAME);
+            
+            AttributeDesignator designator = designatorBuilder.buildObject();
+            designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
+            designator.setAttributeName("urn:mace:dir:attribute-def:eduPersonAffiliation");
+            attributeQuery.getAttributeQuery().getAttributeDesignators().add(designator);
+    
+            designator = designatorBuilder.buildObject();
+            designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
+            designator.setAttributeName("urn:mace:dir:attribute-def:mail");
+            attributeQuery.getAttributeQuery().getAttributeDesignators().add(designator);
+    
+            designator = designatorBuilder.buildObject();
+            designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
+            designator.setAttributeName("urn:mace:dir:attribute-def:foo");
+            attributeQuery.getAttributeQuery().getAttributeDesignators().add(designator);
+        }
 
         final Envelope envelope = buildSOAP11Envelope(attributeQuery);
 

@@ -115,4 +115,12 @@
         class="net.shibboleth.utilities.java.support.security.DelegatingAccessControlService"
         c:acService-ref="shibboleth.ReloadableAccessControlService" />
 
+    <bean id="shibboleth.SAML1AttributeDesignatorsMapperService"
+        class="net.shibboleth.idp.saml.attribute.mapping.impl.SAML1AttributeDesignatorsMapperService"
+        c:resolverService-ref="shibboleth.AttributeResolverService" />
+
+    <bean id="shibboleth.SAML2AttributesMapperService"
+        class="net.shibboleth.idp.saml.attribute.mapping.impl.SAML2AttributesMapperService"
+        c:resolverService-ref="shibboleth.AttributeResolverService" />
+
  </beans>
