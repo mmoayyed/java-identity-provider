@@ -39,7 +39,7 @@ import com.google.common.base.Function;
 /**
  * A {@link Function} over a {@link ProfileRequestContext} which calls out to a supplied script.
  */
-public class ScriptedContextLookupFunction implements Function<ProfileRequestContext,Object> {
+public class ScriptedContextLookupFunction implements Function<ProfileRequestContext, Object> {
 
     /** The default language is Javascript. */
     @Nonnull @NotEmpty public static final String DEFAULT_ENGINE = "JavaScript";
@@ -52,6 +52,9 @@ public class ScriptedContextLookupFunction implements Function<ProfileRequestCon
 
     /** Debugging info. */
     @Nullable private final String logPrefix;
+
+    /** What class we want the output to test against. */
+    @Nullable private Class outputClass;
 
     /**
      * Constructor.
@@ -74,13 +77,33 @@ public class ScriptedContextLookupFunction implements Function<ProfileRequestCon
         logPrefix = "Anonymous Scripted Predicate :";
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param theScript the script we will evaluate.
+     * @param extraInfo debugging information.
+     * @param outputType the type to test against.
+     */
+    public ScriptedContextLookupFunction(@Nonnull EvaluableScript theScript, @Nullable String extraInfo,
+            @Nullable Class outputType) {
+        this(theScript, extraInfo);
+        outputClass = outputType;
+    }
+
     /** {@inheritDoc} */
     @Override public Object apply(@Nullable ProfileRequestContext profileContext) {
+
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("profileContext", profileContext, ScriptContext.ENGINE_SCOPE);
 
         try {
-            return script.eval(scriptContext);
+            Object output = script.eval(scriptContext);
+            if (null != outputClass && null != output && !outputClass.isInstance(output)) {
+                log.error("{} Output of type {} was not of type {}", logPrefix, output.getClass(), outputClass);
+                return null;
+            }
+            return output;
+
         } catch (final ScriptException e) {
             log.error("{} Error while executing Function script", logPrefix, e);
             return null;
@@ -96,10 +119,26 @@ public class ScriptedContextLookupFunction implements Function<ProfileRequestCon
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
+    static ScriptedContextLookupFunction
+            resourceScript(@Nonnull @NotEmpty String engineName, @Nonnull Resource resource) throws ScriptException,
+                    IOException {
+        return resourceScript(engineName, resource, null);
+    }
+
+    /**
+     * Factory to create {@link ScriptedContextLookupFunction} from a {@link Resource}.
+     * 
+     * @param resource the resource to look at
+     * @param engineName the language
+     * @param outputType the type to test against.
+     * @return the function
+     * @throws ScriptException if the compile fails
+     * @throws IOException if the file doesn't exist.
+     */
     static ScriptedContextLookupFunction resourceScript(@Nonnull @NotEmpty String engineName,
-            @Nonnull Resource resource) throws ScriptException, IOException {
+            @Nonnull Resource resource, @Nullable Class outputType) throws ScriptException, IOException {
         final EvaluableScript script = new EvaluableScript(engineName, resource.getFile());
-        return new ScriptedContextLookupFunction(script, resource.getDescription());
+        return new ScriptedContextLookupFunction(script, resource.getDescription(), outputType);
     }
 
     /**
@@ -111,7 +150,21 @@ public class ScriptedContextLookupFunction implements Function<ProfileRequestCon
      * @throws IOException if the file doesn't exist.
      */
     static ScriptedContextLookupFunction resourceScript(Resource resource) throws ScriptException, IOException {
-        return resourceScript(DEFAULT_ENGINE, resource);
+        return resourceScript(DEFAULT_ENGINE, resource, null);
+    }
+
+    /**
+     * Factory to create {@link ScriptedContextLookupFunction} from a {@link Resource}.
+     * 
+     * @param resource the resource to look at
+     * @param outputType the type to test against.
+     * @return the function
+     * @throws ScriptException if the compile fails
+     * @throws IOException if the file doesn't exist.
+     */
+    static ScriptedContextLookupFunction resourceScript(Resource resource, @Nullable Class outputType)
+            throws ScriptException, IOException {
+        return resourceScript(DEFAULT_ENGINE, resource, outputType);
     }
 
     /**
@@ -127,7 +180,22 @@ public class ScriptedContextLookupFunction implements Function<ProfileRequestCon
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
         return new ScriptedContextLookupFunction(script, "Inline");
     }
-    
+
+    /**
+     * Factory to create {@link ScriptedContextLookupFunction} from inline data.
+     * 
+     * @param scriptSource the script, as a string
+     * @param engineName the language
+     * @param outputType the type to test against.
+     * @return the function
+     * @throws ScriptException if the compile fails
+     */
+    static ScriptedContextLookupFunction inlineScript(@Nonnull @NotEmpty String engineName,
+            @Nonnull @NotEmpty String scriptSource, @Nullable Class outputType) throws ScriptException {
+        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        return new ScriptedContextLookupFunction(script, "Inline", outputType);
+    }
+
     /**
      * Factory to create {@link ScriptedContextLookupFunction} from inline data.
      * 
@@ -138,6 +206,20 @@ public class ScriptedContextLookupFunction implements Function<ProfileRequestCon
     static ScriptedContextLookupFunction inlineScript(@Nonnull @NotEmpty String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedContextLookupFunction(script, "Inline");
+    }
+
+    /**
+     * Factory to create {@link ScriptedContextLookupFunction} from inline data.
+     * 
+     * @param scriptSource the script, as a string
+     * @param outputType the type to test against.
+     * @return the function
+     * @throws ScriptException if the compile fails
+     */
+    static ScriptedContextLookupFunction
+            inlineScript(@Nonnull @NotEmpty String scriptSource, @Nullable Class outputType) throws ScriptException {
+        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
+        return new ScriptedContextLookupFunction(script, "Inline", outputType);
     }
 
 }
