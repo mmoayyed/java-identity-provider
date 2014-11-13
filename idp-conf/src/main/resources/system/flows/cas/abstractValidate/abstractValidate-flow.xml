@@ -8,6 +8,7 @@
     <action-state id="initializeRelyingParty">
         <evaluate expression="publishProtocolRequestAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
+        <evaluate expression="buildSAMLMetadataContextAction" />
         <evaluate expression="selectRelyingPartyConfiguration" />
         <evaluate expression="selectProfileConfiguration" />
         <evaluate expression="'proceed'" />

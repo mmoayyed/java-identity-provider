@@ -8,6 +8,7 @@
         <evaluate expression="initializeProfileRequestContext"/>
         <evaluate expression="initializeProxyAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
+        <evaluate expression="buildSAMLMetadataContextAction" />
         <evaluate expression="selectRelyingPartyConfiguration" />
         <evaluate expression="selectProfileConfiguration" />
         <evaluate expression="publishProtocolRequestAction" />

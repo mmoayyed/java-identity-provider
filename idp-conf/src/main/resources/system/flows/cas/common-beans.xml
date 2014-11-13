@@ -19,6 +19,9 @@
           class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
           c:registry-ref="cas.serviceRegistry"/>
 
+    <bean id="buildSAMLMetadataContextAction"
+          class="net.shibboleth.idp.cas.flow.BuildSAMLMetadataContextAction" />
+
     <bean id="publishProtocolRequestAction"
           class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
           c:isRequest="true" />

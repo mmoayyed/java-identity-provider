@@ -9,6 +9,7 @@
         <evaluate expression="populateSessionContext"/>
         <evaluate expression="initializeLoginAction" />
         <evaluate expression="buildRelyingPartyContextAction" />
+        <evaluate expression="buildSAMLMetadataContextAction" />
         <evaluate expression="selectRelyingPartyConfiguration" />
         <evaluate expression="selectProfileConfiguration" />
         <evaluate expression="publishProtocolRequestAction" />

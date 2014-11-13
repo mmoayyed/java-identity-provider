@@ -91,6 +91,9 @@
           class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
           c:registry-ref="cas.serviceRegistry"/>
 
+    <bean id="buildSAMLMetadataContextAction"
+          class="net.shibboleth.idp.cas.flow.BuildSAMLMetadataContextAction" />
+
     <bean id="checkAuthenticationRequiredAction"
           class="net.shibboleth.idp.cas.flow.CheckAuthenticationRequiredAction" />
 
