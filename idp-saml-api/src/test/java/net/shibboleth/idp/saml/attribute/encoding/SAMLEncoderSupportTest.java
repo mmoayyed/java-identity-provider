@@ -37,6 +37,7 @@ import org.opensaml.core.xml.io.AbstractXMLObjectUnmarshaller;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSAnyImpl;
 import org.opensaml.saml.saml2.core.NameID;
@@ -112,8 +113,8 @@ public class SAMLEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
         
         XMLObject obj = SAMLEncoderSupport.encodeByteArrayValue(ATTR, QNAME, BYTE_ARRAY_VALUE, true);
         Assert.assertEquals(obj.getElementQName().getLocalPart(), QNAME_LOCALPART);
-        Assert.assertTrue(obj instanceof XSString);
-        XSString str = (XSString) obj;
+        Assert.assertTrue(obj instanceof XSBase64Binary);
+        XSBase64Binary str = (XSBase64Binary) obj;
         
         Assert.assertEquals(Base64Support.decode(str.getValue()), BYTE_ARRAY_VALUE);
     }
