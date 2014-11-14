@@ -76,10 +76,9 @@ public class RequestedAttributesMapperTest extends MappingTests {
         Assert.assertEquals(result.keySet().size(), 2);
         
         Collection<IdPRequestedAttribute> id = result.get("id");
-        Assert.assertEquals(id.size(), 2);
+        Assert.assertEquals(id.size(), 1);
         Iterator<IdPRequestedAttribute> itr = id.iterator();
         Assert.assertEquals(itr.next().getId(), "id");
-        Assert.assertNull(itr.next());
         
         Assert.assertEquals(result.get("id2").size(), 1);
     }

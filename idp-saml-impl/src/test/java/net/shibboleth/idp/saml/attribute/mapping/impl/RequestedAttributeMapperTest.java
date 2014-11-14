@@ -158,7 +158,6 @@ public class RequestedAttributeMapperTest extends MappingTests {
 
         Map<String, IdPRequestedAttribute> result =
                 mapper.mapAttribute(getAttr(SAML_NAME_THREE));
-        Assert.assertTrue(result.containsKey(ID));
-        Assert.assertNull(result.get(ID));
+        Assert.assertFalse(result.containsKey(ID));
     }
 }
