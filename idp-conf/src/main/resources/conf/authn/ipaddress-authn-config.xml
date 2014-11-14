@@ -13,7 +13,12 @@
     <!-- Apply any regular expression replacement pairs to address before validation. -->
     <util:list id="shibboleth.authn.IPAddress.Transforms" />
 
-    <!-- Configure the address range(s) and principal name(s) for IP-based login here. -->
+    <!--
+    Configure the address range(s) and principal name(s) for IP-based login here.
+    The ranges provided MUST be CIDR network expressions. To specify a single address,
+    add "/32" or "/128" for IPv4 or IPv6 respectively.
+    -->
+
 
     <util:map id="shibboleth.authn.IPAddress.Mappings">
         <!--
