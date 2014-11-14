@@ -58,7 +58,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeMapper.class);
 
     /** The internal names to generate. */
-    @Nonnull @NonnullElements private List<String> attributeIds = Collections.EMPTY_LIST;
+    @Nonnull @NonnullElements private List<String> attributeIds = Collections.emptyList();
 
     /** The attribute format. */
     @Nullable private String attributeFormat;
@@ -207,16 +207,8 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         return matches(attribute.getName(), attribute.getNameFormat());
     }
 
-    /**
-     * Map the SAML attribute to the required output type. We have to be careful about handling attributes types. If the
-     * input has values but we fail to convert them then that is different from not having any values and we signal this
-     * by putting in a name, but no attribute.
-     * 
-     * @param prototype the SAML attribute
-     * @return the appropriate map of names to output type
-     * 
-     */
-    @Override @Nonnull @NullableElements public Map<String,OutType> mapAttribute(@Nonnull final InType prototype) {
+    /** {@inheritDoc} */
+    @Override @Nonnull @NonnullElements public Map<String,OutType> mapAttribute(@Nonnull final InType prototype) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
@@ -227,20 +219,15 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         final List<XMLObject> inputValues = prototype.getAttributeValues();
         final List<IdPAttributeValue<?>> outputValues = getValueMapper().decodeValues(inputValues);
 
-        final boolean noMatch = !inputValues.isEmpty() && outputValues.isEmpty();
+        if (!inputValues.isEmpty() && outputValues.isEmpty()) {
+            log.warn("{} Attribute '{}' value conversion yielded no suitable values", getLogPrefix(),
+                    prototype.getName());
+            return Collections.emptyMap();
+        }
 
-        final Map<String, OutType> output = new HashMap<String, OutType>(inputValues.size());
+        final Map<String,OutType> output = new HashMap<String,OutType>(inputValues.size());
 
         log.debug("{} attribute id {} and aliases {} will be created", getLogPrefix(), getId(), getAttributeIds());
-
-        if (noMatch) {
-            // NOTE this is different from not matching, so we set a NULL entry
-            log.debug("{} Attribute value conversion yielded no suitable values", getLogPrefix());
-            for (String alias : getAttributeIds()) {
-                output.put(alias, null);
-            }
-            return output;
-        }
 
         OutType out = newAttribute(prototype, getId());
         out.setValues(outputValues);

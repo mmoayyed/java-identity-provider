@@ -25,7 +25,13 @@ import javax.annotation.Nullable;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.joda.time.DateTime;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeQuery;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
@@ -74,7 +80,26 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
      */
     @Test public void testSAML2AttributeQueryFlow() throws Exception {
 
-        buildRequest();
+        buildRequest(false);
+
+        request.setAttribute(ServletRequestX509CredentialAdapter.X509_CERT_REQUEST_ATTRIBUTE,
+                new X509Certificate[] {certFactoryBean.getObject()});
+
+        overrideEndStateOutput(FLOW_ID);
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        validateResult(result, FLOW_ID, validator);
+    }
+
+    /**
+     * Test the SAML 2 Attribute Query flow with designators.
+     * 
+     * @throws Exception if an error occurs
+     */
+    @Test public void testSAML2AttributeQueryFlowWithDesignators() throws Exception {
+
+        buildRequest(true);
 
         request.setAttribute(ServletRequestX509CredentialAdapter.X509_CERT_REQUEST_ATTRIBUTE,
                 new X509Certificate[] {certFactoryBean.getObject()});
@@ -93,7 +118,7 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
      */
     @Test public void testSAML2AttributeQueryFlowNoCredential() throws Exception {
 
-        buildRequest();
+        buildRequest(false);
 
         overrideEndStateOutput(FLOW_ID);
 
@@ -109,13 +134,46 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
      * 
      * @throws Exception if an error occurs
      */
-    public void buildRequest() throws Exception {
+    public void buildRequest(final boolean includeDesignators) throws Exception {
 
         final Subject subject = SAML2ActionTestingSupport.buildSubject("jdoe");
 
         final AttributeQuery attributeQuery = SAML2ActionTestingSupport.buildAttributeQueryRequest(subject);
         attributeQuery.setIssueInstant(new DateTime());
         attributeQuery.getIssuer().setValue(SP_ENTITY_ID);
+
+        if (includeDesignators) {
+            final SAMLObjectBuilder<Attribute> designatorBuilder = (SAMLObjectBuilder<Attribute>)
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<Attribute>getBuilderOrThrow(
+                            Attribute.DEFAULT_ELEMENT_NAME);
+            final XMLObjectBuilder<XSAny> valueBuilder =
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(
+                            XSAny.TYPE_NAME);
+
+            
+            Attribute designator = designatorBuilder.buildObject();
+            designator.setNameFormat(Attribute.URI_REFERENCE);
+            designator.setName("urn:oid:1.3.6.1.4.1.5923.1.1.1.1");
+            attributeQuery.getAttributes().add(designator);
+            
+            XSAny value = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+            value.setTextContent("member");
+            designator.getAttributeValues().add(value);
+    
+            designator = designatorBuilder.buildObject();
+            designator.setNameFormat(Attribute.URI_REFERENCE);
+            designator.setName("urn:oid:0.9.2342.19200300.100.1.3");
+            attributeQuery.getAttributes().add(designator);
+            
+            value = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+            value.setTextContent("jdoe@shibboleth.net");
+            designator.getAttributeValues().add(value);
+    
+            designator = designatorBuilder.buildObject();
+            designator.setNameFormat(Attribute.URI_REFERENCE);
+            designator.setName("urn:mace:dir:attribute-def:foo");
+            attributeQuery.getAttributes().add(designator);
+        }
 
         final Envelope envelope = buildSOAP11Envelope(attributeQuery);
 

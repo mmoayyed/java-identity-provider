@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
 /**
@@ -35,14 +35,15 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 public interface AttributeMapper<InType,OutType extends IdPAttribute> extends IdentifiedComponent{
 
     /**
-     * Map the input attribute to the required output type. Be careful about handling attributes types, if the input 
-     * has values but the method fails to convert them then that is different from not having any values.
-     * Signal this by putting in a name, but no attribute.
+     * Map the SAML attribute to the required output type.
      * 
-     * @param input the attribute
-     * @return the appropriate  map of names to the output type.
+     * <p>If the input contains values to be decoded, failure to decode any values results in a failure
+     * to map the input at all.</p>
+     * 
+     * @param input the SAML attribute
+     * @return the appropriate map of names to output type
      * 
      */
-    @Nonnull @NullableElements Map<String,OutType> mapAttribute(@Nonnull final InType input);
+    @Nonnull @NonnullElements Map<String,OutType> mapAttribute(@Nonnull final InType input);
 
 }

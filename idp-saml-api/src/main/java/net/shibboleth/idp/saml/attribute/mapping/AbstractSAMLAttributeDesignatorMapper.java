@@ -55,7 +55,7 @@ public abstract class AbstractSAMLAttributeDesignatorMapper<OutType extends IdPA
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLAttributeDesignatorMapper.class);
 
     /** The internal names to generate. */
-    @Nonnull @NonnullElements private List<String> attributeIds = Collections.EMPTY_LIST;
+    @Nonnull @NonnullElements private List<String> attributeIds = Collections.emptyList();
 
     /** The attribute namespace. */
     @Nullable private String attributeNamespace;
@@ -172,16 +172,9 @@ public abstract class AbstractSAMLAttributeDesignatorMapper<OutType extends IdPA
         return matches(designator.getAttributeName(), designator.getAttributeNamespace());
     }
 
-    /**
-     * Map the {@link AttributeDesignator} to the required output type. We have to be careful about handling
-     * attributes types.
-     * 
-     * @param prototype the attribute designator
-     * @return the appropriate map of names to output type
-     * 
-     */
+    /** {@inheritDoc} */
     @Override
-    @Nonnull @NullableElements public Map<String,OutType> mapAttribute(@Nonnull final AttributeDesignator prototype) {
+    @Nonnull @NonnullElements public Map<String,OutType> mapAttribute(@Nonnull final AttributeDesignator prototype) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
