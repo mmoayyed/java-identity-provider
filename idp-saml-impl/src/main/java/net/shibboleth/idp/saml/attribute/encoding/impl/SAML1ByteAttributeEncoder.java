@@ -47,6 +47,6 @@ public class SAML1ByteAttributeEncoder extends AbstractSAML1AttributeEncoder<Byt
     @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final ByteAttributeValue value)  throws AttributeEncodingException {
         return SAMLEncoderSupport.encodeByteArrayValue(attribute,
-                AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
+                AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue(), encodeType());
     }
 }

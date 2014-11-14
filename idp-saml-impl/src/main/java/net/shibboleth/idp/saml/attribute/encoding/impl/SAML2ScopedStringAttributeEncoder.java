@@ -170,11 +170,11 @@ public class SAML2ScopedStringAttributeEncoder extends AbstractSAML2AttributeEnc
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         if ("attribute".equals(getScopeType())) {
-            return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute, AttributeValue.DEFAULT_ELEMENT_NAME,
-                    value, getScopeAttributeName());
+            return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute,
+                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName(), encodeType());
         } else {
-            return SAMLEncoderSupport.encodeScopedStringValueInline(attribute, AttributeValue.DEFAULT_ELEMENT_NAME,
-                    value, getScopeDelimiter());
+            return SAMLEncoderSupport.encodeScopedStringValueInline(
+                    attribute, AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeDelimiter(), encodeType());
         }
     }
 

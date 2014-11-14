@@ -66,9 +66,13 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
     /** The name of the attribute. */
     @NonnullAfterInit private String name;
 
+    /** Whether to encode with xsi:type or not. */
+    private boolean encodeType;
+    
     /** Constructor. */
     public AbstractSAMLAttributeEncoder() {
         activationCondition = Predicates.alwaysTrue();
+        encodeType = true;
     }
     
     /** {@inheritDoc} */
@@ -107,6 +111,28 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
         
         name = Constraint.isNotNull(StringSupport.trimOrNull(attributeName),
                 "Attribute name cannot be null or empty");
+    }
+    
+    /**
+     * Get whether to encode type information.
+     * 
+     * <p>Defaults to 'true'</p>
+     * 
+     * @return true iff type information should be encoded
+     */
+    public boolean encodeType() {
+        return encodeType;
+    }
+    
+    /**
+     * Set whether to encode type information.
+     * 
+     * @param flag flag to set
+     */
+    public void setEncodeType(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        encodeType = flag;
     }
 
     /** {@inheritDoc} */

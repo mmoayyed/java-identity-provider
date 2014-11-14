@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.testng.Assert;
@@ -63,6 +63,7 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.setName(ATTR_NAME);
         encoder.setNameFormat("NameSpace");
         encoder.setFriendlyName("friendly");
+        encoder.setEncodeType(true);
         encoder.initialize();
     }
 
@@ -104,9 +105,9 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         XMLObject child = children.get(0);
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME);
 
-        Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
+        Assert.assertTrue(child instanceof XSBase64Binary, "Child of result attribute should be a base64Binary");
 
-        XSString childAsString = (XSString) child;
+        XSBase64Binary childAsString = (XSBase64Binary) child;
 
         byte childAsBa[] = Base64Support.decode(childAsString.getValue());
 
@@ -130,17 +131,17 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         XMLObject child = children.get(0);
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
-        Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
+        Assert.assertTrue(child instanceof XSBase64Binary, "Child of result attribute should be a base64Binary");
 
-        XSString childAsString = (XSString) child;
+        XSBase64Binary childAsString = (XSBase64Binary) child;
         Assert.assertEquals(child.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
                 "Attribute Value not inside <AttributeValue/>");
         final byte[] res0 = Base64Support.decode(childAsString.getValue());
         
         child = children.get(1);
-        Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
+        Assert.assertTrue(child instanceof XSBase64Binary, "Child of result attribute should be a base64Binary");
 
-        childAsString = (XSString) child;
+        childAsString = (XSBase64Binary) child;
         final byte[] res1 = Base64Support.decode(childAsString.getValue());
 
         //

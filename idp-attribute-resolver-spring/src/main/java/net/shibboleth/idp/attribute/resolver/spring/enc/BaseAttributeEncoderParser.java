@@ -66,6 +66,10 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
             builder.addPropertyReference("activationCondition", config.getAttributeNS(null, "activationConditionRef"));
         }
         
+        if (config.hasAttributeNS(null, "encodeType")) {
+            builder.addPropertyValue("encodeType", config.getAttributeNS(null, "encodeType"));
+        }
+        
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
         builder.addPropertyValue("name", attributeName);

@@ -163,10 +163,10 @@ public class SAML1ScopedStringAttributeEncoder extends AbstractSAML1AttributeEnc
         
         if ("attribute".equals(getScopeType())) {
             return SAMLEncoderSupport.encodeScopedStringValueAttribute(attribute,
-                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName());
+                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeAttributeName(), encodeType());
         } else {
             return SAMLEncoderSupport.encodeScopedStringValueInline(attribute,
-                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeDelimiter());
+                    AttributeValue.DEFAULT_ELEMENT_NAME, value, getScopeDelimiter(), encodeType());
         }
     }
 }

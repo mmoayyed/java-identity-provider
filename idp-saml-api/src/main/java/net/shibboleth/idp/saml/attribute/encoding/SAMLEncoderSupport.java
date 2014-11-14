@@ -32,6 +32,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.core.xml.schema.XSString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,17 +51,17 @@ public final class SAMLEncoderSupport {
     }
 
     /**
-     * Encodes a String value into an {@link XSString} SAML attribute value element.
+     * Encodes a String value into a SAML attribute value element.
      * 
      * @param attribute attribute to be encoded
-     * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
+     * @param attributeValueElementName the element name to create
      * @param value value to encoded
+     * @param withType whether to include xsi:type
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
     @Nullable public static XMLObject encodeStringValue(@Nonnull final IdPAttribute attribute,
-            @Nonnull final QName attributeValueElementName, @Nullable final String value) {
-
+            @Nonnull final QName attributeValueElementName, @Nullable final String value, final boolean withType) {
         Constraint.isNotNull(attribute, "Attribute cannot be null");
         Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
 
@@ -69,40 +70,60 @@ public final class SAMLEncoderSupport {
             return null;
         }
 
-        final XMLObjectBuilder<XSString> stringBuilder = (XMLObjectBuilder<XSString>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
-
         LOG.debug("Encoding value {} of attribute {}", value, attribute.getId());
-        final XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
-        samlAttributeValue.setValue(value);
-        return samlAttributeValue;
+        
+        if (withType) {
+            final XMLObjectBuilder<XSString> stringBuilder = (XMLObjectBuilder<XSString>)
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(
+                            XSString.TYPE_NAME);
+            final XSString samlAttributeValue =
+                    stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
+            samlAttributeValue.setValue(value);
+            return samlAttributeValue;
+        } else {
+            final XMLObjectBuilder<XSAny> anyBuilder = (XMLObjectBuilder<XSAny>)
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
+            final XSAny samlAttributeValue = anyBuilder.buildObject(attributeValueElementName);
+            samlAttributeValue.setTextContent(value);
+            return samlAttributeValue;
+        }
     }
 
     /**
-     * Base64 encodes a <code>byte[]</code> in to an {@link XSString} SAML attribute value element.
+     * Base64 encodes a <code>byte[]</code> into a SAML attribute value element.
      * 
      * @param attribute attribute to be encoded
-     * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
+     * @param attributeValueElementName the element name to create
      * @param value value to encoded
+     * @param withType whether to include xsi:type
      * 
      * @return the attribute value element or null if the given value was null or empty
      */
     @Nullable public static XMLObject encodeByteArrayValue(@Nonnull final IdPAttribute attribute,
-            @Nonnull final QName attributeValueElementName, @Nullable final byte[] value) {
+            @Nonnull final QName attributeValueElementName, @Nullable final byte[] value, final boolean withType) {
+        Constraint.isNotNull(attribute, "Attribute cannot be null");
+        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
+
         if (value == null || value.length == 0) {
             LOG.debug("Skipping empty value for attribute {}", attribute.getId());
             return null;
         }
-        Constraint.isNotNull(attribute, "Attribute cannot be null");
-        Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
 
-        final XMLObjectBuilder<XSString> stringBuilder = (XMLObjectBuilder<XSString>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
-
-        final XSString samlAttributeValue = stringBuilder.buildObject(attributeValueElementName, XSString.TYPE_NAME);
-
-        samlAttributeValue.setValue(Base64Support.encode(value, Base64Support.UNCHUNKED));
-        return samlAttributeValue;
+        if (withType) {
+            final XMLObjectBuilder<XSBase64Binary> binaryBuilder = (XMLObjectBuilder<XSBase64Binary>)
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<XSBase64Binary>getBuilderOrThrow(
+                            XSBase64Binary.TYPE_NAME);
+            final XSBase64Binary samlAttributeValue =
+                    binaryBuilder.buildObject(attributeValueElementName, XSBase64Binary.TYPE_NAME);
+            samlAttributeValue.setValue(Base64Support.encode(value, Base64Support.UNCHUNKED));
+            return samlAttributeValue;
+        } else {
+            final XMLObjectBuilder<XSAny> anyBuilder = (XMLObjectBuilder<XSAny>)
+                    XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(XSAny.TYPE_NAME);
+            final XSAny samlAttributeValue = anyBuilder.buildObject(attributeValueElementName);
+            samlAttributeValue.setTextContent(Base64Support.encode(value, Base64Support.UNCHUNKED));
+            return samlAttributeValue;
+        }
     }
 
     /**
@@ -132,20 +153,20 @@ public final class SAMLEncoderSupport {
     }
 
     /**
-     * Encode a {@link ScopedStringAttributeValue} value in to an SAML attribute value element using the "attribute"
-     * (older Shibboleth) sytnax.
+     * Encode a {@link ScopedStringAttributeValue} value in to an SAML attribute value element using the
+     * (older Shibboleth) sytnax where the scope is inside an XML attribute.
      * 
      * @param attribute attribute to be encoded
-     * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
+     * @param attributeValueElementName the element name to create
      * @param value value to encoded
      * @param scopeAttributeName the name that the attribute will be given
-     * @return a {@link ShibbolethScopedValue}
+     * @param withType whether to include xsi:type
+     * 
+     * @return the attribute value element or null if the given value was null or empty
      */
     public static XMLObject encodeScopedStringValueAttribute(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final ScopedStringAttributeValue value,
-            @Nonnull @NotEmpty final String scopeAttributeName) {
-
-
+            @Nonnull @NotEmpty final String scopeAttributeName, final boolean withType) {
         Constraint.isNotNull(attribute, "Attribute cannot be null");
         Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
         Constraint.isNotNull(scopeAttributeName, "Scope Attribute Name cannot be null");
@@ -157,7 +178,8 @@ public final class SAMLEncoderSupport {
         
         final XMLObjectBuilder<ScopedValue> scopedValueBuilder = (XMLObjectBuilder<ScopedValue>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(ScopedValue.TYPE_NAME);
-        final ScopedValue scopedValue = scopedValueBuilder.buildObject(attributeValueElementName);
+        final ScopedValue scopedValue = withType ? scopedValueBuilder.buildObject(attributeValueElementName)
+                : scopedValueBuilder.buildObject(attributeValueElementName, ScopedValue.TYPE_NAME);
 
         scopedValue.setScopeAttributeName(scopeAttributeName);
         scopedValue.setScope(value.getScope());
@@ -167,19 +189,20 @@ public final class SAMLEncoderSupport {
     }
 
     /**
-     * Encode a {@link ScopedStringAttributeValue} value in to an {@link XSString} SAML attribute value element using
-     * the "inline" syntax.
+     * Encode a {@link ScopedStringAttributeValue} value into a SAML attribute value element using
+     * the "inline" syntax where the scope and value are combined into a string.
      * 
      * @param attribute attribute to be encoded
-     * @param attributeValueElementName the SAML 1 or SAML 1 attribute name
+     * @param attributeValueElementName the element name to create
      * @param value value to encoded
      * @param scopeDelimiter the delimiter to put between the value and the scope
-     * @return a {@link ShibbolethScopedValue}
+     * @param withType whether to include xsi:type
+     * 
+     * @return the attribute value element or null if the given value was null or empty
      */
     public static XMLObject encodeScopedStringValueInline(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final ScopedStringAttributeValue value,
-            @Nonnull String scopeDelimiter) {
-
+            @Nonnull String scopeDelimiter, final boolean withType) {
         Constraint.isNotNull(attribute, "Attribute cannot be null");
         Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
         Constraint.isNotNull(scopeDelimiter, "Scope delimiter cannot be null");
@@ -192,6 +215,6 @@ public final class SAMLEncoderSupport {
         final StringBuilder builder =
                 new StringBuilder(value.getValue()).append(scopeDelimiter).append(value.getScope());
 
-        return encodeStringValue(attribute, attributeValueElementName, builder.toString());
+        return encodeStringValue(attribute, attributeValueElementName, builder.toString(), withType);
     }
 }

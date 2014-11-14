@@ -75,6 +75,7 @@ public class SAML2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeDelimiter(DELIMITER);
         encoder.setNameFormat("NameSpace");
         encoder.setFriendlyName("friendly");
+        encoder.setEncodeType(true);
         return encoder;
     }
 

@@ -56,7 +56,7 @@ public abstract class AbstractSAML1AttributeEncoder<EncodedType extends IdPAttri
     
     /** The namespace in which the attribute name is interpreted. */
     @NonnullAfterInit private String namespace;
-
+    
     /** Constructor. */
     public AbstractSAML1AttributeEncoder() {
         attributeBuilder =

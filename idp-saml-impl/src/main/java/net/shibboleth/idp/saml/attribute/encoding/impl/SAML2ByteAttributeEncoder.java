@@ -51,8 +51,8 @@ public class SAML2ByteAttributeEncoder extends AbstractSAML2AttributeEncoder<Byt
     /** {@inheritDoc} */
     @Override @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final ByteAttributeValue value) throws AttributeEncodingException {
-        return SAMLEncoderSupport
-                .encodeByteArrayValue(attribute, AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
+        return SAMLEncoderSupport.encodeByteArrayValue(attribute,
+                AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue(), encodeType());
     }
 
     /** {@inheritDoc} */

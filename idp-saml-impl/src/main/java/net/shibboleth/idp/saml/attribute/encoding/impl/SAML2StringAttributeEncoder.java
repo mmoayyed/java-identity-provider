@@ -51,7 +51,8 @@ public class SAML2StringAttributeEncoder extends AbstractSAML2AttributeEncoder<S
     /** {@inheritDoc} */
     @Override @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final StringAttributeValue value) throws AttributeEncodingException {
-        return SAMLEncoderSupport.encodeStringValue(attribute, AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue());
+        return SAMLEncoderSupport.encodeStringValue(attribute,
+                AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue(), encodeType());
     }
 
     /** {@inheritDoc} */

@@ -52,12 +52,11 @@
 						<annotation>
 							<documentation>
 								A human readable name of for this attribute. This name may, for
-								example, be displayed
-								to the user with an attribute release approval request.
+								example, be displayed to the user with an attribute release approval
+								request.
 
 								If multiple display names are used they should bear an xml:lang
-								attribute to
-								distinguish them.
+								attribute to distinguish them.
 							</documentation>
 						</annotation>
 					</element>
@@ -66,12 +65,11 @@
 						<annotation>
 							<documentation>
 								A human readable description of for this attribute. This name
-								may, for example, be
-								displayed to the user with an attribute release approval request.
+								may, for example, be displayed to the user with an attribute release
+								approval request.
 
 								If multiple display descriptions are used they should bear an
-								xml:lang attribute to
-								distinguish them.
+								xml:lang attribute to distinguish them.
 							</documentation>
 						</annotation>
 					</element>
@@ -82,10 +80,8 @@
 					<annotation>
 						<documentation>
 							A boolean flag that indicates whether this attribute definition is
-							only defined becaue its
-							data is needed elsewhere within the resolver and as such should not
-							be released outside the
-							resolver.
+							only defined becaue its	data is needed elsewhere within the resolver
+							and as such should not be released outside the resolver.
 						</documentation>
 					</annotation>
 				</attribute>
@@ -93,14 +89,11 @@
 					<annotation>
 						<documentation>
 							The name of the attribute from the data connector which should be
-							used to populate this
-							attribute definition. For example, an attribute definition for
-							"eduPersonPrincipalName" may
-							have a source attribute of "uid" along with an appropriate scope
-							value. This is an optional
+							used to populate this attribute definition. For example, an attribute
+							definition for "eduPersonPrincipalName" may	have a source attribute of
+							"uid" along with an appropriate scope value. This is an optional
 							attribute, and if left empty the ID of the attribute definition will be
-							used for the source
-							attribute.
+							used for the source	attribute.
 						</documentation>
 					</annotation>
 				</attribute>
@@ -116,17 +109,23 @@
 	<complexType name="BaseAttributeEncoderType">
 		<annotation>
 			<documentation>
-				An attribute encoder is responsible for converting an attribute, and
-				it's values, into a protocol
-				specific representation such as a SAML 1 Attribute or a SAML 2 NameID.
+				An attribute encoder is responsible for converting an attribute, and it's values,
+				into a protocol specific representation such as a SAML 1 Attribute or a SAML 2 NameID.
 			</documentation>
 		</annotation>
 		<attribute name="name" type="string" />
+		<attribute name="encodeType" type="string">
+			<annotation>
+				<documentation>
+					A boolean indicating whether the encoding should include type information. This is
+					encoding-specific (e.g., for XML it likely involves xsi:type).
+				</documentation>
+			</annotation>
+		</attribute>
 		<attribute name="activationConditionRef" type="string">
 			<annotation>
 				<documentation>
-					The reference to a Predicate which controls whether this encoder will
-					run
+					The reference to a Predicate which controls whether this encoder will run
 				</documentation>
 			</annotation>
 		</attribute>
@@ -144,9 +143,8 @@
 		<annotation>
 			<documentation>
 				Data connectors pull information from local infrastructure, such as
-				databases and LDAP directories, and
-				make these raw attributes available to attribute definitions for
-				finishing.
+				databases and LDAP directories, and	make these raw attributes available
+				to attribute definitions for finishing.
 			</documentation>
 		</annotation>
 		<complexContent>
@@ -156,9 +154,7 @@
 				</sequence>
 				<attribute name="springResources" type="string">
 					<annotation>
-						<documentation>
-							Locations of Spring resource configurations.
-						</documentation>
+						<documentation>Locations of Spring resource configurations.</documentation>
 					</annotation>
 				</attribute>
 			</extension>
@@ -169,8 +165,7 @@
 		<annotation>
 			<documentation>
 				Principal connectors convert a subject's NameID into an internal principal
-				name for use within attribute
-				definitions and data connectors.
+				name for use within attribute definitions and data connectors.
 			</documentation>
 		</annotation>
 	</element>
@@ -178,8 +173,7 @@
 		<annotation>
 			<documentation>
 				Principal connectors convert a subject's NameID into an internal principal
-				name for use within attribute
-				definitions and data connectors.
+				name for use within attribute definitions and data connectors.
 			</documentation>
 		</annotation>
 		<complexContent>
@@ -188,15 +182,17 @@
 					<element name="RelyingParty" type="string" minOccurs="0"
 						maxOccurs="unbounded">
 						<annotation>
-							<documentation>The relying party for which this connector is
-								valid.</documentation>
+							<documentation>
+								The relying party for which this connector is valid.
+							</documentation>
 						</annotation>
 					</element>
 				</sequence>
 				<attribute name="nameIDFormat" type="string" use="required">
 					<annotation>
-						<documentation>The format of the NameID for which this connector
-							is valid.</documentation>
+						<documentation>
+							The format of the NameID for which this connector is valid.
+						</documentation>
 					</annotation>
 				</attribute>
 			</extension>
@@ -215,20 +211,21 @@
 		</sequence>
 		<attribute name="id" type="string" use="required">
 			<annotation>
-				<documentation>A unique identifier for this definition.
-				</documentation>
+				<documentation>A unique identifier for this definition.</documentation>
 			</annotation>
 		</attribute>
 		<attribute name="activationConditionRef" type="string">
 			<annotation>
-				<documentation>A reference to a predicate to decide whether this
-					plugin is applicable</documentation>
+				<documentation>
+					A reference to a predicate to decide whether this plugin is applicable
+				</documentation>
 			</annotation>
 		</attribute>
 		<attribute name="profileContextStrategyRef" type="string">
 			<annotation>
-				<documentation>A reference to a function to locate the profile
-					context</documentation>
+				<documentation>
+					A reference to a function to locate the profile context
+				</documentation>
 			</annotation>
 		</attribute>
 
@@ -236,20 +233,21 @@
 
 	<element name="Dependency" type="resolver:PluginDependencyType">
 		<annotation>
-			<documentation>Defines a dependency on a specific resolution plug-in.
+			<documentation>
+				Defines a dependency on a specific resolution plug-in.
 			</documentation>
 		</annotation>
 	</element>
 	<element name="FailoverDataConnector" type="resolver:PluginDependencyType">
 		<annotation>
-			<documentation>Defines a data connector to use should the parent data
-				connector fail.</documentation>
+			<documentation>
+				Defines a data connector to use should the parent data connector fail.
+			</documentation>
 		</annotation>
 	</element>
 	<complexType name="PluginDependencyType">
 		<annotation>
-			<documentation>A type that represents a reference to another plugin
-			</documentation>
+			<documentation>A type that represents a reference to another plugin</documentation>
 		</annotation>
 		<attribute name="ref" type="string" use="required" />
 	</complexType>

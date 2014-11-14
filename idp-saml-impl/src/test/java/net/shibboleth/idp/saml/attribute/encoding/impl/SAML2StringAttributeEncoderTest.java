@@ -61,6 +61,7 @@ public class SAML2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         encoder.setName(ATTR_NAME);
         encoder.setNameFormat("NameSpace");
         encoder.setFriendlyName("friendly");
+        encoder.setEncodeType(true);
         encoder.initialize();
     }
 
