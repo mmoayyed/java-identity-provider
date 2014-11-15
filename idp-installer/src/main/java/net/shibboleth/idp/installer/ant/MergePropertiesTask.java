@@ -99,7 +99,6 @@ public class MergePropertiesTask extends Task {
             log("Could not load input " + inFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }
-        in.addComment(" Properties below were added automatically during installation. ");
         
         final Properties merge = new Properties(); 
         try {
