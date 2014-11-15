@@ -211,7 +211,230 @@
             </extension>
         </complexContent>
     </complexType>
+    
+    <complexType name="DynamicHTTPMetadataProvider">
+        <annotation>
+            <documentation>
+                A metadata provider that dynamically fetches metadata from an HTTP server.
+                
+                Four strategies are supported for constructing the metadata request URL based on the requested entityID.
+                Only one strategy may be configured for any given instance of a metadata provider.
+                
+                Three correspond directly to the 3 child element types of the this type: Template, Regex and MetadataQueryProtocol.
+                See those individual elements for details.
+                
+                The fourth, used when none of the above 3 child elements is present, is to treat an HTTP or HTTPS entityID as the
+                metadata request URL.  This corresponds to the "well-known location" mechanism, as defined in the SAML 2.0
+                Metadata specification, section 4.1.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:DynamicMetadataProviderType">
+                <choice minOccurs="0" maxOccurs="1">
+                    <element name="Template">
+                        <annotation>
+                            <documentation>
+                                Constructs the metadata request URL by means of a simple transform on the template specified by this element.
+                                The entityID is substituted into the template parameter "${entityID}".
+                                If the element contains an encoded attribute set to "false", the value will be replaced directly, 
+                                otherwise it will be URL-encoded.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="encoded" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Boolean flag indicating whether the entityID should be encoded before substitution into the template.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                    <element name="Regex">
+                        <annotation>
+                            <documentation>
+                                Constructs the metadata request URL by means of a complex transform containing a match attribute containing a 
+                                regular expression against which the entityID value is applied, and whose element content contains a 
+                                replacement expression to run based on the results of the match. 
+                                Only numeric/positional group references (e.g. $1) are supported.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="match" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Regular expression against which the entityID is evaluated.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                    <element name="MetadataQueryProtocol" type="string">
+                        <annotation>
+                            <documentation>
+                                Constructs a metadata request URL based on the requirements of the Metadata Query Protocol.
+                                The content of this element will be used as the "Base URL" as defined in that specification.
+                                (TODO - reference to specification).
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
+                <attribute name="httpClientRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The reference to an externally defined Spring bean which specifies a hand
+                            org.apache.http.client.HttpClient.
+                            
+                            This attribute conflicts with and overrides the other HttpClient-related properties: 
+                            disregardSslCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
+                       </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="supportedContentTypes" type="shibmd:MIMETypeListType">
+                    <annotation>
+                        <documentation>MIME types which are supported by this provider when requesting metadata from the HTTP server.
+                          The HTTP response Content-Type will also be validated against this list.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="disregardSslCertificate" type="string">
+                    <annotation>
+                        <documentation>Server certificate will be ignored when fetching from an HTTPS source.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="requestTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time to wait for the remote server to response.
 
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyHost" type="string">
+                    <annotation>
+                        <documentation>Hostname of the HTTP proxy through which connections will be made.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyPort" type="string">
+                    <annotation>
+                        <documentation>Port of the HTTP proxy through which connections will be made.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyUser" type="string">
+                    <annotation>
+                        <documentation>User name used with the HTTP proxy through which connections will be made.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="proxyPassword" type="string">
+                    <annotation>
+                        <documentation>Password used with the HTTP proxy through which connections will be made.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="basicAuthUser" type="string">
+                    <annotation>
+                        <documentation>
+                            The user name to provide, during basic authentication, when connecting to the remote server.
+                            This is a convenience property for the case of a single basic auth user credential, and is 
+                            mutually exclusive with setting a credentialsProviderRef.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="basicAuthPassword" type="string">
+                    <annotation>
+                        <documentation>
+                            The password to provide, during basic authentication, when connecting to the remote server.
+                            This is a convenience property for the case of a single basic auth user credential, and is 
+                            mutually exclusive with setting a credentialsProviderRef.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="credentialsProviderRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally defined Spring bean which specifies an instance of
+                            org.apache.http.client.CredentialsProvider.  Setting a credential provider here overrides
+                            the single credential implied by the attributes basicAuthUser and basicAuthPassword.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <!-- Need to deal with socket factory -->
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <simpleType name="MIMETypeListType">
+        <list itemType="string"/>
+    </simpleType>
+
+    <complexType name="DynamicMetadataProviderType" abstract="true">
+        <annotation>
+            <documentation>A metadata provider that fetches metadata dynamically on demand.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType">
+                <attribute name="parserPoolRef" type="string">
+                    <annotation>
+                        <documentation>ID of the parser pool used to parse incoming metadata.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="taskTimerRef" type="string">
+                    <annotation>
+                        <documentation>ID of the task timer used to schedule background refresh jobs.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="refreshDelayFactor" type="string">
+                    <annotation>
+                        <documentation>Factor applied to metadata's expiration time in order to determine next refresh
+                            time. Must be between 0.0 and 1.0, exclusive.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="minCacheDuration" type="string">
+                    <annotation>
+                        <documentation>The minimum duration for which metadata will be cached before it is refreshed.
+                           This value is expressed in ISO8601 duration notation.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxCacheDuration" type="string">
+                    <annotation>
+                        <documentation>The maximum duration for which metadata will be cached before it is refreshed.
+                           This value is expressed in ISO8601 duration notation.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxIdleEntityData" type="string">
+                    <annotation>
+                        <documentation>The maximum duration for which metadata will be allowed to be idle (no requests for it) 
+                        before it is removed from the cache. This value is expressed in ISO8601 duration notation.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="removeIdleEntityData" type="string">
+                    <annotation>
+                        <documentation>A boolean flag indicating whether idle metadata should be removed.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cleanupTaskInterval" type="string">
+                    <annotation>
+                        <documentation>The interval at which the intern cleanup task should run.  This task performs
+                            background maintenance tasks, such as the removal of expired and idle metadata.
+                            This value is expressed in ISO8601 duration notation.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="ReloadingMetadataProviderType" abstract="true">
         <annotation>
             <documentation>A metadata provider that periodically reloads a cached metadata document.</documentation>
