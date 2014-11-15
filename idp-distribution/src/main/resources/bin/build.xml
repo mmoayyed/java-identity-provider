@@ -69,7 +69,7 @@
 		<echo append="true" file="idp_ant.log">target: gethostname
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Hostname" addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}" />
+		<input message="Hostname: " addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}" />
 	</target>
 
 	<target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties, gethostname">
@@ -82,7 +82,7 @@
 		<echo append="true" file="idp_ant.log">target: getkeystorepassword
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Key Store Password" addproperty="idp.keystore.password">
+		<input message="TLS Private Key Password: " addproperty="idp.keystore.password">
 			<handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
 	    </input>
 	</target>
@@ -91,7 +91,7 @@
 		<echo append="true" file="idp_ant.log">target: getsealerpassword
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Sealer Password" addproperty="idp.sealer.password">
+		<input message="Cookie Encryption Key Password: " addproperty="idp.sealer.password">
             <handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
         </input>
         <echo file="${idp.merge.properties}" append="yes">
@@ -116,7 +116,7 @@
 		<echo append="true" file="idp_ant.log">target: getsource
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Source (Distribution) Directory" addproperty="idp.src.dir" defaultvalue="${basedir}" />
+		<input message="Source (Distribution) Directory: " addproperty="idp.src.dir" defaultvalue="${basedir}" />
 	</target>
 
 	<target name="gettarget" depends="target-properties, setmerge, setservicemerge, target-src-default, target-nosrc-default, prompttarget, settarget" />
@@ -151,7 +151,7 @@
 		<echo append="true" file="idp_ant.log">target: prompttarget
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Target (Install to) Directory" addproperty="idp.target.dir" defaultvalue="${idp.target.default}" />
+		<input message="Install to Directory: " addproperty="idp.target.dir" defaultvalue="${idp.target.default}" />
 	</target>
 
 	<target name="settarget" if="idp.set.target">
@@ -165,7 +165,7 @@
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
 		<local name="entityid" />
-		<input message="EntityID" addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
+		<input message="SAML EntityID: " addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
         <echo file="${idp.merge.properties}" append="yes">
 			idp.entityID=${entityid}
 		</echo>
@@ -183,16 +183,14 @@
     <target name="askscope" if="idp.ask.scope" depends="checkproperties">
 		<echo append="true" file="idp_ant.log">target: askscope
 		</echo>
-		<input message="Attribute Scope" addproperty="idp.scope" defaultvalue="${DOMAIN}" />
+		<input message="Attribute Scope: " addproperty="idp.scope" defaultvalue="${DOMAIN}" />
 		<echo file="${idp.merge.properties}" append="yes">
 		   idp.scope=${idp.scope}
 		</echo>
     </target>
 	
 	<!--
-
      KEY MANAGEMENT
-
     -->
 
 	<target name="genkeys" depends="init, preload, checkproperties, signing-key, encryption-key, backchannel-key, sealer" />
@@ -368,39 +366,41 @@
 	<target name="signing-key" unless="idp.relying.party.present" depends="gethostname, geturisubjectaltname">
 		<echo append="true" file="idp_ant.log">target: signing-key
 		</echo>
-		<echo>Creating Signing Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
+		<echo>Generating Signing Key, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
 		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-signing.key" certificateFile="${idp.target.dir}/credentials/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+		<echo>...done</echo>
 	</target>
 
 	<target name="encryption-key" unless="idp.relying.party.present" depends="gethostname, geturisubjectaltname">
 		<echo append="true" file="idp_ant.log">target: encryption-key
 		</echo>
-		<echo>Creating Encryption Key, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name}</echo>
+		<echo>Creating Encryption Key, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
 		<selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-encryption.key" certificateFile="${idp.target.dir}/credentials/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+		<echo>...done</echo>
 	</target>
 
 	<target name="backchannel-key" unless="idp.relying.party.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
 		<echo append="true" file="idp_ant.log">target: backchannel-key
 		</echo>
-		<echo>Creating TLS keystore, hostname ${idp.host.name} URI = ${idp.uri.subject.alt.name} password supressed</echo>
+		<echo>Creating TLS keystore, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
 		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/credentials/idp-backchannel.p12" certificateFile="${idp.target.dir}/credentials/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
+		<echo>...done</echo>
 	</target>
 
 	<target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
 		<echo append="true" file="idp_ant.log">target: sealer
 		</echo>
-		<echo>Creating sealer</echo>
+		<echo>Creating cookie encryption key files...</echo>
 		<mkdir dir="${idp.target.dir}/credentials"/>
 		<keystorestrategy keystoreFile="${idp.target.dir}/credentials/sealer.jks" versionFile="${idp.target.dir}/credentials/sealer.kver" keyAlias="${idp.sealer.alias}" keystorePassword="${idp.sealer.password}" />
+		<echo>...done</echo>
 	</target>
 
 	<!--
-
      GENERAL V3 TO V3 UPGRADE
-
     -->
 
 	<target name="upgrade" depends="editproperties, editservicesproperties, editldapproperties">
@@ -486,18 +486,18 @@
 	</target>
 	
 	<!--
-
      CREATE WAR FILE
-
     -->
 	<target name="build-war" depends="gettarget">
 		<!-- no logging -->
+		<echo>Rebuilding ${idp.target.dir}/war/idp.war ...</echo>
 		<copy todir="${idp.target.dir}/webapp" overwrite="true" failonerror="false">
 			<fileset dir="${idp.target.dir}/edit-webapp" />
 		</copy>
 		<!-- build a jar, not war, since it is already fully populated -->
 		<delete file="${idp.target.dir}/war/idp.war" failonerror="false" />
 		<jar destfile="${idp.target.dir}/war/idp.war" basedir="${idp.target.dir}/webapp" />
+		<echo>...done</echo>
 	</target>
 
 	<!-- specify getsource before get target to force target default-->
@@ -542,8 +542,7 @@
 		<delete dir="${idp.target.dir}/webapp" failonerror="false" />
 
 		<!-- Now copy or create empty as required.  
-		Creating an existing file is benign, bin gets 
-		updated -->
+		Creating an existing file is benign, bin gets updated -->
 
 		<copy todir="${idp.target.dir}/bin" overwrite="true">
 			<fileset dir="${idp.src.dir}/bin"  excludes="**/ant-jetty.xml"/>
@@ -645,7 +644,7 @@ A V2 Installation has been detected. Configuration will be preserved into
 		<available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
 		<available property="idp.relying.party.present" file="${idp.target.dir}/conf/relying-party.xml" />
 		<condition property="idp.is.V2">
-			<!-- This is V2 is there is relying-party.xml and not idp.properties -->
+			<!-- This is V2 as there is relying-party.xml and not idp.properties -->
 			<and>
 				<isfalse value="${idp.properties.present}" />
 				<istrue value="${idp.relying.party.present}" />
@@ -654,7 +653,7 @@ A V2 Installation has been detected. Configuration will be preserved into
 	</target>
 	
 	<target name="reprotect" depends="gettarget">
-		<!-- See IdP 487 -->
+		<!-- See IDP-487 -->
         <chmod perm="755" dir="${idp.target.dir}/bin" includes="**/*.sh"/>
         <chmod perm="600" dir="${idp.target.dir}/credentials" includes="**/*.key"/>
         <chmod perm="600" dir="${idp.target.dir}/conf" includes="**/*"/>
