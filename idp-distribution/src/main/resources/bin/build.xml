@@ -69,7 +69,7 @@
 		<echo append="true" file="idp_ant.log">target: gethostname
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Hostname: " addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}" />
+		<input message="Hostname:" addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}" />
 	</target>
 
 	<target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties, gethostname">
@@ -116,7 +116,7 @@
 		<echo append="true" file="idp_ant.log">target: getsource
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Source (Distribution) Directory: " addproperty="idp.src.dir" defaultvalue="${basedir}" />
+		<input message="Source (Distribution) Directory:" addproperty="idp.src.dir" defaultvalue="${basedir}" />
 	</target>
 
 	<target name="gettarget" depends="target-properties, setmerge, setservicemerge, target-src-default, target-nosrc-default, prompttarget, settarget" />
@@ -151,7 +151,7 @@
 		<echo append="true" file="idp_ant.log">target: prompttarget
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Install to Directory: " addproperty="idp.target.dir" defaultvalue="${idp.target.default}" />
+		<input message="Install to Directory:" addproperty="idp.target.dir" defaultvalue="${idp.target.default}" />
 	</target>
 
 	<target name="settarget" if="idp.set.target">
@@ -165,7 +165,7 @@
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
 		<local name="entityid" />
-		<input message="SAML EntityID: " addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
+		<input message="SAML EntityID:" addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
         <echo file="${idp.merge.properties}" append="yes">
 			idp.entityID=${entityid}
 		</echo>
@@ -183,7 +183,7 @@
     <target name="askscope" if="idp.ask.scope" depends="checkproperties">
 		<echo append="true" file="idp_ant.log">target: askscope
 		</echo>
-		<input message="Attribute Scope: " addproperty="idp.scope" defaultvalue="${DOMAIN}" />
+		<input message="Attribute Scope:" addproperty="idp.scope" defaultvalue="${DOMAIN}" />
 		<echo file="${idp.merge.properties}" append="yes">
 		   idp.scope=${idp.scope}
 		</echo>
