@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.script.ScriptException;
 
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -84,5 +85,18 @@ public class ScriptedFunctionTest {
         Assert.assertEquals(integer.intValue(), 37);
         
     }
+    
+    @Test(expectedExceptions={ClassCastException.class,}) public void wrongType() throws ScriptException {
+        final ScriptedContextLookupFunction script1 = ScriptedContextLookupFunction.inlineScript(stringReturn(), Object.class);
+        
+        script1.apply(new MessageContext<>());
+        
+    }
 
+    @Test public void messageContext() throws ScriptException {
+        final ScriptedContextLookupFunction<MessageContext> script1 = ScriptedContextLookupFunction.inlineMessageContextScript(stringReturn(), Object.class);
+        
+        Assert.assertEquals(script1.apply(new MessageContext<>()), "String");
+        Assert.assertEquals(script1.apply(null), "String");
+    }
 }
