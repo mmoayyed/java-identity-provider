@@ -12,8 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder />
-
     <!-- Use this file to define any custom beans needed globally. -->
     
 </beans>

@@ -12,8 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <context:property-placeholder />
-
     <!--
     Unverified RP configuration, defaults to no support for any profiles. Add <ref> elements to the list
     to enable specific default profile settings (as below), or create new beans inline to override defaults.
