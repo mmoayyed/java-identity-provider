@@ -27,7 +27,7 @@ public class PasswordHandler extends SecureInputHandler {
     @Override
     public void handleInput(InputRequest arg0) {
         while (true) {
-            System.console().printf("%s : ", arg0.getPrompt());
+            System.console().printf("%s", arg0.getPrompt());
             System.console().flush();
             char[] result  = System.console().readPassword();
             if (null == result || result.length == 0) {
@@ -35,7 +35,7 @@ public class PasswordHandler extends SecureInputHandler {
                 continue;
             }
             final String firstPass = String.copyValueOf(result);
-            System.console().printf("Confirm: ");
+            System.console().printf("Re-enter password: ");
             System.console().flush();
             result  = System.console().readPassword();
             if (null == result || result.length == 0) {
@@ -50,4 +50,5 @@ public class PasswordHandler extends SecureInputHandler {
             System.console().printf("Passwords did not match\n");
         }
     }
+    
 }
