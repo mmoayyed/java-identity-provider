@@ -140,6 +140,11 @@
       <Set name="EndpointIdentificationAlgorithm"></Set>
       <Set name="NeedClientAuth"><Property name="jetty.ssl.needClientAuth" default="false"/></Set>
       <Set name="WantClientAuth"><Property name="jetty.ssl.wantClientAuth" default="false"/></Set>
+      <Set name="excludeProtocols">
+        <Array type="String">
+          <Item>SSLv3</Item>
+        </Array>
+     </Set>
       <Set name="IncludeCipherSuites">
         <Array type="String">
           <Item>TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256</Item>
@@ -151,21 +156,18 @@
           <Item>TLS_RSA_WITH_AES_128_GCM_SHA256</Item>
           <Item>TLS_RSA_WITH_AES_256_GCM_SHA256</Item>
 
-          <Item>TLS_ECDHE_ECDSA_WITH_RC4_128_SHA</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA</Item>
 
-          <Item>TLS_ECDHE_RSA_WITH_RC4_128_SHA</Item>
           <Item>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256</Item>
           <Item>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</Item>
           <Item>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</Item>
           <Item>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA</Item>
           <Item>TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA</Item>
 
-          <Item>SSL_RSA_WITH_RC4_128_SHA</Item>
           <Item>TLS_RSA_WITH_AES_128_CBC_SHA256</Item>
           <Item>TLS_RSA_WITH_AES_256_CBC_SHA384</Item>
           <Item>TLS_RSA_WITH_AES_128_CBC_SHA</Item>
@@ -173,11 +175,6 @@
           <Item>SSL_RSA_WITH_3DES_EDE_CBC_SHA</Item>
         </Array>
       </Set>
-      <Set name="excludeProtocols">
-        <Array type="String">
-          <Item>SSLv3</Item>
-        </Array>
-     </Set>
     </New>
 
     <!-- ============================================================= -->
@@ -188,6 +185,11 @@
       <Set name="KeyStoreType"><Property name="jetty.backchannel.keystore.type" /></Set>
       <Set name="KeyStorePassword"><Property name="jetty.backchannel.keystore.password" /></Set>
       <Set name="EndpointIdentificationAlgorithm"></Set>
+      <Set name="excludeProtocols">
+        <Array type="String">
+          <Item>SSLv3</Item>
+        </Array>
+     </Set>
       <Set name="IncludeCipherSuites">
         <Array type="String">
           <Item>TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256</Item>
@@ -199,26 +201,20 @@
           <Item>TLS_RSA_WITH_AES_128_GCM_SHA256</Item>
           <Item>TLS_RSA_WITH_AES_256_GCM_SHA256</Item>
 
-          <Item>TLS_ECDHE_ECDSA_WITH_RC4_128_SHA</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA</Item>
           <Item>TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA</Item>
-          <Item>TLS_ECDHE_ECDSA_WITH_3DES_EDE_CBC_SHA</Item>
 
-          <Item>TLS_ECDHE_RSA_WITH_RC4_128_SHA</Item>
           <Item>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256</Item>
           <Item>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384</Item>
           <Item>TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA</Item>
           <Item>TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA</Item>
-          <Item>TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA</Item>
 
-          <Item>SSL_RSA_WITH_RC4_128_SHA</Item>
           <Item>TLS_RSA_WITH_AES_128_CBC_SHA256</Item>
           <Item>TLS_RSA_WITH_AES_256_CBC_SHA384</Item>
           <Item>TLS_RSA_WITH_AES_128_CBC_SHA</Item>
           <Item>TLS_RSA_WITH_AES_256_CBC_SHA</Item>
-          <Item>SSL_RSA_WITH_3DES_EDE_CBC_SHA</Item>
         </Array>
       </Set>
     </New>
