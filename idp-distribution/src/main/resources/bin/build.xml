@@ -151,7 +151,7 @@
 		<echo append="true" file="idp_ant.log">target: prompttarget
 		</echo>
 		<fail if="idp.noprompt">Input needed, silence demanded</fail>
-		<input message="Install to Directory:" addproperty="idp.target.dir" defaultvalue="${idp.target.default}" />
+		<input message="Installation Directory:" addproperty="idp.target.dir" defaultvalue="${idp.target.default}" />
 	</target>
 
 	<target name="settarget" if="idp.set.target">
