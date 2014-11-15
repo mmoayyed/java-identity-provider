@@ -29,7 +29,7 @@
     <util:map id="shibboleth.AccessControlPolicies">
     
         <entry key="AccessByIPAddress">
-            <bean class="net.shibboleth.utilities.java.support.security.IPRangeAccessControl"
+            <bean parent="shibboleth.IPRangeAccessControl"
                 p:allowedRanges="#{ {'127.0.0.1/32', '::1/128'} }" />
         </entry>
     
