@@ -31,6 +31,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -208,7 +209,7 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
      *
      * @return the issuer name
      */
-    @Nonnull public String getIssuerId() {
+    @Nonnull @NotEmpty public String getIssuerId() {
         Constraint.isNotNull(issuerId, "Issuer name has not been initialized yet");
         return issuerId;
     }
