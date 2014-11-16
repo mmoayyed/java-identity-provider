@@ -178,8 +178,9 @@ public final class SAMLEncoderSupport {
         
         final XMLObjectBuilder<ScopedValue> scopedValueBuilder = (XMLObjectBuilder<ScopedValue>)
                 XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(ScopedValue.TYPE_NAME);
-        final ScopedValue scopedValue = withType ? scopedValueBuilder.buildObject(attributeValueElementName)
-                : scopedValueBuilder.buildObject(attributeValueElementName, ScopedValue.TYPE_NAME);
+        final ScopedValue scopedValue =
+                withType ? scopedValueBuilder.buildObject(attributeValueElementName, ScopedValue.TYPE_NAME)
+                        : scopedValueBuilder.buildObject(attributeValueElementName);
 
         scopedValue.setScopeAttributeName(scopeAttributeName);
         scopedValue.setScope(value.getScope());
