@@ -195,7 +195,6 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
 
-        // RDBMS TODO wire in the template
         attribute = resolvedAttributes.get("pagerNumber");
         Assert.assertNotNull(attribute);
         values = attribute.getValues();

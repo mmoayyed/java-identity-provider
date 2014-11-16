@@ -49,8 +49,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.Sets;
 
-//TODO test during resolve: failover, requested attributes, bad pluginIDs, plugin throwing error, error propagation
-
 /** Test case for {@link AttributeResolverImpl}. */
 public class AttributeResolverImplTest {
     private final Logger log = LoggerFactory.getLogger(AttributeResolverImplTest.class);
