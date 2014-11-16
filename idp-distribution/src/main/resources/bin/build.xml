@@ -403,7 +403,7 @@
      GENERAL V3 TO V3 UPGRADE
     -->
 
-	<target name="upgrade" depends="editproperties, editservicesproperties, editldapproperties">
+	<target name="upgrade" depends="editproperties, editservicesproperties, editnameidproperties, editldapproperties">
 		<echo append="true" file="idp_ant.log">target: upgrade
 		</echo>
 		<!-- Create edit-webapp tree -->
