@@ -229,7 +229,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="shibmd:DynamicMetadataProviderType">
+            <extension base="shibmd:AbstractDynamicHTTPMetadataProviderType">
                 <choice minOccurs="0" maxOccurs="1">
                     <element name="Template">
                         <annotation>
@@ -243,10 +243,22 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
+                                    <attribute name="velocityEngine" type="string">
+                                        <annotation>
+                                            <documentation>Name of the Velocity Engine defined within the application.</documentation>
+                                        </annotation>
+                                    </attribute>
                                     <attribute name="encoded" type="string">
                                         <annotation>
                                             <documentation>
                                                 Boolean flag indicating whether the entityID should be encoded before substitution into the template.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                    <attribute name="transformRef" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Reference to an optional transform function for the entity ID.
                                             </documentation>
                                         </annotation>
                                     </attribute>
@@ -266,7 +278,7 @@
                         <complexType>
                             <simpleContent>
                                 <extension base="string">
-                                    <attribute name="match" type="string">
+                                    <attribute name="match" type="string" use="required">
                                         <annotation>
                                             <documentation>
                                                 Regular expression against which the entityID is evaluated.
@@ -277,7 +289,7 @@
                             </simpleContent>
                         </complexType>
                     </element>
-                    <element name="MetadataQueryProtocol" type="string">
+                    <element name="MetadataQueryProtocol">
                         <annotation>
                             <documentation>
                                 Constructs a metadata request URL based on the requirements of the Metadata Query Protocol.
@@ -285,8 +297,31 @@
                                 (TODO - reference to specification).
                             </documentation>
                         </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="transformRef" type="string">
+                                        <annotation>
+                                            <documentation>
+                                                Reference to an optional transform function for the entity ID.
+                                            </documentation>
+                                        </annotation>
+                                    </attribute>
+                                </extension>
+                            </simpleContent>
+                        </complexType>
                     </element>
                 </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+                
+    <complexType name="AbstractDynamicHTTPMetadataProviderType" abstract="true">
+        <annotation>
+            <documentation>A metadata provider that dynamically fetches metadata from an HTTP server.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataProviderType"> 
                 <attribute name="httpClientRef" type="string">
                     <annotation>
                         <documentation>
