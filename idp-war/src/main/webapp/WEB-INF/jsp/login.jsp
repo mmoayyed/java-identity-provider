@@ -83,6 +83,13 @@ final boolean identifiedRP = !rpContext.getRelyingPartyId().contains(rpUIContext
                 <input type="checkbox" name="donotcache" value="1" /> Don't Remember Login
                 <button class="form-element form-button" type="submit" name="_eventId_proceed" >Login</button>
               </section>
+              
+              <!--
+              <section>
+                <input id="_idp_revokeConsent" type="checkbox" name="_idp_revokeConsent" value="true"/>
+                Clear data release consent for this service
+              </section>
+              -->
             </form>
             
              <%
