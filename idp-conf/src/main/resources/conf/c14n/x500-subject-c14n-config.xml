@@ -14,7 +14,7 @@
 
     <!-- First priority is given to any subjectAltNames specified (emailAddress is 1) -->
     <util:list id="shibboleth.c14n.x500.SubjectAltNameTypes">
-        <value>1</value>
+        <!-- <value>1</value> -->
     </util:list>
 
     <!-- Second priority is a list of Certificate Subject RDN OIDs to look for. -->
