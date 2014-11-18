@@ -22,7 +22,7 @@
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="LogoutSucceeded" />
     </subflow-state>
-
+    
     <end-state id="LogoutSucceeded">
         <on-entry>
             <evaluate expression="WriteAuditLog" />
@@ -38,8 +38,16 @@
         </on-entry>
     </end-state>
 
+    <!-- Passthrough state if an exception is thrown. -->
+
+    <action-state id="LogRuntimeException">
+        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile').error('Uncaught runtime exception', rootCauseException)" />
+        <transition to="LogoutFailed" />
+    </action-state>
+
     <!-- Default is to turn non-proceed events into an error. -->
     <global-transitions>
+        <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="LogoutFailed" />
     </global-transitions>
 
