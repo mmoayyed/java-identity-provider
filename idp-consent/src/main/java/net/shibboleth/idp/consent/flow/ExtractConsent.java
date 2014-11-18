@@ -29,6 +29,8 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,26 +38,24 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Sets;
 
 /**
- * Consent action which reads serialized consent objects from an HTTP form body.
+ * Consent action which extracts user input and updates current consent objects in the consent context accordingly.
+ * 
+ * For every consent id passed via the {@link #CONSENT_IDS_REQUEST_PARAMETER} request parameter, this action sets
+ * {@link Consent#isApproved()} to true for the current consent object whose id matches the request parameter value. For
+ * every current consent object whose id is not passed as a request parameter, this action sets
+ * {@link Consent#isApproved()} to false.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}
+ * @post See above.
  */
 public class ExtractConsent extends AbstractConsentAction {
 
     /** Parameter name for consent IDs. */
-    @Nonnull @NotEmpty private static final String CONSENT_IDS_REQUEST_PARAMETER = "consentIds";
+    @Nonnull @NotEmpty public static final String CONSENT_IDS_REQUEST_PARAMETER = "consentIds";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractConsent.class);
-
-    /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
-
-        if (!(super.doPreExecute(profileRequestContext, interceptorContext))) {
-            return false;
-        }
-
-        return true;
-    }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -66,19 +66,20 @@ public class ExtractConsent extends AbstractConsentAction {
         final HttpServletRequest request = getHttpServletRequest();
         if (request == null) {
             log.debug("{} Profile action does not contain an HttpServletRequest", getLogPrefix());
-            // TODO ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
         }
 
-        final String[] consentParams = request.getParameterValues(CONSENT_IDS_REQUEST_PARAMETER);
-        log.debug("{} Consent parameter values '{}'", getLogPrefix(), consentParams);
-        if (consentParams == null) {
-            log.debug("{} No consent choices", getLogPrefix());
-            // TODO
+        final String[] consentIdsRequestParameterValues = request.getParameterValues(CONSENT_IDS_REQUEST_PARAMETER);
+        if (consentIdsRequestParameterValues == null) {
+            log.debug("{} No consent choices available from user input", getLogPrefix());
             return;
         }
 
-        final Collection<String> consentIds = StringSupport.normalizeStringCollection(Sets.newHashSet(consentParams));
+        final Collection<String> consentIds =
+                StringSupport.normalizeStringCollection(Sets.newHashSet(consentIdsRequestParameterValues));
+        log.debug("{} Extracted consent ids '{}' from request parameter '{}'", getLogPrefix(), consentIds,
+                CONSENT_IDS_REQUEST_PARAMETER);
 
         final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
         for (final Consent consent : currentConsents.values()) {
@@ -88,10 +89,6 @@ public class ExtractConsent extends AbstractConsentAction {
                 consent.setApproved(Boolean.FALSE);
             }
         }
-
-        // TODO Read expiration
-        // Long chosenExpiration = null;
-        // consentContext.setChosenExpiration(chosenExpiration);
 
         log.debug("{} Consent context '{}'", getLogPrefix(), consentContext);
     }

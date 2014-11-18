@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -38,20 +39,19 @@ import com.google.common.base.Function;
  * 
  * Ensures that
  * <ul>
+ * <li>a consent context exists in the profile request context</li>
  * <li>the flow descriptor is a {@link ConsentFlowDescriptor}</li>
  * </ul>
- * 
- * TODO details
  */
 public abstract class AbstractConsentAction extends AbstractProfileInterceptorAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractConsentAction.class);
 
-    /** The consent context to operate on. */
+    /** Consent context. */
     @Nullable private ConsentContext consentContext;
 
-    /** The consent flow descriptor. */
+    /** Consent flow descriptor. */
     @Nullable private ConsentFlowDescriptor consentFlowDescriptor;
 
     /** Strategy used to find the {@link ConsentContext} from the {@link ProfileRequestContext}. */
@@ -80,6 +80,16 @@ public abstract class AbstractConsentAction extends AbstractProfileInterceptorAc
         return consentFlowDescriptor;
     }
 
+    /**
+     * Set the consent context lookup strategy.
+     * 
+     * @param strategy the consent context lookup strategy
+     */
+    public void
+            setConsentContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, ConsentContext> strategy) {
+        consentContextLookupStrategy = Constraint.isNotNull(strategy, "Consent context lookup strategy cannot be null");
+    }
+
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
@@ -92,7 +102,7 @@ public abstract class AbstractConsentAction extends AbstractProfileInterceptorAc
         }
 
         if (!(interceptorContext.getAttemptedFlow() instanceof ConsentFlowDescriptor)) {
-            log.debug("{} ProfileInterceptorFlowDescriptor is not an ConsentFlowDescriptor", getLogPrefix());
+            log.debug("{} ProfileInterceptorFlowDescriptor is not a ConsentFlowDescriptor", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }

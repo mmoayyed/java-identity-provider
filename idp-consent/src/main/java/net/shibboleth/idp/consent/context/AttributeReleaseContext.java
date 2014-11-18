@@ -17,30 +17,32 @@
 
 package net.shibboleth.idp.consent.context;
 
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.collect.MapConstraints;
+import com.google.common.base.MoreObjects;
 
 /**
- * Context for attribute consent. Holds the attributes for which consent is obtained.
+ * Context for attribute release consent.
+ * 
+ * Holds the attributes for which consent is obtained.
  */
 public class AttributeReleaseContext extends BaseContext {
 
     /** Attributes to be consented to. */
-    @Nonnull @NonnullElements private Map<String, IdPAttribute> consentableAttributes;
+    @Nonnull @NonnullElements @Live private Map<String, IdPAttribute> consentableAttributes;
 
     /** Constructor. */
     public AttributeReleaseContext() {
-        consentableAttributes = Collections.emptyMap();
+        consentableAttributes = new LinkedHashMap<>();
     }
 
     /**
@@ -48,18 +50,14 @@ public class AttributeReleaseContext extends BaseContext {
      * 
      * @return the attributes to be consented to
      */
-    @Nonnull @NonnullElements public Map<String, IdPAttribute> getConsentableAttributes() {
+    @Nonnull @NonnullElements @Live public Map<String, IdPAttribute> getConsentableAttributes() {
         return consentableAttributes;
     }
 
-    /**
-     * Set the attributes to be consented to.
-     * 
-     * @param attributes the attributes to be consented to
-     */
-    public void setConsentableAttributes(@Nonnull @NonnullElements final Map<String, IdPAttribute> attributes) {
-        Constraint.isNotNull(attributes, "Consentable attributes cannot be null");
-
-        consentableAttributes = MapConstraints.constrainedMap(attributes, MapConstraints.notNull());
+    /** {@inheritDoc} */
+    @Override public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("consentableAttributes", consentableAttributes)
+                .toString();
     }
 }

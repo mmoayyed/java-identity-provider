@@ -25,25 +25,24 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Maps;
 
 /**
  * Context representing the state of a consent flow.
+ * 
+ * Holds consent previously given as well as obtained from user input.
  */
 public class ConsentContext extends BaseContext {
 
-    /** Previous consents read from storage. */
-    @Nonnull @NonnullElements private Map<String, Consent> previousConsents;
+    /** Map of previous consent read from storage and keyed by consent id. */
+    @Nonnull @NonnullElements @Live private Map<String, Consent> previousConsents;
 
-    /** Current consents extracted from user input. */
-    @Nonnull @NonnullElements private Map<String, Consent> currentConsents;
-    
+    /** Map of current consent extracted from user input and keyed by consent id. */
+    @Nonnull @NonnullElements @Live private Map<String, Consent> currentConsents;
+
     /** Constructor. */
     public ConsentContext() {
         previousConsents = new LinkedHashMap<>();
@@ -51,64 +50,21 @@ public class ConsentContext extends BaseContext {
     }
 
     /**
-     * Get current consents extracted from user input.
+     * Get map of current consent extracted from user input and keyed by consent id.
      * 
-     * @return consents extracted from user input
+     * @return map of current consent extracted from user input and keyed by consent id
      */
     @Nonnull @NonnullElements @Live public Map<String, Consent> getCurrentConsents() {
         return currentConsents;
     }
 
     /**
-     * Get previous consents read from storage.
+     * Get map of previous consent read from storage and keyed by consent id.
      * 
-     * @return consents read from storage
+     * @return map of previous consent read from storage and keyed by consent id
      */
     @Nonnull @NonnullElements @Live public Map<String, Consent> getPreviousConsents() {
         return previousConsents;
-    }
-
-    /**
-     * Set consents extracted from user input.
-     * 
-     * @param map consents extracted from user input
-     */
-    public void setCurrentConsents(@Nonnull @NonnullElements final Map<String, Consent> map) {
-        Constraint.isNotNull(map, "Current consents cannot be null");
-
-        currentConsents = ConsentContext.setMap(map);
-    }
-
-    /**
-     * Set previous consents read from storage.
-     * 
-     * @param map consents read from storage
-     */
-    public void setPreviousConsents(@Nonnull @NonnullElements final Map<String, Consent> map) {
-        Constraint.isNotNull(map, "Previous consents cannot be null");
-
-        previousConsents = ConsentContext.setMap(map);
-    }
-
-    /**
-     * Enforce @NonnullElements.
-     * 
-     * @param map the source map
-     * @return the map with no null elements
-     */
-    private static Map<String, Consent> setMap(@Nonnull @NonnullElements final Map<String, Consent> map) {
-
-        final Map<String, Consent> newMap = Maps.newHashMapWithExpectedSize(map.size());
-        for (final Map.Entry<String, Consent> entry : map.entrySet()) {
-            if (entry.getValue() != null) {
-                final String trimmed = StringSupport.trimOrNull(entry.getKey());
-                if (trimmed != null) {
-                    newMap.put(trimmed, entry.getValue());
-                }
-            }
-        }
-
-        return newMap;
     }
 
     /** {@inheritDoc} */

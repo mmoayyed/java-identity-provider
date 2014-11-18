@@ -34,6 +34,9 @@ import com.google.common.base.Function;
 /**
  * Consent action which populates the current consents of a consent context with the output value of a function whose
  * input value is a profile request context.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @post See above.
  */
 public class PopulateConsentContext extends AbstractConsentAction {
 
@@ -56,6 +59,6 @@ public class PopulateConsentContext extends AbstractConsentAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
-        getConsentContext().setCurrentConsents(function.apply(profileRequestContext));
+        getConsentContext().getCurrentConsents().putAll(function.apply(profileRequestContext));
     }
 }

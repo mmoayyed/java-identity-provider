@@ -29,7 +29,8 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 /**
  * Descriptor for a consent flow.
  * 
- * TODO details
+ * A consent flow models a sequence of actions which retrieves consent from storage as well as extracts consent from
+ * user input.
  */
 public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
 

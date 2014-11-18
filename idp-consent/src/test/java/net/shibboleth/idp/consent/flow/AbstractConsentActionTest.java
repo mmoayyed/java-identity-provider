@@ -17,37 +17,38 @@
 
 package net.shibboleth.idp.consent.flow;
 
-import javax.annotation.Nonnull;
-
 import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.interceptor.AbstractProfileInterceptorAction;
+import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
+import org.testng.annotations.BeforeMethod;
 
-/**
- * Action that creates a {@link ConsentContext} and attaches it to the current {@link ProfileRequestContext}.
- * 
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @post See above.
- */
-public class InitializeConsentContext extends AbstractProfileInterceptorAction {
+/** {@link AbstractConsentAction} unit test. */
+public abstract class AbstractConsentActionTest {
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeConsentContext.class);
+    protected RequestContext src;
 
-    /** {@inheritDoc} */
-    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
+    protected ProfileRequestContext prc;
 
-        final ConsentContext consentContext = new ConsentContext();
+    protected ConsentFlowDescriptor descriptor;
 
-        log.debug("{} Created consent context '{}'", getLogPrefix(), consentContext);
+    protected AbstractConsentAction action;
 
-        profileRequestContext.addSubcontext(consentContext, true);
+    @BeforeMethod public void setUp() throws Exception {
+        src = new RequestContextBuilder().buildRequestContext();
+        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
-        super.doExecute(profileRequestContext, interceptorContext);
+        prc.addSubcontext(new ConsentContext(), true);
+
+        descriptor = new ConsentFlowDescriptor();
+        descriptor.setId("test");
+
+        final ProfileInterceptorContext pic = new ProfileInterceptorContext();
+        pic.setAttemptedFlow(descriptor);
+        prc.addSubcontext(pic);
     }
+
 }
