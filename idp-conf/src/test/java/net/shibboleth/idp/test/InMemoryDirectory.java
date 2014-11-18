@@ -43,7 +43,24 @@ public class InMemoryDirectory {
     @Nonnull private final InMemoryDirectoryServer directoryServer;
 
     /**
-     * Default constructor.
+     * Constructor without STARTTLS support.
+     * 
+     * @param LDIF the LDIF resource to be imported
+     * 
+     * @throws LDAPException if the in-memory directory server cannot be created
+     * @throws IOException if the LDIF resource cannot be imported
+     */
+    public InMemoryDirectory(@Nonnull final Resource ldif) throws LDAPException, IOException {
+        Constraint.isNotNull(ldif, "LDIF resource cannot be null");
+        final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=example,dc=org", "ou=system");
+        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10389));
+        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
+        directoryServer = new InMemoryDirectoryServer(config);
+        directoryServer.importFromLDIF(true, new LDIFReader(ldif.getInputStream()));
+    }
+    
+    /**
+     * Constructor with STARTTLS support.
      * 
      * @param ldif the LDIF resource to be imported
      * @param keystore to use for startTLS
