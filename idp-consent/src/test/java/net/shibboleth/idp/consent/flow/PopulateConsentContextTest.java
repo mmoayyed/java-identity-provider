@@ -53,7 +53,7 @@ public class PopulateConsentContextTest extends AbstractConsentActionTest {
 
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
         Assert.assertNotNull(consentContext);
-        Assert.assertEquals(consentContext.getCurrentConsents(), ConsentTestingSupport.getMap());
+        Assert.assertEquals(consentContext.getCurrentConsents(), ConsentTestingSupport.newConsentMap());
     }
 
     /** Mock function which returns current consents. */
@@ -61,7 +61,7 @@ public class PopulateConsentContextTest extends AbstractConsentActionTest {
 
         /** {@inheritDoc} */
         public Map<String, Consent> apply(@Nonnull final ProfileRequestContext input) {
-            return ConsentTestingSupport.getMap();
+            return ConsentTestingSupport.newConsentMap();
         }
     }
 

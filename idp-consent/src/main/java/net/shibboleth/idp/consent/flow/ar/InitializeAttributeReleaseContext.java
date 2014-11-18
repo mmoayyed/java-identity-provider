@@ -30,7 +30,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Action that creates an {@link AttributeReleaseContext} and attaches it to the current {@link ProfileRequestContext}.
  * 
- * TODO details
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @post See above.
  */
 public class InitializeAttributeReleaseContext extends AbstractProfileInterceptorAction {
 

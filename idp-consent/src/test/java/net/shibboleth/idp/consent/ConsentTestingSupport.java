@@ -20,12 +20,18 @@ package net.shibboleth.idp.consent;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+
+import com.google.common.collect.Sets;
+
 /**
  * Helper methods for creating test objects for consent action tests.
  */
 public class ConsentTestingSupport {
 
-    public static Map<String, Consent> getMap() {
+    public static Map<String, Consent> newConsentMap() {
 
         final Consent consent1 = new Consent();
         consent1.setId("consent1");
@@ -38,6 +44,31 @@ public class ConsentTestingSupport {
         final Map<String, Consent> map = new HashMap<>();
         map.put(consent1.getId(), consent1);
         map.put(consent2.getId(), consent2);
+
+        return map;
+    }
+
+    public static final Map<String, IdPAttribute> newAttributeMap() {
+
+        final IdPAttributeValue<?> value1 = new StringAttributeValue("value1");
+
+        final IdPAttributeValue<?> value2 = new StringAttributeValue("value2");
+
+        final IdPAttributeValue<?> value3 = new StringAttributeValue("value3");
+
+        final IdPAttribute attribute1 = new IdPAttribute("attribute1");
+        attribute1.setValues(Sets.newHashSet(value1));
+
+        final IdPAttribute attribute2 = new IdPAttribute("attribute2");
+        attribute2.setValues(Sets.newHashSet(value1, value2));
+
+        final IdPAttribute attribute3 = new IdPAttribute("attribute3");
+        attribute3.setValues(Sets.newHashSet(value3));
+
+        final Map<String, IdPAttribute> map = new HashMap<>();
+        map.put(attribute1.getId(), attribute1);
+        map.put(attribute2.getId(), attribute2);
+        map.put(attribute3.getId(), attribute3);
 
         return map;
     }

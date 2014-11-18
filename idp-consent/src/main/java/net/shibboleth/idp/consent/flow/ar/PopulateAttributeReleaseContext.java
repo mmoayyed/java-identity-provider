@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -34,9 +35,11 @@ import com.google.common.collect.Maps;
 
 /**
  * Attribute consent action to populate the attribute consent context with the attributes for which consent should be
- * obtained.
+ * obtained. A predicate is used to determine whether consent should be obtained for each IdP attribute in the attribute
+ * context.
  * 
- * TODO details
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @post See above.
  */
 public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAction {
 
@@ -56,24 +59,30 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
     }
 
     /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (attributePredicate == null) {
+            throw new ComponentInitializationException("Attribute predicate cannot be null");
+        }
+    }
+
+    /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
 
         final Map<String, IdPAttribute> consentableAttributes = Maps.newHashMapWithExpectedSize(attributes.size());
-
         for (final IdPAttribute attribute : attributes.values()) {
             if (attributePredicate.apply(attribute)) {
                 consentableAttributes.put(attribute.getId(), attribute);
             }
         }
 
-        consentableAttributes.putAll(attributes);
-
         getAttributeReleaseContext().getConsentableAttributes().putAll(consentableAttributes);
-        
-        log.debug("{} Consentable attributes are '{}'", getLogPrefix(), consentableAttributes);
+
+        log.debug("{} Consentable attributes '{}'", getLogPrefix(), consentableAttributes);
     }
 
 }

@@ -36,7 +36,7 @@ public class ConsentContextTest {
     @BeforeMethod public void setUp() {
         ctx = new ConsentContext();
 
-        map = ConsentTestingSupport.getMap();
+        map = ConsentTestingSupport.newConsentMap();
     }
 
     @Test public void testInstantiation() {

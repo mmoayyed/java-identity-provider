@@ -34,7 +34,7 @@ public class ExtractConsentTest extends AbstractConsentActionTest {
 
     @BeforeMethod public void setUpCurrentConsents() throws Exception {
         final ConsentContext consentContext = prc.getSubcontext(ConsentContext.class, false);
-        consentContext.getCurrentConsents().putAll(ConsentTestingSupport.getMap());
+        consentContext.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
     }
 
     @Test public void testMissingHttpServletRequest() throws Exception {
