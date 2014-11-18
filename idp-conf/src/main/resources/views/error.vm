@@ -7,7 +7,14 @@
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 
-#if ($flowRequestContext)
+#if ($rootCauseException)
+    ## This handles uncaught runtime exceptions within flows, which we can't plan for.
+    #set ($springContext = $flowRequestContext.getActiveFlow().getApplicationContext())
+    #set ($locale = $flowRequestContext.getExternalContext().getLocale())
+    #set ($titleSuffix = "Uncaught Exception")
+    #set ($message = $encoder.encodeForHTML($rootCauseException.toString()))
+#elseif ($flowRequestContext)
+	## This handles flow events, the most common case.
     #set ($eventId = $flowRequestContext.getCurrentEvent().getId())
     #set ($springContext = $flowRequestContext.getActiveFlow().getApplicationContext())
     #set ($locale = $flowRequestContext.getExternalContext().getLocale())
@@ -23,11 +30,13 @@
         $response.setStatus(500)
     #end
 #elseif ($exception)
+	## This handles exceptions that reach the Spring-MVC exception handler.
     #set ($eventId = $exception.getClass().getSimpleName())
     #set ($eventKey = $springContext.getMessage($eventId, null, "error", $request.getLocale()))
     #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, "Error", $request.getLocale()))
     #set ($message = $springContext.getMessage("${eventKey}.message", null, "ERROR: $eventId", $request.getLocale()))
 #else
+	## This is a catch-all that theoretically shouldn't happen?
     #set ($titleSuffix = "Error")
     #set ($message = "No specific error available")
 #end

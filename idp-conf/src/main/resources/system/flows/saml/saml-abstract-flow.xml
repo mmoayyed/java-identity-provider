@@ -123,6 +123,13 @@
         <transition to="HandleErrorWithView" />
     </action-state>
 
+    <!-- Passthrough state if an exception is thrown. -->
+
+    <action-state id="LogRuntimeException">
+        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.saml.profile').error('Uncaught runtime exception', rootCauseException)" />
+        <transition to="HandleError" />
+    </action-state>
+
     <!-- Unsuccessful terminal state. -->
     
     <end-state id="HandleErrorWithView" view="#{MapEventToView.apply(currentEvent)}">
@@ -149,6 +156,7 @@
     defined by action in child flows.
     -->
     <global-transitions>
+        <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>
 
