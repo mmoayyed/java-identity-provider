@@ -121,5 +121,19 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
+    
+    @Test
+    public void testRegex() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamicRegex.xml", "beans.xml");
+        
+        String entityID = "https://idp.example.org/idp/shibboleth";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
 
 }
