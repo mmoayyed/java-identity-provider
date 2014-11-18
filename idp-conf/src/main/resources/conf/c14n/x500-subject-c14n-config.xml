@@ -12,6 +12,16 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <!-- First priority is given to any subjectAltNames specified (emailAddress is 1) -->
+    <util:list id="shibboleth.c14n.x500.SubjectAltNameTypes">
+        <value>1</value>
+    </util:list>
+
+    <!-- Second priority is a list of Certificate Subject RDN OIDs to look for. -->
+    <util:list id="shibboleth.c14n.x500.ObjectIDs">
+        <value>2.5.4.3</value>
+    </util:list>
+
     <!-- Simple transforms to apply to username after authentication. -->
     <util:constant id="shibboleth.c14n.x500.Lowercase" static-field="java.lang.Boolean.FALSE"/>
     <util:constant id="shibboleth.c14n.x500.Uppercase" static-field="java.lang.Boolean.FALSE"/>

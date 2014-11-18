@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -41,19 +42,25 @@ import org.cryptacular.x509.dn.Attributes;
 import org.cryptacular.x509.dn.NameReader;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
  * {@link ProfileRequestContext}, and transforms the input {@link javax.security.auth.Subject}
- * into a principal name by searching for one and only one {@link X500Principal} custom principal.
+ * into a principal name by searching for one and only one {@link X509Certificate} public credential.
  * 
- * <p>A list of OIDs is used to locate an RDN to extract from the DN and use as the principal name
+ * <p>A list of OIDs is used to locate an RDN to extract from the Subject DN and use as the principal name
  * after applying the transforms from the base class.</p>
+ * 
+ * <p>Alternatively, a list of subjectAltName extension types may be specified, which takes precedence
+ * over the subject, if a match is found.</p>
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#INVALID_SUBJECT}
@@ -72,18 +79,34 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     /** Supplies logic for pre-execute test. */
     @Nonnull private final ActivationCondition embeddedPredicate;
     
+    /** subjectAltName types to search for. */
+    @Nonnull @NonnullElements private List<Integer> subjectAltNameTypes;
+    
     /** OIDs to search for. */
     @Nonnull @NonnullElements private List<String> objectIds;
     
-    /** The custom Principal to operate on. */
-    @Nullable private X500Principal x500Principal;
+    /** The certificate to operate on. */
+    @Nullable private X509Certificate certificate;
     
     /** Constructor. */
     public X500SubjectCanonicalization() {
         embeddedPredicate = new ActivationCondition();
+        subjectAltNameTypes = Collections.emptyList();
         objectIds = Collections.singletonList(CN_OID);
     }
-    
+
+    /**
+     * Set the subjectAltName types to search for, in order of preference.
+     * 
+     * @param types types to search for
+     */
+    public void setSubjectAltNameTypes(@Nonnull @NonnullElements final List<Integer> types) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(types, "Type list cannot be null");
+        
+        subjectAltNameTypes = Lists.newArrayList(Collections2.filter(types, Predicates.notNull()));
+    }
+
     /**
      * Set the OIDs to search for, in order of preference.
      * 
@@ -103,7 +126,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
         if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
-            x500Principal = c14nContext.getSubject().getPrincipals(X500Principal.class).iterator().next();
+            certificate = c14nContext.getSubject().getPublicCredentials(X509Certificate.class).iterator().next();
             return super.doPreExecute(profileRequestContext, c14nContext);
         }
         
@@ -114,21 +137,43 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
+
+        if (!subjectAltNameTypes.isEmpty()) {
+            log.debug("{} Searching for subjectAltName types ({})", getLogPrefix(), subjectAltNameTypes);
+            final List altnames = X509Support.getAltNames(certificate, subjectAltNameTypes.toArray(new Integer[0]));
+            for (final Object altname : altnames) {
+                if (altname instanceof String) {
+                    log.debug("{} Extracted String-valued subjectAltName: {}", getLogPrefix(), altname);
+                    c14nContext.setPrincipalName(applyTransforms((String) altname));
+                    return;
+                }
+            }
+            log.debug("{} No suitable subjectAltName extension");
+        }
+        
+        final X500Principal x500Principal = certificate.getSubjectX500Principal();
         
         log.debug("{} Searching for RDN to extract from DN: {}", getLogPrefix(), x500Principal.getName());
         
-        final Attributes dnAttrs = NameReader.readX500Principal(x500Principal);
-        for (final String oid : objectIds) {
-            final String rdn = findRDN(dnAttrs, oid);
-            if (rdn != null) {
-                log.debug("{} Extracted RDN with OID {}: {}", getLogPrefix(), oid, rdn);
-                c14nContext.setPrincipalName(applyTransforms(rdn));
-                return;
+        try {
+            final Attributes dnAttrs = NameReader.readX500Principal(x500Principal);
+            for (final String oid : objectIds) {
+                final String rdn = findRDN(dnAttrs, oid);
+                if (rdn != null) {
+                    log.debug("{} Extracted RDN with OID {}: {}", getLogPrefix(), oid, rdn);
+                    c14nContext.setPrincipalName(applyTransforms(rdn));
+                    return;
+                }
             }
+            
+            log.warn("{} Unable to extract a suitable RDN from DN: {}", getLogPrefix(), x500Principal.getName());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            
+        } catch (final IllegalArgumentException e) {
+            log.warn("{} Unable to parse subject DN: {}", getLogPrefix(),  x500Principal.getName(), e);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
+            return;
         }
-        
-        log.warn("{} Unable to extract a suitable RDN from DN: {}", getLogPrefix(), x500Principal.getName());
-        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
     }
     
     /**
@@ -184,29 +229,29 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
         public boolean apply(@Nonnull final ProfileRequestContext profileRequestContext,
                 @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
 
-            final Set<X500Principal> usernames;
+            final Set<X509Certificate> certificates;
             if (c14nContext.getSubject() != null) {
-                usernames = c14nContext.getSubject().getPrincipals(X500Principal.class);
+                certificates = c14nContext.getSubject().getPublicCredentials(X509Certificate.class);
             } else {
-                usernames = null;
+                certificates = null;
             }
             
             if (duringAction) {
-                if (usernames == null || usernames.isEmpty()) {
+                if (certificates == null || certificates.isEmpty()) {
                     c14nContext.setException(
-                            new SubjectCanonicalizationException("No X500Principals were found"));
+                            new SubjectCanonicalizationException("No X509Certificates were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
-                } else if (usernames.size() > 1) {
+                } else if (certificates.size() > 1) {
                     c14nContext.setException(
-                            new SubjectCanonicalizationException("Multiple X500Principals were found"));
+                            new SubjectCanonicalizationException("Multiple X509Certificates were found"));
                     ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
                     return false;
                 }
                 
                 return true;
             } else {
-                return usernames != null && usernames.size() == 1;
+                return certificates != null && certificates.size() == 1;
             }
         }
         
