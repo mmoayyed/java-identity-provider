@@ -59,19 +59,11 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
+        if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
+            return false;
+        }
+        
         // TODO build some event when required data is missing ?
-
-        flowDescriptor = interceptorContext.getAttemptedFlow();
-        if (flowDescriptor == null) {
-            log.debug("{} No flow descriptor within interceptor context", getLogPrefix());
-            return false;
-        }
-
-        storageService = flowDescriptor.getStorageService();
-        if (storageService == null) {
-            log.debug("{} No storage service available from interceptor flow descriptor", getLogPrefix());
-            return false;
-        }
 
         results = interceptorContext.getResults();
         if (results.isEmpty()) {
@@ -79,7 +71,19 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
             return false;
         }
 
-        return super.doPreExecute(profileRequestContext, interceptorContext);
+        flowDescriptor = interceptorContext.getAttemptedFlow();
+        if (flowDescriptor == null) {
+            log.warn("{} No flow descriptor within interceptor context", getLogPrefix());
+            return false;
+        }
+
+        storageService = flowDescriptor.getStorageService();
+        if (storageService == null) {
+            log.warn("{} No storage service available from interceptor flow descriptor", getLogPrefix());
+            return false;
+        }
+
+        return true;
     }
 
     /** {@inheritDoc} */
