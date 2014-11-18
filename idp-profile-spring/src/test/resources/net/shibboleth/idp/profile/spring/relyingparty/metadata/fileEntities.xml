@@ -5,7 +5,7 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
     parserPoolRef="myParserPool" refreshDelayFactor="0.5" maxRefreshDelay="PT55M" minRefreshDelay="PT15M"
-	id="fileEntities" xsi:type="metadata:FilesystemMetadataProvider" metadataFile="${DIR}/entities.xml">
+	id="fileEntities" xsi:type="metadata:FilesystemMetadataProvider" metadataFile="%{DIR}/entities.xml">
 
 </metadata:MetadataProvider>
                                    

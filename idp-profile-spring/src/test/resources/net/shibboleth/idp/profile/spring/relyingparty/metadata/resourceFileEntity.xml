@@ -7,7 +7,7 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
 	id="resourceFileEntity" xsi:type="metadata:ResourceBackedMetadataProvider">
-    <metadata:MetadataResource xsi:type="resource:FilesystemResource" file="${DIR}/entity.xml"/>
+    <metadata:MetadataResource xsi:type="resource:FilesystemResource" file="%{DIR}/entity.xml"/>
 
 </metadata:MetadataProvider>
                                    

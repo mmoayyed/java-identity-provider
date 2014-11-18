@@ -98,6 +98,8 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
      */
     protected void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
         PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        placeholderConfig.setPlaceholderPrefix("%{");
+        placeholderConfig.setPlaceholderSuffix("}");
 
         MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
         MockPropertySource mockEnvVars = new MockPropertySource();
