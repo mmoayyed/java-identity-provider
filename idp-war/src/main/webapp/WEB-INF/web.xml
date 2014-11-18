@@ -74,6 +74,7 @@
         <url-pattern>/profile/SAML2/Redirect/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
+        <url-pattern>/profile/cas/login</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ClientSessionStorageServiceFilter</filter-name>
@@ -86,6 +87,7 @@
         <url-pattern>/profile/SAML2/Redirect/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
+        <url-pattern>/profile/cas/login</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ClientPersistentStorageServiceFilter</filter-name>
@@ -94,6 +96,7 @@
         <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
+        <url-pattern>/profile/cas/login</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
