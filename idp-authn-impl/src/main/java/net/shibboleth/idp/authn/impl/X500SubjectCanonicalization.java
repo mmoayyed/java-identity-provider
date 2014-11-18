@@ -54,7 +54,8 @@ import com.google.common.collect.Lists;
 /**
  * An action that operates on a {@link SubjectCanonicalizationContext} child of the current
  * {@link ProfileRequestContext}, and transforms the input {@link javax.security.auth.Subject}
- * into a principal name by searching for one and only one {@link X509Certificate} public credential.
+ * into a principal name by searching for one and only one {@link X509Certificate} public credential,
+ * or in its absence one and only one {@link X500Principal}.
  * 
  * <p>A list of OIDs is used to locate an RDN to extract from the Subject DN and use as the principal name
  * after applying the transforms from the base class.</p>
@@ -87,6 +88,9 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     
     /** The certificate to operate on. */
     @Nullable private X509Certificate certificate;
+    
+    /** The subject DN to operate on. */
+    @Nullable private X500Principal x500Principal;
     
     /** Constructor. */
     public X500SubjectCanonicalization() {
@@ -125,11 +129,25 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
-        if (embeddedPredicate.apply(profileRequestContext, c14nContext, true)) {
-            certificate = c14nContext.getSubject().getPublicCredentials(X509Certificate.class).iterator().next();
+        final Set<X509Certificate> certificates =
+                c14nContext.getSubject().getPublicCredentials(X509Certificate.class);
+        if (certificates != null && certificates.size() == 1) {
+            certificate = certificates.iterator().next();
+            x500Principal = certificate.getSubjectX500Principal();
+        } else {
+            final Set<X500Principal> principals = c14nContext.getSubject().getPrincipals(X500Principal.class);
+            if (principals != null && principals.size() == 1) {
+                x500Principal = principals.iterator().next();
+            }
+        }
+        
+        if (x500Principal != null) {
             return super.doPreExecute(profileRequestContext, c14nContext);
         }
         
+        c14nContext.setException(new SubjectCanonicalizationException(
+                "Neither a single X509Certificate nor X500Principal were found"));
+        ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
         return false;
     }
     
@@ -138,7 +156,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
 
-        if (!subjectAltNameTypes.isEmpty()) {
+        if (certificate != null && !subjectAltNameTypes.isEmpty()) {
             log.debug("{} Searching for subjectAltName types ({})", getLogPrefix(), subjectAltNameTypes);
             final List altnames = X509Support.getAltNames(certificate, subjectAltNameTypes.toArray(new Integer[0]));
             for (final Object altname : altnames) {
@@ -150,8 +168,6 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
             }
             log.debug("{} No suitable subjectAltName extension");
         }
-        
-        final X500Principal x500Principal = certificate.getSubjectX500Principal();
         
         log.debug("{} Searching for RDN to extract from DN: {}", getLogPrefix(), x500Principal.getName());
         
@@ -229,30 +245,25 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
         public boolean apply(@Nonnull final ProfileRequestContext profileRequestContext,
                 @Nonnull final SubjectCanonicalizationContext c14nContext, final boolean duringAction) {
 
-            final Set<X509Certificate> certificates;
             if (c14nContext.getSubject() != null) {
-                certificates = c14nContext.getSubject().getPublicCredentials(X509Certificate.class);
-            } else {
-                certificates = null;
+                final Set<X509Certificate> certificates =
+                        c14nContext.getSubject().getPublicCredentials(X509Certificate.class);
+                if (certificates != null && certificates.size() == 1) {
+                    return true;
+                }
+                
+                final Set<X500Principal> principals = c14nContext.getSubject().getPrincipals(X500Principal.class);
+                if (principals != null && principals.size() == 1) {
+                    return true;
+                }
             }
             
             if (duringAction) {
-                if (certificates == null || certificates.isEmpty()) {
-                    c14nContext.setException(
-                            new SubjectCanonicalizationException("No X509Certificates were found"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
-                } else if (certificates.size() > 1) {
-                    c14nContext.setException(
-                            new SubjectCanonicalizationException("Multiple X509Certificates were found"));
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-                    return false;
-                }
-                
-                return true;
-            } else {
-                return certificates != null && certificates.size() == 1;
+                c14nContext.setException(new SubjectCanonicalizationException(
+                        "Neither a single X509Certificate nor X500Principal were found"));
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             }
+            return false;
         }
         
     }
