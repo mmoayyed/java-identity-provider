@@ -22,6 +22,7 @@ import com.google.common.base.Functions;
 import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
@@ -44,9 +45,7 @@ public class BuildSAMLMetadataContextActionTest extends AbstractFlowActionTest {
     private BuildSAMLMetadataContextAction action;
 
     private Function<ProfileRequestContext, SAMLMetadataContext> mdLookupFunction =
-            Functions.compose(
-                    new ChildContextLookup<RelyingPartyContext, SAMLMetadataContext>(SAMLMetadataContext.class),
-                    new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
+            new SAMLMetadataContextLookupFunction();
 
     @Test
     public void testServiceWithGroup() throws Exception {
@@ -60,7 +59,7 @@ public class BuildSAMLMetadataContextActionTest extends AbstractFlowActionTest {
         assertNotNull(mdc);
         final List<EntityGroupName> groups = mdc.getEntityDescriptor().getObjectMetadata().get(EntityGroupName.class);
         assertEquals(groups.size(), 1);
-        assertEquals(groups.get(0).getName(), service.getName());
+        assertEquals(groups.get(0).getName(), service.getGroup());
     }
 
     @Test

@@ -44,7 +44,7 @@ public class BuildSAMLMetadataContextAction extends AbstractCASProtocolAction {
         }
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(new ServiceEntityDescriptor(getCASService(profileRequestContext)));
-        rpCtx.addSubcontext(mdCtx);
+        rpCtx.setRelyingPartyIdContextTree(mdCtx);
 
         return ActionSupport.buildProceedEvent(this);
     }

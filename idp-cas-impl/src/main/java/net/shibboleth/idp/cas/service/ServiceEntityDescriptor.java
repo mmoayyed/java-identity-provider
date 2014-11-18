@@ -74,7 +74,7 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
         this.service = Constraint.isNotNull(service, "Service cannot be null");
         this.objectMetadata = new LockableClassToInstanceMultiMap<>(true);
         if (StringSupport.trimOrNull(service.getGroup()) != null) {
-            this.objectMetadata.put(new EntityGroupName(service.getName()));
+            this.objectMetadata.put(new EntityGroupName(service.getGroup()));
         }
     }
 
