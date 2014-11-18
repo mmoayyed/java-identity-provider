@@ -34,21 +34,23 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 
 /**
- * Attribute consent action which constraints the attributes released to those consented to.
+ * Attribute consent action which constrains the attributes released to those consented to.
  * 
- * TODO details
+ * For every IdP attribute in the attribute context, this action will release the attribute iff consent for the
+ * attribute has been approved.
+ * 
+ * Consent is obtained from the consent context. If there are no current consents then the previous consents are used to
+ * determine the attributes to be released. The current consents will be present if user input has been obtained during
+ * the attribute release flow. The previous consents will be used when there is no user interaction, for example if
+ * there are no new attributes to consent to.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @post See above.
  */
 public class ReleaseAttributes extends AbstractAttributeReleaseAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ReleaseAttributes.class);
-
-    /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
-        // TODO Auto-generated method stub
-        return super.doPreExecute(profileRequestContext, interceptorContext);
-    }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -60,20 +62,21 @@ public class ReleaseAttributes extends AbstractAttributeReleaseAction {
         log.debug("{} Consents '{}'", getLogPrefix(), consents);
 
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
-        log.debug("{} Attributes '{}'", getLogPrefix(), attributes);
+        log.debug("{} Attributes before release '{}'", getLogPrefix(), attributes);
 
         final Map<String, IdPAttribute> releasedAttributes = new HashMap<String, IdPAttribute>();
 
         for (final IdPAttribute attribute : attributes.values()) {
             if (!consents.containsKey(attribute.getId())) {
-                // TODO shouldn't happen
+                log.debug("{} Unknown attribute '{}' will not be released", getLogPrefix(), attribute);
+                continue;
             }
             final Consent consent = consents.get(attribute.getId());
             if (consent.isApproved()) {
-                log.debug("{} Attribute '{}' is consented to", getLogPrefix(), attribute);
+                log.debug("{} Release of attribute '{}' is consented to", getLogPrefix(), attribute);
                 releasedAttributes.put(attribute.getId(), attribute);
             } else {
-                log.debug("{} Attribute '{}' is not consented to", getLogPrefix(), attribute);
+                log.debug("{} Release of attribute '{}' is not consented to", getLogPrefix(), attribute);
             }
         }
 

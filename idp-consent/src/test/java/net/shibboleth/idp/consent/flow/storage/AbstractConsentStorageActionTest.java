@@ -15,29 +15,22 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.consent.flow.ar;
+package net.shibboleth.idp.consent.flow.storage;
 
-import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.consent.ConsentTestingSupport;
-import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.AbstractConsentActionTest;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
+import org.opensaml.storage.impl.MemoryStorageService;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 
-/** {@link AbstractAttributeReleaseAction} unit test. */
-public abstract class AbstractAttributeReleaseActionTest extends AbstractConsentActionTest {
+/** {@link AbstractConsentStorageAction} unit test. */
+public abstract class AbstractConsentStorageActionTest extends AbstractConsentActionTest {
 
-    @BeforeMethod public void setUpAttributeReleaseAction() throws Exception {
-        final AttributeContext attributeCtx = new AttributeContext();
-        attributeCtx.setIdPAttributes(ConsentTestingSupport.newAttributeMap().values());
-        prc.getSubcontext(RelyingPartyContext.class, true).addSubcontext(attributeCtx);
-
-        prc.addSubcontext(new AttributeReleaseContext(), true);
-
-        descriptor = new AttributeReleaseFlowDescriptor();
-        descriptor.setId("test");
-        prc.getSubcontext(ProfileInterceptorContext.class, false).setAttemptedFlow(descriptor);
+    @BeforeMethod public void setUpMemoryStorageService() {
+        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        Assert.assertNotNull(pic);
+        pic.getAttemptedFlow().setStorageService(new MemoryStorageService());
     }
+
 }

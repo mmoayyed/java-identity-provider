@@ -25,6 +25,7 @@ import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.AbstractConsentAction;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -41,12 +42,12 @@ import com.google.common.base.Functions;
  * 
  * Ensures that
  * <ul>
- * <li>the {@link ProfileInterceptorContext} is a {@link AttributeReleaseContext}</li>
- * <li>the flow descriptor is a {@link AttributeReleaseFlowDescriptor}</li>
- * <li>an {@link AttributeContext} is available from the {@link ProfileRequestContext}
+ * <li>an {@link AttributeReleaseContext} is available from the {@link ProfileRequestContext}</li>
+ * <li>the interceptor attempted flow is an {@link AttributeReleaseFlowDescriptor}</li>
+ * <li>an {@link AttributeContext} is available from the {@link ProfileRequestContext}</li>
  * </ul>
  * 
- * TODO details
+ * @pre See above.
  */
 public abstract class AbstractAttributeReleaseAction extends AbstractConsentAction {
 
@@ -75,6 +76,27 @@ public abstract class AbstractAttributeReleaseAction extends AbstractConsentActi
         attributeContextLookupStrategy =
                 Functions.compose(new ChildContextLookup<>(AttributeContext.class),
                         new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
+    }
+
+    /**
+     * Set the attribute context lookup strategy.
+     * 
+     * @param strategy the attribute context lookup strategy
+     */
+    public void setAttributeContextLookupStrategy(Function<ProfileRequestContext, AttributeContext> strategy) {
+        attributeContextLookupStrategy =
+                Constraint.isNotNull(strategy, "Attribute context lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the attribute release context lookup strategy.
+     * 
+     * @param strategy the attribute release context lookup strategy
+     */
+    public void setAttributeReleaseContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, AttributeReleaseContext> strategy) {
+        attributeReleaseContextLookupStrategy =
+                Constraint.isNotNull(strategy, "Attribute release context lookup strategy cannot be null");
     }
 
     /**

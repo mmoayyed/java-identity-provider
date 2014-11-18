@@ -68,7 +68,8 @@ public class CreateResult extends AbstractConsentStorageAction {
                 expiration = DateTime.now().plus(lifetime).getMillis();
             }
 
-            final ProfileInterceptorResult result = new ConsentResult(getContext(), getKey(), value, expiration);
+            final ProfileInterceptorResult result =
+                    new ConsentResult(getStorageContext(), getStorageKey(), value, expiration);
 
             log.debug("{} Created consent result '{}'", getLogPrefix(), result);
 

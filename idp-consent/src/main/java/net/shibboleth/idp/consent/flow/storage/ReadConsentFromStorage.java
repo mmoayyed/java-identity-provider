@@ -56,7 +56,7 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
         try {
-            final StorageRecord storageRecord = getStorageService().read(getContext(), getKey());
+            final StorageRecord storageRecord = getStorageService().read(getStorageContext(), getStorageKey());
             log.debug("{} Read storage record '{}'", getLogPrefix(), storageRecord);
 
             if (storageRecord == null) {
@@ -65,7 +65,8 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
             }
 
             final Map<String, Consent> consents =
-                    (Map<String, Consent>) storageRecord.getValue(getStorageSerializer(), getContext(), getKey());
+                    (Map<String, Consent>) storageRecord.getValue(getStorageSerializer(), getStorageContext(),
+                            getStorageKey());
 
             getConsentContext().getPreviousConsents().putAll(consents);
 

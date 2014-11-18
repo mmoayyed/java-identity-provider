@@ -25,6 +25,8 @@ import net.shibboleth.idp.consent.logic.FlowIdLookupFunction;
 import net.shibboleth.idp.consent.storage.ConsentSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -39,31 +41,44 @@ import com.google.common.base.Function;
 /**
  * Base for class for consent actions which interact with a {@link StorageService}.
  * 
- * TODO details
+ * This action ensures that the storage service, serializer, storageContext, and storageKey are available.
+ * 
+ * The storage service is provided by the profile interceptor flow descriptor.
+ * 
+ * The storage serializer defaults to a {@link ConsentSerializer}.
+ * 
+ * The storage context defaults to the flow ID provided by a {@link FlowIdLookupFunction}.
+ * 
+ * @pre <pre>InterceptorContext.getAttemptedFlow() != null</pre>
+ * @pre <pre>FlowDescriptor.getStorageService() != null</pre>
+ * @pre <pre>StorageSerializer != null</pre>
+ * @pre <pre>StorageContextLookupStrategy != null</pre>
+ * @pre <pre>StorageKeyLookupStrategy != null</pre>
+ * @pre <pre>storageContextLookupStrategy.apply(profileRequestContext) != null</pre>
+ * @pre <pre>storageKeyLookupStrategy.apply(profileRequestContext) != null</pre>
  */
-// TODO this class might go away
 public abstract class AbstractConsentStorageAction extends AbstractConsentAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractConsentStorageAction.class);
 
-    /** Strategy used to determine the storage context. */
-    @Nullable private Function<ProfileRequestContext, String> storageContextLookupStrategy;
+    /** Strategy used to determine the storage storageContext. */
+    @NonnullAfterInit private Function<ProfileRequestContext, String> storageContextLookupStrategy;
 
-    /** Strategy used to determine the storage key. */
-    @Nullable private Function<ProfileRequestContext, String> storageKeyLookupStrategy;
+    /** Strategy used to determine the storage storageKey. */
+    @NonnullAfterInit private Function<ProfileRequestContext, String> storageKeyLookupStrategy;
 
     /** Storage serializer. */
-    @Nonnull private StorageSerializer storageSerializer;
+    @NonnullAfterInit private StorageSerializer storageSerializer;
 
     /** Storage service from the {@link ProfileInterceptorFlowDescriptor}. */
     @Nullable private StorageService storageService;
 
     /** Storage context resulting from lookup strategy. */
-    @Nullable private String context;
+    @Nullable private String storageContext;
 
     /** Storage key resulting from lookup strategy. */
-    @Nullable private String key;
+    @Nullable private String storageKey;
 
     /** Constructor. */
     public AbstractConsentStorageAction() {
@@ -76,7 +91,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * 
      * @return the storage context lookup strategy
      */
-    @Nullable public Function<ProfileRequestContext, String> getStorageContextLookupStrategy() {
+    @NonnullAfterInit public Function<ProfileRequestContext, String> getStorageContextLookupStrategy() {
         return storageContextLookupStrategy;
     }
 
@@ -85,7 +100,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * 
      * @return the storage key lookup strategy
      */
-    @Nullable public Function<ProfileRequestContext, String> getStorageKeyLookupStrategy() {
+    @NonnullAfterInit public Function<ProfileRequestContext, String> getStorageKeyLookupStrategy() {
         return storageKeyLookupStrategy;
     }
 
@@ -94,8 +109,30 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
      * 
      * @return the storage serializer
      */
-    public StorageSerializer getStorageSerializer() {
+    @NonnullAfterInit public StorageSerializer getStorageSerializer() {
         return storageSerializer;
+    }
+
+    /**
+     * Set the storage storageContext lookup strategy.
+     * 
+     * @param strategy the storage storageContext lookup strategy
+     */
+    public void setStorageContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        storageContextLookupStrategy = Constraint.isNotNull(strategy, "Storage context lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the storage storageKey lookup strategy.
+     * 
+     * @param strategy the storage storageKey lookup strategy
+     */
+    public void setStorageKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        storageKeyLookupStrategy = Constraint.isNotNull(strategy, "Storage key lookup strategy cannot be null");
     }
 
     /**
@@ -110,28 +147,6 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     }
 
     /**
-     * Set the storage context lookup strategy.
-     * 
-     * @param strategy the storage context lookup strategy
-     */
-    public void setStorageContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        storageContextLookupStrategy = Constraint.isNotNull(strategy, "Storage context lookup strategy cannot be null");
-    }
-
-    /**
-     * Set the storage key lookup strategy.
-     * 
-     * @param strategy the storage key lookup strategy
-     */
-    public void setStorageKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        storageKeyLookupStrategy = Constraint.isNotNull(strategy, "Storage key lookup strategy cannot be null");
-    }
-
-    /**
      * Get the storage service from the {@link ProfileInterceptorFlowDescriptor}.
      * 
      * @return the storage service
@@ -141,24 +156,40 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     }
 
     /**
-     * Get the storage context resulting from lookup strategy.
+     * Get the storage context resulting from applying the storage context lookup strategy.
      * 
      * @return the storage context
      */
-    @Nullable public String getContext() {
-        return context;
+    @Nullable public String getStorageContext() {
+        return storageContext;
     }
 
     /**
-     * Get the storage key resulting from lookup strategy.
+     * Get the storage key resulting from applying the storage key lookup strategy.
      * 
      * @return the storage key
      */
-    @Nullable public String getKey() {
-        return key;
+    @Nullable public String getStorageKey() {
+        return storageKey;
     }
 
-    // Checkstyle: ReturnCount OFF
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (storageSerializer == null) {
+            throw new ComponentInitializationException("Storage serializer cannot be null");
+        }
+
+        if (storageContextLookupStrategy == null) {
+            throw new ComponentInitializationException("Storage context lookup strategy cannot be null");
+        }
+
+        if (storageKeyLookupStrategy == null) {
+            throw new ComponentInitializationException("Storage key lookup strategy cannot be null");
+        }
+    }
+
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
@@ -172,7 +203,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
         final ProfileInterceptorFlowDescriptor flowDescriptor = interceptorContext.getAttemptedFlow();
         log.trace("{} Flow descriptor '{}'", getLogPrefix(), flowDescriptor);
         if (flowDescriptor == null) {
-            log.debug("{} No flow descriptor available from interceptor context", getLogPrefix());
+            log.debug("{} No flow descriptor available from interceptor storageContext", getLogPrefix());
             return false;
         }
 
@@ -183,39 +214,20 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
             return false;
         }
 
-        log.trace("{} Storage serializer '{}'", getLogPrefix(), storageSerializer);
-        if (storageSerializer == null) {
-            log.debug("{} No storage serializer available", getLogPrefix());
-            return false;
-        }
-
-        log.trace("{} Storage context lookup strategy '{}'", getLogPrefix(), storageContextLookupStrategy);
-        if (storageContextLookupStrategy == null) {
-            log.debug("{} No storage context lookup strategy available from flow descriptor", getLogPrefix());
-            return false;
-        }
-
-        log.trace("{} Storage key lookup strategy '{}'", getLogPrefix(), storageKeyLookupStrategy);
-        if (storageKeyLookupStrategy == null) {
-            log.debug("{} No storage key lookup strategy available from flow descriptor", getLogPrefix());
-            return false;
-        }
-
-        context = storageContextLookupStrategy.apply(profileRequestContext);
-        log.trace("{} Storage context '{}'", getLogPrefix(), context);
-        if (context == null) {
+        storageContext = storageContextLookupStrategy.apply(profileRequestContext);
+        log.trace("{} Storage context '{}'", getLogPrefix(), storageContext);
+        if (storageContext == null) {
             log.debug("{} No storage context", getLogPrefix());
             return false;
         }
 
-        key = storageKeyLookupStrategy.apply(profileRequestContext);
-        log.trace("{} Storage key '{}'", getLogPrefix(), key);
-        if (key == null) {
+        storageKey = storageKeyLookupStrategy.apply(profileRequestContext);
+        log.trace("{} Storage key '{}'", getLogPrefix(), storageKey);
+        if (storageKey == null) {
             log.debug("{} No storage key", getLogPrefix());
             return false;
         }
 
         return true;
     }
-    // Checkstyle: ReturnCount ON
 }

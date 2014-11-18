@@ -80,8 +80,8 @@ public class UpdateStorageIndex extends AbstractConsentStorageAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        final String context = getContext();
-        final String key = getKey();
+        final String context = getStorageContext();
+        final String key = getStorageKey();
 
         try {
             final StorageRecord storageRecord = getStorageService().read(context, key);

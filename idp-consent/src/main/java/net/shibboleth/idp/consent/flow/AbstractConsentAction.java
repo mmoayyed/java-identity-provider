@@ -37,7 +37,7 @@ import com.google.common.base.Function;
 /**
  * Base class for consent actions.
  * 
- * Ensures that
+ * Ensures that :
  * <ul>
  * <li>a consent context exists in the profile request context</li>
  * <li>the flow descriptor is a {@link ConsentFlowDescriptor}</li>

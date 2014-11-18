@@ -37,7 +37,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Attribute release consent action to create a consent result representing global consent to be stored in a storage
- * service.
+ * service. Global consent is represented by a consent object whose ID is the wildcard character,
+ * {@link Consent#WILDCARD}.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @post See above.
  */
 public class CreateGlobalAttributeReleaseResult extends AbstractConsentStorageAction {
 
@@ -62,7 +66,8 @@ public class CreateGlobalAttributeReleaseResult extends AbstractConsentStorageAc
                 expiration = DateTime.now().plus(lifetime).getMillis();
             }
 
-            final ProfileInterceptorResult result = new ConsentResult(getContext(), getKey(), value, expiration);
+            final ProfileInterceptorResult result =
+                    new ConsentResult(getStorageContext(), getStorageKey(), value, expiration);
 
             log.debug("{} Created global consent result '{}'", getLogPrefix(), result);
 

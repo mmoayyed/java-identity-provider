@@ -59,9 +59,9 @@ public class RevokeConsent extends AbstractConsentStorageAction {
 
         storageService = getStorageService();
 
-        context = getContext();
+        context = getStorageContext();
 
-        key = getKey();
+        key = getStorageKey();
 
         return true;
     }
