@@ -96,6 +96,13 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
     @Override protected void doNativeParse(Element element, ParserContext parserContext, 
             BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
+        
+        if (element.hasAttributeNS(null, "maxCacheDuration")) {
+            log.error("{}: maxCacheDuration is not supported", parserContext.getReaderContext().getResource()
+                    .getDescription());
+            throw new BeanDefinitionParsingException(new Problem("maxCacheDuration is not supported", new Location(
+                    parserContext.getReaderContext().getResource())));
+        }
 
         final List<Element> resources = ElementSupport.getChildElements(element, RESOURCES_NAME);
         if (resources.size() != 1) {

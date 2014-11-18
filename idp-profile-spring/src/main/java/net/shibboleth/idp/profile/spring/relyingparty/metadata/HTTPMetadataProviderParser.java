@@ -24,6 +24,9 @@ import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
+import org.springframework.beans.factory.parsing.Location;
+import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -57,6 +60,20 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
     @Override protected void doNativeParse(Element element, ParserContext parserContext, 
             BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
+        
+        if (element.hasAttributeNS(null, "cacheDuration")) {
+            log.error("{}: cacheDuration is not supported", parserContext.getReaderContext().getResource()
+                    .getDescription());
+            throw new BeanDefinitionParsingException(new Problem("cacheDuration is not supported", new Location(
+                    parserContext.getReaderContext().getResource())));
+        }
+        
+        if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
+            log.error("{}: maintainExpiredMetadata is not supported", parserContext.getReaderContext().getResource()
+                    .getDescription());
+            throw new BeanDefinitionParsingException(new Problem("maintainExpiredMetadata is not supported",
+                    new Location(parserContext.getReaderContext().getResource())));
+        }
 
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(element.getAttributeNS(null, "httpClientRef"));

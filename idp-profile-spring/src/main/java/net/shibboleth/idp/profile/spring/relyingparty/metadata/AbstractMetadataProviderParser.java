@@ -32,9 +32,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
-import org.springframework.beans.factory.parsing.Location;
-import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -167,27 +164,6 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
         if (isPresentNotChaining(element, "requireValidMetadata")) {
             builder.addPropertyValue("requireValidMetadata", element.getAttributeNS(null, "requireValidMetadata"));
-        }
-
-        if (element.hasAttributeNS(null, "maxCacheDuration")) {
-            log.error("{}: maxCacheDuration is not supported", parserContext.getReaderContext().getResource()
-                    .getDescription());
-            throw new BeanDefinitionParsingException(new Problem("maxCacheDuration is not supported", new Location(
-                    parserContext.getReaderContext().getResource())));
-        }
-
-        if (element.hasAttributeNS(null, "cacheDuration")) {
-            log.error("{}: cacheDuration is not supported", parserContext.getReaderContext().getResource()
-                    .getDescription());
-            throw new BeanDefinitionParsingException(new Problem("cacheDuration is not supported", new Location(
-                    parserContext.getReaderContext().getResource())));
-        }
-
-        if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {
-            log.error("{}: maintainExpiredMetadata is not supported", parserContext.getReaderContext().getResource()
-                    .getDescription());
-            throw new BeanDefinitionParsingException(new Problem("maintainExpiredMetadata is not supported",
-                    new Location(parserContext.getReaderContext().getResource())));
         }
 
         final List<Element> filters =
