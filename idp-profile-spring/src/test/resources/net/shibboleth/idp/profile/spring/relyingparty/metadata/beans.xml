@@ -26,4 +26,25 @@
 		destroy-method="cancel" /> <!-- only needed if you do reloading -->
 		
 	<bean id="shibboleth.SchemaBuilder" class="org.opensaml.saml.common.xml.SAMLSchemaBuilder" c:ver="SAML_11"/>
+    
+    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="overrideLogging" value="false"/>
+        <property name="velocityProperties">
+            <props>
+                <prop key="input.encoding">UTF-8</prop>
+                <prop key="output.encoding">UTF-8</prop>
+                <prop key="resource.loader">classpath, string</prop>
+                <prop key="classpath.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+                </prop>
+                <prop key="string.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
+                </prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="digester.SHA1HexLower" class="net.shibboleth.utilities.java.support.codec.StringDigester" 
+           c:_0="SHA-1"
+           c:_1="HEX_LOWER"/>
 </beans>

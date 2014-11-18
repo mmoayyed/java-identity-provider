@@ -321,7 +321,7 @@
             <documentation>A metadata provider that dynamically fetches metadata from an HTTP server.</documentation>
         </annotation>
         <complexContent>
-            <extension base="shibmd:MetadataProviderType"> 
+            <extension base="shibmd:DynamicMetadataProviderType"> 
                 <attribute name="httpClientRef" type="string">
                     <annotation>
                         <documentation>
