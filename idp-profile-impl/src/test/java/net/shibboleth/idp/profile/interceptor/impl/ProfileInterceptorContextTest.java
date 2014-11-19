@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.interceptor;
+package net.shibboleth.idp.profile.interceptor.impl;
 
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

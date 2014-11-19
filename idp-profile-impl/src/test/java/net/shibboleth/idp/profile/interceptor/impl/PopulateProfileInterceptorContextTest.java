@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.interceptor;
+package net.shibboleth.idp.profile.interceptor.impl;
 
 import java.util.Arrays;
 import java.util.Collection;

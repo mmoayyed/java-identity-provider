@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.interceptor;
+package net.shibboleth.idp.profile.interceptor.impl;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.idp.profile.interceptor.impl.SelectProfileInterceptorFlow;
 
 import org.opensaml.profile.context.ProfileRequestContext;
