@@ -33,6 +33,7 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
@@ -183,8 +184,8 @@ public class MetadataGeneratorTask extends Task {
 
             final GenericApplicationContext context =
                     SpringSupport.newContext(MetadataGeneratorTask.class.getName(),
-                            Collections.singletonList(resource), Collections.<BeanPostProcessor> emptyList(),
-                            Collections.singletonList(initializer), null);
+                            Collections.singletonList(resource), Collections.<BeanFactoryPostProcessor>emptyList(),
+                            Collections.<BeanPostProcessor>emptyList(), Collections.singletonList(initializer), null);
 
             parameters = context.getBean("IdPConfiguration", MetadataGeneratorParameters.class);
 
