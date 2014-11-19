@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.interceptor;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -76,7 +75,7 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
      * 
      * @return the storage service
      */
-    @NonnullAfterInit public StorageService getStorageService() {
+    @Nullable public StorageService getStorageService() {
         return storageService;
     }
 
