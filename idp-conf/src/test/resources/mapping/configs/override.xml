@@ -11,13 +11,13 @@
 	<util:list id="shibboleth.AttributeResolverResources">
         <value>classpath:/mapping/configs/attribute-resolver.xml</value>
         <value>classpath:/mapping/configs/attribute-resolver2.xml</value>
-		<value>%{idp.home}/conf/property-placeholder.xml</value>
+		<value>%{idp.home}/system/conf/property-placeholder.xml</value>
 	</util:list>
 
 	<util:list id="shibboleth.AttributeFilterResources">
         <value>classpath:/mapping/configs/attribute-filter.xml</value>
         <value>classpath:/mapping/configs/attribute-filter2.xml</value>
-		<value>%{idp.home}/conf/property-placeholder.xml</value>
+		<value>%{idp.home}/system/conf/property-placeholder.xml</value>
 	</util:list>
 
 </beans>
