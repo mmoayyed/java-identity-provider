@@ -126,7 +126,10 @@
     <!-- Passthrough state if an exception is thrown. -->
 
     <action-state id="LogRuntimeException">
-        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.saml.profile').error('Uncaught runtime exception', rootCauseException)" />
+        <on-entry>
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.saml.profile').error('Uncaught runtime exception', rootCauseException)" />
+        </on-entry>
+        <evaluate expression="'RuntimeException'" />
         <transition to="HandleError" />
     </action-state>
 

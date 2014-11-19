@@ -23,10 +23,17 @@
     <end-state id="NoPotentialFlow" />
     <end-state id="RequestUnsupported" />
     <end-state id="ReselectFlow" />
+    <end-state id="RuntimeException" />
     <end-state id="SubjectCanonicalizationError" />
+
+    <action-state id="LogRuntimeException">
+        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', rootCauseException)" />
+        <transition to="RuntimeException" />
+    </action-state>
 
     <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
+        <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="#{currentEvent.id.startsWith('authn/')}" to="ReselectFlow">
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).setSignaledFlowId(currentEvent.id)" />
         </transition>

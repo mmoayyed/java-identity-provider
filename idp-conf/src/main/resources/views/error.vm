@@ -7,13 +7,7 @@
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 
-#if ($rootCauseException)
-    ## This handles uncaught runtime exceptions within flows, which we can't plan for.
-    #set ($springContext = $flowRequestContext.getActiveFlow().getApplicationContext())
-    #set ($locale = $flowRequestContext.getExternalContext().getLocale())
-    #set ($titleSuffix = "Uncaught Exception")
-    #set ($message = $encoder.encodeForHTML($rootCauseException.toString()))
-#elseif ($flowRequestContext)
+#if ($flowRequestContext)
 	## This handles flow events, the most common case.
     #set ($eventId = $flowRequestContext.getCurrentEvent().getId())
     #set ($springContext = $flowRequestContext.getActiveFlow().getApplicationContext())

@@ -35,7 +35,7 @@
             p:cacheSeconds="%{idp.message.cacheSeconds:300}"
             p:basenames-ref="%{idp.message.resources:shibboleth.MessageSourceResources}" />
 
-    <import resource="../../conf/error-mappings.xml" />
+    <import resource="../../conf/errors.xml" />
     <import resource="general-authn-system.xml" />
     <import resource="session-manager-system.xml" />
     <import resource="services-system.xml" />

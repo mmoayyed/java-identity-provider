@@ -16,12 +16,19 @@
     <end-state id="InvalidSubject" />
     <end-state id="InvalidSubjectContext" />
     <end-state id="InvalidSubjectCanonicalizationContext" />
-    <end-state id="ReselectFlow" />
     <end-state id="NoPotentialFlow" />
+    <end-state id="ReselectFlow" />
+    <end-state id="RuntimeException" />
     <end-state id="SubjectCanonicalizationError" />
+
+    <action-state id="LogRuntimeException">
+        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', rootCauseException)" />
+        <transition to="RuntimeException" />
+    </action-state>
 
     <!-- Default is to turn any error event into its own end-state, except InvalidSubject, which triggers a Reselect. -->
     <global-transitions>
+        <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="InvalidSubject" to="ReselectFlow" />
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
     </global-transitions>

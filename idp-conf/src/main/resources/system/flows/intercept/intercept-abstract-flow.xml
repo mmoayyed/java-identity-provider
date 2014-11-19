@@ -17,10 +17,17 @@
     <end-state id="MessageReplay" />
     <end-state id="MessageAuthenticationError" />
     <end-state id="ContextCheckDenied" />
+    <end-state id="RuntimeException" />
+
+    <action-state id="LogRuntimeException">
+        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', rootCauseException)" />
+        <transition to="RuntimeException" />
+    </action-state>
 
     <!-- Default is to turn any event into its own end-state. -->
     <global-transitions>
-          <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
+        <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
     </global-transitions>
 
 </flow>
