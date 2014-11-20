@@ -32,7 +32,7 @@ import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.logic.AttributeValuesHashFunction;
-import net.shibboleth.idp.consent.logic.FlowDescriptorLookup;
+import net.shibboleth.idp.consent.logic.FlowDescriptorLookupFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -63,7 +63,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
     public AttributeReleaseConsentFunction() {
         consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class, false);
         consentFlowDescriptorLookupStrategy =
-                new FlowDescriptorLookup<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
         attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class, false);
         attributeValuesHashFunction = new AttributeValuesHashFunction();
     }

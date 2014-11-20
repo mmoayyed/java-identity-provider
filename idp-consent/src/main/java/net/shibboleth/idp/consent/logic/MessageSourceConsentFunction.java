@@ -66,9 +66,9 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
     /** Constructor. */
     public MessageSourceConsentFunction() {
         consentFlowDescriptorLookupStrategy =
-                new FlowDescriptorLookup<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
         hashFunction = new HashFunction();
-        localeLookupStrategy = new LocaleLookupStrategy();
+        localeLookupStrategy = new LocaleLookupFunction();
     }
 
     /** {@inheritDoc} */

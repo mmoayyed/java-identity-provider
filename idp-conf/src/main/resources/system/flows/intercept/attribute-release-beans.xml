@@ -13,7 +13,7 @@
 
    <bean id="AttributeReleaseConsentFunction" class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseConsentFunction" scope="prototype" />
 
-    <bean id="AttributeConsentFlowDescriptorLookupStrategy" class="net.shibboleth.idp.consent.logic.FlowDescriptorLookup" scope="prototype"
+    <bean id="AttributeConsentFlowDescriptorLookupStrategy" class="net.shibboleth.idp.consent.logic.FlowDescriptorLookupFunction" scope="prototype"
         c:type="#{ T(net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor) }" />
 
     <bean id="GlobalAttributeConsentPredicate" class="net.shibboleth.idp.consent.logic.GlobalAttributeConsentPredicate" scope="prototype" />

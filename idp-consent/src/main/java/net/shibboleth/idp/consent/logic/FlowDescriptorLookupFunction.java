@@ -34,7 +34,7 @@ import com.google.common.base.Function;
  *
  * @param <T> the profile interceptor flow descriptor type to locate
  */
-public class FlowDescriptorLookup<T extends ProfileInterceptorFlowDescriptor> implements
+public class FlowDescriptorLookupFunction<T extends ProfileInterceptorFlowDescriptor> implements
         Function<ProfileRequestContext, T> {
 
     /** Profile interceptor flow descriptor type to look up. */
@@ -48,7 +48,7 @@ public class FlowDescriptorLookup<T extends ProfileInterceptorFlowDescriptor> im
      *
      * @param type profile interceptor flow descriptor type to look up
      */
-    public FlowDescriptorLookup(@Nonnull final Class<T> type) {
+    public FlowDescriptorLookupFunction(@Nonnull final Class<T> type) {
         interceptorFlowDescriptorType = Constraint.isNotNull(type, "Interceptor flow descriptor type cannot be null");
         
         interceptorContextlookupStrategy = new ChildContextLookup<>(ProfileInterceptorContext.class);

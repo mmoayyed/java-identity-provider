@@ -56,7 +56,7 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
     public IsConsentRequiredPredicate() {
         consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class);
         consentFlowDescriptorLookupStrategy =
-                new FlowDescriptorLookup<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
     }
 
     /**

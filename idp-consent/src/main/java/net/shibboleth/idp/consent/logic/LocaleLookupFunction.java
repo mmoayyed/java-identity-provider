@@ -30,7 +30,7 @@ import com.google.common.base.Function;
 /**
  * Function which resolves the {@link Locale} from a {@link ProfileRequestContext}.
  */
-public class LocaleLookupStrategy implements Function<ProfileRequestContext, Locale> {
+public class LocaleLookupFunction implements Function<ProfileRequestContext, Locale> {
 
     /** {@inheritDoc} */
     @Override

@@ -31,9 +31,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * {@link FlowDescriptorLookup} unit test.
+ * {@link FlowDescriptorLookupFunction} unit test.
  */
-public class FlowDescriptorLookupTest {
+public class FlowDescriptorLookupFunctionTest {
 
     private RequestContext src;
 
@@ -52,8 +52,8 @@ public class FlowDescriptorLookupTest {
     @Test public void testLookup() {
         pic.setAttemptedFlow(new ConsentFlowDescriptor());
 
-        final FlowDescriptorLookup<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookup(ConsentFlowDescriptor.class);
+        final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
+                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(prc);
 
@@ -63,8 +63,8 @@ public class FlowDescriptorLookupTest {
     @Test public void testLookupChild() {
         pic.setAttemptedFlow(new ConsentFlowDescriptor());
 
-        final FlowDescriptorLookup<AttributeReleaseFlowDescriptor> strategy =
-                new FlowDescriptorLookup(AttributeReleaseFlowDescriptor.class);
+        final FlowDescriptorLookupFunction<AttributeReleaseFlowDescriptor> strategy =
+                new FlowDescriptorLookupFunction(AttributeReleaseFlowDescriptor.class);
 
         final AttributeReleaseFlowDescriptor flow = strategy.apply(prc);
 
@@ -74,8 +74,8 @@ public class FlowDescriptorLookupTest {
     @Test public void testLookupParent() {
         pic.setAttemptedFlow(new AttributeReleaseFlowDescriptor());
 
-        final FlowDescriptorLookup<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookup(ConsentFlowDescriptor.class);
+        final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
+                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(prc);
 
@@ -84,8 +84,8 @@ public class FlowDescriptorLookupTest {
 
     @Test public void testNullInput() {
 
-        final FlowDescriptorLookup<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookup(ConsentFlowDescriptor.class);
+        final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
+                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(null);
 
@@ -95,8 +95,8 @@ public class FlowDescriptorLookupTest {
     @Test public void testNoInterceptorContext() {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
-        final FlowDescriptorLookup<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookup(ConsentFlowDescriptor.class);
+        final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
+                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(null);
 
@@ -105,8 +105,8 @@ public class FlowDescriptorLookupTest {
 
     @Test public void testNoAttemptedFlow() {
 
-        final FlowDescriptorLookup<ConsentFlowDescriptor> strategy =
-                new FlowDescriptorLookup(ConsentFlowDescriptor.class);
+        final FlowDescriptorLookupFunction<ConsentFlowDescriptor> strategy =
+                new FlowDescriptorLookupFunction(ConsentFlowDescriptor.class);
 
         final ConsentFlowDescriptor flow = strategy.apply(null);
 
