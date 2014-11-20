@@ -25,8 +25,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
 import org.slf4j.Logger;
@@ -34,22 +32,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Consent action which reads consents from storage and adds them to the consent context as previous consents.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */
 public class ReadConsentFromStorage extends AbstractConsentStorageAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ReadConsentFromStorage.class);
-
-    /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
-
-        if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
-            return false;
-        }
-
-        return true;
-    }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -70,9 +59,9 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
 
             getConsentContext().getPreviousConsents().putAll(consents);
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("{} Unable to read consent from storage", getLogPrefix(), e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }
+    
 }

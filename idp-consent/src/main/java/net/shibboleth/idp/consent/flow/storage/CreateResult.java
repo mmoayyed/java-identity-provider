@@ -28,8 +28,6 @@ import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 
 import org.joda.time.DateTime;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,22 +35,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Consent action to create a consent result representing the result of a consent flow to be stored in a storage
  * service.
+ * 
+ * {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */
 public class CreateResult extends AbstractConsentStorageAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CreateResult.class);
-
-    /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final ProfileInterceptorContext interceptorContext) {
-
-        if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
-            return false;
-        }
-
-        return true;
-    }
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -75,9 +64,9 @@ public class CreateResult extends AbstractConsentStorageAction {
 
             interceptorContext.getResults().add(result);
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.debug("{} Unable to serialize consent", getLogPrefix(), e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }
+    
 }

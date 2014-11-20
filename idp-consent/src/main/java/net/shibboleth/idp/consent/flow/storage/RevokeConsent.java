@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -34,8 +35,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Consent action which deletes records from storage.
+ * 
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#IO_ERROR}
  */
 public class RevokeConsent extends AbstractConsentStorageAction {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(RevokeConsent.class);
 
     /** Storage service. */
     @Nullable private StorageService storageService;
@@ -46,9 +53,20 @@ public class RevokeConsent extends AbstractConsentStorageAction {
     /** Storage key. */
     @Nullable @NotEmpty private String key;
 
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(RevokeConsent.class);
-
+    /** Trap errors in the storage layer. */
+    private boolean maskStorageErrors;
+    
+    /**
+     * Set whether to trap and hide storage-related errors.
+     * 
+     * @param flag  flag to set
+     */
+    public void setMaskStorageErrors(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        maskStorageErrors = flag;
+    }
+    
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
@@ -58,9 +76,7 @@ public class RevokeConsent extends AbstractConsentStorageAction {
         }
 
         storageService = getStorageService();
-
         context = getStorageContext();
-
         key = getStorageKey();
 
         return true;
@@ -72,9 +88,8 @@ public class RevokeConsent extends AbstractConsentStorageAction {
 
         log.debug("{} Attempting to delete consent storage record with context '{}' and key '{}'", getLogPrefix(),
                 context, key);
-        boolean success;
         try {
-            success = getStorageService().delete(context, key);
+            final boolean success = getStorageService().delete(context, key);
             if (success) {
                 log.debug("{} Deleted consent storage record with context '{}' and key '{}'", getLogPrefix(), context,
                         key);
@@ -84,10 +99,12 @@ public class RevokeConsent extends AbstractConsentStorageAction {
                 // TODO build appropriate event ?
                 // TODO read from storage first to avoid ambiguity ?
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("{} Unable to delete consent storage record with context '{}' and key '{}'", getLogPrefix(),
                     context, key, e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+            if (!maskStorageErrors) {
+                ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+            }
         }
     }
 

@@ -31,8 +31,6 @@ import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.StorageRecord;
 import org.slf4j.Logger;
@@ -58,6 +56,9 @@ import org.slf4j.LoggerFactory;
  * 
  * The storage index record should not index itself, so this action does not index interceptor results from the
  * interceptor context whose storage context is {@link #STORAGE_INDEX_CONTEXT}.
+ * 
+ * {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * 
  */
 // TODO more action doc details
 // TODO note about overriding context lookup strategy
@@ -129,9 +130,8 @@ public class UpdateStorageIndex extends AbstractConsentStorageAction {
                 // TODO expiration ?
             }
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("{} Unable to read index from storage", getLogPrefix(), e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }
 }
