@@ -32,7 +32,6 @@ import com.google.common.base.Joiner;
 /**
  * Function to join the result of two functions with a separator.
  */
-// TODO tests
 public class JoinFunction implements Function<ProfileRequestContext, String> {
 
     /** Separator. */
