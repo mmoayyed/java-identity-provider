@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.security.cert.X509Certificate;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -38,8 +37,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.cryptacular.x509.dn.Attribute;
-import org.cryptacular.x509.dn.Attributes;
 import org.cryptacular.x509.dn.NameReader;
+import org.cryptacular.x509.dn.RDN;
+import org.cryptacular.x509.dn.RDNSequence;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.x509.X509Support;
@@ -172,7 +172,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
         log.debug("{} Searching for RDN to extract from DN: {}", getLogPrefix(), x500Principal.getName());
         
         try {
-            final Attributes dnAttrs = NameReader.readX500Principal(x500Principal);
+            final RDNSequence dnAttrs = NameReader.readX500Principal(x500Principal);
             for (final String oid : objectIds) {
                 final String rdn = findRDN(dnAttrs, oid);
                 if (rdn != null) {
@@ -195,19 +195,19 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     /**
      * Find an RDN with the specified OID.
      * 
-     * @param attributes the DN components
+     * @param sequence the DN components
      * @param oid the OID to look for
      * 
      * @return the first matching RDN value, or null
      */
-    @Nullable protected String findRDN(@Nonnull final Attributes attributes, @Nonnull @NotEmpty final String oid) {
+    @Nullable protected String findRDN(@Nonnull final RDNSequence sequence, @Nonnull @NotEmpty final String oid) {
         
         // We use backward() here because otherwise the library returns attributes in least to most-specific order.
-        final Iterator<Attribute> i = attributes.backward();
-        while (i.hasNext()) {
-            final Attribute attr = i.next();
-            if (attr.getType().getOid().equals(oid)) {
-                return attr.getValue();
+        for (final RDN rdn : sequence.backward()) {
+            for (final Attribute attribute : rdn.getAttributes()) {
+                if (attribute.getType().getOid().equals(oid)) {
+                    return attribute.getValue();
+                }
             }
         }
         
