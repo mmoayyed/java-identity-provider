@@ -11,12 +11,14 @@
 
        default-init-method="initialize"
        default-destroy-method="destroy">
-
+       
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
         p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <import resource="../../../conf/intercept/context-check-intercept-config.xml" />
 
     <alias name="shibboleth.context-check.Condition" alias="ContextCheckPredicate"/>
     

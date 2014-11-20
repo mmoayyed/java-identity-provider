@@ -12,10 +12,13 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
     
-    <import resource="../../../conf/authn/remoteuser-internal-authn-config.xml" />
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <import resource="../../../conf/authn/remoteuser-internal-authn-config.xml" />
     
     <bean id="ExtractRemoteUser" class="net.shibboleth.idp.authn.impl.ExtractRemoteUser" scope="prototype"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"

@@ -51,26 +51,4 @@
         p:lifetime="P1Y"
         scope="prototype" />
 
-    <!-- Function to return the user identifier from an IdP attribute. -->
-    <bean id="shibboleth.consent.UserStorageKey"
-        class="net.shibboleth.idp.consent.logic.AttributeValueLookupFunction"
-        c:userAttributeId-ref="shibboleth.consent.UserIdentifierAttributeId"
-        scope="prototype" />
-
-    <!-- Function to return a storage key consisting of the user identifier and
-         relying party ID joined by a delimiter. -->
-    <bean id="shibboleth.consent.UserAndRelyingPartyStorageKey"
-        class="net.shibboleth.idp.consent.logic.JoinFunction"
-        c:functionA-ref="shibboleth.consent.UserStorageKey"
-        c:functionB-ref="shibboleth.RelyingPartyIdLookup.Simple"
-        scope="prototype" />
-
-    <!-- Predicate used to determine if consent should be obtained for an attribute. -->
-    <bean id="shibboleth.consent.AttributeConsent.AttributePredicate"
-        class="net.shibboleth.idp.consent.logic.AttributePredicate"
-        p:whitelistedAttributeIds-ref="shibboleth.attribute-release.WhitelistedAttributeIDs"
-        p:blacklistedAttributeIds-ref="shibboleth.attribute-release.BlacklistedAttributeIDs"
-        p:attributeIdMatchExpression="#{getObject('shibboleth.attribute-release.MatchExpression')}"
-        scope="prototype" />
-
 </beans>

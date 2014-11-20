@@ -8,33 +8,54 @@
 
     default-init-method="initialize" default-destroy-method="destroy">
 
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <bean id="TermsOfUseConsentFunction" class="net.shibboleth.idp.consent.logic.MessageSourceConsentFunction" scope="prototype"
-        p:consentIdMessageCode="idp.terms-of-use.id"
-        p:consentValueMessageCode="idp.terms-of-use.text" />
+    <import resource="../../../conf/intercept/consent-intercept-config.xml" />
 
-    <bean id="InitializeConsentContext" class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
+    <bean id="TermsOfUseConsentFunction"
+        class="net.shibboleth.idp.consent.logic.MessageSourceConsentFunction"
+        p:consentIdMessageCode-ref="shibboleth.consent.terms-of-use.ConsentID"
+        p:consentValueMessageCode-ref="shibboleth.consent.terms-of-use.ConsentValue" />
 
-    <bean id="PopulateConsentContext" class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
+    <bean id="IsConsentRequiredPredicate"
+        class="net.shibboleth.idp.consent.logic.IsConsentRequiredPredicate" />
+
+    <!-- Function to return the user identifier from an IdP attribute. -->
+    <bean id="shibboleth.consent.UserStorageKey"
+        class="net.shibboleth.idp.consent.logic.AttributeValueLookupFunction"
+        c:userAttributeId-ref="shibboleth.consent.UserIdentifierAttributeId" />
+
+    <!-- Action beans -->
+    
+    <bean id="InitializeConsentContext"
+        class="net.shibboleth.idp.consent.flow.InitializeConsentContext" scope="prototype" />
+
+    <bean id="PopulateConsentContext"
+        class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="TermsOfUseConsentFunction"  />
 
-    <bean id="ReadConsentFromStorage" class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
+    <bean id="ReadConsentFromStorage"
+        class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
-    <bean id="SetRPUIInformation" class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+    <bean id="SetRPUIInformation"
+        class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="IsConsentRequiredPredicate" class="net.shibboleth.idp.consent.logic.IsConsentRequiredPredicate" scope="prototype" />
-
-    <bean id="ExtractConsent" class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
+    <bean id="ExtractConsent"
+        class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="CreateResult" class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
+    <bean id="CreateResult"
+        class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
-    <bean id="UpdateStorageIndex" class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
+    <bean id="UpdateStorageIndex"
+        class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
 </beans>

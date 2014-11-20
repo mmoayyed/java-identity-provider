@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!-- The ID of the attribute to be used as the user identifier when storing consent records. -->
+    <!-- TODO add property to properties file -->
+    <!-- TODO doc -->
+    <bean id="shibboleth.consent.UserIdentifierAttributeId" class="java.lang.String"
+        c:_0="%{idp.consent.userIdentifierAttributeId:email}" />
+
+    <!-- TODO: make this a map? -->
+    <bean id="shibboleth.consent.terms-of-use.ConsentID" class="java.lang.String" c:_0="idp.terms-of-use.id" />
+    <bean id="shibboleth.consent.terms-of-use.ConsentValue" class="java.lang.String" c:_0="idp.terms-of-use.text" />
+
+    <!-- Attribute release whitelist, blacklist, and match expression to determine 
+        whether consent should be obtained for an attribute based on the attribute ID. -->
+    <util:list id="shibboleth.attribute-release.WhitelistedAttributeIDs">
+        <!--
+        <value>email</value>
+        -->
+    </util:list>
+
+    <util:list id="shibboleth.attribute-release.BlacklistedAttributeIDs">
+        <value>transientId</value>
+        <value>persistentId</value>
+        <value>eduPersonTargetedID</value>
+    </util:list>
+
+    <!-- 
+    <bean id="shibboleth.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 
+        c:regex="^exampleAttribute.*$" />
+     -->
+
+</beans>
