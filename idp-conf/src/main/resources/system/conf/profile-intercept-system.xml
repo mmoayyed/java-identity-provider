@@ -68,9 +68,9 @@
     <!-- Predicate used to determine if consent should be obtained for an attribute. -->
     <bean id="shibboleth.consent.AttributeConsent.AttributePredicate"
         class="net.shibboleth.idp.consent.logic.AttributePredicate"
-        c:whitelist-ref="shibboleth.attribute-release.WhitelistedAttributeIDs"
-        c:blacklist-ref="shibboleth.attribute-release.BlacklistedAttributeIDs"
-        c:matchExpression="#{getObject('shibboleth.attribute-release.MatchExpression')}"
+        p:whitelistedAttributeIds-ref="shibboleth.attribute-release.WhitelistedAttributeIDs"
+        p:blacklistedAttributeIds-ref="shibboleth.attribute-release.BlacklistedAttributeIDs"
+        p:attributeIdMatchExpression="#{getObject('shibboleth.attribute-release.MatchExpression')}"
         scope="prototype" />
 
 </beans>

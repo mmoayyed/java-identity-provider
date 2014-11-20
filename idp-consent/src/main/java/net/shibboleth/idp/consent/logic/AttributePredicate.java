@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.logic;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -26,7 +27,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Predicate;
@@ -35,7 +37,7 @@ import com.google.common.collect.Sets;
 /**
  * Predicate to determine whether consent should be obtained for an attribute.
  */
-public class AttributePredicate implements Predicate<IdPAttribute> {
+public class AttributePredicate extends AbstractInitializableComponent implements Predicate<IdPAttribute> {
 
     /** Whitelist of attribute IDs to allow. */
     @Nonnull @NonnullElements private Set<String> whitelistedAttributeIds;
@@ -44,21 +46,45 @@ public class AttributePredicate implements Predicate<IdPAttribute> {
     @Nonnull @NonnullElements private Set<String> blacklistedAttributeIds;
 
     /** Regular expression to apply for acceptance testing. */
-    @Nullable private Pattern expression;
+    @Nullable private Pattern matchExpression;
+
+    /** Constructor. */
+    public AttributePredicate() {
+        whitelistedAttributeIds = Collections.emptySet();
+        blacklistedAttributeIds = Collections.emptySet();
+    }
 
     /**
+     * Set the whitelisted attribute IDs.
      * 
-     * Constructor.
-     *
      * @param whitelist whitelisted attribute IDs
-     * @param blacklist blacklisted attribute IDs
-     * @param matchExpression attribute ID pattern
      */
-    public AttributePredicate(@Nullable @NullableElements final Collection<String> whitelist,
-            @Nullable @NullableElements final Collection<String> blacklist, @Nullable final Pattern matchExpression) {
+    public void setWhitelistedAttributeIds(@Nonnull @NonnullElements final Collection<String> whitelist) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
         whitelistedAttributeIds = Sets.newHashSet(StringSupport.normalizeStringCollection(whitelist));
+    }
+
+    /**
+     * Set the blacklisted attribute IDs.
+     * 
+     * @param blacklist blacklisted attribute IDs
+     */
+    public void setBlacklistedAttributeIds(@Nonnull @NonnullElements final Collection<String> blacklist) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
         blacklistedAttributeIds = Sets.newHashSet(StringSupport.normalizeStringCollection(blacklist));
-        expression = matchExpression;
+    }
+
+    /**
+     * Set an attribute ID matching expression to apply for acceptance.
+     * 
+     * @param expression an attribute ID matching expression
+     */
+    public void setAttributeIdMatchExpression(@Nullable final Pattern expression) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        matchExpression = expression;
     }
 
     /** {@inheritDoc} */
@@ -68,15 +94,15 @@ public class AttributePredicate implements Predicate<IdPAttribute> {
 
         if (!whitelistedAttributeIds.isEmpty() && !whitelistedAttributeIds.contains(attributeId)) {
             // Not in whitelist. Only accept if a regexp applies.
-            if (expression == null) {
+            if (matchExpression == null) {
                 return false;
             } else {
-                return expression.matcher(attributeId).matches();
+                return matchExpression.matcher(attributeId).matches();
             }
         } else {
             // In whitelist (or none). Check blacklist, and if necessary a regexp.
             return !blacklistedAttributeIds.contains(attributeId)
-                    && (expression == null || expression.matcher(attributeId).matches());
+                    && (matchExpression == null || matchExpression.matcher(attributeId).matches());
         }
     }
 }
