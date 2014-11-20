@@ -12,9 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <!--
     You can define a TrustEngine to apply to any candidate certificates by defining a bean named
     "shibboleth.authn.X509.TrustEngine". You could also define that in conf/global.xml if you need
