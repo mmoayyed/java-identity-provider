@@ -33,16 +33,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Consent action to create a consent result representing the result of a consent flow to be stored in a storage
- * service.
+ * Consent action to create a consent result representing the result of a consent flow. The result is added to the
+ * profile interceptor context for eventual storage by a storage service. The result of the consent flow is created from
+ * the current consents of the consent context.
  * 
- * {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @pre The current consents in the consent context must not be empty.
+ * @post A {@link ConsentResult} will be created representing the current consents and will be added to the
+ *       {@link ProfileInterceptorContext}.
  */
 public class CreateResult extends AbstractConsentStorageAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CreateResult.class);
 
+    /** {@inheritDoc} */
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final ProfileInterceptorContext interceptorContext) {
+
+        if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
+            return false;
+        }
+
+        if (getConsentContext().getCurrentConsents().isEmpty()) {
+            log.debug("{} No result will be created because there are no current consents", getLogPrefix());
+            return false;
+        }
+
+        return true;
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {

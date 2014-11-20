@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.consent.flow.ar;
+package net.shibboleth.idp.consent.flow.storage;
 
 import java.util.Map;
 
 import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.consent.flow.storage.AbstractConsentStorageAction;
-import net.shibboleth.idp.consent.flow.storage.AbstractConsentStorageActionTest;
+import net.shibboleth.idp.consent.ConsentTestingSupport;
+import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.storage.ConsentResult;
 import net.shibboleth.idp.consent.storage.ConsentSerializer;
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -32,13 +32,14 @@ import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-/** {@link CreateGlobalAttributeReleaseResult} unit test. */
-public class CreateGlobalAttributeReleaseResultTest extends AbstractConsentStorageActionTest {
+/** {@link CreateResult} unit test. */
+public class CreateResultTest extends AbstractConsentStorageActionTest {
 
-    @Test public void setUpAction() throws Exception {
-        action = new CreateGlobalAttributeReleaseResult();
+    @BeforeMethod public void setUpAction() throws Exception {
+        action = new CreateResult();
 
         ((AbstractConsentStorageAction) action).setStorageContextLookupStrategy(FunctionSupport
                 .<ProfileRequestContext, String> constant("context"));
@@ -47,7 +48,23 @@ public class CreateGlobalAttributeReleaseResultTest extends AbstractConsentStora
                 .<ProfileRequestContext, String> constant("key"));
     }
 
-    @Test public void testGlobalAttributeReleaseResult() throws Exception {
+    @Test public void testCreateResultNoCurrentConsents() throws Exception {
+        action.initialize();
+
+        final Event event = action.execute(src);
+
+        ActionTestingSupport.assertProceedEvent(event);
+
+        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
+        Assert.assertNotNull(pic);
+        Assert.assertEquals(pic.getResults().size(), 0);
+    }
+
+    @Test public void testCreateResult() throws Exception {
+
+        final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
+        consentCtx.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
+
         action.initialize();
 
         final Event event = action.execute(src);
@@ -70,12 +87,8 @@ public class CreateGlobalAttributeReleaseResultTest extends AbstractConsentStora
         final Map<String, Consent> consents =
                 consentSerializer.deserialize(0, result.getStorageContext(), result.getStorageKey(),
                         result.getStorageValue(), result.getStorageExpiration());
-        Assert.assertEquals(consents.size(), 1);
-
-        final Consent globalConsent = consents.values().iterator().next();
-        Assert.assertNotNull(globalConsent);
-        Assert.assertEquals(globalConsent.getId(), Consent.WILDCARD);
-        Assert.assertNull(globalConsent.getValue());
-        Assert.assertTrue(globalConsent.isApproved());
+        Assert.assertEquals(consents.size(), 2);
+        Assert.assertEquals(consents, ConsentTestingSupport.newConsentMap());
     }
+
 }

@@ -18,10 +18,11 @@
 package net.shibboleth.idp.consent.storage;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+
+import net.shibboleth.idp.consent.ConsentTestingSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,18 +47,7 @@ public class StorageIndexSerializerTest {
 
     @BeforeMethod public void setUp() {
 
-        storageIndex1 = new StorageIndex();
-        storageIndex1.setContext("context1");
-        storageIndex1.getKeys().add("key1");
-
-        storageIndex2 = new StorageIndex();
-        storageIndex2.setContext("context2");
-        storageIndex2.getKeys().add("key1");
-        storageIndex2.getKeys().add("key2");
-
-        storageIndexes = new LinkedHashMap<>();
-        storageIndexes.put(storageIndex1.getContext(), storageIndex1);
-        storageIndexes.put(storageIndex2.getContext(), storageIndex2);
+       storageIndexes = ConsentTestingSupport.newStorageIndexMap();
 
         serializer = new StorageIndexSerializer();
     }

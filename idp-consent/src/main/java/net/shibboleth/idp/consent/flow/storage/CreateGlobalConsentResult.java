@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.consent.flow.ar;
+package net.shibboleth.idp.consent.flow.storage;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -23,7 +23,6 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.consent.Consent;
-import net.shibboleth.idp.consent.flow.storage.AbstractConsentStorageAction;
 import net.shibboleth.idp.consent.storage.ConsentResult;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
@@ -36,17 +35,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Attribute release consent action to create a consent result representing global consent to be stored in a storage
- * service. Global consent is represented by a consent object whose ID is the wildcard character,
- * {@link Consent#WILDCARD}.
+ * Consent action to create a consent result representing global consent to be stored in a storage service. Global
+ * consent is represented by a consent object whose ID is the wildcard character, {@link Consent#WILDCARD}.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @post See above.
  */
-public class CreateGlobalAttributeReleaseResult extends AbstractConsentStorageAction {
+public class CreateGlobalConsentResult extends AbstractConsentStorageAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(CreateGlobalAttributeReleaseResult.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CreateGlobalConsentResult.class);
 
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,

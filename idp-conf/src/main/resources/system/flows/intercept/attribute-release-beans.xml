@@ -53,7 +53,7 @@
     <bean id="CreateResult" class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey" />
 
-    <bean id="CreateGlobalAttributeConsentResult" class="net.shibboleth.idp.consent.flow.ar.CreateGlobalAttributeReleaseResult" scope="prototype" 
+    <bean id="CreateGlobalConsentResult" class="net.shibboleth.idp.consent.flow.storage.CreateGlobalConsentResult" scope="prototype" 
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
     <bean id="ReleaseAttributes" class="net.shibboleth.idp.consent.flow.ar.ReleaseAttributes" scope="prototype" />

@@ -27,10 +27,24 @@ import org.testng.annotations.BeforeMethod;
 /** {@link AbstractConsentStorageAction} unit test. */
 public abstract class AbstractConsentStorageActionTest extends AbstractConsentActionTest {
 
-    @BeforeMethod public void setUpMemoryStorageService() {
-        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class, false);
+    @BeforeMethod public void setUpMemoryStorageService() throws Exception {
+        final MemoryStorageService storageService = new MemoryStorageService();
+        storageService.setId("test");
+        storageService.initialize();
+
+        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class);
         Assert.assertNotNull(pic);
-        pic.getAttemptedFlow().setStorageService(new MemoryStorageService());
+        Assert.assertNotNull(pic.getAttemptedFlow());
+        pic.getAttemptedFlow().setStorageService(storageService);
+    }
+
+    protected MemoryStorageService getMemoryStorageService() {
+        final ProfileInterceptorContext pic = prc.getSubcontext(ProfileInterceptorContext.class);
+        Assert.assertNotNull(pic);
+        Assert.assertNotNull(pic.getAttemptedFlow());
+        Assert.assertNotNull(pic.getAttemptedFlow().getStorageService());
+        Assert.assertTrue(pic.getAttemptedFlow().getStorageService() instanceof MemoryStorageService);
+        return (MemoryStorageService) pic.getAttemptedFlow().getStorageService();
     }
 
 }

@@ -95,7 +95,7 @@
     </decision-state>
 
     <action-state id="GlobalConsent">
-        <evaluate expression="CreateGlobalAttributeConsentResult" />
+        <evaluate expression="CreateGlobalConsentResult" />
         <evaluate expression="UpdateStorageIndex" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="proceed" />

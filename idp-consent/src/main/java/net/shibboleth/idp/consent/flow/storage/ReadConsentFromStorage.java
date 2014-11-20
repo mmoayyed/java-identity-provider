@@ -31,7 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Consent action which reads consents from storage and adds them to the consent context as previous consents.
+ * Consent action which reads consent records from storage and adds the serialized consent records to the consent
+ * context as previous consents.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */
@@ -44,18 +45,21 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
+        final String context = getStorageContext();
+        final String key = getStorageKey();
+
         try {
-            final StorageRecord storageRecord = getStorageService().read(getStorageContext(), getStorageKey());
-            log.debug("{} Read storage record '{}'", getLogPrefix(), storageRecord);
+            final StorageRecord storageRecord = getStorageService().read(context, key);
+            log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
+                    context, key);
 
             if (storageRecord == null) {
-                // TODO
+                log.debug("{} No storage record for context '{}' and key '{}'", getLogPrefix(), context, key);
                 return;
             }
 
             final Map<String, Consent> consents =
-                    (Map<String, Consent>) storageRecord.getValue(getStorageSerializer(), getStorageContext(),
-                            getStorageKey());
+                    (Map<String, Consent>) storageRecord.getValue(getStorageSerializer(), context, key);
 
             getConsentContext().getPreviousConsents().putAll(consents);
 
@@ -63,5 +67,5 @@ public class ReadConsentFromStorage extends AbstractConsentStorageAction {
             log.error("{} Unable to read consent from storage", getLogPrefix(), e);
         }
     }
-    
+
 }

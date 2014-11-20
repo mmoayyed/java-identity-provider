@@ -57,12 +57,8 @@ import org.slf4j.LoggerFactory;
  * The storage index record should not index itself, so this action does not index interceptor results from the
  * interceptor context whose storage context is {@link #STORAGE_INDEX_CONTEXT}.
  * 
- * {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */
-// TODO more action doc details
-// TODO note about overriding context lookup strategy
-// TODO tests
 public class UpdateStorageIndex extends AbstractConsentStorageAction {
 
     /** Storage context for the storage index record. */
@@ -86,10 +82,10 @@ public class UpdateStorageIndex extends AbstractConsentStorageAction {
 
         try {
             final StorageRecord storageRecord = getStorageService().read(context, key);
-            log.debug("{} Read storage record '{}'", getLogPrefix(), storageRecord);
+            log.debug("{} Read storage record '{}' with context '{}' and key '{}'", getLogPrefix(), storageRecord,
+                    context, key);
 
             Map<String, StorageIndex> storageIndexes = null;
-
             if (storageRecord == null) {
                 storageIndexes = new LinkedHashMap<>();
             } else {
@@ -128,6 +124,8 @@ public class UpdateStorageIndex extends AbstractConsentStorageAction {
                 log.debug("{} Consent index has changed, adding result '{}' to interceptor context", getLogPrefix(),
                         result);
                 // TODO expiration ?
+            } else {
+                log.debug("{} Consent index has not changed, nothing to do", getLogPrefix());
             }
 
         } catch (final IOException e) {
