@@ -36,19 +36,23 @@
                 #springMessage("idp.terms-of-use.text")
             </div>
             <div id="tou-acceptance">
-                <form action="$flowExecutionUrl" method="post" >
                     <div style="float:left;">
-                        <input id="accept" type="checkbox" name="consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
-                        <label for="accept">#springMessage("idp.terms-of-use.accept")</label>
-                        #if($requireCheckbox)
-                            <p class="form-error">#springMessage("idp.terms-of-use.required")</p>
-                        #end
+                        <form action="$flowExecutionUrl" method="post" >
+                            <input type="submit" name="_eventId_TermsRejected" value="#springMessage("idp.terms-of-use.reject")" style="margin-right: 30px;" />
+                        </form>
                     </div>
                     <div style="float:right;">
-                        <input type="submit" name="_eventId_proceed" value="#springMessage("idp.terms-of-use.submit")" />
+                        <form action="$flowExecutionUrl" method="post" >
+                            <input id="accept" type="checkbox" name="consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
+                            <label for="accept">#springMessage("idp.terms-of-use.accept")</label>
+                            #if ($requireCheckbox)
+                                <p class="form-error">#springMessage("idp.terms-of-use.required")</p>
+                            #end
+                            <input type="submit" name="_eventId_proceed" value="#springMessage("idp.terms-of-use.submit")" />
+                        </form>
                     </div>
                     <div style="clear:both;"></div>
-                </form>
+                
             </div>
             <footer>
                 <div class="container container-footer">

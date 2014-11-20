@@ -16,7 +16,8 @@
     <end-state id="MessageExpired" />
     <end-state id="MessageReplay" />
     <end-state id="MessageAuthenticationError" />
-    <end-state id="NoConsent" />
+    <end-state id="AttributeReleaseRejected" />
+    <end-state id="TermsRejected" />
     <end-state id="ContextCheckDenied" />
     <end-state id="RuntimeException" />
 
