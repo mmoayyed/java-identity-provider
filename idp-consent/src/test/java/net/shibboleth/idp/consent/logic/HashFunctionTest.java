@@ -17,31 +17,29 @@
 
 package net.shibboleth.idp.consent.logic;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
-import org.cryptacular.util.CodecUtil;
-import org.cryptacular.util.HashUtil;
+/** {@link HashFunction} unit test. */
+public class HashFunctionTest {
 
-import com.google.common.base.Function;
+    private HashFunction function;
 
-/**
- * Function whose output value is a hash of the input value.
- * 
- * Returns <code>null</code> for a <code>null</code> input.
- * 
- * The hash returned is the Base64 encoded representation of the SHA-256 digest.
- */
-public class HashFunction implements Function<String, String> {
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable public String apply(@Nonnull final String input) {
-
-        if (input == null) {
-            return null;
-        }
-
-        return CodecUtil.b64(HashUtil.sha256(input));
+    @BeforeMethod public void setUp() {
+        function = new HashFunction();
     }
+
+    @Test public void testNullInput() {
+        Assert.assertNull(function.apply(null));
+    }
+
+    @Test public void testEmptyInput() {
+        Assert.assertEquals(function.apply(""), "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=");
+    }
+
+    @Test public void testHash() {
+        Assert.assertEquals(function.apply("foo"), "LCa0a2j/xo/5m0U8HTBBNBNCLXBkg7+g+YpeiGJm564=");
+    }
+
 }

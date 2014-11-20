@@ -40,11 +40,10 @@ import com.google.common.base.Predicate;
  * Predicate that returns whether consent is required by comparing the previous and current consents from the consent
  * context.
  */
-// TODO tests
 public class IsConsentRequiredPredicate implements Predicate<ProfileRequestContext> {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(IsConsentRequiredPredicate.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(IsConsentRequiredPredicateTest.class);
 
     /** Consent context lookup strategy. */
     @Nonnull private Function<ProfileRequestContext, ConsentContext> consentContextLookupStrategy;
@@ -81,8 +80,7 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public boolean apply(@Nullable final ProfileRequestContext input) {
+    @Override @Nullable public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             log.debug("Consent is not required, no profile request context");
             return false;
@@ -107,6 +105,11 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
         }
 
         final Map<String, Consent> currentConsents = consentContext.getCurrentConsents();
+        if (currentConsents.isEmpty()) {
+            log.debug("Consent is not required, there are no current consents");
+            return false;
+        }
+
         for (final Consent currentConsent : currentConsents.values()) {
             final Consent previousConsent = previousConsents.get(currentConsent.getId());
             if (previousConsent == null) {
@@ -121,7 +124,7 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
             }
         }
 
-        log.debug("Consent is not required, previous consents match");
+        log.debug("Consent is not required, previous consents match current consents");
         return false;
     }
 
