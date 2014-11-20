@@ -51,6 +51,7 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeValuesHashFunction.class);
 
     /** {@inheritDoc} */
+    @Override
     @Nullable public String apply(@Nullable @NullableElements final Collection<IdPAttributeValue<?>> input) {
 
         if (input == null) {

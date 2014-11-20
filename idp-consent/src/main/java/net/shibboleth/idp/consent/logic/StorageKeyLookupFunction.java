@@ -73,6 +73,7 @@ public class StorageKeyLookupFunction implements ContextDataLookupFunction<Profi
     }
 
     /** {@inheritDoc} */
+    @Override
     public String apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;

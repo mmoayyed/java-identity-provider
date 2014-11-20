@@ -81,7 +81,8 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public boolean apply(@Nullable final ProfileRequestContext input) {
+    @Override
+    @Nullable public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             log.debug("Consent is not required, no profile request context");
             return false;

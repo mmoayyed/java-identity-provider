@@ -50,6 +50,7 @@ public class GlobalAttributeConsentPredicate implements Predicate<ProfileRequest
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return false;

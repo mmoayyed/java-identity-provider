@@ -88,6 +88,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean apply(@Nullable final IdPAttribute input) {
 
         final String attributeId = input.getId();

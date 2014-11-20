@@ -49,6 +49,7 @@ public class AttributeDisplayNameFunction implements Function<IdPAttribute, Stri
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String apply(@Nonnull final IdPAttribute input) {
         if (input == null) {
             return "N/A";

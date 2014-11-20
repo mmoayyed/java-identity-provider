@@ -79,7 +79,8 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public String apply(@Nullable final ProfileRequestContext input) {
+    @Override
+    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
 
         final AttributeContext attributeContext = attributeContextLookupStrategy.apply(input);
         if (attributeContext == null) {
