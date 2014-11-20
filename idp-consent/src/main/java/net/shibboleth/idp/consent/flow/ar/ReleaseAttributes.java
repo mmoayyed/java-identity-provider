@@ -36,8 +36,10 @@ import com.google.common.collect.Maps;
 /**
  * Attribute consent action which constrains the attributes released to those consented to.
  * 
- * For every IdP attribute in the attribute context, this action will release the attribute iff consent for the
- * attribute has been approved.
+ * For every consentable attribute in the attribute release context, this action will release the attribute if consent
+ * for the attribute has been approved. Attributes in the attribute context which are not consentable attributes in the
+ * attribute release context will be released. In other words, this action releases attributes for which consent has
+ * been approved as well as attributes which are excluded from consent.
  * 
  * Consent is obtained from the consent context. If there are no current consents then the previous consents are used to
  * determine the attributes to be released. The current consents will be present if user input has been obtained during
@@ -64,25 +66,32 @@ public class ReleaseAttributes extends AbstractAttributeReleaseAction {
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
         log.debug("{} Attributes before release '{}'", getLogPrefix(), attributes);
 
-        final Map<String, IdPAttribute> releasedAttributes = new HashMap<String, IdPAttribute>();
+        final Map<String, IdPAttribute> releasedAttributes = new HashMap<>(attributes.size());
 
         for (final IdPAttribute attribute : attributes.values()) {
+            if (!getAttributeReleaseContext().getConsentableAttributes().containsKey(attribute.getId())) {
+                log.debug("{} Attribute '{}' will be released because it is excluded from consent", getLogPrefix(),
+                        attribute);
+                releasedAttributes.put(attribute.getId(), attribute);
+                continue;
+            }
             if (!consents.containsKey(attribute.getId())) {
-                log.debug("{} Unknown attribute '{}' will not be released", getLogPrefix(), attribute);
+                log.debug("{} Attribute '{}' will not be released because consent for it does not exist",
+                        getLogPrefix(), attribute);
                 continue;
             }
             final Consent consent = consents.get(attribute.getId());
             if (consent.isApproved()) {
-                log.debug("{} Release of attribute '{}' is consented to", getLogPrefix(), attribute);
+                log.debug("{} Attribute '{}' will be released because consent is approved", getLogPrefix(), attribute);
                 releasedAttributes.put(attribute.getId(), attribute);
             } else {
-                log.debug("{} Release of attribute '{}' is not consented to", getLogPrefix(), attribute);
+                log.debug("{} Attribute '{}' will not be released because consent is not approved", getLogPrefix(),
+                        attribute);
             }
         }
 
-        log.debug("{} Releasing attributes '{}'", getLogPrefix(), releasedAttributes);
-
         if (log.isDebugEnabled()) {
+            log.debug("{} Releasing attributes '{}'", getLogPrefix(), releasedAttributes);
             final MapDifference<String, IdPAttribute> diff = Maps.difference(attributes, releasedAttributes);
             log.debug("{} Not releasing attributes '{}'", getLogPrefix(), diff.entriesOnlyOnLeft());
         }

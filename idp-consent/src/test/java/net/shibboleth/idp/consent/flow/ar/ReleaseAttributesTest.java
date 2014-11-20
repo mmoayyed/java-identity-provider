@@ -20,21 +20,29 @@ package net.shibboleth.idp.consent.flow.ar;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.ConsentTestingSupport;
+import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ReleaseAttributes} unit test. */
 // TODO incomplete
 public class ReleaseAttributesTest extends AbstractAttributeReleaseActionTest {
 
-    @Test public void testReleaseAttributes() throws Exception {
+    private AttributeReleaseContext arc;
+
+    @BeforeMethod void setUpAction() throws Exception {
+        action = new ReleaseAttributes();
+
         final Consent consentToAttribute1 = new Consent();
         consentToAttribute1.setId("attribute1");
         consentToAttribute1.setApproved(true);
@@ -50,7 +58,15 @@ public class ReleaseAttributesTest extends AbstractAttributeReleaseActionTest {
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
         consentCtx.getPreviousConsents().putAll(consent);
 
-        action = new ReleaseAttributes();
+        arc = prc.getSubcontext(AttributeReleaseContext.class);
+    }
+
+    @Test public void testAllAttributesAreConsentable() throws Exception {
+
+        final Map<String, IdPAttribute> consentableAttributes = ConsentTestingSupport.newAttributeMap();
+        arc.getConsentableAttributes().clear();
+        arc.getConsentableAttributes().putAll(consentableAttributes);
+
         action.initialize();
 
         final Event event = action.execute(src);
@@ -63,6 +79,28 @@ public class ReleaseAttributesTest extends AbstractAttributeReleaseActionTest {
         Assert.assertEquals(attrCtx.getIdPAttributes().size(), 1);
         Assert.assertTrue(attrCtx.getIdPAttributes().containsKey("attribute1"));
         Assert.assertFalse(attrCtx.getIdPAttributes().containsKey("attribute2"));
+        Assert.assertFalse(attrCtx.getIdPAttributes().containsKey("attribute3"));
+    }
+
+    @Test public void testSomeAttributesAreConsentable() throws Exception {
+
+        final Map<String, IdPAttribute> consentableAttributes = ConsentTestingSupport.newAttributeMap();
+        consentableAttributes.remove("attribute2");
+        arc.getConsentableAttributes().clear();
+        arc.getConsentableAttributes().putAll(consentableAttributes);
+
+        action.initialize();
+
+        final Event event = action.execute(src);
+
+        ActionTestingSupport.assertProceedEvent(event);
+
+        final AttributeContext attrCtx =
+                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+        Assert.assertNotNull(attrCtx);
+        Assert.assertEquals(attrCtx.getIdPAttributes().size(), 2);
+        Assert.assertTrue(attrCtx.getIdPAttributes().containsKey("attribute1"));
+        Assert.assertTrue(attrCtx.getIdPAttributes().containsKey("attribute2"));
         Assert.assertFalse(attrCtx.getIdPAttributes().containsKey("attribute3"));
     }
 
