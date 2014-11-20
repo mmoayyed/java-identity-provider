@@ -148,7 +148,7 @@
                         </div>
                     #end
                     <p style="text-align: center;">
-                        <input type="reset" name="noconfirm" value="#springMessage("idp.attribute-release.reject")" style="margin-right: 30px;" onclick="alert('#springMessage("idp.attribute-release.rejectMessage")')" />
+                        <input type="submit" name="_eventId_NoConsent" value="#springMessage("idp.attribute-release.reject")" style="margin-right: 30px;" />
                         <input type="submit" name="_eventId_proceed" value="#springMessage("idp.attribute-release.accept")" />
                     </p>
                 </div>

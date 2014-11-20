@@ -38,7 +38,7 @@
     </action-state>
 
     <decision-state id="TestForRevokeGlobalAttributeConsent">
-        <if test="flowScope.allowGlobalConsent" then="RevokeGlobalAttributeConsent" else="PopulateConsentContext" />
+        <if test="attributeReleaseFlowDescriptor.isGlobalConsentAllowed()" then="RevokeGlobalAttributeConsent" else="PopulateConsentContext" />
     </decision-state>
 
     <action-state id="RevokeGlobalAttributeConsent">
@@ -93,11 +93,11 @@
 
     <view-state id="DisplayAttributeReleasePage" view="#{flowRequestContext.activeFlow.id}">
         <on-render>
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
-            <evaluate expression="new net.shibboleth.idp.consent.logic.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getLocale())" result="requestScope.attributeDisplayNameFunction" />
+            <evaluate expression="new net.shibboleth.idp.consent.logic.AttributeDisplayNameFunction(flowRequestContext.getExternalContext().getLocale())" result="viewScope.attributeDisplayNameFunction" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext))" result="viewScope.consentContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.AttributeReleaseContext))" result="viewScope.attributeReleaseContext" />
             <evaluate expression="SetRPUIInformation.getRPUIContextCreateStrategy().apply(opensamlProfileRequestContext)" result="viewScope.rpUIContext" />

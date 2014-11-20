@@ -70,7 +70,7 @@ public class RevokeConsent extends AbstractConsentStorageAction {
                 log.debug("{} Deleted consent storage record with context '{}' and key '{}'", getLogPrefix(), context,
                         key);
             } else {
-                log.warn("{} Unable to delete consent storage record with context '{}' and key '{}'", getLogPrefix(),
+                log.debug("{} No consent storage record found with context '{}' and key '{}'", getLogPrefix(),
                         context, key);
             }
         } catch (final IOException e) {

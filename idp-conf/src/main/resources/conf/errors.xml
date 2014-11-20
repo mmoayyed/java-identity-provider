@@ -25,6 +25,7 @@
     <!-- List of events to trap and handle with local views, without returning to SPs. -->
     <util:list id="shibboleth.LocalEvents">
         <value>ContextCheckDenied</value>
+        <value>NoConsent</value>
         <value>RuntimeException</value>
         <!--
         <value>IdentitySwitch</value>
