@@ -43,7 +43,7 @@ import com.google.common.base.Predicate;
 public class IsConsentRequiredPredicate implements Predicate<ProfileRequestContext> {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(IsConsentRequiredPredicateTest.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(IsConsentRequiredPredicate.class);
 
     /** Consent context lookup strategy. */
     @Nonnull private Function<ProfileRequestContext, ConsentContext> consentContextLookupStrategy;
