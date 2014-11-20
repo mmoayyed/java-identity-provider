@@ -114,9 +114,9 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     }
 
     /**
-     * Set the storage storageContext lookup strategy.
+     * Set the storage context lookup strategy.
      * 
-     * @param strategy the storage storageContext lookup strategy
+     * @param strategy the storage context lookup strategy
      */
     public void setStorageContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -125,9 +125,9 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     }
 
     /**
-     * Set the storage storageKey lookup strategy.
+     * Set the storage key lookup strategy.
      * 
-     * @param strategy the storage storageKey lookup strategy
+     * @param strategy the storage key lookup strategy
      */
     public void setStorageKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext, String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -194,8 +194,6 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        // TODO build some event when required data is missing ?
-
         if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
             return false;
         }
@@ -203,7 +201,7 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
         final ProfileInterceptorFlowDescriptor flowDescriptor = interceptorContext.getAttemptedFlow();
         log.trace("{} Flow descriptor '{}'", getLogPrefix(), flowDescriptor);
         if (flowDescriptor == null) {
-            log.debug("{} No flow descriptor available from interceptor storageContext", getLogPrefix());
+            log.warn("{} No flow descriptor available from interceptor context", getLogPrefix());
             return false;
         }
 
