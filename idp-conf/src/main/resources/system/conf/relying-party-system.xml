@@ -12,9 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
-        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
-
     <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
