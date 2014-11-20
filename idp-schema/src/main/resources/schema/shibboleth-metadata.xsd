@@ -613,7 +613,7 @@
     <complexType name="SchemaValidation">
         <annotation>
             <documentation>
-                A filter that checks, and optionally requires, the signature on the top level of the incoming metadata.
+                A filter that performs XML schema validation on incoming metadata documents being processed.
             </documentation>
         </annotation>
         <complexContent>
