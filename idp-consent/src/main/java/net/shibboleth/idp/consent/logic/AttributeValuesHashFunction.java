@@ -26,7 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 
 import org.cryptacular.util.CodecUtil;
 import org.cryptacular.util.HashUtil;
@@ -34,11 +34,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
 /**
  * Function to calculate the hash of the values of an IdP attribute.
  * 
- * TODO details
+ * Returns <code>null</code> for a <code>null</code> input or empty collection of IdP attribute values.
+ * <code>Null</code> IdP attribute values are ignored.
+ * 
+ * The hash returned is the Base64 encoded representation of the SHA-256 digest.
  */
 public class AttributeValuesHashFunction implements Function<Collection<IdPAttributeValue<?>>, String> {
 
@@ -46,9 +51,15 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeValuesHashFunction.class);
 
     /** {@inheritDoc} */
-    @Nullable public String apply(@Nonnull @NonnullElements final Collection<IdPAttributeValue<?>> input) {
+    @Nullable public String apply(@Nullable @NullableElements final Collection<IdPAttributeValue<?>> input) {
 
-        if (input.isEmpty()) {
+        if (input == null) {
+            return null;
+        }
+
+        final Collection<IdPAttributeValue<?>> filteredInput = Collections2.filter(input, Predicates.notNull());
+
+        if (filteredInput.isEmpty()) {
             return null;
         }
 
@@ -56,7 +67,7 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
 
-            for (final IdPAttributeValue value : input) {
+            for (final IdPAttributeValue value : filteredInput) {
                 objectOutputStream.writeObject(value.getValue());
             }
 

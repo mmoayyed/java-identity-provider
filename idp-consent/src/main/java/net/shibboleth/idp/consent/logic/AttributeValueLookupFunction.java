@@ -41,7 +41,6 @@ import com.google.common.base.Functions;
 /**
  * {@link ContextDataLookupFunction} to return the value of an attribute from an {@link AttributeContext}.
  */
-// TODO tests
 public class AttributeValueLookupFunction implements ContextDataLookupFunction<ProfileRequestContext, String> {
 
     /** Class logger. */
@@ -68,6 +67,17 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
                         new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
     }
 
+    /**
+     * Set the attribute context lookup strategy.
+     * 
+     * @param strategy the attribute context lookup strategy
+     */
+    public void setAttributeContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
+        attributeContextLookupStrategy =
+                Constraint.isNotNull(strategy, "Attribute context lookup strategy cannot be null");
+    }
+
     /** {@inheritDoc} */
     @Override @Nullable public String apply(@Nullable final ProfileRequestContext input) {
 
@@ -79,7 +89,7 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
 
         final IdPAttribute attribute = attributeContext.getIdPAttributes().get(attributeId);
         if (attribute == null || attribute.getValues().isEmpty()) {
-            log.debug("Attribute {} has no values", attributeId);
+            log.debug("Attribute '{}' does not exist or has no values", attributeId);
             return null;
         }
 
@@ -89,6 +99,8 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
 
         for (final IdPAttributeValue value : attribute.getValues()) {
             if (value instanceof StringAttributeValue) {
+                log.debug("Returning value '{}' of attribute '{}'", ((StringAttributeValue) value).getValue(),
+                        attributeId);
                 return ((StringAttributeValue) value).getValue();
             }
         }
