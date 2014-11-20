@@ -59,6 +59,7 @@
         p:failFast="%{idp.service.nameidGeneration.failFast:false}"
         p:reloadCheckDelay="%{idp.service.nameidGeneration.checkInterval:0}"
         p:reloadTaskTimer-ref="shibboleth.TaskTimer"
+        p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
         p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
 
     <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
@@ -66,6 +67,7 @@
             p:failFast="%{idp.service.relyingparty.failFast:false}"
             p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:0}"
             p:reloadTaskTimer-ref="shibboleth.TaskTimer"
+            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
             p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
         <constructor-arg name="claz" value="net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver" />
         <constructor-arg name="strategy">
@@ -97,6 +99,7 @@
         p:failFast="%{idp.service.access.failFast:true}"
         p:reloadCheckDelay="%{idp.service.access.checkInterval:0}"
         p:reloadTaskTimer-ref="shibboleth.TaskTimer"
+        p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
         p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
 
     <!--

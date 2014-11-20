@@ -12,9 +12,6 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name (if not already set). -->
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
-
     <bean class="net.shibboleth.idp.security.ReloadingAccessControlService">
         <constructor-arg>
             <bean class="net.shibboleth.utilities.java.support.security.BasicAccessControlService"
