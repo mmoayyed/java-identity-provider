@@ -26,9 +26,27 @@
     <!-- If consent revocation was requested, skip reading from storage. -->
 
     <decision-state id="TestForRevokeConsent">
-        <if test="requestParameters._idp_revokeConsent" then="PopulateConsentContext" else="ReadConsentFromStorage" />
+        <if test="requestParameters._idp_revokeConsent" then="RevokeConsent" else="ReadConsentFromStorage" />
     </decision-state>
 
+    <!-- Revoke consent by deleting consent storage records. -->
+
+    <action-state id="RevokeConsent">
+        <evaluate expression="RevokeConsent" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="TestForRevokeGlobalAttributeConsent" />
+    </action-state>
+
+    <decision-state id="TestForRevokeGlobalAttributeConsent">
+        <if test="flowScope.allowGlobalConsent" then="RevokeGlobalAttributeConsent" else="PopulateConsentContext" />
+    </decision-state>
+
+    <action-state id="RevokeGlobalAttributeConsent">
+        <evaluate expression="RevokeGlobalAttributeConsent" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="PopulateConsentContext" />
+    </action-state>
+    
 
     <!-- Read consent from storage. -->
 
@@ -114,27 +132,8 @@
     <!-- Determine whether consent should be stored or not. -->
     
     <decision-state id="TestForDoNotRememberConsent">
-        <if test="requestParameters._idp_consentOptions == '_idp_doNotRememberConsent'" then="RevokeConsent" else="CreateResult" />
+        <if test="requestParameters._idp_consentOptions == '_idp_doNotRememberConsent'" then="ReleaseAttributes" else="CreateResult" />
     </decision-state>
-
-
-    <!-- Revoke consent by deleting consent storage records. -->
-
-    <action-state id="RevokeConsent">
-        <evaluate expression="RevokeConsent" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="TestForRevokeGlobalAttributeConsent" />
-    </action-state>
-
-    <decision-state id="TestForRevokeGlobalAttributeConsent">
-        <if test="flowScope.allowGlobalConsent" then="RevokeGlobalAttributeConsent" else="ReleaseAttributes" />
-    </decision-state>
-
-    <action-state id="RevokeGlobalAttributeConsent">
-        <evaluate expression="RevokeGlobalAttributeConsent" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ReleaseAttributes" />
-    </action-state>
 
 
     <!-- Create result to be stored by interceptor flow. -->
