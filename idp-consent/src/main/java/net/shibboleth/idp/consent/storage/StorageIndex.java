@@ -37,7 +37,6 @@ import com.google.common.collect.Collections2;
 /**
  * Holds a storage context and associated keys to serve as a secondary index for lookup of records from storage.
  */
-// TODO tests
 public class StorageIndex {
 
     /** Storage context. */

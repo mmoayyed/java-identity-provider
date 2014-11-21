@@ -123,7 +123,6 @@ public class UpdateStorageIndex extends AbstractConsentStorageAction {
                 interceptorContext.getResults().add(result);
                 log.debug("{} Consent index has changed, adding result '{}' to interceptor context", getLogPrefix(),
                         result);
-                // TODO expiration ?
             } else {
                 log.debug("{} Consent index has not changed, nothing to do", getLogPrefix());
             }

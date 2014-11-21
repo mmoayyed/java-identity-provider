@@ -61,6 +61,9 @@ public class ConsentTest {
     }
 
     @Test public void testEqualityAndHashCode() {
+        Assert.assertEquals(consent, consent);
+        Assert.assertNotEquals(consent, null);
+        
         final Consent otherConsent = new Consent();
         Assert.assertNotEquals(consent, otherConsent);
         Assert.assertFalse(consent.hashCode() == otherConsent.hashCode());

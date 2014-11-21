@@ -30,7 +30,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 /**
  * Base class for profile interceptor results.
  */
-// TODO tests
 public abstract class AbstractProfileInterceptorResult extends AbstractIdentifiableInitializableComponent implements
         ProfileInterceptorResult {
 

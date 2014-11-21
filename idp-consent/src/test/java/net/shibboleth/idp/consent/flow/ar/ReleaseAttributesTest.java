@@ -35,7 +35,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ReleaseAttributes} unit test. */
-// TODO incomplete
 public class ReleaseAttributesTest extends AbstractAttributeReleaseActionTest {
 
     private AttributeReleaseContext arc;
