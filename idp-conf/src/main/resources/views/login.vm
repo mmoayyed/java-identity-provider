@@ -12,7 +12,7 @@
 
 #set ( $username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername() )
 #set ( $rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext') )
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html>
   	<head>
     	<meta charset="utf-8" />
     	<title>Example Login Page</title>
@@ -43,7 +43,7 @@
                 </p>
               #end
 
-              #if ( !$rpContext.getRelyingPartyId().contains($rpUIContext.getServiceName()) )
+              #if ($rpUIContext.getServiceName() && !$rpContext.getRelyingPartyId().contains($rpUIContext.getServiceName()) )
                 <legend>
                   Login to $encoder.encodeForHTML($rpUIContext.getServiceName())
                 </legend>
@@ -64,11 +64,13 @@
                 <input type="checkbox" name="donotcache" value="1" /> Don't Remember Login
               </section>
 
-              ## <section>
-              ##  <input id="_idp_revokeConsent" type="checkbox" name="_idp_revokeConsent" value="true"/>
-              ##  Clear data release consent for this service
-              ## </section>
-
+              <!--
+              <section>
+                <input id="_idp_revokeConsent" type="checkbox" name="_idp_revokeConsent" value="true"/>
+                Clear prior granting of permission for release of your information to this service.
+              </section>
+              -->
+              
               <section>
                 <button class="form-element form-button" type="submit" name="_eventId_proceed" >Login</button>
               </section>
