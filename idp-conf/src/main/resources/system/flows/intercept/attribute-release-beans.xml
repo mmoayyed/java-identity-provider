@@ -17,7 +17,7 @@
     <import resource="../../../conf/intercept/consent-intercept-config.xml" />
 
     <bean id="AttributeReleaseConsentFunction"
-        class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseConsentFunction" scope="prototype" />
+        class="net.shibboleth.idp.consent.logic.AttributeReleaseConsentFunction" scope="prototype" />
 
     <bean id="AttributeConsentFlowDescriptorLookupStrategy"
         class="net.shibboleth.idp.consent.logic.FlowDescriptorLookupFunction"

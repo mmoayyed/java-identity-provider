@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.consent.flow.ar;
+package net.shibboleth.idp.consent.logic;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -31,8 +31,6 @@ import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
-import net.shibboleth.idp.consent.logic.AttributeValuesHashFunction;
-import net.shibboleth.idp.consent.logic.FlowDescriptorLookupFunction;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -43,7 +41,8 @@ import com.google.common.base.Function;
 /**
  * Function that returns a map of consent objects representing consent to attribute release. Each consent object
  * represents consent to an attribute. The id of each consent object is an attribute id, and the value of each consent
- * object is a hash of the attribute's values.
+ * object is a hash of the attribute's values. A consent object is created for every consentable attribute in the
+ * attribute release context.
  */
 public class AttributeReleaseConsentFunction implements Function<ProfileRequestContext, Map<String, Consent>> {
 
@@ -145,8 +144,14 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
 
             // Remember previous choice.
             final Consent previousConsent = consentContext.getPreviousConsents().get(consent.getId());
-            if (previousConsent != null && Objects.equals(consent.getValue(), previousConsent.getValue())) {
-                consent.setApproved(previousConsent.isApproved());
+            if (previousConsent != null) {
+                if (consentFlowDescriptor.compareValues()) {
+                    if (Objects.equals(consent.getValue(), previousConsent.getValue())) {
+                        consent.setApproved(previousConsent.isApproved());
+                    }
+                } else {
+                    consent.setApproved(previousConsent.isApproved());
+                }
             }
 
             currentConsents.put(consent.getId(), consent);
