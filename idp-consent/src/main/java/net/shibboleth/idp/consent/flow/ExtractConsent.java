@@ -52,8 +52,7 @@ import com.google.common.collect.Sets;
 public class ExtractConsent extends AbstractConsentAction {
 
     /** Parameter name for consent IDs. */
-    // TODO probably change to _idp_consentIds or something
-    @Nonnull @NotEmpty public static final String CONSENT_IDS_REQUEST_PARAMETER = "consentIds";
+    @Nonnull @NotEmpty public static final String CONSENT_IDS_REQUEST_PARAMETER = "_shib_idp_consentIds";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractConsent.class);

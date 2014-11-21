@@ -80,7 +80,7 @@
                                         #else
                                             #set ($inputType = "hidden")
                                         #end
-                                        <input id="$attribute.id" type="$inputType" name="consentIds" value="$encoder.encodeForHTML($attribute.id)" checked />
+                                        <input id="$attribute.id" type="$inputType" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($attribute.id)" checked />
                                     </td>
                                 </tr>
                             #end
@@ -103,7 +103,7 @@
                     #end
                     #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed)
                         <p>
-                            <input id="_idp_doNotRememberConsent" type="radio" name="_idp_consentOptions" value="_idp_doNotRememberConsent" />
+                            <input id="_shib_idp_doNotRememberConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_doNotRememberConsent" />
                             #springMessage("idp.attribute-release.doNotRememberConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )
@@ -117,7 +117,7 @@
                     #end
                     #if ($attributeReleaseFlowDescriptor.doNotRememberConsentAllowed || $attributeReleaseFlowDescriptor.globalConsentAllowed)
                         <p>
-                            <input id="_idp_rememberConsent" type="radio" name="_idp_consentOptions" value="_idp_rememberConsent" checked />
+                            <input id="_shib_idp_rememberConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_rememberConsent" checked />
                             #springMessage("idp.attribute-release.rememberConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )
@@ -131,7 +131,7 @@
                     #end
                     #if ($attributeReleaseFlowDescriptor.globalConsentAllowed)
                         <p>
-                            <input id="_idp_globalConsent" type="radio" name="_idp_consentOptions" value="_idp_globalConsent" />
+                            <input id="_shib_idp_globalConsent" type="radio" name="_shib_idp_consentOptions" value="_shib_idp_globalConsent" />
                             #springMessage("idp.attribute-release.globalConsent")
                             <ul>
                                 #foreach( $i in ["1", "2", "3"] )

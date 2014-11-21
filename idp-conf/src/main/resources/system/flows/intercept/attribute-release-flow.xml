@@ -26,7 +26,7 @@
     <!-- If consent revocation was requested, skip reading from storage. -->
 
     <decision-state id="TestForRevokeConsent">
-        <if test="requestParameters._idp_revokeConsent" then="RevokeConsent" else="ReadConsentFromStorage" />
+        <if test="requestParameters._shib_idp_revokeConsent" then="RevokeConsent" else="ReadConsentFromStorage" />
     </decision-state>
 
     <!-- Revoke consent by deleting consent storage records. -->
@@ -109,7 +109,7 @@
     <!-- If global consent was given by user, create appropriate storage result and end flow. -->
 
     <decision-state id="TestForGlobalConsent">
-        <if test="requestParameters._idp_consentOptions == '_idp_globalConsent'" then="GlobalConsent" else="ExtractConsent" />
+        <if test="requestParameters._shib_idp_consentOptions == '_shib_idp_globalConsent'" then="GlobalConsent" else="ExtractConsent" />
     </decision-state>
 
     <action-state id="GlobalConsent">
@@ -132,7 +132,7 @@
     <!-- Determine whether consent should be stored or not. -->
     
     <decision-state id="TestForDoNotRememberConsent">
-        <if test="requestParameters._idp_consentOptions == '_idp_doNotRememberConsent'" then="ReleaseAttributes" else="CreateResult" />
+        <if test="requestParameters._shib_idp_consentOptions == '_shib_idp_doNotRememberConsent'" then="ReleaseAttributes" else="CreateResult" />
     </decision-state>
 
 

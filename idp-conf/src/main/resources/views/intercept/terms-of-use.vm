@@ -43,7 +43,7 @@
                     </div>
                     <div style="float:right;">
                         <form action="$flowExecutionUrl" method="post" >
-                            <input id="accept" type="checkbox" name="consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
+                            <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
                             <label for="accept">#springMessage("idp.terms-of-use.accept")</label>
                             #if ($requireCheckbox)
                                 <p class="form-error">#springMessage("idp.terms-of-use.required")</p>

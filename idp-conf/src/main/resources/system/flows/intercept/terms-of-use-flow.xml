@@ -40,7 +40,7 @@
     </view-state>
     
     <decision-state id="TestForCheckbox">
-        <if test="requestParameters.consentIds != null" then="ExtractConsent" else="RequireCheckbox" />
+        <if test="requestParameters._shib_idp_consentIds != null" then="ExtractConsent" else="RequireCheckbox" />
     </decision-state>
     
     <action-state id="RequireCheckbox">
