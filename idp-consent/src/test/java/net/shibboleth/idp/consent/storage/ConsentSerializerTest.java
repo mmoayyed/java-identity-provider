@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.storage;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.logic.AttributeValuesHashFunction;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -40,11 +42,10 @@ import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
 /** Unit tests for {@link ConsentSerializer}. */
-// TODO incomplete
-public class AttributeConsentSerializerTest {
+public class ConsentSerializerTest {
 
     /** Class logger. */
-    @Nonnull protected final Logger log = LoggerFactory.getLogger(AttributeConsentSerializerTest.class);
+    @Nonnull protected final Logger log = LoggerFactory.getLogger(ConsentSerializerTest.class);
 
     private static final String CONTEXT = "_context";
 
@@ -94,17 +95,30 @@ public class AttributeConsentSerializerTest {
         consent2 = new Consent();
         consent2.setId("attribute2");
         consent2.setValue(attributeValuesHashFunction.apply(attribute2.getValues()));
-        consent2.setApproved(true);
-        
+        consent2.setApproved(false);
+
         consents = new LinkedHashMap<>();
         consents.put(consent1.getId(), consent1);
         consents.put(consent2.getId(), consent2);
     }
 
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testNull() throws Exception {
+        serializer.initialize();
+        serializer.serialize(null);
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testEmpty() throws Exception {
+        serializer.initialize();
+        serializer.serialize(new HashMap<String, Consent>());
+    }
+
     @Test public void testSimple() throws Exception {
         serializer.initialize();
-        
+
         final String serialized = serializer.serialize(consents);
+        Assert.assertEquals(
+                serialized,
+                "[{\"id\":\"attribute1\",\"v\":\"yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=\"},{\"id\":\"attribute2\",\"v\":\"xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=\",\"appr\":false}]");
 
         final Map<String, Consent> deserialized = serializer.deserialize(1, CONTEXT, KEY, serialized, null);
 

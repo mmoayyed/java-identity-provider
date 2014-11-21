@@ -20,6 +20,7 @@ package net.shibboleth.idp.consent.storage;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -46,12 +47,12 @@ import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+
 /**
  * Serializes {@link Consent}.
- * 
- * TODO details
  */
-// TODO handle null consent values
 public class ConsentSerializer extends AbstractInitializableComponent implements
         StorageSerializer<Map<String, Consent>> {
 
@@ -109,32 +110,27 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
                 }
             }
 
-            log.debug("Deserialized context '{}' key '{}' value '{}' expiration '{}' as '{}", new Object[] {context,
+            log.debug("Deserialized context '{}' key '{}' value '{}' expiration '{}' as '{}'", new Object[] {context,
                     key, value, expiration, consents,});
             return consents;
         } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
-            log.error("Exception while parsing AttributeConsent", e);
-            throw new IOException("Found invalid data structure while parsing AttributeConsent", e);
+            log.error("Exception while parsing consent", e);
+            throw new IOException("Found invalid data structure while parsing consent", e);
         }
     }
 
     /** {@inheritDoc} */
-    @Nonnull
-    @NotEmpty
-    public String serialize(@Nonnull final Map<String, Consent> consents) throws IOException {
+    @Nonnull @NotEmpty public String serialize(@Nonnull final Map<String, Consent> consents) throws IOException {
         Constraint.isNotNull(consents, "Consents cannot be null");
 
-        // TODO what should be returned in this case ?
-
-        if (consents.isEmpty()) {
-            return "";
-        }
+        final Collection<Consent> filteredConsents = Collections2.filter(consents.values(), Predicates.notNull());
+        Constraint.isNotEmpty(filteredConsents, "Consents cannot be empty");
 
         final StringWriter sink = new StringWriter(128);
         final JsonGenerator gen = generatorFactory.createGenerator(sink);
 
         gen.writeStartArray();
-        for (final Consent consent : consents.values()) {
+        for (final Consent consent : filteredConsents) {
             gen.writeStartObject();
             gen.write(ID_FIELD, consent.getId());
             if (consent.getValue() != null) {
@@ -149,7 +145,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
         gen.close();
 
         final String serialized = sink.toString();
-        log.debug("Serialized '{}' as '{}", consents, serialized);
+        log.debug("Serialized '{}' as '{}'", consents, serialized);
         return serialized;
     }
 

@@ -20,6 +20,7 @@ package net.shibboleth.idp.consent.storage;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -46,8 +47,12 @@ import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Storage serializer for map of {@link StorageIndex} objects keyed by the {@link StorageIndex} context. */
-// TODO tests
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+
+/**
+ * Serializes {@link StorageIndex}.
+ */
 public class StorageIndexSerializer extends AbstractInitializableComponent implements
         StorageSerializer<Map<String, StorageIndex>> {
 
@@ -74,19 +79,17 @@ public class StorageIndexSerializer extends AbstractInitializableComponent imple
 
     /** {@inheritDoc} */
     @Nonnull @NotEmpty public String serialize(@Nonnull final Map<String, StorageIndex> instance) throws IOException {
-        Constraint.isNotNull(instance, "Map of storage indexes cannot be null");
+        Constraint.isNotNull(instance, "Storage indexes cannot be null");
 
-        // TODO what should be returned in this case ?
-
-        if (instance.isEmpty()) {
-            return "";
-        }
+        final Collection<StorageIndex> filteredStorageIndexes =
+                Collections2.filter(instance.values(), Predicates.notNull());
+        Constraint.isNotEmpty(filteredStorageIndexes, "Storage indexes cannot be empty");
 
         final StringWriter sink = new StringWriter(128);
         final JsonGenerator gen = generatorFactory.createGenerator(sink);
 
         gen.writeStartArray();
-        for (final StorageIndex storageIndex : instance.values()) {
+        for (final StorageIndex storageIndex : filteredStorageIndexes) {
             gen.writeStartObject();
             gen.write(CONTEXT_FIELD, storageIndex.getContext());
             if (!storageIndex.getKeys().isEmpty()) {
@@ -102,7 +105,7 @@ public class StorageIndexSerializer extends AbstractInitializableComponent imple
         gen.close();
 
         final String serialized = sink.toString();
-        log.debug("Serialized '{}' as '{}", instance, serialized);
+        log.debug("Serialized '{}' as '{}'", instance, serialized);
         return serialized;
     }
 
@@ -134,12 +137,11 @@ public class StorageIndexSerializer extends AbstractInitializableComponent imple
                             }
                         }
                     }
-
                     storageIndexes.put(storageIndex.getContext(), storageIndex);
                 }
             }
 
-            log.debug("Deserialized context '{}' key '{}' value '{}' expiration '{}' as '{}", new Object[] {context,
+            log.debug("Deserialized context '{}' key '{}' value '{}' expiration '{}' as '{}'", new Object[] {context,
                     key, value, expiration, storageIndexes,});
             return storageIndexes;
         } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {

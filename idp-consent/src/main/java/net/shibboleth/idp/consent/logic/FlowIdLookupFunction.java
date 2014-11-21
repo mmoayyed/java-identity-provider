@@ -32,23 +32,17 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * {@link ContextDataLookupFunction} that returns the current flow id.
- * 
- * TODO details
  */
-// TODO tests
 public class FlowIdLookupFunction implements ContextDataLookupFunction<ProfileRequestContext, String> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(FlowIdLookupFunction.class);
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
+    @Override @Nullable public String apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }
-
-        // TODO log null checks ?
 
         final SpringRequestContext springRequestContext = input.getSubcontext(SpringRequestContext.class, false);
         if (springRequestContext == null) {

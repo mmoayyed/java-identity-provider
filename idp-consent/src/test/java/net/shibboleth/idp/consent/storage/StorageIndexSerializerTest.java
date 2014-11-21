@@ -18,24 +18,18 @@
 package net.shibboleth.idp.consent.storage;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-
 import net.shibboleth.idp.consent.ConsentTestingSupport;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit tests for {@link StorageIndexSerializer}. */
-// TODO incomplete
 public class StorageIndexSerializerTest {
-
-    /** Class logger. */
-    @Nonnull protected final Logger log = LoggerFactory.getLogger(StorageIndexSerializerTest.class);
 
     protected Map<String, StorageIndex> storageIndexes;
 
@@ -47,14 +41,26 @@ public class StorageIndexSerializerTest {
 
     @BeforeMethod public void setUp() {
 
-       storageIndexes = ConsentTestingSupport.newStorageIndexMap();
+        storageIndexes = ConsentTestingSupport.newStorageIndexMap();
 
         serializer = new StorageIndexSerializer();
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testNull() throws Exception {
+        serializer.initialize();
+        serializer.serialize(null);
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testEmpty() throws Exception {
+        serializer.initialize();
+        serializer.serialize(new HashMap<String, StorageIndex>());
     }
 
     @Test public void testSimple() throws IOException {
 
         final String serialized = serializer.serialize(storageIndexes);
+        Assert.assertEquals(serialized,
+                "[{\"ctx\":\"context2\",\"keys\":[\"key1\",\"key2\"]},{\"ctx\":\"context1\",\"keys\":[\"key1\"]}]");
 
         final Map<String, StorageIndex> deserialized = serializer.deserialize(-1, "context", "key", serialized, null);
 
