@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
 /**
  * An action that writes a {@link ProfileInterceptorResult} to a {@link StorageService}.
  * 
- * TODO details
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#IO_ERROR}
  */
-// TODO tests
 public class WriteProfileInterceptorResultToStorage extends AbstractProfileInterceptorAction {
 
     /** Class logger. */
@@ -62,8 +62,6 @@ public class WriteProfileInterceptorResultToStorage extends AbstractProfileInter
         if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
             return false;
         }
-        
-        // TODO build some event when required data is missing ?
 
         results = interceptorContext.getResults();
         if (results.isEmpty()) {
