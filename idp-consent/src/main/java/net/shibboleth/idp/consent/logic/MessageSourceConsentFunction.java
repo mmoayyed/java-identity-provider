@@ -28,6 +28,7 @@ import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -152,6 +153,19 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      */
     public void setLocaleLookupStrategy(@Nonnull final Function<ProfileRequestContext, Locale> strategy) {
         localeLookupStrategy = Constraint.isNotNull(strategy, "Locale lookup strategy cannot be null");
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+
+        if (consentIdMessageCode == null) {
+            throw new ComponentInitializationException("Consent ID message code cannot be null");
+        }
+
+        if (consentValueMessageCode == null) {
+            throw new ComponentInitializationException("Consent value message code cannot be null");
+        }
     }
 
     /**
