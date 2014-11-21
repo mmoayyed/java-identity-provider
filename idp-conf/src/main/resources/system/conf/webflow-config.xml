@@ -18,6 +18,9 @@
     <webflow:flow-registry id="flowRegistry" base-path="%{idp.home}/flows" flow-builder-services="flowBuilderServices">
         <webflow:flow-location-pattern value="/**/*-flow.xml" />
 
+        <!-- Abstract base flow for admin flows. -->
+        <webflow:flow-location id="admin.abstract" path="../system/flows/admin/admin-abstract-flow.xml" />
+
         <!-- Status flow (location is for backward compatibility). -->
         <webflow:flow-location id="status" path="../system/flows/admin/status-flow.xml" />
 

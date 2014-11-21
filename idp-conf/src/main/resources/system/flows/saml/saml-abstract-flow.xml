@@ -133,12 +133,26 @@
         <transition to="HandleError" />
     </action-state>
 
-    <!-- Unsuccessful terminal state. -->
+    <!-- Unsuccessful terminal states. -->
     
-    <end-state id="HandleErrorWithView" view="#{MapEventToView.apply(currentEvent)}">
+    <decision-state id="HandleErrorWithView">
+        <if test="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').containsKey(currentEvent.id) and flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').get(currentEvent.id)"
+            then="AuditedErrorView" else="ErrorView" />
+    </decision-state>
+    
+    <end-state id="AuditedErrorView" view="#{MapEventToView.apply(currentEvent)}">
         <on-entry>
             <evaluate expression="ErrorViewPopulateAuditContext" />
-            <evaluate expression="WriteAuditLogForLocalError" />
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="ErrorView" view="#{MapEventToView.apply(currentEvent)}">
+        <on-entry>
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />

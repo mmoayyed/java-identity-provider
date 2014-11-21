@@ -90,12 +90,7 @@
 
     <bean id="ErrorViewPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:activationCondition="%{idp.logging.auditLocalErrors:false}"
         p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
-
-    <bean id="WriteAuditLogForLocalError" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:activationCondition="%{idp.logging.auditLocalErrors:false}"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
     
     <bean id="MapEventToView"

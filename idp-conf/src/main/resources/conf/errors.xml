@@ -17,17 +17,20 @@
         <entry key="LogoutResponse" value="logout-response" />
     </util:map>
 
-    <!-- List of events to trap and handle with local views, without returning to SPs. -->
-    <util:list id="shibboleth.LocalEvents">
-        <value>ContextCheckDenied</value>
-        <value>AttributeReleaseRejected</value>
-        <value>TermsRejected</value>
-        <value>RuntimeException</value>
+    <!--
+    Map of events to trap and handle with local views, without returning to SPs.
+    The map values are flags indicating whether to write an audit log record.
+    -->
+    <util:map id="shibboleth.LocalEventMap">
+        <entry key="ContextCheckDenied" value="true" />
+        <entry key="AttributeReleaseRejected" value="true" />
+        <entry key="TermsRejected" value="true" />
+        <entry key="RuntimeException" value="false" />
         <!--
-        <value>IdentitySwitch</value>
-        <value>NoPotentialFlow</value>
+        <entry key="IdentitySwitch" value="false" />
+        <entry key="NoPotentialFlow" value="false" />
         -->
-    </util:list>
+    </util:map>
     
     <!-- Mappings of error events during requests to SAML status codes and SOAP fault codes. -->
 

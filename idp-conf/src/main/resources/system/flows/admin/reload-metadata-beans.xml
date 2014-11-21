@@ -44,13 +44,4 @@
         p:activationCondition-ref="shibboleth.ProfileAuditingCondition"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
-    <bean id="WriteAuditLogForLocalError" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:activationCondition="%{idp.logging.auditLocalErrors:false}"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
-    
-    <bean id="MapEventToView"
-        class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
-        p:defaultView-ref="shibboleth.DefaultErrorView"
-        p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
-
 </beans>

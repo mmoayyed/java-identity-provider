@@ -11,9 +11,9 @@
     
     <action-state id="DoCanonicalization">
         <on-entry>
-            <set name="requestScope.beanId" value="'Shibboleth.C14N.' + flowExecutionContext.getActiveSession().getDefinition().getId().split('/')[1]" />
+            <set name="requestScope.beanId" value="'Shibboleth.C14N.' + flowRequestContext.getActiveFlow().getId().split('/')[1]" />
         </on-entry>
-        <evaluate expression="flowExecutionContext.getActiveSession().getDefinition().getApplicationContext().getBean(beanId).execute(flowRequestContext)" />
+        <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean(beanId).execute(flowRequestContext)" />
 
         <transition on="success" to="proceed" />
     </action-state>

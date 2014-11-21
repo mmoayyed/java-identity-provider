@@ -43,6 +43,16 @@
         
         <transition on="proceed" to="ResponseView" />
     </action-state>
+
+    <!-- Passthrough state if an exception is thrown. -->
+
+    <action-state id="LogRuntimeException">
+        <on-entry>
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile').error('Uncaught runtime exception', rootCauseException)" />
+        </on-entry>
+        <evaluate expression="'RuntimeException'" />
+        <transition to="ResponseView" />
+    </action-state>
     
     <end-state id="ResponseView" view="resolvertest">
         <on-entry>
@@ -60,6 +70,7 @@
     </end-state>
 
     <global-transitions>
+        <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="#{!'proceed'.equals(currentEvent.id)}" to="ResponseView" />
     </global-transitions>
 

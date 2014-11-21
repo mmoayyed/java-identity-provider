@@ -1,6 +1,7 @@
 <flow xmlns="http://www.springframework.org/schema/webflow"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    parent="admin.abstract">
 
     <action-state id="ReloadServiceConfiguration">
         <evaluate expression="InitializeProfileRequestContext" />
@@ -16,23 +17,6 @@
     <!-- Terminus -->
 
     <end-state id="success" />
-
-    <!-- Unsuccessful terminal state. -->
-    
-    <end-state id="HandleErrorWithView" view="#{MapEventToView.apply(currentEvent)}">
-        <on-entry>
-            <evaluate expression="WriteAuditLogForLocalError" />
-            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
-        </on-entry>
-    </end-state>
-
-    <!-- Default is to turn non-proceed events into an error. -->
-    <global-transitions>
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleErrorWithView" />
-    </global-transitions>
 
     <bean-import resource="reload-service-beans.xml" />
 
