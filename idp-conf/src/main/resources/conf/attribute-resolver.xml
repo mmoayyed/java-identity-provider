@@ -78,12 +78,16 @@
         ldapURL="%{idp.attribute.resolver.LDAP.ldapURL}"
         baseDN="%{idp.attribute.resolver.LDAP.baseDN}" 
         principal="%{idp.attribute.resolver.LDAP.bindDN}"
-        principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}">
+        principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
+        useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${requestContext.principalName})
             ]]>
         </dc:FilterTemplate>
+        <dc:StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="security:X509Filesystem" xmlns:security="urn:mace:shibboleth:2.0:security">
+          <security:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</security:Certificate>
+        </dc:StartTLSTrustCredential>
     </resolver:DataConnector>
     -->
 

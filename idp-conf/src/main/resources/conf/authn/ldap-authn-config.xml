@@ -17,10 +17,22 @@
 
     <!-- Connection Configuration -->
     <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig" abstract="true" p:ldapUrl="%{idp.authn.LDAP.ldapURL}"
-        p:useStartTLS="%{idp.authn.LDAP.useStartTLS}" p:useSSL="%{idp.authn.LDAP.useSSL}" p:connectTimeout="%{idp.authn.LDAP.connectTimeout}" />
-    <!-- Having SSL trust issues? Configure trust by adding <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig"> <property 
-        name="credentialConfig"> <bean class="org.ldaptive.ssl.X509CredentialConfig" p:trustCertificates="file:/path/to/CA.pem" /> 
-        </property> </bean> add p:sslConfig-ref="sslConfig" to each connectionConfig -->
+        p:useStartTLS="%{idp.authn.LDAP.useStartTLS}" p:useSSL="%{idp.authn.LDAP.useSSL}" p:connectTimeout="%{idp.authn.LDAP.connectTimeout}"
+        p:sslConfig-ref="sslConfig" />
+
+    <alias name="%{idp.authn.LDAP.sslConfig}" alias="sslConfig" />
+
+    <bean id="defaultTrust" class="org.ldaptive.ssl.SslConfig" />
+    <bean id="certificateTrust" class="org.ldaptive.ssl.SslConfig">
+      <property name="credentialConfig">
+        <bean class="org.ldaptive.ssl.X509CredentialConfig" p:trustCertificates="%{idp.authn.LDAP.trustCertificates}" /> 
+      </property>
+    </bean>
+    <bean id="keyStoreTrust" class="org.ldaptive.ssl.SslConfig">
+      <property name="credentialConfig">
+        <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" p:trustStore="%{idp.authn.LDAP.trustStore}" /> 
+      </property>
+    </bean>
 
     <!-- Authentication handler -->
     <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler" p:connectionFactory-ref="bindPooledConnectionFactory" />
@@ -36,7 +48,7 @@
     <!-- Pool Configuration -->
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool" abstract="true" init-method="initialize"
         p:blockWaitTime="%{idp.pool.LDAP.blockWaitTime}" p:poolConfig-ref="poolConfig" p:pruneStrategy-ref="pruneStrategy"
-        p:validator-ref="searchValidator" p:failFastInitialize="false" />
+        p:validator-ref="searchValidator" p:failFastInitialize="%{idp.pool.LDAP.failFastInitialize}" />
     <bean id="poolConfig" class="org.ldaptive.pool.PoolConfig" p:minPoolSize="%{idp.pool.LDAP.minSize}"
         p:maxPoolSize="%{idp.pool.LDAP.maxSize}" p:validateOnCheckOut="%{idp.pool.LDAP.validateOnCheckout}"
         p:validatePeriodically="%{idp.pool.LDAP.validatePeriodically}" p:validatePeriod="%{idp.pool.LDAP.validatePeriod}" />
