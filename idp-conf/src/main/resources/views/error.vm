@@ -7,14 +7,19 @@
 ## request - HttpServletRequest
 ## response - HttpServletResponse
 
+#set ($springContext = $flowRequestContext.getActiveFlow().getApplicationContext())
+#set ($locale = $flowRequestContext.getExternalContext().getLocale())
+#set ($title = $springContext.getMessage("idp.title", null, "Web Login Service", $locale))
+#set ($footer = $springContext.getMessage("idp.footer", null, "Insert your footer text here.", $locale))
+#set ($logoAltText = $springContext.getMessage("idp.logo.alt-text", null, "logo", $locale))
+#set ($defaultTitleSuffix = $springContext.getMessage("idp.title.suffix", null, "Error", $locale))
+
 #if ($flowRequestContext)
 	## This handles flow events, the most common case.
     #set ($eventId = $flowRequestContext.getCurrentEvent().getId())
-    #set ($springContext = $flowRequestContext.getActiveFlow().getApplicationContext())
-    #set ($locale = $flowRequestContext.getExternalContext().getLocale())
     #set ($eventKey = $springContext.getMessage($eventId, null, "error", $locale))
-    #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, "Error", $locale))
-    #set ($message = $springContext.getMessage("${eventKey}.message", null, "ERROR: $eventId", $locale))
+    #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, $defaultTitleSuffix, $locale))
+    #set ($message = $springContext.getMessage("${eventKey}.message", null, "$defaultTitleSuffix: $eventId", $locale))
     
     #if ($eventId == "AccessDenied" or $eventId == "ContextCheckDenied")
         $response.setStatus(403)
@@ -27,18 +32,18 @@
 	## This handles exceptions that reach the Spring-MVC exception handler.
     #set ($eventId = $exception.getClass().getSimpleName())
     #set ($eventKey = $springContext.getMessage($eventId, null, "error", $request.getLocale()))
-    #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, "Error", $request.getLocale()))
-    #set ($message = $springContext.getMessage("${eventKey}.message", null, "ERROR: $eventId", $request.getLocale()))
+    #set ($titleSuffix = $springContext.getMessage("${eventKey}.title", null, $defaultTitleSuffix, $request.getLocale()))
+    #set ($message = $springContext.getMessage("${eventKey}.message", null, "$defaultTitleSuffix: $eventId", $request.getLocale()))
 #else
 	## This is a catch-all that theoretically shouldn't happen?
-    #set ($titleSuffix = "Error")
-    #set ($message = "No specific error available")
+    #set ($titleSuffix = $defaultTitleSuffix)
+    #set ($message = $springContext.getMessage("idp.message", null, "An unidentified error occurred.", $locale))
 #end
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html>
   	<head>
     	<meta charset="utf-8" />
-    	<title>Web Login Service - $titleSuffix</title>
+    	<title>$title - $titleSuffix</title>
     	<link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
   	</head>
   	
@@ -46,8 +51,8 @@
     <div class="wrapper">
     	<div class="container">
         	<header>
-				<img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo"/>
-				<h3>Web Login Service - $titleSuffix</h3>
+				<img src="$request.getContextPath()/images/dummylogo.png" alt="$logoAltText"/>
+				<h3>$title - $titleSuffix</h3>
 			</header>
 		
         	<div class="content">
@@ -57,7 +62,7 @@
 
       	<footer>
         	<div class="container container-footer">
-          		<p class="footer-text">Insert your footer text here.</p>
+          		<p class="footer-text">$footer</p>
         	</div>
       	</footer>
       	
