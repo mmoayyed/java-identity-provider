@@ -5,72 +5,62 @@
 ## flowExecutionUrl - the form action location
 ## flowRequestContext - the Spring Web Flow RequestContext
 ## rpUIContext - the context with SP UI information from the metadata
-## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
 ## response - HttpServletResponse
-
-#set ( $username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername() )
-#set ( $rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext') )
+##
+#set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
+#set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())
 <html>
   	<head>
     	<meta charset="utf-8" />
-    	<title>Example Login Page</title>
+    	<title>#springMessageText("idp.title", "Web Login Service")</title>
     	<link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
   	</head>
-
   	<body>
     <div class="wrapper">
       <div class="container">
         <header>
-          <a class="logo" href="../images/dummylogo.png"><img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo"/></a>
+          <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")"/>
         </header>
 
         <div class="content">
           <div class="column one">
             <form action="$flowExecutionUrl" method="post">
-              #if ( $authenticationErrorContext && $authenticationErrorContext.getClassifiedErrors().size() > 0 )
-                <p class="form-element form-error">
-                ERROR: $encoder.encodeForHTML($authenticationErrorContext.getClassifiedErrors().toString())
-                </p>
-              #elseif ( $authenticationErrorContext && $authenticationErrorContext.getExceptions().size() > 0 )
-                <p class="form-element form-error">
-                #if ( $authenticationErrorContext.getExceptions().get(0).getMessage() )
-                    ERROR: $encoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getMessage())
-                #else
-                    ERROR: $encoder.encodeForHTML($authenticationErrorContext.getExceptions().get(0).getClass().getName())
-                #end
-                </p>
-              #end
+            
+              #parse("login-error.vm")
 
-              #if ($rpUIContext.getServiceName() && !$rpContext.getRelyingPartyId().contains($rpUIContext.getServiceName()) )
-                <legend>
-                  Login to $encoder.encodeForHTML($rpUIContext.getServiceName())
-                </legend>
+              #set ($serviceName = $rpUIContext.serviceName)
+              #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
+                <section>
+                  <legend>
+                    #springMessageText("idp.login.loginTo", "Login to") $encoder.encodeForHTML($serviceName)
+                  </legend>
+                </section>
               #end
 
               <section>
-                <label for="j_username">Username</label>
+                <label for="j_username">#springMessageText("idp.login.username", "Username")</label>
                 <input class="form-element form-field" name="j_username" type="text"
                 	value="#if($username)$encoder.encodeForHTML($username)#end">
               </section>
 
               <section>
-                <label for="j_password">Password</label>
+                <label for="j_password">#springMessageText("idp.login.password", "Password")</label>
                 <input class="form-element form-field" name="j_password" type="password" value="">
               </section>
 
               <section>
-                <input type="checkbox" name="donotcache" value="1" /> Don't Remember Login
+                <input type="checkbox" name="donotcache" value="1" /> #springMessageText("idp.login.donotcache", "Don't Remember Login")
               </section>
 
               <section>
                 <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true"/>
-                Clear prior granting of permission for release of your information to this service.
+                #springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")
               </section>
               
               <section>
-                <button class="form-element form-button" type="submit" name="_eventId_proceed" >Login</button>
+                <button class="form-element form-button" type="submit" name="_eventId_proceed">#springMessageText("idp.login.login", "Login")</button>
               </section>
             </form>
 
@@ -84,15 +74,11 @@
               //    Remove or comment out these lines to stop the display of the
               //    added SP information.
               //
-              //    Documentation: 
-              //      https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage  TODO
-              //
-              //    Example:
             -->
             #set ($logo = $rpUIContext.getLogo())
             #if ($logo)
               <img src= "$encoder.encodeForHTMLAttribute($logo)"
-                  alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())"/>
+                  alt="$encoder.encodeForHTMLAttribute($serviceName)"/>
             #end
             #set ($desc = $rpUIContext.getServiceDescription())
             #if ($desc)
@@ -102,9 +88,8 @@
           </div>
           <div class="column two">
             <ul class="list list-help">
-              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> Forgot your password?</a></li>
-              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> Need Help?</a></li>
-              <li class="list-help-item"><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"><span class="item-marker">&rsaquo;</span> How to Customize this Skin</a></li>
+              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.forgotPassword", "Forgot your password?")</a></li>
+              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.needHelp", "Need Help?")</a></li>
             </ul>
           </div>
         </div>
@@ -112,7 +97,7 @@
 
       <footer>
         <div class="container container-footer">
-          <p class="footer-text">Insert your footer text here.</p>
+          <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
         </div>
       </footer>
     </div>
