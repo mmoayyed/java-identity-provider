@@ -11,52 +11,53 @@
 ## response - HttpServletResponse
 ## rpUIContext - context with SP UI information from the metadata
 ## termsOfUseId - terms of use id
+#set ($serviceName = $rpUIContext.serviceName)
+#set ($rpOrganizationLogo = $rpUIContext.getLogo())
 ##
-<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css"/>
-        <title>#springMessage("idp.terms-of-use.title")</title>
+        <title>#springMessageText("idp.terms-of-use.title", "Terms of Use")</title>
     </head>
     <body>
         <div class="box">
             <header>
-                <img src="$request.getContextPath()/images/federation-logo.png" alt="" class="federation_logo" />
-                #set ($rpOrganizationLogo = $rpUIContext.getLogo())
+                <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo" />
                 #if ($rpOrganizationLogo)
-                    <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="logo for $encoder.encodeForHTMLAttribute($rpUIContext.getServiceName())" class="organization_logo" />
+                    <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" class="organization_logo" />
                 #end
             </header>
-            <div style="float:left;">
-                <h1>#springMessage("idp.terms-of-use.title")</h1>
-            </div>
+            #if ($rpOrganizationLogo)
+                <div style="float:left;">
+                    <h1>#springMessageText("idp.terms-of-use.title", "Terms of Use")</h1>
+                </div>
+            #end
             <div id="tou-content">
-                #springMessage("idp.terms-of-use.text")
+                #springMessageText("idp.terms-of-use.text", "Terms of Use Text...")
             </div>
             <div id="tou-acceptance">
-                    <div style="float:left;">
-                        <form action="$flowExecutionUrl" method="post" >
-                            <input type="submit" name="_eventId_TermsRejected" value="#springMessage("idp.terms-of-use.reject")" style="margin-right: 30px;" />
-                        </form>
-                    </div>
-                    <div style="float:right;">
-                        <form action="$flowExecutionUrl" method="post" >
-                            <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
-                            <label for="accept">#springMessage("idp.terms-of-use.accept")</label>
-                            #if ($requireCheckbox)
-                                <p class="form-error">#springMessage("idp.terms-of-use.required")</p>
-                            #end
-                            <input type="submit" name="_eventId_proceed" value="#springMessage("idp.terms-of-use.submit")" />
-                        </form>
-                    </div>
-                    <div style="clear:both;"></div>
-                
+                <div style="float:left;">
+                    <form action="$flowExecutionUrl" method="post" >
+                        <input type="submit" name="_eventId_TermsRejected" value="#springMessageText("idp.terms-of-use.reject", "Refuse")" style="margin-right: 30px;" />
+                    </form>
+                </div>
+                <div style="float:right;">
+                    <form action="$flowExecutionUrl" method="post" >
+                        <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
+                        <label for="accept">#springMessageText("idp.terms-of-use.accept", "I accept the terms of use")</label>
+                        #if ($requireCheckbox)
+                            <p class="form-error">#springMessageText("idp.terms-of-use.required", "Please check this box if you want to proceed.")</p>
+                        #end
+                        <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.terms-of-use.submit", "Submit")" />
+                    </form>
+                </div>
+                <div style="clear:both;"></div>
             </div>
             <footer>
                 <div class="container container-footer">
-                    <p class="footer-text">Insert your footer text here.</p>
+                    <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
                 </div>
             </footer>
         </div>

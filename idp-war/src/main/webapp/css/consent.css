@@ -109,12 +109,14 @@ a:focus, a:hover, a:active {
 
 .federation_logo
 {
+	width: 50%;
     float: left;
     padding-top: 35px;
     border: 0;
 }
 .organization_logo
 {
+	width: 50%;
     float: right;
     border: 0;
 }

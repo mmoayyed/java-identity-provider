@@ -64,12 +64,10 @@
                 <input type="checkbox" name="donotcache" value="1" /> Don't Remember Login
               </section>
 
-              <!--
               <section>
-                <input id="_idp_revokeConsent" type="checkbox" name="_idp_revokeConsent" value="true"/>
+                <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true"/>
                 Clear prior granting of permission for release of your information to this service.
               </section>
-              -->
               
               <section>
                 <button class="form-element form-button" type="submit" name="_eventId_proceed" >Login</button>

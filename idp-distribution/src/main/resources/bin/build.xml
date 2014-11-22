@@ -435,6 +435,17 @@
 			<mapper type="glob" from="*.dist" to="*" />
 		</copy>
 		
+		<!-- messages: copy from dist if not already present -->
+		<mkdir dir="${idp.target.dir}/messages" />
+		<copy todir="${idp.target.dir}/messages">
+			<fileset dir="${idp.target.dir}/dist/messages" includes="**/*">
+				<present present="srconly" targetdir="${idp.target.dir}/messages">
+					<mapper type="glob" from="*.dist" to="*" />
+				</present>
+			</fileset>
+			<mapper type="glob" from="*.dist" to="*" />
+		</copy>
+		
 		<!-- views: copy from dist if not already present -->
 		<mkdir dir="${idp.target.dir}/views" />
 		<copy todir="${idp.target.dir}/views">
@@ -445,7 +456,7 @@
 			</fileset>
 			<mapper type="glob" from="*.dist" to="*" />
 		</copy>
-        
+
 		<!-- Other dirs -->
         <mkdir dir="${idp.target.dir}/logs" />
 	</target>
@@ -508,7 +519,7 @@
 		<property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}" />
 
 		<!-- Save old configuration:
-         NOT conf, credentials, flows, logs, metadata, views-->
+         NOT conf, credentials, flows, logs, messages, metadata, views-->
 		<mkdir dir="${target}" />
 
 		<!-- NOTE - move task appears to be very flaky - at least on windows.  This is why we
@@ -559,10 +570,12 @@
 			
 		<mkdir dir="${idp.target.dir}/flows" />
 		<mkdir dir="${idp.target.dir}/logs" />
+		<mkdir dir="${idp.target.dir}/messages" />
 		<mkdir dir="${idp.target.dir}/metadata" />
 		<copy todir="${idp.target.dir}/system">
 			<fileset dir="${idp.src.dir}/system" />
 		</copy>
+		<mkdir dir="${idp.target.dir}/views" />
 		<mkdir dir="${idp.target.dir}/war" />
 		<mkdir dir="${idp.target.dir}/webapp" />
 		<copy todir="${idp.target.dir}/webapp">
