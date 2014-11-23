@@ -102,6 +102,8 @@
     <bean id="shibboleth.RelyingPartyIdLookup.Simple"
         class="net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction" />
 
+    <bean id="shibboleth.PrincipalNameLookup.Subject"
+        class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
     <bean id="shibboleth.PrincipalNameLookup.Session"
         class="net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction" />
 

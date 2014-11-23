@@ -232,14 +232,9 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose">
-                        <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
-                        </constructor-arg>
-                        <constructor-arg name="f">
-                            <ref bean="shibboleth.ChildLookup.SubjectContext" />
-                        </constructor-arg>
-                    </bean>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                        c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                        c:f-ref="shibboleth.ChildLookup.SubjectContext" />
                 </entry>
                 <entry>
                     <key>
@@ -365,14 +360,9 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose">
-                        <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
-                        </constructor-arg>
-                        <constructor-arg name="f">
-                            <ref bean="shibboleth.ChildLookup.SubjectContext" />
-                        </constructor-arg>
-                    </bean>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                        c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                        c:f-ref="shibboleth.ChildLookup.SubjectContext" />
                 </entry>
                 <entry>
                     <key>
@@ -411,14 +401,9 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose">
-                        <constructor-arg name="g">
-                            <bean class="net.shibboleth.idp.authn.context.navigate.SubjectContextPrincipalLookupFunction" />
-                        </constructor-arg>
-                        <constructor-arg name="f">
-                            <ref bean="shibboleth.ChildLookup.SubjectContext" />
-                        </constructor-arg>
-                    </bean>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                        c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                        c:f-ref="shibboleth.ChildLookup.SubjectContext" />
                 </entry>
                 <entry>
                     <key>
