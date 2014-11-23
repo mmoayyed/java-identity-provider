@@ -24,10 +24,19 @@
     <bean id="IsConsentRequiredPredicate"
         class="net.shibboleth.idp.consent.logic.IsConsentRequiredPredicate" />
 
-    <!-- Function to return the user identifier from an IdP attribute. -->
-    <bean id="shibboleth.consent.UserStorageKey"
+    <!-- Functions to return a storage key consisting of the user identifier. -->
+    
+    <bean id="shibboleth.consent.PrincipalConsentStorageKey"
+        class="com.google.common.base.Functions" factory-method="compose"
+        c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+        c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+        
+    <bean id="shibboleth.consent.AttributeConsentStorageKey"
         class="net.shibboleth.idp.consent.logic.AttributeValueLookupFunction"
-        c:userAttributeId-ref="shibboleth.consent.UserIdentifierAttributeId" />
+        c:userAttributeId="%{idp.consent.userStorageKeyAttribute:uid}" />
+        
+    <alias name="%{idp.consent.userStorageKey:shibboleth.consent.PrincipalConsentStorageKey}"
+        alias="shibboleth.consent.UserStorageKey" />
 
     <!-- Action beans -->
     

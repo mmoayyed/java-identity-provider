@@ -36,13 +36,24 @@
         p:blacklistedAttributeIds-ref="shibboleth.attribute-release.BlacklistedAttributeIDs"
         p:attributeIdMatchExpression="#{getObject('shibboleth.attribute-release.MatchExpression')}" />
 
-    <!-- Function to return the user identifier from an IdP attribute. -->
-    <bean id="shibboleth.consent.UserStorageKey"
+    <!-- Functions to return a storage key consisting of the user identifier. -->
+    
+    <bean id="shibboleth.consent.PrincipalConsentStorageKey"
+        class="com.google.common.base.Functions" factory-method="compose"
+        c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+        c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+        
+    <bean id="shibboleth.consent.AttributeConsentStorageKey"
         class="net.shibboleth.idp.consent.logic.AttributeValueLookupFunction"
-        c:userAttributeId-ref="shibboleth.consent.UserIdentifierAttributeId" />
+        c:userAttributeId="%{idp.consent.userStorageKeyAttribute:uid}" />
+        
+    <alias name="%{idp.consent.userStorageKey:shibboleth.consent.PrincipalConsentStorageKey}"
+        alias="shibboleth.consent.UserStorageKey" />
 
-    <!-- Function to return a storage key consisting of the user identifier and
-         relying party ID joined by a delimiter. -->
+    <!--
+    Function to return a storage key consisting of the user identifier and relying party ID
+    joined by a delimiter.
+    -->
     <bean id="shibboleth.consent.UserAndRelyingPartyStorageKey"
         class="net.shibboleth.idp.consent.logic.JoinFunction"
         c:functionA-ref="shibboleth.consent.UserStorageKey"

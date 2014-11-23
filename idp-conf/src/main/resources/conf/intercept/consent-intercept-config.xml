@@ -12,18 +12,15 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- The ID of the attribute to be used as the user identifier when storing consent records. -->
-    <!-- TODO add property to properties file -->
-    <!-- TODO doc -->
-    <bean id="shibboleth.consent.UserIdentifierAttributeId" class="java.lang.String"
-        c:_0="%{idp.consent.userIdentifierAttributeId:email}" />
-
     <!-- TODO: make this a map? -->
     <bean id="shibboleth.consent.terms-of-use.ConsentID" class="java.lang.String" c:_0="idp.terms-of-use.id" />
     <bean id="shibboleth.consent.terms-of-use.ConsentValue" class="java.lang.String" c:_0="idp.terms-of-use.text" />
 
-    <!-- Attribute release whitelist, blacklist, and match expression to determine 
-        whether consent should be obtained for an attribute based on the attribute ID. -->
+    <!--
+    Attribute release whitelist, blacklist, and match expressions to determine 
+    whether consent should be obtained for an attribute based on the attribute ID.
+    -->
+    
     <util:list id="shibboleth.attribute-release.WhitelistedAttributeIDs">
         <!--
         <value>email</value>
@@ -39,6 +36,6 @@
     <!-- 
     <bean id="shibboleth.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 
         c:regex="^exampleAttribute.*$" />
-     -->
+    -->
 
 </beans>
