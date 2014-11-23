@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
 public class UpdateStorageIndex extends AbstractConsentStorageAction {
 
     /** Storage context for the storage index record. */
-    @Nonnull @NotEmpty public static final String STORAGE_INDEX_CONTEXT = "_storage_idx";
+    @Nonnull @NotEmpty public static final String STORAGE_INDEX_CONTEXT = "_consent_storage_idx";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(UpdateStorageIndex.class);
