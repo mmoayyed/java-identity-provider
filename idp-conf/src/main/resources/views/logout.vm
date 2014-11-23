@@ -15,7 +15,7 @@
 <html>
   	<head>
         <meta charset="utf-8" />
-        <title>Example Logout Page</title>
+        <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
         <style type="text/css">
         iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
@@ -26,12 +26,13 @@
     <div class="wrapper">
       <div class="container">
         <header>
-          <a class="logo" href="../images/dummylogo.png"><img src="$request.getContextPath()/images/dummylogo.png" alt="Replace or remove this logo"/></a>
+          <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")"/>
         </header>
 
         <div class="content">
           <div class="column one">
-        <p>This logout page is an example and should be customized.</p>
+            <p>This logout page is an example and should be customized. It is not internationalized because the
+            presentation will be a highly localized decision, and we don't have a good suggestion for a default.</p>
 
             <p>This page is displayed when a logout operation at the Identity Provider completes.</p>
     
@@ -40,15 +41,15 @@
             initiated the logout operation.</strong></p>
 
             #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
-                <p>The following is a list of services tracked by the session that has been terminated:</p>
+                <p>The following is a list of services accessed during the session that has been terminated:</p>
                 <br/>
                 <ul>
-                #foreach ( $sp in $logoutContext.getSessionMap().keySet() )
-                    #set ( $rpCtx = $multiRPContext.getRelyingPartyContextById($sp) )
-                    #if ( $rpCtx )
-                      #set ( $rpUIContext = $rpCtx.getSubcontext('net.shibboleth.idp.ui.context.RelyingPartyUIContext') )
+                #foreach ($sp in $logoutContext.getSessionMap().keySet())
+                    #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
+                    #if ($rpCtx)
+                      #set ($rpUIContext = $rpCtx.getSubcontext("net.shibboleth.idp.ui.context.RelyingPartyUIContext"))
                     #end
-                    #if ( $rpUIContext and $rpUIContext.getServiceName() )
+                    #if ($rpUIContext and $rpUIContext.getServiceName())
                       <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
                     #else
                       <li>$encoder.encodeForHTML($sp)</li>
@@ -60,22 +61,21 @@
           </div>
           <div class="column two">
             <ul class="list list-help">
-              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> Forgot your password?</a></li>
-              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> Need Help?</a></li>
-              <li class="list-help-item"><a href="https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"><span class="item-marker">&rsaquo;</span> How to Customize this Skin</a></li>
+              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.forgotPassword", "Forgot your password?")</a></li>
+              <li class="list-help-item"><a href="#"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.needHelp", "Need Help?")</a></li>
             </ul>
           </div>
         </div>
       </div>
 
       <!-- If flowExecutionUrl set, complete the flow by adding a hidden iframe. -->
-      #if ( $flowExecutionUrl )
+      #if ($flowExecutionUrl)
           <iframe id="buffer" src="$flowExecutionUrl&_eventId_proceed" />
       #end
       
       <footer>
         <div class="container container-footer">
-          <p class="footer-text">Insert your footer text here.</p>
+          <p class="footer-text">#springMessageText("idp.footer", "Insert your footer text here.")</p>
         </div>
       </footer>
     </div>

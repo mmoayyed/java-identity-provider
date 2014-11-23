@@ -4,6 +4,12 @@
 ## Velocity context will contain the following properties
 ## flowExecutionUrl - the form action location
 ## flowRequestContext - the Spring Web Flow RequestContext
+## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
+## profileRequestContext - root of context tree
+## authenticationContext - context with authentication request information
+## authenticationErrorContext - context with login error state
+## authenticationWarningContext - context with login warning state
+## ldapResponseContext - context with LDAP state (if using native LDAP)
 ## rpUIContext - the context with SP UI information from the metadata
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
@@ -54,10 +60,12 @@
                 <input type="checkbox" name="donotcache" value="1" /> #springMessageText("idp.login.donotcache", "Don't Remember Login")
               </section>
 
+              <!--
               <section>
                 <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true"/>
                 #springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")
               </section>
+              -->
               
               <section>
                 <button class="form-element form-button" type="submit" name="_eventId_proceed">#springMessageText("idp.login.login", "Login")</button>
