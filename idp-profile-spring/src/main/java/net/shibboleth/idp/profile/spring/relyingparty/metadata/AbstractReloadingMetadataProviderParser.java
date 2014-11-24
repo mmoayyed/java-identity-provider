@@ -34,9 +34,6 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
     /** The reference to the system wide timer that we set up. */
     private static final String DEFAULT_TIMER_REF = "shibboleth.TaskTimer";
     
-    /** The default delay factor. */
-    private static final String DEFAULT_DELAY_FACTOR = "0.75";
-
     /**
      * 
      * {@inheritDoc}
@@ -52,8 +49,6 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
         
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
             builder.addPropertyValue("refreshDelayFactor", element.getAttributeNS(null,"refreshDelayFactor"));
-        } else {
-            builder.addPropertyValue("refreshDelayFactor", DEFAULT_DELAY_FACTOR);
         }
         
         if (element.hasAttributeNS(null, "maxRefreshDelay")) {
