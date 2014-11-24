@@ -78,7 +78,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         action.initialize();
 
         Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, EventIds.UNABLE_TO_DECODE);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_MESSAGE);
 
         request.setParameter(ReloadMetadata.RESOLVER_ID, "foo");
         event = action.execute(src);
