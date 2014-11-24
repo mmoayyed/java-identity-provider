@@ -194,7 +194,7 @@
 
     <complexType name="FilesystemMetadataProvider">
         <annotation>
-            <documentation>A metatadata provider that reads SAML2 metadata from the filesystem.</documentation>
+            <documentation>A metadata provider that reads SAML2 metadata from the filesystem.</documentation>
         </annotation>
         <complexContent>
             <extension base="shibmd:ReloadingMetadataProviderType">
