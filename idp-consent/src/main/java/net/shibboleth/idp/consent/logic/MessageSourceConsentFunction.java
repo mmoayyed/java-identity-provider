@@ -26,9 +26,9 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -41,31 +41,37 @@ import org.springframework.context.NoSuchMessageException;
 import com.google.common.base.Function;
 
 /**
- * Function that returns a consent object whose id and value are resolved from a message source.
+ * Function that returns a consent object whose id and value are resolved from a lookup function
+ * and {@link MessageSource}.
+ * 
+ * <p>The lookup function's return value is a master key, mapped via the {@link MessageSource} to an ID.
+ * A suffix is attached to the ID to obtain the message key of the value.</p>
  */
-public class MessageSourceConsentFunction extends AbstractInitializableComponent implements
-        Function<ProfileRequestContext, Map<String, Consent>>, MessageSourceAware {
+public class MessageSourceConsentFunction extends AbstractInitializableComponent
+        implements Function<ProfileRequestContext,Map<String,Consent>>, MessageSourceAware {
 
-    /** Message code used to resolve the consent id. */
-    @Nonnull private String consentIdMessageCode;
+    /** Lookup strategy for the consent message key to use. */
+    @Nonnull private Function<ProfileRequestContext,String> consentKeyLookupStrategy;
 
-    /** Message code used to resolve the consent value. */
-    @Nonnull private String consentValueMessageCode;
+    /** Message code suffix used to resolve the consent value. */
+    @Nonnull @NotEmpty private String consentValueMessageCodeSuffix;
 
     /** Consent flow descriptor lookup strategy. */
-    @Nonnull private Function<ProfileRequestContext, ConsentFlowDescriptor> consentFlowDescriptorLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,ConsentFlowDescriptor> consentFlowDescriptorLookupStrategy;
 
     /** Function used to create a hash of the consent value. */
-    @Nonnull private Function<String, String> hashFunction;
+    @Nonnull private Function<String,String> hashFunction;
 
     /** Locale lookup strategy. */
-    @Nonnull private Function<ProfileRequestContext, Locale> localeLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,Locale> localeLookupStrategy;
 
     /** MessageSource injected by Spring, typically the parent ApplicationContext itself. */
     @Nonnull private MessageSource messageSource;
 
     /** Constructor. */
     public MessageSourceConsentFunction() {
+        consentKeyLookupStrategy = new RelyingPartyIdLookupFunction();
+        consentValueMessageCodeSuffix = ".text";
         consentFlowDescriptorLookupStrategy =
                 new FlowDescriptorLookupFunction<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
         hashFunction = new HashFunction();
@@ -79,47 +85,27 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
     }
 
     /**
-     * Get the consent id message code.
+     * Set the lookup strategy for the consent message key.
      * 
-     * @return consent id message code
+     * @param strategy lookup strategy
      */
-    @Nullable public String getConsentIdMessageCode() {
-        return consentIdMessageCode;
-    }
-
-    /**
-     * Set the consent id message code.
-     * 
-     * @param messageCode consent id message code
-     */
-    public void setConsentIdMessageCode(@Nonnull @NotEmpty final String messageCode) {
+    public void setConsentKeyLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        consentIdMessageCode =
-                Constraint.isNotNull(StringSupport.trimOrNull(messageCode),
-                        "Consent id message code cannot be null nor empty");
+        consentKeyLookupStrategy = Constraint.isNotNull(strategy, "Consent key lookup strategy cannot be null");
     }
 
     /**
-     * Get the consent value message code.
+     * Set the consent value message code suffix.
      * 
-     * @return consent value message code
+     * @param suffix suffix of message code for the consent value
      */
-    @Nullable public String getConsentValueMessageCode() {
-        return consentValueMessageCode;
-    }
-
-    /**
-     * Set the consent value message code.
-     * 
-     * @param messageCode The consentValueMessageCode to set.
-     */
-    public void setConsentValueMessageCode(@Nonnull @NotEmpty final String messageCode) {
+    public void setConsentValueMessageCodeSuffix(@Nonnull @NotEmpty final String suffix) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        consentValueMessageCode =
-                Constraint.isNotNull(StringSupport.trimOrNull(messageCode),
-                        "Consent value message code cannot be null nor empty");
+        consentValueMessageCodeSuffix =
+                Constraint.isNotNull(StringSupport.trimOrNull(suffix),
+                        "Consent value message code suffix cannot be null nor empty");
     }
 
     /**
@@ -128,7 +114,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * @param strategy consent flow descriptor lookup strategy
      */
     public void setConsentFlowDescriptorLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, ConsentFlowDescriptor> strategy) {
+            @Nonnull final Function<ProfileRequestContext,ConsentFlowDescriptor> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         consentFlowDescriptorLookupStrategy =
@@ -140,7 +126,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * 
      * @param function hash function
      */
-    public void setHashFunction(@Nonnull final Function<String, String> function) {
+    public void setHashFunction(@Nonnull final Function<String,String> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         hashFunction = Constraint.isNotNull(function, "Hash function cannot be null");
@@ -151,46 +137,70 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
      * 
      * @param strategy The localeLookupStrategy to set.
      */
-    public void setLocaleLookupStrategy(@Nonnull final Function<ProfileRequestContext, Locale> strategy) {
+    public void setLocaleLookupStrategy(@Nonnull final Function<ProfileRequestContext,Locale> strategy) {
         localeLookupStrategy = Constraint.isNotNull(strategy, "Locale lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (consentIdMessageCode == null) {
-            throw new ComponentInitializationException("Consent ID message code cannot be null");
+    @Override
+    @Nullable public Map<String,Consent> apply(@Nullable final ProfileRequestContext input) {
+        if (input == null) {
+            return null;
         }
-
-        if (consentValueMessageCode == null) {
-            throw new ComponentInitializationException("Consent value message code cannot be null");
+    
+        final Locale locale = getLocale(input);
+        final String id = getConsentId(input, locale);
+        if (id != null) {
+            final Consent consent = new Consent();
+            consent.setId(id);
+            if (isCompareValues(input)) {
+                final String value = getConsentValueHash(id, locale);
+                if (value != null) {
+                    consent.setValue(value);
+                }
+            }
+    
+            return Collections.singletonMap(id, consent);
+        } else {
+            return Collections.emptyMap();
         }
     }
+    
 
     /**
      * Get the consent id.
      * 
      * @param profileRequestContext profile request context
+     * @param locale locale to use
+     * 
      * @return consent id
      */
-    @Nullable protected String getConsentId(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nullable protected String getConsentId(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final Locale locale) {
         try {
-            return messageSource.getMessage(consentIdMessageCode, null, getLocale(profileRequestContext));
+            final String key = consentKeyLookupStrategy.apply(profileRequestContext);
+            if (key != null) {
+                return messageSource.getMessage(key, null, locale);
+            }
         } catch (final NoSuchMessageException e) {
-            return null;
+            
         }
+        
+        return null;
     }
 
     /**
      * Get the consent value.
      * 
-     * @param profileRequestContext profile request context
+     * @param consentId consent ID
+     * @param locale locale to use
+     * 
      * @return consent value
      */
-    @Nullable protected String getConsentValue(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Nullable protected String getConsentValue(@Nonnull @NotEmpty final String consentId,
+            @Nonnull final Locale locale) {
         try {
-            return messageSource.getMessage(consentValueMessageCode, null, getLocale(profileRequestContext));
+            return messageSource.getMessage(consentId + consentValueMessageCodeSuffix, null, locale);
         } catch (final NoSuchMessageException e) {
             return null;
         }
@@ -199,17 +209,21 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
     /**
      * Get the consent value hash.
      * 
-     * @param profileRequestContext profile request context
+     * @param consentId consent ID
+     * @param locale locale to use
+     * 
      * @return consent value hash
      */
-    @Nullable protected String getConsentValueHash(@Nonnull final ProfileRequestContext profileRequestContext) {
-        return hashFunction.apply(getConsentValue(profileRequestContext));
+    @Nullable protected String getConsentValueHash(@Nonnull @NotEmpty final String consentId,
+            @Nonnull final Locale locale) {
+        return hashFunction.apply(getConsentValue(consentId, locale));
     }
 
     /**
      * Get the locale.
      * 
      * @param profileRequestContext profile request context
+     * 
      * @return locale
      */
     @Nullable protected Locale getLocale(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -231,21 +245,5 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
 
         return false;
     }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nullable public Map<String, Consent> apply(@Nullable final ProfileRequestContext input) {
-        if (input == null) {
-            return null;
-        }
-
-        final Consent consent = new Consent();
-        consent.setId(getConsentId(input));
-
-        if (isCompareValues(input)) {
-            consent.setValue(getConsentValueHash(input));
-        }
-
-        return Collections.singletonMap(consent.getId(), consent);
-    }
+    
 }

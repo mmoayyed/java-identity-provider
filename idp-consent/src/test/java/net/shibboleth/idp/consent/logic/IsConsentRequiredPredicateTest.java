@@ -179,6 +179,7 @@ public class IsConsentRequiredPredicateTest {
         Assert.assertNotNull(prc.getSubcontext(ConsentContext.class));
         Assert.assertTrue(prc.getSubcontext(ConsentContext.class).getPreviousConsents().isEmpty());
 
+        prc.getSubcontext(ConsentContext.class).getCurrentConsents().put("test", new Consent());
         setUpDescriptor(false);
 
         Assert.assertTrue(p.apply(prc));

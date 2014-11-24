@@ -3,18 +3,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
        parent="intercept.abstract">
 
-    <!-- TODO non-browser skip view -->
+    <!--
+    TODO non-browser skip view
+    ...this should be implemented via a "supportsNonBrowser" flag on the flow descriptor
+    and then controlling use from the master intercept dispatcher
+    -->
 
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
-    
-    <on-start>
-        <evaluate expression="resourceBundle['idp.terms-of-use.id']" result="flowScope.termsOfUseId" />
-    </on-start>
-    
-    <decision-state id="IsTermsOfUseIdNull">
-        <if test="termsOfUseId == null" then="HandleError" else="TermsOfUseSetup" />
-    </decision-state>
 
     <action-state id="TermsOfUseSetup">
         <evaluate expression="InitializeConsentContext" />
@@ -31,10 +27,11 @@
 
     <view-state id="DisplayTermsOfUsePage" view="#{flowRequestContext.activeFlow.id}">
         <on-render>
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="SetRPUIInformation.getRPUIContextCreateStrategy().apply(opensamlProfileRequestContext)" result="viewScope.rpUIContext" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentContext)).getCurrentConsents().keySet().iterator().next()" result="viewScope.termsOfUseId" />
         </on-render>
         <transition on="proceed" to="TestForCheckbox" />
     </view-state>

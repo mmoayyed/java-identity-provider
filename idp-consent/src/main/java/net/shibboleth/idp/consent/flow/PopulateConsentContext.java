@@ -59,6 +59,14 @@ public class PopulateConsentContext extends AbstractConsentAction {
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
-        getConsentContext().getCurrentConsents().putAll(function.apply(profileRequestContext));
+        
+        final Map<String,Consent> consents = function.apply(profileRequestContext);
+        
+        log.debug("{} Populating consents: {}", getLogPrefix(), consents.keySet());
+        
+        if (consents != null) {
+            getConsentContext().getCurrentConsents().putAll(consents);
+        }
     }
+    
 }

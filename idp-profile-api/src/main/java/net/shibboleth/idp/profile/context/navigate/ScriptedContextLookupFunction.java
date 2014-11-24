@@ -74,7 +74,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
             @Nullable String extraInfo) {
         inputClass = Constraint.isNotNull(inClass, "Supplied inputClass cannot be null");
         script = Constraint.isNotNull(theScript, "Supplied script cannot be null");
-        logPrefix = "Scripted Function from " + extraInfo + " :";
+        logPrefix = "Scripted Function from " + extraInfo + ":";
     }
 
     /**
@@ -86,7 +86,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
     protected ScriptedContextLookupFunction(@Nonnull Class<T> inClass, @Nonnull EvaluableScript theScript) {
         inputClass = Constraint.isNotNull(inClass, "Supplied inputClass cannot be null");
         script = Constraint.isNotNull(theScript, "Supplied script should not be null");
-        logPrefix = "Anonymous Scripted Function :";
+        logPrefix = "Anonymous Scripted Function:";
     }
 
     /**

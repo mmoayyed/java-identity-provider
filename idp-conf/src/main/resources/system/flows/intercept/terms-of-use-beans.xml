@@ -18,13 +18,12 @@
 
     <bean id="TermsOfUseConsentFunction"
         class="net.shibboleth.idp.consent.logic.MessageSourceConsentFunction"
-        p:consentIdMessageCode-ref="shibboleth.consent.terms-of-use.ConsentID"
-        p:consentValueMessageCode-ref="shibboleth.consent.terms-of-use.ConsentValue" />
+        p:consentKeyLookupStrategy-ref="shibboleth.consent.terms-of-use.Key" />
 
     <bean id="IsConsentRequiredPredicate"
         class="net.shibboleth.idp.consent.logic.IsConsentRequiredPredicate" />
 
-    <!-- Functions to return a storage key consisting of the user identifier. -->
+    <!-- Functions to return part of the storage key consisting of the user identifier. -->
     
     <bean id="shibboleth.consent.PrincipalConsentStorageKey"
         class="com.google.common.base.Functions" factory-method="compose"
@@ -38,6 +37,15 @@
     <alias name="%{idp.consent.userStorageKey:shibboleth.consent.PrincipalConsentStorageKey}"
         alias="shibboleth.consent.UserStorageKey" />
 
+    <!--
+    Function to return the full storage key combining the user identifier and a consent key
+    joined by a delimiter.
+    -->
+    <bean id="shibboleth.consent.UserAndTermsStorageKey"
+        class="net.shibboleth.idp.consent.logic.JoinFunction"
+        c:functionA-ref="shibboleth.consent.UserStorageKey"
+        c:functionB-ref="shibboleth.consent.terms-of-use.Key" />
+
     <!-- Action beans -->
     
     <bean id="InitializeConsentContext"
@@ -49,7 +57,7 @@
 
     <bean id="ReadConsentFromStorage"
         class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey" />
 
     <bean id="SetRPUIInformation"
         class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
@@ -61,10 +69,10 @@
 
     <bean id="CreateResult"
         class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey" />
 
     <bean id="UpdateStorageIndex"
         class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey" />
 
 </beans>

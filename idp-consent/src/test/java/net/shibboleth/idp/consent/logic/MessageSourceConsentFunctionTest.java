@@ -26,9 +26,9 @@ import net.shibboleth.idp.consent.flow.ConsentFlowDescriptor;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.MessageSource;
@@ -90,57 +90,29 @@ public class MessageSourceConsentFunctionTest {
         Assert.assertNull(function.apply(null));
     }
 
-    @Test(expectedExceptions = ComponentInitializationException.class) public void testMissingIdMessageCode()
-            throws Exception {
-        function.setConsentValueMessageCode("consentValueMessageCode");
-        function.initialize();
-    }
-
-    @Test(expectedExceptions = ComponentInitializationException.class) public void testMissingValueMessageCode()
-            throws Exception {
-        function.setConsentIdMessageCode("consentIdMessageCode");
-        function.initialize();
-    }
-
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullIdMessageCode() throws Exception {
-        function.setConsentIdMessageCode(null);
+        function.setConsentKeyLookupStrategy(null);
         function.initialize();
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNullValueMessageCode()
             throws Exception {
-        function.setConsentValueMessageCode(null);
-        function.initialize();
-    }
-
-    @Test(expectedExceptions = ConstraintViolationException.class) public void testEmptyIdMessageCode()
-            throws Exception {
-        function.setConsentIdMessageCode("");
+        function.setConsentValueMessageCodeSuffix(null);
         function.initialize();
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testEmptyValueMessageCode()
             throws Exception {
-        function.setConsentValueMessageCode("");
+        function.setConsentValueMessageCodeSuffix("");
         function.initialize();
     }
 
     @Test(expectedExceptions = UnmodifiableComponentException.class) public void testInstantiationIdMessageCode()
             throws Exception {
-        function.setConsentIdMessageCode("consentIdMessageCode");
-        function.setConsentValueMessageCode("consentValueMessageCode");
+        function.setConsentKeyLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("consentIdMessageCode"));
         function.initialize();
 
-        function.setConsentIdMessageCode("consentIdMessageCode");
-    }
-
-    @Test(expectedExceptions = UnmodifiableComponentException.class) public void testInstantiationValueMessageCode()
-            throws Exception {
-        function.setConsentIdMessageCode("consentIdMessageCode");
-        function.setConsentValueMessageCode("consentValueMessageCode");
-        function.initialize();
-
-        function.setConsentValueMessageCode("consentValueMessageCode");
+        function.setConsentKeyLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("consentIdMessageCode"));
     }
 
     @Test public void testMessageSourceConsent() throws Exception {
@@ -148,13 +120,12 @@ public class MessageSourceConsentFunctionTest {
         setUpDescriptor(false);
 
         final Consent consent = new Consent();
-        consent.setId("consentIdMessage");
+        consent.setId("id");
 
         final Map<String, Consent> expected = new HashMap<>();
         expected.put(consent.getId(), consent);
 
-        function.setConsentIdMessageCode("consentIdMessageCode");
-        function.setConsentValueMessageCode("consentValueMessageCode");
+        function.setConsentKeyLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("key"));
         function.initialize();
 
         Assert.assertEquals(function.apply(prc), expected);
@@ -165,14 +136,13 @@ public class MessageSourceConsentFunctionTest {
         setUpDescriptor(true);
 
         final Consent consent = new Consent();
-        consent.setId("consentIdMessage");
-        consent.setValue(hashFunction.apply("consentValueMessage"));
+        consent.setId("id");
+        consent.setValue(hashFunction.apply("value"));
 
         final Map<String, Consent> expected = new HashMap<>();
         expected.put(consent.getId(), consent);
 
-        function.setConsentIdMessageCode("consentIdMessageCode");
-        function.setConsentValueMessageCode("consentValueMessageCode");
+        function.setConsentKeyLookupStrategy(FunctionSupport.<ProfileRequestContext,String>constant("key"));
         function.initialize();
 
         Assert.assertEquals(function.apply(prc), expected);
@@ -182,10 +152,10 @@ public class MessageSourceConsentFunctionTest {
 
         /** {@inheritDoc} */
         public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
-            if (code.equals("consentIdMessageCode")) {
-                return "consentIdMessage";
-            } else if (code.equals("consentValueMessageCode")) {
-                return "consentValueMessage";
+            if (code.equals("key")) {
+                return "id";
+            } else if (code.equals("id.text")) {
+                return "value";
             } else {
                 return defaultMessage;
             }
@@ -193,23 +163,23 @@ public class MessageSourceConsentFunctionTest {
 
         /** {@inheritDoc} */
         public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
-            if (code.equals("consentIdMessageCode")) {
-                return "consentIdMessage";
-            } else if (code.equals("consentValueMessageCode")) {
-                return "consentValueMessage";
+            if (code.equals("key")) {
+                return "id";
+            } else if (code.equals("id.text")) {
+                return "value";
             }
             throw new NoSuchMessageException("No such message");
         }
 
         /** {@inheritDoc} */
         public String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
-            if (resolvable.getCodes()[0].equals("consentIdMessageCode")) {
-                return "consentIdMessage";
-            } else if (resolvable.getCodes()[0].equals("consentValueMessageCode")) {
-                return "consentValueMessage";
+            if (resolvable.getCodes()[0].equals("key")) {
+                return "id";
+            } else if (resolvable.getCodes()[0].equals("id.text")) {
+                return "value";
             }
             throw new NoSuchMessageException("No such message");
         }
-
     }
+
 }

@@ -12,9 +12,36 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <!-- TODO: make this a map? -->
-    <bean id="shibboleth.consent.terms-of-use.ConsentID" class="java.lang.String" c:_0="idp.terms-of-use.id" />
-    <bean id="shibboleth.consent.terms-of-use.ConsentValue" class="java.lang.String" c:_0="idp.terms-of-use.text" />
+    <!-- Terms of Use configuration -->
+    
+    <!--
+    Terms of use is driven by a lookup function returning a key into messages/consent-message.properties
+    
+    The default mapping returns the relying party / SP name as the key. The second example below
+    demonstrates use of a custom mapping table from the relying party name to the key to use. 
+    -->
+    
+    <alias alias="shibboleth.consent.terms-of-use.Key" name="shibboleth.RelyingPartyIdLookup.Simple" />
+    
+    <!--
+    <bean id="shibboleth.consent.terms-of-use.Key"
+            class="com.google.common.base.Functions" factory-method="compose">
+        <constructor-arg name="g">
+            <bean class="com.google.common.base.Functions" factory-method="forMap" c:defaultValue="terms-of-use">
+                <constructor-arg name="map">
+                    <map>
+                        <entry key="https://sp.example.org/shibboleth" value="example-terms" />
+                    </map>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+        <constructor-arg name="f">
+            <ref bean="shibboleth.RelyingPartyIdLookup.Simple" />
+        </constructor-arg>
+    </bean>
+    -->
+
+    <!-- Attribute Release configuration -->
 
     <!--
     Attribute release whitelist, blacklist, and match expressions to determine 

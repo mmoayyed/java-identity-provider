@@ -98,16 +98,16 @@ public class IsConsentRequiredPredicate implements Predicate<ProfileRequestConte
             return false;
         }
 
-        final Map<String, Consent> previousConsents = consentContext.getPreviousConsents();
-        if (previousConsents.isEmpty()) {
-            log.debug("Consent is required, no previous consents");
-            return true;
-        }
-
         final Map<String, Consent> currentConsents = consentContext.getCurrentConsents();
         if (currentConsents.isEmpty()) {
             log.debug("Consent is not required, there are no current consents");
             return false;
+        }
+
+        final Map<String, Consent> previousConsents = consentContext.getPreviousConsents();
+        if (previousConsents.isEmpty()) {
+            log.debug("Consent is required, no previous consents");
+            return true;
         }
 
         for (final Consent currentConsent : currentConsents.values()) {
