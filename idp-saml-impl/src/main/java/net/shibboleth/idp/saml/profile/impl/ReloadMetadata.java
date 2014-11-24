@@ -53,9 +53,9 @@ import org.slf4j.LoggerFactory;
  * HTTP status is returned.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_MESSAGE}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#IO_ERROR}
- * @event {@link EventIds#UNABLE_TO_DECODE}
  */
 public class ReloadMetadata extends AbstractProfileAction {
 
@@ -105,7 +105,7 @@ public class ReloadMetadata extends AbstractProfileAction {
         id = getHttpServletRequest() != null ? getHttpServletRequest().getParameter(RESOLVER_ID) : null;
         if (id == null) {
             log.debug("{} No 'id' parameter found in request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
         }
         

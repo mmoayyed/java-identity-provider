@@ -52,9 +52,9 @@ import com.google.common.base.Function;
  * HTTP status is returned.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_MESSAGE}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#IO_ERROR}
- * @event {@link EventIds#UNABLE_TO_DECODE}
  */
 public class ReloadServiceConfiguration extends AbstractProfileAction {
     
@@ -153,14 +153,14 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
 
             if (getHttpServletRequest() == null) {
                 log.debug("{} HttpServletRequest not found", getLogPrefix());
-                ActionSupport.buildEvent(input, EventIds.UNABLE_TO_DECODE);
+                ActionSupport.buildEvent(input, EventIds.INVALID_PROFILE_CTX);
                 return null;
             }
             
             final String id = StringSupport.trimOrNull(getHttpServletRequest().getParameter(SERVICE_ID));
             if (id == null) {
                 log.debug("{} No 'id' parameter found in request", getLogPrefix());
-                ActionSupport.buildEvent(input, EventIds.UNABLE_TO_DECODE);
+                ActionSupport.buildEvent(input, EventIds.INVALID_MESSAGE);
                 return null;
             }
             
