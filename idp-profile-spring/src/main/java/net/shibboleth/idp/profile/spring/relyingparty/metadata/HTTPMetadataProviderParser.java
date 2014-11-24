@@ -57,6 +57,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
     }
 
     /** {@inheritDoc} */
+    // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doNativeParse(Element element, ParserContext parserContext, 
             BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
@@ -93,6 +94,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
             builder.addPropertyValue("basicCredentials", buildBasicCredentials(element));
         }
     }
+    // Checkstyle: CyclomaticComplexity ON
 
     /**
      * Build the definition of the HTTPClientBuilder which contains all our configuration.
