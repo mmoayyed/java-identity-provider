@@ -161,6 +161,34 @@ public class AttributeFilterServiceTest {
         common45("policy5.xml");
     }
 
+    @Test public void testAll() throws ServiceException, AttributeFilterException, ComponentInitializationException {
+
+        final AttributeFilter filter = getFilter("policyAll.xml");
+
+        AttributeFilterContext filterContext = new AttributeFilterContext();
+        filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
+        filter.filterAttributes(filterContext);
+
+        Map<String, IdPAttribute> filteredAttributes = filterContext.getFilteredIdPAttributes();
+
+        Assert.assertEquals(filteredAttributes.size(), 1);
+
+        Assert.assertNull(filteredAttributes.get("firstName"));
+
+        Assert.assertNull(filteredAttributes.get("lastName"));
+
+        Assert.assertEquals(filteredAttributes.get("email").getValues().size(), 2);
+
+        Assert.assertTrue(filteredAttributes.get("email").getValues()
+                .contains(new StringAttributeValue("jsmith@example.edu")));
+
+        Assert.assertTrue(filteredAttributes.get("email").getValues()
+                .contains(new StringAttributeValue("john.smith@example.edu")));
+
+        Assert.assertNull(filteredAttributes.get("affiliation"));
+    }
+
+
     private void common45(String file) throws ServiceException, AttributeFilterException,
             ComponentInitializationException {
 

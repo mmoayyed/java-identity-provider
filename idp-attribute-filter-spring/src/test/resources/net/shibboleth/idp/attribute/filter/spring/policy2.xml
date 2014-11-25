@@ -6,7 +6,6 @@
         xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd
                             urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd">
 
-    <!-- Release affiliation to anyone in the InCommon group -->
     <afp:AttributeFilterPolicy >
         <afp:PolicyRequirementRule xsi:type="basic:ANY"/>
         
