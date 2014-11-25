@@ -61,6 +61,10 @@ public class SAML1ScopedStringAttributeEncoder extends AbstractSAML1AttributeEnc
         scopeDelimiter = "@";
         scopeAttributeName =  "Scope";
         scopeType = "attribute";
+        
+        // Turn off type encoding, because we default to a non-built-in type that consumers won't
+        // have the schema for.
+        setEncodeType(false);
     }
     
     /**
