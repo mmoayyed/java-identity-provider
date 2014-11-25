@@ -261,6 +261,7 @@
                                     <fileset dir="${assembly-directory}">
                                         <include name="conf/**/*.*" />
                                         <include name="flows/**/*.*" />
+                                        <include name="messages/**/*.*" />
                                         <include name="views/**/*.*" />
                                     </fileset>
                                     <globmapper from="*" to="*.dist" />
