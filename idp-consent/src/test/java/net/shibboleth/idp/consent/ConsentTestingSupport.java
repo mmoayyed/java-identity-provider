@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.consent.storage.ConsentResult;
 import net.shibboleth.idp.consent.storage.StorageIndex;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -59,7 +60,7 @@ public class ConsentTestingSupport {
         attribute1.setValues(Sets.newHashSet(value1));
 
         final IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Sets.newHashSet(value1, value2));
+        attribute2.setValues(Lists.newArrayList(value1, value2));
 
         final IdPAttribute attribute3 = new IdPAttribute("attribute3");
         attribute3.setValues(Sets.newHashSet(value3));
