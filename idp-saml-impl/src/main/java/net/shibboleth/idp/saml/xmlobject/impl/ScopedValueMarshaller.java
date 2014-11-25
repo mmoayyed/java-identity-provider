@@ -36,7 +36,7 @@ public class ScopedValueMarshaller extends AbstractXMLObjectMarshaller {
         ScopedValue scopedValue = (ScopedValue) xmlObject;
 
         if (null != scopedValue.getScopeAttributeName()) {
-            domElement.setAttribute(scopedValue.getScopeAttributeName(), scopedValue.getScope());
+            domElement.setAttributeNS(null, scopedValue.getScopeAttributeName(), scopedValue.getScope());
         }
 
     }
