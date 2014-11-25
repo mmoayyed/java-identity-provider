@@ -26,8 +26,8 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.idp.consent.ConsentTestingSupport;
 import net.shibboleth.idp.consent.logic.AttributeValuesHashFunction;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -39,7 +39,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 
 /** Unit tests for {@link ConsentSerializer}. */
 public class ConsentSerializerTest {
@@ -78,23 +77,16 @@ public class ConsentSerializerTest {
 
         attributeValuesHashFunction = new AttributeValuesHashFunction();
 
-        value1 = new StringAttributeValue("value1");
-        value2 = new StringAttributeValue("value2");
-
-        attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Sets.newHashSet(value1));
-
-        attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Sets.newHashSet(value1, value2));
+        final Map<String, IdPAttribute> attributes = ConsentTestingSupport.newAttributeMap();
 
         consent1 = new Consent();
         consent1.setId("attribute1");
-        consent1.setValue(attributeValuesHashFunction.apply(attribute1.getValues()));
+        consent1.setValue(attributeValuesHashFunction.apply(attributes.get("attribute1").getValues()));
         consent1.setApproved(true);
 
         consent2 = new Consent();
         consent2.setId("attribute2");
-        consent2.setValue(attributeValuesHashFunction.apply(attribute2.getValues()));
+        consent2.setValue(attributeValuesHashFunction.apply(attributes.get("attribute2").getValues()));
         consent2.setApproved(false);
 
         consents = new LinkedHashMap<>();
