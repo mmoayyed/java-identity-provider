@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A profile action that selects flows to invoke.
+ * A profile interceptor action that selects flows to invoke.
  * 
  * <p>
  * The flows available to be executed are held by the {@link ProfileInterceptorContext}. Available flows are executed in
@@ -58,13 +58,13 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
         if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
             return false;
         }
-        
+
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same flow again.
         if (interceptorContext.getAttemptedFlow() != null) {
             log.info("{} Moving completed flow {} to completed set, selecting next one", getLogPrefix(),
                     interceptorContext.getAttemptedFlow().getId());
-            interceptorContext.getAvailableFlows().remove(interceptorContext.getAttemptedFlow());
+            interceptorContext.getAvailableFlows().remove(interceptorContext.getAttemptedFlow().getId());
             interceptorContext.setAttemptedFlow(null);
         }
 
@@ -97,7 +97,7 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
             @Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
 
-        for (final ProfileInterceptorFlowDescriptor flow : interceptorContext.getAvailableFlows()) {
+        for (final ProfileInterceptorFlowDescriptor flow : interceptorContext.getAvailableFlows().values()) {
             log.debug("{} Checking flow {} for applicability...", getLogPrefix(), flow.getId());
             if (flow.apply(profileRequestContext)) {
                 interceptorContext.setAttemptedFlow(flow);

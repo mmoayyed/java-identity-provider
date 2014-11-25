@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An action that writes a {@link ProfileInterceptorResult} to a {@link StorageService}.
+ * A profile interceptor action that writes a {@link ProfileInterceptorResult} to a {@link StorageService}.
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#IO_ERROR}

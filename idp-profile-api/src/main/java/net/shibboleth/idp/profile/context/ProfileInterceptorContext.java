@@ -18,7 +18,9 @@
 package net.shibboleth.idp.profile.context;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,14 +42,14 @@ public class ProfileInterceptorContext extends BaseContext {
     @Nullable private ProfileInterceptorFlowDescriptor attemptedFlow;
 
     /** Flows that need to be executed. */
-    @Nonnull @NonnullElements private final List<ProfileInterceptorFlowDescriptor> availableFlows;
+    @Nonnull @NonnullElements private final Map<String, ProfileInterceptorFlowDescriptor> availableFlows;
 
     /** Results of the flow to be written to storage. */
     @Nonnull @NonnullElements private final List<ProfileInterceptorResult> results;
 
     /** Constructor. */
     public ProfileInterceptorContext() {
-        availableFlows = new ArrayList<>();
+        availableFlows = new LinkedHashMap<>();
         results = new ArrayList<>();
     }
 
@@ -74,7 +76,7 @@ public class ProfileInterceptorContext extends BaseContext {
      * 
      * @return the available flows
      */
-    @Nonnull @NonnullElements @Live public List<ProfileInterceptorFlowDescriptor> getAvailableFlows() {
+    @Nonnull @NonnullElements @Live public Map<String, ProfileInterceptorFlowDescriptor> getAvailableFlows() {
         return availableFlows;
     }
 

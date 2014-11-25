@@ -41,6 +41,7 @@
         p:perAttributeConsentEnabled="false"
         p:compareValues="true"
         p:lifetime="P1Y"
+        p:nonBrowserSupported="false"
         scope="prototype" />
 
     <!-- Parent bean for terms of use consent flows. -->
@@ -49,6 +50,7 @@
         p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
         p:compareValues="true"
         p:lifetime="P1Y"
+        p:nonBrowserSupported="false"
         scope="prototype" />
 
 </beans>

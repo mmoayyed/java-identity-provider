@@ -154,8 +154,6 @@
         <transition on="proceed" to="proceed" />
     </action-state>
 
-    <!-- TODO non-browser skip view -->
-
     <end-state id="proceed" />
     
     <bean-import resource="../../../system/flows/intercept/attribute-release-beans.xml" />

@@ -3,12 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
        parent="intercept.abstract">
 
-    <!--
-    TODO non-browser skip view
-    ...this should be implemented via a "supportsNonBrowser" flag on the flow descriptor
-    and then controlling use from the master intercept dispatcher
-    -->
-
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
 

@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.interceptor.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -27,7 +28,6 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -61,8 +61,8 @@ public class PopulateProfileInterceptorContextTest {
 
         final PopulateProfileInterceptorContext action = new PopulateProfileInterceptorContext();
         action.setAvailableFlows(interceptorFlows);
-        action.setActiveFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
-                Arrays.asList("test1", "test2", "test3")));
+        action.setActiveFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext, Collection<String>> constant(Arrays
+                .asList("test1", "test2", "test3")));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -73,18 +73,20 @@ public class PopulateProfileInterceptorContextTest {
     @Test public void testAction() throws Exception {
         final ProfileInterceptorContext interceptorContext = prc.getSubcontext(ProfileInterceptorContext.class);
         Assert.assertNotNull(interceptorContext);
-        Assert.assertEquals(interceptorContext.getAvailableFlows().size(), 3);
-        Assert.assertEquals(interceptorContext.getAvailableFlows().get(0).getId(), "intercept/test1");
-        Assert.assertEquals(interceptorContext.getAvailableFlows().get(1).getId(), "intercept/test2");
-        Assert.assertEquals(interceptorContext.getAvailableFlows().get(2).getId(), "intercept/test3");
+        final List<ProfileInterceptorFlowDescriptor> availableFlows =
+                ImmutableList.copyOf(interceptorContext.getAvailableFlows().values());
+        Assert.assertEquals(availableFlows.size(), 3);
+        Assert.assertEquals(availableFlows.get(0).getId(), "intercept/test1");
+        Assert.assertEquals(availableFlows.get(1).getId(), "intercept/test2");
+        Assert.assertEquals(availableFlows.get(2).getId(), "intercept/test3");
     }
 
     /** Test that the context is properly added. */
     @Test public void testError() throws Exception {
         final PopulateProfileInterceptorContext action = new PopulateProfileInterceptorContext();
         action.setAvailableFlows(interceptorFlows);
-        action.setActiveFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
-                Collections.singletonList("test4")));
+        action.setActiveFlowsLookupStrategy(FunctionSupport
+                .<ProfileRequestContext, Collection<String>> constant(Collections.singletonList("test4")));
         action.initialize();
 
         final Event event = action.execute(src);

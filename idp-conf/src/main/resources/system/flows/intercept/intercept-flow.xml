@@ -13,6 +13,7 @@
     remaining to be executed, control passes back to the calling (profile) flow.
     -->
     <action-state id="SelectInterceptFlow">
+        <evaluate expression="FilterFlowsByNonBrowserSupport" />
         <evaluate expression="SelectInterceptFlow" />
         <evaluate expression="'proceed'" />
 

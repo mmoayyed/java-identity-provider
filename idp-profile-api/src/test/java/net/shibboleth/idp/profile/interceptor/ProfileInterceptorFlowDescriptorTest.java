@@ -19,8 +19,6 @@ package net.shibboleth.idp.profile.interceptor;
 
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -40,27 +38,40 @@ public class ProfileInterceptorFlowDescriptorTest {
 
     private ProfileRequestContext prc;
 
-    @BeforeMethod public void setUp() throws ComponentInitializationException {
+    @BeforeMethod public void setUp() throws Exception {
         descriptor = new ProfileInterceptorFlowDescriptor();
         descriptor.setId("test");
-        descriptor.initialize();
 
         src = new RequestContextBuilder().buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
     }
 
-    @Test public void testInstantation() throws ComponentInitializationException {
+    @Test public void testInstantation() throws Exception {
         Assert.assertEquals(descriptor.getId(), "test");
+        Assert.assertTrue(descriptor.isNonBrowserSupported());
+        Assert.assertNull(descriptor.getStorageService());
         Assert.assertTrue(descriptor.apply(prc));
     }
 
-    @Test public void testSetters() {
-        try {
-            descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
-            Assert.fail();
-        } catch (UnmodifiableComponentException e) {
-            // OK
-        }
+    @Test(expectedExceptions = UnmodifiableComponentException.class)
+    public void testUnmodifiableActivationCondition()
+            throws Exception {
+        descriptor.initialize();
+        descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
+    }
+
+    @Test(expectedExceptions = UnmodifiableComponentException.class)
+    public void testUnmodifiableStorageService()
+            throws Exception {
+        descriptor.initialize();
+        descriptor.setStorageService(null);
+    }
+
+    @Test(expectedExceptions = UnmodifiableComponentException.class)
+    public void testUnmodifiableNonBrowserSupport()
+            throws Exception {
+        descriptor.initialize();
+        descriptor.setNonBrowserSupported(true);
     }
 
     @Test public void testEquality() {
@@ -73,13 +84,19 @@ public class ProfileInterceptorFlowDescriptorTest {
         Assert.assertFalse(descriptor.equals(descriptorWithDifferentId));
     }
 
-    @Test public void testPredicate() throws ComponentInitializationException {
-        descriptor = new ProfileInterceptorFlowDescriptor();
-        descriptor.setId("test");
+    @Test public void testMutatingPredicate() throws Exception {
         descriptor.setActivationCondition(Predicates.<ProfileRequestContext> alwaysFalse());
         descriptor.initialize();
 
         Assert.assertFalse(descriptor.apply(prc));
+    }
+
+    @Test public void testMutatingNonBrowserSupport() {
+        descriptor.setNonBrowserSupported(true);
+        Assert.assertTrue(descriptor.isNonBrowserSupported());
+
+        descriptor.setNonBrowserSupported(false);
+        Assert.assertFalse(descriptor.isNonBrowserSupported());
     }
 
 }

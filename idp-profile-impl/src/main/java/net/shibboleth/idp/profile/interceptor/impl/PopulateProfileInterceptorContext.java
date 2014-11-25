@@ -46,8 +46,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * An action that populates a {@link ProfileInterceptorContext} with {@link ProfileInterceptorFlowDescriptor}
- * objects based on flow IDs from a lookup function.
+ * An profile interceptor action that populates a {@link ProfileInterceptorContext} with
+ * {@link ProfileInterceptorFlowDescriptor} objects based on flow IDs from a lookup function.
  * 
  * <p>The flow IDs used for filtering must omit the {@link ProfileInterceptorFlowDescriptor#FLOW_ID_PREFIX} prefix.</p>
  * 
@@ -124,7 +124,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
                 
                 if (flow.isPresent()) {
                     log.debug("{} Installing flow {} into interceptor context", getLogPrefix(), flowId);
-                    interceptorContext.getAvailableFlows().add(flow.get());
+                    interceptorContext.getAvailableFlows().put(flow.get().getId(), flow.get());
                 } else {
                     log.error("{} Configured interceptor flow {} not available for use", getLogPrefix(), flowId);
                     ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
