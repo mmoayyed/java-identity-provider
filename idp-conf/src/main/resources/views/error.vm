@@ -18,7 +18,7 @@
     #set ($message = $springMacroRequestContext.getMessage("${eventKey}.message", "$defaultTitleSuffix: $eventId"))
     #if ($eventId == "AccessDenied" or $eventId == "ContextCheckDenied")
         $response.setStatus(403)
-    #elseif ($eventId == "UnableToDecode")
+    #elseif ($eventId == "UnableToDecode" || $eventId == "InvalidMessage")
         $response.setStatus(400)
     #else
         $response.setStatus(500)
