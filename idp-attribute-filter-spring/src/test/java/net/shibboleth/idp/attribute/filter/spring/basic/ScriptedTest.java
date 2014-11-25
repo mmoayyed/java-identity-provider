@@ -46,6 +46,13 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         final String ver = System.getProperty("java.version");
         return ver.startsWith("1.8");
     }
+    
+    private String getScript() {
+        if (isV8()) {
+            return "scripted-v8.xml";
+        }
+        return "scripted.xml";
+    }
 
     @BeforeClass public void setupAttributes() throws ComponentInitializationException, ResolutionException {
 
@@ -54,9 +61,9 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
 
     @Test public void policy() throws ComponentInitializationException {
         if (isV8()) {
-            return;
+            //return;
         }
-        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule("scripted.xml");
+        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule(getScript());
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
@@ -64,17 +71,15 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     }
     
     @Test(expectedExceptions={BeanCreationException.class,}) public void policyNotFound() throws ComponentInitializationException {
-        if (isV8()) {
-            throw new BeanCreationException("test");
-        }
+
         getPolicyRule("scriptedNotThere.xml");
     }
     
     @Test public void matcher()  throws ComponentInitializationException {
         if (isV8()) {
-            return;
+         //   return;
         }
-        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher("scripted.xml");
+        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher(getScript());
         
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
