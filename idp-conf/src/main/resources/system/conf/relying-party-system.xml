@@ -105,7 +105,7 @@
     
     <bean id="shibboleth.DefaultArtifactConfiguration"
         class="net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration"
-        p:artifactResolutionServiceIndex="%{idp.artifact.endpointIndex:1}" />
+        p:artifactResolutionServiceIndex="%{idp.artifact.endpointIndex:2}" />
     
     <!--
     Security Configuration Defaults
