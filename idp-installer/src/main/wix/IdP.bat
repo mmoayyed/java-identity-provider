@@ -91,7 +91,7 @@ if ERRORLEVEL 1 (
 
 for /D %%X in (*) do set idpex=%%X
 
-rem we do not want to populate conf/flows/view
+rem we do not want to populate conf/flows/view/messages
 rem we will populate them from the dist directory
 
 rd/s/q %idpex%\conf
@@ -110,6 +110,12 @@ rd/s/q %idpex%\views
 if ERRORLEVEL 1 (
   cd ..
   echo Views directory not found?
+  goto done;
+)
+rd/s/q %idpex%\messages
+if ERRORLEVEL 1 (
+  cd ..
+  echo Messages directory not found?
   goto done;
 )
 
