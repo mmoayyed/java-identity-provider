@@ -4,33 +4,3 @@ See https://wiki.shibboleth.net/confluence/display/IDP30/ReleaseNotes
 
 Changes for all versions may be found at
 https://issues.shibboleth.net/jira/secure/ReleaseNote.jspa?projectId=10010
-
-Changes in version 3.0.0-alpha2
-===============================
-The second alpha release includes bug fixes and improvements, some of which are
-highlighted below.
-
-The dummy private and secret keys included in the first alpha release have been
-removed and may be generated, see the configuration guide for more information at
-https://wiki.shibboleth.net/confluence/display/IDP30/ConfigurationGuide
-
-[IDP-80] - It should be possible to specify attribute "push" for artefact profile and attibute "pull" for browser/SSO
-[IDP-230] - SAML 2 ECP Profile Actions
-[IDP-432] - Loading legacy relying-party.xml fails with "No bean named 'shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex' is defined"
-[IDP-433] - Support attribute lookup during authentication
-[IDP-435] - Legacy relying-party.xml with defaultAuthenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" stops after login page
-[IDP-436] - alpha 1 ships with dummy certificates and keys
-[IDP-439] - Submitting empty username or password on the login page immediately proceeds to SP with urn:oasis:names:tc:SAML:2.0:status:AuthnFailed
-[IDP-441] - Also support bindDn and bindCredential with the authn/LDAP login flow
-[IDP-442] - includeAttributeStatement="false" in legacy relying-party.xml file not honored
-[IDP-445] - Pluggable access control for administrative functions
-
-Notes for version 3.0.0-alpha1
-===============================
-This is the first alpha release of the 3.0 Identity Provider software.
-
-NOTE especially that there is not yet a true installation process, and the
-private and secret keys that are included by default are not generated, but
-are dummy keys that are checked into subversion and are part of the testing
-environment. Using the software for any sensitive purpose is ill advised,
-but would require at minimum replacing those keys.
