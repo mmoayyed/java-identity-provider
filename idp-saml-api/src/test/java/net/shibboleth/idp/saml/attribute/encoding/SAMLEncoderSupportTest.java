@@ -307,7 +307,7 @@ public class SAMLEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
             ScopedValue scopedValue = (ScopedValue) xmlObject;
 
             if (null != scopedValue.getScopeAttributeName()) {
-                domElement.setAttribute(scopedValue.getScopeAttributeName(), scopedValue.getScope());
+                domElement.setAttributeNS(null, scopedValue.getScopeAttributeName(), scopedValue.getScope());
             }
 
         }
