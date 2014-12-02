@@ -16,7 +16,7 @@
  */
 
 /**
- * Attribute consent.
+ * Classed related to consent.
  */
 
 package net.shibboleth.idp.consent;

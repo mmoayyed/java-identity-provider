@@ -16,7 +16,7 @@
  */
 
 /**
- * Context classes related to attribute consent.
+ * Context classes related to consent.
  */
 
 package net.shibboleth.idp.consent.context;
