@@ -5,7 +5,7 @@
     </formats>
     <fileSets>
         <fileSet>
-            <directory>${assembly-directory}</directory>
+            <directory>${idp.assemblyDirectory}</directory>
             <outputDirectory></outputDirectory>
         </fileSet>
     </fileSets>

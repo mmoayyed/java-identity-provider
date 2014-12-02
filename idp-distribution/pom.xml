@@ -17,7 +17,7 @@
 
     <properties>
         <idp.finalName>shibboleth-identity-provider-${project.version}</idp.finalName>
-        <assembly-directory>${project.build.directory}/${idp.finalName}</assembly-directory>
+        <idp.assemblyDirectory>${project.build.directory}/${idp.finalName}</idp.assemblyDirectory>
     </properties>
 
     <dependencies>
@@ -101,7 +101,7 @@
                         </goals>
                         <configuration>
                             <includeEmptyDirs>true</includeEmptyDirs>
-                            <outputDirectory>${assembly-directory}</outputDirectory>
+                            <outputDirectory>${idp.assemblyDirectory}</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources</directory>
@@ -128,7 +128,7 @@
                                     <artifactId>idp-war</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
-                                    <outputDirectory>${assembly-directory}/webapp/</outputDirectory>
+                                    <outputDirectory>${idp.assemblyDirectory}/webapp/</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -147,7 +147,7 @@
                                     <artifactId>idp-conf</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
-                                    <outputDirectory>${assembly-directory}</outputDirectory>
+                                    <outputDirectory>${idp.assemblyDirectory}</outputDirectory>
                                     <excludes>**/META-INF/**,**/logs/*,**/credentials/*</excludes>
                                 </artifactItem>
                             </artifactItems>
@@ -168,7 +168,7 @@
                                     <version>${jetty9-dta-ssl.version}</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${assembly-directory}/jetty-base/lib/ext</outputDirectory>
+                                    <outputDirectory>${idp.assemblyDirectory}/jetty-base/lib/ext</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -203,7 +203,7 @@
                                     <artifactId>ant-launcher</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${assembly-directory}/bin/lib/</outputDirectory>
+                            <outputDirectory>${idp.assemblyDirectory}/bin/lib/</outputDirectory>
                         </configuration>
                     </execution>
                     <!-- Copy logging dependencies to WEB-INF/lib directory. -->
@@ -228,7 +228,7 @@
                                     <artifactId>jcl-over-slf4j</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${assembly-directory}/webapp/WEB-INF/lib/</outputDirectory>
+                            <outputDirectory>${idp.assemblyDirectory}/webapp/WEB-INF/lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -246,7 +246,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <chmod dir="${assembly-directory}/bin" perm="755" includes="**/*.sh" />
+                                <chmod dir="${idp.assemblyDirectory}/bin" perm="755" includes="**/*.sh" />
                             </target>
                         </configuration>
                     </execution>
@@ -258,8 +258,8 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy todir="${assembly-directory}/dist">
-                                    <fileset dir="${assembly-directory}">
+                                <copy todir="${idp.assemblyDirectory}/dist">
+                                    <fileset dir="${idp.assemblyDirectory}">
                                         <include name="conf/**/*.*" />
                                         <include name="flows/**/*.*" />
                                         <include name="messages/**/*.*" />

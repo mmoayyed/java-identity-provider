@@ -5,7 +5,7 @@
     </formats>
     <fileSets>
         <fileSet>
-            <directory>${assembly-directory}</directory>
+            <directory>${idp.assemblyDirectory}</directory>
             <outputDirectory></outputDirectory>
             <excludes>
                 <exclude>**/*.bat*</exclude>
@@ -18,8 +18,8 @@
             </excludes>
         </fileSet>
         <fileSet>
-            <directory>${assembly-directory}</directory>
-            <outputDirectory></outputDirectory>        
+            <directory>${idp.assemblyDirectory}</directory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>**/*.bat*</include>
                 <include>**/*.config*</include>
