@@ -16,7 +16,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <assembly-directory>${project.build.directory}/${project.build.finalName}</assembly-directory>
+        <idp.finalName>shibboleth-identity-provider-${project.version}</idp.finalName>
+        <assembly-directory>${project.build.directory}/${idp.finalName}</assembly-directory>
     </properties>
 
     <dependencies>
@@ -289,6 +290,7 @@
                         <descriptor>src/main/assembly/idp-assembly-tgz.xml</descriptor>
                         <descriptor>src/main/assembly/idp-assembly-zip.xml</descriptor>
                     </descriptors>
+                    <finalName>${idp.finalName}</finalName>
                     <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
             </plugin>
