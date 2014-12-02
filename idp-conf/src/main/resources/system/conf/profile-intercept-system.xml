@@ -66,6 +66,35 @@
         </constructor-arg>
     </bean>
 
+    <!-- Default pre-consent audit extractors. -->
+    <bean id="shibboleth.DefaultPreConsentAuditExtractors"
+            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                        c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                        c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SERVICE_PROVIDER"/>
+                    </key>
+                    <ref bean="shibboleth.RelyingPartyIdLookup.Simple" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IDENTITY_PROVIDER"/>
+                    </key>
+                    <ref bean="shibboleth.ResponderIdLookup.Simple" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
     <!-- Default consent audit extractors. -->
     <bean id="shibboleth.DefaultConsentAuditExtractors"
             class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
@@ -88,14 +117,6 @@
                         <util:constant static-field="net.shibboleth.idp.consent.audit.ConsentAuditFields.CURRENT_CONSENT_IS_APPROVED" />
                     </key>
                     <bean class="net.shibboleth.idp.consent.audit.CurrentConsentIsApprovedAuditExtractor" />
-                </entry>
-                <entry>
-                    <key>
-                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
-                    </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose"
-                        c:g-ref="shibboleth.PrincipalNameLookup.Subject"
-                        c:f-ref="shibboleth.ChildLookup.SubjectContext" />
                 </entry>
             </map>
         </property>

@@ -17,6 +17,7 @@
         <evaluate expression="InitializeConsentContext" />
         <evaluate expression="InitializeAttributeConsentContext" />
         <evaluate expression="PopulateAttributeConsentContext" />
+        <evaluate expression="PopulatePreConsentAuditContext" />
         <evaluate expression="SetRPUIInformation" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="TestForRevokeConsent" />
@@ -33,6 +34,12 @@
 
     <action-state id="RevokeConsent">
         <evaluate expression="RevokeConsent" />
+        <evaluate expression="'ClearAttributeReleaseConsent'" />
+    </action-state>
+
+    <!-- Write 'ClearAttributeReleaseConsent' event to consent audit log. -->
+    <action-state id="ClearAttributeReleaseConsent">
+        <evaluate expression="WriteRevokeAttributeReleaseConsentAuditLog" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="TestForRevokeGlobalAttributeConsent" />
     </action-state>
@@ -46,7 +53,6 @@
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="PopulateConsentContext" />
     </action-state>
-    
 
     <!-- Read consent from storage. -->
 
@@ -104,7 +110,7 @@
         </on-render>
         <transition on="proceed" to="TestForGlobalConsent" />
     </view-state>
-    
+
 
     <!-- If global consent was given by user, create appropriate storage result and end flow. -->
 
@@ -115,6 +121,12 @@
     <action-state id="GlobalConsent">
         <evaluate expression="CreateGlobalConsentResult" />
         <evaluate expression="UpdateStorageIndex" />
+        <evaluate expression="'GlobalAttributeReleaseConsent'" />
+    </action-state>
+
+    <!-- Write 'GlobalAttributeReleaseConsent' event to consent audit log. -->
+    <action-state id="GlobalAttributeReleaseConsent">
+        <evaluate expression="WriteGlobalAttributeReleaseConsentAuditLog" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="proceed" />
     </action-state>
@@ -124,6 +136,13 @@
 
     <action-state id="ExtractConsent">
         <evaluate expression="ExtractConsent" />
+        <evaluate expression="'AttributeReleaseConsent'" />
+    </action-state>
+
+    <!-- Write 'AttributeReleaseConsent' event to consent audit log. -->
+    <action-state id="AttributeReleaseConsent">
+        <evaluate expression="PopulateConsentAuditContext" />
+        <evaluate expression="WriteAttributeReleaseConsentAuditLog" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="TestForDoNotRememberConsent" />
     </action-state>
@@ -137,7 +156,7 @@
 
 
     <!-- Create result to be stored by interceptor flow. -->
-    
+
     <action-state id="CreateResult">
         <evaluate expression="CreateResult" />
         <evaluate expression="UpdateStorageIndex" />
@@ -155,7 +174,7 @@
     </action-state>
 
     <end-state id="proceed" />
-    
+
     <bean-import resource="../../../system/flows/intercept/attribute-release-beans.xml" />
 
 </flow>

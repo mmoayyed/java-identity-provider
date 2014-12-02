@@ -71,6 +71,12 @@
         class="net.shibboleth.idp.consent.flow.ar.PopulateAttributeReleaseContext" scope="prototype"
         p:attributePredicate-ref="AttributePredicate" />
 
+    <bean id="PopulatePreConsentAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:auditContextCreationStrategy-ref="shibboleth.ChildLookup.ConsentAuditContext"
+        p:fieldExtractors-ref="shibboleth.PreConsentAuditExtractors"
+        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
+
     <bean id="PopulateConsentContext"
         class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="AttributeReleaseConsentFunction"  />
@@ -95,6 +101,12 @@
         class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
+    <bean id="PopulateConsentAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:auditContextCreationStrategy-ref="shibboleth.ChildLookup.ConsentAuditContext"
+        p:fieldExtractors-ref="shibboleth.ConsentAuditExtractors"
+        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
+
     <bean id="ExtractConsent"
         class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
@@ -113,5 +125,17 @@
     <bean id="UpdateStorageIndex"
         class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
+
+    <bean id="WriteAttributeReleaseConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:auditContextLookupStrategy-ref="shibboleth.ChildLookup.ConsentAuditContext"
+        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
+
+    <bean id="WriteGlobalAttributeReleaseConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:auditContextLookupStrategy-ref="shibboleth.ChildLookup.ConsentAuditContext"
+        p:formattingMap-ref="shibboleth.consent.attribute-release.global.AuditFormattingMap" />
+
+    <bean id="WriteRevokeAttributeReleaseConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:auditContextLookupStrategy-ref="shibboleth.ChildLookup.ConsentAuditContext"
+        p:formattingMap-ref="shibboleth.consent.attribute-release.revoke.AuditFormattingMap" />
 
 </beans>
