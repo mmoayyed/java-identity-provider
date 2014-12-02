@@ -53,4 +53,52 @@
         p:nonBrowserSupported="false"
         scope="prototype" />
 
+    <!-- Function to lookup consent-specific audit context as a child of the consent context. -->
+    <bean id="shibboleth.ChildLookup.ConsentAuditContext" class="com.google.common.base.Functions" factory-method="compose">
+        <constructor-arg name="g">
+            <bean id="shibboleth.ChildLookup.AuditContext" class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                c:type="#{ T(net.shibboleth.idp.profile.context.AuditContext) }"
+                c:createContext="true" />
+        </constructor-arg>
+        <constructor-arg name="f">
+            <bean id="shibboleth.ChildLookup.ConsentContext" class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                c:type="#{ T(net.shibboleth.idp.consent.context.ConsentContext) }" />
+        </constructor-arg>
+    </bean>
+
+    <!-- Default consent audit extractors. -->
+    <bean id="shibboleth.DefaultConsentAuditExtractors"
+            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.consent.audit.ConsentAuditFields.CURRENT_CONSENT_IDS" />
+                    </key>
+                    <bean class="net.shibboleth.idp.consent.audit.CurrentConsentIdsAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.consent.audit.ConsentAuditFields.CURRENT_CONSENT_VALUES" />
+                    </key>
+                    <bean class="net.shibboleth.idp.consent.audit.CurrentConsentValuesAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.consent.audit.ConsentAuditFields.CURRENT_CONSENT_IS_APPROVED" />
+                    </key>
+                    <bean class="net.shibboleth.idp.consent.audit.CurrentConsentIsApprovedAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                        c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                        c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
 </beans>

@@ -75,4 +75,14 @@
         class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey" />
 
+    <bean id="PopulateConsentAuditContext"
+        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+        p:auditContextCreationStrategy-ref="shibboleth.ChildLookup.ConsentAuditContext"
+        p:fieldExtractors-ref="shibboleth.ConsentAuditExtractors"
+        p:formattingMap-ref="shibboleth.ConsentAuditFormattingMap" />
+
+    <bean id="WriteConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:auditContextLookupStrategy-ref="shibboleth.ChildLookup.ConsentAuditContext"
+        p:formattingMap-ref="shibboleth.ConsentAuditFormattingMap" />
+
 </beans>

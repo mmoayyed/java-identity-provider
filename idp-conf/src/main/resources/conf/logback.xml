@@ -15,7 +15,7 @@
     <logger name="PROTOCOL_MESSAGE" level="DEBUG" />
     -->
 
-    <!-- Especially chatty. -->    
+    <!-- Especially chatty. -->
     <logger name="net.shibboleth.idp.saml.attribute.mapping" level="INFO" />
     <logger name="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" level="INFO" />
    
@@ -58,8 +58,26 @@
     
     <logger name="Shibboleth-Audit" level="ALL">
         <appender-ref ref="IDP_AUDIT"/>
-    </logger>    
+    </logger>
 
+    <!-- Consent audit log. -->
+    <appender name="IDP_CONSENT_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.home}/logs/idp-consent-audit.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${idp.home}/logs/idp-consent-audit-%d{yyyy-MM-dd}.log</FileNamePattern>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="Shibboleth-Consent-Audit" level="ALL">
+        <appender-ref ref="IDP_CONSENT_AUDIT"/>
+    </logger>
+    
     <root level="INFO">
         <appender-ref ref="IDP_PROCESS"/>
     </root>
