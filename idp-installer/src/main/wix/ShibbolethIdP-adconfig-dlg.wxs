@@ -43,7 +43,7 @@
 	  
 
 	<Control Id="ADDescriptionLine1" Type="Text" X="25" Y="51" Height="18" Width="320"
-                 Text="Fill in details about your Active Director Install"/>
+                 Text="Fill in details about your Active Directory Install"/>
 
 	  
 	<Control Id="ADDescriptionLine2" Type="Text" X="25" Y="71" Height="18" Width="150"
@@ -56,7 +56,7 @@
                  Text="Use Global Catalog"/>
 
 	<Control Id="ADDescriptionLine3" Type="Text" X="25" Y="111" Height="18" Width="320"
-	         Text="In order to resolve attributes, the IdP needs a username/password for ActiveDirectory" />
+	         Text="In order to resolve attributes, the IdP needs a username/password for Active Directory" />
 	  
 	<Control Id="ADDescriptionLine4" Type="Text" X="25" Y="131" Height="18" Width="150"
 	         Text="Username (no domain)" />
