@@ -79,7 +79,7 @@
 
     <bean id="UpdateStorageIndex"
         class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey" />
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
     <bean id="PopulateConsentAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
