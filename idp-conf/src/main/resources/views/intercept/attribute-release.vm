@@ -70,12 +70,7 @@
                         </thead>
                         <tbody>
                             #foreach ($attribute in $attributeReleaseContext.getConsentableAttributes().values())
-                                #if ($foreach.count % 2 == 0)
-                                    #set ($rowStyle = "background-color:#E4E5E3;")
-                                #else
-                                    #set ($rowStyle = "")
-                                #end
-                                <tr style=$rowStyle>
+                                <tr>
                                     <td>$encoder.encodeForHTML($attributeDisplayNameFunction.apply($attribute))</td>
                                     <td>
                                         #foreach ($value in $attribute.values)

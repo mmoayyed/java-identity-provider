@@ -107,6 +107,10 @@ a:focus, a:hover, a:active {
     color: white;
 }
 
+#attributeRelease tr:nth-of-type(even) {
+    background-color: #E4E5E3;
+}
+
 .federation_logo
 {
 	width: 50%;
