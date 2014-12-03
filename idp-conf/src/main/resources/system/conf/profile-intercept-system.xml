@@ -54,20 +54,23 @@
         scope="prototype" />
 
     <!-- Function to lookup consent-specific audit context as a child of the consent context. -->
-    <bean id="shibboleth.ChildLookup.ConsentAuditContext" class="com.google.common.base.Functions" factory-method="compose">
+    <bean id="shibboleth.consent.ChildLookup.ConsentAuditContext"
+        class="com.google.common.base.Functions" factory-method="compose">
         <constructor-arg name="g">
-            <bean id="shibboleth.ChildLookup.AuditContext" class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+            <bean id="shibboleth.ChildLookup.AuditContext"
+                class="org.opensaml.messaging.context.navigate.ChildContextLookup"
                 c:type="#{ T(net.shibboleth.idp.profile.context.AuditContext) }"
                 c:createContext="true" />
         </constructor-arg>
         <constructor-arg name="f">
-            <bean id="shibboleth.ChildLookup.ConsentContext" class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+            <bean id="shibboleth.ChildLookup.ConsentContext"
+                class="org.opensaml.messaging.context.navigate.ChildContextLookup"
                 c:type="#{ T(net.shibboleth.idp.consent.context.ConsentContext) }" />
         </constructor-arg>
     </bean>
 
     <!-- Default pre-consent audit extractors. -->
-    <bean id="shibboleth.DefaultPreConsentAuditExtractors"
+    <bean id="shibboleth.consent.DefaultPreConsentAuditExtractors"
             class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
         <property name="sourceMap">
             <map>
@@ -96,7 +99,7 @@
     </bean>
     
     <!-- Default consent audit extractors. -->
-    <bean id="shibboleth.DefaultConsentAuditExtractors"
+    <bean id="shibboleth.consent.DefaultConsentAuditExtractors"
             class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
         <property name="sourceMap">
             <map>

@@ -48,20 +48,20 @@
     whether consent should be obtained for an attribute based on the attribute ID.
     -->
     
-    <util:list id="shibboleth.attribute-release.WhitelistedAttributeIDs">
+    <util:list id="shibboleth.consent.attribute-release.WhitelistedAttributeIDs">
         <!--
         <value>email</value>
         -->
     </util:list>
 
-    <util:list id="shibboleth.attribute-release.BlacklistedAttributeIDs">
+    <util:list id="shibboleth.consent.attribute-release.BlacklistedAttributeIDs">
         <value>transientId</value>
         <value>persistentId</value>
         <value>eduPersonTargetedID</value>
     </util:list>
 
     <!-- 
-    <bean id="shibboleth.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 
+    <bean id="shibboleth.consent.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 
         c:regex="^exampleAttribute.*$" />
     -->
 
@@ -110,14 +110,14 @@
     If you write your own function to extract a new piece of data for auditing, you can install it into one or more
     of the maps below to add it to the auditing framework, keyed by an audit field label to be used in formatting.
     -->
-    <bean id="shibboleth.PreConsentAuditExtractors" parent="shibboleth.DefaultPreConsentAuditExtractors" lazy-init="true">
+    <bean id="shibboleth.consent.PreConsentAuditExtractors" parent="shibboleth.consent.DefaultPreConsentAuditExtractors" lazy-init="true">
         <property name="sourceMap">
             <map merge="true">
             </map>
         </property>
     </bean>
 
-    <bean id="shibboleth.ConsentAuditExtractors" parent="shibboleth.DefaultConsentAuditExtractors" lazy-init="true">
+    <bean id="shibboleth.consent.ConsentAuditExtractors" parent="shibboleth.consent.DefaultConsentAuditExtractors" lazy-init="true">
         <property name="sourceMap">
             <map merge="true">
             </map>
