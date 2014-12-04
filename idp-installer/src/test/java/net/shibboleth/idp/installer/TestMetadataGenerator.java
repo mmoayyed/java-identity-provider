@@ -66,7 +66,7 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
             Assert.assertSame(entity.getIDPSSODescriptor("urn:mace:shibboleth:1.0"), idpsso);
             Assert.assertNull(entity.getIDPSSODescriptor("urn:mace:shibboleth:1.0:nameid"));
             Assert.assertEquals(idpsso.getArtifactResolutionServices().size(), 2);
-            Assert.assertEquals(idpsso.getSingleLogoutServices().size(), 3);
+            Assert.assertEquals(idpsso.getSingleLogoutServices().size(), 4);
             Assert.assertEquals(idpsso.getSingleSignOnServices().size(), 4);
             Assert.assertEquals(idpsso.getNameIDFormats().size(), 2);
             List<XMLObject> exts = idpsso.getExtensions().getUnknownXMLObjects();
@@ -107,7 +107,7 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
             Assert.assertSame(entity.getIDPSSODescriptor("urn:mace:shibboleth:1.0"), idpsso);
             Assert.assertNull(entity.getIDPSSODescriptor("urn:mace:shibboleth:1.0:nameid"));
             Assert.assertEquals(idpsso.getArtifactResolutionServices().size(), 2);
-            Assert.assertEquals(idpsso.getSingleLogoutServices().size(), 3);
+            Assert.assertEquals(idpsso.getSingleLogoutServices().size(), 4);
             Assert.assertEquals(idpsso.getSingleSignOnServices().size(), 4);
             Assert.assertEquals(idpsso.getNameIDFormats().size(), 2);
             List<XMLObject> exts = idpsso.getExtensions().getUnknownXMLObjects();
