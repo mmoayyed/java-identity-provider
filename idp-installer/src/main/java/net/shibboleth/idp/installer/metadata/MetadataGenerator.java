@@ -74,7 +74,7 @@ public class MetadataGenerator {
         /** IDPSSODescriptor. Artfact */
         SAML1Artifact, SAML2Artifact,
         /** IDPSSODescriptor. SLO */
-        RedirectSLO, POSTSLO, SOAPSLO,
+        RedirectSLO, POSTSLO, POSTSimpleSignSLO, SOAPSLO,
         /** IDPSSODescriptor. SSO */
         ShibbolethSSO, POSTSSO, POSTSimpleSignSSO, RedirectSSO,
 
@@ -96,16 +96,16 @@ public class MetadataGenerator {
             Endpoints.SAML2Artifact));
 
     /**
-     * the SLO endpoints.
+     * the SSO endpoints.
      */
-    static final ImmutableSet<Endpoints> SLO_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(Endpoints.ShibbolethSSO,
+    static final ImmutableSet<Endpoints> SSO_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(Endpoints.ShibbolethSSO,
             Endpoints.POSTSSO, Endpoints.POSTSimpleSignSSO, Endpoints.RedirectSSO));
 
     /**
-     * the SSO endpoints.
+     * the SLO endpoints.
      */
-    static final ImmutableSet<Endpoints> SSO_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(Endpoints.RedirectSLO,
-            Endpoints.POSTSLO, Endpoints.SOAPSLO));
+    static final ImmutableSet<Endpoints> SLO_ENDPOINTS = ImmutableSet.copyOf(EnumSet.of(Endpoints.RedirectSLO,
+            Endpoints.POSTSLO, Endpoints.POSTSimpleSignSLO, Endpoints.SOAPSLO));
 
     /**
      * AttributeAuthority endpoints.
@@ -715,6 +715,18 @@ public class MetadataGenerator {
                 writer.newLine();
                 break;
 
+            case POSTSimpleSignSLO:
+                writer.write("        ");
+                writer.write("<");
+                writer.write(SingleLogoutService.DEFAULT_ELEMENT_LOCAL_NAME);
+                writer.write(" Binding=\"");
+                writer.write(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
+                writer.write("\" Location=\"https://");
+                writer.write(getDNSName());
+                writer.write("/idp/profile/SAML2/POST-SimpleSign/SLO\"/>");
+                writer.newLine();
+                break;
+
             case SOAPSLO:
                 writer.write("        ");
                 writer.write("<");
@@ -758,7 +770,7 @@ public class MetadataGenerator {
                 writer.write(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI);
                 writer.write("\" Location=\"https://");
                 writer.write(getDNSName());
-                writer.write("/idp/profile/SAML2/POST/SSO-SimpleSign\"/>");
+                writer.write("/idp/profile/SAML2/POST-SimpleSign/SSO\"/>");
                 writer.newLine();
                 break;
 
