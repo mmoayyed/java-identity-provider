@@ -28,26 +28,12 @@
     
     <!-- Note that ${idp.home} is the only property available for variable substitution. -->
     
-    <!-- Audit log. -->
-    <appender name="IDP_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${idp.home}/logs/idp-audit.log</File>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${idp.home}/logs/idp-audit-%d{yyyy-MM-dd}.log</FileNamePattern>
-        </rollingPolicy>
-
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <charset>UTF-8</charset>
-            <Pattern>%msg%n</Pattern>
-        </encoder>
-    </appender>
-    
     <!-- Process log. -->
     <appender name="IDP_PROCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${idp.home}/logs/idp-process.log</File>
         
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${idp.home}/logs/idp-process-%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${idp.home}/logs/idp-process-%d{yyyy-MM-dd}.log.gz</FileNamePattern>
         </rollingPolicy>
 
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -56,16 +42,12 @@
         </encoder>
     </appender>
     
-    <logger name="Shibboleth-Audit" level="ALL">
-        <appender-ref ref="IDP_AUDIT"/>
-    </logger>
-
-    <!-- Consent audit log. -->
-    <appender name="IDP_CONSENT_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${idp.home}/logs/idp-consent-audit.log</File>
+    <!-- Audit log. -->
+    <appender name="IDP_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.home}/logs/idp-audit.log</File>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${idp.home}/logs/idp-consent-audit-%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${idp.home}/logs/idp-audit-%d{yyyy-MM-dd}.log.gz</FileNamePattern>
         </rollingPolicy>
 
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -73,6 +55,24 @@
             <Pattern>%msg%n</Pattern>
         </encoder>
     </appender>
+    
+    <!-- Consent audit log. -->
+    <appender name="IDP_CONSENT_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.home}/logs/idp-consent-audit.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${idp.home}/logs/idp-consent-audit-%d{yyyy-MM-dd}.log.gz</FileNamePattern>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="Shibboleth-Audit" level="ALL">
+        <appender-ref ref="IDP_AUDIT"/>
+    </logger>
 
     <logger name="Shibboleth-Consent-Audit" level="ALL">
         <appender-ref ref="IDP_CONSENT_AUDIT"/>
