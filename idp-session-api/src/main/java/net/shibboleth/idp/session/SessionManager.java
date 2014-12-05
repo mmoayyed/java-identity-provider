@@ -21,16 +21,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
-import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
 
 /**
  * Component that manages sessions between the IdP and client devices.
  */
 @ThreadSafe
-public interface SessionManager extends
-    InitializableComponent, DestructableComponent, IdentifiedComponent {
+public interface SessionManager {
 
     /**
      * Create and return a new {@link IdPSession} object for a subject.
@@ -43,8 +39,7 @@ public interface SessionManager extends
      * @return  the newly created session
      * @throws SessionException if the session cannot be created
      */
-    @Nonnull public IdPSession createSession(@Nonnull @NotEmpty final String principalName)
-            throws SessionException;
+    @Nonnull IdPSession createSession(@Nonnull @NotEmpty final String principalName) throws SessionException;
     
     /**
      * Invalidates or otherwise removes a session from persistent storage and/or unbinds it
@@ -58,7 +53,6 @@ public interface SessionManager extends
      * 
      * @throws SessionException if the session cannot be destroyed
      */
-    public void destroySession(@Nonnull @NotEmpty final String sessionId, final boolean unbind)
-            throws SessionException;
+    void destroySession(@Nonnull @NotEmpty final String sessionId, final boolean unbind) throws SessionException;
 
 }

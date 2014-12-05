@@ -31,7 +31,6 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
-import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
 import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
@@ -328,7 +327,7 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         mdProvider.setId("Test");
         mdProvider.initialize();
         
-        RoleDescriptorResolver roleResolver = new BasicRoleDescriptorResolver(mdProvider);
+        BasicRoleDescriptorResolver roleResolver = new BasicRoleDescriptorResolver(mdProvider);
         roleResolver.initialize();
         
         MetadataPKIXValidationInformationResolver resolver = new MetadataPKIXValidationInformationResolver(roleResolver);
