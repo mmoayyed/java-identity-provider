@@ -47,9 +47,9 @@
     <import resource="cas-protocol-system.xml" />
     <import resource="utilities.xml" />
     <import resource="../../conf/global.xml" />
-    
+
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
-    
+
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
         depends-on="shibboleth.LogbackLogging,shibboleth.ParserPool" p:parserPool-ref="shibboleth.ParserPool" />
 
@@ -87,7 +87,7 @@
             p:namespaceAware="true">
         <property name="builderAttributes">
             <map>
-                <!-- Sun/Oracle is the default, for Xerces, set property to org.apache.xerces.util.SecurityManager -->            
+                <!-- Sun/Oracle is the default, for Xerces, set property to org.apache.xerces.util.SecurityManager -->
                 <entry key="http://apache.org/xml/properties/security-manager">
                     <bean class="%{idp.xml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}" />
                 </entry>
@@ -110,7 +110,7 @@
 
     <bean id="shibboleth.HttpServletRequest" class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy" />
     <bean id="shibboleth.HttpServletResponse" class="net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy" />
-    
+
     <bean id="shibboleth.BuilderFactory" factory-method="getBuilderFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.MarshallerFactory" factory-method="getMarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory" class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig" />
@@ -134,7 +134,7 @@
         p:cookieDomain="%{idp.cookie.domain:}"
         p:cookiePath="%{idp.cookie.path:}"
         p:maxAge="%{idp.cookie.maxAge:31536000}" />
-    
+
     <bean id="shibboleth.DataSealer" class="net.shibboleth.utilities.java.support.security.DataSealer">
         <property name="keyStrategy">
             <bean class="net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy"
@@ -144,16 +144,16 @@
                 p:keystorePassword="%{idp.sealer.storePassword}"
                 p:keyAlias="%{idp.sealer.aliasBase:secret}"
                 p:keyPassword="%{idp.sealer.keyPassword}"
-                p:updateInterval="%{idp.sealer.updateInterval:PT15M}"               
+                p:updateInterval="%{idp.sealer.updateInterval:PT15M}"
                 p:updateTaskTimer-ref="shibboleth.TaskTimer" />
         </property>
     </bean>
-    
+
     <!-- This is a convenience for compatibility with the examples for configuring this in V2. -->
     <alias name="shibboleth.DataSealer" alias="shibboleth.TransientIDDataSealer"/>
-    
+
     <bean id="shibboleth.StorageService"
-        class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"        
+        class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
         p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}"
         p:cleanupTaskTimer-ref="shibboleth.TaskTimer" />
 
@@ -172,16 +172,16 @@
         p:cookieManager-ref="shibboleth.PersistentCookieManager"
         p:cookieName="shib_idp_persistent_ss"
         p:dataSealer-ref="shibboleth.DataSealer" />
-    
+
     <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LogbackLogging"
         p:storage-ref="shibboleth.StorageService" p:strict="true" />
 
     <bean id="shibboleth.SAMLArtifactMap" depends-on="shibboleth.StorageService"
         class="org.opensaml.saml.common.binding.artifact.impl.StorageServiceSAMLArtifactMap"
         p:storageService-ref="shibboleth.StorageService" />
-    
+
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
-        class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />    
+        class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />
     
     <bean id="shibboleth.SignatureValidationParametersResolver"
         class="org.opensaml.xmlsec.impl.BasicSignatureValidationParametersResolver" />
@@ -199,13 +199,13 @@
     The beans below are primarily used by trust engines in relying-party-system.xml, but also in the
     resolver for encryption parameters above.
     -->
-    
+
     <bean id="shibboleth.MetadataCredentialResolver" class="org.opensaml.saml.security.impl.MetadataCredentialResolver"
-         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"            
+         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
          p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
     </bean>
-    
+
     <bean id="shibboleth.KeyInfoCredentialResolver" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
         factory-method="buildBasicInlineKeyInfoCredentialResolver" />
-        
+
  </beans>
