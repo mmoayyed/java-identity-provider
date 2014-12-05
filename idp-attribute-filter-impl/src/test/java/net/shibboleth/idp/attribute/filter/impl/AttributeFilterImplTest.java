@@ -362,7 +362,7 @@ public class AttributeFilterImplTest {
         Assert.assertFalse(matcher.isInitialized());
         Assert.assertFalse(matcher.isDestroyed());
 
-        AttributeFilter filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
         policy.initialize();
         matcher.initialize();
         policyRule.initialize();
