@@ -1,5 +1,9 @@
+<%@ page import="org.springframework.web.context.WebApplicationContext" %>
+<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%
-final String path = System.getProperty("idp.home") + "/metadata/idp-metadata.xml";
+final WebApplicationContext springContext =
+	WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
+final String path = springContext.getEnvironment().getProperty("idp.home") + "/metadata/idp-metadata.xml";
 try (final java.io.FileInputStream in = new java.io.FileInputStream(path)) {
 	int i;
 	while ((i = in.read()) != -1) {
