@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -129,6 +130,11 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
 
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
+        
+        // We use a prototype scope because it eliminates the overhead during context closure,
+        // which is a problem when there are thousands of singletons. This means the destroy()
+        // method above will NOT be called for any bean parsed by this class.
+        builder.setScope(BeanDefinition.SCOPE_PROTOTYPE);
 
         super.doParse(element, parserContext, builder);
 
