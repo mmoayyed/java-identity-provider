@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:shibmd="urn:mace:shibboleth:2.0:metadata" xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:res="urn:mace:shibboleth:2.0:resource" xmlns:saml2md="urn:oasis:names:tc:SAML:2.0:metadata" targetNamespace="urn:mace:shibboleth:2.0:metadata" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:mace:shibboleth:2.0:metadata"
+    xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
+    xmlns:security="urn:mace:shibboleth:2.0:security"
+    xmlns:res="urn:mace:shibboleth:2.0:resource"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    elementFormDefault="qualified">
 
     <annotation>
         <documentation>Schema describing metadata providers and filters.</documentation>
     </annotation>
 
-    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata" schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"/>
-    <import namespace="urn:mace:shibboleth:2.0:resource" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-resource.xsd"/>
-    <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
+    <import namespace="urn:oasis:names:tc:SAML:2.0:assertion"
+        schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd"/>
+    <import namespace="urn:oasis:names:tc:SAML:2.0:metadata"
+        schemaLocation="http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:resource"
+        schemaLocation="http://shibboleth.net/schema/idp/shibboleth-resource.xsd"/>
+    <import namespace="urn:mace:shibboleth:2.0:security"
+        schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
 
     <element name="MetadataProvider" type="shibmd:MetadataProviderType">
         <annotation>
@@ -68,12 +80,12 @@
         <complexContent>
             <extension base="shibmd:MetadataProviderType">
                 <choice>
-                    <element ref="saml2md:EntitiesDescriptor">
+                    <element ref="md:EntitiesDescriptor">
                         <annotation>
                             <documentation>A SAML 2 metadata EntitiesDescriptor declaration.</documentation>
                         </annotation>
                     </element>
-                    <element ref="saml2md:EntityDescriptor">
+                    <element ref="md:EntityDescriptor">
                         <annotation>
                             <documentation>A SAML 2 metadata EntitiesDescriptor declaration.</documentation>
                         </annotation>
@@ -706,10 +718,49 @@
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entities descriptors that do not contain at least one entity
-                            or entities descriptor, after filtering, shouldbe removed.
+                            or entities descriptor, after filtering, should be removed.
                         </documentation>
                     </annotation>
                 </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="EntityAttributes">
+        <annotation>
+            <documentation>
+                A filter that adds SAML EntityAttribute extension content to metadata in order to drive software
+                behavior based on them. Sequences of Attribute elements are supplied, and when an Entity or
+                ConditionRef is encountered, the preceding Attributes are applied to the corresponding entities.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <choice minOccurs="0" maxOccurs="unbounded">
+                    <element ref="saml:Attribute">
+                        <annotation>
+                            <documentation>
+                                An Attribute to add to an EntityAttributes extension. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="Entity" type="string">
+                        <annotation>
+                            <documentation>
+                                An entityID to identify an EntityDescriptor to add all the preceding
+                                Attribute elements to. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="ConditionRef" type="string">
+                        <annotation>
+                            <documentation>
+                                The ID of a Spring bean to inject as a condition Predicate to identify one
+                                or more EntityDescriptors to add all the preceding Attribute elements to. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
             </extension>
         </complexContent>
     </complexType>
@@ -785,7 +836,7 @@
                     <annotation>
                         <documentation>
                             A boolean flag indicating that entities descriptors that do not contain at least one entity
-                            or entities descriptor, after filtering, shouldbe removed.
+                            or entities descriptor, after filtering, should be removed.
                         </documentation>
                     </annotation>
                 </attribute>

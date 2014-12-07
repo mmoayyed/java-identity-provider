@@ -3,10 +3,13 @@
 <MetadataProvider id="ShibbolethMetadata" xsi:type="ChainingMetadataProvider"
 	xmlns="urn:mace:shibboleth:2.0:metadata" xmlns:resource="urn:mace:shibboleth:2.0:resource"
 	xmlns:security="urn:mace:shibboleth:2.0:security"
-	xmlns:samlmd="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
                         urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd 
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
+                        urn:oasis:names:tc:SAML:2.0:assertion http://docs.oasis-open.org/security/saml/v2.0/saml-schema-assertion-2.0.xsd
                         urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
                         
 	<!-- ========================================== -->
@@ -29,7 +32,17 @@
             </PublicKey>
         </MetadataFilter>
         <MetadataFilter xsi:type="EntityRoleWhiteList">
-            <RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
+            <RetainedRole>md:SPSSODescriptor</RetainedRole>
+        </MetadataFilter>
+        <MetadataFilter xsi:type="EntityAttributes">
+            <saml:Attribute Name="https://sp.example.org/tagname">
+                <saml:AttributeValue>foo</saml:AttributeValue>
+            </saml:Attribute>
+            <saml:Attribute Name="https://sp.example.org/tagname2">
+                <saml:AttributeValue>foo</saml:AttributeValue>
+                <saml:AttributeValue>bar</saml:AttributeValue>
+            </saml:Attribute>
+            <Entity>https://sp.example.org</Entity>
         </MetadataFilter>
         <MetadataResource xsi:type="resource:ClasspathResource" file="/metadata/example-metadata.xml" />
     </MetadataProvider>
