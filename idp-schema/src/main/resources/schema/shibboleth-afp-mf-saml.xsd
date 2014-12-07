@@ -15,6 +15,8 @@
             <documentation>
                 A match function that checks if the attribute issuer contains an entity attribute with the
                 specified value.
+                
+                Not supported in V3. 
             </documentation>
         </annotation>
         <complexContent>
@@ -25,7 +27,7 @@
     <complexType name="EntityAttributeExactMatch">
         <annotation>
             <documentation>
-                A match function that checks if the attribute issuer contains an entity attribute with the
+                A match function that checks if the attribute requester contains an entity attribute with the
                 specified value.
             </documentation>
         </annotation>
@@ -39,6 +41,8 @@
             <documentation>
                 A match function that checks if the attribute requester contains an entity attribute with the
                 specified value.
+                
+                Deprecated in favor of "EntityAttributeExactMatch".
             </documentation>
         </annotation>
         <complexContent>
@@ -73,6 +77,8 @@
             <documentation>
                 A match function that checks if the attribute issuer contains an entity attribute with a
                 value that matches the given regular expression.
+                
+                Not supported in V3.
             </documentation>
         </annotation>
         <complexContent>
@@ -83,7 +89,7 @@
     <complexType name="EntityAttributeRegexMatch">
         <annotation>
             <documentation>
-                A match function that checks if the attribute issuer contains an entity attribute with a
+                A match function that checks if the attribute requester contains an entity attribute with a
                 value that matches the given regular expression.
             </documentation>
         </annotation>
@@ -97,6 +103,8 @@
             <documentation>
                 A match function that checks if the attribute requester contains an entity attribute with a
                 value that matches the given regular expression.
+                
+                Deprecated in favor of "EntityAttributeRegexMatch".
             </documentation>
         </annotation>
         <complexContent>
@@ -132,6 +140,8 @@
             <documentation>
                 A match function that evaluates to true if the attribute issuer supports a specified
                 NameID format.
+                
+                Not supported in V3.
             </documentation>
         </annotation>
         <complexContent>
@@ -142,7 +152,7 @@
     <complexType name="NameIDFormatExactMatch">
         <annotation>
             <documentation>
-                A match function that evaluates to true if the attribute issuer supports a specified
+                A match function that evaluates to true if the attribute requester supports a specified
                 NameID format.
             </documentation>
         </annotation>
@@ -156,6 +166,8 @@
             <documentation>
                 A match function that evaluates to true if the attribute requester supports a specified
                 NameID format.
+                
+                Deprecated in favor of "NameIDFormatExactMatch".
             </documentation>
         </annotation>
         <complexContent>
@@ -179,8 +191,9 @@
         <annotation>
             <documentation>
                 A match function that evaluates to true if the attribute requester is found in metadata and
-                is a member
-                of the given entity group.
+                is a member of the given entity group.
+                
+                Deprecated in favor of "InEntityGroup".
             </documentation>
         </annotation>
         <complexContent>
@@ -192,8 +205,7 @@
         <annotation>
             <documentation>
                 A match function that evaluates to true if the attribute requester is found in metadata and
-                is a member
-                of the given entity group.
+                is a member of the given entity group.
             </documentation>
         </annotation>
         <complexContent>
@@ -205,8 +217,9 @@
         <annotation>
             <documentation>
                 A match function that evaluates to true if the attribute issuer is found in metadata and is a
-                member
-                of the given entity group.
+                member of the given entity group.
+                
+                Not supported in V3.
             </documentation>
         </annotation>
         <complexContent>
