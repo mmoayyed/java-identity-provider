@@ -23,14 +23,13 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.resolver.Resolver;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /** Resolves a {@link RelyingPartyConfiguration} for a given profile request context. */
 public interface RelyingPartyConfigurationResolver extends Resolver<RelyingPartyConfiguration,ProfileRequestContext>,
-        IdentifiedComponent, InitializableComponent {
+        IdentifiedComponent {
 
     /**
      * Return the default security configuration for the profile.
@@ -40,4 +39,5 @@ public interface RelyingPartyConfigurationResolver extends Resolver<RelyingParty
      * @return the configured default configuration
      */
     @Nullable SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty final String profileId);
+    
 }

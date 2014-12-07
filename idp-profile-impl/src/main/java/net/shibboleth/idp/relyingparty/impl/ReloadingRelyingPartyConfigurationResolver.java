@@ -71,6 +71,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     @Override @Nonnull @NonnullElements public Iterable<RelyingPartyConfiguration> resolve(
             @Nullable final ProfileRequestContext context) throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();
@@ -80,14 +81,14 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
                 final RelyingPartyConfigurationResolver resolver = component.getComponent();
                 return Sets.newHashSet(resolver.resolve(context));
             }
-        } catch (ResolverException e) {
+        } catch (final ResolverException e) {
             log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);
         } finally {
             if (null != component) {
                 component.unpinComponent();
             }
         }
-        return Collections.EMPTY_SET;
+        return Collections.emptySet();
     }
 
     /** {@inheritDoc} */
@@ -95,7 +96,6 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
             throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();
@@ -105,7 +105,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
                 final RelyingPartyConfigurationResolver resolver = component.getComponent();
                 return resolver.resolveSingle(context);
             }
-        } catch (ResolverException e) {
+        } catch (final ResolverException e) {
             log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);
         } finally {
             if (null != component) {
@@ -119,7 +119,6 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     @Override public SecurityConfiguration getDefaultSecurityConfiguration(String profileId) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();
@@ -137,4 +136,5 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
         }
         return null;
     }
+    
 }
