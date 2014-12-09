@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
+import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
@@ -141,10 +142,29 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     @Override public void refresh() throws ResolverException {
         if (resolver instanceof RefreshableMetadataResolver) {
             ((RefreshableMetadataResolver) resolver).refresh();
-
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public DateTime getLastRefresh() {
+        if (resolver instanceof RefreshableMetadataResolver) {
+            return ((RefreshableMetadataResolver) resolver).getLastRefresh();
+        } else {
+            return null;
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public DateTime getLastUpdate() {
+        if (resolver instanceof RefreshableMetadataResolver) {
+            return ((RefreshableMetadataResolver) resolver).getLastUpdate();
+        } else {
+            return null;
+        }
+    }
+    
     /** {@inheritDoc} */
     @Override public int compareTo(RelyingPartyMetadataProvider other) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -178,4 +198,5 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     @Override public int hashCode() {
         return Objects.hashCode(sortKey, getId());
     }
+
 }
