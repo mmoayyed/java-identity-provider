@@ -1,13 +1,20 @@
 <%@ page language="java" contentType="text/plain; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page trimDirectiveWhitespaces="true" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Collection" %>
+<%@ page import="java.util.Collections" %>
 <%@ page import="org.joda.time.DateTime" %>
 <%@ page import="org.joda.time.format.DateTimeFormatter" %>
 <%@ page import="org.joda.time.format.ISODateTimeFormat" %>
 <%@ page import="org.springframework.webflow.execution.RequestContext" %>
+<%@ page import="org.opensaml.saml.metadata.resolver.ChainingMetadataResolver" %>
+<%@ page import="org.opensaml.saml.metadata.resolver.MetadataResolver" %>
+<%@ page import="org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver" %>
 <%@ page import="net.shibboleth.idp.Version" %>
+<%@ page import="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider" %>
 <%@ page import="net.shibboleth.utilities.java.support.component.IdentifiedComponent" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ReloadableService" %>
+<%@ page import="net.shibboleth.utilities.java.support.service.ServiceableComponent" %>
 <%
 final RequestContext requestContext = (RequestContext) request.getAttribute("flowRequestContext");
 final DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis();
@@ -46,5 +53,47 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
     }
     
     out.println();
+    
+    if (((IdentifiedComponent) service).getId().contains("Metadata")) {
+        final ServiceableComponent<MetadataResolver> component = service.getServiceableComponent();
+        try {
+            MetadataResolver rootResolver = component.getComponent();
+            Collection<RefreshableMetadataResolver> resolvers = Collections.emptyList();
+            
+            // Step down into wrapping component.
+            if (rootResolver instanceof RelyingPartyMetadataProvider) {
+                rootResolver = ((RelyingPartyMetadataProvider) rootResolver).getEmbeddedResolver();
+            }
+            
+            if (rootResolver instanceof RefreshableMetadataResolver) {
+                resolvers = Collections.<RefreshableMetadataResolver>singletonList((RefreshableMetadataResolver) rootResolver);
+            } else if (rootResolver instanceof ChainingMetadataResolver) {
+            	resolvers = new ArrayList<RefreshableMetadataResolver>();
+                for (final MetadataResolver childResolver : ((ChainingMetadataResolver) rootResolver).getResolvers()) {
+                    if (childResolver instanceof RefreshableMetadataResolver) {
+                        resolvers.add((RefreshableMetadataResolver) childResolver);
+                    }
+                }
+            }
+            
+            for (final RefreshableMetadataResolver resolver : resolvers) {
+                final DateTime lastRefresh = resolver.getLastRefresh();
+                final DateTime lastUpdate = resolver.getLastUpdate();
+
+                out.println("\tmetadata source: " + resolver.getId());
+                if (lastRefresh != null) {
+                    out.println("\tlast refresh attempt: " + lastRefresh.toString(dateTimeFormatter));
+                }
+                if (lastUpdate != null) {
+                    out.println("\tlast update: " + lastUpdate.toString(dateTimeFormatter));
+                }
+                out.println();
+            }
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
+        }
+    }
 }
 %>
