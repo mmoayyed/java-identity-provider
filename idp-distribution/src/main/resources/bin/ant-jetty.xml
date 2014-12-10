@@ -29,7 +29,7 @@
 
 	<taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
-	<target name="install" depends="init, properties, keystores, copyinis, reprotect, tidy" />
+	<target name="install" depends="init, properties, keystores, directories, copyinis, reprotect, tidy" />
 
 	<target name="init">
 		<tstamp />
@@ -71,14 +71,17 @@
 		<selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/credentials/idp-userfacing.p12" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
 	</target>
 
-	<target name="copyinis" depends="copyidpini">
-		<mkdir dir="jetty-base/start.d" />
+    <target name="directories">
+        <mkdir dir="jetty-base/start.d" />
+        <mkdir dir="jetty-base/logs" />
+    </target>
+
+    <target name="copyinis" depends="directories, copyidpini">
 		<copy file="jetty-base/start.d.dist/jsp.ini" tofile="jetty-base/start.d/jsp.ini" overwrite="false" failonerror="false" />
 		<copy file="jetty-base/start.d.dist/jstl.ini" tofile="jetty-base/start.d/jstl.ini" overwrite="false" failonerror="false" />
 	</target>
 
-	<target name="copyidpini" unless="idp.ini.present">
-		<mkdir dir="jetty-base/start.d" />
+	<target name="copyidpini" depends="directories" unless="idp.ini.present">
 		<mergeproperties inFile="${idp.target.dir}/jetty-base/start.d.dist/idp.ini" outFile="${idp.target.dir}/jetty-base/start.d/idp.ini" mergeFile="${jetty.merge.properties}" />
 	</target>
 	

@@ -49,11 +49,13 @@
 	    <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Start" Root="HKLM">
 		<RegistryValue Name="Params" Type="multiString" Action="append">
 		    <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
+		    <MultiStringValue>jetty.logs=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
 		</RegistryValue>
 	    </RegistryKey>
 	    <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Stop" Root="HKLM">
 		<RegistryValue Name="Params" Type="multiString" Action="append">
 		    <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
+		    <MultiStringValue>jetty.logs=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
 		</RegistryValue>
 	    </RegistryKey>
 	    <Condition>INSTALL_JETTY</Condition>

@@ -206,6 +206,35 @@
                             <outputDirectory>${idp.assemblyDirectory}/bin/lib/</outputDirectory>
                         </configuration>
                     </execution>
+                    <!-- Copy logging dependencies to jetty-base/lib directory. (for Jetty logging) -->
+                    <execution>
+                        <id>copy-jetty-logging-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-classic</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-core</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>ch.qos.logback</groupId>
+                                    <artifactId>logback-access</artifactId>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>${slf4j.groupId}</groupId>
+                                    <artifactId>jcl-over-slf4j</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${idp.assemblyDirectory}/jetty-base/lib/logging/</outputDirectory>
+                        </configuration>
+                    </execution>
                     <!-- Copy logging dependencies to WEB-INF/lib directory. -->
                     <execution>
                         <id>copy-logging-dependencies</id>
