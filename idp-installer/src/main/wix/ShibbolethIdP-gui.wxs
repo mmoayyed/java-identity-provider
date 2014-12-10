@@ -121,7 +121,7 @@
         Installed AND NOT PATCH
       </Publish>
 
-      <ProgressText Action="QtIdpAnt">Performing Installation tasks (this may take some time on initial installs)</ProgressText>
+      <ProgressText Action="QtIdpAnt">Performing IdP Installation tasks; this may take some time.</ProgressText>
       <ProgressText Action="QtJettyAnt">Configuring Jetty</ProgressText>
     </UI>
   </Fragment>

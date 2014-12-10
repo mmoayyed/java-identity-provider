@@ -19,7 +19,7 @@
 
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Shibboleth IdP V3 BETA" Language="1033" Version="3.0.0.5" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+  <Product Id="*" Name="Shibboleth IdP V3" Language="1033" Version="3.0.0.6" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
     <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="$(var.msitype)" Description="Shibboleth IdP V3.0" Manufacturer="The Shibboleth Consortium"/>
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes"
@@ -27,6 +27,9 @@
     <MediaTemplate EmbedCab="yes"/>
 
     <Condition Message="Shibboleth requires a Windows NT-based operating system.">NOT Version9X</Condition>
+<?if $(var.msitype) = "x86" ?>
+    <Condition Message="Do not install the 32 bit installer on a 64 bit machine.">NOT VersionNT64</Condition>
+<?endif?>
 
     <!-- Information for the properties page of the msi -->
 
@@ -82,7 +85,7 @@
       </DirectorySearch>
     </Property>
 
-    <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe please check the value for JAVA_HOME"/>
+    <CustomAction Id="NoJavaBin" Error="Could not locate Java.exe.  Please check the value for JAVA_HOME."/>
 
     <!-- Inherit the setup, if they were. -->
     <CustomAction Id="InheritInstallDir" Property="INSTALLDIR" Value="[OLD_INSTALLDIR]" />
