@@ -23,8 +23,10 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataP
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -97,6 +99,24 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
         Assert.assertEquals(Sets.newHashSet(result).size(), 1);
+    }
+    
+    @Test public void optionalFilterRefs() throws IOException {
+        ApplicationContext context = 
+                getApplicationContext("optionalFilterRefs", "filter/signatureValidationRefs.xml", "filter/switch.xml", "filter/signatureValidationRefs-beans.xml");
+        
+        SignatureValidationFilter filter = context.getBean(SignatureValidationFilter.class);
+        Assert.assertNotNull(filter);
+        
+        
+        // These beans are defined as singletons, so can just test for reference equality
+        Assert.assertSame(filter.getDefaultCriteria(), context.getBean("test.CriteriaSet"));
+        Assert.assertSame(filter.getSignaturePrevalidator(), context.getBean("test.SignaturePrevalidator"));
+        Assert.assertSame(filter.getDynamicTrustedNamesStrategy(), context.getBean("test.DynamicTrustedNamesStrategy"));
+        
+        // Test the other args just for the hell of it
+        Assert.assertFalse(filter.getRequireSignature());
+        Assert.assertSame(filter.getSignatureTrustEngine(), context.getBean("bean.pem"));
     }
 
 
