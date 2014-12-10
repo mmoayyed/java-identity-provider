@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -112,8 +113,8 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         context.addBeanFactoryPostProcessor(placeholderConfig);
 
     }
-
-    protected <T> T getBean(Class<T> claz, String... files) throws IOException {
+    
+    protected ApplicationContext getApplicationContext(String contextName, String... files) throws IOException {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -125,7 +126,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         setDirectoryPlaceholder(context);
 
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: " + claz);
+        context.setDisplayName("ApplicationContext: " + contextName);
         service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
         service.afterPropertiesSet();
 
@@ -137,6 +138,12 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
         configReader.loadBeanDefinitions(resources);
         context.refresh();
+        
+        return context;
+    }
+
+    protected <T> T getBean(Class<T> claz, String... files) throws IOException {
+        ApplicationContext context = getApplicationContext(claz.getCanonicalName(), files);
 
         if (context.containsBean("shibboleth.ParserPool")) {
             parserPool = context.getBean("shibboleth.ParserPool");
