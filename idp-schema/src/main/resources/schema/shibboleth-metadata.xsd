@@ -680,6 +680,23 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="defaultCriteriaRef" type="string">
+                    <annotation>
+                        <documentation>The ID of the optional set of static criteria supplied to the trust engine.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="signaturePrevalidatorRef" type="string">
+                    <annotation>
+                        <documentation>The ID of the optional signature prevalidator used to validate some non-cryptographic aspects
+                            of the signature, prior to cryptographic verification.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="dynamicTrustedNamesStrategyRef" type="string">
+                    <annotation>
+                        <documentation>The ID of the optional strategy used to build at runtime the set of dynamic PKIX trusted names supplied
+                             to the trust engine via the passed criteria set.</documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

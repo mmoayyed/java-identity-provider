@@ -100,6 +100,19 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         if (element.hasAttributeNS(null, "requireSignedMetadata")) {
             builder.addPropertyValue("requireSignature", element.getAttributeNS(null, "requireSignedMetadata"));
         }
+        
+        if (element.hasAttributeNS(null, "defaultCriteriaRef")) {
+            builder.addPropertyReference("defaultCriteria", element.getAttributeNS(null, "defaultCriteriaRef"));
+        }
+        
+        if (element.hasAttributeNS(null, "signaturePrevalidatorRef")) {
+            builder.addPropertyReference("signaturePrevalidator", element.getAttributeNS(null, "signaturePrevalidatorRef"));
+        }
+        
+        if (element.hasAttributeNS(null, "dynamicTrustedNamesStrategyRef")) {
+            builder.addPropertyReference("dynamicTrustedNamesStrategy", element.getAttributeNS(null, "dynamicTrustedNamesStrategyRef"));
+        }
+        
     }
 
     /**
