@@ -27,6 +27,7 @@
     </listener>
     
     <!-- Filters and filter mappings -->
+    <!-- Try and force I18N, probably won't help much. -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -39,10 +40,12 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
+    <!-- Lets us lump repeated Set-Cookie headers into one, something containers rarely support. -->
     <filter>
         <filter-name>CookieBufferingFilter</filter-name>
         <filter-class>net.shibboleth.utilities.java.support.net.CookieBufferingFilter</filter-class>
     </filter>
+    <!-- Automates the unpack and pack of the cookie-based storage model. -->
     <filter>
         <filter-name>ClientSessionStorageServiceFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -51,6 +54,7 @@
             <param-value>shibboleth.ClientSessionStorageService</param-value>
         </init-param>
     </filter>
+    <!-- Automates the unpack and pack of the cookie-based storage model. -->
     <filter>
         <filter-name>ClientPersistentStorageServiceFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -59,9 +63,15 @@
             <param-value>shibboleth.ClientPersistentStorageService</param-value>
         </init-param>
     </filter>
+    <!-- Automates TLS-based propagation of HttpServletRequest/Response into beans. -->
     <filter>
         <filter-name>RequestResponseContextFilter</filter-name>
         <filter-class>net.shibboleth.utilities.java.support.net.RequestResponseContextFilter</filter-class>
+    </filter>
+    <!-- Manages logging MDC. -->
+    <filter>
+        <filter-name>SL4JMDCServletFilter</filter-name>
+        <filter-class>net.shibboleth.idp.log.SLF4JMDCServletFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CookieBufferingFilter</filter-name>
@@ -106,10 +116,10 @@
         <filter-name>RequestResponseContextFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <!-- Add IdP SLF4J MDC cleanup filter to all requests -->
-    <!-- <filter> <filter-name>SL4JCleanupFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.common.log.SLF4JMDCCleanupFilter</filter-class> 
-        </filter> <filter-mapping> <filter-name>SL4JCleanupFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
+    <filter-mapping>
+        <filter-name>SL4JMDCServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <!-- HTTP headers to every response in order to prevent response caching -->
     <!-- <filter> <filter-name>IdPNoCacheFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.idp.util.NoCacheFilter</filter-class> 

@@ -19,14 +19,18 @@ package net.shibboleth.idp.log;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import net.shibboleth.idp.Version;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.slf4j.MDC;
 
@@ -36,27 +40,41 @@ import org.slf4j.MDC;
  * is returned.
  */
 public class SLF4JMDCServletFilter implements Filter {
+    
+    /** MDC attribute name for client address. */
+    @Nonnull @NotEmpty public static final String CLIENT_ADDRESS_MDC_ATTRIBUTE = "idp.remote_addr";
+
+    /** MDC attribute name for container session ID. */
+    @Nonnull @NotEmpty public static final String JSESSIONID_MDC_ATTRIBUTE = "idp.jsessionid";
 
     /** {@inheritDoc} */
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
         try {
             MDC.put(Version.MDC_ATTRIBUTE, Version.getVersion());
-            // TODO populate the MDC will other interesting things
+            MDC.put(CLIENT_ADDRESS_MDC_ATTRIBUTE, request.getRemoteAddr());
+            if (request instanceof HttpServletRequest) {
+                final HttpSession session = ((HttpServletRequest) request).getSession();
+                if (session != null) {
+                    MDC.put(JSESSIONID_MDC_ATTRIBUTE, session.getId());
+                }
+            }
             
             chain.doFilter(request, response);
         } finally {
             MDC.clear();
         }
-
     }
 
     /** {@inheritDoc} */
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // nothing to do
     }
 
     /** {@inheritDoc} */
+    @Override
     public void destroy() {
         // nothing to do
     }
