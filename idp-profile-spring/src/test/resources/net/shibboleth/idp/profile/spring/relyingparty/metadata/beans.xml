@@ -47,4 +47,18 @@
     <bean id="digester.SHA1HexLower" class="net.shibboleth.utilities.java.support.codec.StringDigester" 
            c:_0="SHA-1"
            c:_1="HEX_LOWER"/>
+            
+    <bean id="shibboleth.MetadataSignatureValidationStaticCriteria" 
+            class="net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SignatureValidationCriteriaSetFactoryBean" 
+            p:includeOpenSAMLGlobalConfig="true">
+        <property name="signatureValidationConfigurations">
+            <util:list>
+                <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration" 
+                    p:whitelistedAlgorithms=""
+                    p:blacklistedAlgorithms="foo bar baz">
+                </bean>
+            </util:list>
+        </property>
+    </bean>
+            
 </beans>

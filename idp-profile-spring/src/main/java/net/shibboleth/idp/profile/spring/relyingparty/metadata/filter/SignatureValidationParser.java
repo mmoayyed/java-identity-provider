@@ -104,6 +104,9 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         
         if (element.hasAttributeNS(null, "defaultCriteriaRef")) {
             builder.addPropertyReference("defaultCriteria", element.getAttributeNS(null, "defaultCriteriaRef"));
+        } else {
+            //TODO refactor, if decide upon new strategy for (or against) well-known bean refs
+            builder.addPropertyReference("defaultCriteria", "shibboleth.MetadataSignatureValidationStaticCriteria");
         }
         
         if (element.hasAttributeNS(null, "signaturePrevalidatorRef")) {

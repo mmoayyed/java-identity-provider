@@ -14,4 +14,18 @@
 
     <!-- Use this file to define any custom beans needed globally. -->
     
+    <bean id="shibboleth.MetadataSignatureValidationStaticCriteria" 
+            class="net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SignatureValidationCriteriaSetFactoryBean" 
+            p:includeOpenSAMLGlobalConfig="true">
+        <property name="signatureValidationConfigurations">
+            <util:list>
+                <!-- Algorithm URI's may be supplied below as a space-separated list -->
+                <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration" 
+                    p:whitelistedAlgorithms=""
+                    p:blacklistedAlgorithms="" >
+                </bean>
+            </util:list>
+        </property>
+    </bean>
+    
 </beans>
