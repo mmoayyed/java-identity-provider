@@ -42,6 +42,24 @@
         </encoder>
     </appender>
     
+    <appender name="IDP_WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- Suppress anything below WARN. -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+        
+        <File>${idp.home}/logs/idp-warn.log</File>
+        
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${idp.home}/logs/idp-warn-%d{yyyy-MM-dd}.log.gz</FileNamePattern>
+        </rollingPolicy>
+        
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
+        </encoder>
+    </appender>
+    
     <!-- Audit log. -->
     <appender name="IDP_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>${idp.home}/logs/idp-audit.log</File>
@@ -80,6 +98,7 @@
     
     <root level="INFO">
         <appender-ref ref="IDP_PROCESS"/>
+        <appender-ref ref="IDP_WARN" />
     </root>
 
 </configuration>
