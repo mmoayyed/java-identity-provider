@@ -12,8 +12,7 @@
 final RequestContext requestContext = (RequestContext) request.getAttribute("flowRequestContext");
 final DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis();
 final DateTime now = DateTime.now();
-final DateTime startupTime = new DateTime(
-        requestContext.getFlowExecutionContext().getActiveSession().getDefinition().getApplicationContext().getStartupDate());
+final DateTime startupTime = new DateTime(requestContext.getActiveFlow().getApplicationContext().getStartupDate());
 %>### Operating Environment Information
 operating_system: <%= System.getProperty("os.name") %>
 operating_system_version: <%= System.getProperty("os.version") %>
