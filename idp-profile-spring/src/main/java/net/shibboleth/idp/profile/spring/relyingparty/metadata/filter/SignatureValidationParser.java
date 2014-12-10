@@ -65,6 +65,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         return SignatureValidationFilter.class;
     }
 
+    // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         final boolean hasEngineRef = element.hasAttributeNS(null, "trustEngineRef");
@@ -106,14 +107,17 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         }
         
         if (element.hasAttributeNS(null, "signaturePrevalidatorRef")) {
-            builder.addPropertyReference("signaturePrevalidator", element.getAttributeNS(null, "signaturePrevalidatorRef"));
+            builder.addPropertyReference("signaturePrevalidator", 
+                        element.getAttributeNS(null, "signaturePrevalidatorRef"));
         }
         
         if (element.hasAttributeNS(null, "dynamicTrustedNamesStrategyRef")) {
-            builder.addPropertyReference("dynamicTrustedNamesStrategy", element.getAttributeNS(null, "dynamicTrustedNamesStrategyRef"));
+            builder.addPropertyReference("dynamicTrustedNamesStrategy", 
+                    element.getAttributeNS(null, "dynamicTrustedNamesStrategyRef"));
         }
         
     }
+    // Checkstyle: CyclomaticComplexity ON
 
     /**
      * Build a trust engine and populate it with the supplied credential (definition).
