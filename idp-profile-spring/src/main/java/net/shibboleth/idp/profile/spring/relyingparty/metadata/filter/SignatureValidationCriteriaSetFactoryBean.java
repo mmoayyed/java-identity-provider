@@ -67,7 +67,7 @@ public class SignatureValidationCriteriaSetFactoryBean implements FactoryBean<Cr
     @Nullable private Collection<Criterion> otherCriteria;
     
     /** Flag whether to include the OpenSAML global library-wide SignatureValidationConfiguration by default. */
-    private boolean includeOpenSAMLGlobalConfig;
+    private boolean includeOpenSAMLGlobalConfig = true;
 
     /**
      * Set the list of signature validation configuration.
