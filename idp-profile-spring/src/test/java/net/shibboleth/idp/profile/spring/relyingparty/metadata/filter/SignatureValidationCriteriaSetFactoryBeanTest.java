@@ -50,6 +50,16 @@ public class SignatureValidationCriteriaSetFactoryBeanTest extends OpenSAMLInitB
     public void testNoInputs() throws Exception {
         CriteriaSet criteriaSet = factoryBean.getObject();
         Assert.assertNotNull(criteriaSet);
+        Assert.assertFalse(criteriaSet.isEmpty());
+        Assert.assertEquals(criteriaSet.size(), 1);
+        Assert.assertTrue(criteriaSet.contains(SignatureValidationParametersCriterion.class));
+    }
+    
+    @Test
+    public void testNoOpenSAMLGlobal() throws Exception {
+        factoryBean.setIncludeOpenSAMLGlobalConfig(false);
+        CriteriaSet criteriaSet = factoryBean.getObject();
+        Assert.assertNotNull(criteriaSet);
         Assert.assertTrue(criteriaSet.isEmpty());
     }
     
@@ -81,6 +91,7 @@ public class SignatureValidationCriteriaSetFactoryBeanTest extends OpenSAMLInitB
     public void testOtherCriteriaOnly() throws Exception {
         HashSet<Criterion> otherCriteria = Sets.newHashSet(new UsageCriterion(UsageType.SIGNING), new EntityIdCriterion("foo"));
         factoryBean.setOtherCriteria(otherCriteria);
+        factoryBean.setIncludeOpenSAMLGlobalConfig(false);
         
         CriteriaSet criteriaSet = factoryBean.getObject();
         Assert.assertNotNull(criteriaSet);
