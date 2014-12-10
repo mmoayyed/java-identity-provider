@@ -59,7 +59,13 @@ public class DecryptionConfigurationLookupFunction
 
         final List<DecryptionConfiguration> configs = Lists.newArrayList();
         
-        configs.add(SecurityConfigurationSupport.getGlobalDecryptionConfiguration());
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc.getSecurityConfiguration() != null) {
+                configs.add(pc.getSecurityConfiguration().getDecryptionConfiguration());
+            }
+        }
         
         // Check for a per-profile default (relying party independent) config.
         if (input != null && rpResolver != null) {
@@ -70,13 +76,7 @@ public class DecryptionConfigurationLookupFunction
             }
         }
 
-        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpc != null) {
-            final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc.getSecurityConfiguration() != null) {
-                configs.add(pc.getSecurityConfiguration().getDecryptionConfiguration());
-            }
-        }
+        configs.add(SecurityConfigurationSupport.getGlobalDecryptionConfiguration());
         
         return configs;
     }

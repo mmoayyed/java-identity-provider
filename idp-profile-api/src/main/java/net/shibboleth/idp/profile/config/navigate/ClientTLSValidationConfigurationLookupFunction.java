@@ -59,7 +59,13 @@ public class ClientTLSValidationConfigurationLookupFunction
         
         final List<ClientTLSValidationConfiguration> configs = Lists.newArrayList();
         
-        configs.add(ConfigurationService.get(ClientTLSValidationConfiguration.class));
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc.getSecurityConfiguration() != null) {
+                configs.add(pc.getSecurityConfiguration().getClientTLSValidationConfiguration());
+            }
+        }
         
         // Check for a per-profile default (relying party independent) config.
         if (input != null && rpResolver != null) {
@@ -70,13 +76,7 @@ public class ClientTLSValidationConfigurationLookupFunction
             }
         }
 
-        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpc != null) {
-            final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc.getSecurityConfiguration() != null) {
-                configs.add(pc.getSecurityConfiguration().getClientTLSValidationConfiguration());
-            }
-        }
+        configs.add(ConfigurationService.get(ClientTLSValidationConfiguration.class));
         
         return configs;
     }

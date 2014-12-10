@@ -59,7 +59,13 @@ public class SignatureValidationConfigurationLookupFunction
         
         final List<SignatureValidationConfiguration> configs = Lists.newArrayList();
         
-        configs.add(SecurityConfigurationSupport.getGlobalSignatureValidationConfiguration());
+        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
+        if (rpc != null) {
+            final ProfileConfiguration pc = rpc.getProfileConfig();
+            if (pc != null && pc.getSecurityConfiguration() != null) {
+                configs.add(pc.getSecurityConfiguration().getSignatureValidationConfiguration());
+            }
+        }
         
         // Check for a per-profile default (relying party independent) config.
         if (input != null && rpResolver != null) {
@@ -70,13 +76,7 @@ public class SignatureValidationConfigurationLookupFunction
             }
         }
 
-        final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
-        if (rpc != null) {
-            final ProfileConfiguration pc = rpc.getProfileConfig();
-            if (pc != null && pc.getSecurityConfiguration() != null) {
-                configs.add(pc.getSecurityConfiguration().getSignatureValidationConfiguration());
-            }
-        }
+        configs.add(SecurityConfigurationSupport.getGlobalSignatureValidationConfiguration());
         
         return configs;
     }
