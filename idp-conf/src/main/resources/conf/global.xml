@@ -19,10 +19,17 @@
             p:includeOpenSAMLGlobalConfig="true">
         <property name="signatureValidationConfigurations">
             <util:list>
-                <!-- Algorithm URI's may be supplied below as a space-separated list -->
-                <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration" 
-                    p:whitelistedAlgorithms=""
-                    p:blacklistedAlgorithms="" >
+                <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration">
+                    <property name="whitelistedAlgorithms">
+                        <list>
+                            <!-- Supply algorithm URIs as a sequence of <value> elements. -->
+                        </list>
+                    </property>
+                    <property name="blacklistedAlgorithms">
+                        <list>
+                            <!-- Supply algorithm URIs as a sequence of <value> elements. -->
+                        </list>
+                    </property>
                 </bean>
             </util:list>
         </property>

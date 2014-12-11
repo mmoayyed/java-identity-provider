@@ -129,9 +129,18 @@
             p:includeOpenSAMLGlobalConfig="true">
         <property name="signatureValidationConfigurations">
             <util:list>
-                <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration" 
-                    p:whitelistedAlgorithms=""
-                    p:blacklistedAlgorithms="foo bar baz">
+                <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration">
+                    <property name="whitelistedAlgorithms">
+                        <list>
+                        </list>
+                    </property>
+                    <property name="blacklistedAlgorithms">
+                        <list>
+                            <value>foo</value>
+                            <value>bar</value>
+                            <value>baz</value>
+                        </list>
+                    </property>
                 </bean>
             </util:list>
         </property>
