@@ -156,8 +156,7 @@
 
     <bean id="shibboleth.StorageService"
         class="%{idp.storage.StorageService:org.opensaml.storage.impl.MemoryStorageService}"
-        p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}"
-        p:cleanupTaskTimer-ref="shibboleth.TaskTimer" />
+        p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}" />
 
     <bean id="shibboleth.ClientSessionStorageService"
         class="%{idp.storage.ClientStorageService:org.opensaml.storage.impl.ServletRequestScopedStorageService}"
