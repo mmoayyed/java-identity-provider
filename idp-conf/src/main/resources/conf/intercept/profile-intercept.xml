@@ -29,9 +29,14 @@
                 <bean id="intercept/terms-of-use" parent="shibboleth.consent.TermsOfUseFlow" />
         
                 <bean id="intercept/attribute-release" parent="shibboleth.consent.AttributeReleaseFlow"
-                     p:doNotRememberConsentAllowed="true" 
-                     p:globalConsentAllowed="true"
-                     p:perAttributeConsentEnabled="true" />
+                         p:doNotRememberConsentAllowed="true" 
+                         p:globalConsentAllowed="true"
+                         p:perAttributeConsentEnabled="true">
+                    <!-- If perAttributeConsentEnabled is on, you should enable the condition. -->
+                    <property name="activationCondition">
+                        <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
+                    </property>
+                </bean>
             </list>
         </property>
     </bean>

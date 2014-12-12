@@ -34,18 +34,14 @@
 
     <!-- Parent bean for attribute release consent flows. -->
     <bean id="shibboleth.consent.AttributeReleaseFlow" abstract="true"
-            class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"
-            p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
-            p:doNotRememberConsentAllowed="false"
-            p:globalConsentAllowed="false"
-            p:perAttributeConsentEnabled="false"
-            p:compareValues="true"
-            p:lifetime="P1Y"
-            p:nonBrowserSupported="false">
-        <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
-        </property>
-    </bean>
+        class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"
+        p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
+        p:doNotRememberConsentAllowed="false"
+        p:globalConsentAllowed="false"
+        p:perAttributeConsentEnabled="false"
+        p:compareValues="true"
+        p:lifetime="P1Y"
+        p:nonBrowserSupported="false" />
 
     <!-- Parent bean for terms of use consent flows. -->
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
