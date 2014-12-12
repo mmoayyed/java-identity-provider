@@ -45,7 +45,7 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
      *
      */
     public HttpClientFactoryBean() {
-        builder = new HttpClientBuilder();
+        builder = createHttpClientBuilder();
         final StringBuilder stringBuilder = new StringBuilder("ShibbolethIdp/");
         stringBuilder .append(Version.getVersion()).append(" OpenSAML/").append(org.opensaml.core.Version.getVersion());
         builder.setUserAgent(stringBuilder.toString());
@@ -125,9 +125,29 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
     public void setUserAgent(@Nullable final String agent) {
         builder.setUserAgent(agent);
     }
+    
+    /**
+     * Create and return the instance of {@link HttpClientBuilder} to use.  
+     * Subclasses may override to build a specialized subclass.
+     * 
+     * @return a new builder instance
+     */
+    protected HttpClientBuilder createHttpClientBuilder() {
+        return new HttpClientBuilder();
+    }
+    
+    /**
+     * Get the instance of {@link HttpClientBuilder} to use.
+     * 
+     * @return the existing builder instance in use
+     */
+    protected HttpClientBuilder getHttpClientBuilder() {
+        return builder;
+    }
 
     /** {@inheritDoc} */
     @Override protected HttpClient createInstance() throws Exception {
         return builder.buildClient();
     }
+    
 }
