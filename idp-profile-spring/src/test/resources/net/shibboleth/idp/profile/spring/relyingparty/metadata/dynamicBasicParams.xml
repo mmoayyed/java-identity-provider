@@ -8,7 +8,6 @@
     requireValidMetadata="false"    
     failFastInitialization="false"    
     parserPoolRef="myParserPool"
-    taskTimerRef="shibboleth.TaskTimer"
     refreshDelayFactor="0.5"
     minCacheDuration="PT5M"
     maxCacheDuration="PT4H"

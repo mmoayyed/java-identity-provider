@@ -68,9 +68,6 @@
 		p:maxPoolSize="1000" p:coalescing="true" p:ignoreComments="true"
 		p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
 
-	<bean id="shibboleth.TaskTimer" class="java.util.Timer"
-		destroy-method="cancel" /> <!-- only needed if you do reloading -->
-
 	<bean id="shibboleth.SchemaBuilder" class="org.opensaml.saml.common.xml.SAMLSchemaBuilder"
 		c:ver="SAML_11" />
 

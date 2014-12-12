@@ -31,9 +31,6 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
     
     /** The reference to the system parser pool that we set up. */
     private static final String DEFAULT_PARSER_POOL_REF = "shibboleth.ParserPool";
-
-    /** The reference to the system wide timer that we set up. */
-    private static final String DEFAULT_TIMER_REF = "shibboleth.TaskTimer";
     
     /** The default delay factor. */
     private static final String DEFAULT_DELAY_FACTOR = "0.75";
@@ -49,7 +46,12 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
             BeanDefinitionBuilder builder) {
 
         super.doNativeParse(element, parserContext, builder);
-        builder.addConstructorArgReference(getTaskTimerRef(element));
+
+        // If there's a timer bean reference, that's the first c'tor argument.
+        final String timerRef = getTaskTimerRef(element);
+        if (timerRef != null) {
+            builder.addConstructorArgReference(timerRef);
+        }
         
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
             builder.addPropertyValue("refreshDelayFactor", element.getAttributeNS(null,"refreshDelayFactor"));
@@ -88,16 +90,12 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
      * @return task timer reference
      */
     protected String getTaskTimerRef(Element element) {
-        String taskTimerRef = null;
+        
         if (element.hasAttributeNS(null, "taskTimerRef")) {
-            taskTimerRef = StringSupport.trimOrNull(element.getAttributeNS(null, "taskTimerRef"));
+            return StringSupport.trimOrNull(element.getAttributeNS(null, "taskTimerRef"));
+        } else {
+            return null;
         }
-
-        if (taskTimerRef == null) {
-            taskTimerRef = DEFAULT_TIMER_REF;
-        }
-
-        return taskTimerRef;
     }
     
     /**

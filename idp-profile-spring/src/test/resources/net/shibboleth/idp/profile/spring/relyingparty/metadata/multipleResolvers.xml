@@ -15,8 +15,7 @@
 
 	<bean id="shibboleth.MetadataResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
 		p:failFast="true"
-		p:reloadCheckDelay="0"
-		p:reloadTaskTimer="shibboleth.TaskTimer">
+		p:reloadCheckDelay="0">
 		<constructor-arg name="claz"
 			value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
 		<constructor-arg name="strategy">

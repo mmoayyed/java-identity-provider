@@ -9,9 +9,6 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
-	<bean id="shibboleth.TaskTimer" class="java.util.Timer"
-		destroy-method="cancel" /> 
-
     <bean id="myParserPool"
         class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
         p:maxPoolSize="1000"
@@ -21,7 +18,6 @@
         
 	<bean id="shibboleth.MetadataResolverService"
 		class="net.shibboleth.ext.spring.service.ReloadableSpringService"
-		p:reloadTaskTimer="shibboleth.TaskTimer"
 		p:serviceConfigurations="classpath:/net/shibboleth/idp/profile/spring/relyingparty/reload/metadata.xml"
 		p:failFast="true" p:reloadCheckDelay="0">
 		<constructor-arg name="claz"

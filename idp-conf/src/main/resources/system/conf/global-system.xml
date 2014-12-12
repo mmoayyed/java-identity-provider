@@ -50,12 +50,11 @@
     <import resource="cas-protocol-system.xml" />
     <import resource="utilities.xml" />
 
-    <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
-
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
         depends-on="shibboleth.LogbackLogging,shibboleth.ParserPool" p:parserPool-ref="shibboleth.ParserPool" />
 
-    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" depends-on="shibboleth.LogbackLogging">
+    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
+            depends-on="shibboleth.LogbackLogging">
         <property name="overrideLogging" value="false"/>
         <property name="velocityProperties">
             <props>
