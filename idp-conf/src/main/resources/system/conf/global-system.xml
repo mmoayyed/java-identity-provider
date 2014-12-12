@@ -146,8 +146,7 @@
                 p:keystorePassword="%{idp.sealer.storePassword}"
                 p:keyAlias="%{idp.sealer.aliasBase:secret}"
                 p:keyPassword="%{idp.sealer.keyPassword}"
-                p:updateInterval="%{idp.sealer.updateInterval:PT15M}"
-                p:updateTaskTimer-ref="shibboleth.TaskTimer" />
+                p:updateInterval="%{idp.sealer.updateInterval:PT15M}" />
         </property>
     </bean>
 
