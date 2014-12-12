@@ -14,18 +14,8 @@
                             urn:mace:shibboleth:2.0:afp:mf:basic http://shibboleth.net/schema/idp/shibboleth-afp-mf-basic.xsd
                             urn:mace:shibboleth:2.0:afp:mf:saml http://shibboleth.net/schema/idp/shibboleth-afp-mf-saml.xsd">
 
-    <!--  Release the transient ID to anyone -->
-    <afp:AttributeFilterPolicy id="releaseTransientIdToAnyone">
-        <afp:PolicyRequirementRule xsi:type="basic:ANY" />
-
-        <afp:AttributeRule attributeID="transientId">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-
-    </afp:AttributeFilterPolicy>
-    
     <!-- TODO: Example policy for testbed and unit tests, remove before final -->
-    <afp:AttributeFilterPolicy id="releaseSomeAttributeToAnyone">
+    <afp:AttributeFilterPolicy id="releaseSomeAttributes">
         <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.example.org" />
 
         <afp:AttributeRule attributeID="eduPersonAffiliation">

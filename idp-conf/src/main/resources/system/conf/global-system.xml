@@ -37,7 +37,10 @@
             p:cacheSeconds="%{idp.message.cacheSeconds:300}"
             p:basenames-ref="%{idp.message.resources:shibboleth.MessageSourceResources}" />
 
+    <import resource="../../conf/global.xml" />
     <import resource="../../conf/errors.xml" />
+    <import resource="security-system.xml" />
+    <import resource="../../conf/security.xml" />
     <import resource="general-authn-system.xml" />
     <import resource="session-manager-system.xml" />
     <import resource="services-system.xml" />
@@ -46,7 +49,6 @@
     <import resource="profile-intercept-system.xml" />
     <import resource="cas-protocol-system.xml" />
     <import resource="utilities.xml" />
-    <import resource="../../conf/global.xml" />
 
     <bean id="shibboleth.TaskTimer" class="java.util.Timer" destroy-method="cancel"/> <!--  only needed if you do reloading -->
 

@@ -121,17 +121,17 @@
         </property>
         
         <property name="signatureValidationConfiguration">
-            <bean class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration" 
+            <bean parent="shibboleth.BasicSignatureValidationConfiguration" 
                 p:signatureTrustEngine-ref="%{idp.trust.signatures:shibboleth.ChainingSignatureTrustEngine}" />
         </property>
 
         <property name="clientTLSValidationConfiguration">
-            <bean class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration"
+            <bean parent="shibboleth.BasicClientTLSValidationConfiguration"
                 p:x509TrustEngine-ref="%{idp.trust.certificates:shibboleth.ChainingX509TrustEngine}" />
         </property>
         
         <property name="encryptionConfiguration">
-            <bean class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration">
+            <bean parent="shibboleth.BasicEncryptionConfiguration">
                 <property name="dataEncryptionAlgorithms">
                     <list>
                         <util:constant
@@ -148,14 +148,14 @@
         </property>
 
         <property name="decryptionConfiguration">
-            <bean class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
+            <bean parent="shibboleth.BasicDecryptionConfiguration"
                 p:KEKKeyInfoCredentialResolver-ref="defaultKeyEncryptionCredentialResolver"
                 p:encryptedKeyResolver-ref="defaultEncryptedKeyResolver" />
         </property>
 
     </bean>
 
-    <bean id="shibboleth.SigningConfiguration.SHA256" class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+    <bean id="shibboleth.SigningConfiguration.SHA256" parent="shibboleth.BasicSignatureSigningConfiguration"
             p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
         <property name="signatureAlgorithms">
             <list>
@@ -173,7 +173,7 @@
         </property>
     </bean>
 
-    <bean id="shibboleth.SigningConfiguration.SHA1" class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+    <bean id="shibboleth.SigningConfiguration.SHA1" parent="shibboleth.BasicSignatureSigningConfiguration"
             p:signingCredentials-ref="shibboleth.DefaultSigningCredential">
         <property name="signatureAlgorithms">
             <list>
