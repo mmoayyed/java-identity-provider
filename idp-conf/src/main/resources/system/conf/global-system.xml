@@ -184,5 +184,34 @@
 
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
         class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />
+
+    <!-- Beans that implement the mashing of security configurations into final parameter sets. -->
+    
+    <bean id="shibboleth.SignatureValidationParametersResolver"
+        class="org.opensaml.xmlsec.impl.BasicSignatureValidationParametersResolver" />
+    <bean id="shibboleth.SignatureSigningParametersResolver"
+        class="org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver" />
+    <bean id="shibboleth.DecryptionParametersResolver"
+        class="org.opensaml.xmlsec.impl.BasicDecryptionParametersResolver" />
+    <bean id="shibboleth.EncryptionParametersResolver"
+        class="org.opensaml.saml.security.impl.SAMLMetadataEncryptionParametersResolver"
+        c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+    <bean id="shibboleth.ClientTLSValidationParametersResolver"
+        class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationParametersResolver" />
+
+    <!--
+    The beans below are primarily used by trust engines in relying-party-system.xml, but also in the
+    resolver for encryption parameters above.
+    -->
+
+    <bean id="shibboleth.MetadataCredentialResolver"
+        class="org.opensaml.saml.security.impl.MetadataCredentialResolver"
+         p:roleDescriptorResolver-ref="shibboleth.RoleDescriptorResolver"
+         p:keyInfoCredentialResolver-ref="shibboleth.KeyInfoCredentialResolver">
+    </bean>
+
+    <bean id="shibboleth.KeyInfoCredentialResolver"
+        class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
+        factory-method="buildBasicInlineKeyInfoCredentialResolver" />
     
  </beans>
