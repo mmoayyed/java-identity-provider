@@ -26,7 +26,7 @@ import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 
 import org.opensaml.security.x509.tls.ClientTLSValidationConfiguration;
 import org.opensaml.xmlsec.DecryptionConfiguration;
@@ -66,7 +66,7 @@ public class SecurityConfiguration {
      */
     public SecurityConfiguration() {
         clockSkew = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
-        idGenerator = new RandomIdentifierGenerationStrategy();
+        idGenerator = new SecureRandomIdentifierGenerationStrategy();
     }
 
     /**
