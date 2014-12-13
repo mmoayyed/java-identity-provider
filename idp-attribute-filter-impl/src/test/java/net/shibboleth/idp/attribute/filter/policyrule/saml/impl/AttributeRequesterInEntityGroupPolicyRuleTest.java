@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterInEntityGroupPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -42,7 +41,7 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
         AttributeRequesterInEntityGroupPolicyRule matcher = getMatcher("http://shibboleth.net");
 
         Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
-        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FAIL);
+        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
 
         matcher = getMatcher("urn:otherstuff");
         Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
@@ -56,6 +55,6 @@ public class AttributeRequesterInEntityGroupPolicyRuleTest extends BaseMetadataT
         AttributeRequesterInEntityGroupPolicyRule matcher = new AttributeRequesterInEntityGroupPolicyRule();
         matcher.setId("matcher");
         matcher.initialize();
-        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FAIL);
+        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
     }
 }

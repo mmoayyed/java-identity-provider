@@ -112,8 +112,8 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
 
         EntityDescriptor entityDescriptor = getEntityMetadata(filterContext);
         if (entityDescriptor == null) {
-            log.warn("{} No metadata available for the entity, returning FAIL", getLogPrefix());
-            return Tristate.FAIL;
+            log.info("{} No metadata available for the entity, returning FALSE", getLogPrefix());
+            return Tristate.FALSE;
         }
 
         Attribute entityAttribute = getEntityAttribute(entityDescriptor);

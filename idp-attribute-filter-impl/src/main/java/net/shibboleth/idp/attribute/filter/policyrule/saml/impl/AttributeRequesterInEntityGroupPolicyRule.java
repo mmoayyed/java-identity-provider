@@ -94,13 +94,13 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
 
         if (entityGroup == null) {
             log.warn("{} No entity group specified, unable to check if entity is in group", getLogPrefix());
-            return Tristate.FAIL;
+            return Tristate.FALSE;
         }
 
         final EntityDescriptor entity = getEntityMetadata(input);
         if (entity == null) {
-            // logged in concrete class
-            return Tristate.FAIL;
+            // logged above
+            return Tristate.FALSE;
         }
 
         for (final EntityGroupName group : entity.getObjectMetadata().get(EntityGroupName.class)) {

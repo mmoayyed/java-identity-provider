@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterNameIDFormatExactPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -44,7 +43,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRuleTest extends BaseMetad
         Assert.assertEquals(matcher.getNameIdFormat(), "https://example.org/foo");
 
         Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.TRUE);
-        Assert.assertEquals(matcher.matches(metadataContext(null, null)), Tristate.FALSE);
+        Assert.assertEquals(matcher.matches(metadataContext(null, "Principal")), Tristate.FALSE);
         Assert.assertEquals(matcher.matches(metadataContext(idpEntity, "Principal")), Tristate.FALSE);
 
         matcher = getMatcher("urn:otherstuff");

@@ -105,7 +105,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final SSODescriptor role = getEntitySSODescriptor(filterContext);
         if (role == null) {
-            // logged in concrete class.
+            // logged in above
             return Tristate.FALSE;
         }
 

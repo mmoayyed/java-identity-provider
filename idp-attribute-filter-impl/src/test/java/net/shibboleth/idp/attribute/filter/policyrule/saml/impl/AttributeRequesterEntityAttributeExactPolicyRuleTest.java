@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -90,11 +89,11 @@ public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMe
 
     @Test public void testUnpopulated()
             throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+        Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
     }
 
     @Test public void testNoMetadata()
             throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().matches(metadataContext(null, "Principal")), Tristate.FAIL);
+        Assert.assertEquals(getMatcher().matches(metadataContext(null, "Principal")), Tristate.FALSE);
     }
 }
