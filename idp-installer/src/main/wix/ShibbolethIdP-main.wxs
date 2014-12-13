@@ -19,7 +19,7 @@
 
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Shibboleth IdP V3" Language="1033" Version="3.0.0.6" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
+  <Product Id="*" Name="Shibboleth IdP V3" Language="1033" Version="3.0.0.10" Manufacturer="The Shibboleth Consortium" UpgradeCode="$(var.UpgradeUUID)">
     <Package InstallerVersion="310" Compressed="yes" InstallScope="perMachine" Platform="$(var.msitype)" Description="Shibboleth IdP V3.0" Manufacturer="The Shibboleth Consortium"/>
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes"
@@ -34,8 +34,8 @@
     <!-- Information for the properties page of the msi -->
 
     <Property Id="ARPCONTACT" Value="contact@shibboleth.net" />
-    <Property Id="ARPHELPLINK" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
-    <Property Id="ARPURLUPDATEINFO" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Home" />
+    <Property Id="ARPHELPLINK" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Installation" />
+    <Property Id="ARPURLUPDATEINFO" Value="https://wiki.shibboleth.net/confluence/display/IDP30/Upgrading" />
     <Property Id="ARPURLINFOABOUT" Value="http://shibboleth.net/" />
     <Property Id="ARPNOMODIFY" Value="TRUE"/>
 
