@@ -25,15 +25,12 @@ import org.w3c.dom.Element;
 
 
 /**
- * Parse for abstract dynamic metadata resolvers.
+ * Parser for {@link org.opensaml.saml.metadata.resolver.impl.AbstractDynamicMetadataResolver}.
  */
 public abstract class AbstractDynamicMetadataProviderParser extends AbstractMetadataProviderParser {
     
     /** The reference to the system parser pool that we set up. */
     private static final String DEFAULT_PARSER_POOL_REF = "shibboleth.ParserPool";
-    
-    /** The default delay factor. */
-    private static final String DEFAULT_DELAY_FACTOR = "0.75";
     
     /**
      * 
@@ -55,8 +52,6 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
         
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
             builder.addPropertyValue("refreshDelayFactor", element.getAttributeNS(null,"refreshDelayFactor"));
-        } else {
-            builder.addPropertyValue("refreshDelayFactor", DEFAULT_DELAY_FACTOR);
         }
         
         if (element.hasAttributeNS(null, "minCacheDuration")) {
