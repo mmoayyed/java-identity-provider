@@ -9,6 +9,11 @@
 
 	default-init-method="initialize" default-destroy-method="destroy">
 
+    <!-- Flows that propagate logout to additional services using supported protocols. -->
+    <util:list id="shibboleth.LogoutPropagationFlows">
+        <ref bean="logoutprop/saml2" />
+    </util:list>
+
     <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
     <bean id="shibboleth.SPSessionSerializerRegistry" parent="shibboleth.DefaultSPSessionSerializerRegistry">
         <property name="mappings">
@@ -17,22 +22,12 @@
         </property>
     </bean>
     
-    <!-- Includes defaults for SAML session types. -->
-    <util:map id="shibboleth.SessionTypeProtocolMap" >
-        <entry key="#{T(net.shibboleth.idp.saml.session.SAML1SPSession)}">
-            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML11P_NS" />
-        </entry>
-        <entry key="#{T(net.shibboleth.idp.saml.session.SAML2SPSession)}">
-            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
-        </entry>
-    </util:map>
-    
-    <!-- Flows that propagate logout to additional services using supported protocols. -->
-    <util:list id="shibboleth.LogoutPropagationFlows">
-        <!--
-        For future use, not yet implemented.
-        <ref bean="logoutprop/saml2" />
-        -->
-    </util:list>
-    
+    <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
+    <bean id="shibboleth.SessionTypeProtocolMap" parent="shibboleth.DefaultSessionTypeProtocolMap">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
+        
 </beans>
