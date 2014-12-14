@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -52,6 +53,8 @@ import org.opensaml.saml.saml2.metadata.ServiceName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * The context which carries the user interface information.
  */
@@ -74,6 +77,12 @@ public class RelyingPartyUIContext extends BaseContext {
 
     /** The languages that this browser wants to know about. */
     @Nonnull @NonnullElements private List<String> browserLanguages;
+    
+    /** The languages that this the Operator want to fall back to. */
+    @Nullable private List<String> fallbackLanguages;
+
+    /** The languages that this the bean needs to look at. */
+    @Nonnull @NonnullElements @Unmodifiable private List<String> usableLanguages;
     
     /** Constructor. */
     public RelyingPartyUIContext() {
@@ -174,7 +183,7 @@ public class RelyingPartyUIContext extends BaseContext {
      */
     @Nonnull public RelyingPartyUIContext setBrowserLanguages(@Nonnull @NonnullElements final List<String> languages) {
         browserLanguages = Constraint.isNotNull(languages, "Language List cannot be null");
-        
+        makeNewusableList();
         return this;
     }
 
@@ -185,6 +194,51 @@ public class RelyingPartyUIContext extends BaseContext {
      */
     @Nonnull @NonnullElements protected List<String> getBrowserLanguages() {
         return browserLanguages;
+    }
+
+    /**
+     * Set the fallback languages.
+     * 
+     * @param languages the languages to set
+     * 
+     * @return this context
+     */
+    @Nonnull public RelyingPartyUIContext setFallbackLanguages(@Nullable final List<String> languages) {
+        fallbackLanguages = languages;
+        makeNewusableList();        
+        return this;
+    }
+
+    /**
+     * Get the fallback languages.
+     * 
+     * @return the languages.
+     */
+    @Nonnull @NonnullElements protected List<String> getFallbackLanguages() {
+        return fallbackLanguages;
+    }
+
+    /**
+     * Construct the usableLanguages from the {@link #browserLanguages} and the {@link #fallbackLanguages}. 
+     */
+    protected void makeNewusableList() {
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        if (null != browserLanguages) {
+            builder.addAll(browserLanguages);
+        }
+        if (null != fallbackLanguages) {
+            builder.addAll(fallbackLanguages);
+        }
+        usableLanguages = builder.build();
+    }
+
+    /**
+     * Get the all the languages.
+     * 
+     * @return the languages.
+     */
+    @Nonnull @NonnullElements @Unmodifiable protected List<String> getUsableLanguages() {
+        return usableLanguages;
     }
 
     /**
@@ -438,7 +492,7 @@ public class RelyingPartyUIContext extends BaseContext {
             return null;
         }
 
-        for (final String lang : getBrowserLanguages()) {
+        for (final String lang : getUsableLanguages()) {
             String result;
             result = getNameFromUIInfo(lang);
             if (result != null) {
@@ -461,7 +515,7 @@ public class RelyingPartyUIContext extends BaseContext {
      */
     @Nullable public String getServiceDescription() {
 
-        for (final String lang : getBrowserLanguages()) {
+        for (final String lang : getUsableLanguages()) {
             String value = getDescriptionFromUIInfo(lang);
             if (null != value) {
                 return value;
@@ -486,7 +540,7 @@ public class RelyingPartyUIContext extends BaseContext {
             log.debug("No Organization, OrganizationDisplayName or names, returning null");
             return null;
         }
-        for (final String lang : getBrowserLanguages()) {
+        for (final String lang : getUsableLanguages()) {
 
             for (final OrganizationDisplayName name : org.getDisplayNames()) {
                 if (name.getXMLLang() == null) {
@@ -516,7 +570,7 @@ public class RelyingPartyUIContext extends BaseContext {
             log.debug("No Organization, OrganizationName or names, returning null");
             return null;
         }
-        for (final String lang : getBrowserLanguages()) {
+        for (final String lang : getUsableLanguages()) {
 
             for (final OrganizationName name : org.getOrganizationNames()) {
                 if (name.getXMLLang() == null) {
@@ -546,7 +600,7 @@ public class RelyingPartyUIContext extends BaseContext {
             log.debug("No Organization, OrganizationURL or urls, returning null");
             return null;
         }
-        for (final String lang : getBrowserLanguages()) {
+        for (final String lang : getUsableLanguages()) {
 
             for (final OrganizationURL url : org.getURLs()) {
                 if (url.getXMLLang() == null) {
@@ -621,7 +675,7 @@ public class RelyingPartyUIContext extends BaseContext {
             log.debug("No UIInfo or InformationURLs returning null");
             return null;
         }
-        for (final String lang : getBrowserLanguages()) {
+        for (final String lang : getUsableLanguages()) {
             for (final InformationURL url : rpUIInfo.getInformationURLs()) {
                 if (url.getXMLLang() == null) {
                     continue;
@@ -650,7 +704,7 @@ public class RelyingPartyUIContext extends BaseContext {
             log.debug("No UIInfo or PrivacyStatementURLs returning null");
             return null;
         }
-        for (final String lang : getBrowserLanguages()) {
+        for (final String lang : getUsableLanguages()) {
             for (final PrivacyStatementURL url : rpUIInfo.getPrivacyStatementURLs()) {
                 if (url.getXMLLang() == null) {
                     continue;
@@ -755,7 +809,7 @@ public class RelyingPartyUIContext extends BaseContext {
             return null;
         }
 
-        for (final String lang : getBrowserLanguages()) {
+        for (final String lang : getUsableLanguages()) {
             final String result = getLogoByLanguage(lang, minWidth, minHeight, maxWidth, maxHeight);
             if (null != result) {
                 return policeURLLogo(result);

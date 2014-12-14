@@ -83,7 +83,8 @@
         
     <bean id="SetRPUIInformation"
         class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:fallbackLanguages="%{idp.ui.fallback.languages:null}" />
 
     <bean id="RevokeConsent"
         class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"

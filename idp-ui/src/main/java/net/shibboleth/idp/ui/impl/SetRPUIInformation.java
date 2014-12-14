@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
@@ -29,6 +30,7 @@ import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -58,43 +60,47 @@ import com.google.common.base.Functions;
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @post If a lookup function returns a SAMLMetadataContext, then a RelyingPartyUIContext is created and data copied
- *  into it.
+ *       into it.
  */
 public class SetRPUIInformation extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SetRPUIInformation.class);
-    
+
     /** Strategy function for access to {@link SAMLMetadataContext}. */
-    private Function<ProfileRequestContext,SAMLMetadataContext> metadataContextLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext, SAMLMetadataContext> metadataContextLookupStrategy;
 
     /** Strategy function to create the {@link RelyingPartyUIContext}. */
-    private Function<ProfileRequestContext,RelyingPartyUIContext> rpUIContextCreateStrategy;
+    @Nonnull private Function<ProfileRequestContext, RelyingPartyUIContext> rpUIContextCreateStrategy;
+
+    /** The system wide languages to inspect if there is no match between metadata and browser. */
+    @Nullable private List<String> fallbackLanguages;
 
     /**
      * The {@link EntityDescriptor}. If we cannot find this we short cut the {@link #doExecute(ProfileRequestContext)}
      * stage.
      */
-    private EntityDescriptor entityDescriptor;
+    @Nullable private EntityDescriptor entityDescriptor;
 
     /** The {@link SPSSODescriptor}. Not finding this is not fatal */
-    private SPSSODescriptor spSSODescriptor;
+    @Nullable private SPSSODescriptor spSSODescriptor;
 
     /** The RPUI context - we always create this in {@link #doPreExecute(ProfileRequestContext)}. */
     private RelyingPartyUIContext rpUIContext;
 
     /** The ACS context. */
     private AttributeConsumingService acsDesriptor;
-    
+
     /** Constructor. */
     public SetRPUIInformation() {
-        metadataContextLookupStrategy = Functions.compose(new ChildContextLookup<>(SAMLMetadataContext.class),
-                Functions.compose(new ChildContextLookup<>(SAMLPeerEntityContext.class),
-                        new OutboundMessageContextLookup()));
+        metadataContextLookupStrategy =
+                Functions.compose(new ChildContextLookup<>(SAMLMetadataContext.class), Functions.compose(
+                        new ChildContextLookup<>(SAMLPeerEntityContext.class), new OutboundMessageContextLookup()));
 
-        rpUIContextCreateStrategy = Functions.compose(
-                new ChildContextLookup<>(RelyingPartyUIContext.class, true),
-                new ChildContextLookup<ProfileRequestContext,AuthenticationContext>(AuthenticationContext.class, true));
+        rpUIContextCreateStrategy =
+                Functions.compose(new ChildContextLookup<>(RelyingPartyUIContext.class, true),
+                        new ChildContextLookup<ProfileRequestContext, AuthenticationContext>(
+                                AuthenticationContext.class, true));
     }
 
     /**
@@ -102,7 +108,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @return lookup strategy
      */
-    public Function<ProfileRequestContext,SAMLMetadataContext> getMetadataContextLookupStrategy() {
+    @Nonnull public Function<ProfileRequestContext, SAMLMetadataContext> getMetadataContextLookupStrategy() {
         return metadataContextLookupStrategy;
     }
 
@@ -111,7 +117,8 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @param strgy what to set.
      */
-    public void setMetadataContextLookupStrategy(@Nonnull Function<ProfileRequestContext,SAMLMetadataContext> strgy) {
+    public void setMetadataContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, SAMLMetadataContext> strgy) {
         metadataContextLookupStrategy = Constraint.isNotNull(strgy, "Injected Metadata Strategy cannot be null");
     }
 
@@ -120,7 +127,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @return lookup/creation strategy
      */
-    public Function<ProfileRequestContext,RelyingPartyUIContext> getRPUIContextCreateStrategy() {
+    public Function<ProfileRequestContext, RelyingPartyUIContext> getRPUIContextCreateStrategy() {
         return rpUIContextCreateStrategy;
     }
 
@@ -129,10 +136,22 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @param strategy what to set.
      */
-    public void setRPUIContextCreateStrategy(@Nonnull Function<ProfileRequestContext,RelyingPartyUIContext> strategy) {
+    public void setRPUIContextCreateStrategy(
+            @Nonnull final Function<ProfileRequestContext, RelyingPartyUIContext> strategy) {
         rpUIContextCreateStrategy = Constraint.isNotNull(strategy, "Injected RPUI Strategy cannot be null");
     }
-    
+
+    /**
+     * Set the system wide default languages.
+     * 
+     * @param langs a semi-colon separated string.
+     */
+    public void setFallbackLanguages(@Nullable final String langs) {
+        if (langs != null) {
+            fallbackLanguages = StringSupport.stringToList(langs, ";");
+        }
+    }
+
     /**
      * Get the RP {@link UIInfo}, caching the value and consulting if needed.
      * 
@@ -172,11 +191,11 @@ public class SetRPUIInformation extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
-        
+
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
-        
+
         final SAMLMetadataContext metadataContext = metadataContextLookupStrategy.apply(profileRequestContext);
         if (null == metadataContext) {
             return false;
@@ -196,16 +215,19 @@ public class SetRPUIInformation extends AbstractProfileAction {
         }
 
         return true;
-    }    
-    
+    }
+
     /** {@inheritDoc} */
     @Override protected void doExecute(ProfileRequestContext profileRequestContext) {
-        
+
         rpUIContext = rpUIContextCreateStrategy.apply(profileRequestContext);
         if (rpUIContext == null) {
             log.error("{} Unable to create RelyingPartyUIContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return;
+        }
+        if (null != fallbackLanguages) {
+            rpUIContext.setFallbackLanguages(fallbackLanguages);
         }
 
         rpUIContext.setRPEntityDescriptor(entityDescriptor);
@@ -214,5 +236,5 @@ public class SetRPUIInformation extends AbstractProfileAction {
         rpUIContext.setRPUInfo(getRPUInfo());
         rpUIContext.setBrowserLanguages(getBrowserLanguages());
     }
-    
+
 }

@@ -170,5 +170,16 @@ public class RelyingPartyUIContextTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.pngde");
 
     }
+    
+    @Test public void fallbackLanguage() {
+        RelyingPartyUIContext ctx = getContext();
+        
+        ctx.setBrowserLanguages(Collections.singletonList("improbable"));
+        Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.png");
+        ctx.setFallbackLanguages(Collections.singletonList("de"));
+        Assert.assertEquals(ctx.getLogo(), "https://shibboleth.net/images/shibboleth.pngde");
+
+    }
+
 
 }
