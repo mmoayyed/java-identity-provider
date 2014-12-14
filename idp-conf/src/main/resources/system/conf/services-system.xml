@@ -21,7 +21,7 @@
 
     <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService"
         p:loggingConfiguration="%{idp.home}/conf/logback.xml"
-        p:reloadCheckDelay="%{idp.service.logging.checkInterval:PT5M}"
+        p:reloadCheckDelay="%{idp.service.logging.checkInterval:0}"
         p:failFast="%{idp.service.logging.failFast:true}" />
     
     <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
