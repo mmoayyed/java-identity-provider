@@ -84,7 +84,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
         if (null == policyId) {
             policyId =  builder.getBeanDefinition().getAttribute("qualifiedId").toString();
         }
-        log.info("Parsing configuration for attribute filter policy {}", policyId);
+        log.debug("Parsing configuration for attribute filter policy: {}", policyId);
         builder.addConstructorArgValue(policyId);
 
         // Get the policy requirement, either inline or referenced
