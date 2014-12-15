@@ -62,7 +62,7 @@ public class SelectProfileInterceptorFlow extends AbstractProfileInterceptorActi
         // Detect a previous attempted flow, and move it to the intermediate collection.
         // This will prevent re-selecting the same flow again.
         if (interceptorContext.getAttemptedFlow() != null) {
-            log.info("{} Moving completed flow {} to completed set, selecting next one", getLogPrefix(),
+            log.debug("{} Moving completed flow {} to completed set, selecting next one", getLogPrefix(),
                     interceptorContext.getAttemptedFlow().getId());
             interceptorContext.getAvailableFlows().remove(interceptorContext.getAttemptedFlow().getId());
             interceptorContext.setAttemptedFlow(null);
