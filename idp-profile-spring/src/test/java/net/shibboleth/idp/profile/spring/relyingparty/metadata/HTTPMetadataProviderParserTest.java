@@ -81,4 +81,32 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         
     }
     
+    @Test public void httpCachingNone() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "HTTPEntity-httpCaching-none.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPEntity");
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+        
+    }
+    
+    @Test public void httpCachingMemory() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "HTTPEntity-httpCaching-memory.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPEntity");
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+        
+    }
+    
+    @Test public void httpCachingFile() throws Exception {
+        System.out.println(System.getProperty("java.io.tmpdir"));
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "HTTPEntity-httpCaching-file.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPEntity");
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+        
+    }
+    
 }

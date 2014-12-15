@@ -199,31 +199,31 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="caching" type="shibmd:HttpClientCachingType">
+                <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
                     <annotation>
                         <documentation>
-                            The type of Httpclient caching to perform. Defaults to 'none'.
+                            The type of HttpClient caching to perform. Defaults to 'none'.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="cacheDirectory" type="string">
+                <attribute name="httpCacheDirectory" type="string">
                     <annotation>
                         <documentation>
                             The path to the HttpClient cache directory. Only used if caching type is 'file'.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxCacheEntries" type="string">
+                <attribute name="httpMaxCacheEntries" type="string">
                     <annotation>
                         <documentation>
                             The maximum number of responses to cache.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxCacheEntrySize" type="string">
+                <attribute name="httpMaxCacheEntrySize" type="string">
                     <annotation>
                         <documentation>
-                            The maximum response body size which may be cached.
+                            The maximum response body size which may be cached, in bytes.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -453,31 +453,31 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="caching" type="shibmd:HttpClientCachingType">
+                <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
                     <annotation>
                         <documentation>
-                            The type of Httpclient caching to perform. Defaults to 'memory'.
+                            The type of HttpClient caching to perform. Defaults to 'memory'.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="cacheDirectory" type="string">
+                <attribute name="httpCacheDirectory" type="string">
                     <annotation>
                         <documentation>
                             The path to the HttpClient cache directory. Only used if caching type is 'file'.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxCacheEntries" type="string">
+                <attribute name="httpMaxCacheEntries" type="string">
                     <annotation>
                         <documentation>
                             The maximum number of responses to cache.
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="maxCacheEntrySize" type="string">
+                <attribute name="httpMaxCacheEntrySize" type="string">
                     <annotation>
                         <documentation>
-                            The maximum response body size which may be cached.
+                            The maximum response body size which may be cached, in bytes.
                         </documentation>
                     </annotation>
                 </attribute>

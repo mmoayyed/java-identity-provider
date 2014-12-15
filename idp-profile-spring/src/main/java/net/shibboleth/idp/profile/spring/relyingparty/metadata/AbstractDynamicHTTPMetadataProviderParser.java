@@ -111,25 +111,28 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                 break;
             case "file":
                 clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(FileCachingHttpClientFactoryBean.class);
-                if (element.hasAttributeNS(null, "cacheDirectory")) {
-                    clientBuilder.addPropertyValue("cacheDirectory", element.getAttributeNS(null, "cacheDirectory"));
+                if (element.hasAttributeNS(null, "httpCacheDirectory")) {
+                    clientBuilder.addPropertyValue("cacheDirectory", 
+                            element.getAttributeNS(null, "httpCacheDirectory"));
                 }
-                if (element.hasAttributeNS(null, "maxCacheEntries")) {
-                    clientBuilder.addPropertyValue("maxCacheEntries", element.getAttributeNS(null, "maxCacheEntries"));
+                if (element.hasAttributeNS(null, "httpMaxCacheEntries")) {
+                    clientBuilder.addPropertyValue("maxCacheEntries", 
+                            element.getAttributeNS(null, "httpMaxCacheEntries"));
                 }
-                if (element.hasAttributeNS(null, "maxCacheEntrySize")) {
+                if (element.hasAttributeNS(null, "httpMaxCacheEntrySize")) {
                     clientBuilder.addPropertyValue("maxCacheEntrySize", 
-                            element.getAttributeNS(null, "maxCacheEntrySize"));
+                            element.getAttributeNS(null, "httpMaxCacheEntrySize"));
                 }
                 break;
             case "memory":
                 clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(InMemoryCachingHttpClientFactoryBean.class);
-                if (element.hasAttributeNS(null, "maxCacheEntries")) {
-                    clientBuilder.addPropertyValue("maxCacheEntries", element.getAttributeNS(null, "maxCacheEntries"));
+                if (element.hasAttributeNS(null, "httpMaxCacheEntries")) {
+                    clientBuilder.addPropertyValue("maxCacheEntries", 
+                            element.getAttributeNS(null, "httpMaxCacheEntries"));
                 }
-                if (element.hasAttributeNS(null, "maxCacheEntrySize")) {
+                if (element.hasAttributeNS(null, "httpMaxCacheEntrySize")) {
                     clientBuilder.addPropertyValue("maxCacheEntrySize", 
-                            element.getAttributeNS(null, "maxCacheEntrySize"));
+                            element.getAttributeNS(null, "httpMaxCacheEntrySize"));
                 }
                 break;
             default:

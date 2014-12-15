@@ -135,5 +135,47 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
+    
+    @Test
+    public void testHttpCachingNone() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-httpCaching-none.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
+
+    @Test
+    public void testHttpCachingMemory() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-httpCaching-memory.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
+
+    @Test
+    public void testHttpCachingFile() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-httpCaching-file.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
 
 }
