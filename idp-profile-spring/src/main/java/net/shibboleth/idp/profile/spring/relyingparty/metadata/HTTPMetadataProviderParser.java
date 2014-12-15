@@ -108,8 +108,8 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      */
     private BeanDefinition buildHttpClient(Element element, ParserContext parserContext) {
         String caching = DEFAULT_CACHING;
-        if (element.hasAttributeNS(null, "caching")) {
-            caching = element.getAttributeNS(null, "caching");
+        if (element.hasAttributeNS(null, "httpCaching")) {
+            caching = element.getAttributeNS(null, "httpCaching");
         }
         
         BeanDefinitionBuilder clientBuilder = null;
