@@ -87,6 +87,7 @@ public class RelyingPartyUIContext extends BaseContext {
     /** Constructor. */
     public RelyingPartyUIContext() {
         browserLanguages = Collections.emptyList();
+        usableLanguages = Collections.emptyList();
     }
 
     /**
