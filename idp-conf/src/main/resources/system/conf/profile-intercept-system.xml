@@ -34,14 +34,27 @@
 
     <!-- Parent bean for attribute release consent flows. -->
     <bean id="shibboleth.consent.AttributeReleaseFlow" abstract="true"
-        class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"
-        p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
-        p:doNotRememberConsentAllowed="false"
-        p:globalConsentAllowed="false"
-        p:perAttributeConsentEnabled="false"
-        p:compareValues="true"
-        p:lifetime="P1Y"
-        p:nonBrowserSupported="false" />
+            class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"
+            p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
+            p:doNotRememberConsentAllowed="%{idp.consent.allowDoNotRemember:true}"
+            p:globalConsentAllowed="%{idp.consent.allowGlobal:true}"
+            p:perAttributeConsentEnabled="%{idp.consent.allowPerAttribute:false}"
+            p:compareValues="true"
+            p:lifetime="P1Y"
+            p:nonBrowserSupported="false">
+        <property name="activationCondition">
+            <bean parent="shibboleth.Conditions.OR">
+                <constructor-arg>
+                    <bean parent="shibboleth.Conditions.NOT">
+                        <constructor-arg value="%{idp.consent.allowPerAttribute:false}" />
+                    </bean>
+                </constructor-arg>
+                <constructor-arg>
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
 
     <!-- Parent bean for terms of use consent flows. -->
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
