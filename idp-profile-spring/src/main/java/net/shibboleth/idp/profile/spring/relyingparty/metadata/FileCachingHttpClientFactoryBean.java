@@ -81,7 +81,10 @@ public class FileCachingHttpClientFactoryBean extends HttpClientFactoryBean impl
         HttpClient client = super.createInstance();
         synchronized(this) {
             if (client instanceof InitializableComponent) {
-                ((InitializableComponent)client).initialize();
+                InitializableComponent component = (InitializableComponent) client;
+                if (!component.isInitialized()) {
+                   component.initialize(); 
+                }
             }
             clientRefs.add(client);
         }
@@ -93,7 +96,10 @@ public class FileCachingHttpClientFactoryBean extends HttpClientFactoryBean impl
         synchronized (this) {
             for (HttpClient client : clientRefs) {
                 if (client instanceof DestructableComponent) {
-                   ((DestructableComponent)client).destroy();
+                    DestructableComponent component = (DestructableComponent) client;
+                    if (!component.isDestroyed()) {
+                        component.destroy();
+                    }
                 }
             }
             clientRefs.clear();
