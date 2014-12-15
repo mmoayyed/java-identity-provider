@@ -86,9 +86,12 @@
         class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
         p:inboundInterceptorFlows="security-policy/saml-soap"
         p:encryptionOptional="%{idp.encryption.optional:false}" />
-    
+
+    <!--
+    TBD: not yet implemented    
     <bean id="Liberty.SSOS"
         class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />
+    -->
 
     <bean id="CAS.LoginConfiguration"
           class="net.shibboleth.idp.cas.config.LoginConfiguration" />
