@@ -199,10 +199,46 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="caching" type="shibmd:HttpClientCachingType">
+                    <annotation>
+                        <documentation>
+                            The type of Httpclient caching to perform. Defaults to 'none'.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheDirectory" type="string">
+                    <annotation>
+                        <documentation>
+                            The path to the HttpClient cache directory. Only used if caching type is 'file'.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxCacheEntries" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum number of responses to cache.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxCacheEntrySize" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum response body size which may be cached.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <!-- Need to deal with socket factory -->
             </extension>
         </complexContent>
     </complexType>
+    
+    <simpleType name="HttpClientCachingType">
+        <restriction base="string">
+            <enumeration value="none"/>
+            <enumeration value="file"/>
+            <enumeration value="memory"/>
+        </restriction>
+    </simpleType>
 
     <complexType name="FilesystemMetadataProvider">
         <annotation>
@@ -414,6 +450,34 @@
                             A reference to an externally defined Spring bean which specifies an instance of
                             org.apache.http.client.CredentialsProvider.  Setting a credential provider here overrides
                             the single credential implied by the attributes basicAuthUser and basicAuthPassword.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="caching" type="shibmd:HttpClientCachingType">
+                    <annotation>
+                        <documentation>
+                            The type of Httpclient caching to perform. Defaults to 'memory'.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheDirectory" type="string">
+                    <annotation>
+                        <documentation>
+                            The path to the HttpClient cache directory. Only used if caching type is 'file'.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxCacheEntries" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum number of responses to cache.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxCacheEntrySize" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum response body size which may be cached.
                         </documentation>
                     </annotation>
                 </attribute>

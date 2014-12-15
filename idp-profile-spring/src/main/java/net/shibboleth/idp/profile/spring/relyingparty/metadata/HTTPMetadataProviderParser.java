@@ -47,6 +47,9 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
 
     /** BASIC auth password. */
     private static final String BASIC_AUTH_PASSWORD = "basicAuthPassword";
+    
+    /** Default caching type. */
+    private static final String DEFAULT_CACHING = "none";
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(HTTPMetadataProviderParser.class);
@@ -86,7 +89,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
                         + "disregardSslCertificate, proxyHost, proxyPort, proxyUser and proxyPassword");
             }
         } else {
-            builder.addConstructorArgValue(buildHttpClient(element));
+            builder.addConstructorArgValue(buildHttpClient(element, parserContext));
         }
         builder.addConstructorArgValue(element.getAttributeNS(null, METADATA_URL));
 
@@ -100,39 +103,79 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * Build the definition of the HTTPClientBuilder which contains all our configuration.
      * 
      * @param element the HTTPMetadataProvider parser.
+     * @param parserContext 
      * @return the bean definition with the parameters.
      */
-    private BeanDefinition buildHttpClient(Element element) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
+    private BeanDefinition buildHttpClient(Element element, ParserContext parserContext) {
+        String caching = DEFAULT_CACHING;
+        if (element.hasAttributeNS(null, "caching")) {
+            caching = element.getAttributeNS(null, "caching");
+        }
+        
+        BeanDefinitionBuilder clientBuilder = null;
+        switch (caching) {
+            case "none":
+                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
+                break;
+            case "file":
+                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(FileCachingHttpClientFactoryBean.class);
+                clientBuilder.setInitMethodName("initialize");
+                clientBuilder.setDestroyMethodName("destroy");
+                if (element.hasAttributeNS(null, "cacheDirectory")) {
+                    clientBuilder.addPropertyValue("cacheDirectory", element.getAttributeNS(null, "cacheDirectory"));
+                }
+                if (element.hasAttributeNS(null, "maxCacheEntries")) {
+                    clientBuilder.addPropertyValue("maxCacheEntries", element.getAttributeNS(null, "maxCacheEntries"));
+                }
+                if (element.hasAttributeNS(null, "maxCacheEntrySize")) {
+                    clientBuilder.addPropertyValue("maxCacheEntrySize", 
+                            element.getAttributeNS(null, "maxCacheEntrySize"));
+                }
+                break;
+            case "memory":
+                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(InMemoryCachingHttpClientFactoryBean.class);
+                if (element.hasAttributeNS(null, "maxCacheEntries")) {
+                    clientBuilder.addPropertyValue("maxCacheEntries", element.getAttributeNS(null, "maxCacheEntries"));
+                }
+                if (element.hasAttributeNS(null, "maxCacheEntrySize")) {
+                    clientBuilder.addPropertyValue("maxCacheEntrySize", 
+                            element.getAttributeNS(null, "maxCacheEntrySize"));
+                }
+                break;
+            default:
+                throw new BeanDefinitionParsingException(new Problem(
+                        String.format("Caching value '%s' is unsupported", caching),
+                        new Location( parserContext.getReaderContext().getResource())));
+        }
 
-        builder.setLazyInit(true);
+        clientBuilder.setLazyInit(true);
 
         if (element.hasAttributeNS(null, "requestTimeout")) {
-            builder.addPropertyValue("connectionTimeout", element.getAttributeNS(null, "requestTimeout"));
+            clientBuilder.addPropertyValue("connectionTimeout", element.getAttributeNS(null, "requestTimeout"));
         }
 
         if (element.hasAttributeNS(null, "disregardSslCertificate")) {
-            builder.addPropertyValue("connectionDisregardSslCertificate",
+            clientBuilder.addPropertyValue("connectionDisregardSslCertificate",
                     element.getAttributeNS(null, "disregardSslCertificate"));
         }
 
         if (element.hasAttributeNS(null, "proxyHost")) {
-            builder.addPropertyValue("connectionProxyHost", element.getAttributeNS(null, "proxyHost"));
+            clientBuilder.addPropertyValue("connectionProxyHost", element.getAttributeNS(null, "proxyHost"));
         }
 
         if (element.hasAttributeNS(null, "proxyPort")) {
-            builder.addPropertyValue("connectionProxyPort", element.getAttributeNS(null, "proxyPort"));
+            clientBuilder.addPropertyValue("connectionProxyPort", element.getAttributeNS(null, "proxyPort"));
         }
 
         if (element.hasAttributeNS(null, "proxyUser")) {
-            builder.addPropertyValue("connectionProxyUsername", element.getAttributeNS(null, "proxyUser"));
+            clientBuilder.addPropertyValue("connectionProxyUsername", element.getAttributeNS(null, "proxyUser"));
         }
 
         if (element.hasAttributeNS(null, "proxyPassword")) {
-            builder.addPropertyValue("connectionProxyPassword", element.getAttributeNS(null, "proxyPassword"));
+            clientBuilder.addPropertyValue("connectionProxyPassword", element.getAttributeNS(null, "proxyPassword"));
         }
 
-        return builder.getBeanDefinition();
+        return clientBuilder.getBeanDefinition();
     }
 
     /**

@@ -233,5 +233,21 @@
     <bean id="shibboleth.KeyInfoCredentialResolver"
         class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
         factory-method="buildBasicInlineKeyInfoCredentialResolver" />
+        
+    <!--  These are the common caching HttpClients wired to by multiple components, such as HTTPResources. -->
+    <!-- TODO expose other properties by default? -->
+    <!-- TODO toggle to build only one or the other, etc? -->
+    <!--
+    <bean id="shibboleth.FileCachingHttpClient"
+        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean"
+        p:cacheDirectory="%{idp.httpclient.filecaching.cacheDirectory}"
+        p:maxCacheEntries="%{idp.httpclient.filecaching.maxCacheEntries}"
+        p:maxCacheEntrySize="%{idp.httpclient.filecaching.maxCacheEntrySize}" />
+        
+    <bean id="shibboleth.MemoryCachingHttpClient"
+        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean"
+        p:maxCacheEntries="%{idp.httpclient.memorycaching.maxCacheEntries}"
+        p:maxCacheEntrySize="%{idp.httpclient.memorycaching.maxCacheEntrySize}" />
+    -->
     
  </beans>
