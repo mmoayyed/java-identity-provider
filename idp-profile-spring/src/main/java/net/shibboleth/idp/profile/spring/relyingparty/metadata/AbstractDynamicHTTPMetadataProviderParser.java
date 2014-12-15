@@ -111,8 +111,6 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                 break;
             case "file":
                 clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(FileCachingHttpClientFactoryBean.class);
-                clientBuilder.setInitMethodName("initialize");
-                clientBuilder.setDestroyMethodName("destroy");
                 if (element.hasAttributeNS(null, "cacheDirectory")) {
                     clientBuilder.addPropertyValue("cacheDirectory", element.getAttributeNS(null, "cacheDirectory"));
                 }

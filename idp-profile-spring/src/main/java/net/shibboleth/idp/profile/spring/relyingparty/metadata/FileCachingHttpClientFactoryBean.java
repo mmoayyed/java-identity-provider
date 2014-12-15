@@ -17,6 +17,14 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.client.HttpClient;
+import org.springframework.beans.factory.DisposableBean;
+
+import net.shibboleth.utilities.java.support.component.DestructableComponent;
+import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.httpclient.FileCachingHttpClientBuilder;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
@@ -24,11 +32,16 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
  * Factory bean to accumulate the parameters into a {@link FileCachingHttpClientBuilder} 
  * and to then emit a {@link org.apache.http.client.HttpClient}.
  */
-public class FileCachingHttpClientFactoryBean extends HttpClientFactoryBean {
+public class FileCachingHttpClientFactoryBean extends HttpClientFactoryBean implements DisposableBean {
+    
+    /** List of HttpClients produced by this factory, used to invoke their destroy() 
+     * when this factory instances is destroy()-ed. */
+    private List<HttpClient> clientRefs;
 
     /** Constructor. */
     public FileCachingHttpClientFactoryBean() {
         super();
+        clientRefs = new ArrayList<>();
     }
 
     /**
@@ -61,6 +74,31 @@ public class FileCachingHttpClientFactoryBean extends HttpClientFactoryBean {
     /** {@inheritDoc} */
     protected HttpClientBuilder createHttpClientBuilder() {
         return new FileCachingHttpClientBuilder();
+    }
+
+    /** {@inheritDoc} */
+    protected HttpClient createInstance() throws Exception {
+        HttpClient client = super.createInstance();
+        synchronized(this) {
+            if (client instanceof InitializableComponent) {
+                ((InitializableComponent)client).initialize();
+            }
+            clientRefs.add(client);
+        }
+        return client;
+    }
+
+    /** {@inheritDoc} */
+    public void destroy() throws Exception {
+        synchronized (this) {
+            for (HttpClient client : clientRefs) {
+                if (client instanceof DestructableComponent) {
+                   ((DestructableComponent)client).destroy();
+                }
+            }
+            clientRefs.clear();
+        }
+        super.destroy();
     }
 
 }

@@ -119,8 +119,6 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
                 break;
             case "file":
                 clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(FileCachingHttpClientFactoryBean.class);
-                clientBuilder.setInitMethodName("initialize");
-                clientBuilder.setDestroyMethodName("destroy");
                 if (element.hasAttributeNS(null, "cacheDirectory")) {
                     clientBuilder.addPropertyValue("cacheDirectory", element.getAttributeNS(null, "cacheDirectory"));
                 }
