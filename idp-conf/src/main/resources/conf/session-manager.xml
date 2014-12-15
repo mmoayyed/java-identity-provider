@@ -7,7 +7,8 @@
                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 
-	default-init-method="initialize" default-destroy-method="destroy">
+	default-init-method="initialize"
+    default-destroy-method="destroy">
 
     <!-- Flows that propagate logout to additional services using supported protocols. -->
     <util:list id="shibboleth.LogoutPropagationFlows">

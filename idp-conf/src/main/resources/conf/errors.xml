@@ -7,7 +7,8 @@
                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 
-	default-init-method="initialize" default-destroy-method="destroy">
+	default-init-method="initialize"
+    default-destroy-method="destroy">
 
     <bean id="shibboleth.DefaultErrorView" class="java.lang.String" c:_0="%{idp.errors.defaultView:error}" />
 
