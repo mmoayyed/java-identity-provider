@@ -29,6 +29,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.ui.context.RelyingPartyUIContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.collection.LazyList;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -119,6 +120,8 @@ public class SetRPUIInformation extends AbstractProfileAction {
      */
     public void setMetadataContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, SAMLMetadataContext> strgy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         metadataContextLookupStrategy = Constraint.isNotNull(strgy, "Injected Metadata Strategy cannot be null");
     }
 
@@ -138,6 +141,8 @@ public class SetRPUIInformation extends AbstractProfileAction {
      */
     public void setRPUIContextCreateStrategy(
             @Nonnull final Function<ProfileRequestContext, RelyingPartyUIContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         rpUIContextCreateStrategy = Constraint.isNotNull(strategy, "Injected RPUI Strategy cannot be null");
     }
 
@@ -147,8 +152,12 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * @param langs a semi-colon separated string.
      */
     public void setFallbackLanguages(@Nullable final String langs) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         if (langs != null) {
             fallbackLanguages = StringSupport.stringToList(langs, ";");
+        } else {
+            fallbackLanguages = null;
         }
     }
 
@@ -157,7 +166,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @return the value or null if there is none.
      */
-    protected UIInfo getRPUInfo() {
+    @Nullable protected UIInfo getRPUInfo() {
         final Extensions exts = spSSODescriptor.getExtensions();
         if (exts != null) {
             for (XMLObject object : exts.getOrderedChildren()) {

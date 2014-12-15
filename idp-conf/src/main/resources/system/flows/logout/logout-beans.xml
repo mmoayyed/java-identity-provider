@@ -48,7 +48,7 @@
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
             p:activationCondition="%{idp.logout.elaboration:false}"
-            p:fallbackLanguages="%{idp.ui.fallback.languages:null}"
+            p:fallbackLanguages="%{idp.ui.fallbackLanguages:null}"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest">
         <property name="metadataContextLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose">

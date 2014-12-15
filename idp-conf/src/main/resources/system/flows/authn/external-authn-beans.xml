@@ -24,7 +24,7 @@
         class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
         p:activationCondition-ref="shibboleth.authn.External.populateUIInfo"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:fallbackLanguages="%{idp.ui.fallback.languages:null}" />
+        p:fallbackLanguages="%{idp.ui.fallbackLanguages:null}" />
 
     <bean id="ValidateExternalAuthentication"
             class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
