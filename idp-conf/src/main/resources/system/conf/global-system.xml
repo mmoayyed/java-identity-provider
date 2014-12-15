@@ -39,8 +39,6 @@
 
     <import resource="../../conf/global.xml" />
     <import resource="../../conf/errors.xml" />
-    <import resource="security-system.xml" />
-    <import resource="../../conf/security.xml" />
     <import resource="general-authn-system.xml" />
     <import resource="session-manager-system.xml" />
     <import resource="services-system.xml" />
@@ -181,6 +179,31 @@
 
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
         class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />
+
+    <!-- Parent beans for Signature/Encryption/TLS Configuration objects. -->
+        
+    <bean id="shibboleth.BasicSignatureValidationConfiguration" abstract="true"
+        class="org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration"
+        p:whitelistedAlgorithms="#{getObject('shibboleth.SignatureWhitelist')}"
+        p:blacklistedAlgorithms="#{getObject('shibboleth.SignatureBlacklist')}" />
+    
+    <bean id="shibboleth.BasicClientTLSValidationConfiguration" abstract="true"
+        class="org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration" />
+    
+    <bean id="shibboleth.BasicSignatureSigningConfiguration" abstract="true"
+        class="org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration"
+        p:whitelistedAlgorithms="#{getObject('shibboleth.SignatureWhitelist')}"
+        p:blacklistedAlgorithms="#{getObject('shibboleth.SignatureBlacklist')}" />
+    
+    <bean id="shibboleth.BasicEncryptionConfiguration" abstract="true"
+        class="org.opensaml.xmlsec.impl.BasicEncryptionConfiguration"
+        p:whitelistedAlgorithms="#{getObject('shibboleth.EncryptionWhitelist')}"
+        p:blacklistedAlgorithms="#{getObject('shibboleth.EncryptionBlacklist')}" />
+
+    <bean id="shibboleth.BasicDecryptionConfiguration" abstract="true"
+        class="org.opensaml.xmlsec.impl.BasicDecryptionConfiguration"
+        p:whitelistedAlgorithms="#{getObject('shibboleth.EncryptionWhitelist')}"
+        p:blacklistedAlgorithms="#{getObject('shibboleth.EncryptionBlacklist')}" />
 
     <!-- Beans that implement the mashing of security configurations into final parameter sets. -->
     
