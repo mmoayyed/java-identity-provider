@@ -158,7 +158,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
         }
 
         if (element.hasAttributeNS(null, "disregardSslCertificate")) {
-            clientBuilder.addPropertyValue("connectionDisregardSslCertificate",
+            clientBuilder.addPropertyValue("connectionDisregardTLSCertificate",
                     element.getAttributeNS(null, "disregardSslCertificate"));
         }
 
