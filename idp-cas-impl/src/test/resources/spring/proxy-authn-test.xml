@@ -19,13 +19,17 @@
                         <constructor-arg name="anchors">
                             <list>
                                 <bean class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"
-                                      p:resource="classpath:credentials/nobody-1.pem" />
+                                      p:resource="classpath:credentials/localhost.pem" />
                             </list>
                         </constructor-arg>
                     </bean>
                 </constructor-arg>
             </bean>
         </constructor-arg>
+        <constructor-arg name="pkixEvaluator">
+            <bean class="org.opensaml.security.x509.impl.CertPathPKIXTrustEvaluator" />
+        </constructor-arg>
+        <constructor-arg name="nameEvaluator"><null/></constructor-arg>
     </bean>
 
     <bean id="testCase2" class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine">
@@ -46,6 +50,10 @@
                 </constructor-arg>
             </bean>
         </constructor-arg>
+        <constructor-arg name="pkixEvaluator">
+            <bean class="org.opensaml.security.x509.impl.CertPathPKIXTrustEvaluator" />
+        </constructor-arg>
+        <constructor-arg name="nameEvaluator"><null/></constructor-arg>
     </bean>
 
 </beans>

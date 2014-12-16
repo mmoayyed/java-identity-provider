@@ -153,7 +153,7 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
                     .build();
             socketFactory = new SSLConnectionSocketFactory(
                     sslContext,
-                    SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+                    SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER);
         } catch (Exception e) {
             throw new RuntimeException("SSL initialization error", e);
         }

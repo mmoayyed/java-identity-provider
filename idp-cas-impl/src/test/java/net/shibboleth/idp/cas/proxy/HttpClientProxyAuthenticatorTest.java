@@ -97,7 +97,7 @@ public class HttpClientProxyAuthenticatorTest extends AbstractTestNGSpringContex
 
         final SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setKeyStoreType("PKCS12");
-        sslContextFactory.setKeyStorePath("src/test/resources/credentials/nobody-1.p12");
+        sslContextFactory.setKeyStorePath("src/test/resources/credentials/localhost.p12");
         sslContextFactory.setKeyStorePassword("changeit");
         final ServerConnector connector = new ServerConnector(server, sslContextFactory);
         connector.setHost("127.0.0.1");
