@@ -81,6 +81,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull public Map<String, Consent>
             deserialize(final long version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
@@ -120,6 +121,7 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Map<String, Consent> consents) throws IOException {
         Constraint.isNotNull(consents, "Consents cannot be null");
 

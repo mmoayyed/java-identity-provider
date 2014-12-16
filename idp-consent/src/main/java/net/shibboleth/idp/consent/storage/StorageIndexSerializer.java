@@ -78,6 +78,7 @@ public class StorageIndexSerializer extends AbstractInitializableComponent imple
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Map<String, StorageIndex> instance) throws IOException {
         Constraint.isNotNull(instance, "Storage indexes cannot be null");
 
@@ -110,7 +111,8 @@ public class StorageIndexSerializer extends AbstractInitializableComponent imple
     }
 
     /** {@inheritDoc} */
-    public Map<String, StorageIndex>
+    @Override
+    @Nonnull public Map<String, StorageIndex>
             deserialize(final long version, @Nonnull @NotEmpty final String context,
                     @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value,
                     @Nullable final Long expiration) throws IOException {
