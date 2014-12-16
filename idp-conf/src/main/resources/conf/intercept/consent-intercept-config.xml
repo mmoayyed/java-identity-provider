@@ -82,7 +82,7 @@
 
     <!--
     For attribute-release consent, the default entry is :
-     'YYYYMMDDTHHMMSSZ|https://sp.example.org|AttributeReleaseConsent|jdoe|email,eduPersonAffiliation|false,false'
+     'YYYYMMDDTHHMMSSZ|https://sp.example.org|AttributeReleaseConsent|jdoe|email,eduPersonAffiliation|rHo...rrw=,rHo...rrw=|false,false'
     -->
     <util:map id="shibboleth.consent.attribute-release.AuditFormattingMap">
         <entry key="Shibboleth-Consent-Audit" value="%T|%SP|%e|%u|%CCI|%CCV|%CCA" />
