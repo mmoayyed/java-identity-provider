@@ -20,9 +20,7 @@ package net.shibboleth.idp.consent.flow.storage;
 import net.shibboleth.idp.consent.ConsentTestingSupport;
 import net.shibboleth.idp.consent.context.ConsentContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -34,12 +32,7 @@ public class ReadConsentFromStorageTest extends AbstractConsentStorageActionTest
 
     @BeforeMethod public void setUpAction() throws Exception {
         action = new ReadConsentFromStorage();
-
-        ((AbstractConsentStorageAction) action).setStorageContextLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("context"));
-
-        ((AbstractConsentStorageAction) action).setStorageKeyLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("key"));
+        populateAction();
     }
 
     @Test public void testReadConsentFromStorage() throws Exception {

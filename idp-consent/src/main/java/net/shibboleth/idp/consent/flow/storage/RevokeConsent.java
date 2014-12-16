@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#IO_ERROR}
  */
-public class RevokeConsent extends AbstractConsentStorageAction {
+public class RevokeConsent extends AbstractConsentIndexedStorageAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(RevokeConsent.class);
@@ -73,6 +73,9 @@ public class RevokeConsent extends AbstractConsentStorageAction {
                 log.debug("{} No consent storage record found with context '{}' and key '{}'", getLogPrefix(),
                         context, key);
             }
+            
+            removeKeyFromStorageIndex(key);
+            
         } catch (final IOException e) {
             log.error("{} Unable to delete consent storage record with context '{}' and key '{}'", getLogPrefix(),
                     context, key, e);

@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @post See above.
  */
-public class CreateGlobalConsentResult extends AbstractConsentStorageAction {
+public class CreateGlobalConsentResult extends AbstractConsentIndexedStorageAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CreateGlobalConsentResult.class);
@@ -69,7 +69,7 @@ public class CreateGlobalConsentResult extends AbstractConsentStorageAction {
 
             log.debug("{} Created global consent result '{}'", getLogPrefix(), result);
 
-            interceptorContext.getResults().add(result);
+            storeResultWithIndex(profileRequestContext, result);
 
         } catch (IOException e) {
             log.debug("{} Unable to serialize consent", getLogPrefix(), e);

@@ -59,6 +59,23 @@
         c:functionA-ref="shibboleth.consent.UserStorageKey"
         c:functionB-ref="shibboleth.RelyingPartyIdLookup.Simple" />
 
+    <!--
+    Function to return the storage key of the index record containing all storage keys
+    of the storage context.
+    -->
+    <bean id="shibboleth.consent.UserStorageIndexKey"
+        class="net.shibboleth.idp.consent.logic.JoinFunction"
+        c:functionA-ref="shibboleth.consent.UserStorageKey">
+        <constructor-arg name="functionB">
+            <bean class="com.google.common.base.Functions" factory-method="constant">
+                <constructor-arg>
+                    <util:constant
+                        static-field="net.shibboleth.idp.consent.flow.storage.AbstractConsentIndexedStorageAction.DEFAULT_STORAGE_INDEX_KEY" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
     <!-- Action beans -->
 
     <bean id="InitializeConsentContext"
@@ -88,11 +105,13 @@
 
     <bean id="RevokeConsent"
         class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey"/>
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey"
+        p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 
     <bean id="RevokeGlobalAttributeConsent"
         class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey"
+        p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 
     <bean id="ReadConsentFromStorage"
         class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
@@ -114,18 +133,16 @@
 
     <bean id="CreateResult"
         class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey" />
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey" 
+        p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 
     <bean id="CreateGlobalConsentResult"
         class="net.shibboleth.idp.consent.flow.storage.CreateGlobalConsentResult" scope="prototype" 
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey"
+        p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
 
     <bean id="ReleaseAttributes"
         class="net.shibboleth.idp.consent.flow.ar.ReleaseAttributes" scope="prototype" />
-
-    <bean id="UpdateStorageIndex"
-        class="net.shibboleth.idp.consent.flow.storage.UpdateStorageIndex" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
     <bean id="WriteAttributeReleaseConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"

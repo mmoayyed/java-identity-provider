@@ -64,4 +64,17 @@ public class ConsentFlowDescriptorTest {
         Assert.assertEquals(descriptor.getLifetime(), lifetime);
     }
 
+    @Test public void testMaxStoredRecords() {
+        descriptor.setMaximumNumberOfStoredRecords(1024);
+        Assert.assertEquals(descriptor.getMaximumNumberOfStoredRecords(), 1024);
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testNegativeMaxStoredRecords() {
+        descriptor.setMaximumNumberOfStoredRecords(-1);
+    }
+
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testZeroMaxStoredRecords() {
+        descriptor.setMaximumNumberOfStoredRecords(0);
+    }
+
 }

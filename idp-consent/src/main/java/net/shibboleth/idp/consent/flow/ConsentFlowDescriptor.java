@@ -23,8 +23,10 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /**
  * Descriptor for a consent flow.
@@ -39,6 +41,9 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
 
     /** Maximum amount of time, in milliseconds, before a consent storage record expires. */
     @Nullable @Duration @NonNegative private Long lifetime;
+    
+    /** Maximum number of records stored in the storage service. */
+    @Nonnull private int maxStoredRecords;
 
     /**
      * Whether consent equality includes comparing consent values.
@@ -48,7 +53,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     public boolean compareValues() {
         return compareValues;
     }
-
+    
     /**
      * Get maximum amount of time, in milliseconds, before a consent storage record expires.
      * 
@@ -56,6 +61,15 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      */
     @Nullable @NonNegative public Long getLifetime() {
         return lifetime;
+    }
+
+    /**
+     * Get the maximum number of records stored in the storage service.
+     * 
+     * @return the maximum number of records stored in the storage service
+     */
+    public int getMaximumNumberOfStoredRecords() {
+        return maxStoredRecords;
     }
 
     /**
@@ -79,5 +93,19 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
         Constraint.isNotNull(consentLifetime, "Lifetime cannot be null");
 
         lifetime = Constraint.isGreaterThanOrEqual(0, consentLifetime, "Lifetime must be greater than or equal to 0");
+    }
+
+    /**
+     * Set the maximum number of records stored in the storage service.
+     * 
+     * @param maximum the maximum number of records stored in the storage service
+     */
+    public void setMaximumNumberOfStoredRecords(@Positive int maximum) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+    
+        if (maximum <= 0) {
+            throw new ConstraintViolationException("Maximum number of stored records must be greater than zero");
+        }
+        maxStoredRecords = maximum;
     }
 }

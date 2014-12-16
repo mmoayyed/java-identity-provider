@@ -17,11 +17,11 @@
 
 package net.shibboleth.idp.consent.flow.storage;
 
+import java.util.Collections;
+
 import net.shibboleth.idp.consent.ConsentTestingSupport;
 import net.shibboleth.idp.profile.ActionTestingSupport;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -29,24 +29,20 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link RevokeConsent} unit test. */
-public class RevokeConsentTest extends AbstractConsentStorageActionTest {
+public class RevokeConsentTest extends AbstractConsentIndexedStorageActionTest {
 
     @BeforeMethod public void setUpAction() throws Exception {
         action = new RevokeConsent();
-
-        ((AbstractConsentStorageAction) action).setStorageContextLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("context"));
-
-        ((AbstractConsentStorageAction) action).setStorageKeyLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("key"));
+        populateAction();
     }
 
     @Test public void testRevokeConsent() throws Exception {
-
         final MemoryStorageService ss = getMemoryStorageService();
         ss.create("context", "key", ConsentTestingSupport.newConsentMap(),
                 ((AbstractConsentStorageAction) action).getStorageSerializer(), null);
         Assert.assertNotNull(ss.read("context", "key"));
+        ss.create("context", "_index", Collections.singletonList("key"),
+                ((AbstractConsentIndexedStorageAction) action).getStorageKeysSerializer(), null);
 
         action.initialize();
 
@@ -55,6 +51,7 @@ public class RevokeConsentTest extends AbstractConsentStorageActionTest {
         ActionTestingSupport.assertProceedEvent(event);
 
         Assert.assertNull(ss.read("context", "key"));
+        Assert.assertTrue(readStorageKeysFromIndex().isEmpty());
     }
 
     @Test public void testRevokeEmptyStorage() throws Exception {

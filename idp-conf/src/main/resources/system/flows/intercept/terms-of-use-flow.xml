@@ -44,7 +44,6 @@
     <action-state id="ExtractConsent">
         <evaluate expression="ExtractConsent" />
         <evaluate expression="CreateResult" />
-        <evaluate expression="UpdateStorageIndex" />
         <!-- Set the event ID to 'TermsAccepted' for auditing. -->
         <evaluate expression="'TermsAccepted'" />
     </action-state>

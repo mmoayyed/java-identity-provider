@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @post A {@link ConsentResult} will be created representing the current consents and will be added to the
  *       {@link ProfileInterceptorContext}.
  */
-public class CreateResult extends AbstractConsentStorageAction {
+public class CreateResult extends AbstractConsentIndexedStorageAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CreateResult.class);
@@ -62,7 +62,7 @@ public class CreateResult extends AbstractConsentStorageAction {
 
         return true;
     }
-    
+
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
@@ -82,11 +82,11 @@ public class CreateResult extends AbstractConsentStorageAction {
 
             log.debug("{} Created consent result '{}'", getLogPrefix(), result);
 
-            interceptorContext.getResults().add(result);
+            storeResultWithIndex(profileRequestContext, result);
 
         } catch (final IOException e) {
             log.debug("{} Unable to serialize consent", getLogPrefix(), e);
         }
     }
-    
+
 }
