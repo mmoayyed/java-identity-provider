@@ -40,10 +40,13 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.x509.PKIXValidationInformation;
+import org.opensaml.security.x509.TrustedNamesCriterion;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
+
+import com.google.common.collect.Sets;
 
 /**
  * Testing the Shibboleth metadata PKIX validation information resolver.
@@ -90,8 +93,9 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         
         Assert.assertNotNull(names, "Set of resolved trusted names was null");
         Assert.assertFalse(names.isEmpty(), "Set of trusted names was empty"); 
-        Assert.assertEquals(names.size(), 1, "Set of trusted names had incorrect size");
+        Assert.assertEquals(names.size(), 2, "Set of trusted names had incorrect size");
         Assert.assertTrue(names.contains("foo.example.org"), "Did't find expected name value");
+        Assert.assertTrue(names.contains(fooEntityID), "Did't find expected name value");
         
         criteriaSet.clear();
         criteriaSet.add( new UsageCriterion(UsageType.SIGNING) );
@@ -103,9 +107,10 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         
         Assert.assertNotNull(names, "Set of resolved trusted names was null");
         Assert.assertFalse(names.isEmpty(), "Set of trusted names was empty");
-        Assert.assertEquals(names.size(), 2, "Set of trusted names had incorrect size");
+        Assert.assertEquals(names.size(), 3, "Set of trusted names had incorrect size");
         Assert.assertTrue(names.contains("CN=foo.example.org,O=Internet2"), "Did't find expected name value");
         Assert.assertTrue(names.contains("idp.example.org"), "Did't find expected name value");
+        Assert.assertTrue(names.contains(fooEntityID), "Did't find expected name value");
         
         criteriaSet.clear();
         criteriaSet.add( new UsageCriterion(UsageType.SIGNING) );
@@ -116,7 +121,27 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         names = resolver.resolveTrustedNames(criteriaSet);
         
         Assert.assertNotNull(names, "Set of resolved trusted names was null");
-        Assert.assertTrue(names.isEmpty(), "Set of trusted names was not empty");
+        Assert.assertFalse(names.isEmpty(), "Set of trusted names was empty");
+        Assert.assertEquals(names.size(), 1, "Set of trusted names had incorrect size");
+        Assert.assertTrue(names.contains(barEntityID), "Did't find expected name value");
+        
+        // Test dynamic trusted names
+        Set<String> dynamicNames = Sets.newHashSet("foo", "bar");
+        criteriaSet.clear();
+        criteriaSet.add( new UsageCriterion(UsageType.SIGNING) );
+        criteriaSet.add( new EntityIdCriterion(fooEntityID) );
+        criteriaSet.add( new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME) );
+        criteriaSet.add( new ProtocolCriterion(protocolBlue) );
+        criteriaSet.add( new TrustedNamesCriterion(dynamicNames) );
+        
+        names = resolver.resolveTrustedNames(criteriaSet);
+        
+        Assert.assertNotNull(names, "Set of resolved trusted names was null");
+        Assert.assertFalse(names.isEmpty(), "Set of trusted names was empty"); 
+        Assert.assertEquals(names.size(), 4, "Set of trusted names had incorrect size");
+        Assert.assertTrue(names.contains("foo.example.org"), "Did't find expected name value");
+        Assert.assertTrue(names.contains(fooEntityID), "Did't find expected name value");
+        Assert.assertTrue(names.containsAll(dynamicNames), "Did't find expected name value");
      }
     
     @Test

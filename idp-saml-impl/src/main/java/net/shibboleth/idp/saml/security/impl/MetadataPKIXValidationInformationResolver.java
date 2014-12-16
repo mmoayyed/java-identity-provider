@@ -51,6 +51,7 @@ import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.x509.PKIXValidationInformation;
 import org.opensaml.security.x509.PKIXValidationInformationResolver;
+import org.opensaml.security.x509.TrustedNamesCriterion;
 import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.opensaml.xmlsec.signature.KeyInfo;
 import org.slf4j.Logger;
@@ -127,7 +128,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
     }
 
     /** {@inheritDoc} */
-    @Override public Set<String> resolveTrustedNames(CriteriaSet criteriaSet) throws ResolverException {
+    @Override @Nonnull public Set<String> resolveTrustedNames(CriteriaSet criteriaSet) throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         checkCriteriaRequirements(criteriaSet);
@@ -151,8 +152,14 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
             usage = UsageType.UNSPECIFIED;
         }
 
-        return retrieveTrustedNamesFromMetadata(criteriaSet, entityID, role, protocol, usage);
-
+        Set<String> trustedNames = new HashSet<>();
+        trustedNames.addAll(retrieveTrustedNamesFromMetadata(criteriaSet, entityID, role, protocol, usage));
+        trustedNames.add(entityID);
+        TrustedNamesCriterion trustedNamesCriterion = criteriaSet.get(TrustedNamesCriterion.class);
+        if (trustedNamesCriterion != null) {
+            trustedNames.addAll(trustedNamesCriterion.getTrustedNames());
+        }
+        return trustedNames;
     }
 
     /** {@inheritDoc} */
