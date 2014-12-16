@@ -71,37 +71,21 @@
 
     <!--
     For terms-of-use acceptance, the default entry is :
-     'YYYYMMDDTHHMMSSZ|TermsAccepted|jdoe|example-tou-1|rHo...rrw='
+     'YYYYMMDDTHHMMSSZ|TermsAccepted|jdoe|example-tou-1|rHo...rrw=|true'
 
     For terms-of-use refusal, the default entry is :
-     'YYYYMMDDTHHMMSSZ|TermsRejected|jdoe|example-tou-1|rHo...rrw='
+     'YYYYMMDDTHHMMSSZ|TermsRejected|jdoe|example-tou-1|rHo...rrw=|false'
     -->
     <util:map id="shibboleth.consent.terms-of-use.AuditFormattingMap">
-        <entry key="Shibboleth-Consent-Audit" value="%T|%SP|%e|%u|%CCI|%CCV" />
+        <entry key="Shibboleth-Consent-Audit" value="%T|%SP|%e|%u|%CCI|%CCV|%CCA" />
     </util:map>
 
     <!--
     For attribute-release consent, the default entry is :
      'YYYYMMDDTHHMMSSZ|https://sp.example.org|AttributeReleaseConsent|jdoe|email,eduPersonAffiliation|false,false'
-     -->
+    -->
     <util:map id="shibboleth.consent.attribute-release.AuditFormattingMap">
-        <entry key="Shibboleth-Consent-Audit" value="%T|%SP|%e|%u|%CCI|%CCA" />
-    </util:map>
-
-    <!--
-    For revocation of attribute-release consent, the default entry is :
-     'YYYYMMDDTHHMMSSZ|https://sp.example.org|ClearAttributeReleaseConsent|jdoe'
-     -->
-    <util:map id="shibboleth.consent.attribute-release.revoke.AuditFormattingMap">
-        <entry key="Shibboleth-Consent-Audit" value="%T|%SP|%e|%u" />
-    </util:map>
-
-    <!--
-    For global attribute-release consent, the default entry is :
-     'YYYYMMDDTHHMMSSZ|GlobalAttributeReleaseConsent|jdoe'
-     -->
-    <util:map id="shibboleth.consent.attribute-release.global.AuditFormattingMap">
-        <entry key="Shibboleth-Consent-Audit" value="%T|%e|%u" />
+        <entry key="Shibboleth-Consent-Audit" value="%T|%SP|%e|%u|%CCI|%CCV|%CCA" />
     </util:map>
 
     <!--

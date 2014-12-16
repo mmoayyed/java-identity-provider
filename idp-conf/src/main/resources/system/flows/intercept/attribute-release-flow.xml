@@ -10,7 +10,8 @@
     <!-- Attribute consent setup. -->
     
     <on-start>
-        <evaluate expression="AttributeConsentFlowDescriptorLookupStrategy.apply(opensamlProfileRequestContext)" result="flowScope.attributeReleaseFlowDescriptor" />
+        <evaluate expression="AttributeConsentFlowDescriptorLookupStrategy.apply(opensamlProfileRequestContext)"
+            result="flowScope.attributeReleaseFlowDescriptor" />
     </on-start>
 
     <action-state id="AttributeConsentSetup">
@@ -39,13 +40,14 @@
 
     <!-- Write 'ClearAttributeReleaseConsent' event to consent audit log. -->
     <action-state id="ClearAttributeReleaseConsent">
-        <evaluate expression="WriteRevokeAttributeReleaseConsentAuditLog" />
+        <evaluate expression="WriteAttributeReleaseConsentAuditLog" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="TestForRevokeGlobalAttributeConsent" />
     </action-state>
 
     <decision-state id="TestForRevokeGlobalAttributeConsent">
-        <if test="attributeReleaseFlowDescriptor.isGlobalConsentAllowed()" then="RevokeGlobalAttributeConsent" else="PopulateConsentContext" />
+        <if test="attributeReleaseFlowDescriptor.isGlobalConsentAllowed()"
+            then="RevokeGlobalAttributeConsent" else="PopulateConsentContext" />
     </decision-state>
 
     <action-state id="RevokeGlobalAttributeConsent">
@@ -63,7 +65,8 @@
     </action-state>
 
     <decision-state id="TestForReadGlobalAttributeConsentFromStorage">
-        <if test="attributeReleaseFlowDescriptor.globalConsentAllowed" then="ReadGlobalAttributeConsentFromStorage" else="PopulateConsentContext" />
+        <if test="attributeReleaseFlowDescriptor.globalConsentAllowed"
+            then="ReadGlobalAttributeConsentFromStorage" else="PopulateConsentContext" />
     </decision-state>
 
     <action-state id="ReadGlobalAttributeConsentFromStorage">
@@ -76,7 +79,8 @@
     <!-- If global consent has been given by user, skip the rest of the flow. -->
     
     <decision-state id="TestForGlobalAttributeConsent">
-        <if test="GlobalAttributeConsentPredicate.apply(opensamlProfileRequestContext)" then="proceed" else="PopulateConsentContext" />
+        <if test="GlobalAttributeConsentPredicate.apply(opensamlProfileRequestContext)"
+            then="proceed" else="PopulateConsentContext" />
     </decision-state>
 
 
@@ -91,7 +95,8 @@
     <!-- If consent is required, display page. Otherwise, release attributes.  -->
     
     <decision-state id="IsConsentRequired">
-        <if test="IsConsentRequiredPredicate.apply(opensamlProfileRequestContext)" then="DisplayAttributeReleasePage" else="ReleaseAttributes" />
+        <if test="IsConsentRequiredPredicate.apply(opensamlProfileRequestContext)"
+            then="DisplayAttributeReleasePage" else="ReleaseAttributes" />
     </decision-state>
 
 
@@ -115,7 +120,8 @@
     <!-- If global consent was given by user, create appropriate storage result and end flow. -->
 
     <decision-state id="TestForGlobalConsent">
-        <if test="requestParameters._shib_idp_consentOptions == '_shib_idp_globalConsent'" then="GlobalConsent" else="ExtractConsent" />
+        <if test="requestParameters._shib_idp_consentOptions == '_shib_idp_globalConsent'"
+            then="GlobalConsent" else="ExtractConsent" />
     </decision-state>
 
     <action-state id="GlobalConsent">
@@ -125,7 +131,7 @@
 
     <!-- Write 'GlobalAttributeReleaseConsent' event to consent audit log. -->
     <action-state id="GlobalAttributeReleaseConsent">
-        <evaluate expression="WriteGlobalAttributeReleaseConsentAuditLog" />
+        <evaluate expression="WriteAttributeReleaseConsentAuditLog" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="proceed" />
     </action-state>
@@ -150,7 +156,8 @@
     <!-- Determine whether consent should be stored or not. -->
     
     <decision-state id="TestForDoNotRememberConsent">
-        <if test="requestParameters._shib_idp_consentOptions == '_shib_idp_doNotRememberConsent'" then="ReleaseAttributes" else="CreateResult" />
+        <if test="requestParameters._shib_idp_consentOptions == '_shib_idp_doNotRememberConsent'"
+            then="ReleaseAttributes" else="CreateResult" />
     </decision-state>
 
 

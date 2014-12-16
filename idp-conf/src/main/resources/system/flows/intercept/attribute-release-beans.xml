@@ -144,16 +144,9 @@
     <bean id="ReleaseAttributes"
         class="net.shibboleth.idp.consent.flow.ar.ReleaseAttributes" scope="prototype" />
 
-    <bean id="WriteAttributeReleaseConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+    <bean id="WriteAttributeReleaseConsentAuditLog"
+        class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
-
-    <bean id="WriteGlobalAttributeReleaseConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:formattingMap-ref="shibboleth.consent.attribute-release.global.AuditFormattingMap" />
-
-    <bean id="WriteRevokeAttributeReleaseConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:formattingMap-ref="shibboleth.consent.attribute-release.revoke.AuditFormattingMap" />
 
 </beans>
