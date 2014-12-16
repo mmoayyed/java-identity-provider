@@ -235,19 +235,21 @@
         factory-method="buildBasicInlineKeyInfoCredentialResolver" />
         
     <!--  These are the common caching HttpClients wired to by multiple components, such as HTTPResources. -->
-    <!-- TODO expose other properties by default? -->
-    <!-- TODO toggle to build only one or the other, etc? -->
-    <!--
     <bean id="shibboleth.FileCachingHttpClient"
+        lazy-init="true"
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean"
+        p:connectionDisregardTLSCertificate="%{idp.httpclient.filecaching.connectionDisregardTLSCertificate:false}"
+        p:connectionTimeout="%{idp.httpclient.filecaching.connectionTimeout:-1}"
         p:cacheDirectory="%{idp.httpclient.filecaching.cacheDirectory}"
-        p:maxCacheEntries="%{idp.httpclient.filecaching.maxCacheEntries}"
-        p:maxCacheEntrySize="%{idp.httpclient.filecaching.maxCacheEntrySize}" />
+        p:maxCacheEntries="%{idp.httpclient.filecaching.maxCacheEntries:100}"
+        p:maxCacheEntrySize="%{idp.httpclient.filecaching.maxCacheEntrySize:10485760}" />
         
     <bean id="shibboleth.MemoryCachingHttpClient"
+        lazy-init="true"
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean"
-        p:maxCacheEntries="%{idp.httpclient.memorycaching.maxCacheEntries}"
-        p:maxCacheEntrySize="%{idp.httpclient.memorycaching.maxCacheEntrySize}" />
-    -->
+        p:connectionDisregardTLSCertificate="%{idp.httpclient.memorycaching.connectionDisregardTLSCertificate:false}"
+        p:connectionTimeout="%{idp.httpclient.memorycaching.connectionTimeout:-1}"
+        p:maxCacheEntries="%{idp.httpclient.memorycaching.maxCacheEntries:50}"
+        p:maxCacheEntrySize="%{idp.httpclient.memorycaching.maxCacheEntrySize:1048576}" />
     
  </beans>
