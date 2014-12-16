@@ -70,18 +70,6 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
         }
         builder.setConnectionTimeout((int) timeout);
     }
-
-    /**
-     * Sets whether the responder's SSL/TLS certificate should be ignored.
-     * 
-     * @param disregard whether the responder's SSL/TLS certificate should be ignored
-     * 
-     * @deprecated use {@link #setConnectionDisregardTLSCertificate(boolean)}
-     */
-    @Deprecated
-    public void setConnectionDisregardSslCertificate(final boolean disregard) {
-        builder.setConnectionDisregardSslCertificate(disregard);
-    }
     
     /**
      * Sets whether the responder's SSL/TLS certificate should be ignored.
