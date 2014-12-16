@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- * Base for class for consent actions which interact with a {@link StorageService}.
+ * Base class for consent actions which interact with a {@link StorageService}.
  * 
  * This action ensures that the storage service, serializer, storageContext, and storageKey are available.
  * 
@@ -62,10 +62,10 @@ public abstract class AbstractConsentStorageAction extends AbstractConsentAction
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractConsentStorageAction.class);
 
-    /** Strategy used to determine the storage storageContext. */
+    /** Strategy used to determine the storage context. */
     @NonnullAfterInit private Function<ProfileRequestContext, String> storageContextLookupStrategy;
 
-    /** Strategy used to determine the storage storageKey. */
+    /** Strategy used to determine the storage key. */
     @NonnullAfterInit private Function<ProfileRequestContext, String> storageKeyLookupStrategy;
 
     /** Storage serializer. */
