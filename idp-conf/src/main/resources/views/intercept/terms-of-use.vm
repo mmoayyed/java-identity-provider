@@ -14,19 +14,20 @@
 #set ($serviceName = $rpUIContext.serviceName)
 #set ($rpOrganizationLogo = $rpUIContext.getLogo())
 ##
+<!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css"/>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/consent.css">
         <title>#springMessageText("${termsOfUseId}.title", "Terms of Use")</title>
     </head>
     <body>
         <div class="box">
             <header>
-                <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo" />
+                <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo">
                 #if ($rpOrganizationLogo)
-                    <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" class="organization_logo" />
+                    <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" class="organization_logo">
                 #end
             </header>
             #if ($rpOrganizationLogo)
@@ -40,17 +41,17 @@
             <div id="tou-acceptance">
                 <div style="float:left;">
                     <form action="$flowExecutionUrl" method="post" >
-                        <input type="submit" name="_eventId_TermsRejected" value="#springMessageText("idp.terms-of-use.reject", "Refuse")" style="margin-right: 30px;" />
+                        <input type="submit" name="_eventId_TermsRejected" value="#springMessageText("idp.terms-of-use.reject", "Refuse")" style="margin-right: 30px;">
                     </form>
                 </div>
                 <div style="float:right;">
                     <form action="$flowExecutionUrl" method="post" >
-                        <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required />
+                        <input id="accept" type="checkbox" name="_shib_idp_consentIds" value="$encoder.encodeForHTML($termsOfUseId)" required>
                         <label for="accept">#springMessageText("idp.terms-of-use.accept", "I accept the terms of use")</label>
                         #if ($requireCheckbox)
                             <p class="form-error">#springMessageText("idp.terms-of-use.required", "Please check this box if you want to proceed.")</p>
                         #end
-                        <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.terms-of-use.submit", "Submit")" />
+                        <input type="submit" name="_eventId_proceed" value="#springMessageText("idp.terms-of-use.submit", "Submit")">
                     </form>
                 </div>
                 <div style="clear:both;"></div>

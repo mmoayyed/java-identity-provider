@@ -11,12 +11,13 @@
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
 ## response - HttpServletResponse
-
+##
+<!DOCTYPE html>
 <html>
   	<head>
-        <meta charset="utf-8" />
+        <meta charset="utf-8">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
-        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css"/>
+        <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
         <style type="text/css">
         iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
         </style>
@@ -26,7 +27,7 @@
     <div class="wrapper">
       <div class="container">
         <header>
-          <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")"/>
+          <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")">
         </header>
 
         <div class="content">
@@ -42,7 +43,7 @@
 
             #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
                 <p>The following is a list of services accessed during the session that has been terminated:</p>
-                <br/>
+                <br>
                 <ul>
                 #foreach ($sp in $logoutContext.getSessionMap().keySet())
                     #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
@@ -70,7 +71,7 @@
 
       <!-- If flowExecutionUrl set, complete the flow by adding a hidden iframe. -->
       #if ($flowExecutionUrl)
-          <iframe id="buffer" src="$flowExecutionUrl&_eventId_proceed" />
+          <iframe id="buffer" src="$flowExecutionUrl&_eventId_proceed">
       #end
       
       <footer>

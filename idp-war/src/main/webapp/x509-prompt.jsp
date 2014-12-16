@@ -28,19 +28,19 @@ final RelyingPartyContext rpContext = prc.getSubcontext(RelyingPartyContext.clas
 final RelyingPartyUIContext rpUIContext = authnContext.getSubcontext(RelyingPartyUIContext.class);
 final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId().contains(rpUIContext.getServiceName());
 %>
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8">
     <title>Example Login Page</title>
-    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%>/css/main.css"/>
+    <link rel="stylesheet" type="text/css" href="<%= request.getContextPath()%>/css/main.css">
   </head>
 
   <body>
     <div class="wrapper">
       <div class="container">
         <header>
-          <a class="logo" href="../images/dummylogo.png"><img src="<%= request.getContextPath() %>/images/dummylogo.png" alt="Replace or remove this logo"/></a>
+          <a class="logo" href="../images/dummylogo.png"><img src="<%= request.getContextPath() %>/images/dummylogo.png" alt="Replace or remove this logo"></a>
         </header>
     
         <div class="content">
@@ -48,7 +48,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
             <form id="loginform" action="<%= request.getContextPath() %>/Authn/X509" method="post">
 
             <input type="hidden" name="<%= ExternalAuthentication.CONVERSATION_KEY %>"
-                value="<%= request.getParameter(ExternalAuthentication.CONVERSATION_KEY) %>" />
+                value="<%= request.getParameter(ExternalAuthentication.CONVERSATION_KEY) %>">
 
               <% if (identifiedRP) { %>
                 <legend>
@@ -62,7 +62,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
               </section>
 
               <section>
-                <input type="checkbox" name="x509passthrough" value="true" tabindex="2"/>
+                <input type="checkbox" name="x509passthrough" value="true" tabindex="2">
                 Do not show this page in the future.
 
                 <button class="form-element form-button" type="submit" name="login" value="1"
@@ -76,7 +76,7 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
               //    These idpui lines will display added information (if available
               //    in the metadata) about the Service Provider (SP) that requested
               //    authentication. These idpui lines are "active" in this example
-              //    (not commented out) -- this extra SP info will be displayed.
+              //    (not commented out) - this extra SP info will be displayed.
               //    Remove or comment out these lines to stop the display of the
               //    added SP information.
               //

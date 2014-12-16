@@ -6,9 +6,10 @@
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
 ## response - HttpServletResponse
-
+##
+<!DOCTYPE html>
 <html>
-	<body/>
+	<body></body>
 </html>
 
 #set ( $success = false )
