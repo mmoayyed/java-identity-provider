@@ -83,10 +83,11 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
             builder.addConstructorArgReference(element.getAttributeNS(null, "httpClientRef"));
             if (element.hasAttributeNS(null, "requestTimeout")
                     || element.hasAttributeNS(null, "disregardSslCertificate")
+                    || element.hasAttributeNS(null, "disregardTLSCertificate")
                     || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
                     || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
-                log.warn("httpClientRef overrides settings for requestTimeout, "
-                        + "disregardSslCertificate, proxyHost, proxyPort, proxyUser and proxyPassword");
+                log.warn("httpClientRef overrides settings for requestTimeout, disregardSslCertificate, "
+                        + "disregardTLSCertificate, proxyHost, proxyPort, proxyUser and proxyPassword");
             }
         } else {
             builder.addConstructorArgValue(buildHttpClient(element, parserContext));
@@ -157,7 +158,11 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
             clientBuilder.addPropertyValue("connectionTimeout", element.getAttributeNS(null, "requestTimeout"));
         }
 
-        if (element.hasAttributeNS(null, "disregardSslCertificate")) {
+        if (element.hasAttributeNS(null, "disregardTLSCertificate")) {
+            clientBuilder.addPropertyValue("connectionDisregardTLSCertificate",
+                    element.getAttributeNS(null, "disregardTLSCertificate"));
+        } else if (element.hasAttributeNS(null, "disregardSslCertificate")) {
+            log.warn("disregardSslCertificate is deprecated, please switch to disregardTLSCertificate");
             clientBuilder.addPropertyValue("connectionDisregardTLSCertificate",
                     element.getAttributeNS(null, "disregardSslCertificate"));
         }

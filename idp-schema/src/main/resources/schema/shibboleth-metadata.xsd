@@ -139,6 +139,12 @@
                 </attribute>
                 <attribute name="disregardSslCertificate" type="string">
                     <annotation>
+                        <documentation>This is deprecated, use disregardTLSCertificate instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="disregardTLSCertificate" type="string">
+                    <annotation>
                         <documentation>Server certificate will be ignored when fetching from an HTTPS source.
                         </documentation>
                     </annotation>
@@ -377,7 +383,7 @@
                             org.apache.http.client.HttpClient.
                             
                             This attribute conflicts with and overrides the other HttpClient-related properties: 
-                            disregardSslCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
+                            disregardSslCertificate, disregardTLSCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
                        </documentation>
                     </annotation>
                 </attribute>
@@ -389,6 +395,12 @@
                     </annotation>
                 </attribute>
                 <attribute name="disregardSslCertificate" type="string">
+                    <annotation>
+                        <documentation>This is deprecated, use disregardTLSCertificate instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="disregardTLSCertificate" type="string">
                     <annotation>
                         <documentation>Server certificate will be ignored when fetching from an HTTPS source.
                         </documentation>
