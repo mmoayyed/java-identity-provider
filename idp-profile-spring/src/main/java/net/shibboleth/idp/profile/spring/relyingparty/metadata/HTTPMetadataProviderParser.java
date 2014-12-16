@@ -106,6 +106,8 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * @param parserContext 
      * @return the bean definition with the parameters.
      */
+    // Checkstyle: CyclomaticComplexity OFF
+    // Checkstyle: MethodLength OFF
     private BeanDefinition buildHttpClient(Element element, ParserContext parserContext) {
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
@@ -178,6 +180,8 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
 
         return clientBuilder.getBeanDefinition();
     }
+    // Checkstyle: CyclomaticComplexity ON
+    // Checkstyle: MethodLength OFF
 
     /**
      * Build the POJO with the username and password.

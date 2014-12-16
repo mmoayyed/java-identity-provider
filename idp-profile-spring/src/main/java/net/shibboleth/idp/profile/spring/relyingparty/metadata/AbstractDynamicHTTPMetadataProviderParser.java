@@ -20,7 +20,6 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.util.List;
 
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -95,9 +94,11 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      * Build the definition of the HTTPClientBuilder which contains all our configuration.
      * 
      * @param element the HTTPMetadataProvider parser.
-     * @param parserContext
+     * @param parserContext thee context
      * @return the bean definition with the parameters.
      */
+    // Checkstyle: CyclomaticComplexity OFF
+    // Checkstyle: MethodLength OFF
     private BeanDefinition buildHttpClient(Element element, ParserContext parserContext) {
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
@@ -170,6 +171,9 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
         return clientBuilder.getBeanDefinition();
     }
+    // Checkstyle: CyclomaticComplexity ON
+    // Checkstyle: MethodLength ON
+
 
     /**
      * Build the POJO with the username and password.
