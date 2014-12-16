@@ -40,38 +40,36 @@
 
               #set ($serviceName = $rpUIContext.serviceName)
               #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
-                <section>
-                  <legend>
-                    #springMessageText("idp.login.loginTo", "Login to") $encoder.encodeForHTML($serviceName)
-                  </legend>
-                </section>
+                <legend>
+                  #springMessageText("idp.login.loginTo", "Login to") $encoder.encodeForHTML($serviceName)
+                </legend>
               #end
 
-              <section>
+              <div class="form-element-wrapper">
                 <label for="username">#springMessageText("idp.login.username", "Username")</label>
                 <input class="form-element form-field" id="username" name="j_username" type="text"
                 	value="#if($username)$encoder.encodeForHTML($username)#end">
-              </section>
+              </div>
 
-              <section>
+              <div class="form-element-wrapper">
                 <label for="password">#springMessageText("idp.login.password", "Password")</label>
                 <input class="form-element form-field" id="password" name="j_password" type="password" value="">
-              </section>
+              </div>
 
-              <section>
+              <div class="form-element-wrapper">
                 <input type="checkbox" name="donotcache" value="1"> #springMessageText("idp.login.donotcache", "Don't Remember Login")
-              </section>
+              </div>
 
               <!--
-              <section>
+              <div class="form-element-wrapper">
                 <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true">
                 #springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")
-              </section>
+              </div>
               -->
-              
-              <section>
+
+              <div class="form-element-wrapper">
                 <button class="form-element form-button" type="submit" name="_eventId_proceed">#springMessageText("idp.login.login", "Login")</button>
-              </section>
+              </div>
             </form>
 
 			#*
