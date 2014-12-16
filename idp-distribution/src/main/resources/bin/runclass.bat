@@ -17,20 +17,8 @@ if not exist %JAVACMD% (
   exit /b
 )
 
-if defined CLASSPATH (
-  set LOCALCLASSPATH=%CLASSPATH%
-)
-
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%~dp0lib\*
-set LOCALCLASSPATH=%LOCALCLASSPATH%;%~dp0..\webapp\WEB-INF\lib\*
-
-if exist %JAVA_HOME%\lib\tools.jar (
-    set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_HOME%\lib\tools.jar
-)
-
-if exist %JAVA_HOME%\lib\classes.zip (
-    set LOCALCLASSPATH=%LOCALCLASSPATH%;%JAVA_HOME%\lib\classes.zip
-)
+REM add in the dependency .jar files
+set LOCALCLASSPATH=%~dp0lib\*;%~dp0..\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
 
 REM Go to it !
 
