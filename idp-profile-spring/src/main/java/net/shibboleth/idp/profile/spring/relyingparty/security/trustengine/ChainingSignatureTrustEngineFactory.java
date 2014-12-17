@@ -22,47 +22,45 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.impl.ChainingSignatureTrustEngine;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
- * Factory bean for {@link ChainingSignatureTrustEngine}.  This finesses the issue that some parsers
- * are not supported and return a bean of type object and these cannot be injected into the trust engine.
- * This factory just filters the unsupported engines out.  A warning has been issued at point of parse
- * so no further logging is required.
+ * Factory bean for {@link ChainingSignatureTrustEngine}. This finesses the issue that some parsers are not supported
+ * and return a bean of type object and these cannot be injected into the trust engine. This factory just filters the
+ * unsupported engines out. A warning has been issued at point of parse so no further logging is required.
  */
-public class ChainingSignatureTrustEngineFactory extends AbstractFactoryBean<ChainingSignatureTrustEngine> {
+public class ChainingSignatureTrustEngineFactory extends
+        AbstractComponentAwareFactoryBean<ChainingSignatureTrustEngine> {
 
     /** The unfiltered list of putative trust engines. */
     private final List<Object> engines;
-    
+
     /**
      * Constructor.
-     *
+     * 
      * @param list the putative trust engines.
      */
     public ChainingSignatureTrustEngineFactory(@Nonnull final List<Object> list) {
-        engines= Constraint.isNotNull(list, "Engine list must be non null");
+        engines = Constraint.isNotNull(list, "Engine list must be non null");
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    public Class<?> getObjectType() {
+    @Override public Class<?> getObjectType() {
         return ChainingSignatureTrustEngine.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected ChainingSignatureTrustEngine createInstance() throws Exception {
-        final List <SignatureTrustEngine> list = new ArrayList<>(engines.size());
-        
-        for (Object engine: engines) {
+    @Override protected ChainingSignatureTrustEngine doCreateInstance() throws Exception {
+        final List<SignatureTrustEngine> list = new ArrayList<>(engines.size());
+
+        for (Object engine : engines) {
             if (engine instanceof SignatureTrustEngine) {
                 list.add((SignatureTrustEngine) engine);
-                
+
             }
         }
         return new ChainingSignatureTrustEngine(list);

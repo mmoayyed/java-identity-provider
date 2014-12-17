@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
@@ -62,6 +65,8 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
     static private File tempDir;
 
     static private String tempDirName;
+    
+    static List<GenericApplicationContext> contexts;
 
     protected Object parserPool;
 
@@ -73,6 +78,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         final ClassPathResource resource =
                 new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata");
         workspaceDirName = resource.getFile().getAbsolutePath();
+        contexts = new ArrayList<>();
     }
 
     private void emptyDir(File dir) {
@@ -88,6 +94,17 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         emptyDir(tempDir);
         tempDir.delete();
         tempDir = null;
+    }
+    
+    @AfterSuite public void tearDownContexts() {
+        final Iterator<GenericApplicationContext> contextIterator = contexts.iterator(); 
+        while (contextIterator.hasNext()) {
+            final GenericApplicationContext context;
+            synchronized (contexts) {
+                context = contextIterator.next();
+            }
+            context.close();
+        }
     }
 
     /**
@@ -138,6 +155,10 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
         configReader.loadBeanDefinitions(resources);
         context.refresh();
+        
+        synchronized(contexts) {
+            contexts.add(context);
+        }
         
         return context;
     }

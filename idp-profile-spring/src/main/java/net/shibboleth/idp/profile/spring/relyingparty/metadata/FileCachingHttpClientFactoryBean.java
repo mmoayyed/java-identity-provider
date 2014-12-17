@@ -20,13 +20,12 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.client.HttpClient;
-import org.springframework.beans.factory.DisposableBean;
-
-import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.httpclient.FileCachingHttpClientBuilder;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
+
+import org.apache.http.client.HttpClient;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * Factory bean to accumulate the parameters into a {@link FileCachingHttpClientBuilder} 
@@ -72,13 +71,15 @@ public class FileCachingHttpClientFactoryBean extends HttpClientFactoryBean impl
     }
 
     /** {@inheritDoc} */
+    @Override
     protected HttpClientBuilder createHttpClientBuilder() {
         return new FileCachingHttpClientBuilder();
     }
 
     /** {@inheritDoc} */
-    protected HttpClient createInstance() throws Exception {
-        HttpClient client = super.createInstance();
+    @Override
+    protected HttpClient doCreateInstance() throws Exception {
+        HttpClient client = super.doCreateInstance();
         synchronized(this) {
             if (client instanceof InitializableComponent) {
                 InitializableComponent component = (InitializableComponent) client;
@@ -90,21 +91,4 @@ public class FileCachingHttpClientFactoryBean extends HttpClientFactoryBean impl
         }
         return client;
     }
-
-    /** {@inheritDoc} */
-    public void destroy() throws Exception {
-        synchronized (this) {
-            for (HttpClient client : clientRefs) {
-                if (client instanceof DestructableComponent) {
-                    DestructableComponent component = (DestructableComponent) client;
-                    if (!component.isDestroyed()) {
-                        component.destroy();
-                    }
-                }
-            }
-            clientRefs.clear();
-        }
-        super.destroy();
-    }
-
 }

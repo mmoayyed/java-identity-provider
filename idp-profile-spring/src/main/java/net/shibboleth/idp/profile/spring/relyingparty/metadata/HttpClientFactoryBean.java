@@ -19,17 +19,17 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.idp.Version;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
 import org.apache.http.client.HttpClient;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
  * Factory bean to accumulate the parameters into a {@link HttpClientBuilder} and to then emit a {@link HttpClient}.
  */
-public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
+public class HttpClientFactoryBean extends AbstractComponentAwareFactoryBean<HttpClient> {
 
     /** Our captive builder. */
     private final HttpClientBuilder builder;
@@ -146,7 +146,7 @@ public class HttpClientFactoryBean extends AbstractFactoryBean<HttpClient> {
     }
 
     /** {@inheritDoc} */
-    @Override protected HttpClient createInstance() throws Exception {
+    @Override protected HttpClient doCreateInstance() throws Exception {
         return builder.buildClient();
     }
     

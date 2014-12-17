@@ -22,15 +22,16 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
+
 import org.opensaml.security.credential.Credential;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
  * A factory bean to accumulate the information pertaining to an
  * {@link org.opensaml.security.credential.AbstractCredential}.
  * @param <T> the type of credential to create.
  */
-public abstract class AbstractCredentialFactoryBean<T extends Credential> extends AbstractFactoryBean<T> {
+public abstract class AbstractCredentialFactoryBean<T extends Credential> extends AbstractComponentAwareFactoryBean<T> {
 
     /** Usage type of the credential. */
     private String usageType;

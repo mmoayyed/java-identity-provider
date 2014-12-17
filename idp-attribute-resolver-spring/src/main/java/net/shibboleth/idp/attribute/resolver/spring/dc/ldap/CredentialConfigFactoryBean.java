@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
+import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
+
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.CredentialConfigFactory;
 import org.opensaml.security.credential.Credential;
@@ -27,12 +29,11 @@ import org.opensaml.security.x509.X509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
  * A Factory bean to summon up {@link CredentialConfig} from supplied &lt;Credential&gt; statements.
  */
-public class CredentialConfigFactoryBean extends AbstractFactoryBean<CredentialConfig> {
+public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBean<CredentialConfig> {
 
     /** Log. */
     private static Logger log = LoggerFactory.getLogger(CredentialConfigFactoryBean.class);
@@ -49,7 +50,7 @@ public class CredentialConfigFactoryBean extends AbstractFactoryBean<CredentialC
     }
 
     /** {@inheritDoc} */
-    @Override protected CredentialConfig createInstance() throws Exception {
+    @Override protected CredentialConfig doCreateInstance() throws Exception {
         X509Certificate[] trustCerts = null;
 
         if (trustCredential != null) {

@@ -19,12 +19,12 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.config.AbstractFactoryBean;
+import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 
 /**
  * Factory bean for {@link Pattern}. Allows us to inject property based case sensitivity.
  */
-public class PatternFactoryBean extends AbstractFactoryBean<Pattern> {
+public class PatternFactoryBean extends AbstractComponentAwareFactoryBean<Pattern> {
 
     /** Whether the we are case sensitive or not. */
     private Boolean caseSensitive;
@@ -74,7 +74,7 @@ public class PatternFactoryBean extends AbstractFactoryBean<Pattern> {
     }
 
     /** {@inheritDoc} */
-    @Override protected Pattern createInstance() throws Exception {
+    @Override protected Pattern doCreateInstance() throws Exception {
         if (null == getCaseSensitive() || getCaseSensitive()) {
             return Pattern.compile(regexp, 0);
         } else {

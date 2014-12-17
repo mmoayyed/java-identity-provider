@@ -45,7 +45,7 @@ public abstract class AbstractX509CredentialFactoryBean extends AbstractCredenti
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
-    @Override protected BasicX509Credential createInstance() throws Exception {
+    @Override protected BasicX509Credential doCreateInstance() throws Exception {
 
         final List<X509Certificate> certificates = getCertificates();
         if (null == certificates || certificates.isEmpty()) {

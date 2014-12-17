@@ -111,7 +111,7 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
     }
 
     /** {@inheritDoc} */
-    @Override protected BasicCredential createInstance() throws Exception {
+    @Override protected BasicCredential doCreateInstance() throws Exception {
 
         PrivateKey privateKey = getPrivateKey();
         PublicKey publicKey = getPublicKey();

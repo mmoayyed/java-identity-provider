@@ -24,18 +24,19 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
+
 import org.opensaml.security.x509.impl.BasicPKIXValidationInformation;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
  * A factory bean to collect information to do with a {@link BasicPKIXValidationInformation}.
  */
 public abstract class AbstractBasicPKIXValidationInfoFactoryBean extends
-        AbstractFactoryBean<BasicPKIXValidationInformation> {
+        AbstractComponentAwareFactoryBean<BasicPKIXValidationInformation> {
 
     /** Verification depth. */
     @Nullable private Integer verifyDepth;
-    
+
     /** The description of the file with the configuration us. */
     @Nonnull private String configDescription;
 
@@ -57,14 +58,18 @@ public abstract class AbstractBasicPKIXValidationInfoFactoryBean extends
         verifyDepth = depth;
     }
 
-    /** For logging, get the description of the resource that defined this bean.
+    /**
+     * For logging, get the description of the resource that defined this bean.
+     * 
      * @return Returns the description.
      */
     public String getConfigDescription() {
         return configDescription;
     }
 
-    /** For logging, set the description of the resource that defined this bean.
+    /**
+     * For logging, set the description of the resource that defined this bean.
+     * 
      * @param desc what to set.
      */
     public void setConfigDescription(@Nonnull String desc) {
@@ -77,7 +82,7 @@ public abstract class AbstractBasicPKIXValidationInfoFactoryBean extends
     }
 
     /** {@inheritDoc} */
-    @Override protected BasicPKIXValidationInformation createInstance() throws Exception {
+    @Override protected BasicPKIXValidationInformation doCreateInstance() throws Exception {
         return new BasicPKIXValidationInformation(getCertificates(), getCRLs(), verifyDepth);
     }
 

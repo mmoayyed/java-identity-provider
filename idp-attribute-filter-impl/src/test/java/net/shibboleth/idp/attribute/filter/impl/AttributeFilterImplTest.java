@@ -34,7 +34,6 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
@@ -381,14 +380,6 @@ public class AttributeFilterImplTest {
         Assert.assertTrue(policyRule.isDestroyed());
         Assert.assertTrue(matcher.isInitialized());
         Assert.assertTrue(matcher.isDestroyed());
-
-        try {
-            ComponentSupport.initialize(filter);
-
-            Assert.fail();
-        } catch (DestroyedComponentException e) {
-            // OK
-        }
     }
 
 }
