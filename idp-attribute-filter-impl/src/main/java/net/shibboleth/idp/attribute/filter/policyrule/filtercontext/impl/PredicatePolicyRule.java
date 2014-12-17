@@ -106,7 +106,8 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
      * Compare the issuer from the context with the provided string.
      * 
      * @param filterContext the context
-     * @return whether it matches. All failure and navigation issues return {@link Tristate#FAIL}.
+     * @return whether it matches. All failure and navigation issues return
+     *      {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#FAIL}.
      * 
      * {@inheritDoc}
      */

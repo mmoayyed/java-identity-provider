@@ -33,9 +33,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * {@link PolicyRequirementRule} that implements the disjunction of Policy Rules.  That
- * is to say {@link Tristate#TRUE} if any rule returns {@link Tristate#TRUE},
- * {@link Tristate#FAIL} as soon as a rule returns {@link Tristate#FAIL}, and
- * {@link Tristate#FALSE} otherwise.<br/>
+ * is to say {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#TRUE}
+ * if any rule returns {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#TRUE},
+ * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#FAIL} as soon as a rule returns
+ * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#FAIL}, and
+ * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate#FALSE} otherwise.<br/>
  * The standard "fail/succeed fast" optimization is implemented.
  */
 @ThreadSafe
