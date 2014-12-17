@@ -43,7 +43,6 @@ public class BindingDescriptor extends org.opensaml.saml.common.binding.BindingD
      * Set the Spring bean ID of the binding's {@link org.opensaml.messaging.encoder.MessageEncoder}.
      * 
      * @param id bean ID of message encoder
-     * @return 
      */
     public void setEncoderBeanId(@Nullable final String id) {
         encoderBeanId = StringSupport.trimOrNull(id);

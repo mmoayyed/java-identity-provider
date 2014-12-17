@@ -59,8 +59,8 @@ public class NameIdentifierPrincipal implements CloneablePrincipal {
         return name;
     }
     
-    /** Get the {@link NameIdentifier). 
-     * @return the nameIdentifi
+    /** Get the {@link NameIdentifier}. 
+     * @return the nameIdentifier
      */
     @Nonnull public NameIdentifier getNameIdentifier() {
         return nameIdentifier;
