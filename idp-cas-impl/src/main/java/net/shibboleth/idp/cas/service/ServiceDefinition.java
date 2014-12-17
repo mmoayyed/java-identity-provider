@@ -56,7 +56,7 @@ public class ServiceDefinition {
     /**
      * Creates a new instance with the given regular expression match pattern.
      *
-     * @param regex CAS service URL match pattern.
+     * @param pattern CAS service URL match pattern.
      */
     public ServiceDefinition(@Nonnull final Pattern pattern) {
         matchPattern = Constraint.isNotNull(pattern, "Pattern cannot be null or empty");
