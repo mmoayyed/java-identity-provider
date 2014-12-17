@@ -136,4 +136,54 @@
         </property>
     </bean>
 
+    <!--
+    Defining this map of attribute names to numbers allows us to specify symbolic text
+    replacements that shrink the size of results saved to client-side storage such as cookies.
+    -->
+    <bean id="shibboleth.consent.DefaultAttributeSymbolics"
+        class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <!-- Attribute resolver core schema attributes -->
+                <entry key="email" value="100" />
+                <entry key="homePhone" value="101" />
+                <entry key="homePostalAddress" value="102" />
+                <entry key="mobileNumber" value="103" />
+                <entry key="pagerNumber" value="104" />
+                <entry key="commonName" value="105" />
+                <entry key="surname" value="106" />
+                <entry key="locality" value="107" />
+                <entry key="stateProvince" value="108" />
+                <entry key="street" value="109" />
+                <entry key="organizationName" value="110" />
+                <entry key="organizationalUnit" value="111" />
+                <entry key="title" value="112" />
+                <entry key="postalAddress" value="113" />
+                <entry key="postalCode" value="114" />
+                <entry key="postOfficeBox" value="115" />
+                <entry key="telephoneNumber" value="116" />
+                <entry key="givenName" value="117" />
+                <entry key="initials" value="118" />
+                <!-- Attribute resolver inetOrgPerson attributes -->
+                <entry key="departmentNumber" value="200" />
+                <entry key="displayName" value="201" />
+                <entry key="employeeNumber" value="202" />
+                <entry key="employeeType" value="203" />
+                <entry key="jpegPhoto" value="204" />
+                <entry key="preferredLanguage" value="205" />
+                <!--  Attribute resolver eduPerson attributes -->
+                <entry key="eduPersonAffiliation" value="300" />
+                <entry key="eduPersonEntitlement" value="301" />
+                <entry key="eduPersonNickname" value="302" />
+                <entry key="eduPersonOrgDN" value="303" />
+                <entry key="eduPersonOrgUnitDN" value="304" />
+                <entry key="eduPersonPrimaryAffiliation" value="305" />
+                <entry key="eduPersonPrimaryOrgUnitDN" value="306" />
+                <entry key="eduPersonPrincipalName" value="307" />
+                <entry key="eduPersonScopedAffiliation" value="308" />
+                <entry key="eduPersonAssurance" value="309" />
+            </map>
+        </property>
+    </bean>
+
 </beans>

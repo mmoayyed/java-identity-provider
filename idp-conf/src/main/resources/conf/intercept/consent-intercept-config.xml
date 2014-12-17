@@ -108,4 +108,18 @@
         </property>
     </bean>
 
+    <!--
+    Specify custom symbolic replacements for attribute names to shrink the size of results saved to client-side storage 
+    such as cookies.
+    -->
+    <bean id="shibboleth.consent.AttributeSymbolics" parent="shibboleth.consent.DefaultAttributeSymbolics" lazy-init="true">
+        <property name="sourceMap">
+            <map merge="true">
+                <!--
+                <entry key="myAttribute" value="900" />
+                -->
+            </map>
+        </property>
+    </bean>
+
 </beans>

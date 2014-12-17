@@ -76,6 +76,11 @@
         </constructor-arg>
     </bean>
 
+    <!-- Serializer for consent records with symbolics support. -->
+    <bean id="shibboleth.consent.ConsentSerializer"
+        class="net.shibboleth.idp.consent.storage.ConsentSerializer"
+        p:symbolics-ref="shibboleth.consent.AttributeSymbolics" />
+
     <!-- Action beans -->
 
     <bean id="InitializeConsentContext"
@@ -134,7 +139,8 @@
     <bean id="CreateResult"
         class="net.shibboleth.idp.consent.flow.storage.CreateResult" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey" 
-        p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey" />
+        p:storageIndexKeyLookupStrategy-ref="shibboleth.consent.UserStorageIndexKey"
+        p:storageSerializer-ref="shibboleth.consent.ConsentSerializer" />
 
     <bean id="CreateGlobalConsentResult"
         class="net.shibboleth.idp.consent.flow.storage.CreateGlobalConsentResult" scope="prototype" 

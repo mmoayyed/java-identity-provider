@@ -29,9 +29,11 @@ import javax.annotation.Nullable;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
+import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
@@ -39,8 +41,10 @@ import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 
 import net.shibboleth.idp.consent.Consent;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.storage.StorageSerializer;
@@ -48,7 +52,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.BiMap;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 
 /**
  * Serializes {@link Consent}.
@@ -74,10 +81,50 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
     /** JSON reader factory. */
     @Nonnull private final JsonReaderFactory readerFactory;
 
+    /** Shrink consent IDs into symbolic numbers. */
+    @Nonnull @NonnullElements private BiMap<String, Integer> symbolics;
+
     /** Constructor. */
     public ConsentSerializer() {
         generatorFactory = Json.createGeneratorFactory(null);
         readerFactory = Json.createReaderFactory(null);
+        symbolics = ImmutableBiMap.of();
+    }
+
+    /**
+     * Set mappings of string constants to symbolic constants.
+     * 
+     * @param mappings string to symbolic mappings
+     */
+    public void setSymbolics(@Nonnull @NonnullElements final Map<String, Integer> mappings) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        symbolics = HashBiMap.create(Constraint.isNotNull(mappings, "Symbolic mappings cannot be null"));
+        
+        log.debug("symbolics '{}'", symbolics);
+    }
+
+    /**
+     * Map a field value to a string, either directly or via the symbolic map.
+     * 
+     * @param field the object field to examine
+     * 
+     * @return the resulting string, or null if invalid
+     */
+    @Nullable protected String desymbolize(@Nonnull final JsonValue field) {
+        if (field == null) {
+            return null;
+        }
+        switch (field.getValueType()) {
+            case STRING:
+                return ((JsonString) field).getString();
+
+            case NUMBER:
+                return symbolics.inverse().get(((JsonNumber) field).intValueExact());
+
+            default:
+                return null;
+        }
     }
 
     /** {@inheritDoc} */
@@ -101,8 +148,14 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
                 if (a.getValueType().equals(ValueType.OBJECT)) {
                     final JsonObject o = (JsonObject) a;
 
+                    final String consentId = desymbolize(o.get(ID_FIELD));
+                    if (consentId == null) {
+                        log.warn("Unparseable consent id in structure");
+                        continue;
+                    }
+
                     final Consent consent = new Consent();
-                    consent.setId(o.getString(ID_FIELD));
+                    consent.setId(consentId);
                     if (o.containsKey(VALUE_FIELD)) {
                         consent.setValue(o.getString(VALUE_FIELD));
                     }
@@ -134,7 +187,12 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
         gen.writeStartArray();
         for (final Consent consent : filteredConsents) {
             gen.writeStartObject();
-            gen.write(ID_FIELD, consent.getId());
+            final Integer symbol = symbolics.get(consent.getId());
+            if (symbol != null) {
+                gen.write(ID_FIELD, symbol);
+            } else {
+                gen.write(ID_FIELD, consent.getId());
+            }
             if (consent.getValue() != null) {
                 gen.write(VALUE_FIELD, consent.getValue());
             }

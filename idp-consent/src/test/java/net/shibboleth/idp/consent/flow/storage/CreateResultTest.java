@@ -102,6 +102,19 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
         Assert.assertEquals(keys, Arrays.asList("key"));
     }
 
+    @Test public void testCreateResultWithSymbolics() throws Exception {
+        ConsentSerializer serializer = new ConsentSerializer();
+        serializer.setSymbolics(ConsentTestingSupport.newSymbolicsMap());
+        serializer.initialize();
+        ((AbstractConsentStorageAction) action).setStorageSerializer(serializer);
+
+        testCreateResult();
+
+        final StorageRecord record = getMemoryStorageService().read("context", "key");
+        Assert.assertEquals(record.getValue(),
+                "[{\"id\":101,\"v\":\"value1\",\"appr\":false},{\"id\":102,\"v\":\"value2\",\"appr\":false}]");
+    }
+
     @Test public void testUpdateResult() throws Exception {
         action.initialize();
 
@@ -121,6 +134,19 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         final Collection<String> keys = readStorageKeysFromIndex();
         Assert.assertEquals(keys, Arrays.asList("key"));
+    }
+
+    @Test public void testUpdateResultWithSymbolics() throws Exception {
+        ConsentSerializer serializer = new ConsentSerializer();
+        serializer.setSymbolics(ConsentTestingSupport.newSymbolicsMap());
+        serializer.initialize();
+        ((AbstractConsentStorageAction) action).setStorageSerializer(serializer);
+
+        testUpdateResult();
+
+        final StorageRecord record = getMemoryStorageService().read("context", "key");
+        Assert.assertEquals(record.getValue(),
+                "[{\"id\":101,\"v\":\"value1\",\"appr\":false},{\"id\":102,\"v\":\"value2\",\"appr\":false}]");
     }
 
     @Test public void testMaxStoredRecords() throws Exception {
@@ -165,7 +191,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         Assert.assertEquals(readStorageKeysFromIndex(), Arrays.asList("key2", "key3"));
     }
-    
+
     @Test public void testNoMaxStoredRecords() throws Exception {
         descriptor.setMaximumNumberOfStoredRecords(-1);
 
@@ -174,7 +200,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         // can't test unlimited, so test 10
         final List<String> keys = new ArrayList<>();
-        for(int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 10; i++) {
             ActionTestingSupport.assertProceedEvent(buildAction("key" + Integer.toString(i)).execute(src));
             keys.add("key" + Integer.toString(i));
         }

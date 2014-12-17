@@ -78,4 +78,14 @@ public class ConsentTestingSupport {
         consentResults.add(new ConsentResult("context2", "key2", "value2", null));
         return consentResults;
     }
+
+    public static Map<String, Integer> newSymbolicsMap() {
+        final Map<String, Integer> map = new HashMap<>();
+        map.put("consent1", 101);
+        map.put("consent2", 102);
+        map.put("attribute1", 201);
+        map.put("attribute2", 202);
+        map.put("attribute3", 203);
+        return map;
+    }
 }

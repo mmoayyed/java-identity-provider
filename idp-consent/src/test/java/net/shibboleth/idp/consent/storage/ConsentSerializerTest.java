@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.ConsentTestingSupport;
 import net.shibboleth.idp.consent.logic.AttributeValuesHashFunction;
+import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.joda.time.DateTime;
@@ -104,7 +105,50 @@ public class ConsentSerializerTest {
         serializer.serialize(new HashMap<String, Consent>());
     }
 
+    @Test(expectedExceptions = ConstraintViolationException.class) public void testNullSymoblics() throws Exception {
+        serializer.setSymbolics(null);
+    }
+
+    @Test(expectedExceptions = UnmodifiableComponentException.class) public void testMutatingSymoblics()
+            throws Exception {
+        serializer.initialize();
+        serializer.setSymbolics(new HashMap<String, Integer>());
+    }
+
     @Test public void testSimple() throws Exception {
+        serializer.initialize();
+
+        final String serialized = serializer.serialize(consents);
+        Assert.assertEquals(
+                serialized,
+                "[{\"id\":\"attribute1\",\"v\":\"yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=\"},{\"id\":\"attribute2\",\"v\":\"xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=\",\"appr\":false}]");
+
+        final Map<String, Consent> deserialized = serializer.deserialize(1, CONTEXT, KEY, serialized, null);
+
+        Assert.assertEquals(consents, deserialized);
+    }
+
+    @Test public void testSymbolics() throws Exception {
+        serializer.setSymbolics(ConsentTestingSupport.newSymbolicsMap());
+
+        serializer.initialize();
+
+        final String serialized = serializer.serialize(consents);
+        Assert.assertEquals(
+                serialized,
+                "[{\"id\":201,\"v\":\"yePBj0hcjLihhDtDb//R/ymyw2CHZAUreX/4RupmSXM=\"},{\"id\":202,\"v\":\"xxuA06hGJ1DcJ4JSaWiBXXGfcRr6oxHM5jaURXBBnbA=\",\"appr\":false}]");
+
+        final Map<String, Consent> deserialized = serializer.deserialize(1, CONTEXT, KEY, serialized, null);
+
+        Assert.assertEquals(consents, deserialized);
+    }
+
+    @Test public void testSymbolicsWithNulls() throws Exception {
+        final Map<String, Integer> symbolics = new HashMap<>();
+        symbolics.put("attribute1", null);
+        symbolics.put(null, 222);
+        serializer.setSymbolics(symbolics);
+
         serializer.initialize();
 
         final String serialized = serializer.serialize(consents);
