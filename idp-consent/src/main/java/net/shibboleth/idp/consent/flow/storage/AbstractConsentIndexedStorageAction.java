@@ -269,7 +269,8 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
     protected void pruneStorageRecords(@Nonnull final ProfileRequestContext profileRequestContext) throws IOException {
 
         if (maxStoredRecords <= 0) {
-            log.trace("{} Will not prune storage records, maximum number of records is not set", getLogPrefix());
+            log.trace("{} Will not prune storage records, maximum number of records is not greater than zero",
+                    getLogPrefix());
             return;
         }
 

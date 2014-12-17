@@ -39,8 +39,9 @@
             p:doNotRememberConsentAllowed="%{idp.consent.allowDoNotRemember:true}"
             p:globalConsentAllowed="%{idp.consent.allowGlobal:true}"
             p:perAttributeConsentEnabled="%{idp.consent.allowPerAttribute:false}"
-            p:compareValues="true"
-            p:lifetime="P1Y"
+            p:compareValues="%{idp.consent.compareValues:false}"
+            p:lifetime="%{idp.consent.lifetime:P1Y}"
+            p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:5}"
             p:nonBrowserSupported="false">
         <property name="activationCondition">
             <bean parent="shibboleth.Conditions.OR">
@@ -60,8 +61,9 @@
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
         class="net.shibboleth.idp.consent.flow.ConsentFlowDescriptor"
         p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
-        p:compareValues="true"
-        p:lifetime="P1Y"
+        p:compareValues="%{idp.consent.compareValues:false}"
+        p:lifetime="%{idp.consent.lifetime:P1Y}"
+        p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:5}"
         p:nonBrowserSupported="false" />
 
     <!-- Function to lookup consent-specific audit context as a child of the consent context. -->

@@ -23,10 +23,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
-import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 /**
  * Descriptor for a consent flow.
@@ -100,12 +98,9 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * 
      * @param maximum the maximum number of records stored in the storage service
      */
-    public void setMaximumNumberOfStoredRecords(@Positive int maximum) {
+    public void setMaximumNumberOfStoredRecords(final int maximum) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
     
-        if (maximum <= 0) {
-            throw new ConstraintViolationException("Maximum number of stored records must be greater than zero");
-        }
         maxStoredRecords = maximum;
     }
 }

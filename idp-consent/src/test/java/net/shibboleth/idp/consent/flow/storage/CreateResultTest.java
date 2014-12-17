@@ -17,9 +17,13 @@
 
 package net.shibboleth.idp.consent.flow.storage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.consent.Consent;
 import net.shibboleth.idp.consent.ConsentTestingSupport;
@@ -38,6 +42,23 @@ import org.testng.annotations.Test;
 
 /** {@link CreateResult} unit test. */
 public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
+
+    protected CreateResult buildAction(@Nonnull final String key) throws Exception {
+        final CreateResult action = new CreateResult();
+        action.setStorageContextLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant("context"));
+        action.setStorageKeyLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant(key));
+        action.setStorageIndexKeyLookupStrategy(FunctionSupport.<ProfileRequestContext, String> constant("_index"));
+        action.initialize();
+        return action;
+    }
+
+    protected Map<String, Consent> readConsentFromStorage(@Nonnull final String key) throws Exception {
+        final StorageRecord record = getMemoryStorageService().read("context", key);
+        Assert.assertNotNull(record);
+        final ConsentSerializer serializer = new ConsentSerializer();
+
+        return serializer.deserialize(0, "context", key, record.getValue(), record.getExpiration());
+    }
 
     @BeforeMethod public void setUpAction() throws Exception {
         action = new CreateResult();
@@ -110,25 +131,11 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         // key1
 
-        final CreateResult action1 = new CreateResult();
-        ((AbstractConsentStorageAction) action1).setStorageContextLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("context"));
-        ((AbstractConsentStorageAction) action1).setStorageKeyLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("key1"));
-        ((AbstractConsentIndexedStorageAction) action1).setStorageIndexKeyLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("_index"));
-        action1.initialize();
+        final CreateResult action1 = buildAction("key1");
 
         ActionTestingSupport.assertProceedEvent(action1.execute(src));
 
-        final StorageRecord record1 = getMemoryStorageService().read("context", "key1");
-        Assert.assertNotNull(record1);
-        final ConsentSerializer consentSerializer1 =
-                (ConsentSerializer) ((AbstractConsentStorageAction) action1).getStorageSerializer();
-        Assert.assertNotNull(consentSerializer1);
-
-        final Map<String, Consent> consents1 =
-                consentSerializer1.deserialize(0, "context", "key1", record1.getValue(), record1.getExpiration());
+        final Map<String, Consent> consents1 = readConsentFromStorage("key1");
         Assert.assertEquals(consents1.size(), 2);
         Assert.assertEquals(consents1, ConsentTestingSupport.newConsentMap());
 
@@ -136,25 +143,11 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         // key2
 
-        final CreateResult action2 = new CreateResult();
-        ((AbstractConsentStorageAction) action2).setStorageContextLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("context"));
-        ((AbstractConsentStorageAction) action2).setStorageKeyLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("key2"));
-        ((AbstractConsentIndexedStorageAction) action2).setStorageIndexKeyLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("_index"));
-        action2.initialize();
+        final CreateResult action2 = buildAction("key2");
 
         ActionTestingSupport.assertProceedEvent(action2.execute(src));
 
-        final StorageRecord record2 = getMemoryStorageService().read("context", "key2");
-        Assert.assertNotNull(record2);
-        final ConsentSerializer consentSerializer2 =
-                (ConsentSerializer) ((AbstractConsentStorageAction) action2).getStorageSerializer();
-        Assert.assertNotNull(consentSerializer2);
-
-        final Map<String, Consent> consents2 =
-                consentSerializer2.deserialize(0, "context", "key2", record1.getValue(), record1.getExpiration());
+        final Map<String, Consent> consents2 = readConsentFromStorage("key2");
         Assert.assertEquals(consents2.size(), 2);
         Assert.assertEquals(consents2, ConsentTestingSupport.newConsentMap());
 
@@ -162,28 +155,29 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
 
         // key3
 
-        final CreateResult action3 = new CreateResult();
-        ((AbstractConsentStorageAction) action3).setStorageContextLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("context"));
-        ((AbstractConsentStorageAction) action3).setStorageKeyLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("key3"));
-        ((AbstractConsentIndexedStorageAction) action3).setStorageIndexKeyLookupStrategy(FunctionSupport
-                .<ProfileRequestContext, String> constant("_index"));
-        action3.initialize();
+        final CreateResult action3 = buildAction("key3");
 
         ActionTestingSupport.assertProceedEvent(action3.execute(src));
 
-        final StorageRecord record3 = getMemoryStorageService().read("context", "key2");
-        Assert.assertNotNull(record3);
-        final ConsentSerializer consentSerializer3 =
-                (ConsentSerializer) ((AbstractConsentStorageAction) action2).getStorageSerializer();
-        Assert.assertNotNull(consentSerializer3);
-
-        final Map<String, Consent> consents3 =
-                consentSerializer2.deserialize(0, "context", "key3", record1.getValue(), record1.getExpiration());
+        final Map<String, Consent> consents3 = readConsentFromStorage("key3");
         Assert.assertEquals(consents3.size(), 2);
         Assert.assertEquals(consents3, ConsentTestingSupport.newConsentMap());
 
         Assert.assertEquals(readStorageKeysFromIndex(), Arrays.asList("key2", "key3"));
+    }
+    
+    @Test public void testNoMaxStoredRecords() throws Exception {
+        descriptor.setMaximumNumberOfStoredRecords(-1);
+
+        final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
+        consentCtx.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
+
+        // can't test unlimited, so test 10
+        final List<String> keys = new ArrayList<>();
+        for(int i = 1; i <= 10; i++) {
+            ActionTestingSupport.assertProceedEvent(buildAction("key" + Integer.toString(i)).execute(src));
+            keys.add("key" + Integer.toString(i));
+        }
+        Assert.assertEquals(readStorageKeysFromIndex(), keys);
     }
 }
