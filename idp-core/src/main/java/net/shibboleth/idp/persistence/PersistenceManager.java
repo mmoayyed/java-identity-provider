@@ -60,7 +60,7 @@ public interface PersistenceManager<ItemType> extends IdentifiedComponent {
      * Persists an item to the persistence store. If the item does not currently exist in the persistence store then a
      * new record will be created, otherwise the existing record will be updated. If the item to be persisted is an
      * update to an existing item then the argument to this method MUST be an updated version of the item as returned by
-     * {@link #get(String)} or {@link #persist(Object)}.
+     * {@link #get(String)} or {@link #persist(String, Object)}.
      * 
      * Note, the item returned from this method is not necessarily the same as the one provided as an argument. A given
      * implementation of this interface may return a different object or update the provided object in some way during
