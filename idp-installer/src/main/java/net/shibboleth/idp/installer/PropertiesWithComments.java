@@ -38,11 +38,16 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A package which is similar to Properties, but allows comments to be preserved. We use the Properties package to parse
- * the non comment lines
+ * the non-comment lines.
  */
 public class PropertiesWithComments {
 
-    /** The contents. The Object is either a string (the comment) or a {@link Pair<String, String>} (the property) */
+    /**
+     * The contents.
+     * 
+     * Each {@link Object} is either a string (a non-property line) or a {@link CommentedProperty}
+     * (an optionally commented property definition).
+     */
     private List<Object> contents;
 
     /** The properties bit. */
