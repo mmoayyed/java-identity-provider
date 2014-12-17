@@ -42,18 +42,18 @@ import org.w3c.dom.Element;
 /**
  * Parser for &lt;RelyingPartyGroup&gt;
  * 
- * <p>This parser summons up two beans: a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
- * RelyingParty bit of the file, and a series of 
- * {@link RelyingPartyGroupParser.ELEMENT_NAME.getNamespaceURI().equals(parent.getNamespaceURI());}s which 
- * deal with the metadata
- * configuration.</p>
+ * <p>
+ * This parser summons up two beans: a {@link DefaultRelyingPartyConfigurationResolver} which deals with the
+ * RelyingParty bit of the file, and a series of {@link org.opensaml.saml.metadata.resolver.MetadataResolver}s which
+ * deal with the metadata configuration.
+ * </p>
  */
 public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingPartyGroup");
-    
-    /** Logger.*/
+
+    /** Logger. */
     private final Logger log = LoggerFactory.getLogger(RelyingPartyGroupParser.class);
 
     /** {@inheritDoc} */
@@ -68,11 +68,10 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         builder.setLazyInit(true);
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
-        
 
         builder.addPropertyValue("id", "RelyingPartyGroup["
-                + parserContext.getReaderContext().getResource().getFilename()+"]");
-        
+                + parserContext.getReaderContext().getResource().getFilename() + "]");
+
         seDefaultSecurityConfiguration(builder);
 
         // All the Relying Parties
@@ -90,7 +89,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
                 SpringSupport.parseCustomElements(configChildren.get(AnonymousRelyingPartyParser.ELEMENT_NAME),
                         parserContext);
         builder.addPropertyValue("unverifiedConfiguration", anonRps.get(0));
-        
+
         // Metadata
         SpringSupport.parseCustomElements(configChildren.get(MetadataNamespaceHandler.METADATA_ELEMENT_NAME),
                 parserContext);
@@ -105,8 +104,8 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         // <SecurityPolicy> (warn and ignore).
         final List<Element> policies = configChildren.get(SecurityNamespaceHandler.SECURITY_POLICY_NAME);
         if (null != policies && !policies.isEmpty()) {
-            log.warn("{}: {} Occurence(s of unsupported <SecurityPolicy/> elements have been ignored",
-                    parserContext.getReaderContext().getResource().getDescription(), policies.size());
+            log.warn("{}: {} Occurence(s of unsupported <SecurityPolicy/> elements have been ignored", parserContext
+                    .getReaderContext().getResource().getDescription(), policies.size());
         }
 
     }
@@ -115,7 +114,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
     @Override protected boolean shouldGenerateId() {
         return true;
     }
-    
+
     /**
      * Setup the default {@link SecurityConfiguration} for the resolver to establish default trust engines to use.
      * 
@@ -130,7 +129,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         final BeanDefinitionBuilder tlsValidationConfig =
                 BeanDefinitionBuilder.genericBeanDefinition(BasicClientTLSValidationConfiguration.class);
         tlsValidationConfig.addPropertyReference("x509TrustEngine", "shibboleth.X509TrustEngine");
-        
+
         final BeanDefinitionBuilder configuration =
                 BeanDefinitionBuilder.genericBeanDefinition(SecurityConfiguration.class);
         configuration.addPropertyValue("signatureValidationConfiguration",
