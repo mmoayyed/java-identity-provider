@@ -260,7 +260,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
      * zero.
      * 
      * The function used to determine the records to be deleted may be set by calling
-     * {@link #setStorageKeyIteratorStrategy(Function)}. By default, records are deleted on a first-in-first-out basis,
+     * {@link #setStorageKeysStrategy(Function)}. By default, records are deleted on a first-in-first-out basis,
      * meaning the oldest storage records are deleted first.
      * 
      * @param profileRequestContext the profile request context
