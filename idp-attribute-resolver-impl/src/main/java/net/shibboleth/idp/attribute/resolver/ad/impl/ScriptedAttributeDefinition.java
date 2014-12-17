@@ -64,12 +64,12 @@ import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfi
  * <li>A script attribute whose name is <code>context</code> and whose value is the current
  * {@link AttributeResolutionContext}</li>
  * <li>A script attribute for every attribute produced by the dependencies of this attribute definition. The name of the
- * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link Set} of {@link IdPAttributeValue}
+ * script attribute is the ID of the {@link IdPAttribute} and its value is the {@link List} of {@link IdPAttributeValue}
  * for the attribute.</li>
  * </ul>
  * </p>
  * <p>
- * The evaluated script should populated the values of the newly constructed {@link IdPAttribute} mentioned above. No
+ * The evaluated script should populate the values of the newly constructed {@link IdPAttribute} mentioned above. No
  * other information from the script will be taken in to account.
  * </p>
  */
