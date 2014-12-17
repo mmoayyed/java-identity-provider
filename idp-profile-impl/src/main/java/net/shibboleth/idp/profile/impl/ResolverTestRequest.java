@@ -42,7 +42,7 @@ public class ResolverTestRequest {
     /** The ID of the requester. */
     @Nonnull @NotEmpty private final String requesterId;
 
-    /** The {@link AttributeConsumingService} index into metadata. */
+    /** The <code>&lt;AttributeConsumingService&gt;</code> index into metadata. */
     @Nullable private final Integer acsIndex;
     
     /** Protocol identifier to simulate a response for. */
@@ -53,7 +53,7 @@ public class ResolverTestRequest {
      * 
      * @param princ name of subject
      * @param requester ID of requester
-     * @param index {@link AttributeConsumingService} index
+     * @param index <code>&lt;AttributeConsumingService&gt;</code> index
      * @param prot protocol ID
      */
     public ResolverTestRequest(@Nonnull @NotEmpty final String princ, @Nullable final String requester,
@@ -85,9 +85,9 @@ public class ResolverTestRequest {
     }
 
     /**
-     * Get the {@link AttributeConsumingService} index into metadata to apply.
+     * Get the <code>&lt;AttributeConsumingService&gt;</code> index into metadata to apply.
      * 
-     * @return {@link AttributeConsumingService} index into metadata, or null
+     * @return <code>&lt;AttributeConsumingService&gt;</code> index into metadata, or null
      */
     @Nullable public Integer getAttributeConsumingServiceIndex() {
         return acsIndex;
