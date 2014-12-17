@@ -39,7 +39,8 @@ import com.google.common.base.Function;
  * 
  * <p>This strategy is a default approach that uses a lookup strategy for a {@link RelyingPartyContext}
  * to obtain an issuer value, used as the {@link SPSession}'s relying party ID. The authentication flow ID
- * comes from the {@link AuthenticationResult} in the {@link AuthenticationContext}. The session has a 
+ * comes from the {@link net.shibboleth.idp.authn.AuthenticationResult}
+ * in the {@link net.shibboleth.idp.authn.context.AuthenticationContext}. The session has a 
  * creation time based on the time of execution, and the expiration is based on a configurable lifetime.</p> 
  */
 public class BasicSPSessionCreationStrategy implements Function<ProfileRequestContext, SPSession> {

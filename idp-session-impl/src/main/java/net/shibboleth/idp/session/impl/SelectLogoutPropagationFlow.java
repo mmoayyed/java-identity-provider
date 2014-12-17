@@ -44,7 +44,7 @@ import com.google.common.collect.Lists;
  * A profile action that selects a logout propagation flow to invoke.
  * 
  * <p>This is the heart of the logout propagation processing sequence, and runs after the
- * {@link LogoutContext} has been populated. It uses the potential flows,
+ * {@link net.shibboleth.idp.session.context.LogoutContext} has been populated. It uses the potential flows,
  * and their associated activation conditions to decide how to proceed.</p>
  * 
  * <p>This is a rare case in that the standard default event,
