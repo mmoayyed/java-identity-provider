@@ -35,10 +35,10 @@ import org.w3c.dom.Element;
 /**
  * Bean definition parser for an {@link net.shibboleth.idp.attribute.resolver.AttributeResolver}. <br/>
  * 
- * There is no bean being summoned up here. Rather we just parse all the children. Then over in the service all the *
+ * There is no bean being summoned up here. Rather we just parse all the children. Then over in the service all the
  * {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition},
  * {@link net.shibboleth.idp.attribute.resolver.DataConnector} and
- * {@link net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector} beans are sucked out of spring
+ * {@link net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector} beans are sucked out of Spring
  * by type and injected into a new {@link net.shibboleth.idp.attribute.filter.impl.AttributeFilterImpl} via a
  * {@link AttributeResolverServiceStrategy}.
  */

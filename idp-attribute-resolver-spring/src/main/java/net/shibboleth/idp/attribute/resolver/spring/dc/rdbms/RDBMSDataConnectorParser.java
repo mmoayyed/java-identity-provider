@@ -233,7 +233,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         }
         
         /**
-         * Create the result mapping strategy. See {@link MappingStrategy}.
+         * Create the result mapping strategy. See {@link net.shibboleth.idp.attribute.resolver.dc.MappingStrategy}.
          * 
          * @return mapping strategy
          */
