@@ -70,7 +70,7 @@ public class SAML2TestResponseValidator {
     @Nonnull public String spEntityID = "https://sp.example.org";
 
     /** Authentication context class reference. */
-    @Nonnull public String authnContextClassRef = AuthnContext.IP_AUTHN_CTX;
+    @Nonnull public String authnContextClassRef = AuthnContext.PASSWORD_AUTHN_CTX;
 
     /** SP credential. */
     @Nullable public Credential spCredential;

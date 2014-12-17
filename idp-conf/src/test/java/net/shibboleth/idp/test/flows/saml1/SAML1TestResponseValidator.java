@@ -56,7 +56,7 @@ public class SAML1TestResponseValidator {
     @Nonnull public String spEntityID = "https://sp.example.org";
 
     /** Expected authentication method. */
-    @Nonnull public String authenticationMethod = AuthenticationStatement.UNSPECIFIED_AUTHN_METHOD;
+    @Nonnull public String authenticationMethod = AuthenticationStatement.PASSWORD_AUTHN_METHOD;
 
     /** Expected confirmation method. */
     @Nonnull public String confirmationMethod = ConfirmationMethod.METHOD_BEARER;

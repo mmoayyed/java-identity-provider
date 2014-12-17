@@ -18,9 +18,6 @@
 package net.shibboleth.idp.test.flows;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,7 +31,6 @@ import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
-import net.shibboleth.utilities.java.support.net.IPRange;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.Type4UUIDIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
@@ -84,6 +80,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 
+import com.google.common.net.HttpHeaders;
 import com.unboundid.ldap.sdk.LDAPException;
 
 /**
@@ -179,6 +176,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
     static {
         setIdPHomeProperty();
+        setAuthnFlowsProperty();
     }
 
     /**
@@ -188,6 +186,13 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
         System.setProperty("idp.home", "classpath:");
     }
 
+    /**
+     * Sets the 'idp.authn.flows' property to "Password".
+     */
+    public static void setAuthnFlowsProperty() {
+        System.setProperty("idp.authn.flows", "Password");
+    }
+    
     /**
      * {@link HttpServletRequestResponseContext#clearCurrent()}
      */
@@ -208,6 +213,8 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      */
     @BeforeMethod public void initializeMocks() {
         request = new MockHttpServletRequest();
+        // add basic auth header for jdoe:changeit, see test-ldap.ldif
+        request.addHeader(HttpHeaders.AUTHORIZATION, "Basic amRvZTpjaGFuZ2VpdA==");
         response = new MockHttpServletResponse();
         externalContext = new MockExternalContext();
         externalContext.setNativeRequest(request);
@@ -380,25 +387,6 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
 
         final EndState endState = (EndState) flow.getState(endStateId);
         endState.setOutputMapper(defaultMapper);
-    }
-
-    /**
-     * Configure IP address based authentication by assembling the {@link #IP_ADDRESS_AUTHN_FLOW_ID} flow for the first
-     * time and overriding the map of allowed principals to IP ranges via the {@link #IP_ADDRESS_AUTHN_MAP_BEAN_NAME}
-     * bean.
-     */
-    @BeforeMethod(dependsOnMethods = {"initializeFlowExecutor"}) public void overrideIPBasedAuthn() {
-        
-        System.setProperty("idp.authn.flows", "IPAddress|Password");
-        
-        final Flow flow = getFlow(IP_ADDRESS_AUTHN_FLOW_ID);
-
-        final Map map = flow.getApplicationContext().getBean(IP_ADDRESS_AUTHN_MAP_BEAN_NAME, Map.class);
-
-        final List<IPRange> ipRanges = new ArrayList<IPRange>(2);
-        ipRanges.add(IPRange.parseCIDRBlock("127.0.0.1/24"));
-        ipRanges.add(IPRange.parseCIDRBlock("::1/128"));
-        map.put("jdoe", ipRanges);
     }
 
     /**
