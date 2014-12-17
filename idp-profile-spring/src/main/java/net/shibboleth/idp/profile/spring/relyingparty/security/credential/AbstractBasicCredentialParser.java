@@ -141,7 +141,6 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
                     .getDescription());
             throw new BeanCreationException("More than one <SecretKey> Elements present.");
         }
-        log.warn("<SecretKey> is not supported");
         final Element key = childElements.get(0);
         final String value = StringSupport.trimOrNull(key.getTextContent());
         if (null == value) {
@@ -151,6 +150,7 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
         }
         log.debug("Found a secret key <Supressed>");
         builder.addPropertyValue("secretKeyInfo", value);
-        builder.addPropertyValue("secretKeyPassword", key.getAttributeNS(null, "password"));
+        builder.addPropertyValue("secretKeyAlgorithm", key.getAttributeNS(null, "algorithm"));
+        builder.addPropertyValue("secretKeyEncoding", key.getAttributeNS(null, "encoding"));
     }
 }

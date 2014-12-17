@@ -125,7 +125,7 @@ public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialF
             return null;
         }
         try {
-            return KeySupport.decodePrivateKey(getPrivateKeyInfo().getFile(), getSecretKeyPassword());
+            return KeySupport.decodePrivateKey(getPrivateKeyInfo().getFile(), getPrivateKeyPassword());
         } catch (KeyException | IOException e) {
             log.error("{}: Could not decode private key", getConfigDescription(), e);
             throw new BeanCreationException("Could not decode private key", getConfigDescription(), e);
@@ -138,7 +138,8 @@ public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialF
             return null;
         }
         try {
-            return KeySupport.decodeSecretKey(Files.toByteArray(getSecretKeyInfo().getFile()), getSecretKeyPassword());
+            return KeySupport.decodeSecretKey(decodeSecretKey(Files.toByteArray(getSecretKeyInfo().getFile())), 
+                    getSecretKeyAlgorithm());
         } catch (KeyException | IOException e) {
             log.error("{}: Could not decode secret key", getConfigDescription(), e);
             throw new BeanCreationException("Could not decode secret key", e);

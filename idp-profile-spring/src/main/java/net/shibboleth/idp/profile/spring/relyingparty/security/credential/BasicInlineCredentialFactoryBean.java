@@ -109,7 +109,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
         if (null == getPrivateKeyInfo()) {
             return null;
         }
-        return KeyPairUtil.decodePrivateKey(getPrivateKeyInfo(), getSecretKeyPassword());
+        return KeyPairUtil.decodePrivateKey(getPrivateKeyInfo(), getPrivateKeyPassword());
     }
 
     /** {@inheritDoc} */
@@ -118,7 +118,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
             return null;
         }
         try {
-            return KeySupport.decodeSecretKey(getSecretKeyInfo(), getSecretKeyPassword());
+            return KeySupport.decodeSecretKey(decodeSecretKey(getSecretKeyInfo()), getSecretKeyAlgorithm());
         } catch (KeyException e) {
             throw new BeanCreationException("Could not decode secret key", e);
         }

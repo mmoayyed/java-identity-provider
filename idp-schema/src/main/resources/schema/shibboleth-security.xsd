@@ -122,6 +122,33 @@
                             <annotation>
                                 <documentation>Credential's symmetric key.</documentation>
                             </annotation>
+                            <complexType>
+                                <simpleContent>
+                                    <extension base="string">
+                                        <attribute name="algorithm" type="string" use="required">
+                                            <annotation>
+                                                <documentation>
+                                                    The JCA key algorithm identifier.
+                                                </documentation>
+                                            </annotation>
+                                        </attribute>
+                                        <attribute name="encoding" use="required">
+                                            <annotation>
+                                                <documentation>
+                                                    The encoded format of the key data. Defaults to: base64.
+                                                </documentation>
+                                            </annotation>
+                                            <simpleType>
+                                                <restriction base="string">
+                                                    <enumeration value="binary" />
+                                                    <enumeration value="hex" />
+                                                    <enumeration value="base64" />
+                                                </restriction>
+                                            </simpleType>
+                                        </attribute>
+                                    </extension>
+                                </simpleContent>
+                            </complexType>
                         </element>
                         <sequence>
                             <element name="PrivateKey" minOccurs="0">

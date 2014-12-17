@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.credential;
 
 import java.io.IOException;
 
+import javax.crypto.SecretKey;
+
 import net.shibboleth.idp.profile.spring.relyingparty.security.AbstractSecurityParserTest;
 
 import org.opensaml.security.credential.BasicCredential;
@@ -47,6 +49,22 @@ public class BasicInlineParserTest extends AbstractSecurityParserTest {
                 (BasicCredential) getBean(Credential.class, true, "credential/inlinePublicPrivate.xml");
         Assert.assertNotNull(credential.getPrivateKey());
 
+    }
+    
+    @Test public void secretBase64() throws IOException {
+        final BasicCredential credential =
+                (BasicCredential) getBean(Credential.class, true, "credential/secretKeyAESBase64.xml");
+        Assert.assertNotNull(credential.getSecretKey());
+        SecretKey key = credential.getSecretKey();
+        Assert.assertEquals(key.getAlgorithm(), "AES");
+    }
+    
+    @Test public void secretHex() throws IOException {
+        final BasicCredential credential =
+                (BasicCredential) getBean(Credential.class, true, "credential/secretKeyAESHex.xml");
+        Assert.assertNotNull(credential.getSecretKey());
+        SecretKey key = credential.getSecretKey();
+        Assert.assertEquals(key.getAlgorithm(), "AES");
     }
     
 }
