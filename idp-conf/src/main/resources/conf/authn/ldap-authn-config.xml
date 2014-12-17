@@ -73,7 +73,7 @@
         <constructor-arg index="1" ref="authHandler" />
     </bean>
     <bean id="anonSearchDnResolver" class="org.ldaptive.auth.PooledSearchDnResolver" p:baseDn="%{idp.authn.LDAP.baseDN}"
-        p:subtreeSearch="%{idp.authn.LDAP.subtreeSearch}" p:userFilter="%{idp.authn.LDAP.userFilter}"
+        p:subtreeSearch="%{idp.authn.LDAP.subtreeSearch:false}" p:userFilter="%{idp.authn.LDAP.userFilter}"
         p:connectionFactory-ref="anonSearchPooledConnectionFactory" />
     <bean id="anonSearchPooledConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
         p:connectionPool-ref="anonSearchConnectionPool" />
