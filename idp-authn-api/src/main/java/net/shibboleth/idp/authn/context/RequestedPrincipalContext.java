@@ -51,7 +51,7 @@ import com.google.common.collect.Lists;
  * <p>During the authentication process, interactions with
  * {@link net.shibboleth.idp.authn.principal.PrincipalSupportingComponent}-supporting objects
  * will depend on them satisfying context requirements, via the use of registered
- * {@link PrincipalEvalPredicateFactory} objects.</p>
+ * {@link net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory} objects.</p>
  * 
  * <p>Upon successful authentication the most appropriate "matching" {@link Principal} will be
  * saved back to this context for use in generating a protocol response.</p>

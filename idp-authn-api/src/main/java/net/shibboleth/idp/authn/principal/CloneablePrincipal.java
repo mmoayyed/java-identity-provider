@@ -22,6 +22,14 @@ import java.security.Principal;
 /** Principal that can be cloned without knowledge of the underlying type. */
 public interface CloneablePrincipal extends Principal, Cloneable {
 
-    /** {@inheritDoc} */
+    /**
+     * Creates and returns a copy of this object.
+     * 
+     * @return     a clone of this instance.
+     * @exception  CloneNotSupportedException if the instance cannot
+     *             be cloned.
+     *
+     * @see java.lang.Object#clone
+     */
     Object clone() throws CloneNotSupportedException;
 }
