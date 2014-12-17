@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
  * {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition},
  * {@link net.shibboleth.idp.attribute.resolver.DataConnector} and
  * {@link net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector} beans are sucked out of Spring
- * by type and injected into a new {@link net.shibboleth.idp.attribute.filter.impl.AttributeFilterImpl} via a
+ * by type and injected into a new {@link net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl} via a
  * {@link AttributeResolverServiceStrategy}.
  */
 public class AttributeResolverParser implements BeanDefinitionParser {
