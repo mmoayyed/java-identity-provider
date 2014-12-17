@@ -71,7 +71,7 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
     }
 
     /**
-     * Build and return an instance of the {@link Function} used as the request URL builder.
+     * Build and return an instance of the {@link com.google.common.base.Function} used as the request URL builder.
      * 
      * @param element the parent metadata provider element
      * @return the function

@@ -89,7 +89,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
     
 // Checkstyle: CyclomaticComplexity OFF
     /**
-     * Parser custom element content into a {@link Predicate} to pass to the filter constructor.
+     * Parser custom element content into a {@link com.google.common.base.Predicate} to pass to the filter constructor.
      * 
      * @param element root element to parse
      * 
