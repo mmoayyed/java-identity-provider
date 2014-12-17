@@ -160,7 +160,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * <p>
      * This method first checks to see if this plugin has been initialized and has not be destroyed. Then it checks if
      * the plugins activation criterion has been met. Finally it delegates to
-     * {@link #doResolve(AttributeResolutionContext)}. If an exception is thrown and
+     * {@link #doResolve(AttributeResolutionContext, AttributeResolverWorkContext)}. If an exception is thrown and
      * {@link #isPropagateResolutionExceptions()} is false the exception is logged but not re-thrown, otherwise it is
      * re-thrown.
      * </p>
