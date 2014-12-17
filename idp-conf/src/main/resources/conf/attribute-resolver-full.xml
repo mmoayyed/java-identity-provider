@@ -312,7 +312,7 @@
         baseDN="%{idp.attribute.resolver.LDAP.baseDN}" 
         principal="%{idp.attribute.resolver.LDAP.bindDN}"
         principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
-        useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS}">
+        useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${requestContext.principalName})
