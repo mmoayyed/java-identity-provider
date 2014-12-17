@@ -104,7 +104,7 @@ public class ScriptedAction extends AbstractProfileAction {
     }
 
     /**
-     * Factory to create {@link ScriptedPredicate} from a {@link Resource}.
+     * Factory to create {@link ScriptedAction} from a {@link Resource}.
      * 
      * @param resource the resource to look at
      * @param engineName the language
@@ -119,7 +119,7 @@ public class ScriptedAction extends AbstractProfileAction {
     }
 
     /**
-     * Factory to create {@link ScriptedPredicate} from a {@link Resource}.
+     * Factory to create {@link ScriptedAction} from a {@link Resource}.
      * 
      * @param resource the resource to look at
      * @return the predicate
@@ -131,7 +131,7 @@ public class ScriptedAction extends AbstractProfileAction {
     }
 
     /**
-     * Factory to create {@link ScriptedPredicate} from inline data.
+     * Factory to create {@link ScriptedAction} from inline data.
      * 
      * @param scriptSource the script, as a string
      * @param engineName the language
@@ -145,7 +145,7 @@ public class ScriptedAction extends AbstractProfileAction {
     }
     
     /**
-     * Factory to create {@link ScriptedPredicate} from inline data.
+     * Factory to create {@link ScriptedAction} from inline data.
      * 
      * @param scriptSource the script, as a string
      * @return the predicate

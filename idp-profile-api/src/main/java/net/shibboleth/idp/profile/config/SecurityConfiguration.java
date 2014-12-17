@@ -62,7 +62,7 @@ public class SecurityConfiguration {
      * Constructor.
      * 
      * Initializes the clock skew to 5 minutes and the identifier generator to
-     * {@link RandomIdentifierGenerationStrategy} using the SHA1PRNG algorithm.
+     * {@link SecureRandomIdentifierGenerationStrategy} using the SHA1PRNG algorithm.
      */
     public SecurityConfiguration() {
         clockSkew = TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES);
