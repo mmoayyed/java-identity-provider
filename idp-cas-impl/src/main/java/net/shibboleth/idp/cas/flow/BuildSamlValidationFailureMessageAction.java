@@ -40,8 +40,8 @@ public class BuildSamlValidationFailureMessageAction extends AbstractOutgoingSam
     @Nonnull
     @Override
     protected Response buildSamlResponse(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
+            @Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
 
         final String code = (String) springRequestContext.getFlashScope().get("code");
         final String detailCode = (String) springRequestContext.getFlashScope().get("detailCode");
