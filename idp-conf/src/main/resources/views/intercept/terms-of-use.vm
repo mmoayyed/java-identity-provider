@@ -11,6 +11,7 @@
 ## response - HttpServletResponse
 ## rpUIContext - context with SP UI information from the metadata
 ## termsOfUseId - terms of use ID to lookup message strings
+## environment - Spring Environment object for property resolution
 #set ($serviceName = $rpUIContext.serviceName)
 #set ($rpOrganizationLogo = $rpUIContext.getLogo())
 ##

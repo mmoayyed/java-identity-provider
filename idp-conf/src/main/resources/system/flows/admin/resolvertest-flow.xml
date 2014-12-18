@@ -59,6 +59,7 @@
             <evaluate expression="PostAssertionPopulateAuditContext" />
             <evaluate expression="PostResponsePopulateAuditContext" />
             <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext), true).getSubcontext(T(net.shibboleth.idp.attribute.context.AttributeContext))" result="requestScope.attributeContext" />
             <evaluate expression="T(org.opensaml.core.xml.util.XMLObjectSupport)" result="requestScope.XMLObjectSupport" />

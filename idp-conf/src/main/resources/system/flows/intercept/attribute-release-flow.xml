@@ -104,6 +104,7 @@
 
     <view-state id="DisplayAttributeReleasePage" view="#{flowRequestContext.activeFlow.id}">
         <on-render>
+            <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />

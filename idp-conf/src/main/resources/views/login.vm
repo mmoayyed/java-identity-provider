@@ -14,6 +14,7 @@
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
 ## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
 ##
 #set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
 #set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())

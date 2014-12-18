@@ -6,6 +6,7 @@
 ## encoder - HTMLEncoder class
 ## request - HttpServletRequest
 ## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
 ##
 #set ($title = $springMacroRequestContext.getMessage("idp.title", "Web Login Service"))
 #set ($defaultTitleSuffix = $springMacroRequestContext.getMessage("idp.title.suffix", "Error"))

@@ -49,6 +49,7 @@
 
     <view-state id="LogoutView" view="logout">
         <on-render>
+            <evaluate expression="environment" result="viewScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="viewScope.profileRequestContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext))" result="viewScope.logoutContext" />
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.MultiRelyingPartyContext))" result="viewScope.multiRPContext" />
@@ -75,6 +76,7 @@
         <on-entry>
             <evaluate expression="ErrorViewPopulateAuditContext" />
             <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />

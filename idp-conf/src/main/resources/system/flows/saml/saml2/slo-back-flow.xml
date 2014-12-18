@@ -39,6 +39,7 @@
         <on-entry>
             <evaluate expression="ErrorViewPopulateAuditContext" />
             <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />

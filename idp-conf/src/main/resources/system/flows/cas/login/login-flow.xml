@@ -51,6 +51,7 @@
     <end-state id="gatewayRedirect" view="externalRedirect:#{requestScope.serviceTicketRequest.service}" />
     <end-state id="error" view="error">
         <on-entry>
+            <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
