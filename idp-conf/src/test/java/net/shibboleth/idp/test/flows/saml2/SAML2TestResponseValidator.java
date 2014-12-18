@@ -174,8 +174,8 @@ public class SAML2TestResponseValidator {
 
         expectedAttributes = new ArrayList<>();
         expectedAttributes.add(uidAttribute);
-        expectedAttributes.add(eppnAttribute);
         expectedAttributes.add(mailAttribute);
+        expectedAttributes.add(eppnAttribute);
         expectedAttributes.add(eduPersonScopedAffiliationAttribute);
 
         expectedDesignatedAttributes = new ArrayList<>();
