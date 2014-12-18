@@ -498,9 +498,9 @@ public class SAML1TestResponseValidator {
             assertAttribute(attributes.get(1), "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "member");
         } else {
             assertAttribute(attributes.get(0), "urn:mace:dir:attribute-def:uid", "jdoe");
+            assertAttribute(attributes.get(1), "urn:mace:dir:attribute-def:mail", "jdoe@example.org");
             // The scope here is in a separate XML attribute, so not in the element content.
-            assertAttribute(attributes.get(1), "urn:mace:dir:attribute-def:eduPersonPrincipalName", "jdoe");
-            assertAttribute(attributes.get(2), "urn:mace:dir:attribute-def:mail", "jdoe@example.org");
+            assertAttribute(attributes.get(2), "urn:mace:dir:attribute-def:eduPersonPrincipalName", "jdoe");
             // The scope here is in a separate XML attribute, so not in the element content.
             assertAttribute(attributes.get(3), "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "member");
         }
