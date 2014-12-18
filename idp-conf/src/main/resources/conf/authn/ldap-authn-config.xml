@@ -27,12 +27,12 @@
     <alias name="%{idp.authn.LDAP.sslConfig:defaultTrust}" alias="sslConfig" />
 
     <bean id="defaultTrust" class="org.ldaptive.ssl.SslConfig" />
-    <bean id="certificateTrust" class="org.ldaptive.ssl.SslConfig" lazy-init="true">
+    <bean id="certificateTrust" class="org.ldaptive.ssl.SslConfig">
       <property name="credentialConfig">
         <bean class="org.ldaptive.ssl.X509CredentialConfig" p:trustCertificates="%{idp.authn.LDAP.trustCertificates}" /> 
       </property>
     </bean>
-    <bean id="keyStoreTrust" class="org.ldaptive.ssl.SslConfig" lazy-init="true">
+    <bean id="keyStoreTrust" class="org.ldaptive.ssl.SslConfig">
       <property name="credentialConfig">
         <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" p:trustStore="%{idp.authn.LDAP.trustStore}" /> 
       </property>
