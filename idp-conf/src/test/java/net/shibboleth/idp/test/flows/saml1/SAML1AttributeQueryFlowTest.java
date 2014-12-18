@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.xml.SAMLConstants;
+import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.joda.time.DateTime;
@@ -84,6 +85,9 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
+        validator.statusCode = StatusCode.SUCCESS;
+        validator.usedAttributeDesignators = false;
+
         validateResult(result, FLOW_ID, validator);
     }
 
@@ -103,6 +107,9 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
+        validator.statusCode = StatusCode.SUCCESS;
+        validator.usedAttributeDesignators = true;
+
         validateResult(result, FLOW_ID, validator);
     }
 
@@ -120,6 +127,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         validator.statusCode = StatusCode.REQUESTER;
+        validator.usedAttributeDesignators = false;
 
         validateResult(result, FLOW_ID, validator);
     }
@@ -135,7 +143,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
         final Request attributeQuery = SAML1ActionTestingSupport.buildAttributeQueryRequest(subject);
         attributeQuery.setIssueInstant(new DateTime());
         attributeQuery.getAttributeQuery().setResource(SP_ENTITY_ID);
-        attributeQuery.setID("TESTID");
+        attributeQuery.setID(new SecureRandomIdentifierGenerationStrategy().generateIdentifier());
         
         if (includeDesignators) {
             final SAMLObjectBuilder<AttributeDesignator> designatorBuilder = (SAMLObjectBuilder<AttributeDesignator>)
@@ -144,7 +152,7 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
             
             AttributeDesignator designator = designatorBuilder.buildObject();
             designator.setAttributeNamespace(SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
-            designator.setAttributeName("urn:mace:dir:attribute-def:eduPersonAffiliation");
+            designator.setAttributeName("urn:mace:dir:attribute-def:eduPersonScopedAffiliation");
             attributeQuery.getAttributeQuery().getAttributeDesignators().add(designator);
     
             designator = designatorBuilder.buildObject();

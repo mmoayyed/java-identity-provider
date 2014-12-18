@@ -22,6 +22,7 @@ import java.security.cert.X509Certificate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.joda.time.DateTime;
@@ -89,6 +90,9 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
+        validator.statusCode = StatusCode.SUCCESS;
+        validator.usedAttributeDesignators = false;
+
         validateResult(result, FLOW_ID, validator);
     }
 
@@ -108,6 +112,9 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
+        validator.statusCode = StatusCode.SUCCESS;
+        validator.usedAttributeDesignators = true;
+        
         validateResult(result, FLOW_ID, validator);
     }
 
@@ -125,6 +132,7 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         validator.statusCode = StatusCode.REQUESTER;
+        validator.usedAttributeDesignators = false;
 
         validateResult(result, FLOW_ID, validator);
     }
@@ -141,6 +149,7 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
         final AttributeQuery attributeQuery = SAML2ActionTestingSupport.buildAttributeQueryRequest(subject);
         attributeQuery.setIssueInstant(new DateTime());
         attributeQuery.getIssuer().setValue(SP_ENTITY_ID);
+        attributeQuery.setID(new SecureRandomIdentifierGenerationStrategy().generateIdentifier());
 
         if (includeDesignators) {
             final SAMLObjectBuilder<Attribute> designatorBuilder = (SAMLObjectBuilder<Attribute>)
@@ -153,20 +162,11 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
             
             Attribute designator = designatorBuilder.buildObject();
             designator.setNameFormat(Attribute.URI_REFERENCE);
-            designator.setName("urn:oid:1.3.6.1.4.1.5923.1.1.1.1");
-            attributeQuery.getAttributes().add(designator);
-            
-            XSAny value = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
-            value.setTextContent("member");
-            designator.getAttributeValues().add(value);
-    
-            designator = designatorBuilder.buildObject();
-            designator.setNameFormat(Attribute.URI_REFERENCE);
             designator.setName("urn:oid:0.9.2342.19200300.100.1.3");
             attributeQuery.getAttributes().add(designator);
             
-            value = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
-            value.setTextContent("jdoe@shibboleth.net");
+            XSAny value = valueBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+            value.setTextContent("jdoe@example.org");
             designator.getAttributeValues().add(value);
     
             designator = designatorBuilder.buildObject();

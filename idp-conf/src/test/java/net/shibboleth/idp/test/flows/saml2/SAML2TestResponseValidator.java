@@ -25,8 +25,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
-import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.core.xml.schema.impl.XSStringBuilder;
+import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.core.xml.schema.impl.XSAnyBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -96,14 +96,26 @@ public class SAML2TestResponseValidator {
     /** Whether subject confirmation data should be validated. */
     @Nonnull public boolean validateSubjectConfirmationData = true;
 
+    /** Whether attributes were limited by designators. */
+    public boolean usedAttributeDesignators = false;
+
     /** Expected attributes. */
     @Nonnull public List<Attribute> expectedAttributes;
+
+    /** Expected attributes. */
+    @Nonnull public List<Attribute> expectedDesignatedAttributes;
+
+    /** Expected uid attribute. */
+    @Nonnull public Attribute uidAttribute;
+
+    /** Expected eppn attribute. */
+    @Nonnull public Attribute eppnAttribute;
 
     /** Expected mail attribute. */
     @Nonnull public Attribute mailAttribute;
 
-    /** Expected eduPersonAffiliation attribute. */
-    @Nonnull public Attribute eduPersonAffiliationAttribute;
+    /** Expected eduPersonScopedAffiliation attribute. */
+    @Nonnull public Attribute eduPersonScopedAffiliationAttribute;
 
     /** Constructor. */
     public SAML2TestResponseValidator() {
@@ -115,53 +127,60 @@ public class SAML2TestResponseValidator {
         buildExpectedAttributes();
     }
 
-    /**
-     * Build expected attributes.
-     * <p>
-     * The first attribute is
-     * <ul>
-     * <li>name : urn:oid:1.3.6.1.4.1.5923.1.1.1.1</li>
-     * <li>name format : {@link Attribute#URI_REFERENCE}</li>
-     * <li>friendly name : eduPersonAffiliation</li>
-     * <li>value : member</li>
-     * </ul>
-     * <p>
-     * The second attribute is
-     * <ul>
-     * <li>name : urn:oid:0.9.2342.19200300.100.1.3</li>
-     * <li>name format : {@link Attribute#URI_REFERENCE}</li>
-     * <li>friendly name : mail</li>
-     * <li>value : jdoe@shibboleth.net</li>
-     * </ul>
-     */
+    /** Build expected attributes. */
     protected void buildExpectedAttributes() {
 
         final AttributeBuilder builder = new AttributeBuilder();
+
+        // the expected uid attribute
+        uidAttribute = builder.buildObject();
+        uidAttribute.setName("urn:oid:0.9.2342.19200300.100.1.1");
+        uidAttribute.setNameFormat(Attribute.URI_REFERENCE);
+        uidAttribute.setFriendlyName("uid");
+        final XSAny uidValue =
+                new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        uidValue.setTextContent("jdoe");
+        uidAttribute.getAttributeValues().add(uidValue);
+
+        // the expected eppn attribute
+        eppnAttribute = builder.buildObject();
+        eppnAttribute.setName("urn:oid:1.3.6.1.4.1.5923.1.1.1.6");
+        eppnAttribute.setNameFormat(Attribute.URI_REFERENCE);
+        eppnAttribute.setFriendlyName("eduPersonPrincipalName");
+        final XSAny eppnValue =
+                new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        eppnValue.setTextContent("jdoe@example.org");
+        eppnAttribute.getAttributeValues().add(eppnValue);
 
         // the expected mail attribute
         mailAttribute = builder.buildObject();
         mailAttribute.setName("urn:oid:0.9.2342.19200300.100.1.3");
         mailAttribute.setNameFormat(Attribute.URI_REFERENCE);
         mailAttribute.setFriendlyName("mail");
-        final XSString mailValue =
-                new XSStringBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-        mailValue.setValue("jdoe@shibboleth.net");
+        final XSAny mailValue =
+                new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        mailValue.setTextContent("jdoe@example.org");
         mailAttribute.getAttributeValues().add(mailValue);
 
-        // the expected eduPersonAffiliation attribute
-        eduPersonAffiliationAttribute = builder.buildObject();
-        eduPersonAffiliationAttribute.setName("urn:oid:1.3.6.1.4.1.5923.1.1.1.1");
-        eduPersonAffiliationAttribute.setNameFormat(Attribute.URI_REFERENCE);
-        eduPersonAffiliationAttribute.setFriendlyName("eduPersonAffiliation");
-        final XSString eduPersonAffiliationAttributeValue =
-                new XSStringBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-        eduPersonAffiliationAttributeValue.setValue("member");
-        eduPersonAffiliationAttribute.getAttributeValues().add(eduPersonAffiliationAttributeValue);
+        // the expected eduPersonScopedAffiliation attribute
+        eduPersonScopedAffiliationAttribute = builder.buildObject();
+        eduPersonScopedAffiliationAttribute.setName("urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
+        eduPersonScopedAffiliationAttribute.setNameFormat(Attribute.URI_REFERENCE);
+        eduPersonScopedAffiliationAttribute.setFriendlyName("eduPersonScopedAffiliation");
+        final XSAny eduPersonScopedAffiliationAttributeValue =
+                new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        eduPersonScopedAffiliationAttributeValue.setTextContent("member");
+        eduPersonScopedAffiliationAttribute.getAttributeValues().add(eduPersonScopedAffiliationAttributeValue);
 
         expectedAttributes = new ArrayList<>();
-        expectedAttributes.add(eduPersonAffiliationAttribute);
+        expectedAttributes.add(uidAttribute);
+        expectedAttributes.add(eppnAttribute);
         expectedAttributes.add(mailAttribute);
-    }
+        expectedAttributes.add(eduPersonScopedAffiliationAttribute);
+
+        expectedDesignatedAttributes = new ArrayList<>();
+        expectedDesignatedAttributes.add(mailAttribute);
+}
 
     private Assertion decryptAssertion(final EncryptedAssertion encrypted) throws DecryptionException {
         ArrayList<EncryptedKeyResolver> resolverChain = new ArrayList<>();
@@ -590,14 +609,14 @@ public class SAML2TestResponseValidator {
     public void assertAttributes(@Nullable final List<Attribute> attributes) {
         Assert.assertNotNull(attributes);
         Assert.assertFalse(attributes.isEmpty());
-        Assert.assertEquals(attributes.size(), expectedAttributes.size());
+        Assert.assertEquals(attributes.size(), usedAttributeDesignators ? expectedDesignatedAttributes.size() : expectedAttributes.size());
 
-        for (int i = 0; i < expectedAttributes.size(); i++) {
-            final Attribute expectedAttribute = expectedAttributes.get(i);
+        for (int i = 0; i < (usedAttributeDesignators ? expectedDesignatedAttributes.size() : expectedAttributes.size()); i++) {
+            final Attribute expectedAttribute = usedAttributeDesignators ? expectedDesignatedAttributes.get(i) : expectedAttributes.get(i);
             final Attribute actualAttribute = attributes.get(i);
             assertAttributeName(actualAttribute, expectedAttribute.getName(), expectedAttribute.getNameFormat(),
                     expectedAttribute.getFriendlyName());
-            assertAttributeValue(actualAttribute, ((XSString) expectedAttribute.getAttributeValues().get(0)).getValue());
+            assertAttributeValue(actualAttribute, ((XSAny) expectedAttribute.getAttributeValues().get(0)).getTextContent());
         }
     }
 
@@ -625,8 +644,8 @@ public class SAML2TestResponseValidator {
      */
     public void assertAttributeValue(@Nullable final Attribute attribute, @Nonnull final String attributeValue) {
         Assert.assertEquals(attribute.getAttributeValues().size(), 1);
-        Assert.assertTrue(attribute.getAttributeValues().get(0) instanceof XSString);
-        Assert.assertEquals(((XSString) attribute.getAttributeValues().get(0)).getValue(), attributeValue);
+        Assert.assertTrue(attribute.getAttributeValues().get(0) instanceof XSAny);
+        Assert.assertEquals(((XSAny) attribute.getAttributeValues().get(0)).getTextContent(), attributeValue);
     }
 
 }

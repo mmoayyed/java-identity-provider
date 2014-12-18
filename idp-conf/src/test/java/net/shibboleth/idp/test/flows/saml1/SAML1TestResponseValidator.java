@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.xml.SAMLConstants;
 
-import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
@@ -71,7 +71,10 @@ public class SAML1TestResponseValidator {
     @Nonnull public String statusMessage = "An error occurred.";
 
     /** Whether authentication statements should be validated. */
-    @Nonnull public boolean validateAuthenticationStatements = true;
+    public boolean validateAuthenticationStatements = true;
+    
+    /** Whether attributes were limited by designators. */
+    public boolean usedAttributeDesignators = false;
 
     /** Constructor. */
     public SAML1TestResponseValidator() {
@@ -487,10 +490,20 @@ public class SAML1TestResponseValidator {
     public void assertAttributes(@Nullable final List<Attribute> attributes) {
         Assert.assertNotNull(attributes);
         Assert.assertFalse(attributes.isEmpty());
-        Assert.assertEquals(attributes.size(), 2);
+        Assert.assertEquals(attributes.size(), usedAttributeDesignators ? 2 : 4);
 
-        assertAttribute(attributes.get(0), "urn:mace:dir:attribute-def:eduPersonAffiliation", "member");
-        assertAttribute(attributes.get(1), "urn:mace:dir:attribute-def:mail", "jdoe@shibboleth.net");
+        if (usedAttributeDesignators) {
+            assertAttribute(attributes.get(0), "urn:mace:dir:attribute-def:mail", "jdoe@example.org");
+            // The scope here is in a separate XML attribute, so not in the element content.
+            assertAttribute(attributes.get(1), "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "member");
+        } else {
+            assertAttribute(attributes.get(0), "urn:mace:dir:attribute-def:uid", "jdoe");
+            // The scope here is in a separate XML attribute, so not in the element content.
+            assertAttribute(attributes.get(1), "urn:mace:dir:attribute-def:eduPersonPrincipalName", "jdoe");
+            assertAttribute(attributes.get(2), "urn:mace:dir:attribute-def:mail", "jdoe@example.org");
+            // The scope here is in a separate XML attribute, so not in the element content.
+            assertAttribute(attributes.get(3), "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "member");
+        }
     }
 
     /**
@@ -507,7 +520,7 @@ public class SAML1TestResponseValidator {
         Assert.assertEquals(attribute.getAttributeName(), attributeName);
         Assert.assertEquals(attribute.getAttributeNamespace(), SAMLConstants.SAML1_ATTR_NAMESPACE_URI);
         Assert.assertEquals(attribute.getAttributeValues().size(), 1);
-        Assert.assertTrue(attribute.getAttributeValues().get(0) instanceof XSString);
-        Assert.assertEquals(((XSString) attribute.getAttributeValues().get(0)).getValue(), attributeValue);
+        Assert.assertTrue(attribute.getAttributeValues().get(0) instanceof XSAny);
+        Assert.assertEquals(((XSAny) attribute.getAttributeValues().get(0)).getTextContent(), attributeValue);
     }
 }
