@@ -24,9 +24,9 @@
         p:connectTimeout="%{idp.authn.LDAP.connectTimeout:3000}"
         p:sslConfig-ref="sslConfig" />
 
-    <alias name="%{idp.authn.LDAP.sslConfig:defaultTrust}" alias="sslConfig" />
+    <alias name="%{idp.authn.LDAP.sslConfig:certificateTrust}" alias="sslConfig" />
 
-    <bean id="defaultTrust" class="org.ldaptive.ssl.SslConfig" />
+    <bean id="jvmTrust" class="org.ldaptive.ssl.SslConfig" />
     <bean id="certificateTrust" class="org.ldaptive.ssl.SslConfig">
       <property name="credentialConfig">
         <bean class="net.shibboleth.idp.authn.impl.X509ResourceCredentialConfig" p:trustCertificates="%{idp.authn.LDAP.trustCertificates}" /> 
