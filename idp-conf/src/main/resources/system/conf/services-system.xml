@@ -19,8 +19,8 @@
     services are generally defined in the services.xml file edited by deployers.
     -->
 
-    <bean id="shibboleth.LogbackLogging" class="net.shibboleth.idp.log.LogbackLoggingService"
-        p:loggingConfiguration="%{idp.home}/conf/logback.xml"
+    <bean id="shibboleth.LoggingService" class="%{idp.service.logging.class:net.shibboleth.idp.log.LogbackLoggingService}"
+        p:loggingConfiguration="%{idp.service.logging.resource:%{idp.home}/conf/logback.xml}"
         p:reloadCheckDelay="%{idp.service.logging.checkInterval:0}"
         p:failFast="%{idp.service.logging.failFast:true}" />
     

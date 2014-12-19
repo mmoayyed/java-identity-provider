@@ -19,7 +19,7 @@
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
     
     <util:list id="ServiceCollection">
-        <ref bean="shibboleth.LogbackLogging" />
+        <ref bean="shibboleth.LoggingService" />
         <ref bean="shibboleth.ReloadableAccessControlService" />
         <ref bean="shibboleth.MetadataResolverService" />
         <ref bean="shibboleth.RelyingPartyResolverService" />

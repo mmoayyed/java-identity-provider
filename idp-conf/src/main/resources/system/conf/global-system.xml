@@ -49,10 +49,10 @@
     <import resource="utilities.xml" />
 
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
-        depends-on="shibboleth.LogbackLogging,shibboleth.ParserPool" p:parserPool-ref="shibboleth.ParserPool" />
+        depends-on="shibboleth.LoggingService,shibboleth.ParserPool" p:parserPool-ref="shibboleth.ParserPool" />
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
-            depends-on="shibboleth.LogbackLogging">
+            depends-on="shibboleth.LoggingService">
         <property name="overrideLogging" value="false"/>
         <property name="velocityProperties">
             <props>
@@ -78,7 +78,7 @@
     </bean>
 
     <bean id="shibboleth.ParserPool" class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
-            depends-on="shibboleth.LogbackLogging"
+            depends-on="shibboleth.LoggingService"
             p:maxPoolSize="100"
             p:coalescing="true"
             p:ignoreComments="true"
@@ -170,7 +170,7 @@
         p:cookieName="shib_idp_persistent_ss"
         p:dataSealer-ref="shibboleth.DataSealer" />
 
-    <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LogbackLogging"
+    <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LoggingService"
         p:storage-ref="shibboleth.StorageService" p:strict="true" />
 
     <bean id="shibboleth.SAMLArtifactMap" depends-on="shibboleth.StorageService"

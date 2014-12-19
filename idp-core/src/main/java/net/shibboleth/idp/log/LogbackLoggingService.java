@@ -20,11 +20,15 @@ package net.shibboleth.idp.log;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.Version;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.service.AbstractReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
@@ -46,9 +50,11 @@ import ch.qos.logback.core.status.StatusManager;
 import com.google.common.io.Closeables;
 
 /**
- * Simple logging service that watches for logback configuration file changes and reloads the file when a change occurs.
+ * Simple {@link LoggingService} that watches for logback configuration file changes
+ * and reloads the file when a change occurs.
  */
-public class LogbackLoggingService extends AbstractReloadableService<Object> implements ApplicationContextAware {
+public class LogbackLoggingService extends AbstractReloadableService<Object>
+        implements LoggingService, ApplicationContextAware {
 
     /** Logback logger context. */
     private LoggerContext loggerContext;
@@ -57,10 +63,10 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
     private StatusManager statusManager;
 
     /** URL to the fallback logback configuration found in the IdP jar. */
-    private Resource fallbackConfiguration;
+    @NonnullAfterInit private Resource fallbackConfiguration;
 
     /** Logging configuration resource. */
-    private Resource configurationResource;
+    @NonnullAfterInit private Resource configurationResource;
 
     /** Spring application context. */
     @Nullable private ApplicationContext applicationContext;
@@ -70,26 +76,49 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
      * 
      * @return logging configuration
      */
-    public Resource getLoggingConfiguration() {
+    @NonnullAfterInit public Resource getLoggingConfiguration() {
         return configurationResource;
     }
 
-    /**
-     * Sets the logging configuration.
-     * 
-     * @param configuration logging configuration
-     */
-    public void setLoggingConfiguration(Resource configuration) {
-        if (isInitialized()) {
-            return;
-        }
+    /** {@inheritDoc} */
+    @Override public void setLoggingConfiguration(@Nonnull final Resource configuration) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        configurationResource = configuration;
+        configurationResource = Constraint.isNotNull(configuration, "Logging configuration resource cannot be null");
     }
 
     /** {@inheritDoc} */
     @Override public void setApplicationContext(ApplicationContext context) {
         applicationContext = context;
+    }
+
+    /**
+     * {@inheritDoc}.
+     * 
+     * This service does not support a ServiceableComponent, so return null.
+     */
+    @Override @Nullable public ServiceableComponent<Object> getServiceableComponent() {
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        if (configurationResource == null) {
+            throw new ComponentInitializationException("Logging configuration must be specified.");
+        }
+    
+        fallbackConfiguration = new ClassPathResource("/logback.xml");
+        loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        statusManager = loggerContext.getStatusManager();
+        if (!fallbackConfiguration.exists()) {
+            if (isFailFast()) {
+                throw new ComponentInitializationException(getLogPrefix() + "Cannot locate fallback logger");
+            }
+            statusManager.add(new ErrorStatus("Cannot locate fallback logger at "
+                    + fallbackConfiguration.getDescription(), this));
+        }
+        super.doInitialize();
+    
     }
 
     /** {@inheritDoc} */
@@ -100,7 +129,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
                 return true;
             }
             return configurationResource.lastModified() > lastReload.getMillis();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             statusManager.add(new ErrorStatus(
                     "Error checking last modified time of logging service configuration resource "
                             + configurationResource.getDescription(), this, e));
@@ -110,7 +139,6 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
 
     /** {@inheritDoc} */
     @Override protected synchronized void doReload() {
-
         loadLoggingConfiguration();
     }
 
@@ -126,10 +154,10 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
                     + configurationResource.getDescription(), this));
             ins = configurationResource.getInputStream();
             loadLoggingConfiguration(ins);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             try {
                 Closeables.close(ins, true);
-            } catch (IOException e1) {
+            } catch (final IOException e1) {
                 // swallowed && logged by Closeables but...
                 throw new ServiceException(e1);
             }
@@ -139,10 +167,10 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
                 statusManager.add(new InfoStatus("Loading fallback logging configuration", this));
                 ins = fallbackConfiguration.getInputStream();
                 loadLoggingConfiguration(ins);
-            } catch (IOException ioe) {
+            } catch (final IOException ioe) {
                 try {
                     Closeables.close(ins, true);
-                } catch (IOException e1) {
+                } catch (final IOException e1) {
                     // swallowed && logged by Closeables
                     throw new ServiceException(e1);
                 }
@@ -152,14 +180,12 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
         } finally {
             try {
                 Closeables.close(ins, true);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 // swallowed && logged by Closeables
                 throw new ServiceException(e);
             }
         }
     }
-
-    // Checkstyle: EmtpyBlock ON
 
     /**
      * Loads a logging configuration in to the active logger context. Error messages are printed out to the status
@@ -173,13 +199,13 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
         try {
             loggerContext.reset();
             loadIdPHomeProperty();
-            JoranConfigurator configurator = new JoranConfigurator();
+            final JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(loggerContext);
             configurator.doConfigure(loggingConfig);
             loggerContext.start();
-            LoggerFactory.getLogger(LogbackLoggingService.class)
-                    .info("Shibboleth IdP Version {}", Version.getVersion());
-        } catch (JoranException e) {
+            LoggerFactory.getLogger(LogbackLoggingService.class).info("Shibboleth IdP Version {}",
+                    Version.getVersion());
+        } catch (final JoranException e) {
             throw new ServiceException(e);
         }
     }
@@ -202,31 +228,5 @@ public class LogbackLoggingService extends AbstractReloadableService<Object> imp
             }
         }
     }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        if (configurationResource == null) {
-            throw new ComponentInitializationException("Logging configuration must be specified.");
-        }
-
-        fallbackConfiguration = new ClassPathResource("/logback.xml");
-        loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        statusManager = loggerContext.getStatusManager();
-        if (!fallbackConfiguration.exists()) {
-            if (isFailFast()) {
-                throw new ComponentInitializationException(getLogPrefix() + "Cannot locate fallback logger");
-            }
-            statusManager.add(new ErrorStatus("Cannot locate fallback logger at "
-                    + fallbackConfiguration.getDescription(), this));
-        }
-        super.doInitialize();
-
-    }
-
-    /**
-     * {@inheritDoc}. This service does not support a ServiceableComponent, so return null.
-     */
-    @Override @Nullable public ServiceableComponent<Object> getServiceableComponent() {
-        return null;
-    }
+    
 }
