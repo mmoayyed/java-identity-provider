@@ -48,7 +48,8 @@ import com.google.common.base.Functions;
  * 
  * <p>This strategy is a default approach that uses a {@link RelyingPartyContext} via lookup strategy
  * to obtain a requester value, used as the {@link SPSession}'s relying party ID. The authentication flow ID
- * comes from the {@link net.shibboleth.idp.authn.AuthenticationResult} in the {@link AuthenticationContext}.
+ * comes from the {@link net.shibboleth.idp.authn.AuthenticationResult} in the
+ * {@link net.shibboleth.idp.authn.context.AuthenticationContext}.
  * The session has a creation time based on the time of execution, and the expiration is based on a configurable
  * lifetime, bounded by the per-SP lifetime setting for the profile.</p>
  * 

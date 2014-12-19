@@ -45,9 +45,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Action that refreshes a {@link MetadataProvider} manually.
+ * Action that refreshes a {@link MetadataResolver} manually.
  * 
- * <p>The {@link MetadataProvider} to reload is indicated by supplying {@link #RESOLVER_ID} as a query parameter.</p>
+ * <p>The {@link MetadataResolver} to reload is indicated by supplying {@link #RESOLVER_ID} as a query parameter.</p>
  * 
  * <p>On success, a 200 HTTP status with a simple response body is returned. On failure, a non-successful
  * HTTP status is returned.</p>

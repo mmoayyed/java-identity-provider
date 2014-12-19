@@ -59,14 +59,15 @@ import com.google.common.base.Function;
  * The issuer is based on {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()}.</p>
  * 
  * <p>The {@link AuthenticationStatement} will have its authentication instant set, based on
- * {@link AuthenticationResult#getAuthenticationInstant()} via {@link AuthenticationContext#getAuthenticationResult()}.
+ * {@link net.shibboleth.idp.authn.AuthenticationResult#getAuthenticationInstant()}
+ * via {@link AuthenticationContext#getAuthenticationResult()}.
  * The method property will be set via {@link RequestedPrincipalContext#getMatchingPrincipal()}, or via an injected
  * or defaulted function that obtains an {@link AuthenticationMethodPrincipal} from the profile context.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#INVALID_MSG_CTX}
- * @event {@link AuthnEventIds#INVALID_AUTHN_CTX}
+ * @event {@link net.shibboleth.idp.authn.AuthnEventIds#INVALID_AUTHN_CTX}
  */
 public class AddAuthenticationStatementToAssertion extends BaseAddAuthenticationStatementToAssertion {
 

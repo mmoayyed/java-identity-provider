@@ -176,7 +176,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     }
     
     /**
-     * Set the type of endpoint to resolve, defaults to {@link AssertionConsumerService}.
+     * Set the type of endpoint to resolve, defaults to <code>&lt;AssertionConsumerService&gt;</code>.
      * 
      * @param type  type of endpoint to resolve
      */

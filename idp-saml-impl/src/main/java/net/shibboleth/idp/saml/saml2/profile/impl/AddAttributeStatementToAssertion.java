@@ -62,8 +62,10 @@ import com.google.common.collect.Lists;
  * <p>If no {@link Response} exists, then an {@link Assertion} directly in the outbound message context will
  * be used or created</p>
 
- * <p>The {@link IdPAttribute} set to be encoded is drawn from an {@link AttributeContext} returned from a
- * lookup strategy, by default located on the {@link RelyingPartyContext} beneath the profile request context.</p>
+ * <p>The {@link IdPAttribute} set to be encoded is drawn from an
+ * {@link net.shibboleth.idp.attribute.context.AttributeContext} returned from a
+ * lookup strategy, by default located on the {@link net.shibboleth.idp.profile.context.RelyingPartyContext}
+ * beneath the profile request context.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_MSG_CTX}

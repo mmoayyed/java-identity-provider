@@ -46,7 +46,8 @@ import com.google.common.base.Functions;
 /**
  * Base class for actions that encode an {@link AttributeContext} into a SAML attribute statement.
 
- * <p>The {@link IdPAttribute} set to be encoded is drawn from an {@link AttributeContext} returned from a
+ * <p>The {@link net.shibboleth.idp.attribute.IdPAttribute} set to be encoded is drawn from
+ * an {@link AttributeContext} returned from a
  * lookup strategy, by default located on the {@link RelyingPartyContext} beneath the profile request context.</p>
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
@@ -62,8 +63,9 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
     private boolean statementInOwnAssertion;
 
     /**
-     * Whether attributes that result in an {@link AttributeEncodingException} when being encoded should be ignored or
-     * result in an {@link IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
+     * Whether attributes that result in an {@link net.shibboleth.idp.attribute.AttributeEncodingException}
+     * when being encoded should be ignored or
+     * result in an {@link net.shibboleth.idp.profile.IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
      */
     private boolean ignoringUnencodableAttributes;
 
@@ -123,19 +125,22 @@ public abstract class BaseAddAttributeStatementToAssertion extends AbstractProfi
     }
 
     /**
-     * Get whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
-     * ignored or result in an {@link net.shibboleth.idp.profile.IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
+     * Get whether the attributes that result in an {@link net.shibboleth.idp.attribute.AttributeEncodingException}
+     * when being encoded should be ignored or result in an
+     * {@link net.shibboleth.idp.profile.IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
      * 
-     * @return whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
-     * ignored or result in an {@link net.shibboleth.idp.profile.IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition
+     * @return whether the attributes that result in an {@link net.shibboleth.idp.attribute.AttributeEncodingException}
+     *  when being encoded should be ignored or result in an
+     *  {@link net.shibboleth.idp.profile.IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition
      */
     public boolean isIgnoringUnencodableAttributes() {
         return ignoringUnencodableAttributes;
     }
 
     /**
-     * Set whether the attributes that result in an {@link AttributeEncodingException} when being encoded should be
-     * ignored or result in an {@link net.shibboleth.idp.profile.IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
+     * Set whether the attributes that result in an {@link net.shibboleth.idp.attribute.AttributeEncodingException}
+     *  when being encoded should be ignored or result in an
+     *  {@link net.shibboleth.idp.profile.IdPEventIds#UNABLE_ENCODE_ATTRIBUTE} transition.
      * 
      * @param flag flag to set
      */

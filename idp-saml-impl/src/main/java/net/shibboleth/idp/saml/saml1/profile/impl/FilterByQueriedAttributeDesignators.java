@@ -45,8 +45,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
- * Action that filters a set of attributes against the {@link AttributeDesignator} objects in
- * an {@link AttributeQuery}.
+ * Action that filters a set of attributes against the {@link org.opensaml.saml.saml1.core.AttributeDesignator}
+ * objects in an {@link AttributeQuery}.
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */

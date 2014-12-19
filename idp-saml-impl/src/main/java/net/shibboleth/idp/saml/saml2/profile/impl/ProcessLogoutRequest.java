@@ -323,7 +323,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
      * 
      * @param session {@link IdPSession} to check
      * 
-     * @return  true iff the set of {@link SPSessions} includes one applicable to the logout request
+     * @return  true iff the set of {@link SPSession}s includes one applicable to the logout request
      */
     private boolean sessionMatches(@Nonnull final IdPSession session) {
         
