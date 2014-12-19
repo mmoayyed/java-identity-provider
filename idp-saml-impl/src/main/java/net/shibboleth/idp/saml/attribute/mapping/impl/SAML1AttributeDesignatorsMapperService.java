@@ -53,8 +53,9 @@ public class SAML1AttributeDesignatorsMapperService implements AttributesMapper<
     /** Service used to get the resolver used to fetch attributes. */
     @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
 
-    /** Whether the last invocation of {@link #refreshMappers()} failed. */
-    @Nonnull private boolean refreshFailed;
+    /** Whether the last invocation of {@link ReloadableService#reload()}
+     * on {@link #attributeResolverService} failed. This limits the noise in log file. */
+    @Nonnull private boolean captiveServiceReloadFailed;
 
     /** Cached AttributeMapper. */
     @Nullable private SAML1AttributeDesignatorsMapper attributesMapper;
@@ -105,14 +106,14 @@ public class SAML1AttributeDesignatorsMapperService implements AttributesMapper<
             final DateTime when = attributeResolverService.getLastSuccessfulReloadInstant();
             component = attributeResolverService.getServiceableComponent();
             if (null == component) {
-                if (!refreshFailed) {
+                if (!captiveServiceReloadFailed) {
                     log.error("Invalid AttributeResolver configuration");
                 }
-                refreshFailed = true;
+                captiveServiceReloadFailed = true;
             } else {
                 final AttributeResolver attributeResolver = component.getComponent();
                 am = new SAML1AttributeDesignatorsMapper(attributeResolver);
-                refreshFailed = false;
+                captiveServiceReloadFailed = false;
                 lastReload = when;
             }
         } finally {
