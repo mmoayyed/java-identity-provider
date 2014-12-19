@@ -28,14 +28,14 @@
 
     <bean id="jvmTrust" class="org.ldaptive.ssl.SslConfig" />
     <bean id="certificateTrust" class="org.ldaptive.ssl.SslConfig">
-      <property name="credentialConfig">
-        <bean class="net.shibboleth.idp.authn.impl.X509ResourceCredentialConfig" p:trustCertificates="%{idp.authn.LDAP.trustCertificates}" /> 
-      </property>
+        <property name="credentialConfig">
+            <bean parent="shibboleth.X509ResourceCredentialConfig" p:trustCertificates="%{idp.authn.LDAP.trustCertificates}" /> 
+        </property>
     </bean>
     <bean id="keyStoreTrust" class="org.ldaptive.ssl.SslConfig">
-      <property name="credentialConfig">
-        <bean class="net.shibboleth.idp.authn.impl.KeystoreResourceCredentialConfig" p:trustStore="%{idp.authn.LDAP.trustStore}" /> 
-      </property>
+        <property name="credentialConfig">
+            <bean parent="shibboleth.KeystoreResourceCredentialConfig" p:trustStore="%{idp.authn.LDAP.trustStore}" /> 
+        </property>
     </bean>
 
     <!-- Authentication handler -->
