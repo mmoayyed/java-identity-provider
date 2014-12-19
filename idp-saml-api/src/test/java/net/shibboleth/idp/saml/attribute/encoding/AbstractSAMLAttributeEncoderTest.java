@@ -134,6 +134,11 @@ public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
                             public Object getValue() {
                                 return intArray;
                             }
+
+                            @Override
+                            public String getDisplayValue() {
+                                return intArray.toString();
+                            }
                         }
                         );
         attr.setValues(values);
