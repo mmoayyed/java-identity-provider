@@ -18,7 +18,9 @@
 package net.shibboleth.idp.test.flows.saml2;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -611,9 +613,16 @@ public class SAML2TestResponseValidator {
         Assert.assertFalse(attributes.isEmpty());
         Assert.assertEquals(attributes.size(), usedAttributeDesignators ? expectedDesignatedAttributes.size() : expectedAttributes.size());
 
+        // Ignore attribute ordering
+        final Map<String, Attribute> actualAttributes = new HashMap<>();
+        for(final Attribute attribute : attributes) {
+            actualAttributes.put(attribute.getName(), attribute);
+        }
+        
         for (int i = 0; i < (usedAttributeDesignators ? expectedDesignatedAttributes.size() : expectedAttributes.size()); i++) {
             final Attribute expectedAttribute = usedAttributeDesignators ? expectedDesignatedAttributes.get(i) : expectedAttributes.get(i);
-            final Attribute actualAttribute = attributes.get(i);
+            final Attribute actualAttribute = actualAttributes.get(expectedAttribute.getName());
+            Assert.assertNotNull(actualAttribute);
             assertAttributeName(actualAttribute, expectedAttribute.getName(), expectedAttribute.getNameFormat(),
                     expectedAttribute.getFriendlyName());
             assertAttributeValue(actualAttribute, ((XSAny) expectedAttribute.getAttributeValues().get(0)).getTextContent());
