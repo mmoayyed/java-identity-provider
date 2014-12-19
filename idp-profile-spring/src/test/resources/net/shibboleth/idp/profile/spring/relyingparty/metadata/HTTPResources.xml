@@ -27,8 +27,13 @@
         p:maxCacheEntries="3000"
         p:cacheDirectory-ref="theDir"/>
         
-    <bean id="fileResource" class="net.shibboleth.ext.spring.resource.HTTPResource"
-        c:client-ref="fileClient" c:url="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/document.xml?view=co" />
+    <bean id="theParent" class="org.springframework.core.io.FileSystemResource" c:file-ref="theDir"/>
+
+    <bean id="thefile" factory-bean="theParent" factory-method="createRelative" c:relativePath="wibble"/>
+        
+    <bean id="fileResource" class="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
+        c:client-ref="fileClient" c:url="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/document.xml?view=co" 
+        c:resource-ref="thefile"/>
 
 
 </beans>
