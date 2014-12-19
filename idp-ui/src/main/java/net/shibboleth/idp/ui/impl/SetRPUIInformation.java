@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.ui.impl;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -31,7 +32,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.collection.LazyList;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -53,6 +53,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
 /**
  * Action to populate the {@link ProfileRequestContext} with a {@link RelyingPartyUIContext}. The contents are populated
@@ -151,11 +153,11 @@ public class SetRPUIInformation extends AbstractProfileAction {
      * 
      * @param langs a semi-colon separated string.
      */
-    public void setFallbackLanguages(@Nullable final String langs) {
+    public void setFallbackLanguages(@Nonnull @NonnullElements final List<String> langs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (langs != null) {
-            fallbackLanguages = StringSupport.stringToList(langs, ";");
+            fallbackLanguages = new ArrayList(Collections2.filter(langs, Predicates.notNull()));
         } else {
             fallbackLanguages = null;
         }

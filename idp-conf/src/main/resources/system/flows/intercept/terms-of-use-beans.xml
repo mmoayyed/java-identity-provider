@@ -83,9 +83,12 @@
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndTermsStorageKey" />
 
     <bean id="SetRPUIInformation"
-        class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:fallbackLanguages="%{idp.ui.fallbackLanguages:null}" />
+            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="fallbackLanguages">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+        </property>
+    </bean>
 
     <bean id="ExtractConsent"
         class="net.shibboleth.idp.consent.flow.ExtractConsent" scope="prototype"

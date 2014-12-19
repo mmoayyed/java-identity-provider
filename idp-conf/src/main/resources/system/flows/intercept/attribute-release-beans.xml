@@ -102,11 +102,14 @@
     <bean id="PopulateConsentContext"
         class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="AttributeReleaseConsentFunction"  />
-        
+
     <bean id="SetRPUIInformation"
-        class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:fallbackLanguages="%{idp.ui.fallbackLanguages:null}" />
+            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="fallbackLanguages">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+        </property>
+    </bean>
 
     <bean id="RevokeConsent"
         class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"
