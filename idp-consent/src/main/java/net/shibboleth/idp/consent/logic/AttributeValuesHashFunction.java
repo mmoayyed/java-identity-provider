@@ -26,10 +26,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.XMLObjectAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.cryptacular.util.CodecUtil;
 import org.cryptacular.util.HashUtil;
+import org.opensaml.core.xml.io.MarshallingException;
+import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +75,24 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             final ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
 
             for (final IdPAttributeValue value : filteredInput) {
-                objectOutputStream.writeObject(value.getValue());
+                if (value instanceof ScopedStringAttributeValue) {
+                    objectOutputStream.writeObject(((ScopedStringAttributeValue) value).getValue() + '@'
+                            + ((ScopedStringAttributeValue) value).getScope());
+                } else if (value instanceof XMLObjectAttributeValue) {
+                    if (value.getValue() instanceof NameIDType) {
+                        objectOutputStream.writeObject(((NameIDType) value.getValue()).getValue());
+                    } else {
+                        try {
+                            objectOutputStream.writeObject(SerializeSupport.nodeToString(
+                                    XMLObjectSupport.marshall(((XMLObjectAttributeValue) value).getValue())));
+                        } catch (final MarshallingException e) {
+                            log.error("Error while marshalling XMLObject value", e);
+                            return null;
+                        }
+                    }
+                } else {
+                    objectOutputStream.writeObject(value.getValue());
+                }
             }
 
             objectOutputStream.flush();
@@ -78,7 +101,7 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
 
             return CodecUtil.b64(HashUtil.sha256(byteArrayOutputStream.toByteArray()));
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Error while converting attribute values into a byte array", e);
             return null;
         }
