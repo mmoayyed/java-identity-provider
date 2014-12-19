@@ -50,6 +50,7 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
         final Resource backChannelCrt = new ClassPathResource("/credentials/idp-backchannel.crt");
         task.setBackchannelCert(backChannelCrt.getFile());
         final File out = File.createTempFile("TestMetadataGenerator", ".xml");
+        System.setProperty("idp.home", "classpath:");
 
         try {
             task.setBackchannelCert(backChannelCrt.getFile());
@@ -91,6 +92,7 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
         final Resource backChannelCrt = new ClassPathResource("/credentials/idp-backchannel.crt");
         task.setBackchannelCert(backChannelCrt.getFile());
         final File out = File.createTempFile("TestMetadataGenerator", ".xml");
+        System.setProperty("idp.home", "classpath:");
 
         try {
             task.setBackchannelCert(backChannelCrt.getFile());
