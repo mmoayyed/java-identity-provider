@@ -41,8 +41,10 @@
     <bean id="ResolveAttributes"
             class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
             c:resolverService-ref="shibboleth.AttributeResolverService"
-            p:activationCondition="#{ %{idp.authn.resolveAttribute:null} != null }"
-            p:attributesToResolve="#{ { %{idp.authn.resolveAttribute:null} } }">
+            p:activationCondition="#{ '%{idp.authn.resolveAttribute:null}' != 'null' }">
+        <property name="attributesToResolve">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.authn.resolveAttribute:null}" />
+        </property>
         <property name="principalNameLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose"
                 c:g-ref="shibboleth.PrincipalNameLookup.Session"
@@ -56,9 +58,9 @@
     </bean>
 
     <bean id="FilterFlowsByAttribute"
-            class="net.shibboleth.idp.authn.impl.FilterFlowsByAttribute" scope="prototype"
-            p:activationCondition="#{ %{idp.authn.resolveAttribute:null} != null }"
-            p:attributeId="#{ { %{idp.authn.resolveAttribute:null} }.get(0) }" />
+        class="net.shibboleth.idp.authn.impl.FilterFlowsByAttribute" scope="prototype"
+        p:activationCondition="#{ '%{idp.authn.resolveAttribute:null}' != 'null' }"
+        p:attributeId="#{ T(org.springframework.util.StringUtils).commaDelimitedListToStringArray('%{idp.authn.resolveAttribute:null}')[0] }"/>
 
     <bean id="FilterFlowsByForcedAuthn"
         class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
