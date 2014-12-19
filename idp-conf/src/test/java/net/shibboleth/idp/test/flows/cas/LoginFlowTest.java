@@ -17,28 +17,25 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.cas.ticket.*;
-import net.shibboleth.idp.session.IdPSession;
-import net.shibboleth.idp.session.SessionManager;
-import net.shibboleth.idp.session.SessionResolver;
-import net.shibboleth.idp.session.criterion.SessionIdCriterion;
-import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
-import net.shibboleth.idp.test.flows.AbstractFlowTest;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.webflow.executor.FlowExecutionResult;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import net.shibboleth.idp.cas.ticket.Ticket;
+import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.session.criterion.SessionIdCriterion;
+import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
+import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.webflow.executor.FlowExecutionResult;
+import org.testng.annotations.Test;
 
 /**
  * Tests the flow behind the <code>/login</code> endpoint.
