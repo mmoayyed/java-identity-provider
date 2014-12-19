@@ -120,7 +120,8 @@
 
     <bean id="ReadConsentFromStorage"
         class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
-        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey" />
+        p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey"
+        p:storageSerializer-ref="shibboleth.consent.ConsentSerializer" />
 
     <bean id="ReadGlobalAttributeConsentFromStorage"
         class="net.shibboleth.idp.consent.flow.storage.ReadConsentFromStorage" scope="prototype"
