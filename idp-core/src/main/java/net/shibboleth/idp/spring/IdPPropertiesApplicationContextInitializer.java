@@ -58,8 +58,10 @@ public class IdPPropertiesApplicationContextInitializer implements
     @Nonnull public static final String IDP_PROPERTIES = "/conf/idp.properties";
 
     /** Well known search locations. */
-    @Nonnull public static final String[] SEARCH_LOCATIONS = {System.getProperty("idp.home", "."),
-            System.getProperty("user.dir") + "/shibboleth-idp", "/opt/shibboleth-idp", "..", "classpath:",};
+    @Nonnull public static final String[] SEARCH_LOCATIONS =
+        {
+            System.getProperty("idp.home", "/opt/shibboleth-idp"),
+        };
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
