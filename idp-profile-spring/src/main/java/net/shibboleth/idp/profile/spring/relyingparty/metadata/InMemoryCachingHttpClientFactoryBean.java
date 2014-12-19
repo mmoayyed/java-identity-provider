@@ -21,8 +21,8 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 import net.shibboleth.utilities.java.support.httpclient.InMemoryCachingHttpClientBuilder;
 
 /**
- * Factory bean to accumulate the parameters into a {@link InMemoryCachingHttpClientBuilder} 
- * and to then emit a {@link org.apache.http.client.HttpClient}.
+ * Factory bean to accumulate the parameters into a {@link InMemoryCachingHttpClientBuilder} and to then emit a
+ * {@link org.apache.http.client.HttpClient}.
  */
 public class InMemoryCachingHttpClientFactoryBean extends HttpClientFactoryBean {
 
@@ -37,7 +37,7 @@ public class InMemoryCachingHttpClientFactoryBean extends HttpClientFactoryBean 
      * @param maxCacheEntries The maxCacheEntries to set.
      */
     public void setMaxCacheEntries(int maxCacheEntries) {
-        ((InMemoryCachingHttpClientBuilder)getHttpClientBuilder()).setMaxCacheEntries(maxCacheEntries);
+        ((InMemoryCachingHttpClientBuilder) getHttpClientBuilder()).setMaxCacheEntries(maxCacheEntries);
     }
 
     /**
@@ -46,11 +46,11 @@ public class InMemoryCachingHttpClientFactoryBean extends HttpClientFactoryBean 
      * @param maxCacheEntrySize The maxCacheEntrySize to set.
      */
     public void setMaxCacheEntrySize(long maxCacheEntrySize) {
-        ((InMemoryCachingHttpClientBuilder)getHttpClientBuilder()).setMaxCacheEntrySize(maxCacheEntrySize);
+        ((InMemoryCachingHttpClientBuilder) getHttpClientBuilder()).setMaxCacheEntrySize(maxCacheEntrySize);
     }
 
     /** {@inheritDoc} */
-    protected HttpClientBuilder createHttpClientBuilder() {
+    @Override protected HttpClientBuilder createHttpClientBuilder() {
         return new InMemoryCachingHttpClientBuilder();
     }
 
