@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
@@ -38,7 +39,7 @@ public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
      * @param attributeValue value of the attribute
      */
     public XMLObjectAttributeValue(@Nonnull final XMLObject attributeValue) {
-        value = Constraint.isNotNull(attributeValue, "Attribute value can not be null");
+        value = Constraint.isNotNull(attributeValue, "Attribute value cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -47,6 +48,11 @@ public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
         return value;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NotEmpty public String getDisplayValue() {
+        return "(XML data)";
+    }
 
     /** {@inheritDoc} */
     @Override

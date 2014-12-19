@@ -19,9 +19,11 @@ package net.shibboleth.idp.attribute;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 /**
  * Interface for values of an {@link IdPAttribute}. This interface provides an explicit method for getting the value of
- * an attribute as opposed to any other data that may be associated with the value.
+ * an attribute as opposed to any other data that may be associated with the value, as well as a displayable value.
  * <p>
  * Implementations of this interface <strong>MUST</strong> implement an appropriate {@link Object#equals(Object)} and
  * {@link Object#hashCode()} method. They should also implement {@link Object#toString()} such that useful
@@ -33,9 +35,17 @@ import javax.annotation.Nonnull;
 public interface IdPAttributeValue<ValueType> {
 
     /**
-     * Gets the value of this attribute.
+     * Get the value of this attribute.
      * 
      * @return the attribute value
      */
-    @Nonnull public ValueType getValue();
+    @Nonnull ValueType getValue();
+    
+    /**
+     * Get a displayable form of the value for user interfaces and similar purposes.
+     * 
+     * @return  a displayable value
+     */
+    @Nonnull @NotEmpty String getDisplayValue();
+    
 }

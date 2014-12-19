@@ -44,7 +44,7 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
     public ScopedStringAttributeValue(@Nonnull @NotEmpty final String attributeValue,
             @Nonnull @NotEmpty final String valueScope) {
         super(attributeValue);
-        scope = Constraint.isNotNull(StringSupport.trimOrNull(valueScope), "Scope can not be null or empty");
+        scope = Constraint.isNotNull(StringSupport.trimOrNull(valueScope), "Scope cannot be null or empty");
     }
     
 
@@ -55,6 +55,12 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
      */
     @Nonnull @NotEmpty public final String getScope() {
         return scope;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NotEmpty public String getDisplayValue() {
+        return getValue() + '@' + scope;
     }
 
     /** {@inheritDoc} */

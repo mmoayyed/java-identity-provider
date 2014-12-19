@@ -22,6 +22,7 @@ import java.util.Arrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -41,13 +42,19 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
      * @param attributeValue value of the attribute
      */
     public ByteAttributeValue(@Nonnull final byte[] attributeValue) {
-        value = Constraint.isNotNull(attributeValue, "Attribute value can not be null");
+        value = Constraint.isNotNull(attributeValue, "Attribute value cannot be null");
     }
 
     /** {@inheritDoc} */
     @Override
     public final byte[] getValue() {
         return value;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NotEmpty public String getDisplayValue() {
+        return "(binary data)";
     }
 
     /**

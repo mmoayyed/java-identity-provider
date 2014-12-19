@@ -76,7 +76,7 @@
                                     <td>$encoder.encodeForHTML($attributeDisplayNameFunction.apply($attribute))</td>
                                     <td>
                                         #foreach ($value in $attribute.values)
-                                            <strong>$encoder.encodeForHTML($value.value)</strong>
+                                            <strong>$encoder.encodeForHTML($value.getDisplayValue())</strong>
                                             <br>
                                         #end
                                     </td>

@@ -39,17 +39,19 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
      * @param attributeValue the attribute value
      */
     public StringAttributeValue(@Nonnull @NotEmpty String attributeValue) {
-        value =
-                Constraint.isNotNull(StringSupport.trimOrNull(attributeValue),
-                        "Attribute value can not be null or empty");
+        value = Constraint.isNotNull(StringSupport.trimOrNull(attributeValue),
+                "Attribute value cannot be null or empty");
     }
 
-    /**
-     * Get the attribute value.
-     * 
-     * @return the attribute value
-     */
+    /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public final String getValue() {
+        return value;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NotEmpty public String getDisplayValue() {
         return value;
     }
 
@@ -83,4 +85,5 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
     public String toString() {
         return MoreObjects.toStringHelper(this).add("value", value).toString();
     }
+
 }
