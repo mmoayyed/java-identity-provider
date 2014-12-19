@@ -41,11 +41,11 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * An implementation of {@link SAML2AttributesMapper} for use by objects that
- * can't just store a constructed mapper themselves, such as action beans.
+ * An implementation of {@link SAML2AttributesMapper} for use by objects that can't just store a constructed mapper
+ * themselves, such as action beans.
  */
 @ThreadSafe
-public class SAML2AttributesMapperService implements AttributesMapper<Attribute,IdPAttribute> {
+public class SAML2AttributesMapperService implements AttributesMapper<Attribute, IdPAttribute> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2AttributesMapperService.class);
@@ -53,7 +53,8 @@ public class SAML2AttributesMapperService implements AttributesMapper<Attribute,
     /** Service used to get the resolver used to fetch attributes. */
     @Nonnull private final ReloadableService<AttributeResolver> attributeResolverService;
 
-    /** Whether the last invocation of {@link #refreshMappers()} failed. */
+    /** Whether the last invocation of {@link ReloadableService#reload()} failed 
+     * on {@link #attributeResolverService}. */
     @Nonnull private boolean refreshFailed;
 
     /** Cached AttributeMapper. */
@@ -72,16 +73,15 @@ public class SAML2AttributesMapperService implements AttributesMapper<Attribute,
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NonnullElements public Multimap<String, IdPAttribute> mapAttributes(
+    @Override @Nonnull @NonnullElements public Multimap<String, IdPAttribute> mapAttributes(
             @Nonnull @NonnullElements final List<Attribute> prototypes) {
-        
+
         final SAML2AttributesMapper mapper = getMapper();
         if (null == mapper) {
             log.error("No AttributeMapper available, returning nothing");
             return ArrayListMultimap.create();
         }
-        
+
         return mapper.mapAttributes(prototypes);
     }
 
@@ -91,7 +91,7 @@ public class SAML2AttributesMapperService implements AttributesMapper<Attribute,
      * @return the mapper to use
      */
     @Nullable private SAML2AttributesMapper getMapper() {
-        
+
         if (lastReload != null && lastReload.equals(attributeResolverService.getLastSuccessfulReloadInstant())) {
             // Nothing has changed since we last reloaded.
             return attributesMapper;
@@ -120,7 +120,7 @@ public class SAML2AttributesMapperService implements AttributesMapper<Attribute,
                 component.unpinComponent();
             }
         }
-        
+
         try {
             if (null != am) {
                 am.initialize();
@@ -128,9 +128,9 @@ public class SAML2AttributesMapperService implements AttributesMapper<Attribute,
         } catch (final ComponentInitializationException e) {
             log.error("Error initializing AttributeMapper", e);
         }
-        
+
         attributesMapper = am;
         return am;
     }
-    
+
 }
