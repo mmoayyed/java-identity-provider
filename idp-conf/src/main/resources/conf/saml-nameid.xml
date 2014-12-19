@@ -41,7 +41,7 @@
         <!--
         <bean parent="shibboleth.SAML2AttributeSourcedGenerator"
             p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-            p:attributeSourceIds="#{ {'email'} }" />
+            p:attributeSourceIds="#{ {'mail'} }" />
         -->
                 
     </util:list>
@@ -54,7 +54,7 @@
         <!--
         <bean parent="shibboleth.SAML1AttributeSourcedGenerator"
             p:format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"
-            p:attributeSourceIds="#{ {'email'} }" />
+            p:attributeSourceIds="#{ {'mail'} }" />
         -->
                 
     </util:list>
