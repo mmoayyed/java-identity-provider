@@ -11,7 +11,7 @@
        default-lazy-init="true">
 
     <alias name="%{idp.authn.LDAP.authenticator:anonSearchAuthenticator}" alias="shibboleth.authn.LDAP.authenticator" />
-    <bean id="shibboleth.authn.LDAP.returnAttributes" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray">
+    <bean id="shibboleth.authn.LDAP.returnAttributes" parent="shibboleth.CommaDelimStringArray">
         <constructor-arg type="java.lang.String" value="%{idp.authn.LDAP.returnAttributes}" />
     </bean>
 

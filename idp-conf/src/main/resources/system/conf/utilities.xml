@@ -14,9 +14,15 @@
 
     <bean id="shibboleth.Pair" class="net.shibboleth.utilities.java.support.collection.Pair" abstract="true" />
     
-    <bean id="shibboleth.Conditions.AND" class="com.google.common.base.Predicates" factory-method="and" abstract="true" />
-    <bean id="shibboleth.Conditions.NOT" class="com.google.common.base.Predicates" factory-method="not" abstract="true" />
-    <bean id="shibboleth.Conditions.OR" class="com.google.common.base.Predicates" factory-method="or" abstract="true" />
+    <bean id="shibboleth.CommaDelimStringArray"
+        class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray" abstract="true" />
+    
+    <bean id="shibboleth.Conditions.AND"
+        class="com.google.common.base.Predicates" factory-method="and" abstract="true" />
+    <bean id="shibboleth.Conditions.NOT"
+        class="com.google.common.base.Predicates" factory-method="not" abstract="true" />
+    <bean id="shibboleth.Conditions.OR"
+        class="com.google.common.base.Predicates" factory-method="or" abstract="true" />
     
     <bean id="shibboleth.Conditions.RelyingPartyId"
         class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate" abstract="true" />
