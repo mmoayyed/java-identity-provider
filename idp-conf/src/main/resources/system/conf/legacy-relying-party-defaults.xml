@@ -81,4 +81,12 @@
         </constructor-arg>
     </bean>
     
+    <!--
+    This bean isn't used, but is required in order to allow SignatureValidationFilters in a legacy
+    config to be parsed (and then ignored).
+    -->
+    
+    <bean id="shibboleth.MetadataSignatureValidationStaticCriteria" 
+        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SignatureValidationCriteriaSetFactoryBean" />
+    
 </beans>
