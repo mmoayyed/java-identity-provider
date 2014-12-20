@@ -99,6 +99,9 @@ public class SAML2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
                             public Object getValue() {
                                 return intArray;
                             }
+                            public String getDisplayValue() {
+                                return intArray.toString();
+                            }
                         });
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);

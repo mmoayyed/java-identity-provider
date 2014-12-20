@@ -109,6 +109,9 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
             public Object getValue() {
                 return intArray;
             }
+            public String getDisplayValue() {
+                return intArray.toString();
+            }
         }, saml2NameIdFor(OTHERID));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);

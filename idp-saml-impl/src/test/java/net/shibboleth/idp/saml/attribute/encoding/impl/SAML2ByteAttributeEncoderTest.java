@@ -81,6 +81,9 @@ public class SAML2ByteAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
                             public Object getValue() {
                                 return intArray;
                             }
+                            public String getDisplayValue() {
+                                return intArray.toString();
+                            }
                         });
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

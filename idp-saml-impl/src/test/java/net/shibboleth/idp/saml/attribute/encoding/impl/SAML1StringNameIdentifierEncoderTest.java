@@ -110,6 +110,9 @@ public class SAML1StringNameIdentifierEncoderTest extends OpenSAMLInitBaseTestCa
             @Nonnull public String getValue() {
                 return null;
             }
+            public String getDisplayValue() {
+                return null;
+            }
         };
 
         attribute.setValues(Collections.singleton(empty));
@@ -124,6 +127,9 @@ public class SAML1StringNameIdentifierEncoderTest extends OpenSAMLInitBaseTestCa
             @Override
             @Nonnull public Integer getValue() {
                 return new Integer(3);
+            }
+            public String getDisplayValue() {
+                return "3";
             }
         };
 

@@ -116,6 +116,9 @@ public class SAML2StringNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
             @Nonnull public String getValue() {
                 return null;
             }
+            public String getDisplayValue() {
+                return null;
+            }
         };
 
         attribute.setValues(Collections.singleton(empty));
@@ -130,6 +133,9 @@ public class SAML2StringNameIDEncoderTest extends OpenSAMLInitBaseTestCase {
             @Override
             @Nonnull public Integer getValue() {
                 return new Integer(3);
+            }
+            public String getDisplayValue() {
+                return "3";
             }
         };
 
