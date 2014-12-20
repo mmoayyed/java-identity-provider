@@ -19,66 +19,50 @@
     "Unverified" typically means the IdP has no metadata, or equivalent way of assuring the identity and
     legitimacy of a requesting system. To run an "open" IdP, you can enable profiles here.
     -->
-    
     <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
-            <util:list>
+            <list>
             <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
-            </util:list>
+            </list>
         </property>
     </bean>
 
-    <!-- Default configuration, with default settings applied for all profiles. -->
-
+    <!--
+    Default configuration, with default settings applied for all profiles, and enables
+    the attribute-release consent flow.
+    -->
     <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
-            <util:list>
-                <ref bean="Shibboleth.SSO" />
+            <list>
+                <bean parent="Shibboleth.SSO" p:postAuthenticationFlows="attribute-release" />
                 <ref bean="SAML1.AttributeQuery" />
                 <ref bean="SAML1.ArtifactResolution" />
-                <ref bean="SAML2.SSO" />
+                <bean parent="SAML2.SSO" p:postAuthenticationFlows="attribute-release" />
                 <ref bean="SAML2.ECP" />
                 <ref bean="SAML2.Logout" />
                 <ref bean="SAML2.AttributeQuery" />
                 <ref bean="SAML2.ArtifactResolution" />
-            </util:list>
+            </list>
         </property>
     </bean>
 
+    <!-- Container for any overrides you want to add. -->
+
     <util:list id="shibboleth.RelyingPartyOverrides">
     
+        <!--
+        Override example that identifies a single RP by name and configures it
+        for SAML 2 SSO without encryption. This is a common "vendor" scenario.
+        -->
+        <!--
         <bean parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org">
             <property name="profileConfigurations">
-                <util:list>
-                    <bean parent="Shibboleth.SSO" p:includeAttributeStatement="true">
-                        <!--
-                        <property name="defaultAuthenticationMethods">
-                            <util:list>
-                                <bean parent="shibboleth.SAML1AuthenticationMethod"
-                                    c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
-                            </util:list>
-                        </property>
-                        -->
-                    </bean>
-                    <ref bean="SAML1.AttributeQuery" />
-                    <ref bean="SAML1.ArtifactResolution" />
-                    <bean parent="SAML2.SSO">
-                        <!--
-                        <property name="defaultAuthenticationMethods">
-                            <util:list>
-                                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
-                            </util:list>
-                        </property>
-                        -->
-                    </bean>
-                    <ref bean="SAML2.ECP" />
-                    <ref bean="SAML2.Logout" />
-                    <ref bean="SAML2.AttributeQuery" />
-                    <ref bean="SAML2.ArtifactResolution" />
-                </util:list>
+                <list>
+                    <bean parent="SAML2.SSO" p:encryptAssertions="false" />
+                </list>
             </property>
         </bean>
+        -->
         
     </util:list>
 

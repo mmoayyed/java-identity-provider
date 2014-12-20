@@ -61,12 +61,10 @@
                 <input type="checkbox" name="donotcache" value="1"> #springMessageText("idp.login.donotcache", "Don't Remember Login")
               </div>
 
-              <!--
               <div class="form-element-wrapper">
                 <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true">
                 #springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")
               </div>
-              -->
 
               <div class="form-element-wrapper">
                 <button class="form-element form-button" type="submit" name="_eventId_proceed">#springMessageText("idp.login.login", "Login")</button>
