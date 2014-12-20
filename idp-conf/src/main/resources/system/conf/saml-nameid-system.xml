@@ -19,16 +19,19 @@
     <bean id="shibboleth.SAML1AttributeSourcedGenerator" abstract="true"
         class="net.shibboleth.idp.saml.nameid.impl.AttributeSourcedSAML1NameIdentifierGenerator" />
 
-    <!-- The actual plugins for generarating transient and persistent identifiers. -->
+    <!-- The actual plugins for generating transient and persistent identifiers. -->
 
     <bean id="shibboleth.SAML2TransientGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.TransientSAML2NameIDGenerator"
         p:transientIdGenerator-ref="%{idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
 
     <bean id="shibboleth.SAML2PersistentGenerator" lazy-init="true"
-        class="net.shibboleth.idp.saml.nameid.impl.PersistentSAML2NameIDGenerator"
-        p:attributeSourceIds="#{ { %{idp.persistentId.sourceAttribute:} } }"
-        p:persistentIdGenerator-ref="%{idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}" />
+            class="net.shibboleth.idp.saml.nameid.impl.PersistentSAML2NameIDGenerator"
+            p:persistentIdGenerator-ref="%{idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}">
+        <property name="attributeSourceIds">
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.persistentId.sourceAttribute:}" />
+        </property>
+    </bean>
 
     <bean id="shibboleth.SAML1TransientGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.TransientSAML1NameIdentifierGenerator"
