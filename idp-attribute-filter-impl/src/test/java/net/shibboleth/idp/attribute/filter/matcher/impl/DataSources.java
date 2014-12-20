@@ -59,6 +59,9 @@ public abstract class DataSources {
         @Override @Nonnull public Object getValue() {
             return TEST_STRING;
         }
+        public String getDisplayValue() {
+            return TEST_STRING;
+        }
     };
 
     public static AttributeFilterContext populatedFilterContext(String principal, String issuerID, String recipientId) {
