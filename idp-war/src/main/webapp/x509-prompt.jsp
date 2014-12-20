@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <%@ taglib uri="urn:mace:shibboleth:2.0:idp:ui" prefix="idpui" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="org.opensaml.profile.context.ProfileRequestContext" %>
