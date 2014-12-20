@@ -24,6 +24,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.saml.saml2.core.NameIDType;
 
 import com.google.common.base.MoreObjects;
 
@@ -51,6 +52,9 @@ public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String getDisplayValue() {
+        if (value instanceof NameIDType) {
+            return ((NameIDType) value).getValue();
+        }
         return "(XML data)";
     }
 
