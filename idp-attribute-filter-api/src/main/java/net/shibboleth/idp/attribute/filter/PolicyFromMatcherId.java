@@ -80,7 +80,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
     @Override
     @Nonnull public Tristate matches(@Nonnull AttributeFilterContext context) {
         
-        log.info("{} Applying matcher supplied as policy to all values of attribute {}", getLogPrefix(), attributeId);
+        log.debug("{} Applying matcher supplied as policy to all values of attribute {}", getLogPrefix(), attributeId);
 
         final IdPAttribute attribute = context.getPrefilteredIdPAttributes().get(attributeId);
         
