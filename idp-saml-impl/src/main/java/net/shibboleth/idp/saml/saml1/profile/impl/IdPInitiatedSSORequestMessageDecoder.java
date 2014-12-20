@@ -76,9 +76,15 @@ public class IdPInitiatedSSORequestMessageDecoder extends
      * Populate the context which carries information specific to this binding.
      * 
      * @param messageContext the current message context
+     * 
+     * @throws MessageDecodingException if the message content is invalid
      */
-    protected void populateBindingContext(@Nonnull final MessageContext<IdPInitiatedSSORequest> messageContext) {
+    protected void populateBindingContext(@Nonnull final MessageContext<IdPInitiatedSSORequest> messageContext)
+        throws MessageDecodingException {
         final String relayState = messageContext.getMessage().getRelayState();
+        if (relayState == null) {
+            throw new MessageDecodingException("Legacy Shibboleth authentication requests require a target parameter");
+        }
         log.debug("Decoded SAML relay state: {}", relayState);
         
         SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);

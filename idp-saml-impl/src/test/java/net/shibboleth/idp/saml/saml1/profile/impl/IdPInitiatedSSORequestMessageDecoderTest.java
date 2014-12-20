@@ -103,4 +103,12 @@ public class IdPInitiatedSSORequestMessageDecoderTest {
         Assert.assertEquals(msgInfoContext.getMessageId(), messageID, "Incorrect decoded message ID value in message info context");
     }
 
+    @Test(expectedExceptions=MessageDecodingException.class)
+    public void testMissingTarget() throws MessageDecodingException {
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM,  entityId);
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.SHIRE_PARAM,  acsUrl);
+        request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TIME_PARAM,  time.toString());
+        
+        decoder.decode();
+    }
 }
