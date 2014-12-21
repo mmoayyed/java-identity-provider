@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.test.flows.saml1;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -492,17 +494,42 @@ public class SAML1TestResponseValidator {
         Assert.assertFalse(attributes.isEmpty());
         Assert.assertEquals(attributes.size(), usedAttributeDesignators ? 2 : 4);
 
+        // Ignore attribute ordering
+        final Map<String, Attribute> actualAttributes = new HashMap<>();
+        for (final Attribute attribute : attributes) {
+            actualAttributes.put(attribute.getAttributeName(), attribute);
+        }
+
         if (usedAttributeDesignators) {
-            assertAttribute(attributes.get(0), "urn:mace:dir:attribute-def:mail", "jdoe@example.org");
+            final Attribute actualMailAttribute = actualAttributes.get("urn:mace:dir:attribute-def:mail");
+            Assert.assertNotNull(actualMailAttribute);
+            assertAttribute(actualMailAttribute, "urn:mace:dir:attribute-def:mail", "jdoe@example.org");
+
             // The scope here is in a separate XML attribute, so not in the element content.
-            assertAttribute(attributes.get(1), "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "member");
+            final Attribute actualEPSAAttribute =
+                    actualAttributes.get("urn:mace:dir:attribute-def:eduPersonScopedAffiliation");
+            Assert.assertNotNull(actualEPSAAttribute);
+            assertAttribute(actualEPSAAttribute, "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "member");
         } else {
-            assertAttribute(attributes.get(0), "urn:mace:dir:attribute-def:uid", "jdoe");
-            assertAttribute(attributes.get(1), "urn:mace:dir:attribute-def:mail", "jdoe@example.org");
+            final Attribute actualUidAttribute = actualAttributes.get("urn:mace:dir:attribute-def:uid");
+            Assert.assertNotNull(actualUidAttribute);
+            assertAttribute(actualUidAttribute, "urn:mace:dir:attribute-def:uid", "jdoe");
+
+            final Attribute actualMailAttribute = actualAttributes.get("urn:mace:dir:attribute-def:mail");
+            Assert.assertNotNull(actualMailAttribute);
+            assertAttribute(actualMailAttribute, "urn:mace:dir:attribute-def:mail", "jdoe@example.org");
+
             // The scope here is in a separate XML attribute, so not in the element content.
-            assertAttribute(attributes.get(2), "urn:mace:dir:attribute-def:eduPersonPrincipalName", "jdoe");
+            final Attribute actualEPPNAttribute =
+                    actualAttributes.get("urn:mace:dir:attribute-def:eduPersonPrincipalName");
+            Assert.assertNotNull(actualEPPNAttribute);
+            assertAttribute(actualEPPNAttribute, "urn:mace:dir:attribute-def:eduPersonPrincipalName", "jdoe");
+
             // The scope here is in a separate XML attribute, so not in the element content.
-            assertAttribute(attributes.get(3), "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "member");
+            final Attribute actualEPSAAttribute =
+                    actualAttributes.get("urn:mace:dir:attribute-def:eduPersonScopedAffiliation");
+            Assert.assertNotNull(actualEPSAAttribute);
+            assertAttribute(actualEPSAAttribute, "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "member");
         }
     }
 
