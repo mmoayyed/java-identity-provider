@@ -9,7 +9,7 @@ A wealth of information about Shibboleth can be found at
 http://shibboleth.net/
 
 Shibboleth is divided into identity and service provider components, with the
-IdP in Java and the SP (this software) in C++.
+IdP (this software) in Java and the SP in C++.
 
 Source and binary distributions are available from
 http://shibboleth.net/downloads/
