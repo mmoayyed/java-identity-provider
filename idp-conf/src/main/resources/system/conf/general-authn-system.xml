@@ -35,14 +35,14 @@
             p:lifetime="%{idp.authn.defaultLifetime:PT60M}"
             p:inactivityTimeout="%{idp.authn.defaultTimeout:PT30M}">
         <property name="supportedPrincipals">
-            <util:list>
+            <list>
                 <bean parent="shibboleth.SAML2AuthnContextClassRef"
                     c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
                 <bean parent="shibboleth.SAML2AuthnContextClassRef"
                     c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
                 <bean parent="shibboleth.SAML1AuthenticationMethod"
                     c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
-            </util:list>
+            </list>
         </property>
     </bean>
 
@@ -53,10 +53,10 @@
     <bean id="shibboleth.DefaultAuthenticationResultSerializer"
             class="net.shibboleth.idp.authn.impl.DefaultAuthenticationResultSerializer">
         <property name="principalSerializers">
-            <util:list>
+            <list>
                 <bean class="net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer" />
-            </util:list>
+            </list>
         </property>
         <property name="genericPrincipalSerializer.symbolics">
             <map>
