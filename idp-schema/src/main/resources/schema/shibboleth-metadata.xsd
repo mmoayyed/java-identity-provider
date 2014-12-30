@@ -139,14 +139,12 @@
                 </attribute>
                 <attribute name="disregardSslCertificate" type="string">
                     <annotation>
-                        <documentation>This is deprecated, use disregardTLSCertificate instead.
-                        </documentation>
+                        <documentation>This is deprecated, use disregardTLSCertificate instead.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="disregardTLSCertificate" type="string">
                     <annotation>
-                        <documentation>Server certificate will be ignored when fetching from an HTTPS source.
-                        </documentation>
+                        <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="maintainExpiredMetadata" type="string">
@@ -163,14 +161,14 @@
                     <annotation>
                         <documentation>
                             The maximum length of time to wait for the remote server to response.
-
                             Timeout is expressed in ISO8601 duration notation.
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="proxyHost" type="string">
                     <annotation>
-                        <documentation>Hostname of the HTTP proxy through which connections will be made.
+                        <documentation>
+                            Hostname of the HTTP proxy through which connections will be made.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -207,9 +205,7 @@
                 </attribute>
                 <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
                     <annotation>
-                        <documentation>
-                            The type of HttpClient caching to perform. Defaults to 'none'.
-                        </documentation>
+                        <documentation>The type of HttpClient caching to perform. Defaults to 'none'.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="httpCacheDirectory" type="string">
@@ -221,16 +217,12 @@
                 </attribute>
                 <attribute name="httpMaxCacheEntries" type="string">
                     <annotation>
-                        <documentation>
-                            The maximum number of responses to cache.
-                        </documentation>
+                        <documentation>The maximum number of responses to cache.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="httpMaxCacheEntrySize" type="string">
                     <annotation>
-                        <documentation>
-                            The maximum response body size which may be cached, in bytes.
-                        </documentation>
+                        <documentation>The maximum response body size which may be cached, in bytes.</documentation>
                     </annotation>
                 </attribute>
                 <!-- Need to deal with socket factory -->
@@ -288,10 +280,10 @@
                     <element name="Template">
                         <annotation>
                             <documentation>
-                                Constructs the metadata request URL by means of a simple transform on the template specified by this element.
-                                The entityID is substituted into the template parameter "${entityID}".
-                                If the element contains an encoded attribute set to "false", the value will be replaced directly, 
-                                otherwise it will be URL-encoded.
+                                Constructs the metadata request URL by means of a simple transform on the
+                                template specified by this element. The entityID is substituted into the
+                                template parameter "${entityID}". If the element contains an encoded attribute
+                                set to "false", the value will be replaced directly, otherwise it will be URL-encoded.
                             </documentation>
                         </annotation>
                         <complexType>
@@ -299,13 +291,16 @@
                                 <extension base="string">
                                     <attribute name="velocityEngine" type="string">
                                         <annotation>
-                                            <documentation>Name of the Velocity Engine defined within the application.</documentation>
+                                            <documentation>
+                                                Name of the Velocity Engine defined within the application.
+                                            </documentation>
                                         </annotation>
                                     </attribute>
                                     <attribute name="encoded" type="string">
                                         <annotation>
                                             <documentation>
-                                                Boolean flag indicating whether the entityID should be encoded before substitution into the template.
+                                                Boolean flag indicating whether the entityID should be encoded
+                                                before substitution into the template.
                                             </documentation>
                                         </annotation>
                                     </attribute>
@@ -389,36 +384,33 @@
                 </attribute>
                 <attribute name="supportedContentTypes" type="shibmd:MIMETypeListType">
                     <annotation>
-                        <documentation>MIME types which are supported by this provider when requesting metadata from the HTTP server.
-                          The HTTP response Content-Type will also be validated against this list.
+                        <documentation>
+                            MIME types which are supported by this provider when requesting metadata from the
+                            HTTP server. The HTTP response Content-Type will also be validated against this list.
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="disregardSslCertificate" type="string">
                     <annotation>
-                        <documentation>This is deprecated, use disregardTLSCertificate instead.
-                        </documentation>
+                        <documentation>This is deprecated, use disregardTLSCertificate instead.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="disregardTLSCertificate" type="string">
                     <annotation>
-                        <documentation>Server certificate will be ignored when fetching from an HTTPS source.
-                        </documentation>
+                        <documentation>Server certificate will be ignored when using an HTTPS source.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="requestTimeout" type="string">
                     <annotation>
                         <documentation>
                             The maximum length of time to wait for the remote server to response.
-
                             Timeout is expressed in ISO8601 duration notation.
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="proxyHost" type="string">
                     <annotation>
-                        <documentation>Hostname of the HTTP proxy through which connections will be made.
-                        </documentation>
+                        <documentation>Hostname of the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="proxyPort" type="string">
@@ -428,14 +420,12 @@
                 </attribute>
                 <attribute name="proxyUser" type="string">
                     <annotation>
-                        <documentation>User name used with the HTTP proxy through which connections will be made.
-                        </documentation>
+                        <documentation>User name for the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="proxyPassword" type="string">
                     <annotation>
-                        <documentation>Password used with the HTTP proxy through which connections will be made.
-                        </documentation>
+                        <documentation>Password for the HTTP proxy through which connections will be made.</documentation>
                     </annotation>
                 </attribute>
                 <attribute name="basicAuthUser" type="string">
@@ -520,26 +510,34 @@
                 </attribute>
                 <attribute name="refreshDelayFactor" type="string">
                     <annotation>
-                        <documentation>Factor applied to metadata's expiration time in order to determine next refresh
-                            time. Must be between 0.0 and 1.0, exclusive.</documentation>
+                        <documentation>
+                            Factor applied to metadata's expiration time in order to determine next refresh
+                            time. Must be between 0.0 and 1.0, exclusive.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="minCacheDuration" type="string">
                     <annotation>
-                        <documentation>The minimum duration for which metadata will be cached before it is refreshed.
-                           This value is expressed in ISO8601 duration notation.</documentation>
+                        <documentation>
+                            The minimum duration for which metadata will be cached before it is refreshed.
+                            This value is expressed in ISO8601 duration notation.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="maxCacheDuration" type="string">
                     <annotation>
-                        <documentation>The maximum duration for which metadata will be cached before it is refreshed.
-                           This value is expressed in ISO8601 duration notation.</documentation>
+                        <documentation>
+                            The maximum duration for which metadata will be cached before it is refreshed.
+                            This value is expressed in ISO8601 duration notation.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="maxIdleEntityData" type="string">
                     <annotation>
-                        <documentation>The maximum duration for which metadata will be allowed to be idle (no requests for it) 
-                        before it is removed from the cache. This value is expressed in ISO8601 duration notation.</documentation>
+                        <documentation>
+                            The maximum duration for which metadata will be allowed to be idle (no requests for it) 
+                            before it is removed from the cache. This value is expressed in ISO8601 duration notation.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="removeIdleEntityData" type="string">
@@ -549,9 +547,11 @@
                 </attribute>
                 <attribute name="cleanupTaskInterval" type="string">
                     <annotation>
-                        <documentation>The interval at which the intern cleanup task should run.  This task performs
+                        <documentation>
+                            The interval at which the intern cleanup task should run.  This task performs
                             background maintenance tasks, such as the removal of expired and idle metadata.
-                            This value is expressed in ISO8601 duration notation.</documentation>
+                            This value is expressed in ISO8601 duration notation.
+                        </documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -576,19 +576,23 @@
                 </attribute>
                 <attribute name="refreshDelayFactor" type="string">
                     <annotation>
-                        <documentation>Factor applied to metadata's expiration time in order to determine next refresh
-                            time. Must be between 0.0 and 1.0, exclusive.</documentation>
+                        <documentation>
+                            Factor applied to metadata's expiration time in order to determine next refresh
+                            time. Must be between 0.0 and 1.0, exclusive.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="maxRefreshDelay" type="string">
                     <annotation>
-                        <documentation>Maximum amount time, from the previous, before a metadata refresh cycle runs.
+                        <documentation>
+                            Maximum amount time, from the previous, before a metadata refresh cycle runs.
                         </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="minRefreshDelay" type="string">
                     <annotation>
-                        <documentation>Minimum amount of time, from the previous, before a metadata refresh cycle runs.
+                        <documentation>
+                            Minimum amount of time, from the previous, before a metadata refresh cycle runs.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -597,25 +601,23 @@
     </complexType>
 
     <complexType name="MetadataProviderType" abstract="true">
-        <sequence>
-            <element ref="shibmd:MetadataFilter" minOccurs="0" maxOccurs="unbounded">
+        <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="shibmd:MetadataFilter">
                 <annotation>
                     <documentation>
                         A filter to be applied to metadata after it has been parsed and validated.
                     </documentation>
                 </annotation>
             </element>
-            <element ref="security:TrustEngine" minOccurs="0" maxOccurs="unbounded">
+            <element ref="security:TrustEngine">
                 <annotation>
-                    <documentation>
-                       Trust engines used by a filter
-                    </documentation>
+                    <documentation>Trust engines used by a filter.</documentation>
                 </annotation>
             </element>
-        </sequence>
+        </choice>
         <attribute name="id" type="ID" use="required">
             <annotation>
-                <documentation>A unique identifier that may be used to identify a particular provider</documentation>
+                <documentation>A unique identifier that may be used to identify a particular provider.</documentation>
             </annotation>
         </attribute>
         <attribute name="requireValidMetadata" type="string">
@@ -629,16 +631,19 @@
         </attribute>
         <attribute name="failFastInitialization" type="string">
             <annotation>
-                <documentation>Determines if the metadata provider "fails fast" during initialization. This means that
+                <documentation>
+                    Determines if the metadata provider "fails fast" during initialization. This means that
                     if there is a problem initializing the metadata provider it will stop the IdP from starting.
                 </documentation>
             </annotation>
         </attribute>
         <attribute name="sortKey" type="string">
             <annotation>
-                <documentation>This Integer value determines the processing order for top level Metadata providers.  A top level metadata provider 
-                   is either the topmost element in a file or the single metadata provider inside a RelyinPartyGroup.  The metadata processing
-                   consults the provider tree with the lowest sortKey first. 
+                <documentation>
+                    This Integer value determines the processing order for top level Metadata providers.
+                    A top level metadata provider is either the topmost element in a file or the single
+                    metadata provider inside a RelyinPartyGroup.  The metadata processing consults the
+                    provider tree with the lowest sortKey first. 
                 </documentation>
             </annotation>
         
@@ -731,9 +736,7 @@
                 <sequence>
                     <element name="PublicKey" type="string" minOccurs="0" maxOccurs="1">
                         <annotation>
-                            <documentation>
-                                The PEM of the public key used to sign the metadata.
-                            </documentation>
+                            <documentation>The PEM of the public key used to sign the metadata.</documentation>
                         </annotation>
                     </element>
                 </sequence>
@@ -758,19 +761,25 @@
                 </attribute>
                 <attribute name="defaultCriteriaRef" type="string">
                     <annotation>
-                        <documentation>The ID of the optional set of static criteria supplied to the trust engine.</documentation>
+                        <documentation>
+                            The ID of the optional set of static criteria supplied to the trust engine.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="signaturePrevalidatorRef" type="string">
                     <annotation>
-                        <documentation>The ID of the optional signature prevalidator used to validate some non-cryptographic aspects
-                            of the signature, prior to cryptographic verification.</documentation>
+                        <documentation>
+                            The ID of the optional signature prevalidator used to validate some
+                            non-cryptographic aspects of the signature, prior to cryptographic verification.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="dynamicTrustedNamesStrategyRef" type="string">
                     <annotation>
-                        <documentation>The ID of the optional strategy used to build at runtime the set of dynamic PKIX trusted names supplied
-                             to the trust engine via the passed criteria set.</documentation>
+                        <documentation>
+                            The ID of the optional strategy used to build at runtime the set of dynamic
+                            PKIX trusted names supplied to the trust engine via the passed criteria set.
+                        </documentation>
                     </annotation>
                 </attribute>
             </extension>
@@ -947,9 +956,7 @@
                 <sequence>
                     <element ref="shibmd:MetadataNodeProcessor" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
-                            <documentation>
-                                A node processor to be applied.
-                            </documentation>
+                            <documentation>A node processor to be applied.</documentation>
                         </annotation>
                     </element>
                 </sequence>
