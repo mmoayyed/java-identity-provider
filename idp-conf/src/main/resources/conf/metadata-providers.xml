@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This file is an EXAMPLE metadata configuration file. -->
 <MetadataProvider id="ShibbolethMetadata" xsi:type="ChainingMetadataProvider"
-	xmlns="urn:mace:shibboleth:2.0:metadata" xmlns:resource="urn:mace:shibboleth:2.0:resource"
+	xmlns="urn:mace:shibboleth:2.0:metadata"
+    xmlns:resource="urn:mace:shibboleth:2.0:resource"
 	xmlns:security="urn:mace:shibboleth:2.0:security"
-	xmlns:samlmd="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
                         urn:mace:shibboleth:2.0:resource http://shibboleth.net/schema/idp/shibboleth-resource.xsd 
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
@@ -15,9 +17,9 @@
 	<!--  Below you place the mechanisms which define how to load the metadata for the SP you will  -->
 	<!--  provide a service to.                                                                     -->
     <!--                                                                                            -->
-    <!--  Two examples are provided.  The Shibboleth Documentation                                  -->
-    <!--  https://wiki.shibboleth.net/confluence/display/SHIB2/IdPMetadataProvider provides more    -->
-    <!--  details.                                                                                  -->	
+    <!--  Two examples are provided.  The Shibboleth Documentation at                               -->
+    <!--  https://wiki.shibboleth.net/confluence/display/IDP30/MetadataConfiguration                -->
+    <!--  provides more details.                                                                    -->	
     <!--                                                                                            -->
     <!--  NOTE.  This file SHOULD NOT contain the metadata for this IdP.                            -->
     <!--                                                                                            -->
@@ -34,7 +36,7 @@
 	     that you will interoperate with. 
     
 	<MetadataProvider id="HTTPMetadata"
-	                  xsi:type="metadata:FileBackedHTTPMetadataProvider"
+	                  xsi:type="FileBackedHTTPMetadataProvider"
                       backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
                       metadataURL="http://WHATEVER"> 
         
