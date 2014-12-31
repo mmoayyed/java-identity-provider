@@ -22,14 +22,14 @@
     <bean id="shibboleth.BetterClassRefMatchFactory" parent="shibboleth.InexactMatchFactory">
         <!--
         <property name="matchingRules">
-            <util:map>
+            <map>
                 <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:Password">
                     <list>
                         <value>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</value>
                         <value>urn:oasis:names:tc:SAML:2.0:ac:classes:TimeSyncToken</value>
                     </list>
                 </entry>
-            </util:map>
+            </map>
         </property>
         -->
     </bean>
