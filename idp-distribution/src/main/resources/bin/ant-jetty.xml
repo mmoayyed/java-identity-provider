@@ -8,9 +8,7 @@
 
         TARGETS:
 
-        	The following top level target is.  This in turn calls subsidiary targets.
-
-       		install:
+        	The only top level target is "install".  This in turn calls subsidiary targets.
 
         PROPERTIES:
 
