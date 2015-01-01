@@ -104,7 +104,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         // <SecurityPolicy> (warn and ignore).
         final List<Element> policies = configChildren.get(SecurityNamespaceHandler.SECURITY_POLICY_NAME);
         if (null != policies && !policies.isEmpty()) {
-            log.warn("{}: {} Occurence(s of unsupported <SecurityPolicy/> elements have been ignored", parserContext
+            log.warn("{}: {} occurrence(s) of unsupported <SecurityPolicy/> elements have been ignored", parserContext
                     .getReaderContext().getResource().getDescription(), policies.size());
         }
 
