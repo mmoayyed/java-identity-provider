@@ -47,11 +47,17 @@
         The property idp.noprompt will cause a failure rather than a prompt.
     -->
 
+    <macrodef name="TGT" description="log the invocation of an Ant target">
+        <text name="t" description="name of the target being invoked"/>
+        <sequential>
+            <echo append="true" file="idp_ant.log">target: @{t}${line.separator}</echo>
+        </sequential>
+    </macrodef>
+
     <target name="init">
         <tstamp />
         <hostinfo />
-        <echo append="true" file="idp_ant.log">target: Init
-        </echo>
+        <TGT>init</TGT>
     </target>
 
     <target name="install" depends="init, preload, getsource, gettarget, v2v3prepopulate, allinput, copy-distribution, copy-jetty-distribution, install-nocopy, tidy" />
@@ -59,28 +65,24 @@
 
     <!-- USER INPUT -->
     <target name="preload" if="idp.property.file">
-       <echo append="true" file="idp_ant.log">target: Preload
-       </echo>
-       <property file="${idp.property.file}"/>
+        <TGT>preload</TGT>
+        <property file="${idp.property.file}"/>
     </target>
     <target name="allinput" depends="gettarget, checkproperties, gethostname, getentityid, geturisubjectaltname, setscope, askscope, getkeystorepassword, getsealerpassword, getsealeralias" />
 
     <target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
-        <echo append="true" file="idp_ant.log">target: gethostname
-        </echo>
+        <TGT>gethostname</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <input message="Hostname:" addproperty="idp.host.name" defaultvalue="${NAME}.${DOMAIN}" />
     </target>
 
     <target name="geturisubjectaltname" if="idp.generate.altname" depends="checkproperties, gethostname">
-        <echo append="true" file="idp_ant.log">target: geturisubjectname
-        </echo>
+        <TGT>geturisubjectname</TGT>
         <property name="idp.uri.subject.alt.name" value="https://${idp.host.name}/idp/shibboleth" />
     </target>
 
     <target name="getkeystorepassword" if="idp.ask.keystore.password" depends="checkproperties">
-        <echo append="true" file="idp_ant.log">target: getkeystorepassword
-        </echo>
+        <TGT>getkeystorepassword</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <input message="TLS Private Key Password: " addproperty="idp.keystore.password">
             <handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
@@ -88,8 +90,7 @@
     </target>
 
     <target name="getsealerpassword" if="idp.ask.sealer.password" depends="checkproperties">
-        <echo append="true" file="idp_ant.log">target: getsealerpassword
-        </echo>
+        <TGT>getsealerpassword</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <input message="Cookie Encryption Key Password: " addproperty="idp.sealer.password">
             <handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
@@ -103,8 +104,7 @@
     </target>
 
     <target name="getsealeralias" if="idp.ask.sealer.alias" depends="checkproperties">
-        <echo append="true" file="idp_ant.log">target: getsealeralias
-        </echo>
+        <TGT>getsealeralias</TGT>
         <!--
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <input message="Sealer Alias" addproperty="idp.sealer.alias" defaultvalue="secret"/>
@@ -113,8 +113,7 @@
     </target>
 
     <target name="getsource" unless="idp.src.dir">
-        <echo append="true" file="idp_ant.log">target: getsource
-        </echo>
+        <TGT>getsource</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <input message="Source (Distribution) Directory:" addproperty="idp.src.dir" defaultvalue="${basedir}" />
     </target>
@@ -134,35 +133,30 @@
     </target>
 
     <target name="target-src-default" unless="idp.src.dir.present">
-        <echo append="true" file="idp_ant.log">target: target-src-default
-        </echo>
+        <TGT>target-src-default</TGT>
         <!-- if the source isn't set up then the default is basedir -->
         <property name="idp.target.default" value="${basedir}" />
     </target>
 
     <target name="target-nosrc-default" if="idp.src.dir.present">
-        <echo append="true" file="idp_ant.log">target: target-nosrc-default
-        </echo>
+        <TGT>target-nosrc-default</TGT>
         <!-- if the source is set up then the default must not be basedir -->
         <property name="idp.target.default" value="/opt/shibboleth-idp" />
     </target>
 
     <target name="prompttarget" if="idp.ask.target">
-        <echo append="true" file="idp_ant.log">target: prompttarget
-        </echo>
+        <TGT>prompttarget</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <input message="Installation Directory:" addproperty="idp.target.dir" defaultvalue="${idp.target.default}" />
     </target>
 
     <target name="settarget" if="idp.set.target">
-        <echo append="true" file="idp_ant.log">target: settarget
-        </echo>
+        <TGT>settarget</TGT>
         <property name="idp.target.dir" value="${basedir}" />
     </target>
 
     <target name="getentityid" if="idp.ask.entityid" depends="checkproperties">
-        <echo append="true" file="idp_ant.log">target: getentityid
-        </echo>
+        <TGT>getentityid</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <local name="entityid" />
         <input message="SAML EntityID:" addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
@@ -172,8 +166,7 @@
     </target>
 
     <target name="setscope" if="idp.set.scope" depends="checkproperties">
-        <echo append="true" file="idp_ant.log">target: setscope
-        </echo>
+        <TGT>setscope</TGT>
         <property name="idp.scope" value="${DOMAIN}"/>
         <echo file="${idp.merge.properties}" append="yes">
            idp.scope=${idp.scope}
@@ -181,8 +174,7 @@
     </target>
 
     <target name="askscope" if="idp.ask.scope" depends="checkproperties">
-        <echo append="true" file="idp_ant.log">target: askscope
-        </echo>
+        <TGT>askscope</TGT>
         <input message="Attribute Scope:" addproperty="idp.scope" defaultvalue="${DOMAIN}" />
         <echo file="${idp.merge.properties}" append="yes">
            idp.scope=${idp.scope}
@@ -196,8 +188,7 @@
     <target name="genkeys" depends="init, preload, checkproperties, signing-key, encryption-key, backchannel-key, sealer" />
 
     <target name="checkproperties" depends="gettarget, v2detect, target-properties">
-        <echo append="true" file="idp_ant.log">target: checkproperties
-        </echo>
+        <TGT>checkproperties</TGT>
         <condition property="idp.metadata.present">
             <or>
                 <istrue value="${idp.is.V2}" />
@@ -324,8 +315,7 @@
     </target>
 
     <target name="target-properties">
-        <echo append="true" file="idp_ant.log">target: target-properties
-        </echo>
+        <TGT>target-properties</TGT>
         <condition property="idp.ask.target">
             <and>
                 <not>
@@ -364,8 +354,7 @@
     </target>
 
     <target name="signing-key" unless="idp.relying.party.present" depends="gethostname, geturisubjectaltname">
-        <echo append="true" file="idp_ant.log">target: signing-key
-        </echo>
+        <TGT>signing-key</TGT>
         <echo>Generating Signing Key, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
         <selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-signing.key" certificateFile="${idp.target.dir}/credentials/idp-signing.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
@@ -373,8 +362,7 @@
     </target>
 
     <target name="encryption-key" unless="idp.relying.party.present" depends="gethostname, geturisubjectaltname">
-        <echo append="true" file="idp_ant.log">target: encryption-key
-        </echo>
+        <TGT>encryption-key</TGT>
         <echo>Creating Encryption Key, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
         <selfsignedcert hostname="${idp.host.name}" privateKeyFile="${idp.target.dir}/credentials/idp-encryption.key" certificateFile="${idp.target.dir}/credentials/idp-encryption.crt" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
@@ -382,8 +370,7 @@
     </target>
 
     <target name="backchannel-key" unless="idp.relying.party.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
-        <echo append="true" file="idp_ant.log">target: backchannel-key
-        </echo>
+        <TGT>backchannel-key</TGT>
         <echo>Creating TLS keystore, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
         <selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/credentials/idp-backchannel.p12" certificateFile="${idp.target.dir}/credentials/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
@@ -391,8 +378,7 @@
     </target>
 
     <target name="sealer" unless="idp.sealer.present" depends="getsealerpassword, getsealeralias">
-        <echo append="true" file="idp_ant.log">target: sealer
-        </echo>
+        <TGT>sealer</TGT>
         <echo>Creating cookie encryption key files...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
         <keystorestrategy keystoreFile="${idp.target.dir}/credentials/sealer.jks" versionFile="${idp.target.dir}/credentials/sealer.kver" keyAlias="${idp.sealer.alias}" keystorePassword="${idp.sealer.password}" />
@@ -404,8 +390,7 @@
     -->
 
     <target name="upgrade" depends="editproperties, editservicesproperties, editnameidproperties, editldapproperties, handleeditwebapp">
-        <echo append="true" file="idp_ant.log">target: upgrade
-        </echo>
+        <TGT>upgrade</TGT>
 
         <!-- conf: copy from dist if not already present -->
         <mkdir dir="${idp.target.dir}/conf" />
@@ -457,36 +442,31 @@
     </target>
 
     <target name="editproperties" depends="gettarget, getentityid" unless="idp.properties.present">
-        <echo append="true" file="idp_ant.log">target: editproperties
-        </echo>
+        <TGT>editproperties</TGT>
         <mkdir dir="${idp.target.dir}/conf" />
         <mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties.dist" outFile="${idp.target.dir}/conf/idp.properties" mergeFile="${idp.merge.properties}" />
     </target>
 
     <target name="editservicesproperties" depends="gettarget" if="idp.is.V2" unless="services.properties.present">
-        <echo append="true" file="idp_ant.log">target: editservicesproperties
-        </echo>
+        <TGT>editservicesproperties</TGT>
         <mkdir dir="${idp.target.dir}/conf" />
         <mergeproperties inFile="${idp.target.dir}/dist/conf/services.properties.dist" outFile="${idp.target.dir}/conf/services.properties" mergeFile="${services.merge.properties}" />
     </target>
 
     <target name="editnameidproperties" depends="gettarget" if="idp.is.V2" unless="nameid.properties.present">
-        <echo append="true" file="idp_ant.log">target: editnameidproperties
-        </echo>
+        <TGT>editnameidproperties</TGT>
         <mkdir dir="${idp.target.dir}/conf" />
         <mergeproperties inFile="${idp.target.dir}/dist/conf/saml-nameid.properties.dist" outFile="${idp.target.dir}/conf/saml-nameid.properties" mergeFile="${nameid.merge.properties}" />
     </target>
 
     <target name="editldapproperties" depends="gettarget" if="idp.merge.ldap.properties" unless="ldap.properties.present">
-        <echo append="true" file="idp_ant.log">target: editldapproperties
-        </echo>
+        <TGT>editldapproperties</TGT>
         <mkdir dir="${idp.target.dir}/conf" />
         <mergeproperties inFile="${idp.target.dir}/dist/conf/ldap.properties.dist" outFile="${idp.target.dir}/conf/ldap.properties" mergeFile="${ldap.merge.properties}" />
     </target>
 
     <target name="metadata-gen" depends="gettarget, getentityid, gethostname, genkeys, upgrade"  unless="idp.metadata.present">
-        <echo append="true" file="idp_ant.log">target: metadata-gen
-        </echo>
+        <TGT>metadata-gen</TGT>
         <mkdir dir="${idp.target.dir}/metadata"/>
         <metadatagenerate dnsName="${idp.host.name}" idpHome="${idp.target.dir}" backChannelCert="${idp.target.dir}/credentials/idp-backchannel.crt" output="${idp.target.dir}/metadata/idp-metadata.xml"/>
     </target>
@@ -494,8 +474,7 @@
     <target name="handleeditwebapp" depends="makeeditwebapp, populateeditwebapp"/>
 
     <target name="makeeditwebapp">
-        <echo append="true" file="idp_ant.log">target: makeeditwebapp
-        </echo>
+        <TGT>makeeditwebapp</TGT>
         <!-- Create edit-webapp tree -->
         <mkdir dir="${idp.target.dir}/edit-webapp" />
         <mkdir dir="${idp.target.dir}/edit-webapp/css" />
@@ -506,8 +485,7 @@
     </target>
 
     <target name="populateeditwebapp" unless="idp.properties.present">
-        <echo append="true" file="idp_ant.log">target: populateeditwebapp
-        </echo>
+        <TGT>populateeditwebapp</TGT>
         <copy todir="${idp.target.dir}/edit-webapp/css" failonerror="false">
             <fileset dir="${idp.target.dir}/webapp/css" />
         </copy>
@@ -533,8 +511,7 @@
 
     <!-- specify getsource before get target to force target default-->
     <target name="copy-distribution" depends="init, getsource, gettarget">
-        <echo append="true" file="idp_ant.log">target: copy-distribution
-        </echo>
+        <TGT>copy-distribution</TGT>
         <local name="target" />
         <property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}" />
 
@@ -604,8 +581,7 @@
     </target>
 
     <target name="copy-jetty-distribution" depends="copy-distribution" if="idp.jetty.config">
-        <echo append="true" file="idp_ant.log">target: copy-jetty-distribution
-        </echo>
+        <TGT>copy-jetty-distribution</TGT>
 
         <!-- save old -->
         <local name="target" />
@@ -627,14 +603,13 @@
             <fileset dir="${target}/jetty-base/start.d" />
         </copy>
         <!-- finally copy the ant file -->
-                <copy file="${idp.src.dir}/bin/ant-jetty.xml" tofile="${idp.target.dir}/bin/ant-jetty.xml" overwrite="true"/>
-        </target>
+        <copy file="${idp.src.dir}/bin/ant-jetty.xml" tofile="${idp.target.dir}/bin/ant-jetty.xml" overwrite="true"/>
+    </target>
 
     <!-- V2 to V3 PrePopulate -->
 
     <target name="v2v3prepopulate" depends="gettarget, v2detect" if="idp.is.V2">
-        <echo append="true" file="idp_ant.log">target: v2v3prepopulate
-        </echo>
+        <TGT>v2v3prepopulate</TGT>
         <echo>
 A V2 Installation has been detected. Configuration will be preserved into
 .v2 folders and appropriate files copied forward.
@@ -672,8 +647,7 @@ A V2 Installation has been detected. Configuration will be preserved into
     </target>
 
     <target name="v2detect" depends="gettarget">
-        <echo append="true" file="idp_ant.log">target: v2detect
-        </echo>
+        <TGT>v2detect</TGT>
         <available property="idp.properties.present" file="${idp.target.dir}/conf/idp.properties" />
         <available property="idp.relying.party.present" file="${idp.target.dir}/conf/relying-party.xml" />
         <condition property="idp.is.V2">
@@ -697,8 +671,7 @@ A V2 Installation has been detected. Configuration will be preserved into
     </target>
 
     <target name="tidy" unless="idp.no.tidy">
-        <echo append="true" file="idp_ant.log">target: tidy
-        </echo>
+        <TGT>tidy</TGT>
         <delete file="${idp.merge.properties}" failonerror="false" />
         <delete file="${services.merge.properties}" failonerror="false" />
         <delete file="${nameid.merge.properties}" failonerror="false" />
