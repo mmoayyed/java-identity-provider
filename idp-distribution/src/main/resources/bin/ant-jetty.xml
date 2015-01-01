@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Shibboleth IdP V3 - Jetty Container" basedir=".." default="install">
 
-    <!--  This file is for automatic configuration of Jetty, primarily from THE MSI installer.
+    <!--  This file is for automatic configuration of Jetty, primarily from the MSI installer.
 
-       	Names and APIS *may* change in thre future, please enter an RFI if you wish to use this
+       	Names and APIS *may* change in the future, please enter an RFI if you wish to use this
        	in production outside the MSI installer.
 
         TARGETS:
@@ -20,7 +20,12 @@
             idp.host.name: The host name.
             idp.uri.subject.alt.name: If we are creating certificates.
             idp.target.dir: where to install to.
-            idp.keystore.password: password to use on the created keystore (this value must also have been written to the merge properties file
+
+            idp.keystore.password: password to use on the PKCS12 file for a user-facing TLS credential,
+                which will be created if one does not already exist either in JKS or PKCS12 form.
+                This value must also have been written to the merge properties file as
+                jetty.browser.keystore.password.
+
             jetty.no.tidy: Do not delete the two above files (debug only)
 
     -->
