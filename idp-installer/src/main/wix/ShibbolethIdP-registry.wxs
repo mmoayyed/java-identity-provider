@@ -68,7 +68,7 @@
             <RegistrySearch Id="OldInstallJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJetty" Type="raw" Win64="no" />
         </Property>
 
-        <!-- Make a best effor to find where the Quick Installer was installed to -->
+        <!-- Make a best effort to find where the Quick Installer was installed to -->
         <Property Id="QI_INSTALL_DIR" Secure="yes">
             <RegistrySearch Id="OldQIDir" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{D54EF89F-F134-450C-A64D-593F5602F175}" Name="InstallLocation" Type="raw" Win64="no" />
         </Property>
