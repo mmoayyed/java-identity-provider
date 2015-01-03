@@ -56,8 +56,11 @@ public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         List<Element> schemaNameElements = ElementSupport.getChildElements(element, EXTENSION_SCHEMA_NAME);
 
-        // TODO(rdw) move default to bean (if possible).
-        builder.addConstructorArgReference("shibboleth.SchemaBuilder");
+        if (element.hasAttributeNS(null, "schemaBuilderRef")) {
+            builder.addConstructorArgReference(element.getAttributeNS(null, "schemaBuilderRef"));            
+        } else {
+            builder.addConstructorArgReference("shibboleth.SchemaBuilder");
+        }
         if (null != schemaNameElements && !schemaNameElements.isEmpty()) {
 
             log.warn("Use of <ExtensionSchema> elements is deprecated."

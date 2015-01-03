@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="urn:mace:shibboleth:2.0:metadata"
-    xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
-    xmlns:security="urn:mace:shibboleth:2.0:security"
-    xmlns:res="urn:mace:shibboleth:2.0:resource"
-    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
-    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
-    elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:mace:shibboleth:2.0:metadata" xmlns:shibmd="urn:mace:shibboleth:2.0:metadata"
+    xmlns:security="urn:mace:shibboleth:2.0:security" xmlns:res="urn:mace:shibboleth:2.0:resource" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" elementFormDefault="qualified">
 
     <annotation>
         <documentation>Schema describing metadata providers and filters.</documentation>
@@ -125,8 +120,8 @@
                 <attribute name="httpClientRef" type="string">
                     <annotation>
                         <documentation>
-	                        The reference to an externally defined Spring bean which specifies a hand
-	                        org.apache.http.client.HttpClient.
+	                        The reference to an externally defined Spring bean which specifies an
+	                        org.apache.http.client.HttpClient object.
 	                        
 	                        This attribute conflicts with all other settings except metadata URL
                        </documentation>
@@ -374,8 +369,8 @@
                 <attribute name="httpClientRef" type="string">
                     <annotation>
                         <documentation>
-                            The reference to an externally defined Spring bean which specifies a hand
-                            org.apache.http.client.HttpClient.
+                            The reference to an externally defined Spring bean which specifies an
+                            org.apache.http.client.HttpClient object.
                             
                             This attribute conflicts with and overrides the other HttpClient-related properties: 
                             disregardSslCertificate, disregardTLSCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
@@ -721,7 +716,16 @@
                         </annotation>
                     </element>
                 </sequence>
-            </extension>
+                <attribute name="schemaBuilderRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The reference to an externally defined Spring bean which specifies a
+                            org.opensaml.saml.common.xml.SAMLSchemaBuilder object.
+                            
+                            In the absence of this object the bean called shibboleth.SchemaBuilder is used.
+                       </documentation>
+                    </annotation>
+                </attribute>            </extension>
         </complexContent>
     </complexType>
 

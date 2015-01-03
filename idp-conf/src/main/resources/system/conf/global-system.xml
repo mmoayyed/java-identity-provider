@@ -252,4 +252,10 @@
         p:maxCacheEntries="%{idp.httpclient.memorycaching.maxCacheEntries:50}"
         p:maxCacheEntrySize="%{idp.httpclient.memorycaching.maxCacheEntrySize:1048576}" />
     
+    <!--  Bean used by the SchemaValidation metadata filter -->
+    
+    <bean id="shibboleth.SchemaBuilder"
+        lazy-init="true"
+        class="org.opensaml.saml.common.xml.SAMLSchemaBuilder"
+        c:ver="SAML_11" />
  </beans>

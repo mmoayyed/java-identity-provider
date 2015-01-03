@@ -43,4 +43,9 @@ public class ShemaValidationParserTest extends AbstractMetadataParserTest {
         Assert.assertEquals(resolver.getMetadataFilter().getClass(), SchemaValidationFilter.class); 
     }
 
+    @Test public void bean() throws IOException {
+        MetadataResolver resolver = getBean(MetadataResolver.class, "filter/schemaValidationRefs.xml", "filter/schemaValidationRefs-beans.xml");
+
+        Assert.assertEquals(resolver.getMetadataFilter().getClass(), SchemaValidationFilter.class); 
+    }
 }
