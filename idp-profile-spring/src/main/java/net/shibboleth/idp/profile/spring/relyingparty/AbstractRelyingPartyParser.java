@@ -26,6 +26,8 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -35,13 +37,16 @@ import org.w3c.dom.Element;
 /**
  * Parser for the common parts of &lt;AnonymousRelyingParty&gt; &lt;DefaultRelyingParty&gt; and &lt;RelyingParty&gt;.
  * Implementations only differ by being named or not (for reference elsewhere) and by the
- * {@link com.google.common.base.Predicate} which is injected. 
+ * {@link com.google.common.base.Predicate} which is injected.
  */
 public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
     public static final QName PROFILE_CONFIGURATION = new QName(RelyingPartyNamespaceHandler.NAMESPACE,
             "ProfileConfiguration");
+
+    /** log. */
+    private Logger log = LoggerFactory.getLogger(AbstractRelyingPartyParser.class);
 
     /** {@inheritDoc} */
     @Override protected java.lang.Class<RelyingPartyConfiguration> getBeanClass(Element element) {
@@ -53,24 +58,27 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
         builder.setLazyInit(true);
         super.doParse(element, parserContext, builder);
 
-        // defaultSigningCredentialRef
-        // defaultAuthenticationMethod and nameIDFormatPrecedence is dealt with in the specific SSO
-        // profileConfigurations
+        // defaultSigningCredentialRef, defaultAuthenticationMethod and nameIDFormatPrecedence are dealt with
+        // in the specific SSO profileConfigurations.
+        // IDP-563: defaultAuthenticationMethod had weird semantics in V2. Warn.
+        if (element.hasAttributeNS(null, "defaultAuthenticationMethod")) {
+            log.warn("Specific authentication methods may not work for all profiles.  defaultAuthenticationMethod='{}'",
+                    element.getAttributeNS(null, "defaultAuthenticationMethod"));
+        }
 
         final String provider = StringSupport.trimOrNull(element.getAttributeNS(null, "provider"));
         builder.addPropertyValue("responderId", provider);
-        
-        
+
         final String detailedErrors = StringSupport.trimOrNull(element.getAttributeNS(null, "detailedErrors"));
         if (null != detailedErrors) {
             builder.addPropertyValue("detailedErrors", detailedErrors);
         }
-        
+
         final List<BeanDefinition> profileConfigurations =
                 SpringSupport.parseCustomElements(ElementSupport.getChildElements(element, PROFILE_CONFIGURATION),
                         parserContext);
         builder.addPropertyValue("profileConfigurations", profileConfigurations);
-        
+
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
