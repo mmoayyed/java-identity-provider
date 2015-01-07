@@ -90,9 +90,9 @@
     -->
     <bean id="shibboleth.NameTransformPredicate" parent="shibboleth.Conditions.RelyingPartyId">
         <constructor-arg>
-            <util:list>
+            <list>
                 <!-- <value>https://sp.example.org</value> -->
-            </util:list>
+            </list>
         </constructor-arg>
     </bean>
     
