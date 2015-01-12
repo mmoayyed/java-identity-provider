@@ -173,7 +173,7 @@
     <complexType name="RelationalDatabase">
         <annotation>
             <documentation>
-                A database connector definition that uses JDBC version 3 to connect to and pull information from a
+                A data connector definition that uses JDBC version 3 to connect to and pull information from a
                 relational database.
             </documentation>
         </annotation>
