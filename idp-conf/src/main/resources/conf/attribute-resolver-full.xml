@@ -187,7 +187,7 @@
 
     <!-- Schema: eduPerson attributes -->
     <!--
-    <resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonAffiliation" sourceAttributeID="affiliation">
+    <resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonAffiliation" sourceAttributeID="eduPersonAffiliation">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:eduPersonAffiliation" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.1" friendlyName="eduPersonAffiliation" encodeType="false" />
@@ -229,7 +229,7 @@
         <resolver:AttributeEncoder xsi:type="enc:SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.12" friendlyName="eduPersonPrincipalNamePrior" encodeType="false" />
     </resolver:AttributeDefinition>
 
-    <resolver:AttributeDefinition xsi:type="ad:Scoped" id="eduPersonScopedAffiliation" scope="%{idp.scope}" sourceAttributeID="affiliation">
+    <resolver:AttributeDefinition xsi:type="ad:Scoped" id="eduPersonScopedAffiliation" scope="%{idp.scope}" sourceAttributeID="eduPersonAffiliation">
         <resolver:Dependency ref="myLDAP" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonScopedAffiliation" encodeType="false" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2ScopedString" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.9" friendlyName="eduPersonScopedAffiliation" encodeType="false" />
@@ -249,7 +249,7 @@
     <!-- Example Static Connector -->
     <!--
     <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
-        <dc:Attribute id="affiliation">
+        <dc:Attribute id="eduPersonAffiliation">
             <dc:Value>member</dc:Value>
         </dc:Attribute>
     </resolver:DataConnector>
