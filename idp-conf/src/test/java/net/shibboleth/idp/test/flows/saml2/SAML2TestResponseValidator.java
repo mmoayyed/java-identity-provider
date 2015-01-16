@@ -81,13 +81,13 @@ public class SAML2TestResponseValidator {
     @Nonnull public NameID nameID;
 
     /** Expected status code. */
-    @Nonnull protected String statusCode = StatusCode.SUCCESS;
+    @Nonnull public String statusCode = StatusCode.SUCCESS;
 
     /** Expected nested status code when an error occurs. */
-    @Nonnull protected String statusCodeNested = StatusCode.REQUEST_DENIED;
+    @Nonnull public String statusCodeNested = StatusCode.REQUEST_DENIED;
 
     /** Expected status message when an error occurs. */
-    @Nonnull protected String statusMessage = "An error occurred.";
+    @Nonnull public String statusMessage = "An error occurred.";
 
     /** Expected subject confirmation method. */
     @Nonnull public String subjectConfirmationMethod = SubjectConfirmation.METHOD_BEARER;
