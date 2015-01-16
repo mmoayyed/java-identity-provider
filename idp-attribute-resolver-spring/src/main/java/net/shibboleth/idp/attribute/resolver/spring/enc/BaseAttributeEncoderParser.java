@@ -22,7 +22,9 @@ import javax.annotation.Nonnull;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -34,51 +36,62 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
 
     /** Local name of name attribute. */
     public static final String NAME_ATTRIBUTE_NAME = "name";
-    
+
     /** Whether the name property is required or not. */
     private boolean nameRequired;
-    
+
     /** Constructor. */
     public BaseAttributeEncoderParser() {
         nameRequired = false;
     }
-    
+
     /**
      * Set whether the name property is required or not.
      * 
-     * @param flag  flag to set
+     * @param flag flag to set
      */
     public void setNameRequired(final boolean flag) {
         nameRequired = flag;
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
         final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_ATTRIBUTE_NAME));
         if (nameRequired && attributeName == null) {
             throw new BeanCreationException("Attribute encoder must contain a name property");
         }
-        
+
         if (config.hasAttributeNS(null, "activationConditionRef")) {
             builder.addPropertyReference("activationCondition", config.getAttributeNS(null, "activationConditionRef"));
         }
-        
+
         if (config.hasAttributeNS(null, "encodeType")) {
             builder.addPropertyValue("encodeType", config.getAttributeNS(null, "encodeType"));
         }
-        
+
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
         builder.addPropertyValue("name", attributeName);
+
+    }
+
+    /** {@inheritDoc}
+     * We do <em>not</em> want Spring to add aliases derived from {@literal #NAME_ATTRIBUTE_NAME} so strip them out 
+     * from the registry. */
+    @Override protected void registerBeanDefinition(BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
+        String[] aliases = definition.getAliases();
+        super.registerBeanDefinition(definition, registry);
+        if (aliases != null && aliases.length != 0) {
+            for (String alias : aliases) {
+                registry.removeAlias(alias);
+            }
+        }
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean shouldGenerateId() {
+    @Override public boolean shouldGenerateId() {
         return true;
     }
-    
 }

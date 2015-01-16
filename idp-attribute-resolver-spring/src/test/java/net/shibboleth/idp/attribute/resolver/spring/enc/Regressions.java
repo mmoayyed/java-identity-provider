@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  */
 public class Regressions extends BaseAttributeDefinitionParserTest {
 
-    @Test(enabled=false) public void idp571() {
+    @Test public void idp571() {
         GenericApplicationContext context = new GenericApplicationContext();
         loadFile(ENCODER_FILE_PATH + "idp-571.xml", context);
         context.refresh();
