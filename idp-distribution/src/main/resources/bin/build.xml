@@ -160,6 +160,7 @@
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <local name="entityid" />
         <input message="SAML EntityID:" addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
+    	<property name="idp.uri.subject.alt.name" value="${entityid}" />
         <echo file="${idp.merge.properties}" append="yes">
             idp.entityID=${entityid}
         </echo>
@@ -260,7 +261,7 @@
             <!-- We ask for alt name if there is no alt name and we will call certgen -->
             <and>
                 <not>
-                    <isset property="uri.subject.alt.name" />
+                    <isset property="idp.uri.subject.alt.name" />
                 </not>
                 <istrue value="${idp.will.call.certgen}" />
             </and>
