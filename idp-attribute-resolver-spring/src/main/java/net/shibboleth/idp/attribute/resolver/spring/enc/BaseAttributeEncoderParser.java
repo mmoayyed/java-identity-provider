@@ -81,13 +81,9 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
      * We do <em>not</em> want Spring to add aliases derived from {@literal #NAME_ATTRIBUTE_NAME} so strip them out 
      * from the registry. */
     @Override protected void registerBeanDefinition(BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
-        String[] aliases = definition.getAliases();
-        super.registerBeanDefinition(definition, registry);
-        if (aliases != null && aliases.length != 0) {
-            for (String alias : aliases) {
-                registry.removeAlias(alias);
-            }
-        }
+        // Register bean definition under primary name. Do *not* register the aliases.
+        String beanName = definition.getBeanName();
+        registry.registerBeanDefinition(beanName, definition.getBeanDefinition()); 
     }
 
     /** {@inheritDoc} */
