@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 import java.util.Collection;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
-import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 
 import org.springframework.context.support.GenericApplicationContext;
@@ -38,9 +38,9 @@ public class Regressions extends BaseAttributeDefinitionParserTest {
         context.refresh();
      
         Collection<AttributeEncoder> encoders = context.getBeansOfType(AttributeEncoder.class).values();
-        Collection<AttributeResolver> resolvers = context.getBeansOfType(AttributeResolver.class).values();
+        Collection<AttributeDefinition> definitions = context.getBeansOfType(AttributeDefinition.class).values();
         
         Assert.assertEquals(encoders.size(), 1);
-        Assert.assertEquals(resolvers.size(), 1);
+        Assert.assertEquals(definitions.size(), 1);
     }
 }
