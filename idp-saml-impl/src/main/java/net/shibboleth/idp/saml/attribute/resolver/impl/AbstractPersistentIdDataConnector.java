@@ -143,15 +143,20 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         final String val;
 
         if (attributeValue instanceof StringAttributeValue) {
-            val = StringSupport.trimOrNull(((StringAttributeValue) attributeValue).getValue());
+            if (StringSupport.trimOrNull((String) attributeValue.getValue()) == null) {
+                log.warn("{} Source attribute {} for connector {} was all-whitespace", getLogPrefix(),
+                        getSourceAttributeId(), getId());
+                return null;
+            }
+            val = (String) attributeValue.getValue();
         } else {
-            log.warn("{} Source attribute {} for connector {} was not a string type.  Not used", getLogPrefix(),
-                    getSourceAttributeId(), getId());
+            log.warn("{} Source attribute {} for connector {} was of an unsupported type: {}", getLogPrefix(),
+                    getSourceAttributeId(), getId(), attributeValue.getClass().getName());
             return null;
         }
 
         if (val == null) {
-            log.warn("{} Attribute {} for connector resolved as empty or null.  Not used", getLogPrefix(),
+            log.warn("{} Attribute value {} for connector {} resolved as empty or null", getLogPrefix(),
                     getSourceAttributeId(), getId());
         }
         return val;

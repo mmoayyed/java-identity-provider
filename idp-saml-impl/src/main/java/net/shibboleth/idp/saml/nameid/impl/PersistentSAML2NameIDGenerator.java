@@ -201,14 +201,14 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                             ((ScopedStringAttributeValue) value).getValue() + '@'
                                     + ((ScopedStringAttributeValue) value).getScope());
                 } else if (value instanceof StringAttributeValue) {
-                    final String strVal = StringSupport.trimOrNull((String) value.getValue());
-                    if (strVal == null) {
+                    // Check for all whitespace, but don't trim the value used.
+                    if (StringSupport.trimOrNull((String) value.getValue()) == null) {
                         log.debug("Skipping all-whitespace string value");
                         continue;
                     }
                     log.debug("Generating NameID from String-valued attribute {}", sourceId);
                     return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
-                            strVal);
+                            (String) value.getValue());
                 } else {
                     log.info("Unrecognized attribute value type: {}", value.getClass().getName());
                 }
