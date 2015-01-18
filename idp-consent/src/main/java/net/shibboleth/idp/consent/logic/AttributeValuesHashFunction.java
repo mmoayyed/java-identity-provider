@@ -90,7 +90,7 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
                             return null;
                         }
                     }
-                } else {
+                } else if (value.getValue() != null) {
                     objectOutputStream.writeObject(value.getValue());
                 }
             }
@@ -106,4 +106,5 @@ public class AttributeValuesHashFunction implements Function<Collection<IdPAttri
             return null;
         }
     }
+    
 }
