@@ -39,6 +39,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAft
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -195,14 +196,19 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
             final List<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof ScopedStringAttributeValue) {
-                    log.info("Generating NameID from Scoped String-valued attribute {}", sourceId);
+                    log.debug("Generating NameID from Scoped String-valued attribute {}", sourceId);
                     return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
                             ((ScopedStringAttributeValue) value).getValue() + '@'
                                     + ((ScopedStringAttributeValue) value).getScope());
                 } else if (value instanceof StringAttributeValue) {
-                    log.info("Generating NameID from String-valued attribute {}", sourceId);
+                    final String strVal = StringSupport.trimOrNull((String) value.getValue());
+                    if (strVal == null) {
+                        log.debug("Skipping all-whitespace string value");
+                        continue;
+                    }
+                    log.debug("Generating NameID from String-valued attribute {}", sourceId);
                     return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
-                            ((StringAttributeValue) value).getValue());
+                            strVal);
                 } else {
                     log.info("Unrecognized attribute value type: {}", value.getClass().getName());
                 }

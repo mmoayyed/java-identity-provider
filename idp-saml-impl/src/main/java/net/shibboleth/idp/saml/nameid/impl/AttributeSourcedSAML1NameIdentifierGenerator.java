@@ -38,6 +38,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.ThreadSafeAft
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -192,8 +193,13 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
                     return ((ScopedStringAttributeValue) value).getValue()
                             + delimiter + ((ScopedStringAttributeValue) value).getScope(); 
                 } else if (value instanceof StringAttributeValue) {
+                    final String strVal = StringSupport.trimOrNull((String) value.getValue());
+                    if (strVal == null) {
+                        log.debug("Skipping all-whitespace string value");
+                        continue;
+                    }
                     log.debug("Generating NameIdentifier from String-valued attribute {}", sourceId);
-                    return ((StringAttributeValue) value).getValue();
+                    return strVal;
                 } else {
                     log.warn("Unrecognized attribute value type: {}", value.getClass().getName());
                 }
