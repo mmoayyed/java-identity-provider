@@ -72,7 +72,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
             @Nullable @NullableElements final Collection<AttributeFilterPolicy> policies) {
         setId(engineId);
 
-        ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<AttributeFilterPolicy>();
+        ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
         filterPolicies = ImmutableList.copyOf(Iterables.filter(checkedPolicies, Predicates.notNull()));
     }
