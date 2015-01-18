@@ -129,15 +129,19 @@ public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
         nameId.setFormat(format);
         nameId.setNameQualifier(qualifier);
 
-        for (IdPAttributeValue attrValue : attributeValues) {
+        for (final IdPAttributeValue attrValue : attributeValues) {
             if (attrValue == null || attrValue.getValue() == null) {
-                // Should not be null, but check anyway
                 log.debug("Skipping null value of attribute {}", attributeId);
                 continue;
             }
+            
             Object value = attrValue.getValue();
-
             if (value instanceof String) {
+                // Check for empty or all-whitespace, but don't trim.
+                if (StringSupport.trimOrNull((String) value) == null) {
+                    log.debug("Skipping all-whitespace value of attribute {}", attributeId);
+                    continue;
+                }
                 nameId.setValue((String) value);
                 return nameId;
             } else {
