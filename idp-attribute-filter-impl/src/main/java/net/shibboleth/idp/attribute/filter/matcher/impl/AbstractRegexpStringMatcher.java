@@ -32,7 +32,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
 
     /** Regular expression to match. */
-    private Pattern regex;
+    @NonnullAfterInit private Pattern regex;
 
     /**
      * Gets the regular expression to match.
@@ -60,7 +60,7 @@ public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
      * 
      * @return true if the value matches the given match string, false if not
      */
-    protected final boolean regexpCompare(@Nullable final String value) {
+    protected boolean regexpCompare(@Nullable final String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if (regex == null || value == null) {
             return false;
@@ -74,10 +74,12 @@ public abstract class AbstractRegexpStringMatcher extends AbstractMatcher {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (null == regex) {
             throw new ComponentInitializationException(getLogPrefix() + " No regular expression provided"); 
         }
     }
+    
 }
