@@ -24,7 +24,6 @@ import java.util.Set;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
-import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -152,44 +151,6 @@ public class PrescopedAtributeTest {
         } catch (ResolutionException e) {
             //
         }
-    }
-
-    @Test(expectedExceptions=ResolutionException.class) public void nullValue()
-            throws ComponentInitializationException, ResolutionException {
-        IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
-        attr.setValues(Collections.singletonList(new StringAttributeValue(null)));
-
-        AttributeResolutionContext resolutionContext =
-                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-
-        final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
-        attrDef.setId(TEST_ATTRIBUTE_NAME);
-        attrDef.setScopeDelimiter("@");
-        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        attrDef.setDependencies(Sets.newHashSet(depend));
-        attrDef.initialize();
-
-        attrDef.resolve(resolutionContext);
-    }
-
-    @Test(expectedExceptions=ResolutionException.class) public void emptyValue()
-            throws ComponentInitializationException, ResolutionException {
-        IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
-        attr.setValues(Collections.singletonList(new StringAttributeValue("")));
-
-        AttributeResolutionContext resolutionContext =
-                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-
-        final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
-        attrDef.setId(TEST_ATTRIBUTE_NAME);
-        attrDef.setScopeDelimiter("@");
-        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
-        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        attrDef.setDependencies(Sets.newHashSet(depend));
-        attrDef.initialize();
-
-        attrDef.resolve(resolutionContext);
     }
 
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
