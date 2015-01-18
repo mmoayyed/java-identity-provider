@@ -185,8 +185,7 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
         }
 
         if (samlAttributeValues.isEmpty()) {
-            throw new AttributeEncodingException("Attribute " + attributeId
-                    + " did not contain any non-empty String values, nothing to encode");
+            throw new AttributeEncodingException("Attribute " + attributeId + " did not contain any encodeable values");
         }
 
         log.debug("Completed encoding {} values for attribute {}", samlAttributeValues.size(), attributeId);
