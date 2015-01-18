@@ -93,7 +93,7 @@ public class StaticDataConnectorTest {
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId("Static");
 
-        List<IdPAttribute> input = new ArrayList<IdPAttribute>();
+        List<IdPAttribute> input = new ArrayList<>();
         input.add(null);
         connector.setValues(input);
         

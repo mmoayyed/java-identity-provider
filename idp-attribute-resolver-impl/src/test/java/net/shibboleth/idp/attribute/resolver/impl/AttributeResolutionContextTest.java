@@ -85,7 +85,7 @@ public class AttributeResolutionContextTest {
         Assert.assertNotNull(context.getResolvedIdPAttributes());
         Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());
 
-        HashSet<IdPAttribute> attributes = new HashSet<IdPAttribute>();
+        HashSet<IdPAttribute> attributes = new HashSet<>();
         context.setResolvedIdPAttributes(attributes);
         Assert.assertNotNull(context.getResolvedIdPAttributes());
         Assert.assertTrue(context.getResolvedIdPAttributes().isEmpty());

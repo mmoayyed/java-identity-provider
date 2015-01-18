@@ -48,6 +48,7 @@ import com.google.common.collect.Sets;
  * Test for regex attribute definitions.
  */
 public class RegexAtributeTest {
+    
     /** The name. */
     private static final String TEST_ATTRIBUTE_NAME = "regex";
 
@@ -75,7 +76,7 @@ public class RegexAtributeTest {
         final Set<DataConnector> connectorSet = new LazySet<>();
         connectorSet.add(TestSources.populatedStaticConnector());
 
-        final Set<AttributeDefinition> attributeSet = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(attrDef);
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);

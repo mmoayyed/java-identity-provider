@@ -38,8 +38,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 public class TestCache implements Cache<String, Map<String, IdPAttribute>>, Iterable<Map<String, IdPAttribute>> {
 
     /** Hash map cache. */
-    private final Map<String, Map<String, IdPAttribute>> cache =
-            new HashMap<String, Map<String, IdPAttribute>>();
+    private final Map<String, Map<String, IdPAttribute>> cache = new HashMap<>();
 
     /** {@inheritDoc} */
     @Nullable public Map<String, IdPAttribute> getIfPresent(Object key) {

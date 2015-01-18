@@ -109,7 +109,7 @@ public class Regressions {
         return connector;
     }
 
-    @Test(enabled=false) public void idP573() throws ComponentInitializationException, ResolutionException {
+    @Test public void idP573() throws ComponentInitializationException, ResolutionException {
         ParameterizedExecutableSearchFilterBuilder builder =
                 new ParameterizedExecutableSearchFilterBuilder("(uid={principalName})");
 

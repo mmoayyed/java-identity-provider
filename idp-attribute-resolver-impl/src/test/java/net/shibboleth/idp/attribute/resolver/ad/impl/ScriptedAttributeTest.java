@@ -247,7 +247,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
             IOException {
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
@@ -257,11 +257,11 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         // And resolve
-        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
         attrDefinitions.add(scripted);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
 
-        final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
+        final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);

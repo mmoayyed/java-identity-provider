@@ -196,7 +196,7 @@ public class TemplateAttributeTest {
         templateDef.setVelocityEngine(getEngine());
         templateDef.setTemplateText(TEST_SIMPLE_TEMPLATE);
 
-        final Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(new ResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME));
         // ds.add(TestSources.makeResolverPluginDependency(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR,
         // TestSources.STATIC_ATTRIBUTE_NAME));
@@ -204,10 +204,10 @@ public class TemplateAttributeTest {
         templateDef.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         templateDef.initialize();
 
-        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
-        final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
+        final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
@@ -238,7 +238,7 @@ public class TemplateAttributeTest {
         templateDef.setVelocityEngine(getEngine());
         templateDef.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_CONNECTOR);
 
-        Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
@@ -248,10 +248,10 @@ public class TemplateAttributeTest {
                 TestSources.DEPENDS_ON_SECOND_ATTRIBUTE_NAME));
         templateDef.initialize();
 
-        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
-        final Set<DataConnector> dataDefinitions = new LazySet<DataConnector>();
+        final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
@@ -281,7 +281,7 @@ public class TemplateAttributeTest {
         final String otherDefName = TestSources.STATIC_ATTRIBUTE_NAME + "2";
         final String otherAttrName = TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "2";
 
-        Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         ds.add(TestSources.makeResolverPluginDependency(otherDefName, otherAttrName));
@@ -289,7 +289,7 @@ public class TemplateAttributeTest {
         templateDef.setSourceAttributes(Arrays.asList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, otherAttrName));
         templateDef.initialize();
 
-        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         attrDefinitions.add(TestSources.populatedStaticAttribute(otherDefName, otherAttrName, 1));
@@ -314,7 +314,7 @@ public class TemplateAttributeTest {
         templateDef.setVelocityEngine(getEngine());
         templateDef.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_ATTR);
 
-        Set<ResolverPluginDependency> ds = new LazySet<ResolverPluginDependency>();
+        Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         templateDef.setDependencies(ds);
@@ -328,7 +328,7 @@ public class TemplateAttributeTest {
         simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);
         simple.setValue(attr);
         simple.initialize();
-        final Set<AttributeDefinition> attrDefinitions = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
         attrDefinitions.add(templateDef);
         attrDefinitions.add(simple);
 

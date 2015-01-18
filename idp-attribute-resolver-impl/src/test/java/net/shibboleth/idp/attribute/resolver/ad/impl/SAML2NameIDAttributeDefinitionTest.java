@@ -102,7 +102,7 @@ public class SAML2NameIDAttributeDefinitionTest extends OpenSAMLInitBaseTestCase
         final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
-        Collection<String> nameValues = new HashSet<String>(2);
+        Collection<String> nameValues = new HashSet<>(2);
         for (IdPAttributeValue val : values) {
             NameID id = (NameID) val.getValue();
             Assert.assertEquals(id.getFormat(), "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");

@@ -64,7 +64,7 @@ public class ValueMapTest {
     }
 
     @Test public void regexp() {
-        final HashSet<SourceValue> sources = new HashSet<SourceValue>(3);
+        final HashSet<SourceValue> sources = new HashSet<>(3);
         
         sources.add(new SourceValue("R(.+)", false, false));
         sources.add(new SourceValue("RE(.+)", true, false));

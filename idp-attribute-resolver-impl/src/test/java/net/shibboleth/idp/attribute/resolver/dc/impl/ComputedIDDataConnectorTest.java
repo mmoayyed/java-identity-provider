@@ -90,7 +90,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_ATTRIBUTE_NAME)));
 
-        Set<AttributeDefinition> set = new HashSet<AttributeDefinition>(2);
+        Set<AttributeDefinition> set = new HashSet<>(2);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
@@ -158,7 +158,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
                 TEST_CONNECTOR_NAME)));
         simple.initialize();
 
-        Set<AttributeDefinition> set = new HashSet<AttributeDefinition>(2);
+        Set<AttributeDefinition> set = new HashSet<>(2);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, values));
@@ -183,7 +183,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_CONNECTOR_NAME)));
         simple.initialize();
-        Set<AttributeDefinition> set = new HashSet<AttributeDefinition>(3);
+        Set<AttributeDefinition> set = new HashSet<>(3);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));

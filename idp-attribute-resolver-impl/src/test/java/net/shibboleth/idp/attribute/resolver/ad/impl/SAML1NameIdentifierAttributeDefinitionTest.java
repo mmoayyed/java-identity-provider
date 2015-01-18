@@ -71,14 +71,14 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.initialize();
 
         // And resolve
-        final Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
 
@@ -94,7 +94,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
-        Collection<String> nameValues = new HashSet<String>(2);
+        Collection<String> nameValues = new HashSet<>(2);
         for (IdPAttributeValue val : values) {
             NameIdentifier id = (NameIdentifier) val.getValue();
             Assert.assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
@@ -111,12 +111,12 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
         defn.initialize();
-        final Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
@@ -139,13 +139,13 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         defn2.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(new ResolverPluginDependency(TEST_ATTRIBUTE_NAME));
         defn2.setDependencies(dependencySet);
         defn2.initialize();
 
         // And resolve
-        Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
+        Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
         am.add(defn2);
@@ -168,7 +168,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        final Set<ResolverPluginDependency> dependencySet = new LazySet<ResolverPluginDependency>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         defn.setDependencies(dependencySet);
@@ -177,7 +177,7 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         defn.initialize();
 
         // And resolve
-        final Set<AttributeDefinition> am = new LazySet<AttributeDefinition>();
+        final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
