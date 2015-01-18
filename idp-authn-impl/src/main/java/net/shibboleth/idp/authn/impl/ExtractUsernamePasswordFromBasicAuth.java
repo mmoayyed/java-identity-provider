@@ -124,7 +124,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
      * 
      * @return a pair containing the username and password, respectively, or null
      */
-    @Nullable protected Pair<String, String> decodeCredentials(@Nonnull @NotEmpty final String encodedCredentials) {
+    @Nullable protected Pair<String,String> decodeCredentials(@Nonnull @NotEmpty final String encodedCredentials) {
         final String decodedUserPass = new String(Base64Support.decode(encodedCredentials), Charsets.US_ASCII);
 
         if (decodedUserPass != null && decodedUserPass.contains(":")) {
@@ -132,7 +132,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
             if (username != null && decodedUserPass.length() > username.length() + 1) {
                 final String password = decodedUserPass.substring(decodedUserPass.indexOf(':') + 1);
                 if (password != null) {
-                    return new Pair<String, String>(username, password);
+                    return new Pair<>(username, password);
                 }
             }
         }

@@ -97,7 +97,7 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
      * 
      * @return the username and password
      */
-    @Nullable private Pair<String, String> extractUsernamePassword(@Nonnull final Envelope message) {
+    @Nullable private Pair<String,String> extractUsernamePassword(@Nonnull final Envelope message) {
         final UsernameToken usernameToken = getUsernameToken(message);
         if (usernameToken == null) {
             return null;
@@ -129,7 +129,7 @@ public class ExtractUsernamePasswordFromWSSToken extends AbstractExtractionActio
             log.debug("{} <UsernameToken> does not contain a support <Password>", getLogPrefix());
             return null;
         }
-        return new Pair<String, String>(username.getValue(), password.getValue());
+        return new Pair<>(username.getValue(), password.getValue());
     }
 
     /**

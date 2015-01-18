@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -157,7 +158,7 @@ public class FilterFlowsByAttribute extends AbstractAuthenticationAction {
         
         for (final Principal p : flow.getSupportedPrincipals()) {
             for (final IdPAttributeValue val : attribute.getValues()) {
-                if (val instanceof StringAttributeValue && val.getValue().equals(p.getName())) {
+                if (val instanceof StringAttributeValue && Objects.equals(val.getValue(), p.getName())) {
                     return p.getName();
                 }
             }
