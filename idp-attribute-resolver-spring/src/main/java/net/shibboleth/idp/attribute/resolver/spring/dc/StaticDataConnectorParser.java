@@ -39,10 +39,11 @@ import org.w3c.dom.Element;
 public class StaticDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");
+    @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");
 
     /** Local name of attribute. */
-    public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
+    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME =
+            new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(StaticDataConnectorParser.class);
@@ -57,20 +58,21 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
-        List<BeanDefinition> attributes = new ManagedList<BeanDefinition>(children.size());
+        final List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
+        final List<BeanDefinition> attributes = new ManagedList<>(children.size());
 
-        for (Element child : children) {
+        for (final Element child : children) {
 
-            String attrId = child.getAttributeNS(null, "id");
-            BeanDefinitionBuilder attributeDefn = BeanDefinitionBuilder.genericBeanDefinition(IdPAttribute.class);
+            final String attrId = child.getAttributeNS(null, "id");
+            final BeanDefinitionBuilder attributeDefn = BeanDefinitionBuilder.genericBeanDefinition(IdPAttribute.class);
             attributeDefn.addConstructorArgValue(attrId);
 
-            List<Element> values =
+            final List<Element> values =
                     ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
-            ManagedList<BeanDefinition> inValues = new ManagedList<BeanDefinition>(values.size());
-            for (Element val : values) {
-                BeanDefinitionBuilder value = BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValue.class);
+            final ManagedList<BeanDefinition> inValues = new ManagedList<>(values.size());
+            for (final Element val : values) {
+                final BeanDefinitionBuilder value =
+                        BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValue.class);
                 value.addConstructorArgValue(val.getTextContent());
                 log.trace("{} Attribute: {}, adding value {} ",
                         new Object[] {getLogPrefix(), attrId, val.getTextContent(),});

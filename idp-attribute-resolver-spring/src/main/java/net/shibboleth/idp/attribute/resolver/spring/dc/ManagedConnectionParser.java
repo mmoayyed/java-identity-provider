@@ -218,7 +218,7 @@ public class ManagedConnectionParser {
      */
     @Nullable public static DataSource buildDataSource(final Map<String, String> props, final String resourceName) {
         try {
-            final InitialContext initCtx = new InitialContext(new Hashtable<String, String>(props));
+            final InitialContext initCtx = new InitialContext(new Hashtable<>(props));
             final DataSource dataSource = (DataSource) initCtx.lookup(resourceName);
             return dataSource;
         } catch (NamingException e) {

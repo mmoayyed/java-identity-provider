@@ -67,7 +67,7 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
         builder.addPropertyValue("id", id);
 
         final List<Element> children = ElementSupport.getChildElements(config, RELYING_PARTY);
-        final List<String> relyingParties = new ManagedList<String>(children.size());
+        final List<String> relyingParties = new ManagedList<>(children.size());
 
         for (Element child : children) {
             relyingParties.add(child.getTextContent());
