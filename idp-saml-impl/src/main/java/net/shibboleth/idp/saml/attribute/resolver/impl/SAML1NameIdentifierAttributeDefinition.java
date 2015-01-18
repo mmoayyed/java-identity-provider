@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.resolver.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -41,13 +43,12 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 /**
- * An attribute definition the creates attributes whose values are {@link NameIdentifier}. <br/>
- * When building the NameIdentifier the textual content of the NameIdentifier is the value of the source attribute. If a
- * {@link #nameIdQualifier} is provided that value is used as the NameIdentifier's name qualifier otherwise the
- * attribute issuer's entity ID is used.
+ * An attribute definition the creates attributes whose values are {@link NameIdentifier}.
+ * 
+ * <p>When building the NameIdentifier the textual content of the NameIdentifier is the value of the source attribute.
+ * If a {@link #nameIdQualifier} is provided that value is used as the NameIdentifier's NameQualifier otherwise the
+ * attribute issuer's entity ID is used.</p>
  */
 
 public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDefinition {
@@ -123,7 +124,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
      * @return the constructed NameIdentifier
      * @throws ResolutionException if the IdP Name is empty.
      */
-    protected NameIdentifier buildNameId(@Nonnull final String nameIdValue,
+    protected NameIdentifier buildNameId(@Nonnull @NotEmpty final String nameIdValue,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         log.debug("{} building a SAML1 NameIdentifier with value of '{}'", getLogPrefix(), nameIdValue);
@@ -163,12 +164,16 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         if (theValue instanceof StringAttributeValue) {
-            final StringAttributeValue value = (StringAttributeValue) theValue;
-            final NameIdentifier nid = buildNameId(value.getValue(), resolutionContext);
+            final String value = StringSupport.trimOrNull(((StringAttributeValue) theValue).getValue());
+            if (value == null) {
+                log.warn("{} Value was all whitespace", getLogPrefix());
+                return null;
+            }
+            final NameIdentifier nid = buildNameId(value, resolutionContext);
             final XMLObjectAttributeValue val = new XMLObjectAttributeValue(nid);
             return val;
         }
-        log.warn("{} Value {} is not a string", getLogPrefix(), theValue.toString());
+        log.warn("{} Unsupported value type: {}", getLogPrefix(), theValue.getClass().getName());
         return null;
     }
 
@@ -186,7 +191,6 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
         inputValues = PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
 
         if (null != inputValues && !inputValues.isEmpty()) {
-
             if (1 == inputValues.size()) {
                 final IdPAttributeValue<?> val = encodeOneValue(inputValues.iterator().next(), resolutionContext);
                 if (null != val) {
@@ -195,7 +199,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
             } else {
                 // TODO(rdw) Fix typing
                 // Intermediate to solve typing issues.
-                final List<XMLObjectAttributeValue> xmlVals = Lists.newArrayListWithExpectedSize(inputValues.size());
+                final List<XMLObjectAttributeValue> xmlVals = new ArrayList<>(inputValues.size());
                 for (final IdPAttributeValue<?> theValue : inputValues) {
                     final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
                     if (null != val) {

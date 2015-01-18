@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -45,11 +46,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 /**
- * An attribute definition that creates attributes whose values are {@link NameID}. <br/>
- * When building the NameID the textual content of the NameID is the value of the source attribute. If a
- * {@link #nameIdQualifier} is provided that value is used as the NameID's name qualifier otherwise the attribute
- * issuer's entity ID is used. If a {@link #nameIdSPQualifier} is provided then that valid is used as the NameID's SP
- * name qualifier, otherwise the the attribute recipient's entityID is used.
+ * An attribute definition that creates attributes whose values are {@link NameID}.
+ * 
+ * <p>When building the NameID the textual content of the NameID is the value of the source attribute. If a
+ * {@link #nameIdQualifier} is provided that value is used as the NameID's NameQualifier otherwise the attribute
+ * issuer's entity ID is used. If a {@link #nameIdSPQualifier} is provided then that valid is used as the NameID's
+ * SPNameQualifier, otherwise the the attribute recipient's entityID is used.</p>
  */
 
 public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition {
@@ -146,7 +148,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
      * @return the constructed NameID
      * @throws ResolutionException if the IdP Name is empty.
      */
-    protected NameID buildNameId(@Nonnull final String nameIdValue,
+    protected NameID buildNameId(@Nonnull @NotEmpty final String nameIdValue,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
 
         log.debug("{} building a SAML2 NameID with value of '{}'", getLogPrefix(), nameIdValue);
@@ -199,12 +201,16 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
     @Nullable private XMLObjectAttributeValue encodeOneValue(@Nonnull final IdPAttributeValue theValue,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         if (theValue instanceof StringAttributeValue) {
-            final StringAttributeValue value = (StringAttributeValue) theValue;
-            final NameID nid = buildNameId(value.getValue(), resolutionContext);
+            final String value = StringSupport.trimOrNull(((StringAttributeValue) theValue).getValue());
+            if (value == null) {
+                log.warn("{} Value was all whitespace", getLogPrefix());
+                return null;
+            }
+            final NameID nid = buildNameId(value, resolutionContext);
             final XMLObjectAttributeValue val = new XMLObjectAttributeValue(nid);
             return val;
         }
-        log.warn("{} value {} is not a string", getLogPrefix(), theValue.toString());
+        log.warn("{} Unsupported value type: {}", getLogPrefix(), theValue.getClass().getName());
         return null;
     }
 
@@ -238,7 +244,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
                     }
                 }
                 if (0 == xmlVals.size()) {
-                    log.warn("{} no appropriate values", getLogPrefix());
+                    log.warn("{} No appropriate values", getLogPrefix());
                     return null;
                 }
                 outputValues = xmlVals;
