@@ -133,7 +133,7 @@ public final class TestSources {
         IdPAttribute attr;
         Set<IdPAttribute> attributeSet;
 
-        attributeSet = new LazySet<IdPAttribute>();
+        attributeSet = new LazySet<>();
 
         attr = new IdPAttribute(DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         attr.setValues(Arrays.asList(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING),
@@ -287,8 +287,8 @@ public final class TestSources {
                 return;
             }
 
-            final Map<String, IdPAttribute> map = new HashMap<String, IdPAttribute>(newValues.size());
-            for (IdPAttribute attr : newValues) {
+            final Map<String,IdPAttribute> map = new HashMap<>(newValues.size());
+            for (final IdPAttribute attr : newValues) {
                 if (null == attr) {
                     continue;
                 }
