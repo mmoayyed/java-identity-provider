@@ -154,7 +154,7 @@ public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         List<XMLObject> result = ((Attribute) encoder.encode(attr)).getAttributeValues();
         
         Assert.assertEquals(result.size(), 2);
-        Set<String> resultSet = new HashSet<String>(2); 
+        Set<String> resultSet = new HashSet<>(2); 
         for (XMLObject o: result) {
             Assert.assertTrue(o instanceof XSString);
             resultSet.add(((XSString) o).getValue());
