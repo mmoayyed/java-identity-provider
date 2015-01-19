@@ -73,12 +73,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     /** IDs of the {@link ResolverPlugin}s this plug-in depends on. */
     @Nonnull @NonnullElements private Set<ResolverPluginDependency> dependencies = Collections.emptySet();
 
-    /**
-     * Get whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
-     * will cause the entire attribute resolution request to fail.
-     * 
-     * @return true if {@link ResolutionException}s are propagated, false if not
-     */
+    /** {@inheritDoc} */
     @Override public boolean isPropagateResolutionExceptions() {
         return propagateResolutionExceptions;
     }

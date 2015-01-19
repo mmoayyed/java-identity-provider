@@ -46,7 +46,7 @@ public interface ResolverPlugin<ResolvedType> extends UnmodifiableComponent,
         InitializableComponent, DestructableComponent, IdentifiedComponent {
 
     /**
-     * Get whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
+     * Get whether a {@link ResolutionException} that occurred resolving attributes will be re-thrown. Doing so
      * will cause the entire attribute resolution request to fail.
      * 
      * @return true if {@link ResolutionException}s are propagated, false if not
@@ -54,9 +54,9 @@ public interface ResolverPlugin<ResolvedType> extends UnmodifiableComponent,
     boolean isPropagateResolutionExceptions();
 
     /**
-     * Gets the predicate which defines whether this plugin is active for a given request.
+     * Get the predicate which defines whether this plugin is active for a given request.
      * 
-     * @return the predictate.
+     * @return the predicate.
      */
     @Nullable Predicate<ProfileRequestContext> getActivationCondition();
 
