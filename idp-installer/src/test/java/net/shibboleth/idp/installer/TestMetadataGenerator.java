@@ -45,10 +45,11 @@ import org.w3c.dom.Document;
  */
 public class TestMetadataGenerator extends XMLObjectBaseTestCase {
 
-    @Test public void generator() throws IOException {
+    @Test public void withSAMLLogout() throws IOException {
         final MetadataGeneratorTask task = new MetadataGeneratorTask();
         final Resource backChannelCrt = new ClassPathResource("/credentials/idp-backchannel.crt");
         task.setBackchannelCert(backChannelCrt.getFile());
+        task.setSAML2LogoutCommented(false);
         final File out = File.createTempFile("TestMetadataGenerator", ".xml");
         System.setProperty("idp.home", "classpath:");
 
@@ -109,7 +110,7 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
             Assert.assertSame(entity.getIDPSSODescriptor("urn:mace:shibboleth:1.0"), idpsso);
             Assert.assertNull(entity.getIDPSSODescriptor("urn:mace:shibboleth:1.0:nameid"));
             Assert.assertEquals(idpsso.getArtifactResolutionServices().size(), 2);
-            Assert.assertEquals(idpsso.getSingleLogoutServices().size(), 4);
+            Assert.assertEquals(idpsso.getSingleLogoutServices().size(), 0);
             Assert.assertEquals(idpsso.getSingleSignOnServices().size(), 4);
             Assert.assertEquals(idpsso.getNameIDFormats().size(), 2);
             List<XMLObject> exts = idpsso.getExtensions().getUnknownXMLObjects();

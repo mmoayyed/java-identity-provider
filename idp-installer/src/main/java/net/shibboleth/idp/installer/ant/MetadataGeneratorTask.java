@@ -77,6 +77,11 @@ public class MetadataGeneratorTask extends Task {
     private boolean saml2AttributeQueryCommented = true;
 
     /**
+     * Whether to comment out the SAML2 SLO endpoints.
+     */
+    private boolean saml2LogoutCommented = true;
+
+    /**
      * Where is idp.home.
      * 
      * @return Returns idpHome.
@@ -172,6 +177,20 @@ public class MetadataGeneratorTask extends Task {
         saml2AttributeQueryCommented = asComment;
     }
 
+    /** Returns whether to comment the SAML2 Logout endpoints.
+     * @return  whether to comment the SAML2 Logout endpoints
+     */
+    public boolean isSAML2LogoutCommented() {
+        return saml2LogoutCommented;
+    }
+
+    /** Sets whether to comment the SAML2 Logout endpoints.
+     * @param asComment whether to comment or not
+     */
+    public void setSAML2LogoutCommented(boolean asComment) {
+        saml2LogoutCommented = asComment;
+    }
+    
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     @Override public void execute() {
@@ -231,6 +250,7 @@ public class MetadataGeneratorTask extends Task {
                 generator.setScope(parameters.getScope());
             }
             generator.setSAML2AttributeQueryCommented(isSAML2AttributeQueryCommented());
+            generator.setSAML2LogoutCommented(isSAML2LogoutCommented());
             generator.generate();
 
         } catch (Exception e) {
