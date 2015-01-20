@@ -134,9 +134,14 @@ public class MetadataGenerator {
     private String scope;
     
     /**
-     * Whether to comment out the SAML2 AA port.
+     * Whether to comment out the SAML2 AA endpoint.
      */
     private boolean saml2AttributeQueryCommented = true;
+
+    /**
+     * Whether to comment out the SAML2 SLO endpoints.
+     */
+    private boolean saml2LogoutCommented = true;
 
     /**
      * The signing certificates.
@@ -282,7 +287,7 @@ public class MetadataGenerator {
     }
 
     /** Returns whether to comment the SAML2 AA endpoint.
-     * @return Returns when to comment the SAML2 AA endpoint.
+     * @return  whether to comment the SAML2 AA endpoint
      */
     public boolean isSAML2AttributeQueryCommented() {
         return saml2AttributeQueryCommented;
@@ -293,6 +298,20 @@ public class MetadataGenerator {
      */
     public void setSAML2AttributeQueryCommented(boolean asComment) {
         saml2AttributeQueryCommented = asComment;
+    }
+
+    /** Returns whether to comment the SAML2 Logout endpoints.
+     * @return  whether to comment the SAML2 Logout endpoints
+     */
+    public boolean isSAML2LogoutCommented() {
+        return saml2LogoutCommented;
+    }
+
+    /** Sets whether to comment the SAML2 Logout endpoints.
+     * @param asComment whether to comment or not
+     */
+    public void setSAML2LogoutCommented(boolean asComment) {
+        saml2LogoutCommented = asComment;
     }
 
     /**
@@ -386,10 +405,18 @@ public class MetadataGenerator {
             }
         }
         writer.newLine();
+        if (isSAML2LogoutCommented()) {
+            writer.write("        <!--");
+            writer.newLine();
+        }
         for (Endpoints endpoint : SLO_ENDPOINTS) {
             if (getEndpoints().contains(endpoint)) {
                 outputEndpoint(endpoint);
             }
+        }
+        if (isSAML2LogoutCommented()) {
+            writer.write("        -->");
+            writer.newLine();
         }
         writer.newLine();
         writeNameIdFormat(net.shibboleth.idp.saml.xml.SAMLConstants.SAML1_NAMEID_TRANSIENT);
