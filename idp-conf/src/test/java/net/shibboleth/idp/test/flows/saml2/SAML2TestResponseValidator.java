@@ -61,15 +61,9 @@ import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
 import org.testng.Assert;
 
 /**
- * Abstract SAML 2 flow test.
+ * SAML 2 {@link #org.opensaml.saml.saml2.core.Response} validator.
  */
-public class SAML2TestResponseValidator {
-
-    /** Expected IdP entity ID. */
-    @Nonnull public String idpEntityID = "https://idp.example.org";
-
-    /** Expected SP entity ID. */
-    @Nonnull public String spEntityID = "https://sp.example.org";
+public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValidator {
 
     /** Authentication context class reference. */
     @Nonnull public String authnContextClassRef = AuthnContext.PASSWORD_AUTHN_CTX;
@@ -79,15 +73,6 @@ public class SAML2TestResponseValidator {
 
     /** Expected name identifier. */
     @Nonnull public NameID nameID;
-
-    /** Expected status code. */
-    @Nonnull public String statusCode = StatusCode.SUCCESS;
-
-    /** Expected nested status code when an error occurs. */
-    @Nonnull public String statusCodeNested = StatusCode.REQUEST_DENIED;
-
-    /** Expected status message when an error occurs. */
-    @Nonnull public String statusMessage = "An error occurred.";
 
     /** Expected subject confirmation method. */
     @Nonnull public String subjectConfirmationMethod = SubjectConfirmation.METHOD_BEARER;
@@ -215,9 +200,7 @@ public class SAML2TestResponseValidator {
      */
     public void validateResponse(@Nullable final Response response) {
 
-        assertResponse(response);
-
-        assertStatus(response.getStatus());
+        super.validateResponse(response);
 
         // short circuit validation upon error
         if (statusCode != StatusCode.SUCCESS) {
@@ -347,48 +330,6 @@ public class SAML2TestResponseValidator {
 
         final List<Attribute> attributes = attributeStatement.getAttributes();
         assertAttributes(attributes);
-    }
-
-    /**
-     * Assert that :
-     * <ul>
-     * <li>the response ID is not null nor empty</li>
-     * <li>the response issue instant is not null</li>
-     * <li>the response version is {@link SAMLVersion#VERSION_20}</li>
-     * <li>the response issuer is the expected IdP entity ID</li>
-     * </ul>
-     * 
-     * @param response the response
-     */
-    public void assertResponse(@Nullable final Response response) {
-        Assert.assertNotNull(response);
-        Assert.assertNotNull(response.getID());
-        Assert.assertFalse(response.getID().isEmpty());
-        Assert.assertNotNull(response.getIssueInstant());
-        Assert.assertEquals(response.getVersion(), (SAMLVersion.VERSION_20));
-        Assert.assertEquals(response.getIssuer().getValue(), idpEntityID);
-    }
-
-    /**
-     * Assert that :
-     * <ul>
-     * <li>the status is not null</li>
-     * <li>the status code is not null</li>
-     * <li>the status code is the expected status code</li>
-     * <li>the status message is the expected status message if the status code is not success</li>
-     * <li>the nested status message is the expected nested status message if the status is not success</li>
-     * </ul>
-     * 
-     * @param status the status
-     */
-    public void assertStatus(@Nullable final Status status) {
-        Assert.assertNotNull(status);
-        Assert.assertNotNull(status.getStatusCode());
-        Assert.assertEquals(status.getStatusCode().getValue(), statusCode);
-        if (statusCode != StatusCode.SUCCESS) {
-            Assert.assertEquals(status.getStatusMessage().getMessage(), statusMessage);
-            Assert.assertEquals(status.getStatusCode().getStatusCode().getValue(), statusCodeNested);
-        }
     }
 
     /**
