@@ -606,7 +606,7 @@
             </element>
             <element ref="security:TrustEngine">
                 <annotation>
-                    <documentation>Trust engines used by a filter.  This is deprecated.  Place the engine inside the validarion filter</documentation>
+                    <documentation>Trust engines used by a filter.  This is deprecated.  Place the engine inside the validation filter</documentation>
                 </annotation>
             </element>
         </choice>
