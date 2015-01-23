@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
@@ -40,7 +39,7 @@ public interface ScriptedIdPAttribute {
      * @return a modifiable collection of the string attributes (not the String
      * @throws ResolutionException if the script has called {@link #getNativeAttribute()}
      */
-    @Nullable @NonnullElements public Collection<Object> getValues() throws ResolutionException;
+    @Nullable public Collection<Object> getValues() throws ResolutionException;
 
     /**
      * return the underlying attribute.
