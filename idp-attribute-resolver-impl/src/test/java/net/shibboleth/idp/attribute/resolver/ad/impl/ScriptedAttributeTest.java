@@ -27,6 +27,8 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.script.ScriptException;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -150,6 +152,28 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
+    
+    @Test public void nullValue() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
+
+        final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
+
+        test.setValues(Collections.singletonList(new StringAttributeValue(SIMPLE_VALUE)));
+
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        Assert.assertNull(attr.getScript());
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("nullValue.script", false)));
+        attr.initialize();
+        Assert.assertNotNull(attr.getScript());
+
+        final IdPAttribute val = attr.resolve(generateContext());
+        final List<IdPAttributeValue<?>> results = val.getValues();
+
+        Assert.assertEquals(results.size(), 1, "Scripted result value count");
+        Assert.assertEquals(results.iterator().next(), new EmptyAttributeValue(EmptyType.NULL_VALUE), "Scripted result contains expected value");
+    }
+
 
     @Test public void simpleWithPredef() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
@@ -223,7 +247,6 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         failureTest("fail5.script", "getNativeAttributes, then getValues", true);
 
         failureTest("fail6.script", "bad type added", false);
-        failureTest("fail7.script", "null added ", true);
     }
 
     @Test public void addAfterGetValues() throws ResolutionException, ScriptException, IOException,

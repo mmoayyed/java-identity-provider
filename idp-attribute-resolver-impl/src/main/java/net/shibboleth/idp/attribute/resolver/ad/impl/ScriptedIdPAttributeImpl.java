@@ -24,6 +24,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -78,10 +80,9 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
                 new StringBuilder(prefix).append(" scripted attribute '").append(attribute.getId()).append("':")
                         .toString();
     }
-    
+
     /**
-     *  We use an internal list of attribute values to allow the legacy use of 
-     *  getValues().add().
+     * We use an internal list of attribute values to allow the legacy use of getValues().add().
      */
     private void setupAttributeValues() {
         if (null != attributeValues) {
@@ -94,6 +95,9 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
         for (final IdPAttributeValue value : encapsulatedAttribute.getValues()) {
             if ((value instanceof StringAttributeValue) && !(value instanceof ScopedStringAttributeValue)) {
                 newValues.add(((StringAttributeValue) value).getValue());
+            } else if (value instanceof EmptyAttributeValue) {
+                // Shib2 made both empty strings and nulls null
+                newValues.add(null);
             } else {
                 newValues.add(value);
             }
@@ -109,8 +113,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      * @return a modifiable collection of the string attributes (not the String
      * @throws ResolutionException if the script has called {@link #getNativeAttribute()}
      */
-    @Override
-    @Nullable @NonnullElements public Collection<Object> getValues() throws ResolutionException {
+    @Override @Nullable @NonnullElements public Collection<Object> getValues() throws ResolutionException {
         if (calledGetNativeAttribute) {
             throw new ResolutionException(getLogPrefix()
                     + " cannot call getNativeAttribute() and getValues() or addValues() on the same attribute()");
@@ -128,8 +131,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      * @return the attribute
      * @throws ResolutionException if the script has called getValues.
      */
-    @Override
-    @Nonnull public IdPAttribute getNativeAttribute() throws ResolutionException {
+    @Override @Nonnull public IdPAttribute getNativeAttribute() throws ResolutionException {
         if (null != attributeValues) {
             throw new ResolutionException(getLogPrefix()
                     + "': cannot call getNativeAttribute() and getValues()/setValues() on the same attribute()");
@@ -143,8 +145,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      * 
      * @return the id
      */
-    @Override
-    @Nonnull @NotEmpty public String getId() {
+    @Override @Nonnull @NotEmpty public String getId() {
         return encapsulatedAttribute.getId();
     }
 
@@ -154,8 +155,10 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      * @param values the list to add to.
      * @param value the value to add. Known to be a {@link String} or an {@link IdPAttributeValue}
      */
-    private void addValue(@Nonnull final List<IdPAttributeValue<?>> values, @Nonnull final Object value) {
-        if (value instanceof String) {
+    private void addAsIdPAttributeValue(final List<IdPAttributeValue<?>> values, final Object value) {
+        if (null == value) {
+            values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        } else if (value instanceof String) {
             values.add(StringAttributeValue.valueOf((String) value));
         } else {
             values.add((IdPAttributeValue) value);
@@ -170,8 +173,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      */
     private void policeValueType(@Nullable final Object what) throws ResolutionException {
         if (null == what) {
-            throw new ResolutionException(getLogPrefix() + " added element was null");
-
+            // This is OK, weird but OK
         } else if (!(what instanceof String) && !(what instanceof IdPAttributeValue)) {
             throw new ResolutionException(getLogPrefix()
                     + " added element must be a String or AttributeValue, provided = " + what.getClass().toString());
@@ -184,14 +186,13 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      * @param what a {@link String} or a {@link IdPAttributeValue} to add.
      * @throws ResolutionException if the provided value is of the wrong type
      */
-    @Override
-    public void addValue(@Nullable final Object what) throws ResolutionException {
+    @Override public void addValue(@Nullable final Object what) throws ResolutionException {
         policeValueType(what);
 
         if (null == attributeValues) {
             setupAttributeValues();
         }
-        
+
         attributeValues.add(what);
     }
 
@@ -215,7 +216,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
         log.debug("{} recreating attribute contents from {}", getLogPrefix(), attributeValues);
         for (final Object object : attributeValues) {
             policeValueType(object);
-            addValue(valueList, object);
+            addAsIdPAttributeValue(valueList, object);
         }
         encapsulatedAttribute.setValues(valueList);
         log.debug("{} recreated attribute contents are {}", getLogPrefix(), valueList);
