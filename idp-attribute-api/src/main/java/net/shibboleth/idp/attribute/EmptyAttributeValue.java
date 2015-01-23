@@ -22,41 +22,56 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import com.google.common.base.MoreObjects;
 
-/** Base class for {@link IdPAttribute} values that are strings. */
-public class StringAttributeValue implements IdPAttributeValue<String> {
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
-    /** The attribute value. */
-    @Nonnull @NotEmpty private final String value;
+/**
+ * An {@link IdPAttributeValue} that is empty. This class defines an enum to represent the various types of empty values
+ * that can occur.
+ */
+public class EmptyAttributeValue implements IdPAttributeValue<EmptyAttributeValue.EmptyType> {
+
+    /** Instance of null empty attribute value. */
+    public static final EmptyAttributeValue NULL = new EmptyAttributeValue(EmptyType.NULL_VALUE);
+
+    /** Instance of zero length attribute value. */
+    public static final EmptyAttributeValue ZERO_LENGTH = new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE);
+
+    /** Types of empty values. */
+    public enum EmptyType {
+        /** Value that is the Java null reference. */
+        NULL_VALUE,
+
+        /** Value with zero length. */
+        ZERO_LENGTH_VALUE
+    }
+
+    /** Value of the attribute. */
+    @Nonnull @NotEmpty private final EmptyType value;
 
     /**
      * Constructor.
      * 
-     * @param attributeValue the attribute value
+     * @param attributeValue value of the attribute
      */
-    public StringAttributeValue(@Nonnull @NotEmpty String attributeValue) {
-        value =
-                Constraint.isNotNull(StringSupport.trimOrNull(attributeValue),
-                        "Attribute value cannot be null or empty");
+    public EmptyAttributeValue(@Nonnull final EmptyType attributeValue) {
+        value = Constraint.isNotNull(attributeValue, "Attribute value cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NotEmpty public final String getValue() {
+    @Override @Nonnull public EmptyType getValue() {
         return value;
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull @NotEmpty public String getDisplayValue() {
-        return value;
+        return value.toString();
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(@Nullable Object obj) {
         if (obj == null) {
             return false;
         }
@@ -65,11 +80,11 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
             return true;
         }
 
-        if (!(obj instanceof StringAttributeValue)) {
+        if (!(obj instanceof EmptyAttributeValue)) {
             return false;
         }
 
-        final StringAttributeValue other = (StringAttributeValue) obj;
+        final EmptyAttributeValue other = (EmptyAttributeValue) obj;
         return Objects.equals(value, other.value);
     }
 
@@ -81,22 +96,5 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
     /** {@inheritDoc} */
     @Override public String toString() {
         return MoreObjects.toStringHelper(this).add("value", value).toString();
-    }
-
-    /**
-     * Returns an {@link EmptyAttributeValue} or {@link StringAttributeValue} as appropriate. This method should be
-     * preferred over the constructor when the value may be null or empty.
-     * 
-     * @param value to inspect
-     * @return {@link EmptyAttributeValue} or {@link StringAttributeValue}
-     */
-    @Nonnull public static IdPAttributeValue<?> valueOf(@Nullable final String value) {
-        if (value == null) {
-            return EmptyAttributeValue.NULL;
-        } else if (value.length() == 0) {
-            return EmptyAttributeValue.ZERO_LENGTH;
-        } else {
-            return new StringAttributeValue(value);
-        }
     }
 }

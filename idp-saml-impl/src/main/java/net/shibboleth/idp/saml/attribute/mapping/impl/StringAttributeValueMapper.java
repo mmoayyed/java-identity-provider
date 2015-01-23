@@ -33,13 +33,13 @@ import org.opensaml.core.xml.XMLObject;
 public class StringAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** {@inheritDoc} */
-    @Nullable protected IdPAttributeValue decodeValue(final XMLObject object) {
+    @Nullable protected IdPAttributeValue<?> decodeValue(final XMLObject object) {
         Constraint.isNotNull(object, "Object supplied to must not be null");
         String value = getStringValue(object);
         if (null == value) {
             return null;
         }
-        return new StringAttributeValue(value);
+        return StringAttributeValue.valueOf(value);
     }
 
     /** {@inheritDoc} */

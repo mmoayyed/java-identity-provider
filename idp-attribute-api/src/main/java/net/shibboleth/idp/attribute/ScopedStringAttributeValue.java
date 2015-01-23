@@ -46,7 +46,6 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
         super(attributeValue);
         scope = Constraint.isNotNull(StringSupport.trimOrNull(valueScope), "Scope cannot be null or empty");
     }
-    
 
     /**
      * Get the scope of the value.
@@ -58,14 +57,12 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String getDisplayValue() {
+    @Override @Nonnull @NotEmpty public String getDisplayValue() {
         return getValue() + '@' + scope;
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean equals(@Nullable final Object obj) {
+    @Override public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -84,14 +81,30 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return Objects.hashCode(getValue(), scope);
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String toString() {
+    @Override @Nonnull @NotEmpty public String toString() {
         return MoreObjects.toStringHelper(this).add("value", getValue()).add("scope", scope).toString();
+    }
+
+    /**
+     * Returns an {@link EmptyAttributeValue} or {@link ScopedStringAttributeValue} as appropriate. This method should
+     * be preferred over the constructor when the value may be null or empty.
+     * 
+     * @param value to inspect
+     * @param scope of the value
+     * @return {@link EmptyAttributeValue} or {@link ScopedStringAttributeValue}
+     */
+    public static IdPAttributeValue<?> valueOf(@Nullable final String value, @Nonnull @NotEmpty final String scope) {
+        if (value == null) {
+            return EmptyAttributeValue.NULL;
+        } else if (value.length() == 0) {
+            return EmptyAttributeValue.ZERO_LENGTH;
+        } else {
+            return new ScopedStringAttributeValue(value, scope);
+        }
     }
 }

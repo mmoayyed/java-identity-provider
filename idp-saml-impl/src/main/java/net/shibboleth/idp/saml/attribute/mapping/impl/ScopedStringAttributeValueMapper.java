@@ -62,7 +62,7 @@ public class ScopedStringAttributeValueMapper extends AbstractSAMLAttributeValue
     }
 
     /** {@inheritDoc} */
-    @Nullable protected IdPAttributeValue decodeValue(@Nonnull final XMLObject object) {
+    @Nullable protected IdPAttributeValue<?> decodeValue(@Nonnull final XMLObject object) {
         Constraint.isNotNull(object, "Object supplied to must not be null");
         final String stringValue = getStringValue(object);
 
@@ -76,7 +76,7 @@ public class ScopedStringAttributeValueMapper extends AbstractSAMLAttributeValue
             return null;
         }
 
-        return new ScopedStringAttributeValue(stringValue.substring(0, offset), stringValue.substring(offset
+        return ScopedStringAttributeValue.valueOf(stringValue.substring(0, offset), stringValue.substring(offset
                 + getDelimiter().length()));
     }
 

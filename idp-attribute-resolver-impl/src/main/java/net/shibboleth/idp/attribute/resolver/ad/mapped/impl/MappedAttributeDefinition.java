@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -159,7 +160,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * @return the set of attribute values that the given dependency value maps in to
      */
     protected List<StringAttributeValue> mapValue(@Nullable String value) {
-        log.debug("Attribute Definition {}: mapping depdenency attribute value {}", getId(), value);
+        log.debug("Attribute Definition {}: mapping dependency attribute value {}", getId(), value);
 
         final String trimmedValue = StringSupport.trimOrNull(value);
         final List<StringAttributeValue> mappedValues = Lists.newArrayList();
@@ -182,7 +183,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
             }
         }
 
-        log.debug("Attribute Definition {}: mapped depdenency attribute value {} to the values {}", new Object[] {
+        log.debug("Attribute Definition {}: mapped dependency attribute value {} to the values {}", new Object[] {
                 getId(), value, mappedValues,});
 
         return mappedValues;
@@ -213,14 +214,16 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
         } else {
 
             final List<StringAttributeValue> valueList = Lists.newArrayList();
-            for (final IdPAttributeValue unmappedValue : unmappedResults) {
-                if (!(unmappedValue instanceof StringAttributeValue)) {
+            for (final IdPAttributeValue<?> unmappedValue : unmappedResults) {
+                if (unmappedValue instanceof EmptyAttributeValue) {
+                    valueList.addAll(mapValue(null));                    
+                } else if (unmappedValue instanceof StringAttributeValue) {
+                    valueList.addAll(mapValue(((StringAttributeValue) unmappedValue).getValue()));
+                } else {
                     throw new ResolutionException(new UnsupportedAttributeTypeException("Attribute definition '"
                             + getId() + "' does not support dependency values of type "
                             + unmappedValue.getClass().getName()));
                 }
-
-                valueList.addAll(mapValue(((StringAttributeValue) unmappedValue).getValue()));
             }
             resultAttribute.setValues(valueList);
         }

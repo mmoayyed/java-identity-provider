@@ -46,14 +46,12 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public final byte[] getValue() {
+    @Override public final byte[] getValue() {
         return value;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String getDisplayValue() {
+    @Override @Nonnull @NotEmpty public String getDisplayValue() {
         return "(binary data)";
     }
 
@@ -76,8 +74,7 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean equals(@Nullable Object obj) {
+    @Override public boolean equals(@Nullable Object obj) {
         if (obj == null) {
             return false;
         }
@@ -95,14 +92,29 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return Arrays.hashCode(value);
     }
 
     /** {@inheritDoc} */
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return MoreObjects.toStringHelper(this).add("value", value).toString();
+    }
+
+    /**
+     * Returns an {@link EmptyAttributeValue} or {@link ByteAttributeValue} as appropriate. This method should be
+     * preferred over the constructor when the value may be null or empty.
+     * 
+     * @param value to inspect
+     * @return {@link EmptyAttributeValue} or {@link ByteAttributeValue}
+     */
+    @Nonnull public static IdPAttributeValue<?> valueOf(@Nullable final byte[] value) {
+        if (value == null) {
+            return EmptyAttributeValue.NULL;
+        } else if (value.length == 0) {
+            return EmptyAttributeValue.ZERO_LENGTH;
+        } else {
+            return new ByteAttributeValue(value);
+        }
     }
 }

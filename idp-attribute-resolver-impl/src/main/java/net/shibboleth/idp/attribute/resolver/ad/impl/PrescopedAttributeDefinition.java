@@ -95,7 +95,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
         log.debug("{} Dependencies {} provided unmapped values of {}", getLogPrefix(), getDependencies(),
                 dependencyValues);
 
-        final List<ScopedStringAttributeValue> valueList = Lists.newArrayListWithExpectedSize(dependencyValues.size());
+        final List<IdPAttributeValue<?>> valueList = Lists.newArrayListWithExpectedSize(dependencyValues.size());
         for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
@@ -120,7 +120,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @throws ResolutionException thrown if the given attribute value does not contain a delimited value
      */
-    @Nonnull private ScopedStringAttributeValue buildScopedStringAttributeValue(
+    @Nonnull private IdPAttributeValue<?> buildScopedStringAttributeValue(
             @Nonnull final StringAttributeValue value) throws ResolutionException {
         Constraint.isNotNull(value, getLogPrefix() + " Attribute value can not be null");
 
@@ -133,7 +133,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
 
         log.debug("{} Value '{}' was split into {} at scope delimiter '{}'",
                 new Object[] {getLogPrefix(), value.getValue(), stringValues, scopeDelimiter,});
-        return new ScopedStringAttributeValue(stringValues[0], stringValues[1]);
+        return ScopedStringAttributeValue.valueOf(stringValues[0], stringValues[1]);
     }
 
     /** {@inheritDoc} */

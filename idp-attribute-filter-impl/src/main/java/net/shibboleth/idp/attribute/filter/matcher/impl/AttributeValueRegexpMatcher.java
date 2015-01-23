@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
@@ -42,7 +43,10 @@ public class AttributeValueRegexpMatcher extends AbstractRegexpStringMatcher {
             return false;
         }
 
-        if (value instanceof StringAttributeValue) {
+        if (value instanceof EmptyAttributeValue) {
+            return false;
+
+        } else if (value instanceof StringAttributeValue) {
             return regexpCompare(((StringAttributeValue) value).getValue());
 
         } else {

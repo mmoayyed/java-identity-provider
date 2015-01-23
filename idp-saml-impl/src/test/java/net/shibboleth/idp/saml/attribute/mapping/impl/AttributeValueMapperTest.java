@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -115,9 +116,12 @@ public class AttributeValueMapperTest extends MappingTests {
         Assert.assertEquals(result.size(), 4);
         final Set<String> strings = new HashSet(4);
         
-        for (IdPAttributeValue val: result) {
-            final String s = Base64Support.encode(((ByteAttributeValue)val).getValue(), Base64Support.CHUNKED);
-            strings.add(s);
+        for (IdPAttributeValue<?> val: result) {
+            if (val instanceof EmptyAttributeValue) {
+                strings.add(Base64Support.encode(new byte[0], Base64Support.CHUNKED));
+            } else {
+                strings.add(Base64Support.encode(((ByteAttributeValue)val).getValue(), Base64Support.CHUNKED));
+            }
         }
         Assert.assertTrue(strings.contains("U2NvdCBDYW50b3IgaXMgdGhlIGdvZCBvZiBTQU1M"));        
     }

@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -200,6 +201,9 @@ public class AttributeSourcedSAML1NameIdentifierGenerator extends AbstractSAML1N
                     }
                     log.debug("Generating NameIdentifier from String-valued attribute {}", sourceId);
                     return strVal;
+                } else if (value instanceof EmptyAttributeValue) {
+                    log.debug("Skipping empty value");
+                    continue;
                 } else {
                     log.warn("Unrecognized attribute value type: {}", value.getClass().getName());
                 }

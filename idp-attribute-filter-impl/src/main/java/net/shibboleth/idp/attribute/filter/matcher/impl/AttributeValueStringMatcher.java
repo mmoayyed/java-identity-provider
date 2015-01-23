@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 
@@ -43,7 +44,17 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
             return false;
         }
 
-        if (value instanceof StringAttributeValue) {
+        if (value instanceof EmptyAttributeValue) {
+            switch (((EmptyAttributeValue) value).getValue()) {
+                case NULL_VALUE:
+                    return super.stringCompare(null);
+                case ZERO_LENGTH_VALUE:
+                    return super.stringCompare("");
+                default:
+                    throw new IllegalArgumentException("Unknown empty attribute value type " + value.getValue());
+            }
+            
+        } else if (value instanceof StringAttributeValue) {
             return super.stringCompare(((StringAttributeValue) value).getValue());
 
         } else {

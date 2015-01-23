@@ -107,7 +107,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
             if (matcher.matches()) {
                 log.debug("{} Computed the value '{}' by apply regexp '{}' to input value '{}'", 
                         getLogPrefix(), matcher.group(1), regexp.pattern(), dependencyValue.getValue());
-                resultantValues.add(new StringAttributeValue(matcher.group(1)));
+                resultantValues.add(StringAttributeValue.valueOf(matcher.group(1)));
             } else {
                 log.debug("{} Regexp '{}' did not match anything in input value '{}'", getLogPrefix(),
                         regexp.pattern(), dependencyValue.getValue());

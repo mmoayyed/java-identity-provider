@@ -33,7 +33,7 @@ import org.opensaml.core.xml.XMLObject;
 public class ByteAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
 
     /** {@inheritDoc} */
-    @Nullable protected IdPAttributeValue decodeValue(@Nonnull final XMLObject object) {
+    @Nullable protected IdPAttributeValue<?> decodeValue(@Nonnull final XMLObject object) {
         final String value = getStringValue(object);
         if (null == value) {
             return null;
@@ -42,7 +42,7 @@ public class ByteAttributeValueMapper extends AbstractSAMLAttributeValueMapper {
         if (null == decoded) {
             return null;
         }
-        return new ByteAttributeValue(decoded);
+        return ByteAttributeValue.valueOf(decoded);
     }
 
     /** {@inheritDoc} */

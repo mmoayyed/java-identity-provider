@@ -51,8 +51,8 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override
-    @Nullable public Map<String,IdPAttribute> map(@Nonnull final ResultSet results) throws ResolutionException {
+    @Override @Nullable public Map<String, IdPAttribute> map(@Nonnull final ResultSet results)
+            throws ResolutionException {
         Constraint.isNotNull(results, "Result set can not be null");
 
         try {
@@ -63,13 +63,13 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
                 }
                 return null;
             }
-            
+
             final ResultSetMetaData resultMetadata = results.getMetaData();
 
-            final Map<String,IdPAttribute> attributes =
+            final Map<String, IdPAttribute> attributes =
                     Maps.newHashMapWithExpectedSize(resultMetadata.getColumnCount());
-            
-            final Map<String,String> aliases = getResultRenamingMap();
+
+            final Map<String, String> aliases = getResultRenamingMap();
 
             int rowCount = 0;
             do {
@@ -78,7 +78,7 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
                     throw new ResolutionException("Multiple rows returned from query");
                 }
                 for (int i = 1; i <= resultMetadata.getColumnCount(); i++) {
-                    
+
                     final String originalId = resultMetadata.getColumnName(i);
                     final String effectiveId = aliases.containsKey(originalId) ? aliases.get(originalId) : originalId;
                     if (log.isDebugEnabled()) {
@@ -86,18 +86,19 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
                             log.debug("Remapping column {} to {}", originalId, effectiveId);
                         }
                     }
-                    
+
                     IdPAttribute attribute = attributes.get(effectiveId);
                     if (attribute == null) {
                         attribute = new IdPAttribute(effectiveId);
                         attributes.put(effectiveId, attribute);
                     }
-                    
+
                     if (attribute.getValues().isEmpty()) {
-                        attribute.setValues(Collections.singletonList(new StringAttributeValue(results.getString(i))));
+                        attribute.setValues(
+                            Collections.singletonList(StringAttributeValue.valueOf(results.getString(i))));
                     } else {
                         final List<IdPAttributeValue<?>> values = Lists.newArrayList(attribute.getValues());
-                        values.add(new StringAttributeValue(results.getString(i)));
+                        values.add(StringAttributeValue.valueOf(results.getString(i)));
                         attribute.setValues(values);
                     }
                 }
@@ -113,5 +114,5 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
         }
     }
 // Checkstyle: CyclomaticComplexity ON
-    
+
 }

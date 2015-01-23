@@ -156,7 +156,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
      */
     private void addValue(@Nonnull final List<IdPAttributeValue<?>> values, @Nonnull final Object value) {
         if (value instanceof String) {
-            values.add(new StringAttributeValue((String) value));
+            values.add(StringAttributeValue.valueOf((String) value));
         } else {
             values.add((IdPAttributeValue) value);
         }

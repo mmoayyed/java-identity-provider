@@ -175,7 +175,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
             return null;
         }
         final IdPAttribute attribute = new IdPAttribute(getGeneratedAttributeId());
-        attribute.setValues(Collections.singletonList(new StringAttributeValue(value)));
+        attribute.setValues(Collections.singletonList(StringAttributeValue.valueOf(value)));
         return Collections.singletonMap(getGeneratedAttributeId(), attribute);
     }
 

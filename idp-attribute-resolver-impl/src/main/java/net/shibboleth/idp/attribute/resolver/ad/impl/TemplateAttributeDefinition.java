@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -206,7 +207,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues = new LazyMap<>();
         final int valueCount = setupSourceValues(workContext, sourceValues);
 
-        final List<StringAttributeValue> valueList = Lists.newArrayListWithExpectedSize(valueCount);
+        final List<IdPAttributeValue<?>> valueList = Lists.newArrayListWithExpectedSize(valueCount);
 
         for (int i = 0; i < valueCount; i++) {
             log.debug("{} Determing value {}", getLogPrefix(), i + 1);
@@ -214,17 +215,31 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
 
             // Build velocity context.
             for (final String attributeId : sourceValues.keySet()) {
-                final IdPAttributeValue value = sourceValues.get(attributeId).next();
-                if (!(value instanceof StringAttributeValue)) {
+                final IdPAttributeValue<?> value = sourceValues.get(attributeId).next();
+                final String velocityValue;
+                if (value instanceof EmptyAttributeValue) {
+                    switch (((EmptyAttributeValue) value).getValue()) {
+                        case NULL_VALUE:
+                            velocityValue = null;
+                            break;
+                        case ZERO_LENGTH_VALUE:
+                            velocityValue = "";
+                            break;
+                        default:
+                            throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
+                                    + "Unknown empty attribute value type " + value.getValue()));
+                    }
+                } else if (value instanceof StringAttributeValue) {
+                    velocityValue = (String) value.getValue();
+                } else {
                     throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                             + "This attribute definition only supports attribute value types of "
                             + StringAttributeValue.class.getName() + " not values of type "
                             + value.getClass().getName()));
                 }
-
                 log.debug("{} Adding value '{}' for attribute '{}' to the template context", new Object[] {
-                        getLogPrefix(), value.getValue(), attributeId,});
-                velocityContext.put(attributeId, value.getValue());
+                        getLogPrefix(), velocityValue, attributeId,});
+                velocityContext.put(attributeId, velocityValue);
             }
 
             // Evaluate the context.
@@ -232,7 +247,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 log.debug("{} Evaluating template", getLogPrefix());
                 final String templateResult = template.merge(velocityContext);
                 log.debug("{} Result of template evaluating was '{}'", getLogPrefix(), templateResult);
-                valueList.add(new StringAttributeValue(templateResult));
+                valueList.add(StringAttributeValue.valueOf(templateResult));
             } catch (final VelocityException e) {
                 // uncovered path
                 log.error("{} Unable to evaluate velocity template", getLogPrefix(), e);

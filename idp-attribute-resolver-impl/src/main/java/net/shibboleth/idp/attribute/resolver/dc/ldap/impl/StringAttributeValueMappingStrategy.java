@@ -92,7 +92,7 @@ public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy
                 values.addAll(attribute.getValues());
                 
                 for (final String value : attr.getStringValues()) {
-                    values.add(new StringAttributeValue(value));
+                    values.add(StringAttributeValue.valueOf(value));
                 }
                 attribute.setValues(values);
             }
