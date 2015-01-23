@@ -101,6 +101,16 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
         Assert.assertEquals(Sets.newHashSet(result).size(), 1);
     }
     
+    @Test public void inlineFilterTrustEngine() throws IOException, ResolverException {
+        MetadataResolver resolver =
+                getBean(MetadataResolver.class, "filter/switch-metadata-trustengine-inline-filter.xml", "beans.xml");
+
+        final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
+        Assert.assertTrue(result.iterator().hasNext());
+        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
+    }
+
+    
     @Test public void optionalFilterRefs() throws IOException {
         ApplicationContext context = 
                 getApplicationContext("optionalFilterRefs", "filter/signatureValidationRefs.xml", "filter/switch.xml", "filter/signatureValidationRefs-beans.xml");

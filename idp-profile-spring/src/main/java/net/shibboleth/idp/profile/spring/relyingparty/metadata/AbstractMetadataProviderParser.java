@@ -126,15 +126,14 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
             doNativeParse(element, parserContext, childBeanDefinitionBuilder);
 
             builder.addConstructorArgValue(childBeanDefinitionBuilder.getBeanDefinition());
-            
+
             if (element.hasAttributeNS(null, "sortKey")) {
                 builder.addPropertyValue("sortKey", element.getAttributeNS(null, "sortKey"));
             }
-            
         } else {
             if (element.hasAttributeNS(null, "sortKey")) {
-                log.warn("{} sortKey is only valid on 'top level' MetadataProviders", 
-                        parserContext.getReaderContext().getResource().getDescription());
+                log.warn("{} sortKey is only valid on 'top level' MetadataProviders", parserContext.getReaderContext()
+                        .getResource().getDescription());
             }
             doNativeParse(element, parserContext, builder);
         }
@@ -184,7 +183,11 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
 
         final List<Element> trustEngines =
                 ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
-        SpringSupport.parseCustomElements(trustEngines, parserContext);
-
+        if (trustEngines != null && !trustEngines.isEmpty()) {
+            log.warn("{} Deprecated placement of <TrustEngine> inside <MetadataProvider>. "
+                    + "Place inside the relevant filter", parserContext.getReaderContext().getResource()
+                    .getDescription());
+            SpringSupport.parseCustomElements(trustEngines, parserContext);
+        }
     }
 }

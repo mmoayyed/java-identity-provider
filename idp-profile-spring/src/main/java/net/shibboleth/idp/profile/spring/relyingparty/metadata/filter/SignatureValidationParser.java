@@ -22,7 +22,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicInlineCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509ResourceCredentialFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -66,11 +68,15 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
     }
 
     // Checkstyle: CyclomaticComplexity OFF
+    // Checkstyle: MethodLength OFF
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(Element element, ParserContext parserContext, 
+            BeanDefinitionBuilder builder) {
         final boolean hasEngineRef = element.hasAttributeNS(null, "trustEngineRef");
         final boolean hasCertFile = element.hasAttributeNS(null, "certificateFile");
         final List<Element> publicKeys = ElementSupport.getChildElements(element, PUBLIC_KEY);
+        final List<Element> trustEngines =
+                ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
 
         super.doParse(element, parserContext, builder);
 
@@ -79,6 +85,11 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
                 log.error("{}: trustEngineRef and certificateFile are mutually exlusive", parserContext
                         .getReaderContext().getResource().getDescription());
                 throw new BeanCreationException("trustEngineRef and certificateFile are mutually exlusive");
+            }
+            if (trustEngines != null && !trustEngines.isEmpty()) {
+                log.error("{}: trustEngineRef and Embedded <TrustEngine>  are mutually exlusive", parserContext
+                        .getReaderContext().getResource().getDescription());
+                throw new BeanCreationException("{}: trustEngineRef and Embedded <TrustEngine> are mutually exlusive");
             }
             if (null != publicKeys && !publicKeys.isEmpty()) {
                 log.error("{}: trustEngineRef and certificateFile are mutually exlusive", parserContext
@@ -93,7 +104,21 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
                         .getReaderContext().getResource().getDescription());
                 throw new BeanCreationException("certificateFile and embedded public keys are mutually exlusive");
             }
+            if (trustEngines != null && !trustEngines.isEmpty()) {
+                log.error("{}: certificateFile and Embedded <TrustEngine>  are mutually exlusive", parserContext
+                        .getReaderContext().getResource().getDescription());
+                throw new BeanCreationException("{}: Embedded <TrustEngine> and certificateFile are mutually exlusive");
+            }
             buildTrustEngine(builder, buildCertificateCredential(element.getAttributeNS(null, "certificateFile")));
+        } else if (null != trustEngines && !trustEngines.isEmpty()) {
+            if (trustEngines.size() > 1) {
+                log.error("{}: Too many <TrustEngine>s", parserContext
+                        .getReaderContext().getResource().getDescription());
+                throw new BeanCreationException("{}: Too many <TrustEngine>s");
+            }
+            ManagedList<BeanDefinition> engines = SpringSupport.parseCustomElements(trustEngines, parserContext);
+            
+            builder.addConstructorArgValue(engines.get(0));
         } else {
             buildTrustEngine(builder, buildPublicKeyCredential(parserContext, publicKeys));
         }
@@ -121,6 +146,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         
     }
     // Checkstyle: CyclomaticComplexity ON
+    // Checkstyle: MethodLength ON
 
     /**
      * Build a trust engine and populate it with the supplied credential (definition).
