@@ -97,6 +97,9 @@ public class FilterAttributes extends AbstractProfileAction {
      * Strategy used to locate the {@link SAMLMetadataContext} associated with a given {@link AttributeFilterContext}.
      */
     @Nonnull private Function<AttributeFilterContext,SAMLMetadataContext> metadataFromFilterLookupStrategy;
+    
+    /** Whether to treat resolver errors as equivalent to resolving no attributes. */
+    private boolean maskFailures;
 
     /** AuthenticationContext to work from (if any). */
     @Nullable private AuthenticationContext authenticationContext;
@@ -143,6 +146,8 @@ public class FilterAttributes extends AbstractProfileAction {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeFilterContext.
         filterContextCreationStrategy = Functions.compose(new ChildContextLookup<>(AttributeFilterContext.class, true),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
+        
+        maskFailures = true;
     }
     
     /**
@@ -239,10 +244,27 @@ public class FilterAttributes extends AbstractProfileAction {
                 new RootContextLookup<AttributeFilterContext,ProfileRequestContext>());
     }
 
+    /**
+     * Set whether to treat resolution failure as equivalent to resolving no attributes.
+     * 
+     * <p>This matches the behavior of V2.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setMaskFailures(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        maskFailures = flag;
+    }
 
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         attributeContext = attributeContextLookupStrategy.apply(profileRequestContext);
         if (attributeContext == null) {
             log.debug("{} No attribute context, no attributes to filter", getLogPrefix());
@@ -259,7 +281,7 @@ public class FilterAttributes extends AbstractProfileAction {
             log.debug("{} No authentication context available.", getLogPrefix());
         }
 
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
     
     /** {@inheritDoc} */
@@ -271,7 +293,12 @@ public class FilterAttributes extends AbstractProfileAction {
         final AttributeFilterContext filterContext = filterContextCreationStrategy.apply(profileRequestContext);
         if (filterContext == null) {
             log.error("{} Unable to locate or create AttributeFilterContext", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+            if (maskFailures) {
+                log.warn("Filter error masked, clearing resolved attributes");
+                attributeContext.setIdPAttributes(null);
+            } else {
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+            }
             return;
         }
         
@@ -284,7 +311,12 @@ public class FilterAttributes extends AbstractProfileAction {
             if (null == component) {
                 log.error("{} Error encountered while filtering attributes : Invalid Attribute Filter configuration",
                         getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+                if (maskFailures) {
+                    log.warn("Filter error masked, clearing resolved attributes");
+                    attributeContext.setIdPAttributes(null);
+                } else {
+                    ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+                }
             } else {
                 final AttributeFilter filter = component.getComponent();
                 filter.filterAttributes(filterContext);
@@ -293,7 +325,12 @@ public class FilterAttributes extends AbstractProfileAction {
             }
         } catch (final AttributeFilterException e) {
             log.error("{} Error encountered while filtering attributes", getLogPrefix(), e);
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+            if (maskFailures) {
+                log.warn("Filter error masked, clearing resolved attributes");
+                attributeContext.setIdPAttributes(null);
+            } else {
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+            }
         } finally {
             if (null != component) {
                 component.unpinComponent();

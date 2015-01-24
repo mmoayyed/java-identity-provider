@@ -256,7 +256,8 @@ public class FilterAttributesTest {
         action.initialize();
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_FILTER_ATTRIBS);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertTrue(attributeCtx.getIdPAttributes().isEmpty());
     }
     
     /** Test that action returns the proper event if the attribute configuration is broken */
@@ -275,6 +276,7 @@ public class FilterAttributesTest {
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeFilterCtx);
 
         final FilterAttributes action = new FilterAttributes(new FilterService(null));
+        action.setMaskFailures(false);
         action.initialize();
 
         final Event event = action.execute(src);

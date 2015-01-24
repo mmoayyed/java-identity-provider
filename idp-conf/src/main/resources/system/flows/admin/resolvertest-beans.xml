@@ -115,7 +115,8 @@
         p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
 
     <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
-        c:filterService-ref="shibboleth.AttributeFilterService" />
+        c:filterService-ref="shibboleth.AttributeFilterService"
+        p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}" />
         
     <util:map id="ProtocolStateMap">
         <entry>

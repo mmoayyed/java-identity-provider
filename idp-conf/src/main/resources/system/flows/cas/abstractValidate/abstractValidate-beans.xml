@@ -47,7 +47,8 @@
     <bean id="filterAttributes"
           class="net.shibboleth.idp.profile.impl.FilterAttributes"
           scope="prototype"
-          c:filterService-ref="shibboleth.AttributeFilterService" />
+          c:filterService-ref="shibboleth.AttributeFilterService"
+          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}" />
 
     <bean id="extractAttributesAction"
           class="net.shibboleth.idp.cas.flow.ExtractAttributesAction" />
