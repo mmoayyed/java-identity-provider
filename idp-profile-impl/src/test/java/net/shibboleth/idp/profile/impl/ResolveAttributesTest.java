@@ -173,7 +173,10 @@ public class ResolveAttributesTest {
         action.initialize();
 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+        ActionTestingSupport.assertProceedEvent(event);
+        final AttributeContext resolvedAttributeCtx =
+                prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
+        Assert.assertNull(resolvedAttributeCtx);
     }
     
     /** Test that action returns the proper event if the attribute configuration is broken */
@@ -187,6 +190,7 @@ public class ResolveAttributesTest {
         definitions.add(new MockAttributeDefinition("ad1", new ResolutionException()));
 
         final ResolveAttributes action = new ResolveAttributes(new AttributeService(null));
+        action.setMaskFailures(false);
         action.initialize();
 
         final Event event = action.execute(src);

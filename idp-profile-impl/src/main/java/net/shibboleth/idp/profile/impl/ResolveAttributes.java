@@ -240,7 +240,6 @@ public final class ResolveAttributes extends AbstractProfileAction {
                 log.error("{} Error resolving attributes: Invalid Attribute resolver configuration", getLogPrefix());
                 if (!maskFailures) {
                     ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
-                    return;
                 }
             } else {
                 final AttributeResolver attributeResolver = component.getComponent();
