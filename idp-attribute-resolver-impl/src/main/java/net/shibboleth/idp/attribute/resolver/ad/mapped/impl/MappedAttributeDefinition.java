@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.mapped.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -48,9 +49,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Implementation of Mapped Attributes. <br/>
@@ -63,10 +64,10 @@ import com.google.common.collect.Lists;
 public class MappedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(MappedAttributeDefinition.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(MappedAttributeDefinition.class);
 
     /** Value maps. */
-    private Set<ValueMap> valueMaps = Collections.emptySet();
+    @Nonnull @NonnullElements private Set<ValueMap> valueMaps = Collections.emptySet();
 
     /** Whether the definition passes thru unmatched values. */
     private boolean passThru;
@@ -162,12 +163,11 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     protected List<StringAttributeValue> mapValue(@Nullable String value) {
         log.debug("Attribute Definition {}: mapping dependency attribute value {}", getId(), value);
 
-        final String trimmedValue = StringSupport.trimOrNull(value);
-        final List<StringAttributeValue> mappedValues = Lists.newArrayList();
+        final List<StringAttributeValue> mappedValues = new ArrayList<>();
 
-        boolean valueMapMatch = false;
-        if (null != trimmedValue) {
-            for (ValueMap valueMap : valueMaps) {
+        if (!Strings.isNullOrEmpty(value)) {
+            boolean valueMapMatch = false;
+            for (final ValueMap valueMap : valueMaps) {
                 mappedValues.addAll(valueMap.apply(value));
                 if (!mappedValues.isEmpty()) {
                     valueMapMatch = true;
@@ -213,7 +213,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
             }
         } else {
 
-            final List<StringAttributeValue> valueList = Lists.newArrayList();
+            final List<StringAttributeValue> valueList = new ArrayList<>();
             for (final IdPAttributeValue<?> unmappedValue : unmappedResults) {
                 if (unmappedValue instanceof EmptyAttributeValue) {
                     valueList.addAll(mapValue(null));                    

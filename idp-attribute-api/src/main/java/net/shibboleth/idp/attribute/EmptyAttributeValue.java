@@ -57,7 +57,7 @@ public class EmptyAttributeValue implements IdPAttributeValue<EmptyAttributeValu
      * @param attributeValue value of the attribute
      */
     public EmptyAttributeValue(@Nonnull final EmptyType attributeValue) {
-        value = Constraint.isNotNull(attributeValue, "Attribute value cannot be null");
+        value = Constraint.isNotNull(attributeValue, "Empty value enumeration cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -97,4 +97,5 @@ public class EmptyAttributeValue implements IdPAttributeValue<EmptyAttributeValu
     @Override public String toString() {
         return MoreObjects.toStringHelper(this).add("value", value).toString();
     }
+    
 }

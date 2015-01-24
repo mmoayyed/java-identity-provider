@@ -56,10 +56,11 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
     private String returnValue;
 
     /** Source values. */
-    @Nonnull @NonnullElements private Collection<SourceValue> sourceValues = Collections.EMPTY_SET;
+    @Nonnull @NonnullElements private Collection<SourceValue> sourceValues;
 
     /** Constructor. */
     public ValueMap() {
+        sourceValues = Collections.emptySet();
     }
 
     /**
@@ -109,15 +110,23 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
     /** {@inheritDoc} */
     @Override
     @Nullable public Set<StringAttributeValue> apply(@Nullable String attributeValue) {
+        
+        if (attributeValue == null) {
+            log.debug("Input value was null, returning empty set");
+            return Collections.emptySet();
+        }
+        
         log.debug("Attempting to map attribute value '{}'", attributeValue);
-        final Set<StringAttributeValue> mappedValues = new HashSet<StringAttributeValue>();
+        final Set<StringAttributeValue> mappedValues = new HashSet<>();
 
-        for (SourceValue sourceValue : sourceValues) {
+        for (final SourceValue sourceValue : sourceValues) {
             String newValue = null;
 
             if (sourceValue.isPartialMatch()) {
                 log.debug("Performing partial match comparison.");
-                if (attributeValue.contains(sourceValue.getValue())) {
+                if (sourceValue.getValue() == null) {
+                    log.debug("Source value was null, no partial match");
+                } else if (attributeValue.contains(sourceValue.getValue())) {
                     newValue = returnValue;
                     log.debug("Attribute value '{}' matches source value '{}' it will be mapped to '{}'", new Object[] {
                             attributeValue, sourceValue.getValue(), newValue,});
@@ -127,11 +136,11 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
                 try {
                     final Matcher m = sourceValue.getPattern().matcher(attributeValue);
                     if (m.matches()) {
-                        newValue = m.replaceAll(returnValue);
+                        newValue = returnValue != null ? m.replaceAll(returnValue) : null;
                         log.debug("Attribute value '{}' matches regular expression it will be mapped to '{}'",
                                 attributeValue, newValue);
                     }
-                } catch (PatternSyntaxException e) {
+                } catch (final PatternSyntaxException e) {
                     log.debug("Error matching value {}.  Skipping this value.", attributeValue);
                 }
             }

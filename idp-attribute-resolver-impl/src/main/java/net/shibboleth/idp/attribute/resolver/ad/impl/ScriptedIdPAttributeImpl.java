@@ -91,7 +91,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
         log.debug("{} values being prepared", getLogPrefix());
 
         // NOTE. This has to be a List - the examples use get(0)
-        final ArrayList<Object> newValues = new ArrayList<Object>(encapsulatedAttribute.getValues().size());
+        final ArrayList<Object> newValues = new ArrayList<>(encapsulatedAttribute.getValues().size());
         for (final IdPAttributeValue value : encapsulatedAttribute.getValues()) {
             if ((value instanceof StringAttributeValue) && !(value instanceof ScopedStringAttributeValue)) {
                 newValues.add(((StringAttributeValue) value).getValue());

@@ -42,9 +42,7 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
 
         if (null == value) {
             return false;
-        }
-
-        if (value instanceof EmptyAttributeValue) {
+        } else if (value instanceof EmptyAttributeValue) {
             switch (((EmptyAttributeValue) value).getValue()) {
                 case NULL_VALUE:
                     return super.stringCompare(null);
@@ -56,7 +54,6 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
             
         } else if (value instanceof StringAttributeValue) {
             return super.stringCompare(((StringAttributeValue) value).getValue());
-
         } else {
             final String valueAsString = value.getValue().toString();
             log.warn("{} Object supplied to StringAttributeValue comparison"

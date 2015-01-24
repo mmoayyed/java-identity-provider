@@ -70,8 +70,8 @@ public class AttributeContext extends BaseContext {
             return;
         }
 
-        HashMap<String, IdPAttribute> checkedAttributes = new HashMap<String, IdPAttribute>();
-        for (IdPAttribute attribute : newAttributes) {
+        final HashMap<String,IdPAttribute> checkedAttributes = new HashMap<>();
+        for (final IdPAttribute attribute : newAttributes) {
             if (attribute != null) {
                 checkedAttributes.put(attribute.getId(), attribute);
             }
@@ -79,4 +79,5 @@ public class AttributeContext extends BaseContext {
 
         attributes = ImmutableMap.copyOf(checkedAttributes);
     }
+    
 }

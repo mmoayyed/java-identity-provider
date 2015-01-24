@@ -41,11 +41,8 @@ public class AttributeValueRegexpMatcher extends AbstractRegexpStringMatcher {
         
         if (null == value) {
             return false;
-        }
-
-        if (value instanceof EmptyAttributeValue) {
+        } else if (value instanceof EmptyAttributeValue) {
             return false;
-
         } else if (value instanceof StringAttributeValue) {
             return regexpCompare(((StringAttributeValue) value).getValue());
 
