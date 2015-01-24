@@ -87,6 +87,9 @@ public final class ResolveAttributes extends AbstractProfileAction {
     
     /** Attribute IDs to pass into resolver. */
     @Nonnull @NonnullElements private Collection<String> attributesToResolve;
+    
+    /** Whether to treat resolver errors as equivalent to resolving no attributes. */
+    private boolean maskFailures;
 
     /** AuthenticationContext to work from (if any). */
     @Nullable private AuthenticationContext authenticationContext;
@@ -113,6 +116,8 @@ public final class ResolveAttributes extends AbstractProfileAction {
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
         
         attributesToResolve = Collections.emptyList();
+        
+        maskFailures = true;
     }
     
     /**
@@ -187,17 +192,34 @@ public final class ResolveAttributes extends AbstractProfileAction {
         Constraint.isNotNull(attributeIds, "Attribute ID collection cannot be null");
         attributesToResolve = StringSupport.normalizeStringCollection(attributeIds);
     }
+    
+    /**
+     * Set whether to treat resolution failure as equivalent to resolving no attributes.
+     * 
+     * <p>This matches the behavior of V2.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setMaskFailures(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        maskFailures = flag;
+    }
 
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
         if (authenticationContext == null) {
             log.debug("{} No authentication context available.", getLogPrefix());
         }
 
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
 
     /** {@inheritDoc} */
@@ -216,7 +238,10 @@ public final class ResolveAttributes extends AbstractProfileAction {
             component = attributeResolverService.getServiceableComponent();
             if (null == component) {
                 log.error("{} Error resolving attributes: Invalid Attribute resolver configuration", getLogPrefix());
-                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+                if (!maskFailures) {
+                    ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+                    return;
+                }
             } else {
                 final AttributeResolver attributeResolver = component.getComponent();
                 attributeResolver.resolveAttributes(resolutionContext);
@@ -227,11 +252,12 @@ public final class ResolveAttributes extends AbstractProfileAction {
                     throw new ResolutionException("Unable to create or locate AttributeContext to populate");
                 }
                 attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
-
             }
         } catch (final ResolutionException e) {
             log.error("{} Error resolving attributes", getLogPrefix(), e);
-            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+            if (!maskFailures) {
+                ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+            }
         } finally {
             if (null != component) {
                 component.unpinComponent();

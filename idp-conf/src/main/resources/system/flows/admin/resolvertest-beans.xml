@@ -111,7 +111,8 @@
     </bean>
 
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
-        c:resolverService-ref="shibboleth.AttributeResolverService" />
+        c:resolverService-ref="shibboleth.AttributeResolverService"
+        p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
 
     <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
         c:filterService-ref="shibboleth.AttributeFilterService" />

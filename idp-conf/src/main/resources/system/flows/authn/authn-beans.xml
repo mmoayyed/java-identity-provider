@@ -41,7 +41,8 @@
     <bean id="ResolveAttributes"
             class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
             c:resolverService-ref="shibboleth.AttributeResolverService"
-            p:activationCondition="#{ '%{idp.authn.resolveAttribute:null}' != 'null' }">
+            p:activationCondition="#{ '%{idp.authn.resolveAttribute:null}' != 'null' }"
+            p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}">
         <property name="attributesToResolve">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.authn.resolveAttribute:null}" />
         </property>
