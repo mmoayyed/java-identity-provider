@@ -67,4 +67,16 @@ public class StringAttributeValueTest {
         Assert.assertFalse(value3.equals(value2));
         value2.toString();
     }
+    
+    /** Test valueOf(). */
+    @Test public void valueOf() {
+        Assert.assertEquals(StringAttributeValue.valueOf(null), EmptyAttributeValue.NULL);
+        Assert.assertEquals(StringAttributeValue.valueOf(""), EmptyAttributeValue.ZERO_LENGTH);
+        try {
+            StringAttributeValue.valueOf(" ");
+            Assert.fail("able to set empty attribute value");
+        } catch (ConstraintViolationException e) {
+            // expected this
+        }
+    }
 }
