@@ -84,7 +84,7 @@ public class AbstractAttributeDefinitionTest {
         MockAttributeEncoder enc1 = new MockAttributeEncoder(null, null);
         MockAttributeEncoder enc2 = new MockAttributeEncoder(null, null);
 
-        Set<AttributeEncoder<?>> encoders = new HashSet<AttributeEncoder<?>>(2);
+        Set<AttributeEncoder<?>> encoders = new HashSet<>(2);
 
         definition.setAttributeEncoders(null);
         Assert.assertNotNull(definition.getAttributeEncoders());
@@ -128,7 +128,7 @@ public class AbstractAttributeDefinitionTest {
 
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
         
-        Map<Locale, String> descriptions = new HashMap<Locale, String>();
+        Map<Locale, String> descriptions = new HashMap<>();
         descriptions.put(en, "english");
         descriptions.put(enbr, null);
         definition.setDisplayDescriptions(descriptions);
@@ -154,7 +154,7 @@ public class AbstractAttributeDefinitionTest {
 
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", null);
 
-        Map<Locale, String> names = new HashMap<Locale, String>();
+        Map<Locale, String> names = new HashMap<>();
         names.put(en, "english");
         names.put(enbr, null);
         definition.setDisplayNames(names);
@@ -219,7 +219,7 @@ public class AbstractAttributeDefinitionTest {
         MockAttributeEncoder encoder = new MockAttributeEncoder("foo", "baz");
         MockAttributeDefinition definition = new MockAttributeDefinition("foo", (IdPAttribute) null);
         
-        Set<AttributeEncoder<?>> encoders = new HashSet<AttributeEncoder<?>>(1);
+        Set<AttributeEncoder<?>> encoders = new HashSet<>(1);
         encoders.add(encoder);
         definition.setAttributeEncoders(encoders);
         

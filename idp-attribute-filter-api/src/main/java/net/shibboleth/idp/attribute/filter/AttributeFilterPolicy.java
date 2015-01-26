@@ -84,7 +84,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
 
         rule = Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
 
-        ArrayList<AttributeRule> checkedPolicies = new ArrayList<AttributeRule>();
+        ArrayList<AttributeRule> checkedPolicies = new ArrayList<>();
         CollectionSupport.addIf(checkedPolicies, attributeRules, Predicates.notNull());
         if (null != attributeRules) {
             valuePolicies = ImmutableList.copyOf(Iterables.filter(attributeRules, Predicates.notNull()));

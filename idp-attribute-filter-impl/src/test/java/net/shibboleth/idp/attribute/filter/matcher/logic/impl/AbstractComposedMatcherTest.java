@@ -29,7 +29,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.matcher.logic.impl.AbstractComposedMatcher;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -43,7 +42,7 @@ import org.testng.annotations.Test;
 public class AbstractComposedMatcherTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
-        List<Matcher> firstList = new ArrayList<Matcher>(2);
+        List<Matcher> firstList = new ArrayList<>(2);
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
 
         for (int i = 0; i < 2; i++) {
@@ -87,7 +86,7 @@ public class AbstractComposedMatcherTest {
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Initial state - no matchers");
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add null - no matchers");
 
-        List<Matcher> list = new ArrayList<Matcher>();
+        List<Matcher> list = new ArrayList<>();
 
         for (int i = 0; i < 30; i++) {
             list.add(null);

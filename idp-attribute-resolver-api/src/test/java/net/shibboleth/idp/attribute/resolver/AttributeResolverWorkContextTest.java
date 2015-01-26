@@ -94,7 +94,7 @@ public class AttributeResolverWorkContextTest {
 
         IdPAttribute attribute = new IdPAttribute("foo");
 
-        Map<String, IdPAttribute> attributes = new HashMap<String, IdPAttribute>();
+        Map<String, IdPAttribute> attributes = new HashMap<>();
         attributes.put(attribute.getId(), attribute);
 
         MockDataConnector connector = new MockDataConnector("foo", attributes);

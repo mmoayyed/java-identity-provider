@@ -67,7 +67,7 @@ public class AbstractDataConnectorTest {
         connector.initialize();
         Assert.assertNull(connector.resolve(context));
 
-        HashMap<String, IdPAttribute> values = new HashMap<String, IdPAttribute>();
+        HashMap<String, IdPAttribute> values = new HashMap<>();
         connector = new MockBaseDataConnector("foo", values);
         connector.initialize();
         Assert.assertNotNull(connector.resolve(context));

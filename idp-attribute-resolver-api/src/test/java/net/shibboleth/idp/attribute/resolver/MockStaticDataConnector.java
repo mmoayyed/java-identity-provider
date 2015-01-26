@@ -71,7 +71,7 @@ public class MockStaticDataConnector extends AbstractDataConnector {
             return;
         } 
         
-        Map<String, IdPAttribute> map = new HashMap<String, IdPAttribute>(newValues.size());
+        Map<String, IdPAttribute> map = new HashMap<>(newValues.size());
         for (IdPAttribute attr:newValues) {
             if (null == attr) {
                 continue;

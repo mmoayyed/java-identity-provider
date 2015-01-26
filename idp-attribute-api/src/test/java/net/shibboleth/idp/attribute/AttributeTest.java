@@ -94,7 +94,7 @@ public class AttributeTest {
         attrib.setDisplayNames(Collections.EMPTY_MAP);
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
 
-        Map<Locale, String> displayNames = new HashMap<Locale, String>();
+        Map<Locale, String> displayNames = new HashMap<>();
         displayNames.put(null, "wibble");
         attrib.setDisplayNames(displayNames);
         Assert.assertTrue(attrib.getDisplayNames().isEmpty());
@@ -160,7 +160,7 @@ public class AttributeTest {
         attrib.setDisplayNames(Collections.EMPTY_MAP);
         Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
 
-        Map<Locale, String> displayDescriptions = new HashMap<Locale, String>();
+        Map<Locale, String> displayDescriptions = new HashMap<>();
         displayDescriptions.put(null, "wibble");
         attrib.setDisplayDescriptions(displayDescriptions);
         Assert.assertTrue(attrib.getDisplayDescriptions().isEmpty());
@@ -308,8 +308,8 @@ public class AttributeTest {
 
     /** Tests that values are properly added and modified. */
     @Test public void encoders() {
-        AttributeEncoder<String> enc1 = new MockEncoder<String>();
-        AttributeEncoder<String> enc2 = new MockEncoder<String>();
+        AttributeEncoder<String> enc1 = new MockEncoder<>();
+        AttributeEncoder<String> enc2 = new MockEncoder<>();
 
         IdPAttribute attrib = new IdPAttribute("foo");
         Assert.assertTrue(attrib.getEncoders().isEmpty());
@@ -319,7 +319,7 @@ public class AttributeTest {
         attrib.setEncoders(collection);
         Assert.assertTrue(attrib.getEncoders().isEmpty());
 
-        Set<AttributeEncoder<?>> attribEncoders = new HashSet<AttributeEncoder<?>>();
+        Set<AttributeEncoder<?>> attribEncoders = new HashSet<>();
 
         // test adding one entry
         Assert.assertTrue(attribEncoders.add(enc1));

@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.AbstractComposedPolicyRule;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
@@ -41,7 +40,7 @@ public class AbstractComposedPolicyRuleTest {
 
     @Test
     public void testInitDestroy() throws ComponentInitializationException {
-        List<PolicyRequirementRule> firstList = new ArrayList<PolicyRequirementRule>(2);
+        List<PolicyRequirementRule> firstList = new ArrayList<>(2);
         ComposedPolicyRule rule = new ComposedPolicyRule(Collections.EMPTY_LIST);
         
         for (int i = 0; i < 2;i++) {
@@ -88,7 +87,7 @@ public class AbstractComposedPolicyRuleTest {
         Assert.assertTrue(rule.getComposedRules().isEmpty(), "Initial state - no matchers");
         Assert.assertTrue(rule.getComposedRules().isEmpty(), "Add null - no matchers");
         
-        List<PolicyRequirementRule> list = new ArrayList<PolicyRequirementRule>();
+        List<PolicyRequirementRule> list = new ArrayList<>();
         
         for (int i = 0; i < 30; i++) {
             list.add(null);

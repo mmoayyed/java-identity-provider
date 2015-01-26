@@ -222,7 +222,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         // if no attributes requested, then resolve everything
         if (resolutionContext.getRequestedIdPAttributeNames().isEmpty()) {
-            final Collection<String> attributeIds = new LazyList<String>();
+            final Collection<String> attributeIds = new LazyList<>();
             attributeIds.addAll(attributeDefinitions.keySet());
             return attributeIds;
         } else {
@@ -384,7 +384,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
 
-        final LazySet<IdPAttribute> resolvedAttributes = new LazySet<IdPAttribute>();
+        final LazySet<IdPAttribute> resolvedAttributes = new LazySet<>();
 
         for (final ResolvedAttributeDefinition definition : workContext.getResolvedIdPAttributeDefinitions().values()) {
             final IdPAttribute resolvedAttribute = definition.getResolvedAttribute();
@@ -436,7 +436,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        HashSet<String> dependencyVerifiedPlugins = new HashSet<String>();
+        HashSet<String> dependencyVerifiedPlugins = new HashSet<>();
         for (DataConnector plugin : dataConnectors.values()) {
             log.debug("{} Checking if data connector '{}' is has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);

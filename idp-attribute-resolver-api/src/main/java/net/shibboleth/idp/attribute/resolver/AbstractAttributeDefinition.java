@@ -118,7 +118,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        HashMap<Locale, String> checkedDescriptions = new HashMap<Locale, String>();
+        HashMap<Locale, String> checkedDescriptions = new HashMap<>();
         String trimmedDescription;
         for (Entry<Locale, String> entry : descriptions.entrySet()) {
             trimmedDescription = StringSupport.trimOrNull(entry.getValue());
@@ -149,7 +149,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        HashMap<Locale, String> checkedNames = new HashMap<Locale, String>();
+        HashMap<Locale, String> checkedNames = new HashMap<>();
         String trimmedName;
         for (Entry<Locale, String> entry : names.entrySet()) {
             trimmedName = StringSupport.trimOrNull(entry.getValue());
@@ -181,7 +181,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        Set<AttributeEncoder<?>> checkedEncoders = new HashSet<AttributeEncoder<?>>();
+        Set<AttributeEncoder<?>> checkedEncoders = new HashSet<>();
         CollectionSupport.addIf(checkedEncoders, attributeEncoders, Predicates.notNull());
         encoders = ImmutableSet.copyOf(checkedEncoders);
     }

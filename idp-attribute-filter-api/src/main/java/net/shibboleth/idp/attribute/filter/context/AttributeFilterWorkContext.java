@@ -101,7 +101,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
 
         Set<IdPAttributeValue> permittedAttributeValues = permittedValues.get(trimmedAttributeId);
         if (permittedAttributeValues == null) {
-            permittedAttributeValues = new HashSet<IdPAttributeValue>();
+            permittedAttributeValues = new HashSet<>();
             permittedValues.put(trimmedAttributeId, permittedAttributeValues);
         }
 
@@ -152,7 +152,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
 
         Set<IdPAttributeValue> deniedAttributeValues = deniedValues.get(trimmedAttributeId);
         if (deniedAttributeValues == null) {
-            deniedAttributeValues = new HashSet<IdPAttributeValue>();
+            deniedAttributeValues = new HashSet<>();
             deniedValues.put(trimmedAttributeId, deniedAttributeValues);
         }
 

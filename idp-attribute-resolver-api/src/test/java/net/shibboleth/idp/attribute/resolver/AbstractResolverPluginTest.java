@@ -91,7 +91,7 @@ public class AbstractResolverPluginTest {
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());
 
-        HashSet<ResolverPluginDependency> depdencies = new HashSet<ResolverPluginDependency>();
+        HashSet<ResolverPluginDependency> depdencies = new HashSet<>();
         plugin.setDependencies(depdencies);
         Assert.assertNotNull(plugin.getDependencies());
         Assert.assertTrue(plugin.getDependencies().isEmpty());

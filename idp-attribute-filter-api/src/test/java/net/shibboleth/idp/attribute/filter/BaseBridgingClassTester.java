@@ -43,7 +43,7 @@ public class BaseBridgingClassTester {
     protected final String NAME2 = "bar";
     
     protected AttributeFilterContext setUpCtx() {
-        HashSet<IdPAttribute> attributes = new HashSet<IdPAttribute>(2);
+        HashSet<IdPAttribute> attributes = new HashSet<>(2);
 
         IdPAttribute attribute = new IdPAttribute(NAME1);
         attribute.setValues(Sets.newHashSet(VALUE1, VALUE2));
