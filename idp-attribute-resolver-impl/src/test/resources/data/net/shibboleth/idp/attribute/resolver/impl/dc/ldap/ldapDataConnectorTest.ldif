@@ -32,3 +32,12 @@ homephone: 555-111-3333
 mail: paul.principal@shibboleth.net
 mail: paulprincipal@shibboleth.net
 description: test principal
+
+dn: cn=Philip Principal,ou=people,dc=shibboleth,dc=net
+objectclass: inetOrgPerson
+cn: Philip Principal
+sn: Principal
+uid: PHILIP_THE_PRINCIPAL
+userpassword: changeit
+homephone: 555-111-3333
+mail:

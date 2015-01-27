@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -332,6 +333,35 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(attrs.get("NAME").getValues().size() == 2);
         Assert.assertTrue(attrs.get("NAME").getValues().contains(new StringAttributeValue("group1")));
         Assert.assertTrue(attrs.get("NAME").getValues().contains(new StringAttributeValue("group2")));
+    }
+    
+    /** See IDP-573. */
+    @Test public void resolveEmptyAttribute() throws ComponentInitializationException, ResolutionException {
+        RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
+        connector.initialize();
+
+        AttributeResolutionContext context =
+                TestSources.createResolutionContext("PHILIP_THE_PRINCIPAL", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+
+        Map<String, IdPAttribute> attrs = connector.resolve(context);
+        // check total attributes: userid, name, homephone, mail
+        Assert.assertTrue(attrs.size() == 4);
+        // check userid
+        Assert.assertTrue(attrs.get("USERID").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("USERID").getValues().iterator().next(), new StringAttributeValue(
+                "PHILIP_THE_PRINCIPAL"));
+        // check name
+        Assert.assertTrue(attrs.get("NAME").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("NAME").getValues().iterator().next(), new StringAttributeValue(
+                "Philip Principal"));
+        // check homephone
+        Assert.assertTrue(attrs.get("HOMEPHONE").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("HOMEPHONE").getValues().iterator().next(), new StringAttributeValue(
+                "555-111-4444"));
+        // check mail
+        Assert.assertTrue(attrs.get("MAIL").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("MAIL").getValues().iterator().next(), EmptyAttributeValue.NULL);
     }
     
 }
