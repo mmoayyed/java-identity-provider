@@ -17,9 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
+import java.util.List;
 import java.util.Map;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -120,7 +124,9 @@ public class Regressions {
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         final Map<String, IdPAttribute> attrs = connector.resolve(context);
-        Assert.assertNotNull(attrs);
+        final List<IdPAttributeValue<?>> values = attrs.get("mail").getValues();
+        Assert.assertEquals(values.size(), 4);
+        Assert.assertTrue(values.contains(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE)));
     }
 
 }
