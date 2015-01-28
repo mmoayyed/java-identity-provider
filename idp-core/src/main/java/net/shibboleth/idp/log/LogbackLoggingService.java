@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.service.ServiceException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -47,6 +48,7 @@ import ch.qos.logback.core.status.ErrorStatus;
 import ch.qos.logback.core.status.InfoStatus;
 import ch.qos.logback.core.status.StatusManager;
 
+import com.google.common.base.StandardSystemProperty;
 import com.google.common.io.Closeables;
 
 /**
@@ -56,6 +58,9 @@ import com.google.common.io.Closeables;
 public class LogbackLoggingService extends AbstractReloadableService<Object>
         implements LoggingService, ApplicationContextAware {
 
+    /** Name of logger used to log standard system properties at startup.*/
+    private static final String STARTUP_PROPERTIES_LOGGER = "STARTUP_PROPERTIES";
+    
     /** Logback logger context. */
     private LoggerContext loggerContext;
 
@@ -203,8 +208,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
             configurator.setContext(loggerContext);
             configurator.doConfigure(loggingConfig);
             loggerContext.start();
-            LoggerFactory.getLogger(LogbackLoggingService.class).info("Shibboleth IdP Version {}",
-                    Version.getVersion());
+            logImplementationDetails();
         } catch (final JoranException e) {
             throw new ServiceException(e);
         }
@@ -228,5 +232,25 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
             }
         }
     }
-    
+
+    /**
+     * Log the IdP version and Java version and vendor at INFO level.
+     * 
+     * Log system properties defined by {@link StandardSystemProperty} to the
+     * {@link LogbackLoggingService#STARTUP_PROPERTIES_LOGGER} logger at DEBUG level if enabled.
+     */
+    protected void logImplementationDetails() {
+        final Logger logger = LoggerFactory.getLogger(LogbackLoggingService.class);
+        logger.info("Shibboleth IdP Version {}", Version.getVersion());
+        logger.info("Java Version='{}' Vendor='{}'", StandardSystemProperty.JAVA_VERSION.value(),
+                StandardSystemProperty.JAVA_VENDOR.value());
+
+        final Logger startupPropertiesLogger = LoggerFactory.getLogger(STARTUP_PROPERTIES_LOGGER);
+        if (startupPropertiesLogger.isDebugEnabled()) {
+            for (StandardSystemProperty standardSystemProperty : StandardSystemProperty.values()) {
+                startupPropertiesLogger.debug("{}", standardSystemProperty);
+            }
+        }
+    }
+
 }

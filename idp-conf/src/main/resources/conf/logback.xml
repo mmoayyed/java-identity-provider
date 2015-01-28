@@ -20,6 +20,11 @@
     <logger name="SAML_PRE_ENCRYPTION" level="DEBUG" />
     -->
 
+    <!-- Logs standard system properties during startup at DEBUG level -->
+    <!-- 
+    <logger name="STARTUP_PROPERTIES" level="DEBUG" />
+    -->
+
     <!-- Especially chatty. -->
     <logger name="net.shibboleth.idp.saml.attribute.mapping" level="INFO" />
     <logger name="org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor" level="INFO" />
