@@ -397,7 +397,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
             // Remove dependency-only attributes.
             if (definition.isDependencyOnly()) {
-                log.debug("{} Removing result of attribute definition '{}', is marked as depdency only", logPrefix,
+                log.debug("{} Removing result of attribute definition '{}', is marked as dependency only", logPrefix,
                         definition.getId());
                 continue;
             }
