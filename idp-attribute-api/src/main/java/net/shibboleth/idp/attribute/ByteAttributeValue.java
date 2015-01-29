@@ -42,7 +42,7 @@ public class ByteAttributeValue implements IdPAttributeValue<byte[]> {
      * @param attributeValue value of the attribute
      */
     public ByteAttributeValue(@Nonnull final byte[] attributeValue) {
-        value = Constraint.isNotNull(attributeValue, "Attribute value cannot be null");
+        value = Constraint.isNotEmpty(attributeValue, "Attribute value cannot be null or empty");
     }
 
     /** {@inheritDoc} */

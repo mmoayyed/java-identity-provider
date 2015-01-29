@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -38,9 +39,25 @@ public class AttributeValueStringMatcherTest {
         Assert.assertTrue(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_VALUE_MATCH));
         Assert.assertFalse(matcher.compareAttributeValue(DataSources.SCOPED_VALUE_SCOPE_MATCH));
         Assert.assertFalse(matcher.compareAttributeValue(DataSources.BYTE_ATTRIBUTE_VALUE));
+        Assert.assertFalse(matcher.compareAttributeValue(EmptyAttributeValue.NULL));
+        Assert.assertFalse(matcher.compareAttributeValue(EmptyAttributeValue.ZERO_LENGTH));
         Assert.assertFalse(matcher.compareAttributeValue(null));
         Assert.assertTrue(matcher.compareAttributeValue(DataSources.OTHER_VALUE));
         
+        AttributeValueStringMatcher nullMatcher = new AttributeValueStringMatcher();
+        nullMatcher.setId("NullTest");
+        nullMatcher.initialize();
+        Assert.assertTrue(nullMatcher.compareAttributeValue(EmptyAttributeValue.NULL));
+        Assert.assertFalse(nullMatcher.compareAttributeValue(EmptyAttributeValue.ZERO_LENGTH));
+        Assert.assertFalse(nullMatcher.compareAttributeValue(DataSources.STRING_VALUE));
+
+        AttributeValueStringMatcher emptyMatcher = new AttributeValueStringMatcher();
+        emptyMatcher.setMatchString("");
+        emptyMatcher.setId("EmptyTest");
+        emptyMatcher.initialize();
+        Assert.assertTrue(emptyMatcher.compareAttributeValue(EmptyAttributeValue.ZERO_LENGTH));
+        Assert.assertFalse(emptyMatcher.compareAttributeValue(EmptyAttributeValue.NULL));
+        Assert.assertFalse(emptyMatcher.compareAttributeValue(DataSources.STRING_VALUE));
     }
 
 }

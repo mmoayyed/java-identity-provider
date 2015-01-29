@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.MoreObjects;
 
@@ -39,10 +38,8 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
      * 
      * @param attributeValue the attribute value
      */
-    public StringAttributeValue(@Nonnull @NotEmpty String attributeValue) {
-        value =
-                Constraint.isNotNull(StringSupport.trimOrNull(attributeValue),
-                        "Attribute value cannot be null or empty");
+    public StringAttributeValue(@Nonnull @NotEmpty final String attributeValue) {
+        value = Constraint.isNotEmpty(attributeValue, "Attribute value cannot be null or empty");
     }
 
     /** {@inheritDoc} */

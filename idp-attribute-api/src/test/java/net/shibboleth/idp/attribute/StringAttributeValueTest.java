@@ -28,7 +28,7 @@ public class StringAttributeValueTest {
     /** Test proper instantiation of the object. */
     @Test public void instantiation() {
         StringAttributeValue value = new StringAttributeValue(" foo ");
-        Assert.assertEquals(value.getValue(), "foo");
+        Assert.assertEquals(value.getValue(), " foo ");
 
         try {
             new StringAttributeValue(null);
@@ -52,11 +52,11 @@ public class StringAttributeValueTest {
         StringAttributeValue value2 = new StringAttributeValue("foo");
         StringAttributeValue value3 = new StringAttributeValue(" baz ");
 
-        Assert.assertTrue(value1.equals(value2));
-        Assert.assertTrue(value1.equals(value2));
+        Assert.assertFalse(value1.equals(value2));
+        Assert.assertFalse(value1.equals(value2));
         Assert.assertTrue(value1.equals(value1));
-        Assert.assertTrue(value2.equals(value1));
-        Assert.assertEquals(value1.hashCode(), value2.hashCode());
+        Assert.assertFalse(value2.equals(value1));
+        Assert.assertNotEquals(value1.hashCode(), value2.hashCode());
 
         Assert.assertFalse(value1.equals(value3));
         Assert.assertFalse(value1.equals(null));
@@ -72,11 +72,6 @@ public class StringAttributeValueTest {
     @Test public void valueOf() {
         Assert.assertEquals(StringAttributeValue.valueOf(null), EmptyAttributeValue.NULL);
         Assert.assertEquals(StringAttributeValue.valueOf(""), EmptyAttributeValue.ZERO_LENGTH);
-        try {
-            StringAttributeValue.valueOf(" ");
-            Assert.fail("able to set empty attribute value");
-        } catch (ConstraintViolationException e) {
-            // expected this
-        }
+        Assert.assertEquals(StringAttributeValue.valueOf(" "), new StringAttributeValue(" "));
     }
 }

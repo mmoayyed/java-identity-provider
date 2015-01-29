@@ -348,20 +348,23 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         // check total attributes: userid, name, homephone, mail
         Assert.assertTrue(attrs.size() == 4);
         // check userid
-        Assert.assertTrue(attrs.get("USERID").getValues().size() == 1);
+        Assert.assertTrue(attrs.get("USERID").getValues().size() == 4);
         Assert.assertEquals(attrs.get("USERID").getValues().iterator().next(), new StringAttributeValue(
                 "PHILIP_THE_PRINCIPAL"));
         // check name
-        Assert.assertTrue(attrs.get("NAME").getValues().size() == 1);
+        Assert.assertTrue(attrs.get("NAME").getValues().size() == 4);
         Assert.assertEquals(attrs.get("NAME").getValues().iterator().next(), new StringAttributeValue(
                 "Philip Principal"));
         // check homephone
-        Assert.assertTrue(attrs.get("HOMEPHONE").getValues().size() == 1);
+        Assert.assertTrue(attrs.get("HOMEPHONE").getValues().size() == 4);
         Assert.assertEquals(attrs.get("HOMEPHONE").getValues().iterator().next(), new StringAttributeValue(
                 "555-111-4444"));
         // check mail
-        Assert.assertTrue(attrs.get("MAIL").getValues().size() == 1);
-        Assert.assertEquals(attrs.get("MAIL").getValues().iterator().next(), EmptyAttributeValue.NULL);
+        Assert.assertTrue(attrs.get("MAIL").getValues().size() == 4);
+        Assert.assertTrue(attrs.get("MAIL").getValues().contains(EmptyAttributeValue.NULL));
+        Assert.assertTrue(attrs.get("MAIL").getValues().contains(EmptyAttributeValue.ZERO_LENGTH));
+        Assert.assertTrue(attrs.get("MAIL").getValues().contains(new StringAttributeValue("  ")));
+        Assert.assertTrue(attrs.get("MAIL").getValues().contains(new StringAttributeValue(" phil.principal@shibboleth.net ")));
     }
     
 }

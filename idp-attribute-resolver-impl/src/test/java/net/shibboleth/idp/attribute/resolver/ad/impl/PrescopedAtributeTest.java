@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -151,6 +152,39 @@ public class PrescopedAtributeTest {
         } catch (ResolutionException e) {
             //
         }
+    }
+
+    @Test public void emptyValueType() throws ResolutionException, ComponentInitializationException {
+        // Set the dependency on the data connector
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
+        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        dependencySet.add(depend);
+        final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        // delimiter that will produce an empty value
+        attrDef.setScopeDelimiter("at1-");
+        attrDef.setDependencies(dependencySet);
+        attrDef.initialize();
+
+        // And resolve
+        final Set<DataConnector> connectorSet = new LazySet<>();
+        connectorSet.add(TestSources.populatedStaticConnector());
+
+        final Set<AttributeDefinition> attributeSet = new LazySet<>();
+        attributeSet.add(attrDef);
+
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        resolver.initialize();
+
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        final Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+
+        // 2 empty attribute values are produced, but they get de-duped into a single value
+        Assert.assertEquals(f.size(), 1);
+        Assert.assertEquals(f.iterator().next(), EmptyAttributeValue.ZERO_LENGTH);
     }
 
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {

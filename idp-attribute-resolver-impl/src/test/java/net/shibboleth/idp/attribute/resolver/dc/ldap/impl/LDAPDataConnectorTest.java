@@ -359,12 +359,15 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(attrs.get("sn").getValues().size() == 3);
         Assert.assertTrue(attrs.get("sn").getValues().contains(new StringAttributeValue("Principal")));
         // check mail
-        Assert.assertTrue(attrs.get("mail").getValues().size() == 5);
+        Assert.assertTrue(attrs.get("mail").getValues().size() == 8);
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peter.principal@shibboleth.net")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("paul.principal@shibboleth.net")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("paulprincipal@shibboleth.net")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(EmptyAttributeValue.ZERO_LENGTH));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("\"\"")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("  ")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue(" pete.principal@shibboleth.net ")));
     }
     
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoFilter()
@@ -472,8 +475,11 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(attrs.get("sn").getValues().size() == 1);
         Assert.assertEquals(attrs.get("sn").getValues().iterator().next(), new StringAttributeValue("Principal"));
         // check mail
-        Assert.assertTrue(attrs.get("mail").getValues().size() == 1);
+        Assert.assertTrue(attrs.get("mail").getValues().size() == 4);
         Assert.assertTrue(attrs.get("mail").getValues().contains(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE)));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("\"\"")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("  ")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue(" pete.principal@shibboleth.net ")));
     }
     
 }

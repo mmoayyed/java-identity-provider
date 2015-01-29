@@ -20,8 +20,10 @@ package net.shibboleth.idp.attribute.resolver.ad.impl;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -111,6 +113,37 @@ public class RegexAtributeTest {
         } catch (ResolutionException e) {
             //
         }
+    }
+
+    @Test public void emptyValueType() throws ResolutionException, ComponentInitializationException {
+        // Set the dependency on the data connector
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
+        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
+        dependencySet.add(depend);
+        final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        // regex where the first group doesn't match
+        attrDef.setRegularExpression(Pattern.compile("([zZ]*)at1-(.+)or"));
+        attrDef.setDependencies(dependencySet);
+        attrDef.initialize();
+
+        // And resolve
+        final Set<DataConnector> connectorSet = new LazySet<>();
+        connectorSet.add(TestSources.populatedStaticConnector());
+
+        final Set<AttributeDefinition> attributeSet = new LazySet<>();
+        attributeSet.add(attrDef);
+
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        resolver.initialize();
+
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+        Collection f = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+
+        Assert.assertEquals(f.size(), 1);
+        Assert.assertEquals(f.iterator().next(), EmptyAttributeValue.ZERO_LENGTH);
     }
 
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {

@@ -17,15 +17,19 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
@@ -269,6 +273,48 @@ public class TemplateAttributeTest {
         Assert.assertTrue(results.contains(new StringAttributeValue(s)), "First Match");
         s = "Att " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING + "-" + TestSources.SECOND_ATTRIBUTE_VALUE_STRINGS[1];
         Assert.assertTrue(results.contains(new StringAttributeValue(s)), "Second Match");
+    }
+
+    @Test public void emptyValues() throws ResolutionException, ComponentInitializationException {
+        final String name = TEST_ATTRIBUTE_BASE_NAME + "3";
+
+        final TemplateAttributeDefinition templateDef = new TemplateAttributeDefinition();
+        templateDef.setId(name);
+        templateDef.setVelocityEngine(getEngine());
+        templateDef.setTemplateText("Att ${at1}");
+
+        Set<ResolverPluginDependency> ds = new LazySet<>();
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        templateDef.setDependencies(ds);
+        templateDef.setSourceAttributes(Arrays.asList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        templateDef.initialize();
+
+        final List<IdPAttributeValue<?>> values = new ArrayList<>();
+        values.add(EmptyAttributeValue.ZERO_LENGTH);
+        values.add(EmptyAttributeValue.NULL);
+        IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        attr.setValues(values);
+        StaticAttributeDefinition simple = new StaticAttributeDefinition();
+        simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);
+        simple.setValue(attr);
+        simple.initialize();
+
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
+        attrDefinitions.add(templateDef);
+        attrDefinitions.add(simple);
+
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
+        resolver.initialize();
+
+        final AttributeResolutionContext context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+
+        final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
+        final Collection results = a.getValues();
+        Assert.assertEquals(results.size(), 2, "Templated value count");
+        Assert.assertTrue(results.contains(new StringAttributeValue("Att ")), "First Match");
+        Assert.assertTrue(results.contains(new StringAttributeValue("Att ${at1}")), "Second Match");
     }
 
     @Test public void failMisMatchCount() throws ResolutionException, ComponentInitializationException {

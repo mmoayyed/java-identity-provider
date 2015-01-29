@@ -23,6 +23,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -81,9 +82,9 @@ public class ResolverTestSupport {
     public static IdPAttribute buildAttribute(String attributeId, String... values) {
         final IdPAttribute attribute = new IdPAttribute(attributeId);
         
-        List<StringAttributeValue> valueList = Lists.newArrayList();
+        List<IdPAttributeValue<?>> valueList = Lists.newArrayList();
         for (String value : values) {
-            valueList.add(new StringAttributeValue(value));
+            valueList.add(StringAttributeValue.valueOf(value));
         }
         attribute.setValues(valueList);
 

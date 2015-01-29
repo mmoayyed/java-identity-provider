@@ -28,7 +28,7 @@ public class ScopedStringAttributeValueTest {
     /** Test proper instantiation of the object. */
     @Test public void instantiation() {
         ScopedStringAttributeValue value = new ScopedStringAttributeValue(" foo ", " bar ");
-        Assert.assertEquals(value.getValue(), "foo");
+        Assert.assertEquals(value.getValue(), " foo ");
         Assert.assertEquals(value.getScope(), "bar");
 
         try {
@@ -66,10 +66,10 @@ public class ScopedStringAttributeValueTest {
         ScopedStringAttributeValue value2 = new ScopedStringAttributeValue("foo", "bar");
         ScopedStringAttributeValue value3 = new ScopedStringAttributeValue(" foo ", "baz ");
 
-        Assert.assertTrue(value1.equals(value2));
+        Assert.assertFalse(value1.equals(value2));
         Assert.assertTrue(value1.equals(value1));
-        Assert.assertTrue(value2.equals(value1));
-        Assert.assertEquals(value1.hashCode(), value2.hashCode());
+        Assert.assertFalse(value2.equals(value1));
+        Assert.assertNotEquals(value1.hashCode(), value2.hashCode());
 
         Assert.assertFalse(value1.equals(value3));
         Assert.assertFalse(value1.equals(this));

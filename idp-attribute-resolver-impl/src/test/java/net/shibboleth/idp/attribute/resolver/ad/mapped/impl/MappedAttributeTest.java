@@ -156,6 +156,28 @@ public class MappedAttributeTest {
 
     }
 
+    @Test public void emptyAttributeValues() throws Exception {
+        final AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
+                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
+                                ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
+                                ResolverTestSupport.EPA_ATTRIB_ID, (String) null, "")));
+
+        final MappedAttributeDefinition definition = new MappedAttributeDefinition();
+        definition.setId(TEST_ATTRIBUTE_NAME);
+        definition.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
+                ResolverTestSupport.EPA_ATTRIB_ID)));
+        Assert.assertTrue(definition.getValueMaps().isEmpty());
+        definition.setValueMaps(Collections.singleton(substringValueMapping("student", false, "student")));
+        Assert.assertEquals(definition.getValueMaps().size(), 1);
+        definition.initialize();
+
+        final IdPAttribute result = definition.resolve(resolutionContext);
+        Assert.assertEquals(result.getId(), TEST_ATTRIBUTE_NAME);
+        // mapped attribute definition should return no values for empty and null
+        Assert.assertTrue(result.getValues().isEmpty());
+    }
+
     @Test public void validValueType() throws Exception {
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
