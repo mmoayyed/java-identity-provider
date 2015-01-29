@@ -30,7 +30,6 @@ import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
-import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.saml.impl.TestSources;
@@ -55,8 +54,8 @@ public class RegexAtributeTest {
     private static final String TEST_ATTRIBUTE_NAME = "regex";
 
     /**
-     * Test regexp. We set up an attribute called 'at1-Connector', we throw this at 'at1-(.+)or' and look for group 1
-     * 'Connect'.
+     * Test regexp. We set up an attribute with values including one 'at1-Connector', 
+     * we throw this at 'at1-(.+)or' and look for 'Connect'.
      * 
      * @throws ResolutionException on resolution issues.
      * @throws ComponentInitializationException only if things went bad.
