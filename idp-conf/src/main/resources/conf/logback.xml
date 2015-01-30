@@ -17,7 +17,7 @@
 
     <!-- Logs unencrypted SAML at DEBUG level -->
     <!--
-    <logger name="SAML_PRE_ENCRYPTION" level="DEBUG" />
+    <logger name="org.opensaml.saml.saml2.encryption.Encrypter" level="DEBUG" />
     -->
 
     <!-- Logs standard system properties during startup at DEBUG level -->
