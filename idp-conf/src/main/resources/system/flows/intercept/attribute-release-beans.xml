@@ -157,6 +157,7 @@
     <bean id="WriteAttributeReleaseConsentAuditLog"
         class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
 </beans>
