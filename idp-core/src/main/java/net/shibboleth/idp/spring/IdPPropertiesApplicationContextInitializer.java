@@ -184,7 +184,7 @@ public class IdPPropertiesApplicationContextInitializer implements
     public void logProperties(@Nonnull final Properties properties) {
         if (log.isDebugEnabled()) {
             final Pattern pattern = Pattern.compile("password|credential", Pattern.CASE_INSENSITIVE);
-            for (final String name : new TreeSet<String>(properties.stringPropertyNames())) {
+            for (final String name : new TreeSet<>(properties.stringPropertyNames())) {
                 final Object value = pattern.matcher(name).find() ? "<suppressed>" : properties.get(name);
                 log.debug("Loaded property '{}'='{}'", name, value);
             }
