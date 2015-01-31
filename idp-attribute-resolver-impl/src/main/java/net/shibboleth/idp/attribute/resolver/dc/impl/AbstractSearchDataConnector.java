@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -179,7 +180,8 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
             if (resolvedAttributes == null) {
                 resolvedAttributes = retrieveAttributes(executable);
                 log.trace("{} Resolved attributes {}", getLogPrefix(), resolvedAttributes);
-                resultsCache.put(cacheKey, resolvedAttributes);
+                resultsCache.put(cacheKey, resolvedAttributes != null ? resolvedAttributes
+                        : Collections.<String,IdPAttribute>emptyMap());
             }
         } else {
             resolvedAttributes = retrieveAttributes(executable);
