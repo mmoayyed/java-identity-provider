@@ -41,15 +41,15 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
     @Nullable private Integer index;
 
     /** Show results with a custom protocol encoding.  */
-    @Parameter(names = "--protocol", description = "Show results with a custom protocol encoding")
+    @Parameter(names = {"-p", "--protocol"}, description = "Show results with a custom protocol encoding")
     @Nullable private String protocol;
 
     /** Show results with SAML 1.1 encoding. */
-    @Parameter(names = "--saml1", description = "Show results with SAML 1.1 encoding")
+    @Parameter(names = {"--saml1"}, description = "Show results with SAML 1.1 encoding")
     private boolean saml1;
 
     /** Show results with SAML 2.0 encoding. */
-    @Parameter(names = "--saml2", description = "Show results with SAML 2.0 encoding")
+    @Parameter(names = {"--saml2"}, description = "Show results with SAML 2.0 encoding")
     private boolean saml2;
 
     /**
