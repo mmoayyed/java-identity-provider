@@ -264,11 +264,9 @@
                 <attribute name="cacheResults" type="string">
                     <annotation>
                         <documentation>
-                            A boolean flag that determines whether to cache results. Results using a compound key
-                            consisting of the principal name for whom the information is being requested and the actual
-                            SQL query used.
+                            A boolean flag that determines whether to cache results.
                             
-                            This option is deprecated.
+                            This option is no longer supported, use the ResultCache element instead.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -610,7 +608,8 @@
                         <documentation>
                             A boolean flag indicating that search results should be cached for the duration of a user's
                             session.
-                            Default value is false.
+
+                            This option is no longer supported, use the ResultCache element instead.
                         </documentation>
                     </annotation>
                 </attribute>
