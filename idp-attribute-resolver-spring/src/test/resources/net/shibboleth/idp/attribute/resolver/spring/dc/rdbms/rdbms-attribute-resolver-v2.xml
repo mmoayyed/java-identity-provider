@@ -30,8 +30,7 @@
         <dc:Column columnName="homephone" attributeID="phonenumber" />
         
         <dc:ResultCache
-            elementTimeToLive="PT10S"
-            maximumCachedElements="25"/>
+            elementTimeToLive="PT10S"/>
     </resolver:DataConnector>
     
 </resolver:AttributeResolver>

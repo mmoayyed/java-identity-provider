@@ -30,6 +30,8 @@ import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
@@ -39,6 +41,9 @@ import com.google.common.cache.CacheBuilder;
 
 /** Utility class for parsing v2 cache configuration. */
 public class CacheConfigParser {
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(CacheConfigParser.class);
 
     /** Base XML element. */
     private final Element configElement;
@@ -59,42 +64,42 @@ public class CacheConfigParser {
      * @return cache bean definition
      */
     @Nonnull public BeanDefinition createCache() {
+
         final String defaultCache = AttributeSupport.getAttributeValue(configElement, new QName("cacheResults"));
-        String timeToLive = null;
-        String maximumSize = null;
+        if (defaultCache != null) {
+            log.warn("The cacheResults attribute is no longer supported, please create a dc:ResultCache element");
+            return null;
+        }
+        
         final Element cacheElement =
                 ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
                         "ResultCache"));
-        if (cacheElement != null) {
-            timeToLive = AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive"));
-            maximumSize = AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements"));
+        if (cacheElement == null) {
+            return null;
         }
+        
         final BeanDefinitionBuilder cache =
                 BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCache");
-        cache.addConstructorArgValue(defaultCache);
-        cache.addConstructorArgValue(timeToLive);
-        cache.addConstructorArgValue(maximumSize);
+        cache.addConstructorArgValue(AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive")));
+        cache.addConstructorArgValue(
+                AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements")));
         return cache.getBeanDefinition();
     }
 
     /**
-     * Factory method to leverage spring property replacement functionality. The default cache produced has a max size
+     * Factory method to leverage spring property replacement functionality. The default settings are a max size
      * of 500 and an expiration time of 4 hours.
      * 
-     * @param defaultCache boolean string indicating whether a default cache should be returned
      * @param timeToLive duration string
      * @param maximumSize long string
+     * 
      * @return cache
      */
-    @Nullable public static Cache<String, Map<String, IdPAttribute>> buildCache(final String defaultCache,
-            final String timeToLive, final String maximumSize) {
-        if (Boolean.valueOf(defaultCache)) {
-            return CacheBuilder.newBuilder().maximumSize(500).expireAfterAccess(4, TimeUnit.HOURS).build();
-        }
-        if (timeToLive != null && maximumSize != null) {
-            return CacheBuilder.newBuilder().maximumSize(Long.parseLong(maximumSize))
-                    .expireAfterAccess(DOMTypeSupport.durationToLong(timeToLive), TimeUnit.MILLISECONDS).build();
-        }
-        return null;
+    @Nullable public static Cache<String, Map<String, IdPAttribute>> buildCache(@Nullable final String timeToLive,
+            @Nullable final String maximumSize) {
+        return CacheBuilder.newBuilder().maximumSize(maximumSize != null ? Long.parseLong(maximumSize) : 500)
+                .expireAfterAccess(timeToLive != null ? DOMTypeSupport.durationToLong(timeToLive)
+                        : 4 * 60 * 60 * 1000L, TimeUnit.MILLISECONDS).build();
     }
+    
 }
