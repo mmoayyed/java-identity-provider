@@ -174,11 +174,11 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
         if (resultsCache != null) {
             final String cacheKey = executable.getResultCacheKey();
             resolvedAttributes = resultsCache.getIfPresent(cacheKey);
-            log.trace("Data connector '{}': cache found resolved attributes {} using cache {}", new Object[] {getId(),
+            log.trace("{} Cache found, resolved attributes {} using cache {}", new Object[] {getLogPrefix(),
                     resolvedAttributes, resultsCache,});
             if (resolvedAttributes == null) {
                 resolvedAttributes = retrieveAttributes(executable);
-                log.trace("Data connector '{}': resolved attributes {}", getId(), resolvedAttributes);
+                log.trace("{} Resolved attributes {}", getLogPrefix(), resolvedAttributes);
                 resultsCache.put(cacheKey, resolvedAttributes);
             }
         } else {
@@ -194,15 +194,14 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
         super.doInitialize();
 
         if (searchBuilder == null) {
-            throw new ComponentInitializationException("Data connector '" + getId()
-                    + "': no executable search builder was configured");
+            throw new ComponentInitializationException(getLogPrefix() + " No executable search builder was configured");
         }
         if (connectorValidator == null) {
-            throw new ComponentInitializationException("Data connector '" + getId() + "': no validator was configured");
+            throw new ComponentInitializationException(getLogPrefix() + " No validator was configured");
         }
         if (mappingStrategy == null) {
-            throw new ComponentInitializationException("Data connector '" + getId()
-                    + "': no mapping strategy was configured");
+            throw new ComponentInitializationException(getLogPrefix() + " No mapping strategy was configured");
         }
     }
+    
 }
