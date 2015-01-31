@@ -173,6 +173,24 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
         Assert.assertEquals(results.iterator().next(), new EmptyAttributeValue(EmptyType.NULL_VALUE), "Scripted result contains expected value");
     }
+    
+    @Test public void logging() throws Exception {
+
+        final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
+
+        test.setValues(Collections.singletonList(new StringAttributeValue(SIMPLE_VALUE)));
+
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        Assert.assertNull(attr.getScript());
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("logging.script", false)));
+        attr.initialize();
+
+        final IdPAttribute val = attr.resolve(generateContext());
+        final List<IdPAttributeValue<?>> results = val.getValues();
+
+        Assert.assertEquals(results.size(), 2, "Scripted result value count");
+}
 
 
     @Test public void simpleWithPredef() throws ResolutionException, ComponentInitializationException, ScriptException,
