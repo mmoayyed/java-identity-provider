@@ -160,7 +160,8 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @throws ResolutionException thrown if there is a problem retrieving data from the data source
      */
-    protected abstract Map<String, IdPAttribute> retrieveAttributes(final T executable) throws ResolutionException;
+    @Nullable protected abstract Map<String, IdPAttribute> retrieveAttributes(@Nonnull final T executable)
+            throws ResolutionException;
 
     /** {@inheritDoc} */
     @Override @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(

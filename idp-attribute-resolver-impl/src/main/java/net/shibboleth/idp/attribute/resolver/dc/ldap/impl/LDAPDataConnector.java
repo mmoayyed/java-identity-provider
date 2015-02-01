@@ -111,20 +111,17 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         super.doInitialize();
 
         if (connectionFactory == null) {
-            throw new ComponentInitializationException("Data connector '" + getId()
-                    + "': no connection factory was configured");
+            throw new ComponentInitializationException(getLogPrefix() + " No connection factory was configured");
         }
         if (searchExecutor == null) {
-            throw new ComponentInitializationException("Data connector '" + getId()
-                    + "': no search executor was configured");
+            throw new ComponentInitializationException(getLogPrefix() + " No search executor was configured");
         }
 
         try {
             getValidator().validate();
-        } catch (ValidationException e) {
-            log.error("Data connector '{}': invalid connector configuration", getId(), e);
-            throw new ComponentInitializationException("Data connector '" + getId()
-                    + "': invalid connector configuration", e);
+        } catch (final ValidationException e) {
+            log.error("{} Invalid connector configuration", getLogPrefix(), e);
+            throw new ComponentInitializationException(getLogPrefix() + " Invalid connector configuration", e);
         }
     }
 
@@ -141,14 +138,14 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             throws ResolutionException {
 
         if (filter == null) {
-            throw new ResolutionException("Search filter cannot be null");
+            throw new ResolutionException(getLogPrefix() + " Search filter cannot be null");
         }
         try {
             final SearchResult result = filter.execute(searchExecutor, connectionFactory);
-            log.trace("Data connector '{}': search returned {}", getId(), result);
+            log.trace("{} Search returned {}", getLogPrefix(), result);
             return getMappingStrategy().map(result);
-        } catch (LdapException e) {
-            throw new ResolutionException("Unable to execute LDAP search", e);
+        } catch (final LdapException e) {
+            throw new ResolutionException(getLogPrefix() + " Unable to execute LDAP search", e);
         }
     }
 
@@ -161,10 +158,10 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
             try {
                 connection = connectionFactory.getConnection();
                 if (connection == null) {
-                    throw new LdapException("Unable to retrieve connection from connection factory");
+                    throw new LdapException(getLogPrefix() + " Unable to retrieve connection from connection factory");
                 }
                 connection.open();
-            } catch (LdapException e) {
+            } catch (final LdapException e) {
                 throw new ValidationException(e);
             } finally {
                 if (connection != null) {
@@ -193,7 +190,7 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         @Override public void validate() throws ValidationException {
             try {
                 searchExecutor.search(connectionFactory, validateFilter);
-            } catch (LdapException e) {
+            } catch (final LdapException e) {
                 throw new ValidationException(e);
             }
         }

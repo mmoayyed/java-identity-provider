@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -104,16 +105,14 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
         super.doInitialize();
 
         if (dataSource == null) {
-            throw new ComponentInitializationException("Data connector '" + getId()
-                    + "': no data source was configured");
+            throw new ComponentInitializationException(getLogPrefix() + " no data source was configured");
         }
 
         try {
             getValidator().validate();
-        } catch (ValidationException e) {
-            log.error("Data connector '{}': invalid connector configuration", getId(), e);
-            throw new ComponentInitializationException("Data connector '" + getId()
-                    + "': invalid connector configuration", e);
+        } catch (final ValidationException e) {
+            log.error("{} Invalid connector configuration", getLogPrefix(), e);
+            throw new ComponentInitializationException(getLogPrefix() + " Invalid connector configuration", e);
         }
     }
 
@@ -127,7 +126,8 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
      * @throws ResolutionException thrown if there is a problem retrieving data from the database or transforming that
      *             data into {@link IdPAttribute}s
      */
-    @Override protected Map<String, IdPAttribute> retrieveAttributes(final ExecutableStatement statement)
+    @Override
+    @Nullable protected Map<String, IdPAttribute> retrieveAttributes(final ExecutableStatement statement)
             throws ResolutionException {
 
         if (statement == null) {
@@ -143,8 +143,8 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
             queryResult = statement.execute(connection);
             log.trace("Data connector '{}': search returned {}", getId(), queryResult);
             return getMappingStrategy().map(queryResult);
-        } catch (SQLException e) {
-            throw new ResolutionException("Unable to execute SQL query", e);
+        } catch (final SQLException e) {
+            throw new ResolutionException(getLogPrefix() + " Unable to execute SQL query", e);
         } finally {
             try {
                 if (queryResult != null) {
@@ -154,9 +154,9 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
                 if (connection != null && !connection.isClosed()) {
                     connection.close();
                 }
-            } catch (SQLException e) {
-                log.debug("Data connector '{}': unable to close database connection; SQL State: {}, SQL Code: {}",
-                        new Object[] {getId(), e.getSQLState(), e.getErrorCode()}, e);
+            } catch (final SQLException e) {
+                log.debug("{} Unable to close database connection; SQL State: {}, SQL Code: {}",
+                        new Object[] {getLogPrefix(), e.getSQLState(), e.getErrorCode()}, e);
             }
         }
     }
@@ -170,27 +170,28 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
             try {
                 connection = dataSource.getConnection();
                 if (connection == null) {
-                    throw new ValidationException("Data connector '" + getId()
-                            + "': unable to retrieve connections from configured data source");
+                    throw new ValidationException(getLogPrefix()
+                            + " Unable to retrieve connections from configured data source");
                 }
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 if (e.getSQLState() != null) {
-                    log.error("Data connector '{}': invalid connector configuration; SQL state: {}, SQL Code: {}",
-                            new Object[] {getId(), e.getSQLState(), e.getErrorCode(), e});
+                    log.error("{} Invalid connector configuration; SQL state: {}, SQL Code: {}",
+                            new Object[] {getLogPrefix(), e.getSQLState(), e.getErrorCode(), e});
                 } else {
-                    log.error("Data connector '{}': invalid connector configuration", getId(), e);
+                    log.error("{} Invalid connector configuration", getLogPrefix(), e);
                 }
-                throw new ValidationException("Data connector '" + getId() + "': invalid connector configuration", e);
+                throw new ValidationException(getLogPrefix() + " Invalid connector configuration", e);
             } finally {
                 try {
                     if (connection != null && !connection.isClosed()) {
                         connection.close();
                     }
-                } catch (SQLException e) {
-                    log.error("Data connector '{}': error closing database connection; SQL State: {}, SQL Code: {}",
-                            new Object[] {getId(), e.getSQLState(), e.getErrorCode(), e});
+                } catch (final SQLException e) {
+                    log.error("{} Error closing database connection; SQL State: {}, SQL Code: {}",
+                            new Object[] {getLogPrefix(), e.getSQLState(), e.getErrorCode(), e});
                 }
             }
         }
     }
+    
 }
