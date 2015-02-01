@@ -295,7 +295,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
                 valueCountSet = true;
             } else if (attributeValues.size() != valueCount) {
                 final String msg = getLogPrefix() + " All source attributes used in"
-                        + " TemplateAttributeDefinition must have the same number of values.";
+                        + " TemplateAttributeDefinition must have the same number of values: '" + attributeName + "'" ;
                 log.error(msg);
                 throw new ResolutionException(msg);
             }
