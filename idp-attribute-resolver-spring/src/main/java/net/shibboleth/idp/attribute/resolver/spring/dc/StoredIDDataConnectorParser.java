@@ -18,11 +18,13 @@
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +56,11 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         super.doParse(config, parserContext, builder, "storedId");
         log.debug("doParse {}", config);
         final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
+        final String beanDataSource = getBeanDataSourceID(config); 
         if (springResources == null) {
             builder.addPropertyValue("dataSource", getv2DataSource(config));            
+        } else if (beanDataSource != null) {
+            builder.addPropertyReference("dataSource", beanDataSource);
         } else {
             builder.addPropertyValue("dataSource", getDataSource(springResources.split(";")));
         }
@@ -75,6 +80,23 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         final BeanFactory beanFactory = createBeanFactory(springResource);
         return beanFactory.getBean(DataSource.class);
     }
+
+    /**
+     * Get the bean ID of an externally defined data source.
+     * 
+     * @param config the config element
+     * @return data source bean ID
+     */
+    @Nullable protected String getBeanDataSourceID(@Nonnull final Element config ) {
+        final Element el =
+                ElementSupport.getFirstChildElement(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                        "BeanManagedConnection"));
+        if (el != null) {
+            return ElementSupport.getElementContentAsString(el);
+        }
+        return null;
+    }
+
 
     /**
      * Get the dataSource from a v2 configuration.

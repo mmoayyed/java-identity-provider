@@ -276,7 +276,7 @@ public class LDAPDataConnectorParserTest {
         CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
         AssertJUnit.assertNotNull(credentialConfig);
 
-        final Map<String, Object> providerProps = new HashMap<String, Object>();
+        final Map<String, Object> providerProps = new HashMap<>();
         providerProps.put("name1", "value1");
         providerProps.put("name2", "value2");
         ProviderConfig providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();

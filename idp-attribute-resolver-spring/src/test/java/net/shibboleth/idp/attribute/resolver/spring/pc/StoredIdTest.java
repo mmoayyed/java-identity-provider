@@ -140,4 +140,33 @@ public class StoredIdTest extends BaseAttributeDefinitionParserTest {
         Assert.assertEquals(principalConnector.getNameIDDecoder().decode(scc, nameID), arc.getPrincipal());
     }
     
+    @Test public void connectorStore() throws ResolutionException, AttributeEncodingException, NameDecoderException {
+        
+        setupConnectors("stored-beanConnector.xml");
+        
+        final AttributeResolutionContext arc = new AttributeResolutionContext();
+        arc.setPrincipal("PRINCIPAL");
+        arc.setAttributeIssuerID("ISSUER");
+        arc.setAttributeRecipientID("Recipient");
+        arc.getSubcontext(AttributeResolverWorkContext.class, true);
+       
+        ar.resolveAttributes(arc);
+        
+        final IdPAttribute result = arc.getResolvedIdPAttributes().get("result");
+        
+        final AttributeEncoder<NameID> encoder = (AttributeEncoder<NameID>) ar.getAttributeDefinitions().get("result").getAttributeEncoders().iterator().next();
+        
+        NameID nameID = encoder.encode(result);
+        
+        Assert.assertEquals(result.getValues().size(), 1);
+        
+        final SubjectCanonicalizationContext scc = new SubjectCanonicalizationContext();
+        scc.setPrincipalName(arc.getPrincipal());
+        scc.setRequesterId(arc.getAttributeRecipientID());
+        scc.setResponderId(arc.getAttributeIssuerID());
+        
+        Assert.assertEquals(principalConnector.getNameIDDecoder().decode(scc, nameID), arc.getPrincipal());
+    }
+
+    
 }
