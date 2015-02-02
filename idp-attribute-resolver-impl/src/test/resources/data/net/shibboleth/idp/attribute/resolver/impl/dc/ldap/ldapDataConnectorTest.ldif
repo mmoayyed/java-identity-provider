@@ -42,5 +42,7 @@ userpassword: changeit
 homephone: 555-111-3333
 mail:
 mail: ""
+# two spaces
 mail:: ICA=
-mail:: IHBldGUucHJpbmNpcGFsQHNoaWJib2xldGgubmV0IA==
+# philip.principal@shibboleth.net with leading and trailing space
+mail:: IHBoaWxpcC5wcmluY2lwYWxAc2hpYmJvbGV0aC5uZXQg

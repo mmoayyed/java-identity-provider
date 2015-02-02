@@ -367,7 +367,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(attrs.get("mail").getValues().contains(EmptyAttributeValue.ZERO_LENGTH));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("\"\"")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("  ")));
-        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue(" pete.principal@shibboleth.net ")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue(" philip.principal@shibboleth.net ")));
     }
     
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoFilter()
@@ -479,7 +479,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(attrs.get("mail").getValues().contains(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE)));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("\"\"")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("  ")));
-        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue(" pete.principal@shibboleth.net ")));
+        Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue(" philip.principal@shibboleth.net ")));
     }
     
 }
