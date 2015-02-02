@@ -245,7 +245,6 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
                 logger.debug("{}", standardSystemProperty);
             }
         }
-        System.exit(1);
     }
 
 }
