@@ -57,9 +57,6 @@ import com.google.common.io.Closeables;
  */
 public class LogbackLoggingService extends AbstractReloadableService<Object>
         implements LoggingService, ApplicationContextAware {
-
-    /** Name of logger used to log standard system properties at startup.*/
-    private static final String STARTUP_PROPERTIES_LOGGER = "STARTUP_PROPERTIES";
     
     /** Logback logger context. */
     private LoggerContext loggerContext;
@@ -236,21 +233,19 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
     /**
      * Log the IdP version and Java version and vendor at INFO level.
      * 
-     * Log system properties defined by {@link StandardSystemProperty} to the
-     * {@link LogbackLoggingService#STARTUP_PROPERTIES_LOGGER} logger at DEBUG level if enabled.
+     * Log system properties defined by {@link StandardSystemProperty} at DEBUG level.
      */
     protected void logImplementationDetails() {
         final Logger logger = LoggerFactory.getLogger(LogbackLoggingService.class);
         logger.info("Shibboleth IdP Version {}", Version.getVersion());
-        logger.info("Java Version='{}' Vendor='{}'", StandardSystemProperty.JAVA_VERSION.value(),
+        logger.info("Java version='{}' vendor='{}'", StandardSystemProperty.JAVA_VERSION.value(),
                 StandardSystemProperty.JAVA_VENDOR.value());
-
-        final Logger startupPropertiesLogger = LoggerFactory.getLogger(STARTUP_PROPERTIES_LOGGER);
-        if (startupPropertiesLogger.isDebugEnabled()) {
+        if (logger.isDebugEnabled()) {
             for (StandardSystemProperty standardSystemProperty : StandardSystemProperty.values()) {
-                startupPropertiesLogger.debug("{}", standardSystemProperty);
+                logger.debug("{}", standardSystemProperty);
             }
         }
+        System.exit(1);
     }
 
 }

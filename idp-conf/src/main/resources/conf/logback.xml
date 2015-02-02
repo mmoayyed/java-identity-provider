@@ -22,7 +22,7 @@
 
     <!-- Logs standard system properties during startup at DEBUG level -->
     <!-- 
-    <logger name="STARTUP_PROPERTIES" level="DEBUG" />
+    <logger name="net.shibboleth.idp.log.LogbackLoggingService" level="DEBUG" />
     -->
 
     <!-- Especially chatty. -->
