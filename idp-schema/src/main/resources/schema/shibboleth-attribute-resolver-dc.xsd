@@ -136,6 +136,13 @@
                             </documentation>
                         </annotation>
                     </element>
+                        <element name="BeanManagedConnection" type="string">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database configured in a Spring bean.
+                                </documentation>
+                            </annotation>
+                        </element>
                 </choice>    
                 <attribute name="queryTimeout" type="string">
                     <annotation>
