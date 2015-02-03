@@ -338,7 +338,10 @@
                             <documentation>
                                 Constructs a metadata request URL based on the requirements of the Metadata Query Protocol.
                                 The content of this element will be used as the "Base URL" as defined in that specification.
-                                (TODO - reference to specification).
+                                
+                                Base protocol: https://datatracker.ietf.org/doc/draft-young-md-query/
+                                
+                                SAML profile: http://datatracker.ietf.org/doc/draft-young-md-query-saml/
                             </documentation>
                         </annotation>
                         <complexType>
@@ -369,7 +372,7 @@
                 <attribute name="httpClientRef" type="string">
                     <annotation>
                         <documentation>
-                            The reference to an externally defined Spring bean which specifies an
+                            A reference to an externally defined Spring bean which specifies an
                             org.apache.http.client.HttpClient object.
                             
                             This attribute conflicts with and overrides the other HttpClient-related properties: 
@@ -398,7 +401,7 @@
                 <attribute name="requestTimeout" type="string">
                     <annotation>
                         <documentation>
-                            The maximum length of time to wait for the remote server to response.
+                            The maximum length of time to wait for the remote server to respond.
                             Timeout is expressed in ISO8601 duration notation.
                         </documentation>
                     </annotation>
