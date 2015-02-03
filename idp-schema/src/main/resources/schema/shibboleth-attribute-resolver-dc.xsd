@@ -808,7 +808,7 @@
         <attribute name="cacheManagerRef" type="string">
         <annotation>
                 <documentation>
-                    Name of the CacheManager bean that will manage the result cache.
+                    Name of the CacheManager bean that will manage the result cache.  This is not used.
                 </documentation>
             </annotation>
         </attribute>
