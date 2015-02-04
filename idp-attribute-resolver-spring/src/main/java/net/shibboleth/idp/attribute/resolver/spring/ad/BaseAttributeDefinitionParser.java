@@ -57,9 +57,6 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionParser.class);
 
-    /** cache for the log prefix - to save multiple recalculations. */
-    private String logPrefix;
-
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
@@ -132,10 +129,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
      * @return "Attribute Definition '<definitionID>' :"
      */
     @Nonnull @NotEmpty protected String getLogPrefix() {
-        if (null == logPrefix) {
-            StringBuilder builder = new StringBuilder("Attribute Definition '").append(getDefinitionId()).append("':");
-            logPrefix = builder.toString();
-        }
-        return logPrefix;
+        StringBuilder builder = new StringBuilder("Attribute Definition '").append(getDefinitionId()).append("':");
+        return builder.toString();
     }
 }

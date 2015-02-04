@@ -61,9 +61,6 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
             AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
 
-    /** cache for the log prefix - to save multiple recalculations. */
-    private String logPrefix;
-
     /** Log4j logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
 
@@ -145,10 +142,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * @return "Attribute Definition: '<definitionID>' :"
      */
     @Nonnull @NotEmpty protected String getLogPrefix() {
-        if (null == logPrefix) {
-            StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
-            logPrefix = builder.toString();
-        }
-        return logPrefix;
+        StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
+        return builder.toString();
     }
 }
