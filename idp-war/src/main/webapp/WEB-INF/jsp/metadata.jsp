@@ -1,17 +1,15 @@
-<%@ page import="org.springframework.web.context.WebApplicationContext" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%
-final WebApplicationContext springContext =
-	WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
+final org.springframework.web.context.WebApplicationContext springContext =
+    org.springframework.web.context.support.WebApplicationContextUtils.getRequiredWebApplicationContext(request.getServletContext());
 final String path = springContext.getEnvironment().getProperty("idp.home") + "/metadata/idp-metadata.xml";
 try (final java.io.FileInputStream in = new java.io.FileInputStream(path)) {
-	int i;
-	while ((i = in.read()) != -1) {
-	    out.write(i);
-	}
+    int i;
+    while ((i = in.read()) != -1) {
+        out.write(i);
+    }
 } catch (final java.io.IOException e) {
-	out.println(e.getMessage());
-	return;
+    out.println(e.getMessage());
+    return;
 }
 
 final String acceptHeader = request.getHeader("Accept");
