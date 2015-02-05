@@ -267,7 +267,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         final IdPAttribute resolvedAttribute = definition.resolve(resolutionContext);
 
         if (null == resolvedAttribute) {
-            log.warn("{} Attribute definition '{}' produced no attribute", logPrefix, attributeId);
+            log.debug("{} Attribute definition '{}' produced no attribute", logPrefix, attributeId);
         } else {
             log.debug("{} Attribute definition '{}' produced an attribute with {} values", new Object[] {logPrefix,
                     attributeId, resolvedAttribute.getValues().size(),});

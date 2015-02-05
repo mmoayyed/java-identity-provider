@@ -186,7 +186,11 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
 
         try {
-            return doResolve(resolutionContext, workContext);
+            final ResolvedType result = doResolve(resolutionContext, workContext);
+            if (null == result) {
+                log.info("Resolver plugin '{}' produced no value.", getId());
+            }
+            return result;
         } catch (ResolutionException e) {
             //
             // NOTE - if you change this logic you MUST make changes in any derived classes that
