@@ -403,7 +403,6 @@
             </fileset>
             <mapper type="glob" from="*.dist" to="*" />
         </copy>
-        <delete file="${idp.target.dir}/conf/credentials.xml" if:set="idp.is.V2" />
 
         <!-- flows: copy from dist if not already present -->
         <mkdir dir="${idp.target.dir}/flows" />
