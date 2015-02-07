@@ -215,7 +215,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
 
         if (null == templateText) {
             throw new ComponentInitializationException(
-                    "TemplatedExecutableStatementBuilder: no template text must be non null");
+                    "TemplatedExecutableStatementBuilder: template text must be non null");
         }
 
         template = Template.fromTemplate(engine, templateText);
