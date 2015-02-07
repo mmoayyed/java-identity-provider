@@ -79,6 +79,19 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     }
 
     /**
+     * Set whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
+     * will cause the entire attribute resolution request to fail.
+     * 
+     * @param propagate true if {@link ResolutionException}s are propagated, false if not
+     */
+    public void setPropagateResolutionExceptions(final boolean propagate) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        propagateResolutionExceptions = propagate;
+    }
+
+    /**
      * Sets the mechanism to find out the {@link ProfileRequestContext}.
      * 
      * @param strategy the mechanism
@@ -95,19 +108,6 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      */
     public Function<AttributeResolutionContext, ProfileRequestContext> getProfileContextStrategy() {
         return profileContextStrategy;
-    }
-
-    /**
-     * Set whether an {@link AttributeResolutionContext} that occurred resolving attributes will be re-thrown. Doing so
-     * will cause the entire attribute resolution request to fail.
-     * 
-     * @param propagate true if {@link ResolutionException}s are propagated, false if not
-     */
-    public void setPropagateResolutionExceptions(final boolean propagate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        propagateResolutionExceptions = propagate;
     }
 
     /** {@inheritDoc} */
