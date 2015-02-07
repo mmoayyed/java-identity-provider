@@ -17,18 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
@@ -38,11 +31,8 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.support.GenericApplicationContext;
 import org.w3c.dom.Element;
 
 /**
@@ -57,6 +47,18 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DataConnector");
 
+    /** semi colon separated resources to indicate external config. */
+    public static final String ATTR_SPRING_RESOURCE = "springResources";
+
+    /** A bean name for a {@link java.util.Collection<org.springframework.core.io.Resource>}.. */
+    public static final String ATTR_SPRING_RESOURCE_REF = "springResourcesRef";
+
+    /** A bean name for a {@link List<org.springframework.beans.factory.config.BeanFactoryPostProcessor>}. */
+    public static final String ATTR_FACTORY_POSTPROCESSORS_REF = "factoryPostProcessorsRef";
+
+    /** A bean name for a {@link List<org.springframework.beans.factory.config.BeanPostProcessor>}. */
+    public static final String ATTR_POSTPROCESSORS_REF = "postProcessorsRef";
+
     /** Failover data connector attribute name. */
     public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
             AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
@@ -64,9 +66,36 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     /** Log4j logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
 
+    /**
+     * Returns whether the element configuration is native spring or custom.
+     * 
+     * @param config the element under consideration.
+     * @return whether this is native spring
+     */
+    protected boolean isNative(@Nonnull final Element config) {
+        return config.hasAttributeNS(null, ATTR_SPRING_RESOURCE)
+                || config.hasAttributeNS(null, ATTR_SPRING_RESOURCE_REF);
+    }
+
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected final Class<?> getBeanClass(Element element) {
+        if (isNative(element)) {
+            return DataConnectorFactoryBean.class;
+        }
+        return getNativeBeanClass();
+    }
+
+    /**
+     * Per parser indication of what we are building.
+     * 
+     * @return the class
+     */
+    protected abstract Class<? extends AbstractDataConnector> getNativeBeanClass();
+
+    /** {@inheritDoc} */
+    @Override protected final void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+        
         super.doParse(config, parserContext, builder);
 
         final List<Element> failoverConnector =
@@ -76,65 +105,45 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             log.debug("{} setting the following failover data connector dependencies {}", getLogPrefix(), connectorId);
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
-    }
-
-    /**
-     * Creates a Spring bean factory from the supplied spring resources.
-     * 
-     * @param springResources to load bean definitions from
-     * 
-     * @return bean factory
-     */
-    @Nonnull protected BeanFactory createBeanFactory(@Nonnull final String... springResources) {
-        final GenericApplicationContext ctx = new FilesystemGenericApplicationContext();
-        final XmlBeanDefinitionReader definitionReader = new XmlBeanDefinitionReader(ctx);
-        definitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
-        definitionReader.setNamespaceAware(true);
-        definitionReader.loadBeanDefinitions(springResources);
-        ctx.refresh();
-        return ctx.getBeanFactory();
-    }
-
-    /**
-     * Returns the results of {@link Introspector#getBeanInfo(Class, Class)} for the supplied connector class.
-     * 
-     * @param connectorClass to introspect
-     * 
-     * @return property descriptors or null if an error occurred
-     */
-    @Nullable protected PropertyDescriptor[] getBeanPropertyDescriptors(
-            @Nonnull final Class<? extends AbstractDataConnector> connectorClass) {
-        PropertyDescriptor[] descriptors = null;
-        try {
-            final BeanInfo info = Introspector.getBeanInfo(connectorClass, AbstractDataConnector.class);
-            descriptors = info.getPropertyDescriptors();
-        } catch (IntrospectionException e) {
-            log.error("could not retrieve bean info for class {}", connectorClass, e);
-        }
-        return descriptors;
-    }
-
-    /**
-     * Gets the property descriptors for the supplied connector class and then retrieves the bean for each descriptor
-     * type. If a bean is found it is added to the supplied builder.
-     * 
-     * @param builder to add property values to
-     * @param beanFactory to retrieve bean configuration from
-     * @param connectorClass to read property descriptors from
-     */
-    protected void addPropertyDescriptorValues(@Nonnull BeanDefinitionBuilder builder,
-            @Nonnull BeanFactory beanFactory, @Nonnull final Class<? extends AbstractDataConnector> connectorClass) {
-        for (PropertyDescriptor descriptor : getBeanPropertyDescriptors(connectorClass)) {
-            log.debug("parsing property descriptor {}", descriptor);
-            final Object value = SpringSupport.getBean(beanFactory, descriptor.getPropertyType());
-            if (value != null) {
-                builder.addPropertyValue(descriptor.getName(), value);
-                log.debug("added property value {}", value);
+        if (isNative(config)) {
+            // parse the configuration into a beanfactory and inject the resources as well
+            builder.addConstructorArgValue(getNativeBeanClass());
+            // it's a factory bean so we use the spring lifecycle directly
+            builder.setInitMethodName(null);
+            builder.setDestroyMethodName(null);
+            if (config.hasAttributeNS(null, ATTR_SPRING_RESOURCE)) {
+              final  String[] resources = config.getAttributeNS(null, ATTR_SPRING_RESOURCE).split(";");
+                log.debug("{} native configuration from {}", getLogPrefix(), resources);
+                builder.addPropertyValue("resources", resources);
             } else {
-                log.debug("no configuration found for {}", descriptor.getPropertyType());
+                final String resourceRef = config.getAttributeNS(null, ATTR_SPRING_RESOURCE_REF);
+                log.debug("{} native configuration from bean {}", getLogPrefix(), resourceRef);
+                builder.addPropertyReference("resources", resourceRef);
             }
+            if (config.hasAttribute(ATTR_FACTORY_POSTPROCESSORS_REF)) {
+                final String factoryPostProcessorsRef = config.getAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF);
+                log.debug("{} native conifuguration from bean {}", getLogPrefix(), factoryPostProcessorsRef);
+                builder.addPropertyReference("factoryPostProcessors",factoryPostProcessorsRef);
+            }
+            if (config.hasAttribute(ATTR_POSTPROCESSORS_REF)) {
+                final String postProcessorsRef = config.getAttributeNS(null, ATTR_POSTPROCESSORS_REF);
+                log.debug("{} native conifuguration from bean {}", getLogPrefix(), postProcessorsRef);
+                builder.addPropertyReference("factoryPostProcessors", postProcessorsRef);
+            }
+        } else {
+            doV2Parse(config, parserContext, builder);
         }
     }
+
+    /**
+     * Parse the supplied {@link Element} as a legacy format and populate the supplied
+     * {@link BeanDefinitionBuilder} as required.
+     * @param element the XML element being parsed
+     * @param parserContext the object encapsulating the current state of the parsing process
+     * @param builder used to define the {@code BeanDefinition}
+     * @see #doParse(Element, BeanDefinitionBuilder)
+     */
+    protected abstract void doV2Parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
 
     /**
      * return a string which is to be prepended to all log messages.

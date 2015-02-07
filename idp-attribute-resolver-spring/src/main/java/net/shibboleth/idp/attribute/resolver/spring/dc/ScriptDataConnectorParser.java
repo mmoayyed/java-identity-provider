@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.spring.dc;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
@@ -52,14 +51,13 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(@Nullable Element element) {
+    @Override protected Class<ScriptedDataConnector> getNativeBeanClass() {
         return ScriptedDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
 
         BeanDefinitionBuilder scriptBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(EvaluableScriptFactoryBean.class);

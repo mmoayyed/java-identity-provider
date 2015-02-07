@@ -59,7 +59,6 @@ import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
@@ -84,42 +83,10 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(LDAPDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<LDAPDataConnector> getBeanClass(@Nullable final Element element) {
-        return LDAPDataConnector.class;
+    @Override protected Class<LDAPDataConnector> getNativeBeanClass() {
+            return LDAPDataConnector.class;
     }
 
-    /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
-        log.debug("doParse {}", config);
-
-        final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
-        if (springResources == null) {
-            log.debug("parsing v2 configuration");
-            doParseV2(config, parserContext, builder);
-        } else {
-            doParseInternal(config, createBeanFactory(springResources.split(";")), builder);
-        }
-
-    }
-
-    /**
-     * Parses a Spring <beans/> configuration.
-     * 
-     * @param config LDAPDirectory containing Spring configuration
-     * @param beanFactory containing spring beans
-     * @param builder to initialize
-     */
-    protected void doParseInternal(@Nonnull final Element config, @Nonnull final BeanFactory beanFactory,
-            @Nonnull final BeanDefinitionBuilder builder) {
-
-        addPropertyDescriptorValues(builder, beanFactory, LDAPDataConnector.class);
-        builder.setInitMethodName("initialize");
-        builder.setDestroyMethodName("destroy");
-    }
-
-    // CheckStyle: MethodLength OFF
     /**
      * Parses a version 2 configuration. <br/>
      * The following automatically created & injected beans acquire hard wired defaults:
@@ -142,8 +109,10 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
      * @param parserContext bean definition parsing context
      * @param builder to initialize
      */
-    protected void doParseV2(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    // CheckStyle: MethodLength OFF
+    @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+        log.debug("{} parsing v2 configuration {}", getLogPrefix(), config);
 
         final V2Parser v2Parser = new V2Parser(config);
 

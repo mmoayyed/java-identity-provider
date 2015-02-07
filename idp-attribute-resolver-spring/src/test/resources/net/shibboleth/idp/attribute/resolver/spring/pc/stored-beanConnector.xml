@@ -20,7 +20,7 @@
 
 	<resolver:DataConnector id="dc" xsi:type="dc:StoredId"
 		generatedAttributeID="output" salt="123456789abcdefgh"
-		sourceAttributeID="foobar" springResources="/net/shibboleth/idp/attribute/resolver/spring/pc/dataconnector.xml">
+		sourceAttributeID="foobar" >
 		<resolver:Dependency ref="staticAttributes" />
         <dc:BeanManagedConnection>Connector</dc:BeanManagedConnection>
 	</resolver:DataConnector>

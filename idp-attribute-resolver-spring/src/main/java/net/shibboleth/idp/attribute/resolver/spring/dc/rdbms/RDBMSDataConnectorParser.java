@@ -38,7 +38,6 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
@@ -58,49 +57,15 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(RDBMSDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<RDBMSDataConnector> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<RDBMSDataConnector> getNativeBeanClass() {
         return RDBMSDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
-        log.debug("doParse {}", config);
-
-        final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
-        if (springResources == null) {
-            log.debug("parsing v2 configuration");
-            doParseV2(config, parserContext, builder);
-        } else {
-            doParseInternal(config, createBeanFactory(springResources.split(";")), builder);
-        }
-    }
-
-    /**
-     * Parses a Spring <beans/> configuration.
-     * 
-     * @param config RelationalDatabase containing Spring configuration
-     * @param beanFactory containing spring beans
-     * @param builder to initialize
-     */
-    protected void doParseInternal(@Nonnull final Element config, @Nonnull final BeanFactory beanFactory,
+    @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        addPropertyDescriptorValues(builder, beanFactory, RDBMSDataConnector.class);
-        builder.setInitMethodName("initialize");
-        builder.setDestroyMethodName("destroy");
-    }
-
-    /**
-     * Parses a version 2 configuration.
-     * 
-     * @param config RelationalDatabase containing v2 configuration
-     * @param parserContext bean definition parsing context
-     * @param builder to initialize
-     */
-    protected void doParseV2(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
+        log.debug("parsing v2 configuration {}", config);
 
         final V2Parser v2Parser = new V2Parser(config);
 

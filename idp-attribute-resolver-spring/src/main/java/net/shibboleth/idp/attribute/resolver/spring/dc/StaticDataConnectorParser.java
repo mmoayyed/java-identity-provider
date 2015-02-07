@@ -49,14 +49,13 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
     private final Logger log = LoggerFactory.getLogger(StaticDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<StaticDataConnector> getBeanClass(Element element) {
+    @Override protected Class<StaticDataConnector> getNativeBeanClass() {
         return StaticDataConnector.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        super.doParse(config, parserContext, builder);
 
         final List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
         final List<BeanDefinition> attributes = new ManagedList<>(children.size());

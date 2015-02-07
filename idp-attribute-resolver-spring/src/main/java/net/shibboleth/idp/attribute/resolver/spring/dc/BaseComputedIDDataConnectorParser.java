@@ -17,10 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +38,7 @@ import org.w3c.dom.Element;
  * {@link net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector} and
  * {@link net.shibboleth.idp.saml.nameid.impl.StoredIDDataConnector}.
  */
-public abstract class BaseComputedIDDataConnectorParser extends AbstractDataConnectorParser {
+public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPluginParser {
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(BaseComputedIDDataConnectorParser.class);
@@ -50,12 +55,19 @@ public abstract class BaseComputedIDDataConnectorParser extends AbstractDataConn
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder, @Nullable String generatedIdDefaultName) {
         super.doParse(config, parserContext, builder);
-
         final String generatedAttribute;
         if (config.hasAttributeNS(null, "generatedAttributeID")) {
             generatedAttribute = config.getAttributeNS(null, "generatedAttributeID");
         } else {
             generatedAttribute = generatedIdDefaultName;
+        }
+
+        final List<Element> failoverConnector = ElementSupport.getChildElements(config, 
+                AbstractDataConnectorParser.FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
+        if (failoverConnector != null && !failoverConnector.isEmpty()) {
+            String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
+            log.debug("{} setting the following failover data connector dependencies {}", getLogPrefix(), connectorId);
+            builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
 
         final String sourceAttribute = config.getAttributeNS(null, "sourceAttributeID");
@@ -75,5 +87,14 @@ public abstract class BaseComputedIDDataConnectorParser extends AbstractDataConn
         builder.addPropertyValue("generatedAttributeId", generatedAttribute);
         builder.addPropertyValue("sourceAttributeId", sourceAttribute);
         builder.addPropertyValue("salt", saltBytes);
+    }
+    /**
+     * return a string which is to be prepended to all log messages.
+     * 
+     * @return "Attribute Definition: '<definitionID>' :"
+     */
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
+        return builder.toString();
     }
 }
