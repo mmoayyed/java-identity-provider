@@ -146,6 +146,7 @@ public class LDAPDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
+        ctx.close();
     }
 
     @Test public void springPropsConfig() throws ComponentInitializationException, ServiceException,
@@ -215,6 +216,8 @@ public class LDAPDataConnectorParserTest {
         Assert.assertNotNull(attrs.get("phonenumber"));
     }
 
+    private GenericApplicationContext ctx;
+    
     protected LDAPDataConnector getLdapDataConnector(final String[] beanDefinitions) {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
@@ -230,6 +233,7 @@ public class LDAPDataConnectorParserTest {
 
         beanDefinitionReader.loadBeanDefinitions(beanDefinitions);
         context.refresh();
+        ctx = context;
 
         return (LDAPDataConnector) context.getBean("myLDAP");
     }
