@@ -95,7 +95,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     /** {@inheritDoc} */
     @Override protected final void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        
+
         super.doParse(config, parserContext, builder);
 
         final List<Element> failoverConnector =
@@ -112,7 +112,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             builder.setInitMethodName(null);
             builder.setDestroyMethodName(null);
             if (config.hasAttributeNS(null, ATTR_SPRING_RESOURCE)) {
-              final  String[] resources = config.getAttributeNS(null, ATTR_SPRING_RESOURCE).split(";");
+                final String[] resources = config.getAttributeNS(null, ATTR_SPRING_RESOURCE).split(";");
                 log.debug("{} native configuration from {}", getLogPrefix(), resources);
                 builder.addPropertyValue("resources", resources);
             } else {
@@ -123,10 +123,12 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             if (config.hasAttribute(ATTR_FACTORY_POSTPROCESSORS_REF)) {
                 final String factoryPostProcessorsRef = config.getAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF);
                 log.debug("{} Factory Bean Post Processors {}", getLogPrefix(), factoryPostProcessorsRef);
-                builder.addPropertyReference("beanFactoryPostProcessors",factoryPostProcessorsRef);
+                builder.addPropertyReference("beanFactoryPostProcessors", factoryPostProcessorsRef);
             } else {
-                log.debug("{} Adding default Factory Bean Post Processors shibboleth.PropertySourcesPlaceholderConfigurer", getLogPrefix()); 
-                builder.addPropertyReference("beanFactoryPostProcessors","shibboleth.PropertySourcesPlaceholderConfigurer");
+                log.debug("{} Adding default Factory Bean Post Processors "
+                        + "shibboleth.PropertySourcesPlaceholderConfigurer", getLogPrefix());
+                builder.addPropertyReference("beanFactoryPostProcessors",
+                        "shibboleth.PropertySourcesPlaceholderConfigurer");
             }
             if (config.hasAttribute(ATTR_POSTPROCESSORS_REF)) {
                 final String postProcessorsRef = config.getAttributeNS(null, ATTR_POSTPROCESSORS_REF);
@@ -139,8 +141,9 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     }
 
     /**
-     * Parse the supplied {@link Element} as a legacy format and populate the supplied
-     * {@link BeanDefinitionBuilder} as required.
+     * Parse the supplied {@link Element} as a legacy format and populate the supplied {@link BeanDefinitionBuilder} as
+     * required.
+     * 
      * @param element the XML element being parsed
      * @param parserContext the object encapsulating the current state of the parsing process
      * @param builder used to define the {@code BeanDefinition}
