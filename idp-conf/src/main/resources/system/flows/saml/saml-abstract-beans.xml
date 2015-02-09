@@ -168,7 +168,8 @@
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
         <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate" />
+            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate"
+                p:honorMetadata="%{idp.signing.honorWantAssertionsSigned:true}" />
         </property>
         <property name="securityParametersContextLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose"
