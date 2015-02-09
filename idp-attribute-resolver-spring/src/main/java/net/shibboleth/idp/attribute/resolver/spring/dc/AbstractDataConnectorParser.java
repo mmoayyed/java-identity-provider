@@ -122,13 +122,16 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             }
             if (config.hasAttribute(ATTR_FACTORY_POSTPROCESSORS_REF)) {
                 final String factoryPostProcessorsRef = config.getAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF);
-                log.debug("{} native conifuguration from bean {}", getLogPrefix(), factoryPostProcessorsRef);
-                builder.addPropertyReference("factoryPostProcessors",factoryPostProcessorsRef);
+                log.debug("{} Factory Bean Post Processors {}", getLogPrefix(), factoryPostProcessorsRef);
+                builder.addPropertyReference("beanFactoryPostProcessors",factoryPostProcessorsRef);
+            } else {
+                log.debug("{} Adding default Factory Bean Post Processors shibboleth.PropertySourcesPlaceholderConfigurer", getLogPrefix()); 
+                builder.addPropertyReference("beanFactoryPostProcessors","shibboleth.PropertySourcesPlaceholderConfigurer");
             }
             if (config.hasAttribute(ATTR_POSTPROCESSORS_REF)) {
                 final String postProcessorsRef = config.getAttributeNS(null, ATTR_POSTPROCESSORS_REF);
-                log.debug("{} native conifuguration from bean {}", getLogPrefix(), postProcessorsRef);
-                builder.addPropertyReference("factoryPostProcessors", postProcessorsRef);
+                log.debug("{} Bean Post Processors {}", getLogPrefix(), postProcessorsRef);
+                builder.addPropertyReference("beanPostProcessors", postProcessorsRef);
             }
         } else {
             doV2Parse(config, parserContext, builder);

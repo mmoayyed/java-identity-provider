@@ -157,6 +157,21 @@
 						<documentation>Locations of Spring resource configurations.</documentation>
 					</annotation>
 				</attribute>
+                <attribute name="springResourcesRef" type="string">
+                    <annotation>
+                        <documentation>Bean Name of locations of Spring resource configurations.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="factoryPostProcessorsRef" type="string">
+                    <annotation>
+                        <documentation>Bean Name of locations of bean factory post processors resource configurations.  Defaults to shibboleth.PropertySourcesPlaceholderConfigurer.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="postProcessorsRef" type="string">
+                    <annotation>
+                        <documentation>Bean Name of a list of bean post processors.</documentation>
+                    </annotation>
+                </attribute>
 			</extension>
 		</complexContent>
 	</complexType>

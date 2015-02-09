@@ -8,20 +8,20 @@
                                 urn:mace:shibboleth:2.0:resolver:dc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-dc.xsd">
 
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory"
-        ldapURL="${connectionConfig.ldapURL}" 
-        baseDN="${search.baseDn}" 
-        principal="${connectionConfig.bindDn}"
-        principalCredential="${connectionConfig.bindCredential}"
-        useStartTLS="${connectionConfig.useStartTLS}"
-        noResultIsError="${noResultIsError}"
-        multipleResultsIsError="${multipleResultsIsError}">
+        ldapURL="%{connectionConfig.ldapURL}" 
+        baseDN="%{search.baseDn}" 
+        principal="%{connectionConfig.bindDn}"
+        principalCredential="%{connectionConfig.bindCredential}"
+        useStartTLS="%{connectionConfig.useStartTLS}"
+        noResultIsError="%{noResultIsError}"
+        multipleResultsIsError="%{multipleResultsIsError}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${resolutionContext.principal})
             ]]>
         </dc:FilterTemplate>
-        <dc:LDAPProperty name="name1" value="${jndi.property1}"/>
-        <dc:LDAPProperty name="name2" value="${jndi.property2}"/>
+        <dc:LDAPProperty name="name1" value="%{jndi.property1}"/>
+        <dc:LDAPProperty name="name2" value="%{jndi.property2}"/>
         <dc:StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security" id="LDAPtoIdPCredential">
             <security:Certificate>
               MIICATCCAWoCCQCZy4ovDlQTvDANBgkqhkiG9w0BAQUFADBFMRMwEQYKCZImiZPy
@@ -42,18 +42,18 @@
             <security:Certificate>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.crt</security:Certificate>
         </dc:StartTLSAuthenticationCredential>
         <dc:ConnectionPool
-            minPoolSize="${connectionPool.minPoolSize}"
-            maxPoolSize="${connectionPool.maxPoolSize}"
-            blockWaitTime="${connectionPool.blockWaitTime}"
-            expirationTime="${connectionPool.expirationTime}"
-            validatePeriodically="${connectionPool.validatePeriodically}"
-            validateTimerPeriod="${connectionPool.validatePeriod}"
-            validateDN="${connectionPool.validator.baseDn}"
-            validateFilter="${connectionPool.validator.filter}"
-            failFastInitialize="${connectionPool.failFastInitialize}"/>
+            minPoolSize="%{connectionPool.minPoolSize}"
+            maxPoolSize="%{connectionPool.maxPoolSize}"
+            blockWaitTime="%{connectionPool.blockWaitTime}"
+            expirationTime="%{connectionPool.expirationTime}"
+            validatePeriodically="%{connectionPool.validatePeriodically}"
+            validateTimerPeriod="%{connectionPool.validatePeriod}"
+            validateDN="%{connectionPool.validator.baseDn}"
+            validateFilter="%{connectionPool.validator.filter}"
+            failFastInitialize="%{connectionPool.failFastInitialize}"/>
         <dc:ResultCache
-            elementTimeToLive="${cache.TTL}"
-            maximumCachedElements="${cache.maxSize}"/>
+            elementTimeToLive="%{cache.TTL}"
+            maximumCachedElements="%{cache.maxSize}"/>
     </resolver:DataConnector>
     
 </resolver:AttributeResolver>

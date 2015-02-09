@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -31,11 +32,14 @@ import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.service.ServiceException;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePropertySource;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeTest;
@@ -65,7 +69,7 @@ public class RDBMSDataConnectorParserTest {
         DatabaseTestingSupport.InitializeDataSourceFromFile(DATA_FILE, datasource);
     }
     
-    @Test public void v2Config() throws ComponentInitializationException, ServiceException, ResolutionException {
+    @Test public void v2Config() throws Exception {
         RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2.xml");
         Assert.assertNotNull(dataConnector);
@@ -75,7 +79,7 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
     }
 
-    @Test public void hybridConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+    @Test public void hybridConfig() throws Exception {
         RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-hybrid.xml",
@@ -87,36 +91,49 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
     }
 
-    @Test public void v2PropsConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+    @Test public void v2PropsConfig() throws Exception {
+        final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v2.properties");
         RDBMSDataConnector dataConnector =
-                getRdbmsDataConnector(
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-props.xml",
-                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/PropertyPlaceholder.xml");
+                getRdbmsDataConnector(props,
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-props.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
-    @Test public void springConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+    @Test public void springConfig() throws Exception {
         RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
-    @Test public void springPropsConfig() throws ComponentInitializationException, ServiceException, ResolutionException {
+    @Test public void springPropsConfig() throws Exception {
+        final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v3.properties");
+
         RDBMSDataConnector dataConnector =
-                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-props.xml");
+                getRdbmsDataConnector(props, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-props.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
     }
 
-    protected RDBMSDataConnector getRdbmsDataConnector(final String... beanDefinitions) {
+    protected RDBMSDataConnector getRdbmsDataConnector(final String... beanDefinitions) throws IOException {
+        return getRdbmsDataConnector(null, beanDefinitions);
+    }
+    protected RDBMSDataConnector getRdbmsDataConnector(Resource properties, final String... beanDefinitions) throws IOException {
         GenericApplicationContext context = new GenericApplicationContext();
         context.setDisplayName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
+        
+        if (null != properties) {
+            ConfigurableEnvironment env = context.getEnvironment();
+            env.getPropertySources().replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, new ResourcePropertySource(properties));
+            
+           env.setPlaceholderPrefix("%{");
+           env.setPlaceholderSuffix("}");
+        }
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
-        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/velocity.xml");
+        configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
         
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);

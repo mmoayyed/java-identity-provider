@@ -8,6 +8,6 @@
     <resolver:DataConnector
       id="myDatabase"
       xsi:type="dc:RelationalDatabase"
-      springResources="classpath:net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-props-context.xml"/>
+      springResourcesRef="rdbmsResource"/>
     
 </resolver:AttributeResolver>

@@ -8,6 +8,8 @@
     <resolver:DataConnector
       id="myLDAP"
       xsi:type="dc:LDAPDirectory"
+      factoryPostProcessorsRef="shibboleth.PropertySourcesPlaceholderConfigurer"
+      postProcessorsRef="emptyList"
       springResources="classpath:net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-props-context.xml"/>
 
 </resolver:AttributeResolver>
