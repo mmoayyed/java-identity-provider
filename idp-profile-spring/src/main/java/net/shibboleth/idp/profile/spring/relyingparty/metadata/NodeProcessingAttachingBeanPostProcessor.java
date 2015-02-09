@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,8 +92,8 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
 
         if (!filterAttached) {
             final NodeProcessingMetadataFilter filterToAttach = new NodeProcessingMetadataFilter();
-            final List<MetadataNodeProcessor> processors =
-                    Arrays.asList(new EntitiesDescriptorNameProcessor(), new KeyAuthorityNodeProcessor());
+            final List<MetadataNodeProcessor> processors = new ArrayList<>(
+                    Arrays.asList(new EntitiesDescriptorNameProcessor(), new KeyAuthorityNodeProcessor()));
             if (null != atributeResolverService) {
                 processors.add(new AttributeMappingNodeProcessor(atributeResolverService));
             }
