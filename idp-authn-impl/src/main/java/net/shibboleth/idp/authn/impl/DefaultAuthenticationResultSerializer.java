@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -54,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 /**
  * Handles serialization of results, delegating handling of {@link Principal} objects to one or more
@@ -105,7 +105,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             @Nonnull @NonnullElements Collection<PrincipalSerializer<String>> serializers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        principalSerializers = Lists.newArrayList(Collections2.filter(serializers, Predicates.notNull()));
+        principalSerializers = new ArrayList<>(Collections2.filter(serializers, Predicates.notNull()));
     }
 
     /**

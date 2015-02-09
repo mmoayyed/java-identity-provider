@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,8 +50,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -207,8 +207,8 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
-        List<IdPAttributeValue<?>> attributeValues = Lists.newArrayList();
+        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
+        List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("student"));
         dependsAttributes.put("affiliation", attributeValues);
         ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
@@ -223,8 +223,8 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
-        List<IdPAttributeValue<?>> attributeValues = Lists.newArrayList();
+        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
+        List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("entitlement1"));
         attributeValues.add(new StringAttributeValue("entitlement*"));
         dependsAttributes.put("entitlement", attributeValues);
@@ -261,8 +261,8 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
-        List<IdPAttributeValue<?>> attributeValues = Lists.newArrayList();
+        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
+        List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("student"));
         dependsAttributes.put("affiliation", attributeValues);
         ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
@@ -278,8 +278,8 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
-        List<IdPAttributeValue<?>> attributeValues = Lists.newArrayList();
+        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
+        List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("entitlement1"));
         attributeValues.add(new StringAttributeValue("entitlement*"));
         dependsAttributes.put("entitlement", attributeValues);

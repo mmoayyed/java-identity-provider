@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,8 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-
 
 /**
  * A profile action that selects a logout propagation flow to invoke.
@@ -76,8 +75,7 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(flows, "Available flow list cannot be null");
         
-        availableFlows = Lists.newArrayListWithExpectedSize(flows.size());
-        availableFlows.addAll(Collections2.filter(flows, Predicates.notNull()));
+        availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
     }
     
     /** {@inheritDoc} */

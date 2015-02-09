@@ -20,7 +20,9 @@ package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,9 +38,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * A simple {@link ResultMappingStrategy} that assumes all columns in the result set should be mapped and that all
@@ -66,8 +65,7 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
 
             final ResultSetMetaData resultMetadata = results.getMetaData();
 
-            final Map<String, IdPAttribute> attributes =
-                    Maps.newHashMapWithExpectedSize(resultMetadata.getColumnCount());
+            final Map<String, IdPAttribute> attributes = new HashMap<>(resultMetadata.getColumnCount());
 
             final Map<String, String> aliases = getResultRenamingMap();
 
@@ -97,7 +95,7 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
                         attribute.setValues(
                             Collections.singletonList(StringAttributeValue.valueOf(results.getString(i))));
                     } else {
-                        final List<IdPAttributeValue<?>> values = Lists.newArrayList(attribute.getValues());
+                        final List<IdPAttributeValue<?>> values = new ArrayList<>(attribute.getValues());
                         values.add(StringAttributeValue.valueOf(results.getString(i)));
                         attribute.setValues(values);
                     }

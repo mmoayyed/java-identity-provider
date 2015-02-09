@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
@@ -35,8 +34,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /** {@link AttributeFilterPolicy} unit test. */
 public class AttributeFilterPolicyTest {
@@ -186,11 +183,11 @@ public class AttributeFilterPolicyTest {
 
         IdPAttribute attribute = new IdPAttribute(ATTR_NAME);
 
-        attribute.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
+        attribute.setValues(Arrays.asList(new StringAttributeValue("one"),
                 new StringAttributeValue("two"), new StringAttributeValue("three")));
 
         IdPAttribute attribute2 = new IdPAttribute(ATTR_NAME_2);
-        attribute2.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("45")));
+        attribute2.setValues(Collections.singletonList(new StringAttributeValue("45")));
         context.setPrefilteredIdPAttributes(Arrays.asList(attribute, attribute2));
 
         policyMatcher.setRetVal(state);

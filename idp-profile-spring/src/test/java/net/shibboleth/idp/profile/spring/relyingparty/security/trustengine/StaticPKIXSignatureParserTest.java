@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,9 +36,6 @@ import org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.beust.jcommander.internal.Lists;
-import com.google.common.collect.Sets;
-
 /**
  * test for xsi:type="security:StaticPKIXKeySignature".
  */
@@ -51,7 +49,10 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
                 (StaticPKIXValidationInformationResolver) engine.getPKIXResolver();
         Assert.assertTrue(resolver.resolveTrustedNames(null).isEmpty());
 
-        Set<PKIXValidationInformation> infos = Sets.newHashSet(resolver.resolve(null));
+        final List<PKIXValidationInformation> infos = new ArrayList<>();
+        for (final PKIXValidationInformation info : resolver.resolve(null)) {
+            infos.add(info);
+        }
         Assert.assertEquals(infos.size(), 1);
 
         final CertPathPKIXTrustEvaluator trustEvaluator = (CertPathPKIXTrustEvaluator) engine.getPKIXTrustEvaluator();
@@ -74,7 +75,10 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
         Assert.assertTrue(tns.contains("Name2"));
         Assert.assertTrue(tns.contains("Name3"));
 
-        final List<PKIXValidationInformation> infos = Lists.newArrayList(Sets.newHashSet(resolver.resolve(null)));
+        final List<PKIXValidationInformation> infos = new ArrayList<>();
+        for (final PKIXValidationInformation info : resolver.resolve(null)) {
+            infos.add(info);
+        }
         Assert.assertEquals(infos.size(), 2);
         final int firstVal = ((BasicPKIXValidationInformation) infos.get(0)).getVerificationDepth().intValue();
         final int secondVal = ((BasicPKIXValidationInformation) infos.get(1)).getVerificationDepth().intValue();
@@ -101,7 +105,10 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
         Assert.assertEquals(tns.size(), 1);
         Assert.assertTrue(tns.contains("Name1"));
 
-        final List<PKIXValidationInformation> infos = Lists.newArrayList(Sets.newHashSet(resolver.resolve(null)));
+        final List<PKIXValidationInformation> infos = new ArrayList<>();
+        for (final PKIXValidationInformation info : resolver.resolve(null)) {
+            infos.add(info);
+        }
         Assert.assertEquals(infos.size(), 1);
         final int value = ((BasicPKIXValidationInformation) infos.get(0)).getVerificationDepth().intValue();
 
@@ -121,4 +128,5 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
         Assert.assertEquals(options.getInitialPolicies().size(), 1);
         Assert.assertTrue(options.getInitialPolicies().contains("1234"));
     }
+    
 }

@@ -17,12 +17,11 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-
-import com.google.common.collect.Lists;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -85,7 +84,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
         final List<IdPAttributeValue<?>> dependencyValues =
                 PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
 
-        final List<StringAttributeValue> valueList = Lists.newArrayListWithExpectedSize(dependencyValues.size());
+        final List<StringAttributeValue> valueList = new ArrayList<>(dependencyValues.size());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {

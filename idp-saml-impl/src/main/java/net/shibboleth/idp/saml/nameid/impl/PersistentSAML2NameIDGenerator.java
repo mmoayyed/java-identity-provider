@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 /**
  * Generator for "persistent" Format {@link NameID} objects that provides a source/seed ID based on {@link IdPAttribute}
@@ -124,7 +124,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(ids, "Attribute ID collection cannot be null");
 
-        attributeSourceIds = Lists.newArrayList(Collections2.filter(ids, Predicates.notNull()));
+        attributeSourceIds = new ArrayList<>(Collections2.filter(ids, Predicates.notNull()));
     }
 
     /**

@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.relyingparty.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,8 +38,6 @@ import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context. The
@@ -79,7 +79,11 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
                 log.error("RelyingPartyResolver '{}': error looking up Relying Party: Invalid configuration.", getId());
             } else {
                 final RelyingPartyConfigurationResolver resolver = component.getComponent();
-                return Sets.newHashSet(resolver.resolve(context));
+                final List<RelyingPartyConfiguration> results = new ArrayList<>();
+                for (final RelyingPartyConfiguration result : resolver.resolve(context)) {
+                    results.add(result);
+                }
+                return results;
             }
         } catch (final ResolverException e) {
             log.error("RelyingPartyResolver '{}': error in resolution", getId(), e);

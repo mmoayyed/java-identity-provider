@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.resolver.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,8 +43,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 /**
  * An attribute definition that creates attributes whose values are {@link NameID}.
@@ -236,7 +235,7 @@ public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition 
                 }
             } else {
                 // TODO Intermediate to solve typing issues.
-                final List<XMLObjectAttributeValue> xmlVals = Lists.newArrayListWithExpectedSize(inputValues.size());
+                final List<XMLObjectAttributeValue> xmlVals = new ArrayList<>(inputValues.size());
                 for (final IdPAttributeValue<?> theValue : inputValues) {
                     final XMLObjectAttributeValue val = encodeOneValue(theValue, resolutionContext);
                     if (null != val) {

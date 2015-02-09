@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -46,8 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Sets;
 
 /** Test case for {@link AttributeResolverImpl}. */
 public class AttributeResolverImplTest {
@@ -242,7 +241,7 @@ public class AttributeResolverImplTest {
         
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
-        ad1.setDependencies(Sets.newHashSet(dep1));
+        ad1.setDependencies(Collections.singleton(dep1));
         ad1.initialize();
 
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", attr);
@@ -250,7 +249,7 @@ public class AttributeResolverImplTest {
         ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1");
         ResolverPluginDependency dep3 = new ResolverPluginDependency("ad2");
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", attr);
-        ad0.setDependencies(Sets.newHashSet(dep2, dep3));
+        ad0.setDependencies(new HashSet<>(Arrays.asList(dep2, dep3)));
         ad0.initialize();
 
         LazySet<DataConnector> connectors = new LazySet<>();
@@ -285,7 +284,7 @@ public class AttributeResolverImplTest {
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
-        ad1.setDependencies(Sets.newHashSet(dep1));
+        ad1.setDependencies(Collections.singleton(dep1));
         ad1.initialize();
 
         LazySet<DataConnector> connectors = new LazySet<>();
@@ -318,7 +317,7 @@ public class AttributeResolverImplTest {
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
-        ad1.setDependencies(Sets.newHashSet(dep1));
+        ad1.setDependencies(Collections.singleton(dep1));
 
         LazySet<DataConnector> connectors = new LazySet<>();
         connectors.add(dc1);
@@ -348,13 +347,13 @@ public class AttributeResolverImplTest {
         IdPAttribute attr = new IdPAttribute("test1");
         attr.setValues(Collections.singletonList(new StringAttributeValue("value1")));
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
-        ad1.setDependencies(Sets.newHashSet(dep1));
+        ad1.setDependencies(Collections.singleton(dep1));
         ad1.initialize();
 
         attr = new IdPAttribute("test2");
         attr.setValues(Collections.singletonList(new StringAttributeValue("value2")));
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", attr);
-        ad2.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1")));
+        ad2.setDependencies(Collections.singleton(new ResolverPluginDependency("dc1")));
         ad2.initialize();
 
         LazySet<DataConnector> connectors = new LazySet<>();
@@ -384,13 +383,13 @@ public class AttributeResolverImplTest {
         connectors.add(dcfail2);
 
         MockAttributeDefinition ad10 = new MockAttributeDefinition("ad10", new IdPAttribute("ten"));
-        ad10.setDependencies(Sets.newHashSet(depFail1));
+        ad10.setDependencies(Collections.singleton(depFail1));
         ad10.setPropagateResolutionExceptions(false);
         ad10.initialize();
 
 
         MockAttributeDefinition ad11 = new MockAttributeDefinition("ad11", new IdPAttribute("eleven"));
-        ad11.setDependencies(Sets.newHashSet(depFail2));
+        ad11.setDependencies(Collections.singleton(depFail2));
         ad11.setPropagateResolutionExceptions(false);
         ad11.initialize();
 
@@ -416,7 +415,7 @@ public class AttributeResolverImplTest {
         attr = new IdPAttribute("test1");
         attr.setValues(Collections.singletonList(new StringAttributeValue("value1")));
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", attr);
-        ad1.setDependencies(Sets.newHashSet(dep1));
+        ad1.setDependencies(Collections.singleton(dep1));
         ad1.initialize();
 
         LazySet<DataConnector> connectors = new LazySet<>();
@@ -523,12 +522,12 @@ public class AttributeResolverImplTest {
     @Test public void badPluginIdInitialize() throws Exception {
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
-        ad1.setDependencies(Sets.newHashSet(dep1));
+        ad1.setDependencies(Collections.singleton(dep1));
         ad1.initialize();
 
         ResolverPluginDependency dep2 = new ResolverPluginDependency("ad1");
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
-        ad0.setDependencies(Sets.newHashSet(dep2));
+        ad0.setDependencies(Collections.singleton(dep2));
         ad0.initialize();
 
         LazySet<AttributeDefinition> definitions = new LazySet<>();
@@ -545,7 +544,7 @@ public class AttributeResolverImplTest {
 
         ResolverPluginDependency dep3 = new ResolverPluginDependency("ad0");
         ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
-        ad0.setDependencies(Sets.newHashSet(dep3));
+        ad0.setDependencies(Collections.singleton(dep3));
         definitions = new LazySet<>();
         definitions.add(ad0);
         ad0.initialize();
@@ -563,7 +562,7 @@ public class AttributeResolverImplTest {
     /** Test that validation fails when there are circular dependencies between plugins. */
     @Test public void circularDependencyInitialize() throws Exception {
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
-        ad1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad1")));
+        ad1.setDependencies(Collections.singleton(new ResolverPluginDependency("ad1")));
 
         LazySet<AttributeDefinition> definitions = new LazySet<>();
         definitions.add(ad1);
@@ -577,18 +576,18 @@ public class AttributeResolverImplTest {
             // OK
         }
 
-        MockDataConnector dc1 = new MockDataConnector("dc1", null, Sets.newHashSet(new ResolverPluginDependency("ad0")));
+        MockDataConnector dc1 = new MockDataConnector("dc1", null, Collections.singleton(new ResolverPluginDependency("ad0")));
 
         ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
-        ad1.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1")));
+        ad1.setDependencies(Collections.singleton(new ResolverPluginDependency("dc1")));
         ad1.initialize();
 
         MockAttributeDefinition ad2 = new MockAttributeDefinition("ad2", new IdPAttribute("test"));
-        ad2.setDependencies(Sets.newHashSet(new ResolverPluginDependency("dc1")));
+        ad2.setDependencies(Collections.singleton(new ResolverPluginDependency("dc1")));
         ad2.initialize();
 
         MockAttributeDefinition ad0 = new MockAttributeDefinition("ad0", new IdPAttribute("test"));
-        ad0.setDependencies(Sets.newHashSet(new ResolverPluginDependency("ad1"), new ResolverPluginDependency("ad2")));
+        ad0.setDependencies(new HashSet<>(Arrays.asList(new ResolverPluginDependency("ad1"), new ResolverPluginDependency("ad2"))));
         ad0.initialize();
 
         LazySet<DataConnector> connectors = new LazySet<>();

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.logic;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 /**
  * Function to filter a set of candidate NameIdentifier/NameID Format values derived from an entity's SAML metadata
@@ -89,7 +89,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
 
     /** {@inheritDoc} */
     @Override @Nullable public List<String> apply(@Nullable final ProfileRequestContext input) {
-        List<String> fromConfig = Lists.newArrayList();
+        List<String> fromConfig = new ArrayList<>();
         final List<String> fromMetadata = super.apply(input);
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(input);

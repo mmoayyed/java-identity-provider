@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.config.navigate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -30,8 +31,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.xmlsec.DecryptionConfiguration;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
-
-import com.google.common.collect.Lists;
 
 /**
  * A function that returns a {@link DecryptionConfiguration} list by way of various lookup strategies.
@@ -57,7 +56,7 @@ public class DecryptionConfigurationLookupFunction
     @Override
     @Nullable public List<DecryptionConfiguration> apply(@Nullable final ProfileRequestContext input) {
 
-        final List<DecryptionConfiguration> configs = Lists.newArrayList();
+        final List<DecryptionConfiguration> configs = new ArrayList<>();
         
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {

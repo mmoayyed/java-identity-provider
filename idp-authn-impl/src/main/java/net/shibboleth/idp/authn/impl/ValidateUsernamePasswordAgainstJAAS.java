@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,8 +50,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 /**
  * An action that checks for a {@link UsernamePasswordContext} and directly produces an
@@ -142,7 +141,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(names, "Configuration name list cannot be null");
         
-        loginConfigNames = Lists.newArrayList(StringSupport.normalizeStringCollection(names));
+        loginConfigNames = new ArrayList<>(StringSupport.normalizeStringCollection(names));
         
         if (loginConfigNames.isEmpty()) {
             throw new ConstraintViolationException("Configuration name list cannot be empty");

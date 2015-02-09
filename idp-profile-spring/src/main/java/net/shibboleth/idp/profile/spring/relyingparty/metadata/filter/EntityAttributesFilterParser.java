@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -43,8 +44,6 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import com.google.common.collect.Lists;
-
 /** Parser for a &lt;EntityAttributes&gt; filter. */
 public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionParser {
 
@@ -68,7 +67,7 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
         }
 
         // Accumulate Attribute objects to attach as rule values.
-        final List<Attribute> accumulator = Lists.newArrayList();
+        final List<Attribute> accumulator = new ArrayList<>();
         
         final ManagedMap<Object,ManagedList<Attribute>> ruleMap = new ManagedMap();
         

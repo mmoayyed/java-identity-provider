@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -40,8 +41,6 @@ import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /** Unit test for {@link AttributeSourcedSAML2NameIDGenerator}. */
 public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
@@ -106,7 +105,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
     @Test public void testWrongType() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(
+                Arrays.asList(
                         new IdPAttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
@@ -161,7 +160,7 @@ public class AttributeSourcedSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTe
 
     @Test public void testMultiNameIDValued() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1));
+                Arrays.asList(saml2NameIdFor(OTHERID), saml1NameIdFor(NAME_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

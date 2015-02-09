@@ -17,14 +17,13 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
+import java.util.Arrays;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-
-import com.google.common.collect.Sets;
-
 
 /** Base class for {@link Matcher} and {@link PolicyRequirementRule} unit tests. */
 public abstract class AbstractMatcherPolicyRuleTest {
@@ -54,7 +53,7 @@ public abstract class AbstractMatcherPolicyRuleTest {
 
         attribute = new IdPAttribute("foo");
         
-        attribute.setValues(Sets.newHashSet(value1, value2, value3));
+        attribute.setValues(Arrays.asList(value1, value2, value3));
 
         filterContext = new AttributeFilterContext();
     }

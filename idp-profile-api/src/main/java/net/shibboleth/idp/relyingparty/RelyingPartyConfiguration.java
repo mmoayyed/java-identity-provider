@@ -19,6 +19,7 @@ package net.shibboleth.idp.relyingparty;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -43,7 +44,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 /** The configuration that applies to a given relying party. */
 public class RelyingPartyConfiguration extends AbstractIdentifiableInitializableComponent implements
@@ -147,7 +147,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(configs, "ProfileConfiguration collection cannot be null");
 
-        profileConfigurations = Maps.newHashMap();
+        profileConfigurations = new HashMap<>();
         for (ProfileConfiguration config : Collections2.filter(configs, Predicates.notNull())) {
             final String trimmedId =
                     Constraint.isNotNull(StringSupport.trimOrNull(config.getId()), "ID of profile configuration class "

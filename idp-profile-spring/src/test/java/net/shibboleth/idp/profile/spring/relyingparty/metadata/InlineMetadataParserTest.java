@@ -18,6 +18,8 @@
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
@@ -37,8 +39,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Sets;
 
 public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
@@ -75,7 +75,7 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: ");
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
@@ -104,4 +104,5 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
         }
         msc.unloadComponent();
     }
+    
 }

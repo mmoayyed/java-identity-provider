@@ -39,8 +39,6 @@ import org.opensaml.xmlsec.signature.KeyInfo;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-
 
 /**
  * Utility class for extracting {@link PKIXValidationInformation} from a {@link KeyAuthority}.
@@ -153,13 +151,13 @@ public final class KeyAuthoritySupport {
             verificationDepth = Constraint.isNotNull(depth, "Verification depth cannot be null");
             
             if (anchors != null) {
-                trustAnchors = Lists.newArrayList(Collections2.filter(anchors, Predicates.notNull()));
+                trustAnchors = new ArrayList<>(Collections2.filter(anchors, Predicates.notNull()));
             } else {
                 trustAnchors = null;
             }
             
             if (crls != null) {
-                trustedCRLs = Lists.newArrayList(Collections2.filter(crls, Predicates.notNull()));
+                trustedCRLs = new ArrayList<>(Collections2.filter(crls, Predicates.notNull()));
             } else {
                 trustedCRLs = null;
             }

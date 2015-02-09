@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.config;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +25,6 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.collect.Lists;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -94,7 +93,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     public void setInboundInterceptorFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        inboundFlows = Lists.newArrayList(StringSupport.normalizeStringCollection(flows));
+        inboundFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
     }
     
     /** {@inheritDoc} */
@@ -111,7 +110,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     public void setOutboundInterceptorFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        outboundFlows = Lists.newArrayList(StringSupport.normalizeStringCollection(flows));
+        outboundFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
     }
 
     /** {@inheritDoc} */

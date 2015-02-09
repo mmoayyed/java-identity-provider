@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,8 +44,6 @@ import org.opensaml.saml.saml1.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /**
  *
@@ -127,7 +126,7 @@ public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         
         final int[] intArray = {1, 2, 3, 4};
         final List<IdPAttributeValue<?>> values =
-                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
                         null,
                         new IdPAttributeValue<Object>() {
                             @Override

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -60,8 +61,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Maps;
-
 /** {@link ProcessLogoutRequest} unit test. */
 public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
 
@@ -94,7 +93,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         sessionManager.setSecondaryServiceIndex(true);
         sessionManager.setSessionSlop(900 * 60 * 1000);
         final SPSessionSerializerRegistry registry = new SPSessionSerializerRegistry();
-        final Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> mappings = Maps.newHashMap();
+        final Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> mappings = new HashMap<>();
         mappings.put(SAML1SPSession.class, new SAML1SPSessionSerializer(900 * 60 * 1000));
         mappings.put(SAML2SPSession.class, new SAML2SPSessionSerializer(900 * 60 * 1000));
         registry.setMappings(mappings);

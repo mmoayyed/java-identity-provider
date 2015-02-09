@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.encoding.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,8 +36,6 @@ import org.opensaml.saml.saml2.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /**
  * {@link SAML2StringAttributeEncoder} Unit test.
@@ -74,7 +73,7 @@ public class SAML2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue<Object>() {
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue<Object>() {
                     public Object getValue() {
                         return intArray;
                     }
@@ -91,8 +90,7 @@ public class SAML2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void single() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new StringAttributeValue(STRING_1)));
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -119,8 +117,8 @@ public class SAML2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void multi() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2)));
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
+                        new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

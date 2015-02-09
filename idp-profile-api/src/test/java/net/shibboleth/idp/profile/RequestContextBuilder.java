@@ -45,8 +45,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Collections2;
 
 /**
  * Builder used to construct {@link RequestContext} used in {@link org.springframework.webflow.execution.Action}
@@ -118,7 +117,7 @@ public class RequestContextBuilder {
 
         if (prototype.relyingPartyProfileConfigurations != null) {
             relyingPartyProfileConfigurations =
-                    new ArrayList<ProfileConfiguration>(prototype.relyingPartyProfileConfigurations);
+                    new ArrayList<>(prototype.relyingPartyProfileConfigurations);
         }
     }
 
@@ -433,11 +432,11 @@ public class RequestContextBuilder {
         }
 
         if (relyingPartyProfileConfigurations == null) {
-            relyingPartyProfileConfigurations = new ArrayList<ProfileConfiguration>();
+            relyingPartyProfileConfigurations = new ArrayList<>();
         }
         
-        ArrayList<ProfileConfiguration> profileConfigs =
-                Lists.newArrayList(Iterables.filter(relyingPartyProfileConfigurations, Predicates.notNull()));
+        final ArrayList<ProfileConfiguration> profileConfigs =
+                new ArrayList<>(Collections2.filter(relyingPartyProfileConfigurations, Predicates.notNull()));
         if (profileConfigs.isEmpty()) {
             profileConfigs.add(new MockProfileConfiguration("mock"));
         }

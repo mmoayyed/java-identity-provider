@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -42,7 +43,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
@@ -144,7 +144,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        final Collection<IdPAttribute> keepers = Lists.newArrayListWithExpectedSize(query.getAttributes().size());
+        final Collection<IdPAttribute> keepers = new ArrayList<>(query.getAttributes().size());
         
         final Multimap<String,IdPAttribute> mapped = mapperService.mapAttributes(query.getAttributes());
         log.debug("{} Query content mapped to attribute IDs: {}", getLogPrefix(), mapped.keySet());
@@ -187,8 +187,7 @@ public class FilterByQueriedAttributes extends AbstractProfileAction {
         
         boolean requestedValues = false;
         
-        final Collection<IdPAttributeValue<?>> keepers =
-                Lists.newArrayListWithExpectedSize(attribute.getValues().size());
+        final Collection<IdPAttributeValue<?>> keepers = new ArrayList<>(attribute.getValues().size());
         
         for (final IdPAttributeValue<?> value : attribute.getValues()) {
             

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.config.navigate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -30,8 +31,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.xmlsec.EncryptionConfiguration;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
-
-import com.google.common.collect.Lists;
 
 /**
  * A function that returns a {@link EncryptionConfiguration} list using injected lookup strategies.
@@ -57,7 +56,7 @@ public class EncryptionConfigurationLookupFunction
     @Override
     @Nullable public List<EncryptionConfiguration> apply(@Nullable final ProfileRequestContext input) {
         
-        final List<EncryptionConfiguration> configs = Lists.newArrayList();
+        final List<EncryptionConfiguration> configs = new ArrayList<>();
         
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {

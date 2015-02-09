@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +40,6 @@ import org.springframework.core.io.Resource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Sets;
 
 /** Test the attribute resolver service. */
 public class AttributeFilterServiceTest {
@@ -85,12 +84,12 @@ public class AttributeFilterServiceTest {
         attributesToBeFiltered.put(lastName.getId(), lastName);
 
         IdPAttribute email = new IdPAttribute("email");
-        email.setValues(Sets.newHashSet(new StringAttributeValue("jsmith@example.edu"), new StringAttributeValue(
+        email.setValues(Arrays.asList(new StringAttributeValue("jsmith@example.edu"), new StringAttributeValue(
                 "john.smith@example.edu")));
         attributesToBeFiltered.put(email.getId(), email);
 
         IdPAttribute affiliation = new IdPAttribute("affiliation");
-        affiliation.setValues(Sets.newHashSet(new StringAttributeValue("employee"), new StringAttributeValue("staff"),
+        affiliation.setValues(Arrays.asList(new StringAttributeValue("employee"), new StringAttributeValue("staff"),
                 new StringAttributeValue("illegalValue")));
 
         attributesToBeFiltered.put(affiliation.getId(), affiliation);

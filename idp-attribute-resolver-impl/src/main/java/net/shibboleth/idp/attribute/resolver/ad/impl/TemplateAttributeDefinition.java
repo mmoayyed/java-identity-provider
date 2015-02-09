@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 
 /**
  * An attribute definition that constructs its values based on the values of its dependencies using the Velocity
@@ -108,7 +108,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         Constraint.isNotNull(newSourceAttributes, "Source attribute list cannot be null");
 
-        sourceAttributes = Lists.newArrayListWithExpectedSize(newSourceAttributes.size());
+        sourceAttributes = new ArrayList<>(newSourceAttributes.size());
         CollectionSupport.addIf(sourceAttributes, newSourceAttributes, Predicates.notNull());
     }
 
@@ -207,7 +207,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         final Map<String,Iterator<IdPAttributeValue<?>>> sourceValues = new LazyMap<>();
         final int valueCount = setupSourceValues(workContext, sourceValues);
 
-        final List<IdPAttributeValue<?>> valueList = Lists.newArrayListWithExpectedSize(valueCount);
+        final List<IdPAttributeValue<?>> valueList = new ArrayList<>(valueCount);
 
         for (int i = 0; i < valueCount; i++) {
             log.debug("{} Determing value {}", getLogPrefix(), i + 1);

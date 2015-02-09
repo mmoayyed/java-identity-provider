@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.audit.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,8 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Action that populates fields in an {@link AuditContext} using injected functions.
@@ -108,7 +108,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Field extractor map cannot be null");
         
-        fieldExtractors = Maps.newHashMapWithExpectedSize(map.size());
+        fieldExtractors = new HashMap<>(map.size());
         for (final Map.Entry<String,Function<ProfileRequestContext,Object>> entry : map.entrySet()) {
             final String field = StringSupport.trimOrNull(entry.getKey());
             if (entry.getValue() != null) {
@@ -130,7 +130,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Audit formatting map cannot be null");
         
-        fieldsToExtract = Sets.newHashSetWithExpectedSize(10);
+        fieldsToExtract = new HashSet<>(10);
         
         for (final String s : map.values()) {
             int len = s.length();

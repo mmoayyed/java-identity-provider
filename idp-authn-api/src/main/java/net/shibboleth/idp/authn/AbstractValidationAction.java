@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,7 +58,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 /**
  * A base class for authentication related actions that validate credentials and produce an
@@ -123,8 +123,8 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(messages, "Map of classified messages cannot be null");
         
-        classifiedMessages = Maps.newHashMap();
-        for (Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
+        classifiedMessages = new HashMap<>();
+        for (final Map.Entry<String, Collection<String>> entry : messages.entrySet()) {
             if (entry.getKey() != null && !entry.getKey().isEmpty()
                     && entry.getValue() != null && !entry.getValue().isEmpty()) {
                 classifiedMessages.put(entry.getKey(),

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.Arrays;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -30,8 +32,6 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /** Tests for {@link StaticAttributeDefinition}
  *
@@ -54,7 +54,7 @@ public class StaticAttributeDefinitionTest {
         }
 
         IdPAttribute attribute = new IdPAttribute("attribute");
-        attribute.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         attrDef.setValue(attribute);
         Assert.assertNotNull(attrDef.getValue());

@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
@@ -111,13 +110,13 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
             }
         }
 
-        mappers = Lists.newArrayListWithExpectedSize(theMappers.values().size());
+        mappers = new ArrayList<>(theMappers.values().size());
 
         for (final Entry<AbstractSAMLAttributeMapper<InType,OutType>,Collection<String>> entry : theMappers.asMap()
                 .entrySet()) {
 
             final AbstractSAMLAttributeMapper<InType, OutType> mapper = entry.getKey();
-            mapper.setAttributeIds(new ArrayList<String>(entry.getValue()));
+            mapper.setAttributeIds(new ArrayList<>(entry.getValue()));
             mappers.add(mapper);
         }
     }

@@ -17,10 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -82,7 +81,7 @@ public class ResolverTestSupport {
     public static IdPAttribute buildAttribute(String attributeId, String... values) {
         final IdPAttribute attribute = new IdPAttribute(attributeId);
         
-        List<IdPAttributeValue<?>> valueList = Lists.newArrayList();
+        List<IdPAttributeValue<?>> valueList = new ArrayList<>();
         for (String value : values) {
             valueList.add(StringAttributeValue.valueOf(value));
         }

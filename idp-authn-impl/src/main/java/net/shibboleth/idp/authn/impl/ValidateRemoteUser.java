@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -41,8 +42,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 /**
  * An action that checks for a {@link UsernameContext} and directly produces an
@@ -89,7 +88,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     public void setWhitelistedUsernames(@Nonnull @NonnullElements final Collection<String> whitelist) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        whitelistedUsernames = Sets.newHashSet(StringSupport.normalizeStringCollection(whitelist));
+        whitelistedUsernames = new HashSet<>(StringSupport.normalizeStringCollection(whitelist));
     }
 
     /**
@@ -100,7 +99,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     public void setBlacklistedUsernames(@Nonnull @NonnullElements final Collection<String> blacklist) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        blacklistedUsernames = Sets.newHashSet(StringSupport.normalizeStringCollection(blacklist));
+        blacklistedUsernames = new HashSet<>(StringSupport.normalizeStringCollection(blacklist));
     }
 
     /**

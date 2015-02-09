@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.impl;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +51,6 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /** {@link FilterAttributes} unit test. */
 public class FilterAttributesTest {
@@ -98,10 +97,10 @@ public class FilterAttributesTest {
     /** Test that the action filters attributes and proceeds properly while auto-creating a filter context. */
     @Test public void testFilterAttributesAutoCreateFilterContext() throws Exception {
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         final IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Lists.newArrayList(new StringAttributeValue("a"), new StringAttributeValue("b")));
+        attribute2.setValues(Arrays.asList(new StringAttributeValue("a"), new StringAttributeValue("b")));
 
         final List<IdPAttribute> attributes = Arrays.asList(attribute1, attribute2);
 
@@ -117,9 +116,9 @@ public class FilterAttributesTest {
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Lists.newArrayList(attribute1Policy));
+                        Collections.singletonList(attribute1Policy));
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
@@ -157,10 +156,10 @@ public class FilterAttributesTest {
     /** Test that the action filters attributes and proceeds properly with an existing filter context. */
     @Test public void testFilterAttributesExistingFilterContext() throws Exception {
         final IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         final IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Lists.newArrayList(new StringAttributeValue("a"), new StringAttributeValue("b")));
+        attribute2.setValues(Arrays.asList(new StringAttributeValue("a"), new StringAttributeValue("b")));
 
         final List<IdPAttribute> attributes = Arrays.asList(attribute1, attribute2);
 
@@ -176,9 +175,9 @@ public class FilterAttributesTest {
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Lists.newArrayList(attribute1Policy));
+                        Collections.singletonList(attribute1Policy));
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
@@ -219,7 +218,7 @@ public class FilterAttributesTest {
     /** Test that action returns the proper event if the attributes are not able to be filtered. */
     @Test public void testUnableToFilterAttributes() throws Exception {
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
-        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         final List<IdPAttribute> attributes = Arrays.asList(attribute1);
 
@@ -235,9 +234,9 @@ public class FilterAttributesTest {
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Lists.newArrayList(attribute1Policy));
+                        Collections.singletonList(attribute1Policy));
 
-        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        final AttributeFilterImpl engine = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         policy.initialize();
         attribute1Policy.initialize();
         attribute1Matcher.initialize();
@@ -263,12 +262,12 @@ public class FilterAttributesTest {
     /** Test that action returns the proper event if the attribute configuration is broken */
     @Test public void testUnableToFindFilter() throws Exception {
         final IdPAttribute attribute1 = new MockUncloneableAttribute("attribute1");
-        attribute1.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         prc.getSubcontext(SubjectContext.class, true);
 
         final AttributeContext attributeCtx = new AttributeContext();
-        final List<IdPAttribute> attributes = Arrays.asList(attribute1);
+        final List<IdPAttribute> attributes = Collections.singletonList(attribute1);
         attributeCtx.setIdPAttributes(attributes);
         prc.getSubcontext(RelyingPartyContext.class).addSubcontext(attributeCtx);
 

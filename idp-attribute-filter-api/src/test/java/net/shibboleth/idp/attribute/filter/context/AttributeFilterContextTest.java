@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.context;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -25,8 +26,6 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /** Unit test for {@link AttributeFilterContext}. */
 public class AttributeFilterContextTest {
@@ -58,7 +57,7 @@ public class AttributeFilterContextTest {
 
         IdPAttribute attribute2 = new IdPAttribute("attribute2");
         IdPAttribute attribute3 = new IdPAttribute("attribute3");
-        List<IdPAttribute> attributes = Lists.newArrayList(attribute2, attribute3);
+        List<IdPAttribute> attributes = Arrays.asList(attribute2, attribute3);
         context.setPrefilteredIdPAttributes(attributes);
         Assert.assertEquals(context.getPrefilteredIdPAttributes().size(), 2);
         Assert.assertFalse(context.getPrefilteredIdPAttributes().containsKey("attribute1"));
@@ -120,7 +119,7 @@ public class AttributeFilterContextTest {
 
         IdPAttribute attribute2 = new IdPAttribute("attribute2");
         IdPAttribute attribute3 = new IdPAttribute("attribute3");
-        List<IdPAttribute> attributes = Lists.newArrayList(attribute2, attribute3);
+        List<IdPAttribute> attributes = Arrays.asList(attribute2, attribute3);
         context.setFilteredIdPAttributes(attributes);
         Assert.assertEquals(context.getFilteredIdPAttributes().size(), 2);
         Assert.assertFalse(context.getFilteredIdPAttributes().containsKey("attribute1"));

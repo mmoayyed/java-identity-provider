@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.impl;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -38,8 +39,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /** Unit test for {@link AttributeFilter}. */
 public class AttributeFilterImplTest {
@@ -79,9 +78,7 @@ public class AttributeFilterImplTest {
         AttributeFilterPolicy policy2 = new AttributeFilterPolicy("policy2", PolicyRequirementRule.MATCHES_NONE, null);
         AttributeFilterPolicy policy3 = new AttributeFilterPolicy("policy3", PolicyRequirementRule.MATCHES_NONE, null);
 
-        AttributeFilterImpl filter =
-                new AttributeFilterImpl("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy1,
-                        policy2));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Arrays.asList(policy1, policy1, policy2));
         policy1.initialize();
         policy2.initialize();
         filter.initialize();
@@ -95,7 +92,7 @@ public class AttributeFilterImplTest {
         Assert.assertFalse(filter.getFilterPolicies().contains(policy3));
         Assert.assertFalse(policy3.isInitialized());
 
-        filter = new AttributeFilterImpl("engine", Lists.<AttributeFilterPolicy> newArrayList(policy1, policy2));
+        filter = new AttributeFilterImpl("engine", Arrays.asList(policy1, policy2));
         filter.initialize();
 
         Assert.assertEquals(filter.getFilterPolicies().size(), 2);
@@ -125,21 +122,19 @@ public class AttributeFilterImplTest {
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Lists.newArrayList(attribute1Policy));
+                        Collections.singletonList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        attribute2.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("a"),
-                new StringAttributeValue("b")));
+        attribute2.setValues(Arrays.asList(new StringAttributeValue("a"), new StringAttributeValue("b")));
         filterContext.getPrefilteredIdPAttributes().put(attribute2.getId(), attribute2);
 
-        final AttributeFilterImpl filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        final AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         attribute1Policy.initialize();
         policy.initialize();
         ComponentSupport.initialize(filter);
@@ -163,18 +158,17 @@ public class AttributeFilterImplTest {
 
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Lists.newArrayList(attribute1Policy));
+                        Collections.singletonList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         attribute1Policy.initialize();
         policy.initialize();
-        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         filter.initialize();
 
         filter.filterAttributes(filterContext);
@@ -196,18 +190,17 @@ public class AttributeFilterImplTest {
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Lists.newArrayList(attribute2Policy));
+                        Collections.singletonList(attribute2Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
         attribute2Policy.initialize();
         policy.initialize();
-        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         filter.initialize();
 
         filter.filterAttributes(filterContext);
@@ -225,16 +218,15 @@ public class AttributeFilterImplTest {
 
         AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
-                        Lists.newArrayList(attribute1Policy));
+                        Collections.singletonList(attribute1Policy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        AttributeFilter filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         attribute1Policy.initialize();
         policy.initialize();
         ComponentSupport.initialize(filter);
@@ -246,7 +238,7 @@ public class AttributeFilterImplTest {
     @Test public void testDenyFilterAttributes() throws Exception {
         MockMatcher deny = new MockMatcher();
         deny.setMatchingAttribute("attribute1");
-        deny.setMatchingValues(Arrays.asList(new StringAttributeValue("one")));
+        deny.setMatchingValues(Collections.singletonList(new StringAttributeValue("one")));
 
         AttributeRule denyPolicy = new AttributeRule();
         denyPolicy.setId("denyPolicy");
@@ -261,17 +253,16 @@ public class AttributeFilterImplTest {
         allowPolicy.setIsDenyRule(false);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL, Lists.newArrayList(denyPolicy,
-                        allowPolicy));
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
+                        Arrays.asList(denyPolicy, allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         denyPolicy.initialize();
         allowPolicy.initialize();
         policy.initialize();
@@ -293,16 +284,16 @@ public class AttributeFilterImplTest {
         allowPolicy.setIsDenyRule(false);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_NONE, Lists.newArrayList(allowPolicy));
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_NONE,
+                        Collections.singletonList(allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        AttributeFilter filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         policy.initialize();
         ComponentSupport.initialize(filter);
 
@@ -324,17 +315,16 @@ public class AttributeFilterImplTest {
         allowPolicy.setIsDenyRule(false);
 
         AttributeFilterPolicy policy =
-                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL, Lists.newArrayList(denyPolicy,
-                        allowPolicy));
+                new AttributeFilterPolicy("attribute1Policy", PolicyRequirementRule.MATCHES_ALL,
+                        Arrays.asList(denyPolicy, allowPolicy));
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
 
         IdPAttribute attribute1 = new IdPAttribute("attribute1");
-        attribute1.setValues(Lists.<IdPAttributeValue<?>> newArrayList(new StringAttributeValue("one"),
-                new StringAttributeValue("two")));
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
         filterContext.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        AttributeFilter filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        AttributeFilter filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         allowPolicy.initialize();
         denyPolicy.initialize();
         policy.initialize();
@@ -354,14 +344,14 @@ public class AttributeFilterImplTest {
         filterPolicy.setIsDenyRule(false);
 
         MockPolicyRequirementRule policyRule = new MockPolicyRequirementRule();
-        AttributeFilterPolicy policy = new AttributeFilterPolicy("policy", policyRule, Arrays.asList(filterPolicy));
+        AttributeFilterPolicy policy = new AttributeFilterPolicy("policy", policyRule, Collections.singletonList(filterPolicy));
 
         Assert.assertFalse(policyRule.isInitialized());
         Assert.assertFalse(policyRule.isDestroyed());
         Assert.assertFalse(matcher.isInitialized());
         Assert.assertFalse(matcher.isDestroyed());
 
-        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Lists.newArrayList(policy));
+        AttributeFilterImpl filter = new AttributeFilterImpl("engine", Collections.singletonList(policy));
         policy.initialize();
         matcher.initialize();
         policyRule.initialize();

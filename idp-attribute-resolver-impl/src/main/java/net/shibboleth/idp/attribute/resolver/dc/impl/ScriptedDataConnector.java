@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,7 +55,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.collect.Lists;
 
 /**
  * A Data Connector which populates a series of attributes from a provided {@link ProfileRequestContext}.
@@ -176,7 +176,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
         }
         log.debug("{} Attribute '{}' has {} values.", getLogPrefix(), attribute.getId(), attribute.getValues().size());
         List<IdPAttributeValue<?>> inputValues = attribute.getValues();
-        List<IdPAttributeValue<?>> outputValues = Lists.newArrayListWithExpectedSize(inputValues.size());
+        List<IdPAttributeValue<?>> outputValues = new ArrayList<>(inputValues.size());
 
         for (final Object o : inputValues) {
             if (o instanceof IdPAttributeValue<?>) {

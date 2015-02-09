@@ -58,7 +58,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
 /**
  * A component that resolves the attributes for a particular subject.
@@ -412,8 +411,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             // Remove duplicate attribute values.
             log.debug("{} De-duping attribute definition {} result", logPrefix, definition.getId());
             final Iterator<IdPAttributeValue<?>> valueIter = resolvedAttribute.getValues().iterator();
-            final Set<IdPAttributeValue<?>> monitor =
-                    Sets.newHashSetWithExpectedSize(resolvedAttribute.getValues().size());
+            final Set<IdPAttributeValue<?>> monitor = new HashSet<>(resolvedAttribute.getValues().size());
             while (valueIter.hasNext()) {
                 final IdPAttributeValue<?> value = valueIter.next();
                 if (!monitor.add(value)) {

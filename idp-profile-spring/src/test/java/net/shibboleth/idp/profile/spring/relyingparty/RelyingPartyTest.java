@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -31,8 +34,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Sets;
 
 /**
  * Test a &lt;RelyingParty&gt;
@@ -50,7 +51,7 @@ public class RelyingPartyTest extends OpenSAMLInitBaseTestCase {
         final GenericApplicationContext context = new GenericApplicationContext();
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: ");
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());

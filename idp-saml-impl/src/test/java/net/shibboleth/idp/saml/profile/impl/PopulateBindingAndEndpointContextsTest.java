@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,7 +61,6 @@ import org.testng.annotations.Test;
 import org.w3c.dom.Document;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 
 /** Unit test for {@link PopulateBindingAndEndpointContexts}. */
 public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCase {
@@ -93,7 +93,7 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         action = new PopulateBindingAndEndpointContexts();
         action.setEndpointResolver(new DefaultEndpointResolver());
         action.setEndpointType(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
-        final List<BindingDescriptor> bindings = Lists.newArrayList();
+        final List<BindingDescriptor> bindings = new ArrayList<>();
         bindings.add(new BindingDescriptor());
         bindings.get(0).setId(SAMLConstants.SAML2_POST_BINDING_URI);
         bindings.get(0).initialize();

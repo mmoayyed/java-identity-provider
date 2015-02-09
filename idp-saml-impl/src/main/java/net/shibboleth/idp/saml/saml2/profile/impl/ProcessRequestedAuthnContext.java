@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -46,7 +47,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.collect.Lists;
 
 /**
  * An authentication action that processes the {@link RequestedAuthnContext} in a SAML 2 {@link AuthnRequest},
@@ -115,7 +115,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
             return;
         }
 
-        final List<Principal> principals = Lists.newArrayList();
+        final List<Principal> principals = new ArrayList<>();
         
         if (!requestedCtx.getAuthnContextClassRefs().isEmpty()) {
             for (final AuthnContextClassRef ref : requestedCtx.getAuthnContextClassRefs()) {

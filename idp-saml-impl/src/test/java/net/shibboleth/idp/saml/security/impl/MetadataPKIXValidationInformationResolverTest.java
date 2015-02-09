@@ -18,6 +18,8 @@
 package net.shibboleth.idp.saml.security.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -45,8 +47,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-
-import com.google.common.collect.Sets;
 
 /**
  * Testing the Shibboleth metadata PKIX validation information resolver.
@@ -126,7 +126,7 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         Assert.assertTrue(names.contains(barEntityID), "Did't find expected name value");
         
         // Test dynamic trusted names
-        Set<String> dynamicNames = Sets.newHashSet("foo", "bar");
+        final Set<String> dynamicNames = new HashSet<>(Arrays.asList("foo", "bar"));
         criteriaSet.clear();
         criteriaSet.add( new UsageCriterion(UsageType.SIGNING) );
         criteriaSet.add( new EntityIdCriterion(fooEntityID) );

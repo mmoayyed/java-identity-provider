@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.context;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,8 +41,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapConstraints;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} interface. */
 @NotThreadSafe
@@ -161,7 +160,7 @@ public class AttributeResolutionContext extends BaseContext {
     public void setRequestedIdPAttributeNames(@Nonnull @NonnullElements final Collection<String> names) {
         Constraint.isNotNull(names, "Requested IdPAttribute collection cannot be null");
 
-        requestedAttributeNames = Sets.newHashSet(Collections2.filter(names, Predicates.notNull()));
+        requestedAttributeNames = new HashSet<>(Collections2.filter(names, Predicates.notNull()));
     }
 
     /**
@@ -179,7 +178,7 @@ public class AttributeResolutionContext extends BaseContext {
      * @param attributes set of resolved attributes
      */
     public void setResolvedIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        resolvedAttributes = Maps.newHashMap();
+        resolvedAttributes = new HashMap<>();
 
         if (attributes != null) {
             for (IdPAttribute attribute : attributes) {

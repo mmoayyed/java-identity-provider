@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,6 @@ import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
@@ -187,7 +186,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
         // inject dependencies
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
             for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
-                final List<Object> values = Lists.newArrayList();
+                final List<Object> values = new ArrayList<>(entry.getValue().size());
                 for (IdPAttributeValue<?> value : entry.getValue()) {
                     values.add(value.getValue());
                 }
@@ -229,13 +228,13 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
             if (value == null) {
                 return null;
             } else if (value instanceof Object[]) {
-                final List<Object> encodedValues = Lists.newArrayList();
+                final List<Object> encodedValues = new ArrayList<>();
                 for (Object o : (Object[]) value) {
                     encodedValues.add(encode(o));
                 }
                 return encodedValues.toArray();
             } else if (value instanceof Collection<?>) {
-                final List<Object> encodedValues = Lists.newArrayList();
+                final List<Object> encodedValues = new ArrayList<>();
                 for (Object o : (Collection<?>) value) {
                     encodedValues.add(encode(o));
                 }

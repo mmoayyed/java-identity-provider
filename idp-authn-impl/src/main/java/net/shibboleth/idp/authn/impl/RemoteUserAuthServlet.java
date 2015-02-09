@@ -18,6 +18,8 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -39,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 /**
  * Extracts REMOTE_USER and places it in a request attribute to be used by the IdP's external authentication
@@ -93,7 +94,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
      * @param attributes    list of request attributes to check
      */
     public void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
-        checkAttributes = Lists.newArrayList(Collections2.filter(attributes, Predicates.notNull()));
+        checkAttributes = new ArrayList<>(Collections2.filter(attributes, Predicates.notNull()));
     }
 
     /**
@@ -102,7 +103,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
      * @param headers list of request headers to check
      */
     public void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
-        checkHeaders = Lists.newArrayList(Collections2.filter(headers, Predicates.notNull()));
+        checkHeaders = new ArrayList<>(Collections2.filter(headers, Predicates.notNull()));
     }
     
     /** {@inheritDoc} */
@@ -119,7 +120,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
         if (param != null) {
             final String[] attrs = param.split(" ");
             if (attrs != null) {
-                checkAttributes = StringSupport.normalizeStringCollection(Lists.newArrayList(attrs));
+                checkAttributes = StringSupport.normalizeStringCollection(Arrays.asList(attrs));
             }
         }
 
@@ -127,7 +128,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
         if (param != null) {
             final String[] headers = param.split(" ");
             if (headers != null) {
-                checkHeaders = StringSupport.normalizeStringCollection(Lists.newArrayList(headers));
+                checkHeaders = StringSupport.normalizeStringCollection(Arrays.asList(headers));
             }
         }
         

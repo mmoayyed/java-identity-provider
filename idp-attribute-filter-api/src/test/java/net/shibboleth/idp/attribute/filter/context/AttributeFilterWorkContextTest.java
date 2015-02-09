@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.filter.context;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -26,9 +28,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /** Unit test for {@link AttributeFilterContext}. */
 public class AttributeFilterWorkContextTest {
@@ -47,10 +46,10 @@ public class AttributeFilterWorkContextTest {
         AttributeFilterWorkContext context = parent.getSubcontext(AttributeFilterWorkContext.class, true);
 
         IdPAttribute attribute1 = new IdPAttribute("one");
-        attribute1.setValues(Sets.newHashSet(aStringAttributeValue, bStringAttributeValue));
+        attribute1.setValues(Arrays.asList(aStringAttributeValue, bStringAttributeValue));
         parent.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        context.addPermittedIdPAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
+        context.addPermittedIdPAttributeValues("one", Collections.singletonList(aStringAttributeValue));
         Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 1);
 
         context.addPermittedIdPAttributeValues("one", null);
@@ -59,32 +58,32 @@ public class AttributeFilterWorkContextTest {
         context.addPermittedIdPAttributeValues("one", new ArrayList<IdPAttributeValue>());
         Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 1);
 
-        context.addPermittedIdPAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
+        context.addPermittedIdPAttributeValues("one", Collections.singletonList(bStringAttributeValue));
         Assert.assertEquals(context.getPermittedIdPAttributeValues().get("one").size(), 2);
 
         try {
-            context.addPermittedIdPAttributeValues(null, Lists.newArrayList(aStringAttributeValue));
+            context.addPermittedIdPAttributeValues(null, Collections.singletonList(aStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addPermittedIdPAttributeValues("", Lists.newArrayList(aStringAttributeValue));
+            context.addPermittedIdPAttributeValues("", Collections.singletonList(aStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addPermittedIdPAttributeValues("two", Lists.newArrayList(aStringAttributeValue));
+            context.addPermittedIdPAttributeValues("two", Collections.singletonList(aStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addPermittedIdPAttributeValues("one", Lists.newArrayList(cStringAttributeValue));
+            context.addPermittedIdPAttributeValues("one", Collections.singletonList(cStringAttributeValue));
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this
@@ -97,10 +96,10 @@ public class AttributeFilterWorkContextTest {
         AttributeFilterWorkContext context = parent.getSubcontext(AttributeFilterWorkContext.class, true);
 
         IdPAttribute attribute1 = new IdPAttribute("one");
-        attribute1.setValues(Sets.newHashSet(aStringAttributeValue, bStringAttributeValue));
+        attribute1.setValues(Arrays.asList(aStringAttributeValue, bStringAttributeValue));
         parent.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
 
-        context.addDeniedIdPAttributeValues("one", Lists.newArrayList(aStringAttributeValue));
+        context.addDeniedIdPAttributeValues("one", Collections.singletonList(aStringAttributeValue));
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
         context.addDeniedIdPAttributeValues("one", null);
@@ -109,32 +108,32 @@ public class AttributeFilterWorkContextTest {
         context.addDeniedIdPAttributeValues("one", new ArrayList<IdPAttributeValue>());
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 1);
 
-        context.addDeniedIdPAttributeValues("one", Lists.newArrayList(bStringAttributeValue));
+        context.addDeniedIdPAttributeValues("one", Collections.singletonList(bStringAttributeValue));
         Assert.assertEquals(context.getDeniedAttributeValues().get("one").size(), 2);
 
         try {
-            context.addDeniedIdPAttributeValues(null, Lists.newArrayList(bStringAttributeValue));
+            context.addDeniedIdPAttributeValues(null, Collections.singletonList(bStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addDeniedIdPAttributeValues("", Lists.newArrayList(bStringAttributeValue));
+            context.addDeniedIdPAttributeValues("", Collections.singletonList(bStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addDeniedIdPAttributeValues("two", Lists.newArrayList(bStringAttributeValue));
+            context.addDeniedIdPAttributeValues("two", Collections.singletonList(bStringAttributeValue));
             Assert.fail();
         } catch (ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            context.addDeniedIdPAttributeValues("one", Lists.newArrayList(cStringAttributeValue));
+            context.addDeniedIdPAttributeValues("one", Collections.singletonList(cStringAttributeValue));
             Assert.fail();
         } catch (IllegalArgumentException e) {
             // expected this

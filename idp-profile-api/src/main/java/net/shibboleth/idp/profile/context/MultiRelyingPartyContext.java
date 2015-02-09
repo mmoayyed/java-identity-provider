@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.context;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -36,7 +37,6 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
 
 /**
  * {@link BaseContext} representing multiple relying parties involved in a request, usually a
@@ -64,7 +64,7 @@ public final class MultiRelyingPartyContext extends BaseContext {
     
     /** Constructor. */
     public MultiRelyingPartyContext() {
-        relyingPartyIdMap = Maps.newHashMap();
+        relyingPartyIdMap = new HashMap<>();
         relyingPartyLabelMap = ArrayListMultimap.create();
     }
     

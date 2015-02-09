@@ -38,8 +38,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Lists;
-
 /**
  * An encapsulated Attribute suitable for handing to scripts. This handles some of the cumbersome issues associated with
  * {@link IdPAttribute} and also a lot of the V2 backwards compatibility stuff. <br/>
@@ -211,7 +209,7 @@ public class ScriptedIdPAttributeImpl implements ScriptedIdPAttribute {
         }
 
         // Otherwise re-marshall the {@link #attributeValues}
-        final List<IdPAttributeValue<?>> valueList = Lists.newArrayListWithExpectedSize(attributeValues.size());
+        final List<IdPAttributeValue<?>> valueList = new ArrayList<>(attributeValues.size());
 
         log.debug("{} recreating attribute contents from {}", getLogPrefix(), attributeValues);
         for (final Object object : attributeValues) {

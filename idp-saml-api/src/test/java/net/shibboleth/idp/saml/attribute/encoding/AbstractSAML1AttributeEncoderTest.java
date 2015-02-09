@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.encoding;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,8 +37,6 @@ import org.opensaml.saml.saml1.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /**
  * Test for {@link AbstractSAML1AttributeEncoder}.
@@ -72,7 +71,7 @@ public class AbstractSAML1AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
 
                 
         IdPAttribute attr = new IdPAttribute(ATTRIBUTE_ID);
-        attr.setValues(Lists.newArrayList(new StringAttributeValue(ATTRIBUTE_VALUE_1),
+        attr.setValues(Arrays.asList(new StringAttributeValue(ATTRIBUTE_VALUE_1),
                 new StringAttributeValue(ATTRIBUTE_VALUE_2)));
         
         XMLObject obj = encoder.encode(attr);
@@ -82,7 +81,7 @@ public class AbstractSAML1AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
         List<XMLObject> result = ((Attribute) obj).getAttributeValues();
         
         Assert.assertEquals(result.size(), 2);
-        Set<String> resultSet = new HashSet<String>(2); 
+        Set<String> resultSet = new HashSet<>(2); 
         for (XMLObject o: result) {
             Assert.assertTrue(o instanceof XSString);
             resultSet.add(((XSString) o).getValue());

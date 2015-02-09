@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.mapping.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,7 +31,6 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
 /**
@@ -65,7 +65,7 @@ public class RequestedAttributesMapperTest extends MappingTests {
         RequestedAttributesMapper mapper = new RequestedAttributesMapper();
         mapper.setId("id");
    
-        mapper.setMappers(Lists.newArrayList(buildMapper("id", SAML_NAME_ONE, new StringAttributeValueMapper()),
+        mapper.setMappers(Arrays.asList(buildMapper("id", SAML_NAME_ONE, new StringAttributeValueMapper()),
                 buildMapper("id", SAML_NAME_THREE, new ScopedStringAttributeValueMapper()),
                 buildMapper("id2", SAML_NAME_THREE, new StringAttributeValueMapper())));
         

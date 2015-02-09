@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -36,8 +37,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /** Test the {@link NotMatcher} matcher. */
 public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
@@ -126,7 +125,7 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         }
 
         OrMatcher orMatcher =
-                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo(value1)),
+                new OrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(equalTo(value1)),
                         new MockValuePredicateMatcher(equalTo(value2)), new MockValuePredicateMatcher(equalTo(value3))));
 
         orMatcher.setId("or");

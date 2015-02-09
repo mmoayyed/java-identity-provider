@@ -18,6 +18,7 @@
 package net.shibboleth.idp.session;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -26,8 +27,6 @@ import javax.annotation.Nullable;
 import org.opensaml.storage.StorageSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Maps;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -62,7 +61,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Map cannot be null");
         
-        registry = Maps.newHashMapWithExpectedSize(map.size());
+        registry = new HashMap<>(map.size());
         for (final Map.Entry<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> entry
                 : map.entrySet()) {
             if (entry.getKey() != null && entry.getValue() != null) {

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.interceptor.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -43,7 +44,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * An profile interceptor action that populates a {@link ProfileInterceptorContext} with
@@ -80,7 +80,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(flows, "Flow collection cannot be null");
 
-        availableFlows = Lists.newArrayList(Collections2.filter(flows, Predicates.notNull()));
+        availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
     }
     
     /**

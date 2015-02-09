@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,8 +42,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition} that produces its attribute values by taking the
@@ -87,7 +86,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        final List<IdPAttributeValue<?>> resultantValues = Lists.newArrayList();
+        final List<IdPAttributeValue<?>> resultantValues = new ArrayList<>();
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final List<IdPAttributeValue<?>> dependencyValues =

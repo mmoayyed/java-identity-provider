@@ -39,8 +39,6 @@ import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFil
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import com.google.common.collect.Lists;
-
 /**
  * A {@link BeanPostProcessor} for {@link MetadataResolver} beans that ensures a {@link NodeProcessingMetadataFilter}
  * containing a pair of default {@link MetadataNodeProcessor} plugins is attached.
@@ -94,7 +92,7 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
         if (!filterAttached) {
             final NodeProcessingMetadataFilter filterToAttach = new NodeProcessingMetadataFilter();
             final List<MetadataNodeProcessor> processors =
-                    Lists.newArrayList(new EntitiesDescriptorNameProcessor(), new KeyAuthorityNodeProcessor());
+                    Arrays.asList(new EntitiesDescriptorNameProcessor(), new KeyAuthorityNodeProcessor());
             if (null != atributeResolverService) {
                 processors.add(new AttributeMappingNodeProcessor(atributeResolverService));
             }

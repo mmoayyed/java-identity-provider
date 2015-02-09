@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -24,9 +25,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -64,7 +62,7 @@ public final class PluginDependencySupport {
         Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
         Constraint.isNotNull(dependencies, "Resolver dependency collection cannot be null");
 
-        final List<IdPAttributeValue<?>> values = Lists.newArrayList();
+        final List<IdPAttributeValue<?>> values = new ArrayList<>();
 
         for (final ResolverPluginDependency dependency : dependencies) {
             Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
@@ -117,7 +115,7 @@ public final class PluginDependencySupport {
             @Nonnull final AttributeResolverWorkContext workContext,
             @Nonnull final Collection<ResolverPluginDependency> dependencies) {
 
-        final HashMap<String,List<IdPAttributeValue<?>>> result = Maps.newHashMap();
+        final HashMap<String,List<IdPAttributeValue<?>>> result = new HashMap<>();
 
         for (final ResolverPluginDependency dependency : dependencies) {
             Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
@@ -172,7 +170,7 @@ public final class PluginDependencySupport {
         }
         List<IdPAttributeValue<?>> attributeValues = target.get(source.getId());
         if (attributeValues == null) {
-            attributeValues = Lists.newArrayList();
+            attributeValues = new ArrayList<>();
             target.put(source.getId(), attributeValues);
         }
 

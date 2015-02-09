@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -41,8 +42,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 /**
  * An attribute definition that creates {@link ScopedStringAttributeValue}s by taking a source attribute value splitting
@@ -95,7 +94,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
         log.debug("{} Dependencies {} provided unmapped values of {}", getLogPrefix(), getDependencies(),
                 dependencyValues);
 
-        final List<IdPAttributeValue<?>> valueList = Lists.newArrayListWithExpectedSize(dependencyValues.size());
+        final List<IdPAttributeValue<?>> valueList = new ArrayList<>(dependencyValues.size());
         for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()

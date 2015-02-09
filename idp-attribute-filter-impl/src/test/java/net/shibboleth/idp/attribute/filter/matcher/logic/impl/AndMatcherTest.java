@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -37,8 +38,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-
 /** {@link AndMatcher} unit test. */
 public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
@@ -48,7 +47,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testNullArguments() throws Exception {
         Matcher valuePredicate = Matcher.MATCHES_ALL;
-        AndMatcher matcher = new AndMatcher(Lists.<Matcher> newArrayList(valuePredicate));
+        AndMatcher matcher = new AndMatcher(Collections.singletonList(valuePredicate));
         matcher.setId("test");
         matcher.initialize();
 
@@ -76,7 +75,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testGetMatchingValues() throws Exception {
         AndMatcher matcher =
-                new AndMatcher(Lists.<Matcher> newArrayList(
+                new AndMatcher(Arrays.<Matcher>asList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(or(equalTo(value2), equalTo(value3)))));
 
@@ -105,14 +104,14 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testFails() throws Exception {
-        AndMatcher matcher = new AndMatcher(Lists.<Matcher> newArrayList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
+        AndMatcher matcher = new AndMatcher(Arrays.<Matcher>asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
         matcher.setId("test");
         matcher.initialize();
 
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNull(result);
 
-        matcher = new AndMatcher(Lists.<Matcher> newArrayList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));
+        matcher = new AndMatcher(Arrays.<Matcher>asList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));
         matcher.setId("test");
         matcher.initialize();
 
@@ -129,7 +128,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void emptyResults() throws ComponentInitializationException {
         AndMatcher matcher =
-                new AndMatcher(Lists.<Matcher> newArrayList(
+                new AndMatcher(Arrays.<Matcher>asList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(equalTo(value3))));
 

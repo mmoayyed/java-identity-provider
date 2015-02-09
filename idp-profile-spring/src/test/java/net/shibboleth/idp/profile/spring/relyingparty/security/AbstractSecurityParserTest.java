@@ -18,6 +18,8 @@
 package net.shibboleth.idp.profile.spring.relyingparty.security;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
@@ -33,8 +35,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.BeforeSuite;
-
-import com.google.common.collect.Sets;
 
 /**
  * Base mechanics for Security parser tests
@@ -87,7 +87,7 @@ public class AbstractSecurityParserTest {
         
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + claz);
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -36,8 +37,6 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
 
 /**
  * An action that extracts an asserted user identity from the incoming request, creates a
@@ -89,7 +88,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     public void setCheckAttributes(@Nonnull @NonnullElements final Collection<String> attributes) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        checkAttributes = Lists.newArrayList(StringSupport.normalizeStringCollection(attributes));
+        checkAttributes = new ArrayList<>(StringSupport.normalizeStringCollection(attributes));
     }
 
     /**
@@ -100,7 +99,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     public void setCheckHeaders(@Nonnull @NonnullElements final Collection<String> headers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        checkHeaders = Lists.newArrayList(StringSupport.normalizeStringCollection(headers));
+        checkHeaders = new ArrayList<>(StringSupport.normalizeStringCollection(headers));
     }
     
     /** {@inheritDoc} */

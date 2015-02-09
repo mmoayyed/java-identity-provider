@@ -43,8 +43,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Sets;
-
 /**
  * Test for regex attribute definitions.
  */
@@ -103,7 +101,7 @@ public class RegexAtributeTest {
         attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
         ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        attrDef.setDependencies(Sets.newHashSet(depend));
+        attrDef.setDependencies(Collections.singleton(depend));
         attrDef.initialize();
 
         try {
@@ -150,7 +148,7 @@ public class RegexAtributeTest {
         RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
         ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        Set<ResolverPluginDependency> pluginDependencies = Sets.newHashSet(depend);
+        Set<ResolverPluginDependency> pluginDependencies = Collections.singleton(depend);
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         try {

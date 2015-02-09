@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.cert.Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
@@ -30,7 +31,6 @@ import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 /**
  * Context, usually attached to {@link AuthenticationContext}, that carries a {@link Certificate} to be
@@ -46,7 +46,7 @@ public class CertificateContext extends BaseContext {
 
     /** Constructor. */
     public CertificateContext() {
-        intermediates = Lists.newArrayList();
+        intermediates = new ArrayList<>();
     }
     
     /**

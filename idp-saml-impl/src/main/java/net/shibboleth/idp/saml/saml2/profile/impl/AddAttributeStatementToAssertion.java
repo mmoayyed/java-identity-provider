@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 /**
  * Action that builds an {@link AttributeStatement} and adds it to an {@link Assertion} returned by a lookup
@@ -139,7 +138,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
             return null;
         }
 
-        final ArrayList<Attribute> encodedAttributes = Lists.newArrayListWithExpectedSize(attributes.size());
+        final ArrayList<Attribute> encodedAttributes = new ArrayList<>(attributes.size());
         for (final IdPAttribute attribute : Collections2.filter(attributes, Predicates.notNull())) {
             final Attribute encodedAttribute = encodeAttribute(profileRequestContext, attribute);
             if (encodedAttribute != null) {

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.consent.flow;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -34,8 +35,6 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 /**
  * Consent action which extracts user input and updates current consent objects in the consent context accordingly.
@@ -77,7 +76,7 @@ public class ExtractConsent extends AbstractConsentAction {
         }
 
         final Collection<String> consentIds =
-                StringSupport.normalizeStringCollection(Sets.newHashSet(consentIdsRequestParameterValues));
+                StringSupport.normalizeStringCollection(Arrays.asList(consentIdsRequestParameterValues));
         log.debug("{} Extracted consent ids '{}' from request parameter '{}'", getLogPrefix(), consentIds,
                 CONSENT_IDS_REQUEST_PARAMETER);
 

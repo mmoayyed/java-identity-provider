@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,9 +37,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * A simple {@link SearchResultMappingStrategy} that iterates over all result entries and includes all attribute values
@@ -65,7 +64,7 @@ public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy
             throw new ResolutionException("Multiple entries returned from search");
         }
 
-        final Map<String,IdPAttribute> attributes = Maps.newHashMapWithExpectedSize(results.size());
+        final Map<String,IdPAttribute> attributes = new HashMap<>(results.size());
         
         final Map<String,String> aliases = getResultRenamingMap();
 
@@ -86,7 +85,7 @@ public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy
                     attributes.put(effectiveId, attribute);
                 }
 
-                final List<IdPAttributeValue<?>> values = Lists.newArrayListWithExpectedSize(
+                final List<IdPAttributeValue<?>> values = new ArrayList<>(
                         attr.getStringValues().size() + attribute.getValues().size());
 
                 values.addAll(attribute.getValues());

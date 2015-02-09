@@ -18,11 +18,10 @@
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.Criterion;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -34,8 +33,6 @@ import org.opensaml.xmlsec.signature.support.SignatureValidationParametersCriter
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Sets;
 
 public class SignatureValidationCriteriaSetFactoryBeanTest extends OpenSAMLInitBaseTestCase {
     
@@ -89,8 +86,7 @@ public class SignatureValidationCriteriaSetFactoryBeanTest extends OpenSAMLInitB
     
     @Test
     public void testOtherCriteriaOnly() throws Exception {
-        HashSet<Criterion> otherCriteria = Sets.newHashSet(new UsageCriterion(UsageType.SIGNING), new EntityIdCriterion("foo"));
-        factoryBean.setOtherCriteria(otherCriteria);
+        factoryBean.setOtherCriteria(Arrays.asList(new UsageCriterion(UsageType.SIGNING), new EntityIdCriterion("foo")));
         factoryBean.setIncludeOpenSAMLGlobalConfig(false);
         
         CriteriaSet criteriaSet = factoryBean.getObject();
@@ -111,8 +107,7 @@ public class SignatureValidationCriteriaSetFactoryBeanTest extends OpenSAMLInitB
         
         factoryBean.setIncludeOpenSAMLGlobalConfig(true);
         
-        HashSet<Criterion> otherCriteria = Sets.newHashSet(new UsageCriterion(UsageType.SIGNING), new EntityIdCriterion("foo"));
-        factoryBean.setOtherCriteria(otherCriteria);
+        factoryBean.setOtherCriteria(Arrays.asList(new UsageCriterion(UsageType.SIGNING), new EntityIdCriterion("foo")));
         
         CriteriaSet criteriaSet = factoryBean.getObject();
         Assert.assertNotNull(criteriaSet);

@@ -30,8 +30,6 @@ import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Sets;
-
 
 /**
  * test for parser for SignatureValidation filter
@@ -44,7 +42,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
-        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
     }
 
     @Test public void wrongSig() throws IOException, ResolverException {
@@ -53,7 +50,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertFalse(result.iterator().hasNext());
-        Assert.assertEquals(Sets.newHashSet(result).size(), 0);
     }
     
     @Test public void noSigCheck() throws IOException, ResolverException {
@@ -62,7 +58,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("https://sp.example.org/sp/shibboleth"));
         Assert.assertFalse(result.iterator().hasNext());
-        Assert.assertEquals(Sets.newHashSet(result).size(), 0);
     }
 
     @Test public void noSigNoCheck() throws IOException, ResolverException {
@@ -71,7 +66,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("https://sp.example.org/sp/shibboleth"));
         Assert.assertTrue(result.iterator().hasNext());
-        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
     }
 
     @Test public void cert() throws IOException, ResolverException {
@@ -80,7 +74,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
-        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
     }
     
     @Test public void pubkey() throws IOException, ResolverException {
@@ -89,7 +82,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
-        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
     }
     
     @Test public void inlineTrustEngine() throws IOException, ResolverException {
@@ -98,7 +90,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
-        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
     }
     
     @Test public void inlineFilterTrustEngine() throws IOException, ResolverException {
@@ -107,7 +98,6 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
 
         final Iterable<EntityDescriptor> result = resolver.resolve(criteriaFor("urn:mace:switch.ch:SWITCHaai:ethz.ch"));
         Assert.assertTrue(result.iterator().hasNext());
-        Assert.assertEquals(Sets.newHashSet(result).size(), 1);
     }
 
     
@@ -133,4 +123,5 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
     @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void none() throws IOException, ResolverException {
                 getBean(MetadataResolver.class, "filter/signingNone.xml", "beans.xml");
     }
+    
 }

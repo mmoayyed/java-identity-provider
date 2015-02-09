@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.config;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -27,7 +28,6 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 
 /** Unit test for {@link AbstractSAMLProfileConfiguration}. */
 public class AbstractSAMLProfileConfigurationTest {
@@ -112,7 +112,7 @@ public class AbstractSAMLProfileConfigurationTest {
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
 
-        config.setAdditionalAudienceForAssertion(Lists.newArrayList("", null, " foo"));
+        config.setAdditionalAudienceForAssertion(Arrays.asList("", null, " foo"));
 
         Set<String> audiences = config.getAdditionalAudiencesForAssertion();
         Assert.assertNotNull(audiences);

@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,8 +48,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
-
-import com.google.common.collect.Sets;
 
 /**
  * Base class for testing metadata providers.
@@ -144,7 +144,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + contextName);
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());

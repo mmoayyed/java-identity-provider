@@ -19,6 +19,7 @@ package net.shibboleth.idp.consent.logic;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -32,7 +33,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
 
 /**
  * Predicate to determine whether consent should be obtained for an attribute.
@@ -62,7 +62,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
     public void setWhitelistedAttributeIds(@Nonnull @NonnullElements final Collection<String> whitelist) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        whitelistedAttributeIds = Sets.newHashSet(StringSupport.normalizeStringCollection(whitelist));
+        whitelistedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(whitelist));
     }
 
     /**
@@ -73,7 +73,7 @@ public class AttributePredicate extends AbstractInitializableComponent implement
     public void setBlacklistedAttributeIds(@Nonnull @NonnullElements final Collection<String> blacklist) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        blacklistedAttributeIds = Sets.newHashSet(StringSupport.normalizeStringCollection(blacklist));
+        blacklistedAttributeIds = new HashSet<>(StringSupport.normalizeStringCollection(blacklist));
     }
 
     /**

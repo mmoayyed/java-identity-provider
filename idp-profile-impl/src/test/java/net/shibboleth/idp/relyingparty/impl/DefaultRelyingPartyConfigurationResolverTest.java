@@ -17,8 +17,9 @@
 
 package net.shibboleth.idp.relyingparty.impl;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -29,32 +30,31 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 
 /** Unit test for {@link DefaultRelyingPartyConfigurationResolver}. */
 public class DefaultRelyingPartyConfigurationResolverTest {
 
     @Test public void testConstruction() throws ComponentInitializationException {
-        RelyingPartyConfiguration one = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration one = new RelyingPartyConfiguration();
         one.setId("one");
         one.setResponderId("foo");
         one.setDetailedErrors(true);
         one.initialize();
 
-        RelyingPartyConfiguration two = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration two = new RelyingPartyConfiguration();
         two.setId("two");
         two.setResponderId("foo");
         two.setDetailedErrors(true);
         two.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         two.initialize();
 
-        RelyingPartyConfiguration three = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration three = new RelyingPartyConfiguration();
         three.setId("three");
         three.setResponderId("foo");
         three.setDetailedErrors(true);
         three.initialize();
         
-        ArrayList<RelyingPartyConfiguration> rpConfigs = Lists.newArrayList(one, two, three);
+        final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(one, two, three);
 
         DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
@@ -74,31 +74,31 @@ public class DefaultRelyingPartyConfigurationResolverTest {
     }
     
     @Test public void testDefault() throws Exception {
-        ProfileRequestContext requestContext = new ProfileRequestContext();
+        final ProfileRequestContext requestContext = new ProfileRequestContext();
         requestContext.getSubcontext(RelyingPartyContext.class, true).setVerified(true);
 
-        RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
         anonRP.setResponderId("anonRPResp");
         anonRP.setDetailedErrors(true);
         anonRP.initialize();
         
-        RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
         defaultRP.setId("defaultRPId");
         defaultRP.setResponderId("defaultRPResp");
         defaultRP.setDetailedErrors(true);
         defaultRP.initialize();
 
-        DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
+        final DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
         resolver.initialize();
         
-        Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
+        final Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
         Assert.assertNotNull(results);
         
-        Iterator<RelyingPartyConfiguration> resultItr = results.iterator();        
+        final Iterator<RelyingPartyConfiguration> resultItr = results.iterator();        
         Assert.assertTrue(resultItr.hasNext());
         Assert.assertSame(resultItr.next(), defaultRP);
         Assert.assertFalse(resultItr.hasNext());
@@ -107,32 +107,32 @@ public class DefaultRelyingPartyConfigurationResolverTest {
     }
     
     @Test public void testAnon() throws Exception {
-        ProfileRequestContext requestContext = new ProfileRequestContext();
+        final ProfileRequestContext requestContext = new ProfileRequestContext();
         requestContext.getSubcontext(RelyingPartyContext.class, true).setVerified(false);
         
-        RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
         anonRP.setResponderId("anonRPResp");
         anonRP.setDetailedErrors(true);
         anonRP.setActivationCondition(Predicates.<ProfileRequestContext>alwaysTrue());
         anonRP.initialize();
         
-        RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
         defaultRP.setId("defaultRPId");
         defaultRP.setResponderId("defaultRPResp");
         defaultRP.setDetailedErrors(true);
         defaultRP.initialize();
 
-        DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
+        final DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setUnverifiedConfiguration(anonRP);
         resolver.setDefaultConfiguration(defaultRP);
         resolver.initialize();
         
-        Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
+        final Iterable<RelyingPartyConfiguration> results = resolver.resolve(requestContext);
         Assert.assertNotNull(results);
         
-        Iterator<RelyingPartyConfiguration> resultItr = results.iterator();        
+        final Iterator<RelyingPartyConfiguration> resultItr = results.iterator();        
         Assert.assertTrue(resultItr.hasNext());
         Assert.assertSame(resultItr.next(), anonRP);
         Assert.assertFalse(resultItr.hasNext());
@@ -141,43 +141,43 @@ public class DefaultRelyingPartyConfigurationResolverTest {
     }
 
     @Test public void testResolve() throws Exception {
-        ProfileRequestContext requestContext = new ProfileRequestContext();
+        final ProfileRequestContext requestContext = new ProfileRequestContext();
         requestContext.getSubcontext(RelyingPartyContext.class, true).setVerified(true);
 
-        RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration anonRP = new RelyingPartyConfiguration();
         anonRP.setId("anonRPId");
         anonRP.setResponderId("anonRPResp");
         anonRP.setDetailedErrors(true);
         anonRP.initialize();
         
-        RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration defaultRP = new RelyingPartyConfiguration();
         defaultRP.setId("defaultRPId");
         defaultRP.setResponderId("defaultRPResp");
         defaultRP.setDetailedErrors(true);
         defaultRP.initialize();
 
-        RelyingPartyConfiguration one = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration one = new RelyingPartyConfiguration();
         one.setId("one");
         one.setResponderId("foo");
         one.setDetailedErrors(true);
         one.initialize();
 
-        RelyingPartyConfiguration two = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration two = new RelyingPartyConfiguration();
         two.setId("two");
         two.setResponderId("foo");
         two.setDetailedErrors(true);
         two.setActivationCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         two.initialize();
 
-        RelyingPartyConfiguration three = new RelyingPartyConfiguration();
+        final RelyingPartyConfiguration three = new RelyingPartyConfiguration();
         three.setId("three");
         three.setResponderId("foo");
         three.setDetailedErrors(true);
         three.initialize();
         
-        ArrayList<RelyingPartyConfiguration> rpConfigs = Lists.newArrayList(one, two, three);
+        final List<RelyingPartyConfiguration> rpConfigs = Arrays.asList(one, two, three);
 
-        DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
+        final DefaultRelyingPartyConfigurationResolver resolver = new DefaultRelyingPartyConfigurationResolver();
         resolver.setId("test");
         resolver.setRelyingPartyConfigurations(rpConfigs);
         resolver.setUnverifiedConfiguration(anonRP);

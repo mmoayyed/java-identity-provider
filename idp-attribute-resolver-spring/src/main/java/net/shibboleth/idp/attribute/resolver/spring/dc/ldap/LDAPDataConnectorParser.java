@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -64,8 +65,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import com.google.common.collect.Lists;
 
 /**
  * Bean definition Parser for a {@link LDAPDataConnector}. <em>Note</em> That parsing the V2 configuration will set some
@@ -642,7 +641,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * @return possibly empty list of search entry handlers
          */
         public static List<SearchEntryHandler> buildSearchEntryHandlers(final String lowercaseAttributeNames) {
-            final List<SearchEntryHandler> handlers = Lists.newArrayList();
+            final List<SearchEntryHandler> handlers = new ArrayList<>();
             if (Boolean.valueOf(lowercaseAttributeNames)) {
                 final CaseChangeEntryHandler entryHandler = new CaseChangeEntryHandler();
                 entryHandler.setAttributeNameCaseChange(CaseChange.LOWER);

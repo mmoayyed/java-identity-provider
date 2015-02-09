@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.saml;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -34,7 +37,6 @@ import org.springframework.core.io.Resource;
 import org.testng.Assert;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
 
 public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
 
@@ -50,7 +52,7 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
         final GenericApplicationContext context = new GenericApplicationContext();
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + claz);
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());

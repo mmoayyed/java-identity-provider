@@ -19,6 +19,7 @@ package net.shibboleth.idp.relyingparty.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +53,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Retrieves a per-relying party configuration for a given profile request based on the request context.
@@ -114,7 +112,7 @@ public class DefaultRelyingPartyConfigurationResolver
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(configs, "RelyingPartyConfiguration list cannot be null");
 
-        rpConfigurations = Lists.newArrayList(Collections2.filter(configs, Predicates.notNull()));
+        rpConfigurations = new ArrayList<>(Collections2.filter(configs, Predicates.notNull()));
     }
 
     /**
@@ -198,7 +196,7 @@ public class DefaultRelyingPartyConfigurationResolver
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "SecurityConfiguration map cannot be null");
         
-        securityConfigurationMap = Maps.newHashMapWithExpectedSize(map.size());
+        securityConfigurationMap = new HashMap<>(map.size());
         for (final Map.Entry<String,SecurityConfiguration> entry : map.entrySet()) {
             if (entry.getValue() != null) {
                 final String trimmed = StringSupport.trimOrNull(entry.getKey());
@@ -224,7 +222,7 @@ public class DefaultRelyingPartyConfigurationResolver
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        final HashSet<String> configIds = Sets.newHashSetWithExpectedSize(rpConfigurations.size());
+        final HashSet<String> configIds = new HashSet<>(rpConfigurations.size());
         for (final RelyingPartyConfiguration config : rpConfigurations) {
             if (configIds.contains(config.getId())) {
                 throw new ComponentInitializationException("Multiple replying party configurations with ID "
@@ -254,7 +252,7 @@ public class DefaultRelyingPartyConfigurationResolver
             return Collections.singleton(getUnverifiedConfiguration());
         }
 
-        final ArrayList<RelyingPartyConfiguration> matches = Lists.newArrayList();
+        final ArrayList<RelyingPartyConfiguration> matches = new ArrayList<>();
 
         for (final RelyingPartyConfiguration configuration : rpConfigurations) {
             log.debug("Checking if relying party configuration {} is applicable", configuration.getId());

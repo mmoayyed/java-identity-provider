@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.config.navigate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -30,8 +31,6 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.x509.tls.ClientTLSValidationConfiguration;
-
-import com.google.common.collect.Lists;
 
 /**
  * A function that returns a {@link ClientTLSValidationConfiguration} list by way of various lookup strategies.
@@ -57,7 +56,7 @@ public class ClientTLSValidationConfigurationLookupFunction
     @Override
     @Nullable public List<ClientTLSValidationConfiguration> apply(@Nullable final ProfileRequestContext input) {
         
-        final List<ClientTLSValidationConfiguration> configs = Lists.newArrayList();
+        final List<ClientTLSValidationConfiguration> configs = new ArrayList<>();
         
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null) {

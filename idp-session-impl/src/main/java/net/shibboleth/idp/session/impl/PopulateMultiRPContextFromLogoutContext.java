@@ -18,6 +18,7 @@
 package net.shibboleth.idp.session.impl;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -52,7 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
 /**
  * Profile action that populates a {@link MultiRelyingPartyContext} with the relying party
@@ -126,7 +126,7 @@ public class PopulateMultiRPContextFromLogoutContext extends AbstractProfileActi
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Session type to protocol map cannot be null");
         
-        sessionTypeProtocolMap = Maps.newHashMapWithExpectedSize(map.size());
+        sessionTypeProtocolMap = new HashMap<>(map.size());
         
         for (final Map.Entry<Class<? extends SPSession>,String> entry : map.entrySet()) {
             if (entry.getKey() != null) {

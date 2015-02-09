@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.context.navigate;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -29,7 +30,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.springframework.webflow.execution.Event;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
 /**
  * A function that returns a view name to render based on a Spring Web Flow {@link Event}.
@@ -65,7 +65,7 @@ public class SpringEventToViewLookupFunction implements Function<Event,String> {
         if (map == null) {
             eventMap = Collections.emptyMap();
         } else {
-            eventMap = Maps.newHashMapWithExpectedSize(map.size());
+            eventMap = new HashMap<>(map.size());
             for (final Map.Entry<String,String> entry : map.entrySet()) {
                 final String eventId = StringSupport.trimOrNull(entry.getKey());
                 final String viewName = StringSupport.trimOrNull(entry.getValue());

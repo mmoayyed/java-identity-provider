@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
@@ -39,8 +41,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
-
-import com.google.common.collect.Sets;
 
 /**
  * Base class for tests for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
@@ -78,8 +78,8 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
             boolean supressValid) {
 
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter(),
-                new StringToResourceConverter()));
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
+                new StringToResourceConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
@@ -124,8 +124,8 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter(),
-                new StringToResourceConverter()));
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
+                new StringToResourceConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());

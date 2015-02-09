@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.consent.flow.ar;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -31,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 
 /**
  * Attribute consent action to populate the attribute consent context with the attributes for which consent should be
@@ -73,7 +73,7 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
 
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
 
-        final Map<String, IdPAttribute> consentableAttributes = Maps.newHashMapWithExpectedSize(attributes.size());
+        final Map<String, IdPAttribute> consentableAttributes = new HashMap<>(attributes.size());
         for (final IdPAttribute attribute : attributes.values()) {
             if (attributePredicate.apply(attribute)) {
                 consentableAttributes.put(attribute.getId(), attribute);

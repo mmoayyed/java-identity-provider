@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,7 +47,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.collect.Lists;
 
 /**
  * An action that extracts a resolved {@link IdPAttribute} value from an {@link AttributeContext} child obtained via
@@ -110,7 +110,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        attributeSourceIds = Lists.newArrayList(StringSupport.normalizeStringCollection(ids));
+        attributeSourceIds = new ArrayList<>(StringSupport.normalizeStringCollection(ids));
     }
     
     /**

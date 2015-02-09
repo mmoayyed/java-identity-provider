@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -27,8 +28,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Sets;
 
 /**
  * Base for the various XX from YY test clases
@@ -46,12 +45,12 @@ public class BaseBridgingClassTester {
         HashSet<IdPAttribute> attributes = new HashSet<>(2);
 
         IdPAttribute attribute = new IdPAttribute(NAME1);
-        attribute.setValues(Sets.newHashSet(VALUE1, VALUE2));
+        attribute.setValues(Arrays.asList(VALUE1, VALUE2));
         attributes.add(attribute);
         
 
         attribute = new IdPAttribute(NAME2);
-        attribute.setValues(Sets.newHashSet(VALUE1, VALUE3));
+        attribute.setValues(Arrays.asList(VALUE1, VALUE3));
         attributes.add(attribute);
         AttributeFilterContext filterContext = new AttributeFilterContext();
 

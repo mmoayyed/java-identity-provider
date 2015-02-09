@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -25,8 +28,6 @@ import org.opensaml.saml.metadata.resolver.impl.HTTPEntityIDRequestURLBuilder;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
@@ -49,7 +50,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertEquals(resolver.getCleanupTaskInterval(), new Long(30*60*1000L));
         
         Assert.assertEquals(resolver.getSupportedContentTypes(), 
-                Lists.newArrayList("application/samlmetadata+xml", "application/xml", "text/xml"));
+                Arrays.asList("application/samlmetadata+xml", "application/xml", "text/xml"));
         
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
     }
@@ -72,8 +73,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertFalse(resolver.isRemoveIdleEntityData());
         Assert.assertEquals(resolver.getCleanupTaskInterval(), new Long(20*60*1000L));
         
-        Assert.assertEquals(resolver.getSupportedContentTypes(), 
-                Lists.newArrayList("text/xml"));
+        Assert.assertEquals(resolver.getSupportedContentTypes(), Collections.singletonList("text/xml"));
         
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
     }

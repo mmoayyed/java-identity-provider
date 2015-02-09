@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -61,8 +62,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Sets;
-
 /**
  * Test for a complete example RelyingParty file
  */
@@ -87,7 +86,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext");
-        service.setConverters(Sets.newHashSet(new DurationToLongConverter(), new StringToIPRangeConverter()));
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
@@ -133,7 +132,10 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         ProfileRequestContext ctx = new ProfileRequestContext<>();
         RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
         rpCtx.setRelyingPartyId("https://idp.example.org");
-        final HashSet<RelyingPartyConfiguration> set = Sets.newHashSet(resolver.resolve(ctx));
+        final HashSet<RelyingPartyConfiguration> set = new HashSet<>();
+        for (final RelyingPartyConfiguration rpc : resolver.resolve(ctx)) {
+            set.add(rpc);
+        }
         Assert.assertEquals(set.size(), 1);
 
         Assert.assertNotNull(resolver.resolveSingle(ctx));
@@ -159,7 +161,10 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         ProfileRequestContext ctx = new ProfileRequestContext<>();
         RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
         rpCtx.setRelyingPartyId("https://idp.example.org");
-        final HashSet<RelyingPartyConfiguration> set = Sets.newHashSet(resolver.resolve(ctx));
+        final HashSet<RelyingPartyConfiguration> set = new HashSet<>();
+        for (final RelyingPartyConfiguration rpc : resolver.resolve(ctx)) {
+            set.add(rpc);
+        }
         Assert.assertEquals(set.size(), 1);
 
         Assert.assertNotNull(resolver.resolveSingle(ctx));

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.saml.attribute.mapping;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 
 /**
  * Basis of all classes which map SAML1 {@link AttributeDesignator} into an IdP {@link IdPAttribute}.
@@ -182,7 +182,7 @@ public abstract class AbstractSAMLAttributeDesignatorMapper<OutType extends IdPA
             return Collections.emptyMap();
         }
 
-        final Map<String,OutType> output = Maps.newHashMap();
+        final Map<String,OutType> output = new HashMap<>();
 
         log.debug("{} attribute id {} and aliases {} will be created", getLogPrefix(), getId(), getAttributeIds());
 

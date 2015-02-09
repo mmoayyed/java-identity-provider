@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
@@ -67,7 +68,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     
     /** Constructor. */
     PopulateAuthenticationContext() {
-        availableFlows = Lists.newArrayList();
+        availableFlows = Collections.emptyList();
         activeFlowsLookupStrategy = new AuthenticationFlowsLookupFunction();
     }
     
@@ -80,8 +81,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(flows, "Flow collection cannot be null");
         
-        availableFlows.clear();
-        availableFlows.addAll(Collections2.filter(flows, Predicates.notNull()));
+        availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
     }
     
     /**

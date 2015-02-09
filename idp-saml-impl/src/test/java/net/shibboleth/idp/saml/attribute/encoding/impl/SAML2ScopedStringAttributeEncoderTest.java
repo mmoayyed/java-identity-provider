@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.encoding.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,8 +38,6 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /**
  * {@link SAML2ScopedStringAttributeEncoder} Unit test. Looks a lot like the SAML1 one
@@ -94,7 +93,7 @@ public class SAML2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         final SAML2ScopedStringAttributeEncoder encoder = makeEncoder();
         final int[] intArray = {1, 2, 3, 4};
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue("dd"),
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new StringAttributeValue("dd"),
                         new IdPAttributeValue<Object>() {
                             public Object getValue() {
                                 return intArray;
@@ -131,7 +130,7 @@ public class SAML2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeDelimiter(DELIMITER);
 
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1));
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1);
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -165,7 +164,7 @@ public class SAML2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeAttributeName(ATTR_NAME);
         encoder.initialize();
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2));
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2);
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -227,7 +226,7 @@ public class SAML2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.initialize();
 
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1));
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1);
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -258,7 +257,7 @@ public class SAML2ScopedStringAttributeEncoderTest extends OpenSAMLInitBaseTestC
         encoder.setScopeAttributeName(null);
         encoder.initialize();
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2));
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), value1, value2);
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

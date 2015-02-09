@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,9 +46,6 @@ import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Tests for {@link RDBMSDataConnector}
@@ -175,8 +174,8 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
-        List<IdPAttributeValue<?>> attributeValues = Lists.newArrayList();
+        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
+        List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("student"));
         dependsAttributes.put("affiliation", attributeValues);
         String query = builder.getSQLQuery(context, dependsAttributes);
@@ -191,8 +190,8 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = Maps.newHashMap();
-        List<IdPAttributeValue<?>> attributeValues = Lists.newArrayList();
+        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
+        List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("entitlement1"));
         attributeValues.add(new StringAttributeValue("entitlement2"));
         dependsAttributes.put("entitlement", attributeValues);

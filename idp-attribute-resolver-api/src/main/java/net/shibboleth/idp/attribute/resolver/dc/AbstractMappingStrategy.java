@@ -18,12 +18,12 @@
 package net.shibboleth.idp.attribute.resolver.dc;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -69,7 +69,7 @@ public abstract class AbstractMappingStrategy<T> implements MappingStrategy<T> {
     public void setResultRenamingMap(@Nonnull @NonnullElements final Map<String,String> map) {
         Constraint.isNotNull(map, "Renaming map cannot be null");
         
-        resultRenamingMap = Maps.newHashMapWithExpectedSize(map.size());
+        resultRenamingMap = new HashMap<>(map.size());
         for (final Map.Entry<String,String> entry : map.entrySet()) {
             if (entry.getKey() != null && entry.getValue() != null) {
                 resultRenamingMap.put(entry.getKey(), entry.getValue());

@@ -17,14 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringEscapeUtils;
-
-import com.google.common.collect.Lists;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -63,7 +62,7 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
     /** {@inheritDoc} */
     @Override protected String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) {
-        final List<Object> args = Lists.newArrayList();
+        final List<Object> args = new ArrayList<>();
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
             for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
                 for (IdPAttributeValue<?> value : entry.getValue()) {

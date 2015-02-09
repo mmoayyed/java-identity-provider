@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -72,7 +73,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * Action that populates the outbound {@link SAMLBindingContext} and when appropriate the
@@ -206,7 +206,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(bindings, "Binding descriptor list cannot be null");
         
-        bindingDescriptors = Lists.newArrayList(Collections2.filter(bindings, Predicates.notNull()));
+        bindingDescriptors = new ArrayList<>(Collections2.filter(bindings, Predicates.notNull()));
     }
 
     /**
@@ -367,7 +367,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         log.debug("{} Attempting to resolve endpoint of type {} for outbound message", getLogPrefix(), endpointType);
 
         // Compile binding list.
-        final List<String> bindings = Lists.newArrayListWithExpectedSize(bindingDescriptors.size());
+        final List<String> bindings = new ArrayList<>(bindingDescriptors.size());
         for (final BindingDescriptor bindingDescriptor : bindingDescriptors) {
             if (bindingDescriptor.apply(profileRequestContext)) {
                 bindings.add(bindingDescriptor.getId());

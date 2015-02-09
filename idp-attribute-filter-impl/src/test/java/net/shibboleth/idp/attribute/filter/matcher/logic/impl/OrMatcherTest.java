@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -38,7 +39,6 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
 
 /** {@link OrMatcher} unit test. */
 public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
@@ -49,7 +49,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testNullArguments() throws Exception {
         Matcher valuePredicate = Matcher.MATCHES_ALL;
-        OrMatcher matcher = new OrMatcher(Lists.<Matcher> newArrayList(valuePredicate));
+        OrMatcher matcher = new OrMatcher(Collections.singletonList(valuePredicate));
         matcher.setId("test");
         matcher.initialize();
 
@@ -77,7 +77,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testGetMatchingValues() throws Exception {
         OrMatcher matcher =
-                new OrMatcher(Lists.<Matcher> newArrayList(
+                new OrMatcher(Arrays.<Matcher>asList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(equalTo(value2))));
 
@@ -116,7 +116,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testRegressionGetValues() throws ComponentInitializationException {
         OrMatcher matcher =
-                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(Predicates.alwaysFalse()),
+                new OrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(Predicates.alwaysFalse()),
                         new MockValuePredicateMatcher(Predicates.alwaysFalse()), new MockValuePredicateMatcher(
                                 equalTo(value1)), new MockValuePredicateMatcher(equalTo(value2))));
         matcher.setId("Test");
@@ -133,7 +133,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testNoMatchingValues() throws Exception {
         OrMatcher matcher =
-                new OrMatcher(Lists.<Matcher> newArrayList(new MockValuePredicateMatcher(equalTo("Nothing")),
+                new OrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(equalTo("Nothing")),
                         new MockValuePredicateMatcher(equalTo("Zippo"))));
 
         matcher.setId("Test");
@@ -146,7 +146,7 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testFails() throws Exception {
-        OrMatcher matcher = new OrMatcher(Lists.<Matcher> newArrayList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
+        OrMatcher matcher = new OrMatcher(Arrays.<Matcher>asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
         matcher.setId("test");
         matcher.initialize();
 

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -41,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 
 /**
  * This filter filters on mdrpi in the SP's metadata.
@@ -74,7 +74,7 @@ public class RegistrationAuthorityPolicyRule extends AbstractPolicyRule {
     public void setIssuers(@Nonnull @NonnullElements final Collection<String> theIssuers) {
         Constraint.isNotNull(theIssuers, "Issuer collection cannot be null");
         
-        issuers = Sets.newHashSetWithExpectedSize(theIssuers.size());
+        issuers = new HashSet<>(theIssuers.size());
         for (final String s : theIssuers) {
             final String trimmed = StringSupport.trimOrNull(s);
             if (trimmed != null) {

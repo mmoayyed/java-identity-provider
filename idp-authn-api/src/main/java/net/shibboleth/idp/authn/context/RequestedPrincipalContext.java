@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +37,6 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * A {@link BaseContext} that holds information about an authentication request's
@@ -107,7 +107,7 @@ public class RequestedPrincipalContext extends BaseContext {
     public void setRequestedPrincipals(@Nonnull @NonnullElements final List<Principal> principals) {
         Constraint.isNotNull(principals, "Principal list cannot be null");
         
-        requestedPrincipals = Lists.newArrayList(Collections2.filter(principals, Predicates.notNull()));
+        requestedPrincipals = new ArrayList<>(Collections2.filter(principals, Predicates.notNull()));
     }
     
     /**
@@ -127,4 +127,5 @@ public class RequestedPrincipalContext extends BaseContext {
     public void setMatchingPrincipal(@Nullable final Principal principal) {
        matchingPrincipal = principal;
     }
+    
 }

@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.audit.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -38,7 +39,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
 /** {@link PopulateAuditContext} unit test. */
 public class PopulateAuditContextTest {
@@ -58,7 +58,7 @@ public class PopulateAuditContextTest {
     }
     
     @Test public void testSingle() throws Exception {
-        final Map<String,Function<ProfileRequestContext,Object>> map = Maps.newHashMap();
+        final Map<String,Function<ProfileRequestContext,Object>> map = new HashMap<>();
         map.put("a", new MockFunction(Collections.singletonList("foo")));
         
         action.setFieldExtractors(map);
@@ -75,7 +75,7 @@ public class PopulateAuditContextTest {
     }
 
     @Test public void testMultiple() throws Exception {
-        final Map<String,Function<ProfileRequestContext,Object>> map = Maps.newHashMap();
+        final Map<String,Function<ProfileRequestContext,Object>> map = new HashMap<>();
         map.put("a", new MockFunction(Collections.singletonList("foo")));
         map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
         
@@ -95,7 +95,7 @@ public class PopulateAuditContextTest {
     }
 
     @Test public void testSkipped() throws Exception {
-        final Map<String,Function<ProfileRequestContext,Object>> map = Maps.newHashMap();
+        final Map<String,Function<ProfileRequestContext,Object>> map = new HashMap<>();
         map.put("a", new MockFunction(Collections.singletonList("foo")));
         map.put("A", new MockFunction(Arrays.asList("bar", "baz")));
         

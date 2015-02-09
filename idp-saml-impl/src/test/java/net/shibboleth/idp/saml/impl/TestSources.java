@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +52,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 /** Basic data sources for testing the attribute generators. */
 public final class TestSources {
@@ -166,7 +166,7 @@ public final class TestSources {
     public static AttributeDefinition populatedStaticAttribute(String definitionName, String attributeName,
             int attributeCount) throws ComponentInitializationException {
         IdPAttribute attr;
-        List<IdPAttributeValue<?>> valuesList = Lists.newArrayList();
+        List<IdPAttributeValue<?>> valuesList = new ArrayList<>();
 
         if (attributeCount > 0) {
             valuesList.add(new StringAttributeValue(COMMON_ATTRIBUTE_VALUE_STRING));

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -36,8 +37,6 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-
 /** Tests for {@link StaticDataConnector}
  *
  */
@@ -45,7 +44,7 @@ public class StaticDataConnectorTest {
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
         IdPAttribute attribute = new IdPAttribute("attribute");
-        attribute.setValues(Lists.newArrayList(new StringAttributeValue("one"), new StringAttributeValue("two")));
+        attribute.setValues(Arrays.asList(new StringAttributeValue("one"), new StringAttributeValue("two")));
 
         StaticDataConnector connector = new StaticDataConnector();
         connector.setId("Static");

@@ -18,8 +18,10 @@
 package net.shibboleth.idp.session.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,9 +53,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 /** {@link StorageBackedSessionManager} unit test. */
 public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase {
 
@@ -65,7 +64,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
     
     @BeforeClass public void setUp() throws ComponentInitializationException {
         serializerRegistry = new SPSessionSerializerRegistry();
-        final Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> map = Maps.newHashMap();
+        final Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> map = new HashMap<>();
         map.put(BasicSPSession.class, new BasicSPSessionSerializer(sessionSlop));
         map.put(ExtendedSPSession.class, new ExtendedSPSessionSerializer(sessionSlop));
         serializerRegistry.setMappings(map);
@@ -313,22 +312,32 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         Assert.assertFalse(sessionManager.resolve(new CriteriaSet(
                 new SPSessionCriterion("https://sp.example.org/shibboleth", "None"))).iterator().hasNext());
         
-        List<IdPSession> sessions = Lists.newArrayList(sessionManager.resolve(
+        List<IdPSession> sessions = new ArrayList<>();
+        for (final IdPSession s : sessionManager.resolve(
                 new CriteriaSet(new SPSessionCriterion("https://sp.example.org/shibboleth",
-                        ExtendedSPSession.SESSION_KEY))));
+                        ExtendedSPSession.SESSION_KEY)))) {
+            sessions.add(s);
+        }
         Assert.assertEquals(sessions.size(), 2);
         
         sessionManager.destroySession(session.getId(), true);
         
-        sessions = Lists.newArrayList(sessionManager.resolve(
+        sessions.clear();
+        for (final IdPSession s : sessionManager.resolve(
                 new CriteriaSet(new SPSessionCriterion("https://sp2.example.org/shibboleth",
-                        ExtendedSPSession.SESSION_KEY))));
+                        ExtendedSPSession.SESSION_KEY)))) {
+            sessions.add(s);
+        }
         Assert.assertEquals(sessions.size(), 1);
         
         sessionManager.destroySession(session2.getId(), true);
-        sessions = Lists.newArrayList(sessionManager.resolve(
+        
+        sessions.clear();
+        for (final IdPSession s : sessionManager.resolve(
                 new CriteriaSet(new SPSessionCriterion("https://sp2.example.org/shibboleth",
-                        ExtendedSPSession.SESSION_KEY))));
+                        ExtendedSPSession.SESSION_KEY)))) {
+            sessions.add(s);
+        }
         Assert.assertEquals(sessions.size(), 0);
     }
 

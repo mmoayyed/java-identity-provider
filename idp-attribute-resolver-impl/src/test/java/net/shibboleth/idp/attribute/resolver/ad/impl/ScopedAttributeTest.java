@@ -17,8 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
@@ -41,8 +43,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Sets;
 
 /**
  * Tester for {@link ScopedAttributeDefinition}.
@@ -110,8 +110,8 @@ public class ScopedAttributeTest {
         final ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScope(TEST_SCOPE);
-        attrDef.setDependencies(Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
-                ResolverTestSupport.EPA_ATTRIB_ID)));
+        attrDef.setDependencies(new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
+                ResolverTestSupport.EPA_ATTRIB_ID))));
         attrDef.initialize();
 
         try {
@@ -126,8 +126,8 @@ public class ScopedAttributeTest {
 
         ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
         Set<ResolverPluginDependency> pluginDependencies =
-                Sets.newHashSet(TestSources.makeResolverPluginDependency("connector1",
-                        ResolverTestSupport.EPA_ATTRIB_ID));
+                new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
+                        ResolverTestSupport.EPA_ATTRIB_ID)));
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.saml.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -46,8 +47,6 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /**
  * Tests for {@link AttributeInMetadataMatcher}
@@ -135,7 +134,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     @Test public void noRequested() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         Set<IdPAttributeValue<?>> result =
                 makeMatcher("test", true, true, null, null).getMatchingValues(attr, new AttributeFilterContext());
@@ -151,7 +150,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     @Test public void wrongRequested() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         final AttributeInMetadataMatcher matcher = makeMatcher("test", true, false, null, null);
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attr, makeContext(null));
@@ -170,7 +169,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     @Test public void otherRequested() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         final AttributeInMetadataMatcher matcher = makeMatcher("test", false, false, "attr2", Attribute.BASIC);
 
@@ -188,7 +187,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     @Test public void isRequiredOnly() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         final RequestedAttribute req = reqAttributeBuilder.buildObject();
         req.setName("attr");
@@ -208,7 +207,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     @Test public void values() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         final RequestedAttribute req = reqAttributeBuilder.buildObject();
         req.setName("attr");
@@ -228,7 +227,7 @@ public class AttributeInMetadataMatcherTest extends OpenSAMLInitBaseTestCase {
     @Test public void multiValues() throws ComponentInitializationException {
 
         final IdPAttribute attr =
-                makeAttribute("attr", Lists.newArrayList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
+                makeAttribute("attr", Arrays.asList(DataSources.STRING_VALUE, DataSources.NON_MATCH_STRING_VALUE));
 
         final RequestedAttribute req = reqAttributeBuilder.buildObject();
         req.setName("attr");

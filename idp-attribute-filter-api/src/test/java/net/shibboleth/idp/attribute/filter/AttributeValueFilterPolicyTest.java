@@ -33,8 +33,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Sets;
-
 /**
  * Tests for {@link AttributeRule}
  */
@@ -203,7 +201,7 @@ public class AttributeValueFilterPolicyTest {
         final StringAttributeValue dStringAttributeValue = new StringAttributeValue("d");
         final String ATTR_NAME = "one";
         final IdPAttribute attribute1 = new IdPAttribute(ATTR_NAME);
-        attribute1.setValues(Sets.newHashSet(aStringAttributeValue, bStringAttributeValue, cStringAttributeValue, dStringAttributeValue));
+        attribute1.setValues(Arrays.asList(aStringAttributeValue, bStringAttributeValue, cStringAttributeValue, dStringAttributeValue));
 
         matcher.setMatchingAttribute(ATTR_NAME);
         matcher.setMatchingValues(Arrays.asList(aStringAttributeValue, cStringAttributeValue));

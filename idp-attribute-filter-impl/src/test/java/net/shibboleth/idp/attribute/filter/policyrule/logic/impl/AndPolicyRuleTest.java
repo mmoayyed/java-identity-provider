@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.logic.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
@@ -31,8 +32,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Lists;
-
 /** {@link AndPolicyRule} unit test. */
 public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
 
@@ -41,8 +40,7 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        AndPolicyRule rule =
-                new AndPolicyRule(Lists.<PolicyRequirementRule> newArrayList(PolicyRequirementRule.MATCHES_ALL));
+        AndPolicyRule rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL));
         rule.setId("test");
         rule.initialize();
 
@@ -62,30 +60,22 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testMatches() throws ComponentInitializationException {
-        AndPolicyRule rule =
-                new AndPolicyRule(Lists.<PolicyRequirementRule> newArrayList(PolicyRequirementRule.MATCHES_NONE,
-                        PolicyRequirementRule.MATCHES_NONE));
+        AndPolicyRule rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_NONE, PolicyRequirementRule.MATCHES_NONE));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
-        rule =
-                new AndPolicyRule(Lists.<PolicyRequirementRule> newArrayList(PolicyRequirementRule.MATCHES_ALL,
-                        PolicyRequirementRule.MATCHES_NONE));
+        rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.MATCHES_NONE));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
-        rule =
-                new AndPolicyRule(Lists.<PolicyRequirementRule> newArrayList(PolicyRequirementRule.MATCHES_ALL,
-                        PolicyRequirementRule.MATCHES_ALL));
+        rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.MATCHES_ALL));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
 
-        rule =
-                new AndPolicyRule(Lists.<PolicyRequirementRule> newArrayList(PolicyRequirementRule.MATCHES_ALL,
-                        PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
+        rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);

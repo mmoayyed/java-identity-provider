@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -29,7 +30,6 @@ import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -59,7 +59,7 @@ public class SubStatusCodeAuditExtractor implements Function<ProfileRequestConte
                         ((Response) response).getStatus() != null
                                 ? ((Response) response).getStatus().getStatusCode() : null;
                 if (sc != null && sc.getStatusCode() != null) {
-                    final Collection<String> values = Lists.newArrayListWithExpectedSize(1);
+                    final Collection<String> values = new ArrayList(1);
                     do {
                         sc = sc.getStatusCode();
                         if (sc.getValue() != null) {
@@ -73,7 +73,7 @@ public class SubStatusCodeAuditExtractor implements Function<ProfileRequestConte
                         ((StatusResponseType) response).getStatus() != null
                                 ? ((StatusResponseType) response).getStatus().getStatusCode() : null;
                 if (sc != null && sc.getStatusCode() != null) {
-                    final Collection<String> values = Lists.newArrayListWithExpectedSize(1);
+                    final Collection<String> values = new ArrayList<>(1);
                     do {
                         sc = sc.getStatusCode();
                         if (sc.getValue() != null) {

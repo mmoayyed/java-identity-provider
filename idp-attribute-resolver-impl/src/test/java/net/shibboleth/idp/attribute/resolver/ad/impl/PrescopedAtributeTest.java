@@ -43,8 +43,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Sets;
-
 /**
  * Test for prescoped attribute definitions.
  */
@@ -143,7 +141,7 @@ public class PrescopedAtributeTest {
         attrDef.setScopeDelimiter("@");
         ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        attrDef.setDependencies(Sets.newHashSet(depend));
+        attrDef.setDependencies(Collections.singleton(depend));
         attrDef.initialize();
 
         try {
@@ -192,8 +190,7 @@ public class PrescopedAtributeTest {
         PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        Set<ResolverPluginDependency> pluginDependencies =
-                Sets.newHashSet(depend);
+        Set<ResolverPluginDependency> pluginDependencies = Collections.singleton(depend);
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 

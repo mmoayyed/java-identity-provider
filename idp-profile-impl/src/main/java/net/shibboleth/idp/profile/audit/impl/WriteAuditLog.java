@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.profile.audit.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +53,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Action that produces audit log entries based on an {@link AuditContext} and one or more formatting strings. 
@@ -123,7 +123,7 @@ public class WriteAuditLog extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Audit formatting map cannot be null");
         
-        formattingMap = Maps.newHashMapWithExpectedSize(map.size());
+        formattingMap = new HashMap<>(map.size());
         
         for (final Map.Entry<String,String> entry : map.entrySet()) {
             final String category = StringSupport.trimOrNull(entry.getKey());
@@ -134,7 +134,7 @@ public class WriteAuditLog extends AbstractProfileAction {
             
             int len = s.length();
             boolean inToken = false;
-            final List<String> format = Lists.newArrayList();
+            final List<String> format = new ArrayList<>();
             final StringBuilder field = new StringBuilder();
             for (int pos = 0; pos < len; ++pos) {
                 char ch = s.charAt(pos);

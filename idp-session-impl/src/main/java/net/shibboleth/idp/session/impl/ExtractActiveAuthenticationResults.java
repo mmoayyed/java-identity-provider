@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.session.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -37,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 /**
  * An authentication action that populates a {@link AuthenticationContext} with the active
@@ -98,7 +98,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final List<AuthenticationResult> actives = Lists.newArrayList();
+        final List<AuthenticationResult> actives = new ArrayList<>();
         for (AuthenticationResult result : session.getAuthenticationResults()) {
             AuthenticationFlowDescriptor descriptor =
                     authenticationContext.getPotentialFlows().get(result.getAuthenticationFlowId());

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.encoding.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -38,8 +39,6 @@ import org.opensaml.saml.saml2.core.AttributeValue;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.Lists;
 
 /**
  * {@link SAML2XMLObjectAttributeEncoder} Unit test.
@@ -83,9 +82,7 @@ public class SAML2XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
      * @return an XML object
      */
     private XMLObjectAttributeValue ObjectFor(final String value) {
-        final IdPAttribute inputAttribute;
-
-        inputAttribute = new IdPAttribute(ATTR_NAME);
+        final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(Collections.singleton(new StringAttributeValue(value)));
         try {
             return new XMLObjectAttributeValue(strEncoder.encode(inputAttribute));
@@ -126,7 +123,7 @@ public class SAML2XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
     @Test(expectedExceptions = {AttributeEncodingException.class,}) public void inappropriate() throws Exception {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new ScopedStringAttributeValue("foo",
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new ScopedStringAttributeValue("foo",
                         "bar"), new IdPAttributeValue<Object>() {
                     @Override
                     public Object getValue() {
@@ -145,7 +142,7 @@ public class SAML2XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
     @Test public void single() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
+                Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), ObjectFor(STRING_1));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -166,7 +163,7 @@ public class SAML2XMLObjectAttributeEncoderTest extends OpenSAMLInitBaseTestCase
 
     @Test public void multi() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
-                Lists.newArrayList(ObjectFor(STRING_1), ObjectFor(STRING_2));
+                Arrays.asList(ObjectFor(STRING_1), ObjectFor(STRING_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);

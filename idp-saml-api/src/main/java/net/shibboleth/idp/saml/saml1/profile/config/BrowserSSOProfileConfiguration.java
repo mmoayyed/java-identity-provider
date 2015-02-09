@@ -18,8 +18,10 @@
 package net.shibboleth.idp.saml.saml1.profile.config;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,8 +34,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
@@ -170,7 +170,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
             @Nonnull @NonnullElements final List<AuthenticationMethodPrincipal> methods) {
         Constraint.isNotNull(methods, "List of methods cannot be null");
         
-        defaultAuthenticationMethods = Lists.newArrayList(Collections2.filter(methods, Predicates.notNull()));
+        defaultAuthenticationMethods = new ArrayList<>(Collections2.filter(methods, Predicates.notNull()));
     }
     
     /** {@inheritDoc} */
@@ -187,7 +187,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     public void setAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        authenticationFlows = Sets.newHashSet(StringSupport.normalizeStringCollection(flows));
+        authenticationFlows = new HashSet<>(StringSupport.normalizeStringCollection(flows));
     }
     
     /** {@inheritDoc} */
@@ -204,7 +204,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     public void setPostAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
         Constraint.isNotNull(flows, "Collection of flows cannot be null");
         
-        postAuthenticationFlows = Lists.newArrayList(StringSupport.normalizeStringCollection(flows));
+        postAuthenticationFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
     }
     
     /** {@inheritDoc} */
@@ -221,7 +221,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
     public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
         
-        nameIDFormatPrecedence = Lists.newArrayList(StringSupport.normalizeStringCollection(formats));
+        nameIDFormatPrecedence = new ArrayList<>(StringSupport.normalizeStringCollection(formats));
     }
 
 }
