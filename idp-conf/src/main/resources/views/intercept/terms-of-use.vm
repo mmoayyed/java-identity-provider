@@ -26,7 +26,7 @@
     <body>
         <div class="box">
             <header>
-                <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo">
+                <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo">
                 #if ($rpOrganizationLogo)
                     <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="$encoder.encodeForHTMLAttribute($serviceName)" class="organization_logo">
                 #end

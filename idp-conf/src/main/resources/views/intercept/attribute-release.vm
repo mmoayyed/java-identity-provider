@@ -35,7 +35,7 @@
         <form action="$flowExecutionUrl" method="post" style="padding:10px" >
             <div class="box">
                 <header>
-                    <img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo">
+                    <img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")" class="federation_logo">
                     #if ($rpOrganizationLogo)
                         <img src="$encoder.encodeForHTMLAttribute($rpOrganizationLogo)" alt="logo for $encoder.encodeForHTMLAttribute($serviceName)" class="organization_logo">
                     #end

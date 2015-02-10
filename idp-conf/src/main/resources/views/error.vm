@@ -48,7 +48,7 @@
     <div class="wrapper">
     	<div class="container">
         	<header>
-				<img src="$request.getContextPath()/images/dummylogo.png" alt="#springMessageText("idp.logo.alt-text", "logo")">
+				<img src="$request.getContextPath()#springMessage("idp.logo")" alt="#springMessageText("idp.logo.alt-text", "logo")">
 				<h3>$title - $titleSuffix</h3>
 			</header>
 		
