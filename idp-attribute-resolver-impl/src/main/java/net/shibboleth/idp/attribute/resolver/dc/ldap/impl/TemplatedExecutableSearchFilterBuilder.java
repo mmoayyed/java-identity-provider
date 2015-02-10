@@ -176,6 +176,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
                 for (IdPAttributeValue<?> value : entry.getValue()) {
                     values.add(value.getValue());
                 }
+                log.trace("Adding dependency {} to context with {} value(s)", entry.getKey(), values.size());
                 context.put(entry.getKey(), values);
             }
         }
