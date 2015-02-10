@@ -187,9 +187,10 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
             for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = new ArrayList<>(entry.getValue().size());
-                for (IdPAttributeValue<?> value : entry.getValue()) {
+                for (final IdPAttributeValue<?> value : entry.getValue()) {
                     values.add(value.getValue());
                 }
+                log.trace("Adding dependency {} to context with {} value(s)", entry.getKey(), values.size());
                 context.put(entry.getKey(), values);
             }
         }
