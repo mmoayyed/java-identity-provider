@@ -91,12 +91,12 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
         
         boolean haveTLSTrustEngine = false;
         if (element.hasAttributeNS(null, "tlsTrustEngineRef")) {
-            builder.addPropertyReference("tlsTrustEngine", element.getAttributeNS(null, "tlsTrustEngineRef"));
+            builder.addPropertyReference("tLSTrustEngine", element.getAttributeNS(null, "tlsTrustEngineRef"));
             haveTLSTrustEngine = true;
         } else {
             BeanDefinition tlsTrustEngine = parseTLSTrustEngine(element, parserContext);
             if (tlsTrustEngine != null) {
-                builder.addPropertyValue("tlsTrustEngine", tlsTrustEngine);
+                builder.addPropertyValue("tLSTrustEngine", tlsTrustEngine);
                 haveTLSTrustEngine = true;
             }
         }
