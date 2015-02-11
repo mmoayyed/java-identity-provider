@@ -66,7 +66,7 @@ import com.google.common.collect.ImmutableSet;
  */
 // Checkstyle: HideUtilityClassConstructor OFF
 public class MetadataGenerator {
-
+    
     /**
      * The end points we understand.
      */
@@ -396,7 +396,10 @@ public class MetadataGenerator {
         writeRoleDescriptor(IDPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME,
                 Arrays.asList(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS, "urn:mace:shibboleth:1.0"));
         writer.newLine();
-        writeExtensions();
+        openExtensions();
+        writeScope();
+        writeMDUI();
+        closeExtensions();
         writer.newLine();
         writeKeyDescriptors();
         for (Endpoints endpoint : ARTIFACT_ENDPOINTS) {
@@ -462,7 +465,9 @@ public class MetadataGenerator {
         writeRoleDescriptor(AttributeAuthorityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME,
                 Arrays.asList(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS));
         writer.newLine();
-        writeExtensions();
+        openExtensions();
+        writeScope();
+        closeExtensions();
         writer.newLine();
         writeKeyDescriptors();
         for (Endpoints endpoint : AA_ENDPOINTS) {
@@ -501,22 +506,42 @@ public class MetadataGenerator {
     }
 
     /**
-     * Write out any &lt;Extensions&gt;Elements. Currently this is just the scope TODO: mdui TODO: entityAttributes
+     * Write the open &lt;Extensions&gt; elements.
      * 
      * @throws IOException if badness happens
      */
-    protected void writeExtensions() throws IOException {
+    protected void openExtensions() throws IOException {
 
         writer.write("        <");
         writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
         writer.newLine();
-        writeScope();
-        writeMDUI();
+    }
+
+    /**
+     * Write out the close &lt;\Extensions&gt; Element.
+     * 
+     * @throws IOException if badness happens
+     */
+    protected void closeExtensions() throws IOException {
+
         writer.write("        </");
         writer.write(Extensions.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
         writer.newLine();
+    }
+
+    /**
+     * Write out any &lt;Extensions&gt;Elements. Currently this is just the scope TODO: mdui TODO: entityAttributes
+     * @deprecated use {@link #openExtensions()} and  {@link #closeExtensions()}
+     * @throws IOException if badness happens
+     */
+    @Deprecated protected void writeExtensions() throws IOException {
+
+        openExtensions();
+        writeScope();
+        writeMDUI();
+        closeExtensions();
     }
 
     /**
