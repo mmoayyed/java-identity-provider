@@ -25,6 +25,7 @@ import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
 
 import org.apache.http.client.HttpClient;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 
 /**
  * Factory bean to accumulate the parameters into a {@link HttpClientBuilder} and to then emit a {@link HttpClient}.
@@ -69,6 +70,15 @@ public class HttpClientFactoryBean extends AbstractComponentAwareFactoryBean<Htt
             throw new IllegalArgumentException("Timeout was too large");
         }
         builder.setConnectionTimeout((int) timeout);
+    }
+    
+    /**
+     * Set the TLS socket factory to use.
+     * 
+     * @param factory the new socket factory, may be null
+     */
+    public void setTLSSocketFactory(@Nullable final LayeredConnectionSocketFactory factory) {
+        builder.setTLSSocketFactory(factory);
     }
     
     /**

@@ -19,8 +19,14 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
+import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.conn.ssl.StrictHostnameVerifier;
 import org.opensaml.saml.metadata.resolver.impl.HTTPMetadataResolver;
+import org.opensaml.security.httpclient.impl.TrustEngineTLSSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -38,6 +44,10 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
 
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "HTTPMetadataProvider");
+    
+    /** TLSTrustEngine element name. */
+    public static final QName TLS_TRUST_ENGINE_ELEMENT_NAME = 
+            new QName(MetadataNamespaceHandler.NAMESPACE, "TLSTrustEngine");
 
     /** The URL for the metadata. */
     private static final String METADATA_URL = "metadataURL";
@@ -78,6 +88,18 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
             throw new BeanDefinitionParsingException(new Problem("maintainExpiredMetadata is not supported",
                     new Location(parserContext.getReaderContext().getResource())));
         }
+        
+        boolean haveTLSTrustEngine = false;
+        if (element.hasAttributeNS(null, "tlsTrustEngineRef")) {
+            builder.addPropertyReference("tlsTrustEngine", element.getAttributeNS(null, "tlsTrustEngineRef"));
+            haveTLSTrustEngine = true;
+        } else {
+            BeanDefinition tlsTrustEngine = parseTLSTrustEngine(element, parserContext);
+            if (tlsTrustEngine != null) {
+                builder.addPropertyValue("tlsTrustEngine", tlsTrustEngine);
+                haveTLSTrustEngine = true;
+            }
+        }
 
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(element.getAttributeNS(null, "httpClientRef"));
@@ -90,13 +112,14 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
                         + "disregardTLSCertificate, proxyHost, proxyPort, proxyUser and proxyPassword");
             }
         } else {
-            builder.addConstructorArgValue(buildHttpClient(element, parserContext));
+            builder.addConstructorArgValue(buildHttpClient(element, parserContext, haveTLSTrustEngine));
         }
         builder.addConstructorArgValue(element.getAttributeNS(null, METADATA_URL));
 
         if (element.hasAttributeNS(null, BASIC_AUTH_USER) || element.hasAttributeNS(null, BASIC_AUTH_PASSWORD)) {
             builder.addPropertyValue("basicCredentials", buildBasicCredentials(element));
         }
+        
     }
     // Checkstyle: CyclomaticComplexity ON
 
@@ -105,11 +128,12 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * 
      * @param element the HTTPMetadataProvider parser.
      * @param parserContext 
+     * @param haveTLSTrustEngine whether have a TLS TrustEngine configured
      * @return the bean definition with the parameters.
      */
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
-    private BeanDefinition buildHttpClient(Element element, ParserContext parserContext) {
+    private BeanDefinition buildHttpClient(Element element, ParserContext parserContext, boolean haveTLSTrustEngine) {
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
             caching = element.getAttributeNS(null, "httpCaching");
@@ -157,7 +181,13 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
         if (element.hasAttributeNS(null, "requestTimeout")) {
             clientBuilder.addPropertyValue("connectionTimeout", element.getAttributeNS(null, "requestTimeout"));
         }
-
+        
+        if (haveTLSTrustEngine) {
+            clientBuilder.addPropertyValue("tLSSocketFactory", 
+                    new TrustEngineTLSSocketFactory(HttpClientSupport.buildNoTrustSSLConnectionSocketFactory(), 
+                            new StrictHostnameVerifier()));
+        }
+        
         if (element.hasAttributeNS(null, "disregardTLSCertificate")) {
             clientBuilder.addPropertyValue("connectionDisregardTLSCertificate",
                     element.getAttributeNS(null, "disregardTLSCertificate"));
@@ -203,5 +233,30 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
         builder.addConstructorArgValue(element.getAttributeNS(null, BASIC_AUTH_PASSWORD));
 
         return builder.getBeanDefinition();
+    }
+    
+    /**
+     * Build the definition of the HTTPClientBuilder which contains all our configuration.
+     * 
+     * @param element the HTTPMetadataProvider element
+     * @param parserContext 
+     * @return the bean definition 
+     */
+    private BeanDefinition parseTLSTrustEngine(Element element, ParserContext parserContext) {
+        Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, TLS_TRUST_ENGINE_ELEMENT_NAME);
+        if (tlsTrustEngine != null) {
+            Element trustEngine = ElementSupport.getFirstChildElement(tlsTrustEngine, 
+                    SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+            if (trustEngine != null) {
+                return parserContext.getDelegate().parseCustomElement(trustEngine);
+            } else {
+                // This should be schema-invalid, but log a warning just in case.
+                log.warn("{}:, Element {} did not contain a {} child element", 
+                        parserContext.getReaderContext().getResource().getDescription(),
+                        TLS_TRUST_ENGINE_ELEMENT_NAME, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+            }
+        }
+            
+        return null;
     }
 }

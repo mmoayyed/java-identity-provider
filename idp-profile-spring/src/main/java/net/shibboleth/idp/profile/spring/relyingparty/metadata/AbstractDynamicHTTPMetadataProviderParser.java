@@ -19,10 +19,17 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
+import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
+import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.conn.ssl.StrictHostnameVerifier;
+import org.opensaml.security.httpclient.impl.TrustEngineTLSSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -37,6 +44,10 @@ import org.w3c.dom.Element;
  * Parser for abstract dynamic HTTP metadata resolvers.
  */
 public abstract class AbstractDynamicHTTPMetadataProviderParser extends AbstractDynamicMetadataProviderParser {
+    
+    /** TLSTrustEngine element name. */
+    public static final QName TLS_TRUST_ENGINE_ELEMENT_NAME = 
+            new QName(MetadataNamespaceHandler.NAMESPACE, "TLSTrustEngine");
     
     /** BASIC auth username. */
     private static final String BASIC_AUTH_USER = "basicAuthUser";
@@ -55,6 +66,18 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
     @Override protected void doNativeParse(Element element, ParserContext parserContext, 
             BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
+        
+        boolean haveTLSTrustEngine = false;
+        if (element.hasAttributeNS(null, "tlsTrustEngineRef")) {
+            builder.addPropertyReference("tlsTrustEngine", element.getAttributeNS(null, "tlsTrustEngineRef"));
+            haveTLSTrustEngine = true;
+        } else {
+            BeanDefinition tlsTrustEngine = parseTLSTrustEngine(element, parserContext);
+            if (tlsTrustEngine != null) {
+                builder.addPropertyValue("tlsTrustEngine", tlsTrustEngine);
+                haveTLSTrustEngine = true;
+            }
+        }
 
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(element.getAttributeNS(null, "httpClientRef"));
@@ -67,7 +90,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                         + "disregardTLSCertificate, proxyHost, proxyPort, proxyUser and proxyPassword");
             }
         } else {
-            builder.addConstructorArgValue(buildHttpClient(element, parserContext));
+            builder.addConstructorArgValue(buildHttpClient(element, parserContext, haveTLSTrustEngine));
         }
         
         if (element.hasAttributeNS(null, "credentialsProviderRef")) {
@@ -96,11 +119,12 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      * 
      * @param element the HTTPMetadataProvider parser.
      * @param parserContext thee context
+     * @param haveTLSTrustEngine whether have a TLS TrustEngine configured
      * @return the bean definition with the parameters.
      */
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
-    private BeanDefinition buildHttpClient(Element element, ParserContext parserContext) {
+    private BeanDefinition buildHttpClient(Element element, ParserContext parserContext, boolean haveTLSTrustEngine) {
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
             caching = element.getAttributeNS(null, "httpCaching");
@@ -147,6 +171,12 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
         if (element.hasAttributeNS(null, "requestTimeout")) {
             clientBuilder.addPropertyValue("connectionTimeout", element.getAttributeNS(null, "requestTimeout"));
+        }
+        
+        if (haveTLSTrustEngine) {
+            clientBuilder.addPropertyValue("tLSSocketFactory", 
+                    new TrustEngineTLSSocketFactory(HttpClientSupport.buildNoTrustSSLConnectionSocketFactory(), 
+                            new StrictHostnameVerifier()));
         }
 
         if (element.hasAttributeNS(null, "disregardTLSCertificate")) {
@@ -196,5 +226,30 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
         return builder.getBeanDefinition();
     }
-
+    
+    /**
+     * Build the definition of the HTTPClientBuilder which contains all our configuration.
+     * 
+     * @param element the HTTPMetadataProvider element
+     * @param parserContext 
+     * @return the bean definition 
+     */
+    private BeanDefinition parseTLSTrustEngine(Element element, ParserContext parserContext) {
+        Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, TLS_TRUST_ENGINE_ELEMENT_NAME);
+        if (tlsTrustEngine != null) {
+            Element trustEngine = ElementSupport.getFirstChildElement(tlsTrustEngine, 
+                    SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+            if (trustEngine != null) {
+                return parserContext.getDelegate().parseCustomElement(trustEngine);
+            } else {
+                // This should be schema-invalid, but log a warning just in case.
+                log.warn("{}:, Element {} did not contain a {} child element", 
+                        parserContext.getReaderContext().getResource().getDescription(),
+                        TLS_TRUST_ENGINE_ELEMENT_NAME, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+            }
+        }
+            
+        return null;
+    }
+    
 }
