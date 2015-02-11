@@ -117,6 +117,22 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:ReloadingMetadataProviderType">
+                <sequence>
+                    <element name="TLSTrustEngine"  minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                                This element conflicts with and is overridden by the tlsTrustEngineRef attribute.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element ref="security:TrustEngine" minOccurs="1" maxOccurs="1" />
+                            </sequence>
+                        </complexType>
+                    </element>
+                </sequence>
                 <attribute name="httpClientRef" type="string">
                     <annotation>
                         <documentation>
@@ -218,6 +234,16 @@
                 <attribute name="httpMaxCacheEntrySize" type="string">
                     <annotation>
                         <documentation>The maximum response body size which may be cached, in bytes.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="tlsTrustEngineRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally-defined Spring bean which specifies an
+                            instance of TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                            This attribute conflicts with and overrides the TLSTrustEngine child element.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <!-- Need to deal with socket factory -->
@@ -369,6 +395,22 @@
         </annotation>
         <complexContent>
             <extension base="shibmd:DynamicMetadataProviderType"> 
+                <sequence>
+                    <element name="TLSTrustEngine"  minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>
+                                TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                                This element conflicts with and is overridden by the tlsTrustEngineRef attribute.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element ref="security:TrustEngine" minOccurs="1" maxOccurs="1" />
+                            </sequence>
+                        </complexType>
+                    </element>
+                </sequence>
                 <attribute name="httpClientRef" type="string">
                     <annotation>
                         <documentation>
@@ -478,6 +520,16 @@
                     <annotation>
                         <documentation>
                             The maximum response body size which may be cached, in bytes.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="tlsTrustEngineRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally-defined Spring bean which specifies an
+                            instance of TrustEngine used to evaluate HTTPS server TLS certificates.
+                            
+                            This attribute conflicts with and overrides the TLSTrustEngine child element.
                         </documentation>
                     </annotation>
                 </attribute>
