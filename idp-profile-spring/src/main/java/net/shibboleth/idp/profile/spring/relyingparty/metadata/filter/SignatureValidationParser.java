@@ -165,7 +165,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
 
         trustEngineBuilder.addConstructorArgValue(resolver.getBeanDefinition());
 
-        List<KeyInfoProvider> keyInfoProviders = new ArrayList<KeyInfoProvider>();
+        List<KeyInfoProvider> keyInfoProviders = new ArrayList<>();
         keyInfoProviders.add(new DSAKeyValueProvider());
         keyInfoProviders.add(new RSAKeyValueProvider());
         keyInfoProviders.add(new InlineX509DataProvider());
