@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -248,7 +249,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
             Element trustEngine = ElementSupport.getFirstChildElement(tlsTrustEngine, 
                     SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
             if (trustEngine != null) {
-                return parserContext.getDelegate().parseCustomElement(trustEngine);
+                return SpringSupport.parseCustomElement(trustEngine, parserContext);
             } else {
                 // This should be schema-invalid, but log a warning just in case.
                 log.warn("{}:, Element {} did not contain a {} child element", 
