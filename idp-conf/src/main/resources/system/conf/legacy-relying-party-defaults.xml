@@ -73,7 +73,7 @@
     <bean id="shibboleth.X509TrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
         <constructor-arg>
             <list>
-                <bean class="org.opensaml.security.trust.impl.ExplicitX509CertificateTrustEngine"
+                <bean class="org.opensaml.security.trust.impl.ExplicitKeyTrustEngine"
                     c:resolver-ref="shibboleth.MetadataCredentialResolver" />
                 <bean class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine"
                     c:resolver-ref="shibboleth.MetadataPKIXValidationInformationResolver" />
