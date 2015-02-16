@@ -77,6 +77,7 @@
     <target name="directories">
         <mkdir dir="jetty-base/start.d" />
         <mkdir dir="jetty-base/logs" />
+        <mkdir dir="static" />
     </target>
 
     <target name="copyinis" depends="directories, copyidpini">
