@@ -99,7 +99,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
         
         service = serviceLookupStrategy.apply(profileRequestContext);
         if (service == null) {
-            log.debug("{} Unable to locate service to reload", getLogPrefix());
+            log.warn("{} Unable to locate service to reload", getLogPrefix());
             try {
                 getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Service not found.");
             } catch (final IOException e) {
@@ -152,29 +152,25 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
         @Nullable public ReloadableService apply(@Nullable final ProfileRequestContext input) {
 
             if (getHttpServletRequest() == null) {
-                log.debug("{} HttpServletRequest not found", getLogPrefix());
-                ActionSupport.buildEvent(input, EventIds.INVALID_PROFILE_CTX);
+                log.error("{} HttpServletRequest not found", getLogPrefix());
                 return null;
             }
             
             final String id = StringSupport.trimOrNull(getHttpServletRequest().getParameter(SERVICE_ID));
             if (id == null) {
-                log.debug("{} No 'id' parameter found in request", getLogPrefix());
-                ActionSupport.buildEvent(input, EventIds.INVALID_MESSAGE);
+                log.warn("{} No 'id' parameter found in request", getLogPrefix());
                 return null;
             }
             
             final SpringRequestContext springRequestContext = input.getSubcontext(SpringRequestContext.class);
             if (springRequestContext == null) {
-                log.debug("{} Spring request context not found in profile request context", getLogPrefix());
-                ActionSupport.buildEvent(input, EventIds.INVALID_PROFILE_CTX);
+                log.warn("{} Spring request context not found in profile request context", getLogPrefix());
                 return null;
             }
 
             final RequestContext requestContext = springRequestContext.getRequestContext();
             if (requestContext == null) {
-                log.debug("{} Web Flow request context not found in Spring request context", getLogPrefix());
-                ActionSupport.buildEvent(input, EventIds.INVALID_PROFILE_CTX);
+                log.warn("{} Web Flow request context not found in Spring request context", getLogPrefix());
                 return null;
             }
             
@@ -187,7 +183,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
                 
             }
             
-            log.debug("{} No bean of the correct type found named {}", getLogPrefix(), id);
+            log.warn("{} No bean of the correct type found named {}", getLogPrefix(), id);
             return null;
         }
         

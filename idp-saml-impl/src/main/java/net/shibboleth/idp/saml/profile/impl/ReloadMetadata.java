@@ -104,8 +104,12 @@ public class ReloadMetadata extends AbstractProfileAction {
         
         id = getHttpServletRequest() != null ? getHttpServletRequest().getParameter(RESOLVER_ID) : null;
         if (id == null) {
-            log.debug("{} No 'id' parameter found in request", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
+            log.warn("{} No 'id' parameter found in request", getLogPrefix());
+            try {
+                getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
+            } catch (final IOException e) {
+                ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+            }
             return false;
         }
         
@@ -146,12 +150,12 @@ public class ReloadMetadata extends AbstractProfileAction {
                 getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
                 getHttpServletResponse().getWriter().println("Metadata reloaded.");
             } else {
-                log.debug("{} Unable to locate refreshable metadata source '{}'", getLogPrefix(), id);
+                log.warn("{} Unable to locate refreshable metadata source '{}'", getLogPrefix(), id);
                 getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
             }
             
         } catch (final ResolverException e) {
-            log.error("{} MetadataProvider '{}': Error during refresh", getLogPrefix(), id, e);
+            log.error("{} Metadata source '{}': Error during refresh", getLogPrefix(), id, e);
             try {
                 getHttpServletResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (final IOException e2) {
