@@ -553,7 +553,7 @@
         Creating an existing file is benign, bin gets updated -->
 
         <copy todir="${idp.target.dir}/bin" overwrite="true">
-            <fileset dir="${idp.src.dir}/bin"  excludes="**/ant-jetty.xml"/>
+            <fileset dir="${idp.src.dir}/bin"  excludes="**/ant-jetty.xml **/install.*"/>
         </copy>
         <mkdir dir="${idp.target.dir}/conf" />
         <mkdir dir="${idp.target.dir}/credentials" />
