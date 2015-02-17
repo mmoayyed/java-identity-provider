@@ -67,6 +67,21 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
 
+    @Test public void serviceNotSpecified() throws ComponentInitializationException {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        
+        final ReloadMetadata action = new ReloadMetadata();
+        action.setMetadataResolver(service);
+        action.setHttpServletRequest(request);
+        action.setHttpServletResponse(response);
+        action.initialize();
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_NOT_FOUND);
+    }
+
     @Test public void serviceNotFound() throws ComponentInitializationException {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -77,13 +92,9 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         action.setHttpServletResponse(response);
         action.initialize();
 
-        Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, EventIds.INVALID_MESSAGE);
-
         request.setParameter(ReloadMetadata.RESOLVER_ID, "foo");
-        event = action.execute(src);
+        final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-
         Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_NOT_FOUND);
     }
     
