@@ -20,7 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import net.shibboleth.idp.Version;
 
 /**
- * Factory bean customization for the Shiboleth IdP.
+ * Factory bean customization for the Shibboleth IdP.
  */
 public class HttpClientFactoryBean extends net.shibboleth.ext.spring.factory.HttpClientFactoryBean {
 
