@@ -22,7 +22,8 @@ import net.shibboleth.idp.Version;
 /**
  *  Factory bean customization for the Shiboleth IdP.
  */
-public class InMemoryCachingHttpClientFactoryBean extends net.shibboleth.ext.spring.factory.InMemoryCachingHttpClientFactoryBean {
+public class InMemoryCachingHttpClientFactoryBean 
+        extends net.shibboleth.ext.spring.factory.InMemoryCachingHttpClientFactoryBean {
     
     /**
      * Constructor.
