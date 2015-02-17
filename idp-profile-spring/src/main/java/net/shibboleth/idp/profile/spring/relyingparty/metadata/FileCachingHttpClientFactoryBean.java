@@ -17,78 +17,22 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.shibboleth.utilities.java.support.component.InitializableComponent;
-import net.shibboleth.utilities.java.support.httpclient.FileCachingHttpClientBuilder;
-import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
-
-import org.apache.http.client.HttpClient;
-import org.springframework.beans.factory.DisposableBean;
+import net.shibboleth.idp.Version;
 
 /**
- * Factory bean to accumulate the parameters into a {@link FileCachingHttpClientBuilder} 
- * and to then emit a {@link org.apache.http.client.HttpClient}.
+ * Factory bean customization for the Shiboleth IdP.
  */
-public class FileCachingHttpClientFactoryBean extends HttpClientFactoryBean implements DisposableBean {
+public class FileCachingHttpClientFactoryBean extends net.shibboleth.ext.spring.factory.FileCachingHttpClientFactoryBean {
     
-    /** List of HttpClients produced by this factory, used to invoke their destroy() 
-     * when this factory instances is destroy()-ed. */
-    private List<HttpClient> clientRefs;
-
-    /** Constructor. */
+    /**
+     * Constructor.
+     *
+     */
     public FileCachingHttpClientFactoryBean() {
         super();
-        clientRefs = new ArrayList<>();
+        final StringBuilder stringBuilder = new StringBuilder("ShibbolethIdp/");
+        stringBuilder.append(Version.getVersion()).append(" OpenSAML/").append(org.opensaml.core.Version.getVersion());
+        setUserAgent(stringBuilder.toString());
     }
 
-    /**
-     * Set the cache directory path.
-     * 
-     * @param cacheDirectory The cacheDirectory to set.
-     */
-    public void setCacheDirectory(String cacheDirectory) {
-        ((FileCachingHttpClientBuilder)getHttpClientBuilder()).setCacheDirectory(cacheDirectory);
-    }
-
-    /**
-     * Set the maximum number of cached responses.
-     * 
-     * @param maxCacheEntries The maxCacheEntries to set.
-     */
-    public void setMaxCacheEntries(int maxCacheEntries) {
-        ((FileCachingHttpClientBuilder)getHttpClientBuilder()).setMaxCacheEntries(maxCacheEntries);
-    }
-
-    /**
-     * Set the maximum response body size, in bytes, that will be eligible for caching.
-     * 
-     * @param maxCacheEntrySize The maxCacheEntrySize to set.
-     */
-    public void setMaxCacheEntrySize(long maxCacheEntrySize) {
-        ((FileCachingHttpClientBuilder)getHttpClientBuilder()).setMaxCacheEntrySize(maxCacheEntrySize);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected HttpClientBuilder createHttpClientBuilder() {
-        return new FileCachingHttpClientBuilder();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected HttpClient doCreateInstance() throws Exception {
-        HttpClient client = super.doCreateInstance();
-        synchronized(this) {
-            if (client instanceof InitializableComponent) {
-                InitializableComponent component = (InitializableComponent) client;
-                if (!component.isInitialized()) {
-                   component.initialize(); 
-                }
-            }
-            clientRefs.add(client);
-        }
-        return client;
-    }
 }

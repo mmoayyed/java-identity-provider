@@ -17,41 +17,22 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
-import net.shibboleth.utilities.java.support.httpclient.HttpClientBuilder;
-import net.shibboleth.utilities.java.support.httpclient.InMemoryCachingHttpClientBuilder;
+import net.shibboleth.idp.Version;
 
 /**
- * Factory bean to accumulate the parameters into a {@link InMemoryCachingHttpClientBuilder} and to then emit a
- * {@link org.apache.http.client.HttpClient}.
+ *  Factory bean customization for the Shiboleth IdP.
  */
-public class InMemoryCachingHttpClientFactoryBean extends HttpClientFactoryBean {
-
-    /** Constructor. */
+public class InMemoryCachingHttpClientFactoryBean extends net.shibboleth.ext.spring.factory.InMemoryCachingHttpClientFactoryBean {
+    
+    /**
+     * Constructor.
+     *
+     */
     public InMemoryCachingHttpClientFactoryBean() {
         super();
-    }
-
-    /**
-     * Set the maximum number of cached responses.
-     * 
-     * @param maxCacheEntries The maxCacheEntries to set.
-     */
-    public void setMaxCacheEntries(int maxCacheEntries) {
-        ((InMemoryCachingHttpClientBuilder) getHttpClientBuilder()).setMaxCacheEntries(maxCacheEntries);
-    }
-
-    /**
-     * Set the maximum response body size, in bytes, that will be eligible for caching.
-     * 
-     * @param maxCacheEntrySize The maxCacheEntrySize to set.
-     */
-    public void setMaxCacheEntrySize(long maxCacheEntrySize) {
-        ((InMemoryCachingHttpClientBuilder) getHttpClientBuilder()).setMaxCacheEntrySize(maxCacheEntrySize);
-    }
-
-    /** {@inheritDoc} */
-    @Override protected HttpClientBuilder createHttpClientBuilder() {
-        return new InMemoryCachingHttpClientBuilder();
+        final StringBuilder stringBuilder = new StringBuilder("ShibbolethIdp/");
+        stringBuilder.append(Version.getVersion()).append(" OpenSAML/").append(org.opensaml.core.Version.getVersion());
+        setUserAgent(stringBuilder.toString());
     }
 
 }
