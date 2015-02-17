@@ -66,7 +66,7 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(StaticPKIXSignatureParser.TYPE_NAME, new StaticPKIXSignatureParser());
         registerBeanDefinitionParser(SignatureChainingParser.TYPE_NAME, new SignatureChainingParser());
 
-        // Metadata based unsupported
+        // Metadata based unsupported 
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_TYPE,
                 new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_SIGNATURE_TYPE,
@@ -91,6 +91,7 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         // Credential unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING_TYPE, new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.STATIC_EXPLICIT_KEY_TYPE, new UnsupportedTrustEngineParser());
 
     }
 }

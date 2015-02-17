@@ -56,6 +56,10 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
     public static final QName PKIX_CREDENTIAL = new QName(SecurityNamespaceHandler.NAMESPACE,
             "StaticPKIXX509Credential");
 
+    /** Schema type for StaticPKIXX509Credential. */
+    public static final QName STATIC_EXPLICIT_KEY_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
+            "StaticExplicitKey");
+
     /** log. */
     private Logger log = LoggerFactory.getLogger(UnsupportedTrustEngineParser.class);
 
