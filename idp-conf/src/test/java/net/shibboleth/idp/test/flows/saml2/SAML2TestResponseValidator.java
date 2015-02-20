@@ -66,7 +66,7 @@ import org.testng.Assert;
 public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValidator {
 
     /** Authentication context class reference. */
-    @Nonnull public String authnContextClassRef = AuthnContext.PASSWORD_AUTHN_CTX;
+    @Nonnull public String authnContextClassRef = AuthnContext.PPT_AUTHN_CTX;
 
     /** SP credential. */
     @Nullable public Credential spCredential;
