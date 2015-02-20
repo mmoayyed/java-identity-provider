@@ -21,6 +21,9 @@ package net.shibboleth.idp.saml.xmlobject;
 public final class ExtensionsConstants {
 
     /** URI for XML schema namespace for Shibboleth extensions to SAML metadata. */
+    public static final String SHIB_MDEXT10_SCHEMA_LOCATION = "/schema/shibboleth-metadata-1.0.xsd";
+    
+    /** URI for XML schema namespace for Shibboleth extensions to SAML metadata. */
     public static final String SHIB_MDEXT10_NS = "urn:mace:shibboleth:metadata:1.0";
 
     /** Namespace QName prefix for Shibboleth extensions to SAML metadata. */
