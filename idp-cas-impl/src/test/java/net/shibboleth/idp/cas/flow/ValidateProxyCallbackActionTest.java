@@ -68,9 +68,9 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
                 ProtocolError.ProxyCallbackAuthenticationFailure.id());
     }
 
-    private static ProxyAuthenticator<TrustEngine<X509Credential>> mockProxyAuthenticator(final Exception toBeThrown)
+    private static ProxyAuthenticator<TrustEngine<? super X509Credential>> mockProxyAuthenticator(final Exception toBeThrown)
             throws Exception {
-        final ProxyAuthenticator<TrustEngine<X509Credential>> authenticator = mock(ProxyAuthenticator.class);
+        final ProxyAuthenticator<TrustEngine<? super X509Credential>> authenticator = mock(ProxyAuthenticator.class);
         if (toBeThrown != null) {
             doThrow(toBeThrown).when(authenticator).authenticate(any(URI.class), any(TrustEngine.class));
         }

@@ -63,7 +63,7 @@ public class ValidateX509Certificate extends AbstractValidationAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateX509Certificate.class);
 
     /** Optional trust engine to validate certificates against. */
-    @Nullable private TrustEngine<X509Credential> trustEngine;
+    @Nullable private TrustEngine<? super X509Credential> trustEngine;
     
     /** CertificateContext containing the credentials to validate. */
     @Nullable private CertificateContext certContext;
@@ -73,7 +73,7 @@ public class ValidateX509Certificate extends AbstractValidationAction {
      * 
      * @param tm trust engine to use  
      */
-    public void setTrustEngine(@Nullable final TrustEngine<X509Credential> tm) {
+    public void setTrustEngine(@Nullable final TrustEngine<? super X509Credential> tm) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         trustEngine = tm;

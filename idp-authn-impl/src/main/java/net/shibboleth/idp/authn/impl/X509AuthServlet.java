@@ -65,14 +65,14 @@ public class X509AuthServlet extends HttpServlet {
     @Nonnull private final Logger log = LoggerFactory.getLogger(X509AuthServlet.class);
 
     /** Trust engine. */
-    @Nullable private TrustEngine<X509Credential> trustEngine;
+    @Nullable private TrustEngine<? super X509Credential> trustEngine;
 
     /**
      * Set the {@link TrustEngine} to use.
      * 
      * @param tm trust engine to use  
      */
-    public void setTrustEngine(@Nullable final TrustEngine<X509Credential> tm) {
+    public void setTrustEngine(@Nullable final TrustEngine<? super X509Credential> tm) {
         trustEngine = tm;
     }
     

@@ -67,7 +67,7 @@ public class ValidateProxyCallbackAction
 
     /** Validates the proxy callback endpoint. */
     @Nonnull
-    private final ProxyAuthenticator<TrustEngine<X509Credential>> proxyAuthenticator;
+    private final ProxyAuthenticator<TrustEngine<? super X509Credential>> proxyAuthenticator;
 
     /** Manages CAS tickets. */
     @Nonnull
@@ -81,7 +81,7 @@ public class ValidateProxyCallbackAction
      * @param ticketService Ticket service component.
      */
     public ValidateProxyCallbackAction(
-            @Nonnull ProxyAuthenticator<TrustEngine<X509Credential>> proxyAuthenticator,
+            @Nonnull ProxyAuthenticator<TrustEngine<? super X509Credential>> proxyAuthenticator,
             @Nonnull TicketService ticketService) {
         this.proxyAuthenticator = Constraint.isNotNull(proxyAuthenticator, "ProxyAuthenticator cannot be null");
         this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
@@ -123,7 +123,7 @@ public class ValidateProxyCallbackAction
         }
         try {
             log.debug("Attempting proxy authentication to {}", proxyCallbackUri);
-            final TrustEngine<X509Credential> engine;
+            final TrustEngine<? super X509Credential> engine;
             if (config.getSecurityConfiguration().getClientTLSValidationConfiguration() != null) {
                 engine = config.getSecurityConfiguration().getClientTLSValidationConfiguration().getX509TrustEngine();
             } else {

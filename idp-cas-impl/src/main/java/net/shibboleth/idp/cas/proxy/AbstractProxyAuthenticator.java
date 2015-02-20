@@ -37,7 +37,7 @@ import java.util.Set;
  *
  * @author Marvin S. Addison
  */
-public abstract class AbstractProxyAuthenticator implements ProxyAuthenticator<TrustEngine<X509Credential>> {
+public abstract class AbstractProxyAuthenticator implements ProxyAuthenticator<TrustEngine<? super X509Credential>> {
 
     /** Required https scheme for proxy callbacks. */
     protected static final String HTTPS_SCHEME = "https";
@@ -59,7 +59,7 @@ public abstract class AbstractProxyAuthenticator implements ProxyAuthenticator<T
     }
 
     @Override
-    public final void authenticate(@Nonnull final URI credential, @Nullable TrustEngine<X509Credential> criteria)
+    public final void authenticate(@Nonnull final URI credential, @Nullable TrustEngine<? super X509Credential> criteria)
             throws GeneralSecurityException {
 
         Constraint.isNotNull(credential, "URI to authenticate cannot be null.");
@@ -88,7 +88,7 @@ public abstract class AbstractProxyAuthenticator implements ProxyAuthenticator<T
      */
     protected abstract int authenticateProxyCallback(
             @Nonnull URI callbackUri,
-            @Nullable TrustEngine<X509Credential> x509TrustEngine)
+            @Nullable TrustEngine<? super X509Credential> x509TrustEngine)
             throws GeneralSecurityException;
 
 }

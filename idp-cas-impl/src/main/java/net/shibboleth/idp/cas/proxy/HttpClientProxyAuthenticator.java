@@ -63,12 +63,12 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
      */
     private static class TrustEngineTrustStrategy implements TrustStrategy {
 
-        private final TrustEngine<X509Credential> trustEngine;
+        private final TrustEngine<? super X509Credential> trustEngine;
 
         /** Class logger. */
         private final Logger log = LoggerFactory.getLogger(TrustEngineTrustStrategy.class);
 
-        public TrustEngineTrustStrategy(final TrustEngine<X509Credential> engine) {
+        public TrustEngineTrustStrategy(final TrustEngine<? super X509Credential> engine) {
             trustEngine = engine;
         }
 
@@ -113,7 +113,7 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
     @Override
     protected int authenticateProxyCallback(
             @Nonnull final URI callbackUri,
-            @Nullable final TrustEngine<X509Credential> x509TrustEngine)
+            @Nullable final TrustEngine<? super X509Credential> x509TrustEngine)
             throws GeneralSecurityException {
 
         CloseableHttpClient httpClient = null;
@@ -144,7 +144,7 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
         }
     }
 
-    private CloseableHttpClient createHttpClient(final TrustEngine<X509Credential> x509TrustEngine) {
+    private CloseableHttpClient createHttpClient(final TrustEngine<? super X509Credential> x509TrustEngine) {
         final SSLConnectionSocketFactory socketFactory;
         try {
             final SSLContext sslContext = SSLContexts.custom()
