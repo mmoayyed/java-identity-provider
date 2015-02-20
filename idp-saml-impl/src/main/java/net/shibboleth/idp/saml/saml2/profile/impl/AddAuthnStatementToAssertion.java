@@ -34,6 +34,8 @@ import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.navigate.SessionLifetimeLookupFunction;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAssertion;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -81,19 +83,16 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
     @Nonnull private final Logger log = LoggerFactory.getLogger(AddAuthnStatementToAssertion.class);
     
     /** Strategy used to locate the {@link Assertion} to operate on. */
-    @Nonnull private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;
     
     /** Strategy used to determine the AuthnContextClassRef. */
-    @Nonnull private Function<ProfileRequestContext,AuthnContextClassRefPrincipal> classRefLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,AuthnContextClassRefPrincipal> classRefLookupStrategy;
 
     /** Strategy used to determine SessionNotOnOrAfter value to set. */
     @Nullable private Function<ProfileRequestContext,Long> sessionLifetimeLookupStrategy;
         
     /** Constructor. */
     public AddAuthnStatementToAssertion() {
-        assertionLookupStrategy = new AssertionStrategy();
-        classRefLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthnContextClassRefPrincipal.class,
-                new AuthnContextClassRefPrincipal(AuthnContext.UNSPECIFIED_AUTHN_CTX));
         sessionLifetimeLookupStrategy = new SessionLifetimeLookupFunction();
     }
     
@@ -132,6 +131,21 @@ public class AddAuthnStatementToAssertion extends BaseAddAuthenticationStatement
         sessionLifetimeLookupStrategy = strategy;
     }
     
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (classRefLookupStrategy == null) {
+            classRefLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthnContextClassRefPrincipal.class,
+                    new AuthnContextClassRefPrincipal(AuthnContext.UNSPECIFIED_AUTHN_CTX));
+        }
+
+        if (assertionLookupStrategy == null) {
+            assertionLookupStrategy = new AssertionStrategy();
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,

@@ -38,6 +38,16 @@
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
+        <property name="classRefLookupStrategy">
+            <bean class="net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy"
+                    c:type="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
+                    p:weightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap')}">
+                <constructor-arg name="principal">
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal"
+                        c:classRef="#{T(org.opensaml.saml.saml2.core.AuthnContext).UNSPECIFIED_AUTHN_CTX}" />
+                </constructor-arg>
+            </bean>
+        </property>
     </bean>
 
     <bean id="InitializeOutboundMessageContextForError"
@@ -54,9 +64,9 @@
             <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
         </property>
         <property name="statusCodes">
-            <util:list>
+            <list>
                 <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.RESPONDER" />
-            </util:list>
+            </list>
         </property>
         <property name="statusCodesLookupStrategy">
             <bean class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse.StatusCodeMappingFunction"
@@ -70,10 +80,10 @@
     <bean id="AddPartialLogoutStatusToResponse"
             class="org.opensaml.saml.saml2.profile.impl.AddStatusToResponse" scope="prototype">
         <property name="statusCodes">
-            <util:list>
+            <list>
                 <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.SUCCESS" />
                 <util:constant static-field="org.opensaml.saml.saml2.core.StatusCode.PARTIAL_LOGOUT" />
-            </util:list>
+            </list>
         </property>
     </bean>
 

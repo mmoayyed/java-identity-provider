@@ -30,6 +30,8 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAuthenticationStatementToAssertion;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -75,22 +77,14 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
     @Nonnull private final Logger log = LoggerFactory.getLogger(AddAuthenticationStatementToAssertion.class);
 
     /** Strategy used to locate the {@link Assertion} to operate on. */
-    @Nonnull private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;
     
     /** Strategy used to determine the AuthenticationMethod attribute. */
-    @Nonnull private Function<ProfileRequestContext,AuthenticationMethodPrincipal> methodLookupStrategy;
+    @NonnullAfterInit private Function<ProfileRequestContext,AuthenticationMethodPrincipal> methodLookupStrategy;
 
     /** The generator to use. */
     @Nullable private IdentifierGenerationStrategy idGenerator;
-    
-    /** Constructor. */
-    public AddAuthenticationStatementToAssertion() {
-    
-        assertionLookupStrategy = new AssertionStrategy();
-        methodLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthenticationMethodPrincipal.class,
-                new AuthenticationMethodPrincipal(AuthenticationStatement.UNSPECIFIED_AUTHN_METHOD));
-    }
-    
+        
     /**
      * Set the strategy used to locate the {@link Assertion} to operate on.
      * 
@@ -112,6 +106,21 @@ public class AddAuthenticationStatementToAssertion extends BaseAddAuthentication
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         methodLookupStrategy = Constraint.isNotNull(strategy, "Authentication method strategy cannot be null");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (methodLookupStrategy == null) {
+            methodLookupStrategy = new DefaultPrincipalDeterminationStrategy<>(AuthenticationMethodPrincipal.class,
+                    new AuthenticationMethodPrincipal(AuthenticationStatement.UNSPECIFIED_AUTHN_METHOD));
+        }
+
+        if (assertionLookupStrategy == null) {
+            assertionLookupStrategy = new AssertionStrategy();
+        }
     }
     
     /** {@inheritDoc} */

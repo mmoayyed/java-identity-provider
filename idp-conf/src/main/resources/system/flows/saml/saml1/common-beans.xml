@@ -37,6 +37,16 @@
             <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
                 p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
         </property>
+        <property name="authenticationMethodLookupStrategy">
+            <bean class="net.shibboleth.idp.authn.principal.DefaultPrincipalDeterminationStrategy"
+                    c:type="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal"
+                    p:weightMap="#{getObject('shibboleth.AuthenticationPrincipalWeightMap')}">
+                <constructor-arg name="principal">
+                    <bean class="net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal"
+                        c:method="#{T(org.opensaml.saml.saml1.core.AuthenticationStatement).UNSPECIFIED_AUTHN_METHOD}" />
+                </constructor-arg>
+            </bean>
+        </property>
     </bean>
 
     <bean id="InitializeOutboundMessageContextForError"
@@ -53,9 +63,9 @@
             <bean class="net.shibboleth.idp.profile.config.logic.DetailedErrorsPredicate" />
         </property>
         <property name="statusCodes">
-            <util:list>
+            <list>
                 <util:constant static-field="org.opensaml.saml.saml1.core.StatusCode.RESPONDER" />
-            </util:list>
+            </list>
         </property>
         <property name="statusCodesLookupStrategy">
             <bean class="org.opensaml.saml.saml1.profile.impl.AddStatusToResponse.StatusCodeMappingFunction"
