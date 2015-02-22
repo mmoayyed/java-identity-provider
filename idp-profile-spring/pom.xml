@@ -64,6 +64,18 @@
         </dependency>
         
         <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-security-api</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-security-impl</artifactId>
+            <version>${opensaml.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.tmatesoft.svnkit</groupId>
             <artifactId>svnkit</artifactId>
             <!-- Required for SVNResource. Constrained by licensing. -->

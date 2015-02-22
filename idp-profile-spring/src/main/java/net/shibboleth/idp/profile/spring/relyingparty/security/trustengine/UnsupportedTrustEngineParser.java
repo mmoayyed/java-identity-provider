@@ -49,9 +49,6 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
     public static final QName METADATA_EXPLICIT_KEY_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
             "MetadataExplicitKey");
 
-    /** Schema type for Chaining. */
-    public static final QName CHAINING_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE, "Chaining");
-
     /** Schema type for StaticPKIXX509Credential. */
     public static final QName PKIX_CREDENTIAL = new QName(SecurityNamespaceHandler.NAMESPACE,
             "StaticPKIXX509Credential");
@@ -61,7 +58,7 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
             "StaticExplicitKey");
 
     /** log. */
-    private Logger log = LoggerFactory.getLogger(UnsupportedTrustEngineParser.class);
+    private final Logger log = LoggerFactory.getLogger(UnsupportedTrustEngineParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {

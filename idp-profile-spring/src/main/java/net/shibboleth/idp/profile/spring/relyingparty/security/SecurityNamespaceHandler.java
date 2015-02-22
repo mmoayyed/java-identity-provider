@@ -25,6 +25,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicR
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509InlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.X509ResourceCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.CertPathPKIXValidationOptionsParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.ChainingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXInlineValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXResourceValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXValidationOptionsParser;
@@ -47,6 +48,9 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** SecurityPolicy element name. */
     public static final QName SECURITY_POLICY_NAME = new QName(NAMESPACE, "SecurityPolicy");
+
+    /** TrustEngineRef element name. */
+    public static final QName TRUST_ENGINE_REF= new QName(NAMESPACE, "TrustEngineRef");
 
     /** {@inheritDoc} */
     @Override public void init() {
@@ -87,11 +91,16 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(PKIXValidationOptionsParser.ELEMENT_NAME, new PKIXValidationOptionsParser());
         registerBeanDefinitionParser(CertPathPKIXValidationOptionsParser.ELEMENT_NAME,
                 new CertPathPKIXValidationOptionsParser());
+        
+        //
+        // Trust Engines needed for the HttpMetadataProvider
+        //
+        registerBeanDefinitionParser(ChainingParser.TYPE_NAME, new ChainingParser());
 
         // Credential unsupported
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.CHAINING_TYPE, new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.STATIC_EXPLICIT_KEY_TYPE, new UnsupportedTrustEngineParser());
+        registerBeanDefinitionParser(UnsupportedTrustEngineParser.STATIC_EXPLICIT_KEY_TYPE, 
+                new UnsupportedTrustEngineParser());
 
     }
 }
