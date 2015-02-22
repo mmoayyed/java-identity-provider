@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <security:TrustEngine id="testBean"
-	xsi:type="security:StaticExplicitKeySignature" xmlns:security="urn:mace:shibboleth:2.0:security"
+	xsi:type="security:StaticExplicitKey" xmlns:security="urn:mace:shibboleth:2.0:security"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
 	<security:Credential id="InLineBean" xsi:type="security:X509Inline">

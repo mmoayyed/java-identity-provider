@@ -30,8 +30,10 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXI
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXResourceValidationInfoParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.PKIXValidationOptionsParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.SignatureChainingParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeyParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticExplicitKeySignatureParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticPKIXSignatureParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.StaticPKIXX509CredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.UnsupportedTrustEngineParser;
 
 /** Namespace handler <em>{@value NAMESPACE}</em>. */
@@ -96,11 +98,8 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         // Trust Engines needed for the HttpMetadataProvider
         //
         registerBeanDefinitionParser(ChainingParser.TYPE_NAME, new ChainingParser());
-
-        // Credential unsupported
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.PKIX_CREDENTIAL, new UnsupportedTrustEngineParser());
-        registerBeanDefinitionParser(UnsupportedTrustEngineParser.STATIC_EXPLICIT_KEY_TYPE, 
-                new UnsupportedTrustEngineParser());
+        registerBeanDefinitionParser(StaticExplicitKeyParser.TYPE_NAME, new StaticExplicitKeyParser());
+        registerBeanDefinitionParser(StaticPKIXX509CredentialParser.TYPE_NAME, new StaticPKIXX509CredentialParser());
 
     }
 }

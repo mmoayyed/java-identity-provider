@@ -25,7 +25,7 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.joda.time.DateTime;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.trust.TrustEngine;
-import org.opensaml.security.trust.TrustedCredentialTrustEngine;
+import org.opensaml.security.trust.impl.ExplicitKeyTrustEngine;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -33,10 +33,10 @@ import org.testng.annotations.Test;
 /**
  * test for  xsi:type="security:StaticExplicitKeySignature".
  */
-public class StaticExplicitKeySignatureParserTest extends AbstractSecurityParserTest {
+public class StaticExplicitKeyParserTest extends AbstractSecurityParserTest {
  
     @Test public void simple() throws IOException, ResolverException {
-        final TrustedCredentialTrustEngine engine = (TrustedCredentialTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticExplicitSignature.xml");
+        final ExplicitKeyTrustEngine engine = (ExplicitKeyTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticExplicit.xml");
         
         final StaticCredentialResolver resolver = (StaticCredentialResolver) engine.getCredentialResolver();
         

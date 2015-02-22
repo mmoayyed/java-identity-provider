@@ -22,41 +22,37 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 
 import org.opensaml.security.x509.impl.BasicX509CredentialNameEvaluator;
-import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
-import org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine;
+import org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for trust engines of type StaticPKIXKeySignature.
+ * Parser for trust engines of type StaticPKIXX509Credential.
  */
-public class StaticPKIXSignatureParser extends AbstractStaticPKIXSignatureParser {
+public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXSignatureParser {
 
     /** Schema type. */
-    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXSignature");
+    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXX509Credential");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
-        return PKIXSignatureTrustEngine.class;
+        return PKIXX509CredentialTrustEngine.class;
     }
 
     /**
      * {@inheritDoc} <br/>
      * We call into
-     * {@link PKIXSignatureTrustEngine#PKIXSignatureTrustEngine(
-     *  org.opensaml.security.x509.PKIXValidationInformationResolver,
-     *  org.opensaml.xmlsec.keyinfo.KeyInfoCredentialResolver, 
-     *  org.opensaml.security.x509.PKIXTrustEvaluator, 
-     *  org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
+     * {@link PKIXX509CredentialTrustEngine#PKIXX509CredentialTrustEngine(
+     *    org.opensaml.security.x509.PKIXValidationInformationResolver, 
+     *    org.opensaml.security.x509.PKIXTrustEvaluator, 
+     *    org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
      * .
      */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         builder.addConstructorArgValue(getPKIXValidationInformationResolver(element, parserContext));
-        builder.addConstructorArgValue(DefaultSecurityConfigurationBootstrap
-                .buildBasicInlineKeyInfoCredentialResolver());
         builder.addConstructorArgValue(getPKIXTrustEvaluator(element, parserContext));
         builder.addConstructorArgValue(new BasicX509CredentialNameEvaluator());
     }

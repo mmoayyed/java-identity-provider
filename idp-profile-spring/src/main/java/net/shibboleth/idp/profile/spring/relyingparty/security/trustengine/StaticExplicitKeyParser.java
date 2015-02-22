@@ -19,42 +19,44 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.security.credential.AbstractCredentialParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.springframework.beans.BeanMetadataElement;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.opensaml.security.credential.impl.StaticCredentialResolver;
+import org.opensaml.security.trust.impl.ExplicitKeyTrustEngine;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Base Parser for trust engines of type SignatureChaining and Chaining.
+ * Parser for trust engines of type StaticExplicitKey TrustEngine.
  */
-public abstract class AbstractChainingParser extends AbstractTrustEngineParser {
-    
+public class StaticExplicitKeyParser extends AbstractTrustEngineParser {
+
+    /** Schema type. */
+    public static final QName TYPE_NAME =
+            new QName(SecurityNamespaceHandler.NAMESPACE, "StaticExplicitKey");
+
+    /** {@inheritDoc} */
+    @Override protected Class<?> getBeanClass(Element element) {
+        return ExplicitKeyTrustEngine.class;
+    }
+
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
-        final List<Element> childEngines =
-                ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
-        final List<Element> childEngineRefs =
-                ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_REF);
-        
-        final List<BeanMetadataElement> allChildren = new ManagedList<>(childEngines.size()+ childEngineRefs.size());
-        
-        allChildren.addAll(SpringSupport.parseCustomElements(childEngines, parserContext));
-        
-        for (Element ref:childEngineRefs) {
-            final String reference = ref.getAttributeNS(null, "ref");
-            if (null != reference) {
-                allChildren.add(new RuntimeBeanReference(StringSupport.trim(reference)));
-            }
-        }
-        builder.addConstructorArgValue(allChildren);
+        final List<Element> credentials =
+                ElementSupport.getChildElements(element, AbstractCredentialParser.CREDENTIAL_ELEMENT_NAME);
+
+        final BeanDefinitionBuilder resolver =
+                BeanDefinitionBuilder.genericBeanDefinition(StaticCredentialResolver.class);
+        resolver.addConstructorArgValue(SpringSupport.parseCustomElements(credentials, parserContext));
+
+        builder.addConstructorArgValue(resolver.getBeanDefinition());
     }
 }
