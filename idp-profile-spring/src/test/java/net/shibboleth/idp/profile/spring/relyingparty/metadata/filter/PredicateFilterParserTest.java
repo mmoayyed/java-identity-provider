@@ -27,6 +27,7 @@ import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.common.profile.logic.EntityIdPredicate;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter.Direction;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -41,7 +42,7 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
         getBean(PredicateFilter.class, "filter/predicateEmpty.xml");
     }
 
-    @Test(expectedExceptions=BeanDefinitionStoreException.class)
+    @Test(expectedExceptions=BeanCreationException.class)
     public void badDirection() throws IOException {
         getBean(PredicateFilter.class, "filter/predicateBadDirection.xml");
     }

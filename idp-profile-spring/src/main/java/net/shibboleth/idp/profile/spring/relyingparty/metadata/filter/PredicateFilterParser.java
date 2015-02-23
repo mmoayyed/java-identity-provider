@@ -54,7 +54,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PredicateFilterParser.class);
-    
+
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
         return PredicateFilter.class;
@@ -68,17 +68,11 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
                     element.getAttributeNS(null, "removeEmptyEntitiesDescriptors"));
         }
 
-        final String direction = element.getAttributeNS(null, "direction");
-        if (direction == null) {
-            throw new BeanCreationException("Predicate filter requires 'direction' attribute");
-        } else if ("exclude".equals(direction)) {
-            builder.addConstructorArgValue(PredicateFilter.Direction.EXCLUDE);
-        } else if ("include".equals(direction)) {
-            builder.addConstructorArgValue(PredicateFilter.Direction.INCLUDE);
-        } else {
-            throw new BeanCreationException("Predicate filter direction must be 'include' or 'exclude'");
-        }
-        
+        final BeanDefinitionBuilder directionBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(PredicateFilterDirectoryFactoryBean.class);
+        directionBuilder.addConstructorArgValue(element.getAttributeNS(null, "direction"));
+        builder.addConstructorArgValue(directionBuilder.getBeanDefinition());
+
         if (element.hasAttributeNS(null, "conditionRef")) {
             log.info("Found conditionRef attribute, ignoring embedded Entity/Group/Tag elements");
             builder.addConstructorArgReference(element.getAttributeNS(null, "conditionRef"));
@@ -86,8 +80,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             builder.addConstructorArgValue(parseCustomElements(element));
         }
     }
-    
-// Checkstyle: CyclomaticComplexity OFF
+
+    // Checkstyle: CyclomaticComplexity OFF
     /**
      * Parser custom element content into a {@link com.google.common.base.Predicate} to pass to the filter constructor.
      * 
@@ -96,12 +90,12 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
      * @return the bean definition of the Predicate to install
      */
     @Nonnull public BeanDefinition parseCustomElements(@Nonnull final Element element) {
-        
+
         // Track which predicates have to be built.
         final BeanDefinitionBuilder entityIdPredicateBuilder = parseEntityPredicate(element);
         final BeanDefinitionBuilder groupPredicateBuilder = parseGroupPredicate(element);
         final BeanDefinitionBuilder tagPredicateBuilder = parseTagPredicate(element);
-        
+
         int count = 0;
         if (entityIdPredicateBuilder != null) {
             count++;
@@ -112,7 +106,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
         if (tagPredicateBuilder != null) {
             count++;
         }
-        
+
         if (count == 0) {
             throw new BeanCreationException("No Entity, Group, or Tag element found");
         } else if (count == 1) {
@@ -139,8 +133,9 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             return orBuilder.getBeanDefinition();
         }
     }
-// Checkstyle: CyclomaticComplexity ON
-    
+
+    // Checkstyle: CyclomaticComplexity ON
+
     /**
      * Parse Entity elements into a builder for an {@link EntityIdPredicate}.
      * 
@@ -157,7 +152,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             builder.addConstructorArgValue(managedEntityList);
             return builder;
         }
-        
+
         return null;
     }
 
@@ -169,7 +164,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
      * @return builder for the predicate, or null if none needed
      */
     @Nullable public BeanDefinitionBuilder parseGroupPredicate(@Nonnull final Element element) {
-        
+
         final List<Element> groupList =
                 ElementSupport.getChildElementsByTagNameNS(element, MetadataNamespaceHandler.NAMESPACE, "Group");
         if (!groupList.isEmpty()) {
@@ -214,13 +209,12 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             builder.addConstructorArgValue(element.getAttributeNS(null, "trim"));
             return builder;
         }
-        
+
         return null;
     }
-    
+
     /** {@inheritDoc} */
     @Override protected boolean shouldGenerateId() {
         return true;
     }
-    
 }
