@@ -177,5 +177,73 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
+    
+    @Test
+    public void testHTTPSNoTrustEngine() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-https-noTrustEngine.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
+    
+    @Test
+    public void testHTTPSTrustEngineExplicitKey() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-https-trustEngine-explicitKey.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
+    
+    @Test
+    public void testHTTPSTrustEngineInvalidKey() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-https-trustEngine-invalidKey.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNull(ed);
+    }
+    
+    @Test
+    public void testHTTPSTrustEngineValidPKIX() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-https-trustEngine-validPKIX.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
+    
+    @Test
+    public void testHTTPSTrustEngineInvalidPKIX() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-https-trustEngine-invalidPKIX.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNull(ed);
+    }
 
 }

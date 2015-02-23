@@ -48,25 +48,50 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
     
-    @Test(enabled=false) public void httpsTrustEngine() throws Exception {
+    @Test public void httpsNoTrustEngine() throws Exception {
 
-        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-trustEngine.xml", "beans.xml");
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-noTrustEngine.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "HTTPSEntity");
         
-   
-        final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
-        Assert.assertTrue(resolver.isFailFastInitialization());
-        Assert.assertTrue(resolver.isRequireValidMetadata());
-        
-        Assert.assertEquals(entities.next().getEntityID(), IDP_ID);
-        Assert.assertFalse(entities.hasNext());
-
-        Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75, 0.001);
-        Assert.assertSame(resolver.getParserPool(), parserPool);
-        
-        Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
     }
+    
+    @Test public void httpsTrustEngineExplicitKey() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-trustEngine-explicitKey.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPSEntity");
+        
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+    }
+    
+    @Test(expectedExceptions=BeanCreationException.class) public void httpsTrustEngineInvalidKey() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-trustEngine-invalidKey.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPSEntity");
+        
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+    } 
+    
+    @Test public void httpsTrustEngineValidPKIX() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-trustEngine-validPKIX.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPSEntity");
+        
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+    }
+    
+    @Test(expectedExceptions=BeanCreationException.class) public void httpsTrustEngineInvalidPKIX() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-trustEngine-invalidPKIX.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPSEntity");
+        
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+    } 
     
     /**Test the proxy parameters.  This will throw an exception because we do not
      * have a proxy to test against.  It is here to allow hand walking of the code during
