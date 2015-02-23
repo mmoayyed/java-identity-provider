@@ -77,7 +77,7 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
 
             final AttributeAuthorityDescriptor aa = entity.getAttributeAuthorityDescriptor(SAMLConstants.SAML11P_NS);
             Assert.assertNotNull(aa);
-            Assert.assertSame(entity.getAttributeAuthorityDescriptor(SAMLConstants.SAML20P_NS), aa);
+            Assert.assertSame(entity.getAttributeAuthorityDescriptor(SAMLConstants.SAML11P_NS), aa);
             Assert.assertNull(entity.getAttributeAuthorityDescriptor("urn:mace:shibboleth:1.0"));
             Assert.assertEquals(aa.getAttributeServices().size(), 1);
             exts = aa.getExtensions().getUnknownXMLObjects();

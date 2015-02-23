@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -66,7 +67,7 @@ import com.google.common.collect.ImmutableSet;
  */
 // Checkstyle: HideUtilityClassConstructor OFF
 public class MetadataGenerator {
-    
+
     /**
      * The end points we understand.
      */
@@ -132,7 +133,7 @@ public class MetadataGenerator {
      * The Scope.
      */
     private String scope;
-    
+
     /**
      * Whether to comment out the SAML2 AA endpoint.
      */
@@ -286,28 +287,36 @@ public class MetadataGenerator {
         endpoints = Constraint.isNotNull(points, "supplied endpoints should not be null");
     }
 
-    /** Returns whether to comment the SAML2 AA endpoint.
-     * @return  whether to comment the SAML2 AA endpoint
+    /**
+     * Returns whether to comment the SAML2 AA endpoint.
+     * 
+     * @return whether to comment the SAML2 AA endpoint
      */
     public boolean isSAML2AttributeQueryCommented() {
         return saml2AttributeQueryCommented;
     }
 
-    /** Sets whether to comment the SAML2 AA endpoint.
+    /**
+     * Sets whether to comment the SAML2 AA endpoint.
+     * 
      * @param asComment whether to comment or not.
      */
     public void setSAML2AttributeQueryCommented(boolean asComment) {
         saml2AttributeQueryCommented = asComment;
     }
 
-    /** Returns whether to comment the SAML2 Logout endpoints.
-     * @return  whether to comment the SAML2 Logout endpoints
+    /**
+     * Returns whether to comment the SAML2 Logout endpoints.
+     * 
+     * @return whether to comment the SAML2 Logout endpoints
      */
     public boolean isSAML2LogoutCommented() {
         return saml2LogoutCommented;
     }
 
-    /** Sets whether to comment the SAML2 Logout endpoints.
+    /**
+     * Sets whether to comment the SAML2 Logout endpoints.
+     * 
      * @param asComment whether to comment or not
      */
     public void setSAML2LogoutCommented(boolean asComment) {
@@ -462,8 +471,13 @@ public class MetadataGenerator {
      * @throws IOException if badness happens
      */
     private void writeAttributeAuthorityDescriptor() throws IOException {
-        writeRoleDescriptor(AttributeAuthorityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME,
-                Arrays.asList(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS));
+        final List<String> protocols;
+        if (isSAML2AttributeQueryCommented()) {
+            protocols = Collections.singletonList(SAMLConstants.SAML11P_NS);
+        } else {
+            protocols = Arrays.asList(SAMLConstants.SAML20P_NS, SAMLConstants.SAML11P_NS);
+        }
+        writeRoleDescriptor(AttributeAuthorityDescriptor.DEFAULT_ELEMENT_LOCAL_NAME, protocols);
         writer.newLine();
         openExtensions();
         writeScope();
@@ -533,7 +547,8 @@ public class MetadataGenerator {
 
     /**
      * Write out any &lt;Extensions&gt;Elements. Currently this is just the scope TODO: mdui TODO: entityAttributes
-     * @deprecated use {@link #openExtensions()} and  {@link #closeExtensions()}
+     * 
+     * @deprecated use {@link #openExtensions()} and {@link #closeExtensions()}
      * @throws IOException if badness happens
      */
     @Deprecated protected void writeExtensions() throws IOException {
@@ -606,7 +621,7 @@ public class MetadataGenerator {
         writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Description.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
         writer.newLine();
-        
+
         // Logo
         writer.write("                <");
         writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Logo.DEFAULT_ELEMENT_LOCAL_NAME);
@@ -623,7 +638,7 @@ public class MetadataGenerator {
         writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, UIInfo.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
         writer.newLine();
-        
+
         writer.write("-->");
         writer.newLine();
     }
@@ -864,6 +879,10 @@ public class MetadataGenerator {
                 writer.write(":8443/idp/profile/SAML2/SOAP/AttributeQuery\"/>");
                 if (isSAML2AttributeQueryCommented()) {
                     writer.write(" -->");
+                    writer.newLine();
+                    writer.write("        ");
+                    writer.write("<!-- If you uncomment the above you should add " + SAMLConstants.SAML20P_NS
+                            + " to the protocolSupportEnumeration above -->");
                 }
                 writer.newLine();
                 break;
