@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 /**
  * Parser for trust engines of type StaticPKIXKeySignature.
  */
-public class StaticPKIXSignatureParser extends AbstractStaticPKIXSignatureParser {
+public class StaticPKIXSignatureParser extends AbstractStaticPKIXParser {
 
     /** Schema type. */
     public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXSignature");

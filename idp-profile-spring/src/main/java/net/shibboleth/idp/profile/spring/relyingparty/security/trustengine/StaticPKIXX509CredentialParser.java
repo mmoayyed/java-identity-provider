@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 /**
  * Parser for trust engines of type StaticPKIXX509Credential.
  */
-public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXSignatureParser {
+public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXParser {
 
     /** Schema type. */
     public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXX509Credential");

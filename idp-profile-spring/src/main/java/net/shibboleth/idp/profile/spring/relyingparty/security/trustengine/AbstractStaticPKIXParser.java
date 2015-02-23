@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
 /**
  * Base Parser for trust engines of type StaticPKIXKeySignature and StaticPKIXX509Credential.
  */
-public abstract class AbstractStaticPKIXSignatureParser extends AbstractTrustEngineParser {
+public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser {
 
     /** Validation Information. */
     public static final QName VALIDATION_INFO = new QName(SecurityNamespaceHandler.NAMESPACE, "ValidationInfo");
