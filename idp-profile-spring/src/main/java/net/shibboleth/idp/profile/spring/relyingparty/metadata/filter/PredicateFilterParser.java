@@ -69,7 +69,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
         }
 
         final BeanDefinitionBuilder directionBuilder =
-                BeanDefinitionBuilder.genericBeanDefinition(PredicateFilterDirectoryFactoryBean.class);
+                BeanDefinitionBuilder.genericBeanDefinition(PredicateFilterDirectionFactoryBean.class);
         directionBuilder.addConstructorArgValue(element.getAttributeNS(null, "direction"));
         builder.addConstructorArgValue(directionBuilder.getBeanDefinition());
 

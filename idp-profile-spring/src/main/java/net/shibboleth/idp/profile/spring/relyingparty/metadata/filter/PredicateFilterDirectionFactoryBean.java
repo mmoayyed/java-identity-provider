@@ -27,7 +27,7 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 /**
  * Factory bean allow property replacements of the direction going in to a {@link PredicateFilter}.
  */
-public class PredicateFilterDirectoryFactoryBean extends AbstractFactoryBean<PredicateFilter.Direction> {
+public class PredicateFilterDirectionFactoryBean extends AbstractFactoryBean<PredicateFilter.Direction> {
 
     /** What we want to set the value from this should be "exclude" or "include".*/
     private final String value;
@@ -36,7 +36,7 @@ public class PredicateFilterDirectoryFactoryBean extends AbstractFactoryBean<Pre
      * Constructor.
      * @param what the value to set
      */
-    public PredicateFilterDirectoryFactoryBean(@Nullable String what) {
+    public PredicateFilterDirectionFactoryBean(@Nullable String what) {
         value = what;
     }
     
