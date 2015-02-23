@@ -43,6 +43,7 @@
         idp.no.tidy: Do not delete the two above files (debug only)
         idp.jetty.config: Copy jetty configuration from distribution (Unsupported)
         ldap.merge.properties:  The name of a property file to merge with ldap.properties
+        idp.conf.filemode (default "600"): The permissions to mark the files in conf with (UNIX only).
 
         The property idp.noprompt will cause a failure rather than a prompt.
     -->
@@ -118,7 +119,7 @@
         <input message="Source (Distribution) Directory:" addproperty="idp.src.dir" defaultvalue="${basedir}" />
     </target>
 
-    <target name="gettarget" depends="target-properties, setmerge, setservicemerge, target-src-default, target-nosrc-default, prompttarget, settarget" />
+    <target name="gettarget" depends="target-properties, setmerge, setservicemerge, target-src-default, target-nosrc-default, prompttarget, settarget, setfilemode" />
 
     <target name="setmerge" unless="idp.merge.properties.present">
         <property name="idp.merge.properties" value="replace.properties" />
@@ -126,6 +127,10 @@
 
     <target name="setservicemerge" unless="services.merge.properties.present">
         <property name="services.merge.properties" value="replace.services.properties" />
+    </target>
+
+    <target name="setfilemode" unless="idp.conf.filemode.present">
+        <property name="idp.conf.filemode" value="600" />
     </target>
 
     <target name="setnameidmerge" unless="nameid.merge.properties.present">
@@ -160,7 +165,7 @@
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
         <local name="entityid" />
         <input message="SAML EntityID:" addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
-    	<property name="idp.uri.subject.alt.name" value="${entityid}" />
+        <property name="idp.uri.subject.alt.name" value="${entityid}" />
         <echo file="${idp.merge.properties}" append="yes">
             idp.entityID=${entityid}
         </echo>
@@ -351,6 +356,10 @@
 
         <condition property="services.merge.properties.present">
             <isset property="services.merge.properties" />
+        </condition>
+
+        <condition property="idp.conf.filemode.present">
+            <isset property="idp.conf.filemode"/>
         </condition>
     </target>
 
@@ -663,7 +672,7 @@ A V2 Installation has been detected. Configuration will be preserved into
         <!-- See IDP-487 -->
         <chmod perm="755" dir="${idp.target.dir}/bin" includes="**/*.sh"/>
         <chmod perm="600" dir="${idp.target.dir}/credentials" includes="**/*.key"/>
-        <chmod perm="600" dir="${idp.target.dir}/conf" includes="**/*"/>
+        <chmod perm="${idp.conf.filemode}" dir="${idp.target.dir}/conf" includes="**/*"/>
         <chmod perm="444" dir="${idp.target.dir}/system" includes="**/*"/>
         <attrib readonly="true">
             <fileset dir="${idp.target.dir}/system" includes="**/*"/>
