@@ -22,9 +22,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -77,17 +75,14 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
 
     }
 
-    /** {@inheritDoc}
-     * We do <em>not</em> want Spring to add aliases derived from {@literal #NAME_ATTRIBUTE_NAME} so strip them out 
-     * from the registry. */
-    @Override protected void registerBeanDefinition(BeanDefinitionHolder definition, BeanDefinitionRegistry registry) {
-        // Register bean definition under primary name. Do *not* register the aliases.
-        String beanName = definition.getBeanName();
-        registry.registerBeanDefinition(beanName, definition.getBeanDefinition()); 
-    }
-
     /** {@inheritDoc} */
     @Override public boolean shouldGenerateId() {
         return true;
+    }
+    
+    /** {@inheritDoc}. <br/> We parse the attribute "name" and we do not want Spring to. see #IDP-571. */
+    @Override
+    protected boolean shouldParseNameAsAliases() {
+        return false;
     }
 }
