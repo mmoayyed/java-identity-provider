@@ -60,24 +60,16 @@ public class CounterStorageKeyComparator implements Comparator<String> {
     /** {@inheritDoc} */
     public int compare(String o1, String o2) {
 
-        final Long counter1 = keyToCounterMap.get(o1);
-        final Long counter2 = keyToCounterMap.get(o2);
+        final Long counter1 = keyToCounterMap.containsKey(o1) ? keyToCounterMap.get(o1) : 0;
+        final Long counter2 = keyToCounterMap.containsKey(o2) ? keyToCounterMap.get(o2) : 0;
 
-        if (counter1 == null && counter2 == null) {
+        if (counter1.equals(counter2)) {
             // Compare based on storage key list ordering.
             return Integer.compare(storageKeys.indexOf(o1), storageKeys.indexOf(o2));
-        } else if (counter1 == null) {
-            return -1;
-        } else if (counter2 == null) {
-            return 1;
-        } else if (counter1.equals(counter2)) {
-            // Compare based on storage key list ordering.
-            return Integer.compare(storageKeys.indexOf(o1), storageKeys.indexOf(o2));
-        } else {
-            // Compare counters.
-            return Long.compare(counter1, counter2);
         }
 
+        // Compare counters.
+        return Long.compare(counter1, counter2);
     }
 
 }
