@@ -21,6 +21,8 @@
             <documentation>
                 Allows credential components to be specified by filesystem path. Keys, Certificates, and CRLs may be
                 PKCS#12, DER, or PEM encoded and may be encrypted or not.
+                
+                This credential is deprecated in favor of X509ResourceBacked
             </documentation>
         </annotation>
         <complexContent>
@@ -30,7 +32,10 @@
     
     <complexType name="X509ResourceBacked">
         <annotation>
-            <documentation>This credential type is not supported by the Shibboleth IdP</documentation>
+            <documentation>
+                Allows credential components to be loaded from a Spring Resource. Keys, Certificates, and CRLs may be
+                PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
         </annotation>
         <complexContent>
             <extension base="sec:X509Credential"/>
@@ -91,6 +96,8 @@
             <documentation>
                 Allows credential components to be specified by filesystem path.
                 Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+                
+                This is deprecated in favor of BasicResourceBacked
             </documentation>
         </annotation>
         <complexContent>
@@ -100,7 +107,10 @@
     
     <complexType name="BasicResourceBacked">
         <annotation>
-            <documentation>This credential type is not supported by the Shibboleth IdP</documentation>
+            <documentation>
+                Allows credential components to be specified by Spring Resource specification.
+                Keys may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
         </annotation>
         <complexContent>
             <extension base="sec:BasicCredential"/>
@@ -253,7 +263,10 @@
     
     <complexType name="PKIXResourceBacked">
         <annotation>
-            <documentation>This credential type is not supported by the Shibboleth IdP</documentation>
+            <documentation>
+                Allows PKIX validation info components to be specified by a Spring Resource specification.
+                Certificates, and CRLs may be PKCS#12, DER, or PEM encoded and may be encrypted or not.
+            </documentation>
         </annotation>
         <complexContent>
             <extension base="sec:PKIXValidationInfoType"/>
