@@ -286,7 +286,7 @@
                 %{idp.attribute.resolver.LDAP.searchFilter}
             ]]>
         </dc:FilterTemplate>
-        <dc:StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509Filesystem">
+        <dc:StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
             <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
         </dc:StartTLSTrustCredential>
     </resolver:DataConnector>
