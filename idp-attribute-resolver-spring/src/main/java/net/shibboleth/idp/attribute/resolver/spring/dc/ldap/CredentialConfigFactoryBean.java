@@ -62,7 +62,7 @@ public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBe
             } else {
                 log.error("Supplied StartTLSTrustCredential was of type {}, not {}", trustCredential.getClass()
                         .getName(), X509Credential.class.getName());
-                throw new BeanCreationException("Supplied StartTLSTrustCredentiall was of wrong type");
+                throw new BeanCreationException("Supplied StartTLSTrustCredential was of wrong type");
             }
         }
         X509Certificate authCert = null;
