@@ -217,7 +217,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
 
             return storageKeys;
         } catch (final ConstraintViolationException e) {
-            log.warn("Unable to ... TODO", e);
+            log.warn("Unable to apply counter storage key function", e);
             return input.getSecond();
         }
     }
