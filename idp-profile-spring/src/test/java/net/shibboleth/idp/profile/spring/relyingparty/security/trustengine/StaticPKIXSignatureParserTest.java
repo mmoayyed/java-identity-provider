@@ -44,6 +44,32 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
     @Test public void simple() throws IOException, ResolverException {
         final PKIXSignatureTrustEngine engine =
                 (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIX.xml");
+        
+        Assert.assertNotNull(engine.getX509CredentialNameEvaluator());
+
+        final StaticPKIXValidationInformationResolver resolver =
+                (StaticPKIXValidationInformationResolver) engine.getPKIXResolver();
+        Assert.assertTrue(resolver.resolveTrustedNames(null).isEmpty());
+
+        final List<PKIXValidationInformation> infos = new ArrayList<>();
+        for (final PKIXValidationInformation info : resolver.resolve(null)) {
+            infos.add(info);
+        }
+        Assert.assertEquals(infos.size(), 1);
+
+        final CertPathPKIXTrustEvaluator trustEvaluator = (CertPathPKIXTrustEvaluator) engine.getPKIXTrustEvaluator();
+        final PKIXValidationOptions options = trustEvaluator.getPKIXValidationOptions();
+        Assert.assertTrue(options.isProcessCredentialCRLs());
+        Assert.assertTrue(options.isProcessEmptyCRLs());
+        Assert.assertTrue(options.isProcessExpiredCRLs());
+        Assert.assertEquals(options.getDefaultVerificationDepth().intValue(), 1);
+    }
+    
+    @Test public void nameCheckDisabled() throws IOException, ResolverException {
+        final PKIXSignatureTrustEngine engine =
+                (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIX-nameCheckDisabled.xml");
+        
+        Assert.assertNull(engine.getX509CredentialNameEvaluator());
 
         final StaticPKIXValidationInformationResolver resolver =
                 (StaticPKIXValidationInformationResolver) engine.getPKIXResolver();
@@ -66,6 +92,8 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
     @Test public void values() throws IOException, ResolverException {
         final PKIXSignatureTrustEngine engine =
                 (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXValues.xml");
+        
+        Assert.assertNotNull(engine.getX509CredentialNameEvaluator());
 
         final StaticPKIXValidationInformationResolver resolver =
                 (StaticPKIXValidationInformationResolver) engine.getPKIXResolver();
@@ -98,6 +126,8 @@ public class StaticPKIXSignatureParserTest extends AbstractSecurityParserTest {
     @Test public void certPath() throws IOException, ResolverException {
         final PKIXSignatureTrustEngine engine =
                 (PKIXSignatureTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXValuesCertPathOpts.xml");
+        
+        Assert.assertNotNull(engine.getX509CredentialNameEvaluator());
 
         final StaticPKIXValidationInformationResolver resolver =
                 (StaticPKIXValidationInformationResolver) engine.getPKIXResolver();

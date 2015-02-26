@@ -21,7 +21,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 
-import org.opensaml.security.x509.impl.BasicX509CredentialNameEvaluator;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -58,7 +57,7 @@ public class StaticPKIXSignatureParser extends AbstractStaticPKIXParser {
         builder.addConstructorArgValue(DefaultSecurityConfigurationBootstrap
                 .buildBasicInlineKeyInfoCredentialResolver());
         builder.addConstructorArgValue(getPKIXTrustEvaluator(element, parserContext));
-        builder.addConstructorArgValue(new BasicX509CredentialNameEvaluator());
+        builder.addConstructorArgValue(getX509CredentialNameEvaluator(element, parserContext));
     }
 
 }

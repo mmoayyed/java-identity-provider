@@ -21,7 +21,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 
-import org.opensaml.security.x509.impl.BasicX509CredentialNameEvaluator;
 import org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -54,7 +53,7 @@ public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXParser {
 
         builder.addConstructorArgValue(getPKIXValidationInformationResolver(element, parserContext));
         builder.addConstructorArgValue(getPKIXTrustEvaluator(element, parserContext));
-        builder.addConstructorArgValue(new BasicX509CredentialNameEvaluator());
+        builder.addConstructorArgValue(getX509CredentialNameEvaluator(element, parserContext));
     }
 
 }

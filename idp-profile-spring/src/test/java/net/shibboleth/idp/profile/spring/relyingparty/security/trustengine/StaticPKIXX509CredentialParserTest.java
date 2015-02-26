@@ -43,6 +43,8 @@ public class StaticPKIXX509CredentialParserTest extends AbstractSecurityParserTe
     @Test public void certPath() throws IOException, ResolverException {
         final PKIXX509CredentialTrustEngine engine =
                 (PKIXX509CredentialTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXCredentials.xml");
+        
+        Assert.assertNotNull(engine.getX509CredentialNameEvaluator());
 
         final StaticPKIXValidationInformationResolver resolver =
                 (StaticPKIXValidationInformationResolver) engine.getPKIXResolver();
@@ -73,5 +75,41 @@ public class StaticPKIXX509CredentialParserTest extends AbstractSecurityParserTe
         Assert.assertEquals(options.getInitialPolicies().size(), 1);
         Assert.assertTrue(options.getInitialPolicies().contains("1234"));
     }
+    
+    @Test public void nameCheckDisabled() throws IOException, ResolverException {
+        final PKIXX509CredentialTrustEngine engine =
+                (PKIXX509CredentialTrustEngine) getBean(TrustEngine.class, true, "trustengine/staticPKIXCredentials-nameCheckDisabled.xml");
+        
+        Assert.assertNull(engine.getX509CredentialNameEvaluator());
+
+        final StaticPKIXValidationInformationResolver resolver =
+                (StaticPKIXValidationInformationResolver) engine.getPKIXResolver();
+        final Set<String> tns = resolver.resolveTrustedNames(null);
+        Assert.assertEquals(tns.size(), 0);
+
+        final List<PKIXValidationInformation> infos = new ArrayList<>();
+        for (final PKIXValidationInformation info : resolver.resolve(null)) {
+            infos.add(info);
+        }
+        Assert.assertEquals(infos.size(), 1);
+        final int value = ((BasicPKIXValidationInformation) infos.get(0)).getVerificationDepth().intValue();
+
+        Assert.assertEquals(value, 99);
+
+        final CertPathPKIXTrustEvaluator trustEvaluator = (CertPathPKIXTrustEvaluator) engine.getPKIXTrustEvaluator();
+        final CertPathPKIXValidationOptions options = (CertPathPKIXValidationOptions) trustEvaluator.getPKIXValidationOptions();
+        Assert.assertFalse(options.isProcessCredentialCRLs());
+        Assert.assertFalse(options.isProcessEmptyCRLs());
+        Assert.assertFalse(options.isProcessExpiredCRLs());
+        Assert.assertEquals(options.getDefaultVerificationDepth().intValue(), 3);
+
+        Assert.assertFalse(options.isRevocationEnabled());
+        Assert.assertTrue(options.isAnyPolicyInhibited());
+        Assert.assertTrue(options.isPolicyMappingInhibited());
+        Assert.assertTrue(options.isForceRevocationEnabled());
+        Assert.assertEquals(options.getInitialPolicies().size(), 1);
+        Assert.assertTrue(options.getInitialPolicies().contains("1234"));
+    }
+    
     
 }

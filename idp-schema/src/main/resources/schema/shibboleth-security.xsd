@@ -611,7 +611,7 @@
                     <element name="TrustedName" type="string" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
-                                Specifies an optional trusted name against which the target entity 
+                                Specifies a trusted name against which the target entity 
                                 certificate's public key must be bound for trust processing to be successful.
                                 
                                 Supported trusted name formats are:
@@ -621,6 +621,8 @@
                                 
                                 If multiple instances of this element are present, trust processing
                                 is successful if the target entity certificate matches at least one of them.
+                                
+                                Trusted names are ignored and therefore optional if trustedNameCheckEnabled = false.
                             </documentation>
                         </annotation>
                     </element>
@@ -639,6 +641,15 @@
                         </annotation>
                     </element>
                 </sequence>
+                <attribute name="trustedNameCheckEnabled" type="string">
+                    <annotation>
+                        <documentation>
+                            If true, the candidate X509Crednetial's certificate must match one of the 
+                            names indicated via the TrustedName child elements.
+                            Defaults to true.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -676,7 +687,7 @@
                     <element name="TrustedName" type="string" minOccurs="0" maxOccurs="unbounded">
                         <annotation>
                             <documentation>
-                                Specifies an optional trusted name against which the target entity 
+                                Specifies a trusted name against which the target entity 
                                 certificate's public key must be bound for trust processing to be successful.
                                 
                                 Supported trusted name formats are:
@@ -686,6 +697,8 @@
                                 
                                 If multiple instances of this element are present, trust processing
                                 is successful if the target entity certificate matches at least one of them.
+                                
+                                Trusted names are ignored and therefore optional if trustedNameCheckEnabled=false.
                             </documentation>
                         </annotation>
                     </element>
@@ -704,6 +717,15 @@
                         </annotation>
                     </element>
                 </sequence>
+                <attribute name="trustedNameCheckEnabled" type="string">
+                    <annotation>
+                        <documentation>
+                            If true, the candidate X509Crednetial's certificate must match one of the 
+                            names indicated via the TrustedName child elements.
+                            Defaults to true.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
