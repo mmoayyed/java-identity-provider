@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata:MetadataProvider xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:metadata="urn:mace:shibboleth:2.0:metadata"
     xmlns:security="urn:mace:shibboleth:2.0:security" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
-                       urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
+                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
-	id="HTTPSEntity" xsi:type="metadata:HTTPMetadataProvider" metadataURL="https://svn.shibboleth.net/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml"> 
+	id="dynamicTemplate" xsi:type="metadata:DynamicHTTPMetadataProvider" >
     
     <metadata:TLSTrustEngine>
-        <security:TrustEngine id="trustEngine" xsi:type="security:StaticPKIXX509Credential" trustedNameCheckEnabled="false">
+        <security:TrustEngine id="trustEngine" xsi:type="security:StaticPKIXX509Credential">
+            <security:TrustedName>*.shibboleth.net</security:TrustedName>
             <security:ValidationInfo id="validRoot" xsi:type="security:PKIXInline" verifyDepth="5">
                 <!-- This is the AddTrust External CA Root for the *.shibboleth.net wildcard cert which expires Jan 2017. -->
                 <security:Certificate>
@@ -41,6 +42,11 @@ mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=
             </security:ValidationInfo>
         </security:TrustEngine>
     </metadata:TLSTrustEngine>
+    
+    <!-- Note: use of the transformRef here is mostly just to facilitate testing. -->
+    <metadata:Template transformRef="digester.SHA1HexLower">
+        https://svn.shibboleth.net/java-opensaml/trunk/opensaml-saml-impl/src/test/resources/data/org/opensaml/saml/metadata/resolver/impl/${entityID}.xml
+    </metadata:Template>
 
 </metadata:MetadataProvider>
                                    

@@ -234,6 +234,20 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     }
     
     @Test
+    public void testHTTPSTrustEngineValidPKIXExplicitTrustedName() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamic-https-trustEngine-validPKIX-explicitTrustedName.xml", "beans.xml");
+        
+        String entityID = "https://www.example.org/sp";
+        
+        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        
+        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        Assert.assertNotNull(ed);
+        Assert.assertEquals(ed.getEntityID(), entityID);
+    }
+    
+    @Test
     public void testHTTPSTrustEngineInvalidPKIX() throws Exception {
         FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-https-trustEngine-invalidPKIX.xml", "beans.xml");
