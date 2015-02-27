@@ -596,11 +596,11 @@
         <local name="target" />
         <property name="target" value="${idp.target.dir}/old-${DSTAMP}-${TSTAMP}" />
 
+        <!--- IDP-626 we do not need to preserve tmp -->
+        <delete failonerror="false"  dir="${idp.target.dir}/jetty-base/tmp"/>
         <copy todir="${target}/jetty-base" failonerror="false">
             <fileset dir="${idp.target.dir}/jetty-base" />
         </copy>
-    	<!--- IDP-626 we do not need to preserve tmp -->
-        <delete failonerror="false"  dir="${target}/jetty-base/tmp"/>
         <delete failonerror="false" dir="${idp.target.dir}/jetty-base"/>
 
         <!-- Copy new -->
