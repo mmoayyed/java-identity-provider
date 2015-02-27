@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Shibboleth Identity Provider V3" basedir=".." default="install"
     xmlns:if="ant:if"
-    xmlns:unless="ant:unless">
+    xmlns:unless="ant:unless">  
 
     <taskdef resource="net/shibboleth/idp/installer/ant.xml" />
 
@@ -599,6 +599,8 @@
         <copy todir="${target}/jetty-base" failonerror="false">
             <fileset dir="${idp.target.dir}/jetty-base" />
         </copy>
+    	<!--- IDP-626 we do not need to preserve tmp -->
+        <delete failonerror="false"  dir="${target}/jetty-base/tmp"/>
         <delete failonerror="false" dir="${idp.target.dir}/jetty-base"/>
 
         <!-- Copy new -->
