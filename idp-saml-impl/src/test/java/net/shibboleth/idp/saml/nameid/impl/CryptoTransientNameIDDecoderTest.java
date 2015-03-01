@@ -122,17 +122,19 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(decoder.decode(ct, RECIPIENT), PRINCIPAL);
     }
 
-    @Test(expectedExceptions = {NameDecoderException.class,}) public void timeout()
+    @Test(expectedExceptions = NameDecoderException.class)
+    public void timeout()
             throws SubjectCanonicalizationException, DataSealerException, NameDecoderException {
         final String ct = code(PRINCIPAL, RECIPIENT, -10);
 
         decoder.decode(ct, RECIPIENT);
     }
 
-    @Test public void baddata() throws DataSealerException, NameDecoderException {
+    @Test(expectedExceptions = NameDecoderException.class)
+    public void baddata() throws DataSealerException, NameDecoderException {
         final String ct = code(PRINCIPAL, ISSUER, RECIPIENT);
 
-        Assert.assertNull(decoder.decode(ct.toUpperCase(), RECIPIENT));
+        decoder.decode(ct.toUpperCase(), RECIPIENT);
     }
 
     @Test public void baddata2() throws DataSealerException, NameDecoderException {
