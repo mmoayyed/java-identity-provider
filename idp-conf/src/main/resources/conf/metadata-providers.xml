@@ -55,7 +55,7 @@
             </PublicKey>
         </MetadataFilter>
         <MetadataFilter xsi:type="EntityRoleWhiteList">
-            <RetainedRole>samlmd:SPSSODescriptor</RetainedRole>
+            <RetainedRole>md:SPSSODescriptor</RetainedRole>
         </MetadataFilter>
         
     </MetadataProvider>
