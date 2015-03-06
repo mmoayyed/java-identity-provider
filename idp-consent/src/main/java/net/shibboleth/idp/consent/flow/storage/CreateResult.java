@@ -71,11 +71,7 @@ public class CreateResult extends AbstractConsentIndexedStorageAction {
             final Map<String, Consent> currentConsents = getConsentContext().getCurrentConsents();
             final String value = getStorageSerializer().serialize(currentConsents);
 
-            final Long lifetime = getConsentFlowDescriptor().getLifetime();
-            Long expiration = null;
-            if (lifetime != null) {
-                expiration = DateTime.now().plus(lifetime).getMillis();
-            }
+            final long expiration = DateTime.now().plus(getConsentFlowDescriptor().getLifetime()).getMillis();
 
             final ProfileInterceptorResult result =
                     new ConsentResult(getStorageContext(), getStorageKey(), value, expiration);

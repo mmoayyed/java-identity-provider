@@ -18,6 +18,7 @@
 package net.shibboleth.idp.consent.flow;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -36,7 +37,7 @@ public class ConsentFlowDescriptorTest {
     @Test public void testInstantation() {
         Assert.assertEquals(descriptor.getId(), "test");
         Assert.assertFalse(descriptor.compareValues());
-        Assert.assertNull(descriptor.getLifetime());
+        Assert.assertEquals(Long.valueOf(DOMTypeSupport.durationToLong("P1Y")), descriptor.getLifetime());
     }
 
     @Test public void testCompareValues() {

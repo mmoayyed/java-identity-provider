@@ -58,11 +58,7 @@ public class CreateGlobalConsentResult extends AbstractConsentIndexedStorageActi
             final String value =
                     getStorageSerializer().serialize(Collections.singletonMap(globalConsent.getId(), globalConsent));
 
-            final Long lifetime = getConsentFlowDescriptor().getLifetime();
-            Long expiration = null;
-            if (lifetime != null) {
-                expiration = DateTime.now().plus(lifetime).getMillis();
-            }
+            final long expiration = DateTime.now().plus(getConsentFlowDescriptor().getLifetime()).getMillis();
 
             final ProfileInterceptorResult result =
                     new ConsentResult(getStorageContext(), getStorageKey(), value, expiration);

@@ -40,6 +40,7 @@
             p:globalConsentAllowed="%{idp.consent.allowGlobal:true}"
             p:perAttributeConsentEnabled="%{idp.consent.allowPerAttribute:false}"
             p:compareValues="%{idp.consent.compareValues:false}"
+            p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
             p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
             p:nonBrowserSupported="false">
         <property name="activationCondition">
@@ -61,6 +62,7 @@
         class="net.shibboleth.idp.consent.flow.ConsentFlowDescriptor"
         p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
         p:compareValues="%{idp.consent.compareValues:false}"
+        p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
         p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
         p:nonBrowserSupported="false" />
 
