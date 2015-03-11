@@ -186,7 +186,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
             return Collections.emptyList();
         }
 
-        return new ArrayList<String>((Collection<String>) storageRecord.getValue(getStorageKeysSerializer(),
+        return new ArrayList<>((Collection<String>) storageRecord.getValue(getStorageKeysSerializer(),
                 getStorageContext(), getStorageIndexKey()));
     }
 

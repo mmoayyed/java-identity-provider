@@ -62,7 +62,7 @@ public class AttributeReleaseConsentFunction implements Function<ProfileRequestC
     public AttributeReleaseConsentFunction() {
         consentContextLookupStrategy = new ChildContextLookup<>(ConsentContext.class, false);
         consentFlowDescriptorLookupStrategy =
-                new FlowDescriptorLookupFunction<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
         attributeReleaseContextLookupStrategy = new ChildContextLookup<>(AttributeReleaseContext.class, false);
         attributeValuesHashFunction = new AttributeValuesHashFunction();
     }

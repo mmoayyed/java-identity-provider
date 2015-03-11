@@ -73,7 +73,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
         consentKeyLookupStrategy = new RelyingPartyIdLookupFunction();
         consentValueMessageCodeSuffix = ".text";
         consentFlowDescriptorLookupStrategy =
-                new FlowDescriptorLookupFunction<ConsentFlowDescriptor>(ConsentFlowDescriptor.class);
+                new FlowDescriptorLookupFunction<>(ConsentFlowDescriptor.class);
         hashFunction = new HashFunction();
         localeLookupStrategy = new LocaleLookupFunction();
     }

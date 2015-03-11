@@ -102,7 +102,7 @@ public class CollectionSerializer extends AbstractInitializableComponent impleme
             throw new IOException("Found invalid data structure");
         }
 
-        final Collection<String> collection = new ArrayList<String>();
+        final Collection<String> collection = new ArrayList<>();
 
         for (final JsonValue arrayValue : (JsonArray) st) {
             if (arrayValue.getValueType().equals(ValueType.STRING)) {
