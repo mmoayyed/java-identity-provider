@@ -37,7 +37,7 @@
         p:attributeIdMatchExpression="#{getObject('shibboleth.consent.attribute-release.MatchExpression')}" />
 
     <!-- Functions to return a storage key consisting of the user identifier. -->
-    
+
     <bean id="shibboleth.consent.PrincipalConsentStorageKey"
         class="com.google.common.base.Functions" factory-method="compose"
         c:g-ref="shibboleth.PrincipalNameLookup.Subject"
@@ -103,13 +103,12 @@
         class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="AttributeReleaseConsentFunction"  />
 
+    <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
-        <property name="fallbackLanguages">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
-        </property>
-    </bean>
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:fallbackLanguages-ref="FallbackLanguages"/>
 
     <bean id="RevokeConsent"
         class="net.shibboleth.idp.consent.flow.storage.RevokeConsent" scope="prototype"

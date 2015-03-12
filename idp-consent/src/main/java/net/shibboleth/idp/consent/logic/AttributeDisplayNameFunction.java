@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.springframework.util.StringUtils;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 
@@ -63,15 +63,7 @@ public class AttributeDisplayNameFunction implements Function<IdPAttribute, Stri
      * @param request The {@link HttpServletRequest} this is used to get the languages.
      * @param defaultLangauages the comma delimited list of fallback languages
      */
-    public AttributeDisplayNameFunction(@Nonnull HttpServletRequest request, @Nullable String defaultLangauages) {
-
-        final String[] languageStrings;
-
-        if (null == defaultLangauages) {
-            languageStrings = new String[0];
-        } else {
-            languageStrings = StringUtils.commaDelimitedListToStringArray(defaultLangauages);
-        }
+    public AttributeDisplayNameFunction(@Nonnull HttpServletRequest request, @Nullable List<String> defaultLangauages) {
 
         final Enumeration<Locale> requestLocales = request.getLocales();
         
@@ -80,9 +72,13 @@ public class AttributeDisplayNameFunction implements Function<IdPAttribute, Stri
         while (requestLocales.hasMoreElements()) {
             Locale l = requestLocales.nextElement();
             newLocales.add(l);
+            LoggerFactory.getLogger(this.getClass()).trace("Adding locale {}", l);
         }
-        for (String s : languageStrings) {
-            newLocales.add(new Locale(s));
+        if (null != defaultLangauages) {
+            for (String s : defaultLangauages) {
+                newLocales.add(new Locale(s));
+                LoggerFactory.getLogger(this.getClass()).trace("Adding language {}", s);
+            }
         }
         locales = newLocales;
     }

@@ -33,6 +33,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
 /**
  * test for {@link AttributeDisplayNameFunction}.
@@ -87,10 +88,12 @@ public class AttributeDisplayNameFunctionTest {
     }
 
     @Test public void testWithDefault() {
-        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), "en,fr,de");
+        List<String> fallback = Lists.newArrayList("en", "fr", "de");
+        
+        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), fallback);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
 
-        func = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), "en,fr,de");
+        func = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), fallback);
         Assert.assertEquals(func.apply(testAttribute), "EN locale Name");
     }
 
