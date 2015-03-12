@@ -17,14 +17,22 @@
 
 package net.shibboleth.idp.consent.logic;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.springframework.util.StringUtils;
 
 import com.google.common.base.Function;
 
@@ -35,37 +43,68 @@ import com.google.common.base.Function;
 public class AttributeDisplayNameFunction implements Function<IdPAttribute, String> {
 
     /** Locale. */
-    @Nonnull private final Locale locale;
+    @Nonnull private final List<Locale> locales;
+    
+    /**
+     * Constructor.
+     * 
+     * @param l locale
+     * @deprecated use {@link #AttributeDisplayNameFunction(HttpServletRequest, String)}
+     */
+    @Deprecated public AttributeDisplayNameFunction(@Nonnull final Locale l) {
+        Constraint.isNotNull(l, "Locale cannot be null");
+
+        locales = Collections.singletonList(l);
+    }
 
     /**
      * Constructor.
-     *
-     * @param l locale
+     * 
+     * @param request The {@link HttpServletRequest} this is used to get the languages.
+     * @param defaultLangauages the comma delimited list of fallback languages
      */
-    public AttributeDisplayNameFunction(@Nonnull final Locale l) {
-        Constraint.isNotNull(l, "Locale cannot be null");
+    public AttributeDisplayNameFunction(@Nonnull HttpServletRequest request, @Nullable String defaultLangauages) {
 
-        locale = l;
+        final String[] languageStrings;
+
+        if (null == defaultLangauages) {
+            languageStrings = new String[0];
+        } else {
+            languageStrings = StringUtils.commaDelimitedListToStringArray(defaultLangauages);
+        }
+
+        final Enumeration<Locale> requestLocales = request.getLocales();
+        
+        final List<Locale> newLocales = new ArrayList<>();
+
+        while (requestLocales.hasMoreElements()) {
+            Locale l = requestLocales.nextElement();
+            newLocales.add(l);
+        }
+        for (String s : languageStrings) {
+            newLocales.add(new Locale(s));
+        }
+        locales = newLocales;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull @NotEmpty public String apply(@Nonnull final IdPAttribute input) {
+    @Override @Nonnull @NotEmpty public String apply(@Nonnull final IdPAttribute input) {
         if (input == null) {
             return "N/A";
         }
         final Map<Locale, String> displayNames = input.getDisplayNames();
         if (!displayNames.isEmpty()) {
-            String displayName = displayNames.get(locale);
-            if (displayName != null) {
-                return displayName;
-            }
-            displayName = displayNames.get(Locale.forLanguageTag(locale.getLanguage()));
-            if (displayName != null) {
-                return displayName;
+            for (Locale locale : locales) {
+                String displayName = displayNames.get(locale);
+                if (displayName != null) {
+                    return displayName;
+                }
+                displayName = displayNames.get(Locale.forLanguageTag(locale.getLanguage()));
+                if (displayName != null) {
+                    return displayName;
+                }
             }
         }
         return input.getId();
     }
-
 }
