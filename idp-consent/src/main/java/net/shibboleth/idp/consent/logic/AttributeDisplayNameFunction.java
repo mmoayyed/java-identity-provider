@@ -40,28 +40,29 @@ import com.google.common.base.Function;
  */
 public class AttributeDisplayNameFunction implements Function<IdPAttribute, String> {
 
-    /** Locale. */
+    /** Desired locales in order of preference. */
     @Nonnull private final List<Locale> locales;
     
     /**
      * Constructor.
      * 
      * @param request The {@link HttpServletRequest} this is used to get the languages.
-     * @param defaultLangauages the comma delimited list of fallback languages
+     * @param defaultLanguages the comma delimited list of fallback languages
      */
-    public AttributeDisplayNameFunction(@Nonnull HttpServletRequest request, @Nullable List<String> defaultLangauages) {
+    public AttributeDisplayNameFunction(@Nonnull final HttpServletRequest request,
+            @Nullable final List<String> defaultLanguages) {
 
         final Enumeration<Locale> requestLocales = request.getLocales();
         
         final List<Locale> newLocales = new ArrayList<>();
 
         while (requestLocales.hasMoreElements()) {
-            Locale l = requestLocales.nextElement();
+            final Locale l = requestLocales.nextElement();
             newLocales.add(l);
             LoggerFactory.getLogger(this.getClass()).trace("Adding locale {}", l);
         }
-        if (null != defaultLangauages) {
-            for (String s : defaultLangauages) {
+        if (null != defaultLanguages) {
+            for (final String s : defaultLanguages) {
                 newLocales.add(new Locale(s));
                 LoggerFactory.getLogger(this.getClass()).trace("Adding language {}", s);
             }
@@ -76,7 +77,7 @@ public class AttributeDisplayNameFunction implements Function<IdPAttribute, Stri
         }
         final Map<Locale, String> displayNames = input.getDisplayNames();
         if (!displayNames.isEmpty()) {
-            for (Locale locale : locales) {
+            for (final Locale locale : locales) {
                 String displayName = displayNames.get(locale);
                 if (displayName != null) {
                     return displayName;
