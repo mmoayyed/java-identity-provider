@@ -18,7 +18,6 @@
 package net.shibboleth.idp.consent.logic;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.slf4j.LoggerFactory;
 
@@ -45,18 +43,6 @@ public class AttributeDisplayNameFunction implements Function<IdPAttribute, Stri
     /** Locale. */
     @Nonnull private final List<Locale> locales;
     
-    /**
-     * Constructor.
-     * 
-     * @param l locale
-     * @deprecated use {@link #AttributeDisplayNameFunction(HttpServletRequest, String)}
-     */
-    @Deprecated public AttributeDisplayNameFunction(@Nonnull final Locale l) {
-        Constraint.isNotNull(l, "Locale cannot be null");
-
-        locales = Collections.singletonList(l);
-    }
-
     /**
      * Constructor.
      * 

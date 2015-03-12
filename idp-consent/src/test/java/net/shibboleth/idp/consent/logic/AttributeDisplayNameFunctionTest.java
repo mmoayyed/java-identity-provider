@@ -72,13 +72,6 @@ public class AttributeDisplayNameFunctionTest {
         return request;
     }
     
-    @Test public void testServerLocale() {
-        @SuppressWarnings("deprecation")
-        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(new Locale("fr"));
-        
-        Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
-    }
-    
     @Test public void testHttpOnly() {
         Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), null);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
