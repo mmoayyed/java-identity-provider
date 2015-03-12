@@ -17,13 +17,19 @@
 
 package net.shibboleth.idp.consent.logic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -32,8 +38,10 @@ import com.google.common.base.Function;
  * test for {@link AttributeDisplayNameFunction}.
  */
 public class AttributeDisplayNameFunctionTest {
+    
+    private IdPAttribute testAttribute;
 
-    private IdPAttribute constructAttribute() {
+    @BeforeClass public void constructAttribute() {
         final IdPAttribute attr = new IdPAttribute("What");
 
         final Map<Locale, String> names = new HashMap<>(3);
@@ -49,12 +57,41 @@ public class AttributeDisplayNameFunctionTest {
         attr.setDisplayNames(names);
         attr.setDisplayDescriptions(descriptions);
         
-        return attr;
+        testAttribute = attr;
+    }
+    
+    private HttpServletRequest getMockRequest(String... languages) {
+        
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final List<Locale> locales = new ArrayList<>(languages.length);
+        for (String language: languages) {
+            locales.add(new Locale(language));
+        }
+        request.setPreferredLocales(locales);
+        return request;
     }
     
     @Test public void testServerLocale() {
+        @SuppressWarnings("deprecation")
         Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(new Locale("fr"));
         
-        Assert.assertEquals(func.apply(constructAttribute()), "FR locale Name");
+        Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
     }
+    
+    @Test public void testHttpOnly() {
+        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), null);
+        Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
+
+        func = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), null);
+        Assert.assertEquals(func.apply(testAttribute), testAttribute.getId());
+    }
+
+    @Test public void testWithDefault() {
+        Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), "en,fr,de");
+        Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
+
+        func = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), "en,fr,de");
+        Assert.assertEquals(func.apply(testAttribute), "EN locale Name");
+    }
+
 }
