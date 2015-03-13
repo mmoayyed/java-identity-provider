@@ -62,7 +62,7 @@
 
     <!-- 
     <bean id="shibboleth.consent.attribute-release.MatchExpression" class="java.util.regex.Pattern" factory-method="compile" 
-        c:regex="^exampleAttribute.*$" />
+        c:_0="^exampleAttribute.*$" />
     -->
 
     <!--
