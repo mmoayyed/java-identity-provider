@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
 /**
  * test for {@link AttributeDisplayNameFunction}.
  */
-public class AttributeDisplayNameFunctionTest {
+public class AttributeDisplayNameDescriptionFunctionTest {
     
     private IdPAttribute testAttribute;
 
@@ -72,7 +72,7 @@ public class AttributeDisplayNameFunctionTest {
         return request;
     }
     
-    @Test public void testHttpOnly() {
+    @Test public void testNameHttpOnly() {
         Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), null);
         Assert.assertEquals(func.apply(testAttribute), "FR locale Name");
 
@@ -80,7 +80,7 @@ public class AttributeDisplayNameFunctionTest {
         Assert.assertEquals(func.apply(testAttribute), testAttribute.getId());
     }
 
-    @Test public void testWithDefault() {
+    @Test public void testNameWithDefault() {
         List<String> fallback = Lists.newArrayList("en", "fr", "de");
         
         Function<IdPAttribute, String> func = new AttributeDisplayNameFunction(getMockRequest("fr", "de", "en"), fallback);
@@ -90,4 +90,21 @@ public class AttributeDisplayNameFunctionTest {
         Assert.assertEquals(func.apply(testAttribute), "EN locale Name");
     }
 
+    @Test public void testDescHttpOnly() {
+        Function<IdPAttribute, String> func = new AttributeDisplayDescriptionFunction(getMockRequest("fr", "de", "en"), null);
+        Assert.assertEquals(func.apply(testAttribute), "FR locale Description");
+
+        func = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), null);
+        Assert.assertEquals(func.apply(testAttribute), testAttribute.getId());
+    }
+
+    @Test public void testDescWithDefault() {
+        List<String> fallback = Lists.newArrayList("en", "fr", "de");
+        
+        Function<IdPAttribute, String> func = new AttributeDisplayDescriptionFunction(getMockRequest("fr", "de", "en"), fallback);
+        Assert.assertEquals(func.apply(testAttribute), "FR locale Description");
+
+        func = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), fallback);
+        Assert.assertEquals(func.apply(testAttribute), "EN locale Description");
+    }
 }
