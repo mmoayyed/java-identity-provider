@@ -36,13 +36,14 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse().setStatus(500)" />
             <evaluate expression="RecordResponseComplete" />
         </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>
 
     <!-- Passthrough state if an exception is thrown. -->
 
     <action-state id="LogRuntimeException">
         <on-entry>
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile').error('Uncaught runtime exception', rootCauseException)" />
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile').error('Uncaught runtime exception', flowExecutionException.getCause())" />
         </on-entry>
         <evaluate expression="'RuntimeException'" />
         <transition to="LogoutFailed" />

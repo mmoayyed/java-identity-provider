@@ -62,6 +62,8 @@
         
         <transition on="proceed" to="ReturnToParentFlow" />
         <transition to="HandleErrorWithView" />
+        
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </action-state>
 
     <bean-import resource="attribute-query-beans.xml" />

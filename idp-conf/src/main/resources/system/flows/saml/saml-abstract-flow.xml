@@ -121,13 +121,15 @@
         
         <transition on="proceed" to="end" />
         <transition to="HandleErrorWithView" />
+        
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </action-state>
 
     <!-- Passthrough state if an exception is thrown. -->
 
     <action-state id="LogRuntimeException">
         <on-entry>
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.saml.profile').error('Uncaught runtime exception', rootCauseException)" />
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.saml.profile').error('Uncaught runtime exception', flowExecutionException.getCause())" />
         </on-entry>
         <evaluate expression="'RuntimeException'" />
         <transition to="HandleError" />
@@ -150,6 +152,7 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
         </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>
 
     <end-state id="ErrorView" view="#{MapEventToView.apply(currentEvent)}">
@@ -160,6 +163,7 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
         </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>
 
     <!-- Successful terminal state (success meaning outbound SAML message encoded). -->

@@ -137,6 +137,8 @@
         
         <transition on="proceed" to="ReturnToParentFlow" />
         <transition to="HandleErrorWithView" />
+        
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </action-state>
 
     <action-state id="SOAPFault">
@@ -148,6 +150,8 @@
         
         <transition on="proceed" to="end" />
         <transition to="HandleErrorWithView" />
+        
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </action-state>
 
     <bean-import resource="sso-abstract-beans.xml" />
