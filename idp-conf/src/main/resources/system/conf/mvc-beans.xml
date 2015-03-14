@@ -43,6 +43,9 @@
         <property name="defaultErrorView" value="%{idp.errors.defaultView:error}"/>
     </bean>
     
+    <bean id="RethrowingFlowExecutionExceptionHandler"
+        class="net.shibboleth.idp.profile.impl.RethrowingFlowExecutionExceptionHandler" />
+    
     <!-- ViewResolvers -->
     
     <bean id="shibboleth.VelocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
