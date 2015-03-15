@@ -21,7 +21,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
 
-import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -37,7 +36,7 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
-        return RequiredValidUntilFilter.class;
+        return RequiredValidUntilFactoryBean.class;
     }
 
     /** {@inheritDoc} */
