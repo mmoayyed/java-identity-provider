@@ -65,7 +65,7 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
                 // Treat as a Long and seconds.
                 long durationInMs = 1000 * Long.valueOf(maxValidityIntervalDuration);
                 log.warn("Numerical duration form is deprecated. The property 'maxValidityInterval'"
-                        + " on RequiredValidUntilF metadata filter should use the duration notation: {}",
+                        + " on RequiredValidUntil metadata filter should use the duration notation: {}",
                         DOMTypeSupport.longToDuration(durationInMs));
                 value.setMaxValidityInterval(durationInMs);
             }
