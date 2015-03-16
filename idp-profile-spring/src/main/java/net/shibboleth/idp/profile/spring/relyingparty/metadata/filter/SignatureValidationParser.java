@@ -82,32 +82,32 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
 
         if (hasEngineRef) {
             if (hasCertFile) {
-                log.error("{}: trustEngineRef and certificateFile are mutually exlusive", parserContext
+                log.error("{}: trustEngineRef and certificateFile are mutually exclusive", parserContext
                         .getReaderContext().getResource().getDescription());
                 throw new BeanCreationException("trustEngineRef and certificateFile are mutually exlusive");
             }
             if (trustEngines != null && !trustEngines.isEmpty()) {
-                log.error("{}: trustEngineRef and Embedded <TrustEngine>  are mutually exlusive", parserContext
+                log.error("{}: trustEngineRef and Embedded <TrustEngine>  are mutually exclusive", parserContext
                         .getReaderContext().getResource().getDescription());
-                throw new BeanCreationException("{}: trustEngineRef and Embedded <TrustEngine> are mutually exlusive");
+                throw new BeanCreationException("trustEngineRef and Embedded <TrustEngine> are mutually exclusive");
             }
             if (null != publicKeys && !publicKeys.isEmpty()) {
-                log.error("{}: trustEngineRef and certificateFile are mutually exlusive", parserContext
+                log.error("{}: trustEngineRef and certificateFile are mutually exclusive", parserContext
                         .getReaderContext().getResource().getDescription());
-                throw new BeanCreationException("trustEngineRef and embedded public keys are mutually exlusive");
+                throw new BeanCreationException("trustEngineRef and embedded public keys are mutually exclusive");
             }
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, 
                     "trustEngineRef")));
         } else if (hasCertFile) {
             if (null != publicKeys && !publicKeys.isEmpty()) {
-                log.error("{}: certificateFile and embedded public keys are mutually exlusive", parserContext
+                log.error("{}: certificateFile and embedded public keys are mutually exclusive", parserContext
                         .getReaderContext().getResource().getDescription());
-                throw new BeanCreationException("certificateFile and embedded public keys are mutually exlusive");
+                throw new BeanCreationException("certificateFile and embedded public keys are mutually exclusive");
             }
             if (trustEngines != null && !trustEngines.isEmpty()) {
-                log.error("{}: certificateFile and Embedded <TrustEngine>  are mutually exlusive", parserContext
+                log.error("{}: certificateFile and Embedded <TrustEngine>  are mutually exclusive", parserContext
                         .getReaderContext().getResource().getDescription());
-                throw new BeanCreationException("{}: Embedded <TrustEngine> and certificateFile are mutually exlusive");
+                throw new BeanCreationException("Embedded <TrustEngine> and certificateFile are mutually exclusive");
             }
             buildTrustEngine(builder, buildCertificateCredential(element.getAttributeNS(null, "certificateFile")));
         } else if (null != trustEngines && !trustEngines.isEmpty()) {
