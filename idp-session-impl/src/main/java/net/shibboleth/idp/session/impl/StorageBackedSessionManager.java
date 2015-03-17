@@ -483,7 +483,9 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         final StorageBackedIdPSession newSession =
                 new StorageBackedIdPSession(this, sessionId, principalName, System.currentTimeMillis());
-        newSession.doBindToAddress(remoteAddr);
+        if (remoteAddr != null) {
+            newSession.doBindToAddress(remoteAddr);
+        }
 
         try {
             if (!storageService.create(sessionId, SESSION_MASTER_KEY, newSession, serializer,
