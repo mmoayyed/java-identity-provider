@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.config.LoginConfiguration;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
@@ -44,8 +44,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
 
     @Test
     public void testInvalidTicketFormat() throws Exception {
-        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, "AB-1234-012346abcdef"), null)
+                .addRelyingPartyContext(TEST_SERVICE, true, new ValidateConfiguration())
                 .build();
         assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.InvalidTicketFormat.id());
     }
@@ -53,8 +54,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
     @Test
     public void testServiceMismatch() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
-        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest("mismatch", ticket.getId()), null)
+                .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
         assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.ServiceMismatch.id());
     }
@@ -62,8 +64,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
     @Test
     public void testTicketExpired() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
-        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
+                .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
         // Remove the ticket prior to validation to simulate expiration
         ticketService.removeServiceTicket(ticket.getId());
@@ -74,8 +77,9 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
     public void testTicketRetrievalError() throws Exception {
         final TicketService throwingTicketService = mock(TicketService.class);
         when(throwingTicketService.removeServiceTicket(any(String.class))).thenThrow(new RuntimeException("Broken"));
-        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, "ST-12345"), null)
+                .addRelyingPartyContext(TEST_SERVICE, true, new ValidateConfiguration())
                 .build();
         assertEquals(
                 newAction(throwingTicketService).execute(context).getId(),
@@ -85,22 +89,35 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
     @Test
     public void testServiceTicketValidateSuccess() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, false);
-        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
+                .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
         final ValidateTicketAction action = newAction(ticketService);
         assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.id());
         assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 
+    @Test
+    public void testServiceTicketValidateSuccessWithJSessionID() throws Exception {
+        final ServiceTicket ticket = createServiceTicket(TEST_SERVICE + ";jsessionid=abc123", false);
+        final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
+                .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
+                .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
+                .build();
+        final ValidateTicketAction action = newAction(ticketService);
+        assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.id());
+        assertNotNull(action.getCASResponse(getProfileContext(context)));
+    }
 
     @Test
     public void testProxyTicketValidateSuccess() throws Exception {
         final ServiceTicket st = createServiceTicket(TEST_SERVICE, false);
         final ProxyGrantingTicket pgt = createProxyGrantingTicket(st);
         final ProxyTicket pt = createProxyTicket(pgt, "proxyA");
-        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
+        final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest("proxyA", pt.getId()), null)
+                .addRelyingPartyContext(pt.getService(), true, new ValidateConfiguration())
                 .build();
         final ValidateTicketAction action = newAction(ticketService);
         assertEquals(action.execute(context).getId(), Events.ProxyTicketValidated.id());

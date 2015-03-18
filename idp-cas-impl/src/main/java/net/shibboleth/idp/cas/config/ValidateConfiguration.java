@@ -17,11 +17,13 @@
 
 package net.shibboleth.idp.cas.config;
 
+import net.shibboleth.idp.cas.service.DefaultServiceComparator;
 import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 
 /**
  * CAS protocol configuration that applies to the following ticket validation URIs:
@@ -49,6 +51,10 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
     @Nonnull
     private IdentifierGenerationStrategy pgtIOUGenerator = new TicketIdentifierGenerationStrategy("PGTIOU", 50);
 
+    /** Component responsible for enforcing ticket requestor matches ticket validator. */
+    @Nonnull
+    private Comparator<String> serviceComparator = new DefaultServiceComparator();
+
 
     /** Creates a new instance. */
     public ValidateConfiguration() {
@@ -70,6 +76,15 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
      */
     public void setPGTIOUGenerator(@Nonnull IdentifierGenerationStrategy generator) {
         this.pgtIOUGenerator = Constraint.isNotNull(generator, "PGTIOU generator cannot be null");
+    }
+
+    @Nonnull
+    public Comparator<String> getServiceComparator() {
+        return serviceComparator;
+    }
+
+    public void setServiceComparator(@Nonnull Comparator<String> serviceComparator) {
+        this.serviceComparator = serviceComparator;
     }
 
     @Override

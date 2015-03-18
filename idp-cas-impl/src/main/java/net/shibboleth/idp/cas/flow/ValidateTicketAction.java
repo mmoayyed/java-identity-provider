@@ -17,8 +17,10 @@
 
 package net.shibboleth.idp.cas.flow;
 
+import net.shibboleth.idp.cas.config.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.config.ProxyConfiguration;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
@@ -53,6 +55,10 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ValidateTicketAction.class);
 
+    /** Profile configuration lookup function. */
+    private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction =
+            new ConfigLookupFunction<>(ValidateConfiguration.class);
+
     /** Manages CAS tickets. */
     @Nonnull
     private final TicketService ticketService;
@@ -72,6 +78,12 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
     protected Event doExecute(
             final @Nonnull RequestContext springRequestContext,
             final @Nonnull ProfileRequestContext profileRequestContext) {
+
+        final ValidateConfiguration config = configLookupFunction.apply(profileRequestContext);
+        if (config == null) {
+            log.info("Ticket validation configuration undefined");
+            return ProtocolError.IllegalState.event(this);
+        }
 
         final TicketValidationRequest request = getCASRequest(profileRequestContext);
         final Ticket ticket;
@@ -97,7 +109,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             return ProtocolError.TicketExpired.event(this);
         }
 
-        if (!ticket.getService().equalsIgnoreCase(request.getService())) {
+        if (config.getServiceComparator().compare(ticket.getService(), request.getService()) != 0) {
             log.debug("Service issued for {} does not match {}", ticket.getService(), request.getService());
             return ProtocolError.ServiceMismatch.event(this);
         }
