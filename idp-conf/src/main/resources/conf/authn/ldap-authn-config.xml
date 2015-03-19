@@ -11,9 +11,8 @@
        default-lazy-init="true">
 
     <alias name="%{idp.authn.LDAP.authenticator:anonSearchAuthenticator}" alias="shibboleth.authn.LDAP.authenticator" />
-    <bean id="shibboleth.authn.LDAP.returnAttributes" parent="shibboleth.DelimStringArray">
+    <bean id="shibboleth.authn.LDAP.returnAttributes" parent="shibboleth.CommaDelimStringArray">
         <constructor-arg type="java.lang.String" value="%{idp.authn.LDAP.returnAttributes}" />
-        <constructor-arg type="java.lang.String" value=", " />
     </bean>
 
     <alias name="ValidateUsernamePasswordAgainstLDAP" alias="ValidateUsernamePassword" />

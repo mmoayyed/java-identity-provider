@@ -14,11 +14,9 @@
 
     <bean id="shibboleth.Pair" class="net.shibboleth.utilities.java.support.collection.Pair" abstract="true" />
     
-    <bean id="shibboleth.DelimStringArray"
-        class="org.springframework.util.StringUtils" factory-method="tokenizeToStringArray" abstract="true" />
     <bean id="shibboleth.CommaDelimStringArray"
         class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToStringArray" abstract="true" />
-              
+    
     <bean id="shibboleth.Conditions.AND"
         class="com.google.common.base.Predicates" factory-method="and" abstract="true" />
     <bean id="shibboleth.Conditions.NOT"
