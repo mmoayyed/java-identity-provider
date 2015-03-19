@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
+import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
@@ -383,15 +384,14 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             handlers.addConstructorArgValue(lowercaseAttributeNames);
             searchExecutor.addPropertyValue("searchEntryHandlers", handlers.getBeanDefinition());
 
-            List<String> returnAttrs = null;
             final Element returnAttrsElement =
                     ElementSupport.getFirstChildElement(configElement, new QName(
                             DataConnectorNamespaceHandler.NAMESPACE, "ReturnAttributes"));
             if (returnAttrsElement != null) {
-                returnAttrs = ElementSupport.getElementContentAsList(returnAttrsElement);
-                if (returnAttrs != null && !returnAttrs.isEmpty()) {
-                    searchExecutor.addPropertyValue("returnAttributes", returnAttrs);
-                }
+                final BeanDefinitionBuilder returnAttrs =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildStringList");
+                returnAttrs.addConstructorArgValue(ElementSupport.getElementContentAsString(returnAttrsElement));
+                searchExecutor.addPropertyValue("returnAttributes", returnAttrs.getBeanDefinition());
             }
 
             final Element filterElement =
@@ -615,6 +615,17 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          */
         public static long buildDuration(final String duration, final long divisor) {
             return DOMTypeSupport.durationToLong(duration) / divisor;
+        }
+
+        /**
+         * Converts the supplied value to a list of strings delimited by {@link XMLConstants#LIST_DELIMITERS}.
+         *
+         * @param value to convert to a list
+         *
+         * @return list of strings
+         */
+        @Nonnull public static List<String> buildStringList(final String value) {
+            return StringSupport.stringToList(value, XMLConstants.LIST_DELIMITERS);
         }
 
         /**

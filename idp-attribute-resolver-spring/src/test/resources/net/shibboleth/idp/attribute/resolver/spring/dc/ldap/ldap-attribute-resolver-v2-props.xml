@@ -20,6 +20,7 @@
                 (uid=${resolutionContext.principal})
             ]]>
         </dc:FilterTemplate>
+        <dc:ReturnAttributes>%{search.returnAttributes}</dc:ReturnAttributes>
         <dc:LDAPProperty name="name1" value="%{jndi.property1}"/>
         <dc:LDAPProperty name="name2" value="%{jndi.property2}"/>
         <dc:StartTLSTrustCredential xsi:type="security:X509Inline" xmlns:security="urn:mace:shibboleth:2.0:security" id="LDAPtoIdPCredential">
@@ -37,7 +38,7 @@
               4mvLjAdt7riBIl5y5n3tbtrZdpTgFhQxjLWTBpWIO0XKxqtBhw==
             </security:Certificate>
         </dc:StartTLSTrustCredential>
-        <dc:StartTLSAuthenticationCredential xsi:type="security:X509Filesystem" xmlns:security="urn:mace:shibboleth:2.0:security" id="IdPtoLDAPCredential">
+        <dc:StartTLSAuthenticationCredential xsi:type="security:X509ResourceBacked" xmlns:security="urn:mace:shibboleth:2.0:security" id="IdPtoLDAPCredential">
             <security:PrivateKey>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.key</security:PrivateKey>
             <security:Certificate>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.crt</security:Certificate>
         </dc:StartTLSAuthenticationCredential>

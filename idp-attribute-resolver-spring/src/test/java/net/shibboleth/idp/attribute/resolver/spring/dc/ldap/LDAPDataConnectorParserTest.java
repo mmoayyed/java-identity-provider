@@ -136,6 +136,10 @@ public class LDAPDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
+        Assert.assertEquals(attrs.size(), 3);
+        Assert.assertNotNull(attrs.get("uid"));
+        Assert.assertNotNull(attrs.get("homephone"));
+        Assert.assertNotNull(attrs.get("mail"));
     }
 
     @Test public void springConfig() throws Exception {
@@ -166,6 +170,10 @@ public class LDAPDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
+        Assert.assertEquals(attrs.size(), 3);
+        Assert.assertNotNull(attrs.get("uid"));
+        Assert.assertNotNull(attrs.get("phonenumber"));
+        Assert.assertNotNull(attrs.get("mail"));
     }
 
     /**
