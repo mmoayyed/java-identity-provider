@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.consent.flow.ar;
 
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
@@ -48,6 +50,9 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
 
     /** Predicate to determine whether consent should be obtained for an attribute. */
     @Nonnull private Predicate<IdPAttribute> attributePredicate;
+    
+    /** Comparator used to sort attributes displayed to user. */
+    @Nullable private Comparator<String> attributeIdComparator;
 
     /**
      * Set the predicate to determine whether consent should be obtained for an attribute.
@@ -56,6 +61,15 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
      */
     public void setAttributePredicate(@Nonnull final Predicate<IdPAttribute> predicate) {
         attributePredicate = Constraint.isNotNull(predicate, "Attribute predicate cannot be null");
+    }
+
+    /**
+     * Set the comparator used to sort attributes displayed to user.
+     * 
+     * @param comparator comparator used to sort attributes displayed to user
+     */
+    public void setAttributeIdComparator(@Nullable final Comparator<String> comparator) {
+        attributeIdComparator = comparator;
     }
 
     /** {@inheritDoc} */
@@ -73,7 +87,7 @@ public class PopulateAttributeReleaseContext extends AbstractAttributeReleaseAct
 
         final Map<String, IdPAttribute> attributes = getAttributeContext().getIdPAttributes();
 
-        final Map<String, IdPAttribute> consentableAttributes = new HashMap<>(attributes.size());
+        final Map<String, IdPAttribute> consentableAttributes = new TreeMap<>(attributeIdComparator);
         for (final IdPAttribute attribute : attributes.values()) {
             if (attributePredicate.apply(attribute)) {
                 consentableAttributes.put(attribute.getId(), attribute);

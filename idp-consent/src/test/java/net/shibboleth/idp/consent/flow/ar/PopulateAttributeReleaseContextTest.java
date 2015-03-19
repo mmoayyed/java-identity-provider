@@ -17,12 +17,24 @@
 
 package net.shibboleth.idp.consent.flow.ar;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.consent.ConsentTestingSupport;
 import net.shibboleth.idp.consent.context.AttributeReleaseContext;
+import net.shibboleth.idp.consent.logic.PreferExplicitOrderComparator;
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;
@@ -31,6 +43,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.Ordering;
 
 /** {@link PopulateAttributeReleaseContext} unit test. */
 public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleaseActionTest {
@@ -70,6 +83,79 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         Assert.assertTrue(arc.getConsentableAttributes().containsKey("attribute1"));
         Assert.assertTrue(arc.getConsentableAttributes().containsKey("attribute2"));
         Assert.assertFalse(arc.getConsentableAttributes().containsKey("attribute3"));
+    }
+
+    @Test public void testDefaultNaturalAttributeOrdering() throws Exception {
+
+        final Map<String, IdPAttribute> orderedAttributes = new TreeMap(Ordering.natural());
+        orderedAttributes.putAll(ConsentTestingSupport.newAttributeMap());
+
+        action = new PopulateAttributeReleaseContext();
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        action.initialize();
+
+        final Event event = action.execute(src);
+
+        ActionTestingSupport.assertProceedEvent(event);
+
+        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
+        Assert.assertNotNull(arc);
+        Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
+    }
+
+    @Test public void testExplicitAttributeOrderingWithKnownAttributesOnly() throws Exception {
+
+        final List<String> attributeOrder = Arrays.asList("attribute2", "attribute3", "attribute1");
+
+        final Map<String, IdPAttribute> orderedAttributes = new TreeMap(Ordering.explicit(attributeOrder));
+        orderedAttributes.putAll(ConsentTestingSupport.newAttributeMap());
+
+        action = new PopulateAttributeReleaseContext();
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        ((PopulateAttributeReleaseContext) action)
+                .setAttributeIdComparator(new PreferExplicitOrderComparator(attributeOrder));
+        action.initialize();
+
+        final Event event = action.execute(src);
+
+        ActionTestingSupport.assertProceedEvent(event);
+
+        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
+        Assert.assertNotNull(arc);
+        Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
+    }
+
+    @Test public void testExplicitAttributeOrderingWithUnknownAttributes() throws Exception {
+
+        final List<String> attributeOrder = Arrays.asList("attribute3", "attribute2");
+
+        final IdPAttribute attribute4 = new IdPAttribute("attribute4");
+        attribute4.setValues(Collections.singleton(new StringAttributeValue("value4")));
+
+        final Map<String, IdPAttribute> orderedAttributes = new LinkedHashMap<>();
+        orderedAttributes.put("attribute3", ConsentTestingSupport.newAttributeMap().get("attribute3"));
+        orderedAttributes.put("attribute2", ConsentTestingSupport.newAttributeMap().get("attribute2"));
+        orderedAttributes.put("attribute1", ConsentTestingSupport.newAttributeMap().get("attribute1"));
+        orderedAttributes.put("attribute4", attribute4);
+
+        final List<IdPAttribute> attributes = new ArrayList<>();
+        attributes.addAll(ConsentTestingSupport.newAttributeMap().values());
+        attributes.add(attribute4);
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class).setIdPAttributes(attributes);
+
+        action = new PopulateAttributeReleaseContext();
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        ((PopulateAttributeReleaseContext) action)
+                .setAttributeIdComparator(new PreferExplicitOrderComparator(attributeOrder));
+        action.initialize();
+
+        final Event event = action.execute(src);
+
+        ActionTestingSupport.assertProceedEvent(event);
+
+        final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
+        Assert.assertNotNull(arc);
+        Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
     }
 
     /** Mock IdP attribute predicate. */
