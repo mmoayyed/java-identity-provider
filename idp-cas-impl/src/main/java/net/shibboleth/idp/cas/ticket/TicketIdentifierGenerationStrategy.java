@@ -52,8 +52,9 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
     @Nullable
     private String suffix;
 
-    /** Generator of random ticket part. */
-    private IdGenerator randomPartGenerator;
+    /** Number of characters in random part of generated ticket. */
+    @Positive
+    private int randomLength;
 
 
     /**
@@ -65,10 +66,7 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
     public TicketIdentifierGenerationStrategy(
             @Nonnull @NotEmpty final String prefix,
             @Positive final int randomLength) {
-        if (randomLength < 1) {
-            throw new IllegalArgumentException("Length of random part of ticket must be positive");
-        }
-        this.randomPartGenerator = new RandomIdGenerator(randomLength);
+        this.randomLength = (int) Constraint.isGreaterThan(0, randomLength, "Random length must be positive");
         this.prefix = Constraint.isNotNull(StringSupport.trimOrNull(prefix), "Prefix cannot be null or empty");
         if (!isUrlSafe(this.prefix)) {
             throw new IllegalArgumentException("Unsupported prefix " + this.prefix);
@@ -93,10 +91,10 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
     @Override
     @Nonnull
     public String generateIdentifier() {
-        final StringBuilder builder = new StringBuilder(100);
+        final StringBuilder builder = new StringBuilder(randomLength * 2);
         builder.append(prefix).append('-');
         builder.append(System.currentTimeMillis()).append('-');
-        builder.append(randomPartGenerator.generate());
+        builder.append(new RandomIdGenerator(randomLength).generate());
         if (suffix != null) {
             builder.append('-').append(suffix);
         }

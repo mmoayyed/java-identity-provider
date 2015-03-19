@@ -7,10 +7,19 @@ package net.shibboleth.idp.cas.ticket;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -67,5 +76,24 @@ public class TicketIdentifierGenerationStrategyTest {
           expectedExceptions = IllegalArgumentException.class)
     public void testUrlSafety(final String prefix, final String suffix) {
         new TicketIdentifierGenerationStrategy(prefix, 10).setSuffix(suffix);
+    }
+
+    @Test
+    public void testConcurrentGeneration() throws Exception {
+        final ExecutorService executor = Executors.newFixedThreadPool(20);
+        final TicketIdentifierGenerationStrategy generator = new TicketIdentifierGenerationStrategy("ST", 50);
+        final Collection<Callable<String>> tasks = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            tasks.add(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    return generator.generateIdentifier();
+                }
+            });
+        }
+        final List<Future<String>> results = executor.invokeAll(tasks);
+        for (Future<String> result : results) {
+            assertNotNull(result.get(1, TimeUnit.SECONDS));
+        }
     }
 }
