@@ -39,7 +39,7 @@
     <action-state id="grantServiceTicket">
         <evaluate expression="grantServiceTicketAction" />
         <transition on="success" to="redirectToService" />
-        <transition on="failure" to="error" />
+        <transition on="ticketCreationError" to="error" />
     </action-state>
 
     <!-- Redirect end states -->
