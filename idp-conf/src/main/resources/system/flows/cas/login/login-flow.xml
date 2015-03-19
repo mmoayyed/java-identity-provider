@@ -48,7 +48,10 @@
             <evaluate expression="publishProtocolResponseAction" />
         </on-entry>
     </end-state>
+
     <end-state id="gatewayRedirect" view="externalRedirect:#{requestScope.serviceTicketRequest.service}" />
+
+    <!-- View end state -->
     <end-state id="error" view="error">
         <on-entry>
             <evaluate expression="environment" result="requestScope.environment" />
@@ -57,10 +60,13 @@
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
         </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>
 
     <global-transitions>
-        <transition on-exception="java.lang.IllegalStateException" to="error" />
+        <transition on-exception="java.lang.RuntimeException" to="error">
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.cas').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+        </transition>
         <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
                     to="error" />
         <transition on="illegalState" to="error" />

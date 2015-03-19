@@ -78,15 +78,19 @@
             <set name="flashScope.escapeUtils" value="T(org.apache.commons.lang.StringEscapeUtils)" />
         </on-entry>
     </end-state>
+
     <end-state id="validateFailure" view="cas/validateFailure">
         <on-entry>
             <set name="flashScope.code" value="currentEvent.attributes.code?:'INTERNAL_ERROR'" />
             <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode?:'E_ILLEGAL_STATE'" />
         </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>
 
     <global-transitions>
-        <transition on-exception="java.lang.IllegalStateException" to="validateFailure" />
+        <transition on-exception="java.lang.RuntimeException" to="validateFailure">
+            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.cas').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+        </transition>
         <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
                     to="validateFailure" />
         <transition on="illegalState" to="validateFailure" />

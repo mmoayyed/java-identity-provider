@@ -24,12 +24,14 @@
             <evaluate expression="recordResponseComplete" />
         </on-entry>
     </end-state>
+
     <end-state id="validateFailure">
         <on-entry>
             <evaluate expression="buildSamlValidationFailureMessageAction" />
             <evaluate expression="encodeMessage" />
             <evaluate expression="recordResponseComplete" />
         </on-entry>
+        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>
 
     <bean-import resource="samlValidate-beans.xml" />
