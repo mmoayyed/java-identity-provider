@@ -7,7 +7,7 @@
 	id="dynamicMDQ" xsi:type="metadata:DynamicHTTPMetadataProvider" >
     
         <metadata:MetadataQueryProtocol>
-            http://md.iay.org.uk/global
+            http://shibboleth.net:9000
         </metadata:MetadataQueryProtocol>
 
 </metadata:MetadataProvider>

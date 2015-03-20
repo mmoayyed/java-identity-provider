@@ -109,11 +109,10 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
 
     @Test
     public void testMDQ() throws Exception {
-        //TODO update with permanent test target, when it's stood up on shibboleth.net
         FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicMetadataQueryProtocol.xml", "beans.xml");
         
-        String entityID = "https://login.cmu.edu/idp/shibboleth";
+        String entityID = "https://foo1.example.org/idp/shibboleth";
         
         CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
