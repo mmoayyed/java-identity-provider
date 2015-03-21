@@ -179,7 +179,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
         }
 
         if (entityAttributesCollection.size() > 1) {
-            log.debug("{} Descriptor for {} contains more than EntityAttributes extension, only using the first one",
+            log.debug("{} Descriptor for {} contains more than one EntityAttributes extension, only using the first one",
                     getLogPrefix(), entityDescriptor.getEntityID());
         }
 
