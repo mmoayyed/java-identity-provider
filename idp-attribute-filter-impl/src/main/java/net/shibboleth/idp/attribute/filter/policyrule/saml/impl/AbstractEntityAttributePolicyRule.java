@@ -97,15 +97,14 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
     }
 
     /**
-     * Checks to see if the entity returned by {@link #getEntityMetadata(AttributeFilterContext)} contains the
-     * entity attribute specified by this matcher's configuration.
+     * Checks to see if the entity returned by {@link #getEntityMetadata(AttributeFilterContext)} contains the entity
+     * attribute specified by this matcher's configuration.
      * 
      * @param filterContext current request context
      * 
      * @return whether the entity has the configured attribute {@inheritDoc}
      */
-    @Override
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
 
         Constraint.isNotNull(filterContext, "Context must be supplied");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -129,7 +128,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
             return Tristate.FALSE;
         }
 
-        log.debug("{} Checking if entity attribute {} contains the required value.", getLogPrefix(), 
+        log.debug("{} Checking if entity attribute {} contains the required value.", getLogPrefix(),
                 getAttributeName());
         String valueString;
         for (XMLObject attributeValue : attributeValues) {
@@ -179,8 +178,8 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
         }
 
         if (entityAttributesCollection.size() > 1) {
-            log.debug("{} Descriptor for {} contains more than one EntityAttributes extension, only using the first one",
-                    getLogPrefix(), entityDescriptor.getEntityID());
+            log.debug("{} Descriptor for {} contains more than one EntityAttributes extension,"
+                    + " only using the first one", getLogPrefix(), entityDescriptor.getEntityID());
         }
 
         List<Attribute> entityAttributes = ((EntityAttributes) entityAttributesCollection.get(0)).getAttributes();
@@ -207,11 +206,11 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
                 new Object[] {getLogPrefix(), entityDescriptor.getEntityID(), getAttributeName(), getNameFormat()});
         return null;
     }
+
     // Checkstyle: CyclomaticComplexity ON
-    
+
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (attrName == null) {
             throw new ComponentInitializationException(getLogPrefix() + " Attribute name is null");
