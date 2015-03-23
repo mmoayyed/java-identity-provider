@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.policy;
 import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PredicatePolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
@@ -77,6 +78,32 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
         Assert.assertEquals(rule.getProfileContextStrategy().getClass(), Func.class);
     }
 
+    private AttributeFilterContext prcFor(String sp) {
+
+        final ProfileRequestContext prc = new ProfileRequestContext();
+        final  RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, true);rpc.setRelyingPartyId(sp);
+        return rpc.getSubcontext(AttributeFilterContext.class, true);
+    }
+    
+
+    @Test public void rp() throws Exception {
+
+        GenericApplicationContext ctx = new GenericApplicationContext();
+        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
+
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
+                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
+                + "predicateRp.xml"));
+
+        ctx.refresh();
+
+        final PredicatePolicyRule rule = ctx.getBean(PredicatePolicyRule.class);
+        Assert.assertEquals(rule.matches(prcFor("https://example.org")), Tristate.FALSE);
+        Assert.assertEquals(rule.matches(prcFor("https://sp.example.org")), Tristate.TRUE);
+        Assert.assertEquals(rule.matches(prcFor("https://sp2.example.org")), Tristate.TRUE);
+
+    }
+
     static class Foo implements Predicate<AttributeFilterContext> {
 
         /** {@inheritDoc} */
@@ -85,7 +112,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
         }
 
     }
-    
+
     static class Func implements Function<AttributeFilterContext, ProfileRequestContext> {
 
         /** {@inheritDoc} */

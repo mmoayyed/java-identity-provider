@@ -11,4 +11,16 @@
 		
 	<bean id="ctxStrategy"
 	   class="net.shibboleth.idp.attribute.filter.spring.policy.PredicateRuleParserTest.Func" />
+       
+    <bean id="rpPred" parent="shibboleth.Conditions.RelyingPartyId">
+        <constructor-arg>
+            <list>
+                <value>https://sp.example.org</value>
+                <value>https://sp2.example.org</value>
+            </list>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="shibboleth.Conditions.RelyingPartyId" class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate" abstract="true" />
+    
 </beans>
