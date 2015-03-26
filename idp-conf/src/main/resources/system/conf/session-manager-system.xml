@@ -22,15 +22,15 @@
             <map>
                 <entry key="#{ T(net.shibboleth.idp.session.BasicSPSession) }">
                     <bean class="net.shibboleth.idp.session.impl.BasicSPSessionSerializer"
-                        c:offset="%{idp.session.slop:0}" />
+                        c:offset="%{idp.session.slop:PT0S}" />
                 </entry>
                 <entry key="#{ T(net.shibboleth.idp.saml.session.SAML1SPSession) }">
                     <bean class="net.shibboleth.idp.saml.session.impl.SAML1SPSessionSerializer"
-                        c:offset="%{idp.session.slop:0}" />
+                        c:offset="%{idp.session.slop:PT0S}" />
                 </entry>
                 <entry key="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }">
                     <bean class="net.shibboleth.idp.saml.session.impl.SAML2SPSessionSerializer"
-                        c:offset="%{idp.session.slop:0}"
+                        c:offset="%{idp.session.slop:PT0S}"
                         p:parserPool-ref="shibboleth.ParserPool" />
                 </entry>
             </map>
@@ -60,7 +60,7 @@
             p:storageService-ref="%{idp.session.StorageService:shibboleth.ClientSessionStorageService}"
             p:consistentAddress="%{idp.session.consistentAddress:true}"
             p:sessionTimeout="%{idp.session.timeout:PT60M}"
-            p:sessionSlop="%{idp.session.slop:0}"
+            p:sessionSlop="%{idp.session.slop:PT0S}"
             p:maskStorageFailure="%{idp.session.maskStorageFailure:false}"
             p:trackSPSessions="%{idp.session.trackSPSessions:false}"
             p:secondaryServiceIndex="%{idp.session.secondaryServiceIndex:false}"
