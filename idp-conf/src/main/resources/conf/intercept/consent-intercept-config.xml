@@ -66,6 +66,18 @@
     -->
 
     <!--
+    The following beans define the comparator used to order attributes displayed to the user
+    during attribute release consent. The default comparator prefers ordering attributes in
+    the order in which they appear in the whitelist.
+    -->
+    <alias alias="shibboleth.consent.attribute-release.AttributeIDComparator"
+            name="shibboleth.consent.attribute-release.DefaultAttributeIDComparator" />
+            
+    <bean id="shibboleth.consent.attribute-release.DefaultAttributeIDComparator"
+        class="net.shibboleth.idp.consent.logic.PreferExplicitOrderComparator"
+        c:order-ref="shibboleth.consent.attribute-release.WhitelistedAttributeIDs" />
+
+    <!--
     These beans define mappings between audit log categories and formatting strings.
     -->
 

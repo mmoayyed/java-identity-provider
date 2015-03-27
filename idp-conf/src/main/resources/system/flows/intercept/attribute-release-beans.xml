@@ -91,7 +91,8 @@
 
     <bean id="PopulateAttributeConsentContext"
         class="net.shibboleth.idp.consent.flow.ar.PopulateAttributeReleaseContext" scope="prototype"
-        p:attributePredicate-ref="AttributePredicate" />
+        p:attributePredicate-ref="AttributePredicate"
+        p:attributeIdComparator-ref="shibboleth.consent.attribute-release.AttributeIDComparator" />
 
     <bean id="PopulatePreConsentAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
