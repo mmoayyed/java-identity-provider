@@ -35,7 +35,8 @@
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
             p:cacheSeconds="%{idp.message.cacheSeconds:300}"
-            p:basenames-ref="%{idp.message.resources:shibboleth.MessageSourceResources}" />
+            p:basenames-ref="%{idp.message.resources:shibboleth.MessageSourceResources}"
+            p:defaultEncoding="UTF-8" />
 
     <import resource="../../conf/global.xml" />
     <import resource="../../conf/errors.xml" />
