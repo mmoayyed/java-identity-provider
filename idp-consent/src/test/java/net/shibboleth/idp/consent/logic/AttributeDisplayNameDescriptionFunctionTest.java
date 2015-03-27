@@ -36,7 +36,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
- * test for {@link AttributeDisplayNameFunction}.
+ * {@link AttributeDisplayNameFunction} and {@link AttributeDisplayDescriptionFunction} unit tests.
  */
 public class AttributeDisplayNameDescriptionFunctionTest {
     
@@ -106,5 +106,15 @@ public class AttributeDisplayNameDescriptionFunctionTest {
 
         func = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), fallback);
         Assert.assertEquals(func.apply(testAttribute), "EN locale Description");
+    }
+
+    @Test public void testNullFallbackLanguage() {
+        List<String> fallback = Lists.newArrayList(null, "fr");
+        
+        Function<IdPAttribute, String> displayNameFunc = new AttributeDisplayNameFunction(getMockRequest("pt", "es"), fallback);
+        Assert.assertEquals(displayNameFunc.apply(testAttribute), "FR locale Name");
+        
+        Function<IdPAttribute, String> descFunc = new AttributeDisplayDescriptionFunction(getMockRequest("pt", "es"), fallback);
+        Assert.assertEquals(descFunc.apply(testAttribute), "FR locale Description");
     }
 }

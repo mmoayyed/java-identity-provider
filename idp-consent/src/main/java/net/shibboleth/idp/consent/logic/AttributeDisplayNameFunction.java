@@ -30,8 +30,8 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import com.google.common.base.Function;
 
 /**
- * Function which returns the display names of an attribute for the defined {@link Locale}, defaulting to the
- * attribute id if no names are configured.
+ * Function which returns the locale-aware display name of an attribute, defaulting to the
+ * attribute ID if the attribute has no display name.
  */
 public class AttributeDisplayNameFunction extends AbstractAttributeDisplayFunction implements
         Function<IdPAttribute, String> {
@@ -39,16 +39,16 @@ public class AttributeDisplayNameFunction extends AbstractAttributeDisplayFuncti
     /**
      * Constructor.
      * 
-     * @param request The {@link HttpServletRequest} this is used to get the languages.
-     * @param defaultLangauages the comma delimited list of fallback languages
+     * @param request {@link HttpServletRequest} used to get preferred languages
+     * @param defaultLangauages list of fallback languages in order of decreasing preference
      */
-    public AttributeDisplayNameFunction(@Nonnull HttpServletRequest request,
-            @Nullable List<String> defaultLangauages) {
+    public AttributeDisplayNameFunction(@Nonnull final HttpServletRequest request,
+            @Nullable final List<String> defaultLangauages) {
         super(request, defaultLangauages);
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull protected Map<Locale, String> getDisplayInfo(@Nonnull IdPAttribute attribute) {
+    @Override @Nonnull protected Map<Locale, String> getDisplayInfo(@Nonnull final IdPAttribute attribute) {
         return attribute.getDisplayNames();
     }
 }

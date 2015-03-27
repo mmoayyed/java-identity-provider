@@ -33,9 +33,9 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import com.google.common.base.Function;
 
 /**
- * Abstract Function which returns information about attribute for the defined {@link Locale}. The abstract method
- * {@link #getDisplayInfo(IdPAttribute)} returns the information select from and the default is the attribute id if no
- * information is returned.
+ * Abstract Function which returns {@link Locale}-aware information about an attribute. The abstract method
+ * {@link #getDisplayInfo(IdPAttribute)} returns the information selected from the attribute. This function defaults to
+ * returning the attribute ID if no information is selected from the attribute for the desired locales.
  */
 public abstract class AbstractAttributeDisplayFunction implements Function<IdPAttribute, String> {
 
@@ -45,42 +45,43 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
     /**
      * Constructor.
      * 
-     * @param request The {@link HttpServletRequest} this is used to get the languages.
-     * @param defaultLanguages the comma delimited list of fallback languages
+     * @param request {@link HttpServletRequest} used to get preferred languages
+     * @param defaultLanguages list of fallback languages in order of decreasing preference
      */
-    public AbstractAttributeDisplayFunction(@Nonnull HttpServletRequest request,
-            @Nullable List<String> defaultLanguages) {
-
-        final Enumeration<Locale> requestLocales = request.getLocales();
+    public AbstractAttributeDisplayFunction(@Nonnull final HttpServletRequest request,
+            @Nullable final List<String> defaultLanguages) {
 
         final List<Locale> newLocales = new ArrayList<>();
 
+        final Enumeration<Locale> requestLocales = request.getLocales();
         while (requestLocales.hasMoreElements()) {
             newLocales.add(requestLocales.nextElement());
         }
         if (null != defaultLanguages) {
             for (final String s : defaultLanguages) {
-                newLocales.add(new Locale(s));
+                if (null != s) {
+                    newLocales.add(new Locale(s));
+                }
             }
         }
         locales = newLocales;
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull @NotEmpty public String apply(@Nonnull final IdPAttribute input) {
+    @Override @Nonnull @NotEmpty public String apply(@Nullable final IdPAttribute input) {
         if (input == null) {
             return "N/A";
         }
-        final Map<Locale, String> displayNames = getDisplayInfo(input);
-        if (null != displayNames && !displayNames.isEmpty()) {
+        final Map<Locale, String> displayInfo = getDisplayInfo(input);
+        if (null != displayInfo && !displayInfo.isEmpty()) {
             for (final Locale locale : locales) {
-                String displayName = displayNames.get(locale);
-                if (displayName != null) {
-                    return displayName;
+                String toBeDisplayed = displayInfo.get(locale);
+                if (toBeDisplayed != null) {
+                    return toBeDisplayed;
                 }
-                displayName = displayNames.get(Locale.forLanguageTag(locale.getLanguage()));
-                if (displayName != null) {
-                    return displayName;
+                toBeDisplayed = displayInfo.get(Locale.forLanguageTag(locale.getLanguage()));
+                if (toBeDisplayed != null) {
+                    return toBeDisplayed;
                 }
             }
         }
@@ -90,8 +91,8 @@ public abstract class AbstractAttributeDisplayFunction implements Function<IdPAt
     /**
      * Get the information to be displayed from the attribute.
      * 
-     * @param input The attribute to consider
-     * @return the map of locale dependant information.
+     * @param input the attribute to consider
+     * @return the map of locale dependent information to be displayed
      */
     @Nonnull protected abstract Map<Locale, String> getDisplayInfo(@Nonnull final IdPAttribute input);
 }
