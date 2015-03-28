@@ -26,6 +26,7 @@
   <ItemGroup>
     <Compile Include="idp_contents.wxs" />
     <Compile Include="ShibbolethIdP-adconfig-dlg.wxs" />
+    <Compile Include="ShibbolethIdP-delete.wxs" />
     <Compile Include="ShibbolethIdP-gui.wxs" />
     <Compile Include="ShibbolethIdP-install-dlg.wxs" />
     <Compile Include="ShibbolethIdP-main.wxs" />
