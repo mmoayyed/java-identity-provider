@@ -54,4 +54,9 @@ public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionP
             builder.addPropertyValue("scopeDelimiter", scopeDelimiter);
         }
     }
+
+    /** {@inheritDoc} */
+    @Override protected boolean needsAttributeSourceID() {
+        return true;
+    }
 }

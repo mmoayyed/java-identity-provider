@@ -26,15 +26,19 @@ import org.w3c.dom.Element;
 /**
  * Spring Bean Definition Parser for static data connector.
  */
-public class PrincipalAuthenticationMethodAttributeDefinitionParser extends
-        BaseAttributeDefinitionParser {
+public class PrincipalAuthenticationMethodAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
             "PrincipalAuthenticationMethod");
 
     /** {@inheritDoc} */
-    protected Class<PrincipalAuthenticationMethodAttributeDefinition> getBeanClass(Element element) {
+    @Override protected Class<PrincipalAuthenticationMethodAttributeDefinition> getBeanClass(Element element) {
         return PrincipalAuthenticationMethodAttributeDefinition.class;
+    }
+
+    /** {@inheritDoc}. No input. */
+    @Override protected boolean needsAttributeSourceID() {
+        return false;
     }
 }

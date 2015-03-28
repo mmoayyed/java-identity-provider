@@ -60,7 +60,10 @@ public class SAML1NameIdentifierAttributeDefinitionParser extends BaseAttributeD
         } else {
             log.debug("{} nameIdQualifier '{}'.", getLogPrefix(), nameIdQualifier);
         }
+    }
 
-        
+    /** {@inheritDoc} */
+    @Override protected boolean needsAttributeSourceID() {
+        return true;
     }
 }

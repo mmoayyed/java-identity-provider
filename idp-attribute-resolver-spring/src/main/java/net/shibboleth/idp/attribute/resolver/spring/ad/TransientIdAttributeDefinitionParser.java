@@ -73,4 +73,9 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
 
         builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
     }
+
+    /** {@inheritDoc}. No input. */
+    @Override protected boolean needsAttributeSourceID() {
+        return false;
+    }
 }

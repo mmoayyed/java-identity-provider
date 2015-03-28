@@ -94,4 +94,9 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
         builder.addPropertyValue("defaultValue", defaultValue);
         builder.addPropertyValue("valueMaps", valueMaps);
     }
+
+    /** {@inheritDoc} */
+    @Override protected boolean needsAttributeSourceID() {
+        return true;
+    }
 }

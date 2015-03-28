@@ -69,4 +69,9 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
 
         builder.addPropertyValue("regularExpression", pattern.getBeanDefinition());
     }
+
+    /** {@inheritDoc} */
+    @Override protected boolean needsAttributeSourceID() {
+        return true;
+    }
 }

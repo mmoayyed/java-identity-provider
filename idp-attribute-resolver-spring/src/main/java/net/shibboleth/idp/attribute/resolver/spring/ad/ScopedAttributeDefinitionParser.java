@@ -41,11 +41,13 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
     private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
+    @Override
     protected Class<ScopedAttributeDefinition> getBeanClass(@Nullable Element element) {
         return ScopedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -54,5 +56,10 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
         String scope = config.getAttributeNS(null, "scope");
         log.debug("{} setting scope to '{}'.", getLogPrefix(), scope);
         builder.addPropertyValue("scope", scope);
+    }
+
+    /** {@inheritDoc} */
+    @Override protected boolean needsAttributeSourceID() {
+        return true;
     }
 }

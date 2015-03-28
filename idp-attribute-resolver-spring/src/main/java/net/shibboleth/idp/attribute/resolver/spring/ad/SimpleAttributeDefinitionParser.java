@@ -34,13 +34,20 @@ public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionPars
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
 
     /** {@inheritDoc} */
+    @Override
     protected Class<SimpleAttributeDefinition> getBeanClass(@Nullable Element element) {
         return SimpleAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
+    }
+
+    /** {@inheritDoc} */
+    @Override protected boolean needsAttributeSourceID() {
+        return true;
     }
 }

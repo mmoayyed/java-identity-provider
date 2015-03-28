@@ -64,4 +64,9 @@ public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitio
         log.debug("{} nameIdQualifier '{}', nameIdSPQualifier '{}'.", getLogPrefix(), nameIdQualifier,
                 nameIdSPQualifier);
     }
+
+    /** {@inheritDoc} */
+    @Override protected boolean needsAttributeSourceID() {
+        return true;
+    }
 }

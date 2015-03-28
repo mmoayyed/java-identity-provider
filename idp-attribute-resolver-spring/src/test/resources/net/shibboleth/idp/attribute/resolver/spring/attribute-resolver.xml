@@ -28,6 +28,21 @@
         <resolver:Dependency ref="staticAttributes" />
     </resolver:AttributeDefinition>
     
+    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="simpleEPE" sourceAttributeID="eduPersonEntitlement" dependencyOnly="true">
+        <resolver:Dependency ref="staticAttributes" />
+    </resolver:AttributeDefinition>
+    
+    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="broken" sourceAttributeID="staticEpA">
+        <resolver:Dependency ref="simpleEPE" />
+        <resolver:Dependency ref="eduPersonAffiliation" />
+        <resolver:Dependency ref="staticAttributes" />
+    </resolver:AttributeDefinition>
+
+    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="broken2">
+        <resolver:Dependency ref="simpleEPE" />
+        <resolver:Dependency ref="eduPersonAffiliation" />
+    </resolver:AttributeDefinition>
+    
     <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="broken">
         <resolver:Dependency ref="simpleEPE" />
         <resolver:Dependency ref="eduPersonAffiliation" />

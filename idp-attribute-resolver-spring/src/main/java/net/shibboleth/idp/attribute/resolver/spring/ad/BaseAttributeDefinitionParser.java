@@ -58,6 +58,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
+    // CheckStyle: CyclomaticComplexity OFF
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -86,14 +87,17 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
             builder.addPropertyValue("dependencyOnly", dependencyOnly);
         }
 
-        final String sourceAttributeId;
         if (config.hasAttributeNS(null, "sourceAttributeID")) {
-            sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
-            log.debug("{} setting sourceAttributeId {}.", getLogPrefix(), sourceAttributeId);
-        } else {
-            sourceAttributeId = getDefinitionId();
+            final String sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
+            log.debug("{} setting sourceAttributeID {}.", getLogPrefix(), sourceAttributeId);
+            builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
+            if (!needsAttributeSourceID()) {
+                log.warn("{} sourceAttributeID was specified but is meaningless.  Add {} as a <Dependency> instead.",
+                        getLogPrefix(), sourceAttributeId);
+            }
+        } else if (needsAttributeSourceID()) {
+            log.warn("{} sourceAttributeID was not specified but is required.", getLogPrefix());
         }
-        builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
 
         final List<Element> attributeEncoders =
                 ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
@@ -105,10 +109,12 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
                     SpringSupport.parseCustomElements(attributeEncoders, parserContext));
         }
     }
+    // CheckStyle: CyclomaticComplexity ON
+
 
     /**
-     * Used to process string elements that contain an xml:lang attribute expressing localization.
-     * returns a {@link ManagedMap} to allow property replacement to work.
+     * Used to process string elements that contain an xml:lang attribute expressing localization. returns a
+     * {@link ManagedMap} to allow property replacement to work.
      * 
      * @param elements list of elements, must not be null, may be empty
      * 
@@ -132,4 +138,11 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
         StringBuilder builder = new StringBuilder("Attribute Definition '").append(getDefinitionId()).append("':");
         return builder.toString();
     }
+
+    /**
+     * Ask the specific parser of it needs attributeSourceID. We use this to log several misconfiguration possibilities.
+     * 
+     * @return Whether the attribute definition for this parser meeds attributeSourceID.
+     */
+    protected abstract boolean needsAttributeSourceID();
 }

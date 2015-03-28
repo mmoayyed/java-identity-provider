@@ -63,4 +63,9 @@ public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDef
 
         builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
     }
+
+    /** {@inheritDoc}. So source Attribute for this. */
+    @Override protected boolean needsAttributeSourceID() {
+        return false;
+    }
 }

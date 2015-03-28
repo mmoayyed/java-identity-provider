@@ -92,4 +92,9 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
 
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
+
+    /** {@inheritDoc}. No input. */
+    @Override protected boolean needsAttributeSourceID() {
+        return false;
+    }
 }

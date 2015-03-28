@@ -93,4 +93,10 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
         log.debug("{} velocity engine reference '{}'.", getLogPrefix(), velocityEngineRef);
         builder.addPropertyReference("velocityEngine", velocityEngineRef);
     }
+    
+    /** {@inheritDoc}. No input. */
+    @Override protected boolean needsAttributeSourceID() {
+        return false;
+    }
+
 }

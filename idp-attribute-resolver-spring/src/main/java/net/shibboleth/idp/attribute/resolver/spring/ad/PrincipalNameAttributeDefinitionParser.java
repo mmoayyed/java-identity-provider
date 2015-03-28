@@ -33,7 +33,13 @@ public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinit
     public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalName");
 
     /** {@inheritDoc} */
+    @Override
     protected Class<PrincipalNameAttributeDefinition> getBeanClass(@Nullable Element element) {
         return PrincipalNameAttributeDefinition.class;
+    }
+
+    /** {@inheritDoc}. No input. */
+    @Override protected boolean needsAttributeSourceID() {
+        return false;
     }
 }

@@ -12,7 +12,7 @@
                 p:keyVersionResource="/net/shibboleth/idp/attribute/resolver/spring/ad/SealerKeyStore.kver"
                 p:keystorePassword="kpassword"
                 p:keyPassword="password"
-                p:updateInterval="0" />
+                p:updateInterval="PT0S" />
         </property>
     </bean>
 </beans>
