@@ -32,8 +32,14 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContex
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /** Support class for working with {@link ResolverPluginDependency}. */
 public final class PluginDependencySupport {
+
+    /** Log. */
+    private static final Logger LOG = LoggerFactory.getLogger(PluginDependencySupport.class);
 
     /** Constructor. */
     private PluginDependencySupport() {
@@ -42,21 +48,21 @@ public final class PluginDependencySupport {
 
     /**
      * Gets the values, as a single list, from all dependencies. This method only supports dependencies which contain an
-     * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null). It
-     * is therefore used inside Attribute definitions which only process a single attribute as input.
+     * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null). It is
+     * therefore used inside Attribute definitions which only process a single attribute as input.
      * 
      * <p>
      * <strong>NOTE</strong>, this method does *not* actually trigger any attribute definition or data connector
-     * resolution, it only looks for the cached results of previously resolved plugins within the current work
-     * context.
+     * resolution, it only looks for the cached results of previously resolved plugins within the current work context.
      * </p>
      * 
      * @param workContext current attribute resolver work context
      * @param dependencies set of dependencies
-     * 
+     * @deprecated use
+     *  {@link PluginDependencySupport#getMergedAttributeValues(AttributeResolverWorkContext, Collection, String)}
      * @return the merged value set
      */
-    @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
+    @Deprecated @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
             @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies) {
         Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
@@ -94,16 +100,80 @@ public final class PluginDependencySupport {
     }
 
     /**
+     * Gets the values, as a single list, from all dependencies. This method only supports dependencies which contain an
+     * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null). It is
+     * therefore used inside Attribute definitions which only process a single attribute as input.
+     * 
+     * <p>
+     * <strong>NOTE</strong>, this method does *not* actually trigger any attribute definition or data connector
+     * resolution, it only looks for the cached results of previously resolved plugins within the current work context.
+     * </p>
+     * 
+     * @param workContext current attribute resolver work context
+     * @param dependencies set of dependencies
+     * @param attributeDefinitionId the attributeID that these values will be associated with.
+     * @return the merged value set
+     */
+    @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
+            @Nonnull final AttributeResolverWorkContext workContext,
+            @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies,
+            @Nonnull final String attributeDefinitionId) {
+        Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
+        Constraint.isNotNull(dependencies, "Resolver dependency collection cannot be null");
+
+        final List<IdPAttributeValue<?>> values = new ArrayList<>();
+
+        for (final ResolverPluginDependency dependency : dependencies) {
+            Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
+
+            final String pluginId = dependency.getDependencyPluginId();
+
+            final ResolvedAttributeDefinition attributeDefinition =
+                    workContext.getResolvedIdPAttributeDefinitions().get(pluginId);
+            final String dependencyAttributeId = dependency.getDependencyAttributeId();
+            if (attributeDefinition != null) {
+                if (null == dependencyAttributeId) {
+                    LOG.warn("Plugin '{}' was defined without a sourceAttributeID,  but attribute '{}', specified " + ""
+                            + "as a <Dependency> will be used.", attributeDefinitionId, pluginId);
+                } else if (!dependencyAttributeId.equals(pluginId)) {
+                    LOG.warn("Plugin '{}' was defined with a sourceAttributeID '{}',"
+                            + " but the attribute definition '{}', specified as a <Dependency> will be used as well.",
+                            attributeDefinitionId, dependencyAttributeId, pluginId);
+                }
+
+                final IdPAttribute resolvedAttribute = attributeDefinition.getResolvedAttribute();
+                addAttributeValues(resolvedAttribute, values);
+                continue;
+            }
+
+            ResolvedDataConnector dataConnector =
+                    workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
+            if (dataConnector != null) {
+                Constraint.isTrue(dependency.getDependencyAttributeId() != null, "Data connector dependencies "
+                        + "must specify a dependant attribute ID");
+
+                if (null != dataConnector.getResolvedAttributes()) {
+                    final IdPAttribute resolvedAttribute =
+                            dataConnector.getResolvedAttributes().get(dependency.getDependencyAttributeId());
+                    addAttributeValues(resolvedAttribute, values);
+                    continue;
+                }
+            }
+        }
+
+        return values;
+    }
+
+    /**
      * Gets the values from all dependencies. Attributes, with the same identifier but from different resolver plugins,
      * will have their values merged into a single list within this method's returned map. This method is the equivalent
      * of calling {@link #getMergedAttributeValues(AttributeResolverWorkContext, Collection)} for all attributes
-     * resolved by all the given dependencies.  This is therefore used when an attribute definition may have multiple
+     * resolved by all the given dependencies. This is therefore used when an attribute definition may have multiple
      * input attributes (for instance scripted or templated definitions).
      * 
      * <p>
      * <strong>NOTE</strong>, this method does *not* actually trigger any attribute definition or data connector
-     * resolution, it only looks for the cached results of previously resolved plugins within the current work
-     * context.
+     * resolution, it only looks for the cached results of previously resolved plugins within the current work context.
      * </p>
      * 
      * @param workContext current attribute resolver work context
@@ -111,11 +181,11 @@ public final class PluginDependencySupport {
      * 
      * @return the merged value set
      */
-    public static Map<String,List<IdPAttributeValue<?>>> getAllAttributeValues(
+    public static Map<String, List<IdPAttributeValue<?>>> getAllAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
             @Nonnull final Collection<ResolverPluginDependency> dependencies) {
 
-        final HashMap<String,List<IdPAttributeValue<?>>> result = new HashMap<>();
+        final HashMap<String, List<IdPAttributeValue<?>>> result = new HashMap<>();
 
         for (final ResolverPluginDependency dependency : dependencies) {
             Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
@@ -189,5 +259,4 @@ public final class PluginDependencySupport {
             target.addAll(source.getValues());
         }
     }
-    
 }

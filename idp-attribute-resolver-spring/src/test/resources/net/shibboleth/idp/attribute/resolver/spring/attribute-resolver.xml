@@ -42,12 +42,7 @@
         <resolver:Dependency ref="simpleEPE" />
         <resolver:Dependency ref="eduPersonAffiliation" />
     </resolver:AttributeDefinition>
-    
-    <resolver:AttributeDefinition xsi:type="Simple" xmlns="urn:mace:shibboleth:2.0:resolver:ad" id="broken">
-        <resolver:Dependency ref="simpleEPE" />
-        <resolver:Dependency ref="eduPersonAffiliation" />
-    </resolver:AttributeDefinition>
-    
+        
     <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
         <dc:Attribute id="staticEpA">
             <dc:Value>member</dc:Value>
