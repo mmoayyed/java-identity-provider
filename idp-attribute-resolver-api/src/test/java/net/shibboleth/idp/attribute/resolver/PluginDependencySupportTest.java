@@ -61,7 +61,8 @@ public class PluginDependencySupportTest {
 
         final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
-                        Collections.singletonList(new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
+                        Collections.singletonList(new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        ResolverTestSupport.EPA_ATTRIB_ID);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
@@ -81,7 +82,8 @@ public class PluginDependencySupportTest {
         final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPE_ATTRIB_ID);
         final List<IdPAttributeValue<?>> result =
-                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList(depend));
+                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList(depend),
+                        ResolverTestSupport.EPE_ATTRIB_ID);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
@@ -109,7 +111,8 @@ public class PluginDependencySupportTest {
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
         final List<IdPAttributeValue<?>> result =
                 PluginDependencySupport.getMergedAttributeValues(workContext,
-                        Arrays.asList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)));
+                        Arrays.asList(depend, new ResolverPluginDependency(ResolverTestSupport.EPA_ATTRIB_ID)),
+                        ResolverTestSupport.EPE_ATTRIB_ID);
 
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 4);
