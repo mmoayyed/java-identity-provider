@@ -35,7 +35,6 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -48,7 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 import edu.internet2.middleware.shibboleth.common.attribute.provider.V2SAMLProfileRequestContext;
 
@@ -87,10 +85,8 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Constructor. */
     public ScriptedAttributeDefinition() {
-        // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
-        prcLookupStrategy =
-                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
-                        new ParentContextLookup<AttributeResolutionContext, RelyingPartyContext>());
+        // Defaults to ProfileRequestContext -> AttributeContext.
+        prcLookupStrategy = new ParentContextLookup<>();
     }
 
     /**
@@ -199,8 +195,11 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         log.debug("{} adding contexts to script context", getLogPrefix());
         scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("workContext", workContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("profileContext", prcLookupStrategy.apply(resolutionContext),
-                ScriptContext.ENGINE_SCOPE);
+        final ProfileRequestContext prc = prcLookupStrategy.apply(resolutionContext);
+        if (null == prc) {
+            log.error("{} ProfileRequestContext could not be located", getLogPrefix());
+        }
+        scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
 
         log.debug("{} adding emulated V2 request context to script context", getLogPrefix());
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
