@@ -131,8 +131,11 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext
-                .setAttribute("profileContext", prcLookupStrategy.apply(filterContext), ScriptContext.ENGINE_SCOPE);
+        final ProfileRequestContext prc = prcLookupStrategy.apply(filterContext);
+        if (null == prc) {
+            log.error("{} Could not locate ProfileRequestContext", getLogPrefix());
+        }
+        scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
 
         try {
             final Object result = currentScript.eval(scriptContext);
