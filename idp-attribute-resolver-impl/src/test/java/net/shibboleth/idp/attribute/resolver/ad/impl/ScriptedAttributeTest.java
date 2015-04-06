@@ -48,7 +48,6 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
@@ -389,11 +388,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
         resolver.initialize();
 
-        TestContextContainer parent = new TestContextContainer();
         final AttributeResolutionContext context = generateContext();
-        parent.addSubcontext(context);
-        ProfileRequestContext prc = new ProfileRequestContext<>();
-        prc.addSubcontext(parent);
 
         try {
             resolver.resolveAttributes(context);
@@ -405,7 +400,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final Collection<IdPAttributeValue<?>> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2, "looking for context");
-        Assert.assertTrue(values.contains(new StringAttributeValue("TestContextContainer")));
+        Assert.assertTrue(values.contains(new StringAttributeValue("AttributeResolutionContext")));
         Assert.assertTrue(values.contains(new StringAttributeValue("ProfileRequestContext")));
     }
 
