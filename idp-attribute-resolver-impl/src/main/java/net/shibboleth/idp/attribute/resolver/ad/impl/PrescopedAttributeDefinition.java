@@ -90,7 +90,7 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final List<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
         log.debug("{} Dependencies {} provided unmapped values of {}", getLogPrefix(), getDependencies(),
                 dependencyValues);
 

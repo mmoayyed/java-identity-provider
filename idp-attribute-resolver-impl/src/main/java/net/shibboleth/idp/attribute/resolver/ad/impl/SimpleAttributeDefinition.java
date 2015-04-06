@@ -43,7 +43,7 @@ public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
         Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
 
         final IdPAttribute result = new IdPAttribute(getId());
-        result.setValues(PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies()));
+        result.setValues(PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId()));
 
         return result;
     }
@@ -56,5 +56,5 @@ public class SimpleAttributeDefinition extends AbstractAttributeDefinition {
             throw new ComponentInitializationException(getLogPrefix() + " no dependencies were configured");
         }
     }
-    
+  
 }

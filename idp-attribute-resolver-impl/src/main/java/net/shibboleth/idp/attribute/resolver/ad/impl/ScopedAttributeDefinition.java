@@ -82,7 +82,7 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final List<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
 
         final List<StringAttributeValue> valueList = new ArrayList<>(dependencyValues.size());
 

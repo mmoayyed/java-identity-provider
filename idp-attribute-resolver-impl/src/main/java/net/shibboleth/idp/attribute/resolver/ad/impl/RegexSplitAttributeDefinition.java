@@ -90,7 +90,7 @@ public class RegexSplitAttributeDefinition extends AbstractAttributeDefinition {
         final IdPAttribute resultantAttribute = new IdPAttribute(getId());
 
         final List<IdPAttributeValue<?>> dependencyValues =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
             if (!(dependencyValue instanceof StringAttributeValue)) {

@@ -198,7 +198,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
         Constraint.isNotNull(resolutionContext, "Attribute resolution context can not be null");
 
         final List<IdPAttributeValue<?>> unmappedResults =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
         log.debug("Attribute Definition '{}': Attempting to map the following values: {}", getId(), unmappedResults);
 
         // Bucket for results
