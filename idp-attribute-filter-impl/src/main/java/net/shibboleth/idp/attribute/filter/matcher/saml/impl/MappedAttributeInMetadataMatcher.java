@@ -62,7 +62,7 @@ public class MappedAttributeInMetadataMatcher extends AbstractIdentifiableInitia
     @Nonnull private final Logger log = LoggerFactory.getLogger(MappedAttributeInMetadataMatcher.class);
 
     /** Whether optionally requested attributes should be matched. */
-    private boolean onlyIfRequired;
+    private boolean onlyIfRequired = true;
 
     /** Whether to return a match if the metadata does not contain an ACS descriptor. */
     private boolean matchIfMetadataSilent;
