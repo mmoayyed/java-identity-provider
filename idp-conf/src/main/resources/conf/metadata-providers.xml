@@ -40,17 +40,15 @@
                       backingFile="%{idp.home}/metadata/localCopyFromXYZHTTP.xml"
                       metadataURL="http://WHATEVER"> 
         
-        <MetadataFilter xsi:type="Chaining">
-          <MetadataFilter xsi:type="SignatureValidation" requireSignedMetadata="true">
+        <MetadataFilter xsi:type="SignatureValidation" requireSignedMetadata="true">
             <PublicKey>
                 MIIBI.....
             </PublicKey>
-          </MetadataFilter>
-          <MetadataFilter xsi:type="metadata:RequiredValidUntil" maxValidityInterval="P30D"/>
-          <MetadataFilter xsi:type="EntityRoleWhiteList">
+        </MetadataFilter>
+        <MetadataFilter xsi:type="metadata:RequiredValidUntil" maxValidityInterval="P30D"/>
+        <MetadataFilter xsi:type="EntityRoleWhiteList">
             <RetainedRole>md:SPSSODescriptor</RetainedRole>
-          </MetadataFilter>
-       </MetadataFilter>        
+        </MetadataFilter>
     </MetadataProvider>
     
     -->   
