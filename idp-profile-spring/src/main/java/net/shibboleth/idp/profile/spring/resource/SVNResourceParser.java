@@ -128,7 +128,13 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
 
         builder.addConstructorArgValue(getAttribute(element, WORKING_COPY_DIR_ATTRIB_NAME, parserContext));
 
-        builder.addConstructorArgValue(getAttribute(element, REVISION_ATTRIB_NAME, parserContext));
+        final String revision = StringSupport.trimOrNull(getAttribute(element, REVISION_ATTRIB_NAME, parserContext));
+        
+        if (null == revision) {
+            builder.addConstructorArgValue(-1);
+        } else{
+            builder.addConstructorArgValue(revision);
+        }
 
         builder.addConstructorArgValue(getAttribute(element, RESOURCE_FILE_ATTRIB_NAME, parserContext));
     }
