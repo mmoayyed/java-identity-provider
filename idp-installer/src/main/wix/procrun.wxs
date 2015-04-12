@@ -114,15 +114,15 @@
                     <RegistryValue Name="StdOutput" Value="auto" Type="string" />
                 </RegistryKey>
             </Component>
-            <Component Id="cmpD450CE822D5D1E635C3D66423D0E27B8" Directory="PROCRUNROOT" Guid="{62BACF23-6B8B-43C6-9B37-3992D6B86E5C}" KeyPath="yes">
+            <Component Id="cmpD450CE822D5D1E635C3D66423D0E27B8" Directory="PROCRUNROOT" Guid="{62BACF23-6B8B-43C6-9B37-3992D6B86E5C}" KeyPath="yes" >
                 <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM">
                     <RegistryValue Name="JavaHome" Value="[%JAVA_HOME]" Type="string" />
                     <RegistryValue Name="Jvm" Value="auto" Type="string" />
                     <RegistryValue Name="Classpath" Value="[JETTYROOT]\start.jar" Type="string" />
                     <RegistryValue Name="JvmMs" Value="256" Type="integer" />
-                    <RegistryValue Name="JvmMx" Value="512" Type="integer" />
                 </RegistryKey>
             </Component>
         </ComponentGroup>
+
     </Fragment>
 </Wix>

@@ -121,6 +121,12 @@
         <CustomAction Id="RunJettyAnt" Directory="INSTALLDIR" ExeCommand="[QtJettyAnt]" Execute="deferred" Impersonate="no" />
         <CustomAction Id="QtJettyAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
+        <?if $(var.msitype) = "x86" ?>
+        <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#768" />
+        <?else?>
+        <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#1024" />
+        <?endif ?>
+
         <InstallUISequence>
 
             <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
@@ -148,22 +154,18 @@
         <InstallExecuteSequence>
 
             <!-- Duplicate actions from the UI case - but only for auto 3->3 upgrades -->
-            <Custom Action="InheritInstallDir" After="AppSearch">
-        OLD_INSTALLDIR
-      </Custom>
+            <Custom Action="InheritInstallDir" After="AppSearch">OLD_INSTALLDIR</Custom>
 
-            <Custom Action="InheritInstallJetty" After="AppSearch">
-        OLD_JETTY_INSTALL AND NOT JETTY_INSTALL
-      </Custom>
+            <Custom Action="InheritInstallJetty" After="AppSearch">OLD_JETTY_INSTALL AND NOT JETTY_INSTALL</Custom>
 
             <!-- Setup JAVA_IDP_HOME before we use it -->
 
             <Custom Action="SetJavaIdpHome" Before="SetIdpAnt" />
 
             <!-- Could we find JAVA.EXE ?-->
-            <Custom Action="NoJavaBin" After="AppSearch">
-        NOT JAVA_EXECUTABLE
-      </Custom>
+            <Custom Action="NoJavaBin" After="AppSearch">NOT JAVA_EXECUTABLE</Custom>
+            <!-- Preserve Jetty parms -->
+            <Custom Action="SetJavaJvmMx" After="AppSearch">(NOT Installed) AND INSTALL_JETTY AND (NOT JAVA_JVMMX)</Custom>
 
             <!-- Work -->
 

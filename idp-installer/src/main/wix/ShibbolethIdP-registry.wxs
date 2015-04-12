@@ -43,7 +43,7 @@
                     <RegistryValue Name="Options" Type="multiString">
                         <MultiStringValue>-Didp.home=[JAVA_IDP_HOME]</MultiStringValue>
                     </RegistryValue>
-
+                    <RegistryValue Name="JvmMx" Value="[JAVA_JVMMX]" Type="string" /><!-- Its an integer, but we added the # -->
                 </RegistryKey>
                 <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Start" Root="HKLM">
                     <RegistryValue Name="Params" Type="multiString" Action="append">
@@ -66,6 +66,10 @@
         </Property>
         <Property Id="OLD_INSTALL_JETTY" Secure="yes">
             <RegistrySearch Id="OldInstallJetty" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="InstallJetty" Type="raw" Win64="no" />
+        </Property>
+
+        <Property Id="JAVA_JVMMX" Secure="yes">
+            <RegistrySearch Id="JvmMx" Root="HKLM" Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\shibd_idp\Parameters\Java" Name="JvmMx" Type="raw" Win64="no" />
         </Property>
 
         <!-- Make a best effort to find where the Quick Installer was installed to -->
