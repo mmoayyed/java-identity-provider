@@ -42,6 +42,7 @@
             <Feature Id="InstallJetty" Title="Jetty">
                 <MergeRef Id="jetty" />
                 <ComponentRef Id="JettyPermissions" />
+                <ComponentRef Id="Shibd_idpw"/>
             </Feature>
 	    <ComponentGroupRef Id="DeleteFiles"/>
 	    <ComponentGroupRef Id="IdPGroup" />
@@ -58,6 +59,12 @@
                         <Directory Id="ConfFolder" Name="conf" />
                         <Directory Id="JettyBaseFolder" Name="jetty-base">
                             <Directory Id="StartDotD" Name="start.d" />
+                        </Directory>
+                        <Directory Id="BinFolder" Name="bin">
+                            <Component Id="Shibd_idpw" Guid="{30E1130E-BEBF-4167-83A0-BBDE083968C4}" Win64="no">
+                              <RegistryValue Id="Shibd_idpw_r" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="Shibd_idpw" Value="TRUE" Type="string" KeyPath="yes" />
+                                <Shortcut Id="Shibd_idpw_shortcut" Name="shibd_idpw.exe" Target="[ProgramFilesFolder]\Shibboleth\Procrun\shibd_idpw.exe"/>
+                            </Component>
                         </Directory>
                         <Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
                             <RegistryValue Id="SetPermissions" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="SetPermissions" Value="TRUE" Type="string" KeyPath="yes" />
