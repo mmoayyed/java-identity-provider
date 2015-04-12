@@ -41,7 +41,6 @@ import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -54,7 +53,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Functions;
 
 /**
  * A Data Connector which populates a series of attributes from a provided {@link ProfileRequestContext}.
@@ -76,9 +74,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
     /** Constructor. */
     public ScriptedDataConnector() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
-        prcLookupStrategy =
-                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
-                        new ParentContextLookup<AttributeResolutionContext, RelyingPartyContext>());
+        prcLookupStrategy = new ParentContextLookup<>();
     }
 
     /**

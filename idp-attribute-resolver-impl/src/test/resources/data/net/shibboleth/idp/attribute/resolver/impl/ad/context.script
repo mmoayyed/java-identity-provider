@@ -1,6 +1,6 @@
 importPackage(Packages.net.shibboleth.idp.attribute.resolver.impl.ad);
 
-child = resolutionContext.getParent().getSubcontext("net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext");
+child = profileContext.getSubcontext("net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext");
 
 Scripted.addValue(child.getClass().getSimpleName());
 Scripted.addValue(profileContext.getClass().getSimpleName());
