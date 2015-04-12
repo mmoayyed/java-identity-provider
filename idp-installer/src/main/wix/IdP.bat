@@ -119,6 +119,15 @@ if ERRORLEVEL 1 (
   goto done;
 )
 
+rem we Want to call embedded/jetty-base jetty-base
+move %idpex%\embedded\jetty-base %idpex%\jetty-base
+if ERRORLEVEL 1 (
+  cd ..
+  echo embedded/jetty-base directory not found?
+  goto done;
+)
+rd embedded
+
 rem We want to call jetty-base/start.d jetty-base/start.d.dist
 
 rename  %idpex%\jetty-base\start.d start.d.dist

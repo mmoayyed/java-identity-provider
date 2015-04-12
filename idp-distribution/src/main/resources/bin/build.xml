@@ -605,7 +605,7 @@
 
         <!-- Copy new -->
         <copy todir="${idp.target.dir}/jetty-base">
-            <fileset dir="${idp.src.dir}/jetty-base" />
+            <fileset dir="${idp.src.dir}/embedded/jetty-base" />
         </copy>
         <!-- rename Start.d -->
         <move file="${idp.target.dir}/jetty-base/start.d" tofile="${idp.target.dir}/jetty-base/start.d.dist"/>

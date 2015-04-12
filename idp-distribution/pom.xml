@@ -153,7 +153,7 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                    <!-- Copy Jetty DTA plugin to jetty-base/lib/ext directory. -->
+                    <!-- Copy Jetty DTA plugin to embedded/jetty-base/lib/ext directory. -->
                     <execution>
                         <id>copy-jetty-dta-ssl</id>
                         <phase>prepare-package</phase>
@@ -168,7 +168,7 @@
                                     <version>${jetty9-dta-ssl.version}</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${idp.assemblyDirectory}/jetty-base/lib/ext</outputDirectory>
+                                    <outputDirectory>${idp.assemblyDirectory}/embedded/jetty-base/lib/ext</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -206,7 +206,7 @@
                             <outputDirectory>${idp.assemblyDirectory}/bin/lib/</outputDirectory>
                         </configuration>
                     </execution>
-                    <!-- Copy logging dependencies to jetty-base/lib directory. (for Jetty logging) -->
+                    <!-- Copy logging dependencies to embedded/jetty-base/lib directory. (for Jetty logging) -->
                     <execution>
                         <id>copy-jetty-logging-dependencies</id>
                         <phase>prepare-package</phase>
@@ -232,7 +232,7 @@
                                     <artifactId>jcl-over-slf4j</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${idp.assemblyDirectory}/jetty-base/lib/logging/</outputDirectory>
+                            <outputDirectory>${idp.assemblyDirectory}/embedded/jetty-base/lib/logging/</outputDirectory>
                         </configuration>
                     </execution>
                     <!-- Copy logging dependencies to WEB-INF/lib directory. -->
