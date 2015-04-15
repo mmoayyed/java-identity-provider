@@ -126,7 +126,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final List<IdPAttributeValue<?>> attributeValues =
-                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies());
+                PluginDependencySupport.getMergedAttributeValues(workContext, getDependencies(), getId());
         if (attributeValues == null || attributeValues.isEmpty()) {
             log.debug("{} Source attribute {} for connector {} provide no values", getLogPrefix(),
                     getSourceAttributeId(), getId());

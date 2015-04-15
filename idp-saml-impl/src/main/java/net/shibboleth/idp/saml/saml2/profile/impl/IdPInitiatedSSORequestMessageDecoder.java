@@ -99,7 +99,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
     protected void doDecode() throws MessageDecodingException {
         ssoRequest = buildIdPInitiatedSSORequest();
         
-        final MessageContext<SAMLObject> messageContext = new MessageContext<SAMLObject>();
+        final MessageContext<SAMLObject> messageContext = new MessageContext<>();
         messageContext.setMessage(buildAuthnRequest());
         
         populateBindingContext(messageContext);

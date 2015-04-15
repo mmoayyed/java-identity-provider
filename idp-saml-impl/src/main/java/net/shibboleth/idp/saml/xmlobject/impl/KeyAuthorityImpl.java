@@ -42,7 +42,7 @@ public class KeyAuthorityImpl extends AbstractXMLObject implements KeyAuthority 
     private Integer verifyDepth;
 
     /** Wildcard, unknown 'anyAttribute' attributes. */
-    private AttributeMap unknownAttributes;
+    private final AttributeMap unknownAttributes;
 
     /**
      * Constructor.
@@ -53,37 +53,42 @@ public class KeyAuthorityImpl extends AbstractXMLObject implements KeyAuthority 
      */
     protected KeyAuthorityImpl(String namespaceURI, String elementLocalName, String namespacePrefix) {
         super(namespaceURI, elementLocalName, namespacePrefix);
-        keyInfos = new XMLObjectChildrenList<KeyInfo>(this);
+        keyInfos = new XMLObjectChildrenList<>(this);
         unknownAttributes = new AttributeMap(this);
     }
 
     /** {@inheritDoc} */
+    @Override
     public List<KeyInfo> getKeyInfos() {
         return keyInfos;
     }
 
     /** {@inheritDoc} */
+    @Override
     public Integer getVerifyDepth() {
         return verifyDepth;
     }
 
     /** {@inheritDoc} */
+    @Override
     public void setVerifyDepth(Integer newVerifyDepth) {
         verifyDepth = prepareForAssignment(verifyDepth, newVerifyDepth);
     }
 
     /** {@inheritDoc} */
+    @Override
     public AttributeMap getUnknownAttributes() {
         return unknownAttributes;
     }
 
     /** {@inheritDoc} */
+    @Override
     public List<XMLObject> getOrderedChildren() {
         if (keyInfos.isEmpty()) {
             return Collections.emptyList();
         }
         
-        ArrayList<XMLObject> children = new ArrayList<XMLObject>();
+        ArrayList<XMLObject> children = new ArrayList<>();
         children.addAll(keyInfos);
         return Collections.unmodifiableList(children);
     }
