@@ -27,6 +27,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -37,6 +38,7 @@ import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.MockDataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.utilities.java.support.collection.LazySet;
@@ -56,6 +58,7 @@ public class AttributeResolverImplTest {
     @Test public void initDestroy() throws Exception {
         MockAttributeDefinition attrDef = new MockAttributeDefinition("foo", new IdPAttribute("test"));
         MockDataConnector dataCon = new MockDataConnector("bar", (Map) null);
+        dataCon.initialize();
         AttributeResolverImpl resolver =
                 new AttributeResolverImpl("toto", Collections.singleton((AttributeDefinition) attrDef),
                         Collections.singleton((DataConnector) dataCon), null);
@@ -235,6 +238,7 @@ public class AttributeResolverImplTest {
     /** Test that resolve w/ dependencies returns the expected results. */
     @Test public void resolveWithDependencies() throws Exception {
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
+        dc1.initialize();
 
         final IdPAttribute attr = new IdPAttribute("test");
         attr.setValues(Arrays.asList(new StringAttributeValue("a"), new StringAttributeValue("b")));
@@ -279,8 +283,10 @@ public class AttributeResolverImplTest {
      */
     @Test public void resolveWithDependencyFail1() throws ComponentInitializationException, ResolutionException
     /* throws Exception */{
-        MockDataConnector dc1 = new MockDataConnector("dc1", new ResolutionException());
+        MockDataConnector dc1 = new MockDataConnector("dc1", new HashMap<String, IdPAttribute>());
         dc1.setFailoverDataConnectorId("dc2");
+        dc1.initialize();
+        //
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
@@ -305,6 +311,62 @@ public class AttributeResolverImplTest {
         //
         resolver.resolveAttributes(context);
     }
+    
+    @Test(enabled=false) public void resolveWithTimeout() throws Exception {
+        
+        final IdPAttribute i1Val = new IdPAttribute("Atr");
+        i1Val.setValues(Collections.singleton(new StringAttributeValue("value1")));
+        
+        final MockDataConnector dc1 = new MockDataConnector("dc1", Collections.singletonMap("Atr", i1Val));
+        final SimpleAttributeDefinition ad = new SimpleAttributeDefinition();
+        ad.setId("output");
+        ad.setSourceAttributeId("Atr");
+        final ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
+        ad.setDependencies(Collections.singleton(dep1));
+        ad.initialize();
+        
+        final IdPAttribute i2Val = new IdPAttribute("Atr");
+        final HashSet<IdPAttributeValue<?>>vals = new HashSet<>();
+        vals.add(new StringAttributeValue("value1"));
+        vals.add(new StringAttributeValue("value2"));
+        i2Val.setValues(vals);
+        final MockDataConnector dc2 = new MockDataConnector("dc2", Collections.singletonMap("Atr", i2Val));
+        dc2.initialize();
+        dc1.setFailoverDataConnectorId("dc2");
+       // dc1.setNoRetryDelay(3000);
+        dc1.initialize();
+        
+        final HashSet<DataConnector> connectors = new HashSet<>(2);
+        connectors.add(dc2);
+        connectors.add(dc1);
+        
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", Collections.singleton((AttributeDefinition)ad), connectors, null);
+        resolver.initialize();
+
+        AttributeResolutionContext context = new AttributeResolutionContext();
+        
+        resolver.resolveAttributes(context);
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
+        
+        dc1.setFailure(true);
+        
+        context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+        
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 2);
+
+        dc1.setFailure(false);
+
+        context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+        // Change when the timeout code is there.
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
+        
+        Thread.sleep(3100);
+        context = new AttributeResolutionContext();
+        resolver.resolveAttributes(context);
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
+    }
 
     /**
      * Test that resolve w/ dependencies returns the expected results.
@@ -313,7 +375,9 @@ public class AttributeResolverImplTest {
      * @throws ResolutionException if badness happens in attribute resolution
      */
     @Test public void resolveDataConnectorFail() throws ComponentInitializationException, ResolutionException {
-        MockDataConnector dc1 = new MockDataConnector("dc1", new ResolutionException());
+        MockDataConnector dc1 = new MockDataConnector("dc1", new HashMap<String, IdPAttribute>());
+        dc1.setFailure(true);
+        dc1.initialize();
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         MockAttributeDefinition ad1 = new MockAttributeDefinition("ad1", new IdPAttribute("test"));
@@ -342,6 +406,7 @@ public class AttributeResolverImplTest {
 
     @Test public void cachedDataConnectorDependency() throws ComponentInitializationException, ResolutionException {
         MockDataConnector dc1 = new MockDataConnector("dc1", (Map) null);
+        dc1.initialize();
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         IdPAttribute attr = new IdPAttribute("test1");
@@ -371,11 +436,15 @@ public class AttributeResolverImplTest {
 
         Assert.assertEquals(context.getResolvedIdPAttributes().size(), 2);
 
-        MockDataConnector dcfail1 = new MockDataConnector("failer1", new ResolutionException());
+        MockDataConnector dcfail1 = new MockDataConnector("failer1", new HashMap<String, IdPAttribute>());
+        dcfail1.setFailure(true);
         dcfail1.setPropagateResolutionExceptions(false);
+        dcfail1.initialize();
         ResolverPluginDependency depFail1 = new ResolverPluginDependency("failer1");
-        MockDataConnector dcfail2 = new MockDataConnector("failer2", new ResolutionException());
+        MockDataConnector dcfail2 = new MockDataConnector("failer2", new HashMap<String, IdPAttribute>());
+        dcfail2.setFailure(true);
         dcfail2.setFailoverDataConnectorId("failer1");
+        dcfail2.initialize();
         ResolverPluginDependency depFail2 = new ResolverPluginDependency("failer2");
 
         connectors = new LazySet<>();
@@ -409,6 +478,7 @@ public class AttributeResolverImplTest {
 
         values.put("SubAttribute", attr);
         MockDataConnector dc1 = new MockDataConnector("dc1", values);
+        dc1.initialize();
 
         ResolverPluginDependency dep1 = new ResolverPluginDependency("dc1");
         dep1.setDependencyAttributeId("SubAttribute");
