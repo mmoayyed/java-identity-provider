@@ -618,14 +618,14 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         /**
-         * Converts the supplied value to a list of strings delimited by {@link XMLConstants#LIST_DELIMITERS}.
+         * Converts the supplied value to a list of strings delimited by {@link XMLConstants#LIST_DELIMITERS} and comma.
          *
          * @param value to convert to a list
          *
          * @return list of strings
          */
         @Nonnull public static List<String> buildStringList(final String value) {
-            return StringSupport.stringToList(value, XMLConstants.LIST_DELIMITERS);
+            return StringSupport.stringToList(value, XMLConstants.LIST_DELIMITERS + ",");
         }
 
         /**
