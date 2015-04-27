@@ -69,7 +69,7 @@
         <TGT>preload</TGT>
         <property file="${idp.property.file}"/>
     </target>
-    <target name="allinput" depends="gettarget, checkproperties, gethostname, getentityid, geturisubjectaltname, setscope, askscope, getkeystorepassword, getsealerpassword, getsealeralias" />
+    <target name="allinput" depends="gettarget, checkproperties, gethostname, getentityid, geturisubjectaltname, setscope, askscope, writescope, getkeystorepassword, getsealerpassword, getsealeralias" />
 
     <target name="gethostname" if="idp.ask.hostname" depends="checkproperties">
         <TGT>gethostname</TGT>
@@ -174,19 +174,20 @@
     <target name="setscope" if="idp.set.scope" depends="checkproperties">
         <TGT>setscope</TGT>
         <property name="idp.scope" value="${DOMAIN}"/>
-        <echo file="${idp.merge.properties}" append="yes">
-           idp.scope=${idp.scope}
-        </echo>
     </target>
 
     <target name="askscope" if="idp.ask.scope" depends="checkproperties">
         <TGT>askscope</TGT>
         <input message="Attribute Scope:" addproperty="idp.scope" defaultvalue="${DOMAIN}" />
+    </target>
+
+    <target name="writescope" if="idp.write.scope" depends="setscope, askscope">
+        <TGT>writescope</TGT>
         <echo file="${idp.merge.properties}" append="yes">
            idp.scope=${idp.scope}
         </echo>
     </target>
-
+    
     <!--
      KEY MANAGEMENT
     -->
@@ -260,6 +261,15 @@
                 <isset property="idp.noprompt" />
                 <isfalse value="${idp.properties.present}" />
             </and>
+        </condition>
+
+        <condition property="idp.write.scope">
+            <!-- We write the scope if we set it, ask for it, or if its supplied -->
+            <or>
+                <isset property="idp.scope" />
+                <isset property="idp.ask.scope" />
+                <isset property="idp.write.scope" />
+            </or>
         </condition>
 
         <condition property="idp.generate.altname">
