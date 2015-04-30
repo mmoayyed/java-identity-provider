@@ -47,7 +47,7 @@ public class RelyingPartyConfigurationTest {
         Assert.assertFalse(config.isDetailedErrors());
         Assert.assertTrue(config.getProfileConfigurations().isEmpty());
 
-        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
+        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();
         profileConfigs.add(new MockProfileConfiguration("foo"));
         profileConfigs.add(null);
         profileConfigs.add(new MockProfileConfiguration("bar"));
@@ -86,7 +86,7 @@ public class RelyingPartyConfigurationTest {
     }
 
     @Test public void testProfileConfiguration() {
-        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
+        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();
         profileConfigs.add(new MockProfileConfiguration("foo"));
         profileConfigs.add(new MockProfileConfiguration("bar"));
 
