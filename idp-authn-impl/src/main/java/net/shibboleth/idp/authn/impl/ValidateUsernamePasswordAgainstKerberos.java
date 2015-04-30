@@ -243,8 +243,10 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
             throw new KrbException("No service keys found in keytab file, unable to verify KDC");
         }
         
+        // TODO: this no longer works on 8, so we're probably going to have to redo all this
+        // on top of GSS-API to make it viable.
         final KrbApReq request = new KrbApReq(serviceCreds, false, false, false, null);
-        final KrbApReq decrypted = new KrbApReq(request.getMessage(), serviceKeys, null);
+        //final KrbApReq decrypted = new KrbApReq(request.getMessage(), serviceKeys, null);
         
         log.debug("{} Successfully decrypted AP_REQ issued to service principal '{}'", getLogPrefix(),
                 servicePrincipal);
