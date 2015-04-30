@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
@@ -29,7 +30,9 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -40,6 +43,9 @@ import org.slf4j.LoggerFactory;
 import sun.security.jgss.krb5.Krb5Util;
 import sun.security.krb5.Config;
 import sun.security.krb5.Credentials;
+import sun.security.krb5.internal.ktab.KeyTab;
+import sun.security.krb5.EncryptionKey;
+import sun.security.krb5.KrbApReq;
 import sun.security.krb5.KrbAsReqBuilder;
 import sun.security.krb5.KrbException;
 import sun.security.krb5.PrincipalName;
@@ -70,6 +76,12 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
     /** Save the TGT in the resulting Subject? */
     private boolean preserveTicket;
     
+    /** Service principal to acquire a ticket for to verify KDC. */
+    private String servicePrincipal;
+    
+    /** Path to keytab for service principal. */
+    private String keytabPath;
+    
     /** UsernamePasswordContext containing the credentials to validate. */
     @Nullable private UsernamePasswordContext upContext;
     
@@ -96,6 +108,40 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         preserveTicket = flag;
+    }
+    
+    /**
+     * Set the name of a service principal to use to verify the KDC.
+     * 
+     * <p>If non-null, a keytab resource must also be set.</p>
+     * 
+     * @param name name of service principal
+     */
+    public void setServicePrincipal(@Nullable final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        servicePrincipal = StringSupport.trimOrNull(name);
+    }
+
+    /**
+     * Provides a keytab for the service principal to use to verify the KDC.
+     * 
+     * @param path path to file containing a keytab
+     */
+    public void setKeytabPath(@Nullable final String path) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        keytabPath = path;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (servicePrincipal != null && keytabPath == null) {
+            throw new ComponentInitializationException("A keytab path is required if a service principal is set");
+        }
     }
     
     /** {@inheritDoc} */
@@ -150,6 +196,10 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
             krbCreds = reqBuilder.action().getCreds();
             reqBuilder.destroy();
             
+            if (servicePrincipal != null) {
+                verifyKDC();
+            }
+            
             log.info("{} Login by '{}' succeeded", getLogPrefix(), pname.getName());
             
             buildAuthenticationResult(profileRequestContext, authenticationContext);
@@ -172,4 +222,32 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
         return subject;
     }
 
+    /**
+     * Use credentials to acquire and verify a service ticket.
+     * 
+     * @throws IOException
+     * @throws KrbException
+     */
+    private void verifyKDC() throws KrbException, IOException {
+        log.debug("{} Attempting to verify authenticity of TGT using service principal '{}'", getLogPrefix(),
+                servicePrincipal);
+        
+        final Credentials serviceCreds = Credentials.acquireServiceCreds(servicePrincipal, krbCreds);
+        
+        final KeyTab keytab = KeyTab.getInstance(keytabPath);
+        if (!keytab.isValid() || keytab.isMissing()) {
+            throw new IOException("Service principal keytab was missing or invalid, unable to verify KDC");
+        }
+        final EncryptionKey[] serviceKeys = keytab.readServiceKeys(new PrincipalName(servicePrincipal));
+        if (serviceKeys.length == 0) {
+            throw new KrbException("No service keys found in keytab file, unable to verify KDC");
+        }
+        
+        final KrbApReq request = new KrbApReq(serviceCreds, false, false, false, null);
+        final KrbApReq decrypted = new KrbApReq(request.getMessage(), serviceKeys, null);
+        
+        log.debug("{} Successfully decrypted AP_REQ issued to service principal '{}'", getLogPrefix(),
+                servicePrincipal);
+    }
+    
 }
