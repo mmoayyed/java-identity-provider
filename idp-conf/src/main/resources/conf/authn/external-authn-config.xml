@@ -22,7 +22,9 @@
     <!--
     Define entries here to map error messages returned by external modules and classify them as particular
     kinds of errors for use in your templates and as events in flows.
-    
+
+    Keys are events to signal, values are error codes.
+
     The examples here just allow external signaling of the exact type of condition to record.
     
     If you want to "fall-through" to other login flows, include a mapping to "ReselectFlow".
