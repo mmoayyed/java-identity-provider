@@ -31,10 +31,25 @@ public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>>
     /**
      * Gets the ID of the {@link DataConnector} whose values will be used in the event that this data connector
      * experiences an error.
-     * 
+     *
      * @return ID of the {@link DataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
     @Nullable String getFailoverDataConnectorId();
+
+    /**
+     * Get how long to wait until we declare the connector live again.
+     *
+     * @return hoe long to wait.
+     */
+     long getNoRetryDelay();
+
+     /**
+      * Get the time when this connector last failed. This will be said for any exception regardless of the setting of
+      * {@link #isPropagateResolutionExceptions()}
+      *
+      * @return when it last failed
+      */
+     long getLastFail();
 
 }

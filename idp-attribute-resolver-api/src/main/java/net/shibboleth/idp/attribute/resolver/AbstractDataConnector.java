@@ -26,6 +26,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -48,10 +49,16 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /** cache for the log prefix - to save multiple recalculations. */
     @Nullable private String logPrefix;
 
+    /** When did this connector last fail. */
+    private long lastFail;
+
+    /** How long to wait until we declare the connector live again. */
+    @Duration private long noRetryDelay;
+
     /**
      * Gets the ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      * experiences an error.
-     * 
+     *
      * @return ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *         experiences an error
      */
@@ -62,7 +69,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /**
      * Set the ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      * experiences an error.
-     * 
+     *
      * @param id ID of the {@link AbstractDataConnector} whose values will be used in the event that this data connector
      *            experiences an error
      */
@@ -71,6 +78,36 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         failoverDataConnectorId = StringSupport.trimOrNull(id);
+    }
+
+    /**
+     * Set the time when this connector last failed.
+     *
+     * @param time what to set
+     */
+    public void setLastFail(long time) {
+        lastFail = time;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override public long getLastFail() {
+        return lastFail;
+    }
+
+    /**
+     * Set how long to wait until we declare the connector live again.
+     *
+     * @param delay what to set
+     */
+    public void setNoRetryDelay(@Duration long delay) {
+        noRetryDelay = delay;
+    }
+
+    /** {@inheritDoc} */
+    @Override public long getNoRetryDelay() {
+        return noRetryDelay;
     }
 
     /**
@@ -83,7 +120,14 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     @Override @Nullable public final Map<String, IdPAttribute> doResolve(
             @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
-        Map<String, IdPAttribute> result = doDataConnectorResolve(resolutionContext, workContext);
+
+        final Map<String, IdPAttribute> result;
+        try {
+            result = doDataConnectorResolve(resolutionContext, workContext);
+        } catch (Exception e) {
+            setLastFail(System.currentTimeMillis());
+            throw e;
+        }
 
         if (null == result) {
             log.debug("{} no attributes were produced during resolution", getId());

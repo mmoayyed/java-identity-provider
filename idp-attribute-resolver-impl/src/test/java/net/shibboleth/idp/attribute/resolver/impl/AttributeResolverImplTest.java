@@ -333,7 +333,7 @@ public class AttributeResolverImplTest {
         final MockDataConnector dc2 = new MockDataConnector("dc2", Collections.singletonMap("Atr", i2Val));
         dc2.initialize();
         dc1.setFailoverDataConnectorId("dc2");
-       // dc1.setNoRetryDelay(3000);
+        dc1.setNoRetryDelay(3000);
         dc1.initialize();
         
         final HashSet<DataConnector> connectors = new HashSet<>(2);
@@ -359,8 +359,7 @@ public class AttributeResolverImplTest {
 
         context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
-        // Change when the timeout code is there.
-        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
+        Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 2);
         
         Thread.sleep(3100);
         context = new AttributeResolutionContext();

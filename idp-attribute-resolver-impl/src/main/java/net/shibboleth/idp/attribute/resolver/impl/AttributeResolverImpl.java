@@ -291,6 +291,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
+        final long resolveTime = System.currentTimeMillis(); 
 
         if (workContext.getResolvedDataConnectors().containsKey(connectorId)) {
             log.trace("{} Data connector '{}' was already resolved, nothing to do", logPrefix, connectorId);
@@ -301,6 +302,20 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         if (connector == null) {
             log.debug("{} No data connector was registered with ID '{}', nothing to do", logPrefix, connectorId);
             return;
+        }
+
+        if (resolveTime < connector.getLastFail() + connector.getNoRetryDelay()) {
+            log.debug("{} Data connector '{}' failed to resolve previously.  Still waiting", logPrefix, connectorId);
+            final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
+            if (null != failoverDataConnectorId) {
+                log.debug("{} Data connector '{}' invoking failover data connector '{}'", logPrefix, connectorId,
+                        failoverDataConnectorId);
+                resolveDataConnector(failoverDataConnectorId, resolutionContext);
+                workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
+                return;
+            } else {
+                throw new ResolutionException("Previous resolve failed");
+            }
         }
 
         resolveDependencies(connector, resolutionContext);
