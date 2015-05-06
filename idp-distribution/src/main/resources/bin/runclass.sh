@@ -32,7 +32,7 @@ if [ -n "$CLASSPATH" ] ; then
 fi
 
 if [ -z "$IDP_BASE_URL" ] ; then
-  IDP_BASE_URL="http://localhost"
+  IDP_BASE_URL="http://localhost/idp"
 fi
 
 # add in the dependency .jar files

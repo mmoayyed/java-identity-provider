@@ -96,7 +96,7 @@ public class ResolverTestArguments extends AbstractCommandLineArguments {
     protected StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
         
         if (getPath() == null) {
-            builder.append("/idp/profile/admin/resolvertest");
+            builder.append("/profile/admin/resolvertest");
         }
         
         if (builder.toString().contains("?")) {

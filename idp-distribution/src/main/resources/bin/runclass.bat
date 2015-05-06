@@ -12,7 +12,7 @@ if not defined JAVACMD (
 )
 
 if not defined IDP_BASE_URL (
-  set IDP_BASE_URL="http://localhost"
+  set IDP_BASE_URL="http://localhost/idp"
 )
 
 if not exist %JAVACMD% (

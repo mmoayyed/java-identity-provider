@@ -37,7 +37,7 @@ public class ReloadServiceArguments extends AbstractCommandLineArguments {
     protected StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
         
         if (getPath() == null) {
-            builder.append("/idp/profile/admin/reload-service");
+            builder.append("/profile/admin/reload-service");
         }
         
         if (builder.toString().contains("?")) {

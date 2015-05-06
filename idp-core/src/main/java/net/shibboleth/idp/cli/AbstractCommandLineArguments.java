@@ -42,12 +42,12 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     @Parameter(names = {"-h", "--help"}, description = "Display program usage", help = true)
     private boolean help;
 
-    /** URL to invoke. */
-    @Parameter(names = {"-u", "--url"}, description = "Base URL to invoke (no path, no query string)")
+    /** Base of URL to invoke. */
+    @Parameter(names = {"-u", "--url"}, description = "Base URL to invoke (path and query string will be appended)")
     @Nonnull private String url;
 
-    /** Path to invoke. */
-    @Parameter(names = {"-p", "--path"}, description = "Path to append to URL to invoke (may include query string)")
+    /** Path to add to base URL. */
+    @Parameter(names = {"-p", "--path"}, description = "Path to append to base URL to invoke")
     @Nullable private String path;
     
     /** Trust store for SSL connectivity. */
@@ -66,7 +66,7 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     public AbstractCommandLineArguments() {
         url = System.getProperty(BASEURL_PROPERTY);
         if (url == null) {
-            url = "http://localhost";
+            url = "http://localhost/idp";
         }
     }
     

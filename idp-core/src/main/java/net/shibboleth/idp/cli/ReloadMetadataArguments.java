@@ -37,7 +37,7 @@ public class ReloadMetadataArguments extends AbstractCommandLineArguments {
     protected StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
         
         if (getPath() == null) {
-            builder.append("/idp/profile/admin/reload-metadata");
+            builder.append("/profile/admin/reload-metadata");
         }
         
         if (builder.toString().contains("?")) {

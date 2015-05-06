@@ -27,7 +27,7 @@ public class StatusArguments extends AbstractCommandLineArguments {
     protected StringBuilder doBuildURL(@Nonnull final StringBuilder builder) {
         
         if (getPath() == null) {
-            builder.append("/idp/status");
+            builder.append("/status");
         }
         
         return builder;
