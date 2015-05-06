@@ -23,6 +23,8 @@ import java.net.URL;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 
@@ -33,13 +35,16 @@ import com.beust.jcommander.Parameters;
 @Parameters(separators = " =")
 public abstract class AbstractCommandLineArguments implements CommandLineArguments {
 
+    /** Name of system property for overriding default URL. */
+    @Nonnull @NotEmpty public static final String BASEURL_PROPERTY = "net.shibboleth.idp.cli.baseURL";
+    
     /** Display command usage. */
     @Parameter(names = {"-h", "--help"}, description = "Display program usage", help = true)
     private boolean help;
 
     /** URL to invoke. */
     @Parameter(names = {"-u", "--url"}, description = "Base URL to invoke (no path, no query string)")
-    @Nonnull private String url = "http://localhost";
+    @Nonnull private String url;
 
     /** Path to invoke. */
     @Parameter(names = {"-p", "--path"}, description = "Path to append to URL to invoke (may include query string)")
@@ -57,6 +62,14 @@ public abstract class AbstractCommandLineArguments implements CommandLineArgumen
     @Parameter(names = {"-tp", "--trustStorePassword"}, description = "Password to a trust store for SSL connections")
     @Nullable private String trustStorePassword;
 
+    /** Constructor. */
+    public AbstractCommandLineArguments() {
+        url = System.getProperty(BASEURL_PROPERTY);
+        if (url == null) {
+            url = "http://localhost";
+        }
+    }
+    
     /**
      * Value of "help" parameter.
      * 
