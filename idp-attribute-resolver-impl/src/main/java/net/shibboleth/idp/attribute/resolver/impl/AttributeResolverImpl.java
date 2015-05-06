@@ -315,6 +315,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                         + " connector '{}'.  Reason for failure:", logPrefix, connectorId,
                         failoverDataConnectorId, e);
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
+                workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
                 return;
             } else {
                 // Pass it on. Do not look at propagateException because this is handled in the
@@ -365,7 +366,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             }
         }
 
-        log.debug("{} Finished resolving dependencies for {}", logPrefix, plugin.getId());
+        log.debug("{} Finished resolving dependencies for '{}'", logPrefix, plugin.getId());
     }
 
     /**

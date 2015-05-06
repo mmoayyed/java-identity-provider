@@ -312,7 +312,7 @@ public class AttributeResolverImplTest {
         resolver.resolveAttributes(context);
     }
     
-    @Test(enabled=false) public void resolveWithTimeout() throws Exception {
+    @Test(enabled=true) public void resolveWithTimeout() throws Exception {
         
         final IdPAttribute i1Val = new IdPAttribute("Atr");
         i1Val.setValues(Collections.singleton(new StringAttributeValue("value1")));

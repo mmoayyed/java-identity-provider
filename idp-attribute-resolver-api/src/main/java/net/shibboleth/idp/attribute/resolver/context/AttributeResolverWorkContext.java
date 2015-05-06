@@ -40,11 +40,12 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.collect.MapConstraints;
 
 /**
- * A context which carries and collects information through the attribute resolution process,
- * and coordinates data between the resolver implementation and the various resolver plugin
- * implementations.
- * 
- * <p>This should be considered a private API limited to plugin implementations.</p>
+ * A context which carries and collects information through the attribute resolution process, and coordinates data
+ * between the resolver implementation and the various resolver plugin implementations.
+ *
+ * <p>
+ * This should be considered a private API limited to plugin implementations.
+ * </p>
  */
 @NotThreadSafe
 public class AttributeResolverWorkContext extends BaseContext {
@@ -127,5 +128,35 @@ public class AttributeResolverWorkContext extends BaseContext {
         final ResolvedDataConnector wrapper = new ResolvedDataConnector(connector, attributes);
         resolvedDataConnectors.put(connector.getId(), wrapper);
     }
-    
+
+    /**
+     * Transfer the attributes from a failover dataconnector to a failed one. This allows up stream processing to
+     * pretend that the failed connector worked OK. The inherent duplication is OK since the code which exploits this
+     * does the dedupe.
+     *
+     * @param failedConnector the connector which failed and provoked the failover.
+     * @param failoverConnector the failover connector which did resolve OK.
+     * @throws ResolutionException if badness ocurrs
+     */
+    public void recordFailoverResolution(@Nonnull final DataConnector failedConnector,
+            @Nonnull final DataConnector failoverConnector) throws ResolutionException {
+
+        if (failoverConnector == null) {
+            return;
+        }
+
+        if (resolvedDataConnectors.containsKey(failedConnector.getId())) {
+            throw new ResolutionException("The resolution of data connector " + failedConnector.getId()
+                    + " has already been recorded");
+        }
+
+        final ResolvedDataConnector resolvedFailoverConector = resolvedDataConnectors.get(failoverConnector.getId());
+        if (null == resolvedFailoverConector) {
+            throw new ResolutionException("The resolution of failover conector" + failoverConnector.getId()
+                    + " was not recorded");
+        }
+        final ResolvedDataConnector wrapper =
+                new ResolvedDataConnector(failedConnector, resolvedFailoverConector.getResolvedAttributes());
+        resolvedDataConnectors.put(failedConnector.getId(), wrapper);
+    }
 }
