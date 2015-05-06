@@ -38,14 +38,14 @@ public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>>
     @Nullable String getFailoverDataConnectorId();
 
     /**
-     * Get how long to wait until we declare the connector live again.
+     * Get how long to wait until we declare the connector (potentially) alive again.
      *
-     * @return hoe long to wait.
+     * @return how long to wait.
      */
      long getNoRetryDelay();
 
      /**
-      * Get the time when this connector last failed. This will be said for any exception regardless of the setting of
+      * Get the time when this connector last failed. This will be set for any exception regardless of the setting of
       * {@link #isPropagateResolutionExceptions()}
       *
       * @return when it last failed

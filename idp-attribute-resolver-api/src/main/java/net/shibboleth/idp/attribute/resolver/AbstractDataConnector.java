@@ -49,7 +49,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     /** cache for the log prefix - to save multiple recalculations. */
     @Nullable private String logPrefix;
 
-    /** When did this connector last fail. */
+    /** When did this connector last fail? */
     private long lastFail;
 
     /** How long to wait until we declare the connector live again. */
@@ -97,7 +97,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
     }
 
     /**
-     * Set how long to wait until we declare the connector live again.
+     * Set how long to wait until we declare the connector (potentially) alive again.
      *
      * @param delay what to set
      */
