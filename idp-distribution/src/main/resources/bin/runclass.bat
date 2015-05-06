@@ -11,6 +11,10 @@ if not defined JAVACMD (
   set JAVACMD="%JAVA_HOME%\bin\java.exe"
 )
 
+if not defined IDP_BASE_URL (
+  set IDP_BASE_URL="http://localhost"
+)
+
 if not exist %JAVACMD% (
   echo Error: JAVA_HOME is not defined correctly.
   echo Cannot execute %JAVACMD%
@@ -22,4 +26,4 @@ set LOCALCLASSPATH=%~dp0lib\*;%~dp0..\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\class
 
 REM Go to it !
 
-%JAVACMD% -cp "%LOCALCLASSPATH%" %*
+%JAVACMD% -cp "%LOCALCLASSPATH%" -Dnet.shibboleth.idp.cli.baseURL=%IDP_BASE_URL% %*

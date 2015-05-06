@@ -31,16 +31,20 @@ if [ -n "$CLASSPATH" ] ; then
   LOCALCLASSPATH=$CLASSPATH
 fi
 
+if [ -z "$IDP_BASE_URL" ] ; then
+  IDP_BASE_URL="http://localhost"
+fi
+
 # add in the dependency .jar files
 LOCALCLASSPATH="$LOCATION/../webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 LOCALCLASSPATH="$LOCATION/lib/*":$LOCALCLASSPATH
 
 if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
-    LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/tools.jar
+  LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/tools.jar
 fi
 
 if [ -f "$JAVA_HOME/lib/classes.zip" ] ; then
-    LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/classes.zip
+  LOCALCLASSPATH=$LOCALCLASSPATH:$JAVA_HOME/lib/classes.zip
 fi
 
-"$JAVACMD" '-classpath' "$LOCALCLASSPATH" "$@"
+"$JAVACMD" '-classpath' "$LOCALCLASSPATH" -Dnet.shibboleth.idp.cli.baseURL=$IDP_BASE_URL "$@"
