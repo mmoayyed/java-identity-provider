@@ -12,8 +12,9 @@
     <!--
        | The CAS service registry defines verified relying parties by endpoint URI.
        | Each entry is a regular expression defining a logical group of services whose URIs match the expression.
+       | By default this bean is reloaded periodically according to %{idp.home}/conf/services.properties.
        -->
-    <bean id="cas.serviceRegistry"
+    <bean id="cas.ReloadingServiceRegistry"
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">
         <property name="definitions">
             <list>

@@ -95,6 +95,14 @@
         p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
         p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
 
+    <bean id="cas.ReloadableServiceRegistry" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
+          c:claz="net.shibboleth.idp.cas.service.ServiceRegistry"
+          p:serviceConfigurations-ref="%{idp.service.cas.registry.resources:cas.ServiceRegistryResources}"
+          p:failFast="%{idp.service.cas.registry.failFast:true}"
+          p:reloadCheckDelay="%{idp.service.cas.registry.checkInterval:PT0S}"
+          p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
+          p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
+
     <!--
     These are proxies/facades that expose a service-unaware interface to client components.
     Services without such facades are being consumed directly in a service-aware way.
@@ -123,5 +131,9 @@
     <bean id="shibboleth.SAML2AttributesMapperService"
         class="net.shibboleth.idp.saml.attribute.mapping.impl.SAML2AttributesMapperService"
         c:resolverService-ref="shibboleth.AttributeResolverService" />
+
+    <bean id="cas.ServiceRegistry"
+          class="net.shibboleth.idp.cas.service.ReloadableServiceRegistry"
+          c:delegate-ref="cas.ReloadableServiceRegistry" />
 
  </beans>

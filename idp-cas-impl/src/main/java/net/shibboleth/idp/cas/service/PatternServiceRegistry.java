@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.cas.service;
 
+import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,8 @@ import java.util.List;
  *
  * @author Marvin S. Addison
  */
-public class PatternServiceRegistry implements ServiceRegistry {
+public class PatternServiceRegistry extends AbstractServiceableComponent<ServiceRegistry>
+        implements IdentifiableComponent, ServiceRegistry {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(PatternServiceRegistry.class);
@@ -43,6 +46,11 @@ public class PatternServiceRegistry implements ServiceRegistry {
     @NonnullElements
     private List<ServiceDefinition> definitions = Collections.emptyList();
 
+    @Override
+    public void setId(@Nonnull final String componentId) {
+        super.setId(componentId);
+    }
+
     /**
      * Sets the list of service definitions that back the registry.
      * @param definitions List of service definitions, each of which defines a match pattern to evaluate a candidate
@@ -50,6 +58,12 @@ public class PatternServiceRegistry implements ServiceRegistry {
      */
     public void setDefinitions(@Nonnull @NonnullElements List<ServiceDefinition> definitions) {
         this.definitions = Constraint.isNotNull(definitions, "Service definition list cannot be null");
+    }
+
+    @Nonnull
+    @Override
+    public ServiceRegistry getComponent() {
+        return this;
     }
 
     @Override

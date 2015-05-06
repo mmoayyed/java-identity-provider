@@ -58,11 +58,11 @@
           p:secondaryServiceIndex="false"
           p:IDGenerator-ref="shibboleth.SessionIDGenerator" />
 
-    <bean id="cas.ticketService"
+    <bean id="cas.TicketService"
           class="net.shibboleth.idp.cas.ticket.SimpleTicketService"
           c:service-ref="shibboleth.StorageService" />
 
-    <bean id="cas.serviceRegistry"
+    <bean id="cas.ServiceRegistry"
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">
         <property name="definitions">
             <list>
@@ -78,18 +78,18 @@
         </property>
     </bean>
 
-    <bean id="cas.proxyAuthenticator"
+    <bean id="cas.ProxyAuthenticator"
           class="net.shibboleth.idp.cas.proxy.HttpClientProxyAuthenticator" />
 
 
     <!-- Flow beans -->
     <bean id="buildProxyChainAction"
           class="net.shibboleth.idp.cas.flow.BuildProxyChainAction"
-          c:ticketService-ref="cas.ticketService" />
+          c:ticketService-ref="cas.TicketService" />
 
     <bean id="buildRelyingPartyContextAction"
           class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
-          c:registry-ref="cas.serviceRegistry"/>
+          c:registry-ref="cas.ServiceRegistry"/>
 
     <bean id="buildSAMLMetadataContextAction"
           class="net.shibboleth.idp.cas.flow.BuildSAMLMetadataContextAction" />
@@ -102,11 +102,11 @@
 
     <bean id="grantProxyTicketAction"
           class="net.shibboleth.idp.cas.flow.GrantProxyTicketAction"
-          c:ticketService-ref="cas.ticketService" />
+          c:ticketService-ref="cas.TicketService" />
 
     <bean id="grantServiceTicketAction"
           class="net.shibboleth.idp.cas.flow.GrantServiceTicketAction"
-          c:ticketService-ref="cas.ticketService" />
+          c:ticketService-ref="cas.TicketService" />
 
     <bean id="validateIdPSessionAction"
           class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
@@ -114,13 +114,13 @@
 
     <bean id="validateProxyCallbackAction"
           class="net.shibboleth.idp.cas.flow.ValidateProxyCallbackAction"
-          c:proxyAuthenticator-ref="cas.proxyAuthenticator"
-          c:ticketService-ref="cas.ticketService" />
+          c:proxyAuthenticator-ref="cas.ProxyAuthenticator"
+          c:ticketService-ref="cas.TicketService" />
 
     <bean id="validateRenewAction"
           class="net.shibboleth.idp.cas.flow.ValidateRenewAction" />
 
     <bean id="validateTicketAction"
           class="net.shibboleth.idp.cas.flow.ValidateTicketAction"
-          c:ticketService-ref="cas.ticketService" />
+          c:ticketService-ref="cas.TicketService" />
 </beans>

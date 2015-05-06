@@ -12,6 +12,6 @@
     <!-- Action beans -->
     <bean id="buildProxyChainAction"
           class="net.shibboleth.idp.cas.flow.BuildProxyChainAction"
-          c:ticketService-ref="cas.ticketService" />
+          c:ticketService-ref="cas.TicketService" />
 
 </beans>

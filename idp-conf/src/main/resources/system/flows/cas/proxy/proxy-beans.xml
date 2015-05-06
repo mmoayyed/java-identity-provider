@@ -19,10 +19,10 @@
 
     <bean id="initializeProxyAction"
           class="net.shibboleth.idp.cas.flow.InitializeProxyAction"
-          c:ticketService-ref="cas.ticketService" />
+          c:ticketService-ref="cas.TicketService" />
 
     <bean id="grantProxyTicketAction"
           class="net.shibboleth.idp.cas.flow.GrantProxyTicketAction"
-          c:ticketService-ref="cas.ticketService" />
+          c:ticketService-ref="cas.TicketService" />
 
 </beans>

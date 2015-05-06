@@ -28,7 +28,7 @@
 
     <bean id="grantServiceTicketAction"
           class="net.shibboleth.idp.cas.flow.GrantServiceTicketAction"
-          c:ticketService-ref="cas.ticketService" />
+          c:ticketService-ref="cas.TicketService" />
 
     <bean id="populateSessionContext"
           class="net.shibboleth.idp.session.impl.PopulateSessionContext"
