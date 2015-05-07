@@ -133,7 +133,7 @@
         c:resolverService-ref="shibboleth.AttributeResolverService" />
 
     <bean id="cas.ServiceRegistry"
-          class="net.shibboleth.idp.cas.service.ReloadableServiceRegistry"
+          class="net.shibboleth.idp.cas.service.ReloadingServiceRegistry"
           c:delegate-ref="cas.ReloadableServiceRegistry" />
 
  </beans>

@@ -32,10 +32,10 @@ import javax.annotation.Nullable;
  *
  * @author Marvin S. Addison
  */
-public class ReloadableServiceRegistry extends AbstractIdentifiableInitializableComponent implements ServiceRegistry {
+public class ReloadingServiceRegistry extends AbstractIdentifiableInitializableComponent implements ServiceRegistry {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ReloadableServiceRegistry.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ReloadingServiceRegistry.class);
 
     /** The service that manages the reloading. */
     private final ReloadableService<ServiceRegistry> service;
@@ -45,18 +45,25 @@ public class ReloadableServiceRegistry extends AbstractIdentifiableInitializable
      *
      * @param delegate The service to which operations are delegated.
      */
-    public ReloadableServiceRegistry(@Nonnull ReloadableService<ServiceRegistry> delegate) {
+    public ReloadingServiceRegistry(@Nonnull ReloadableService<ServiceRegistry> delegate) {
         service = Constraint.isNotNull(delegate, "ReloadableService cannot be null");
     }
 
     @Nullable
     @Override
     public Service lookup(@Nonnull String serviceURL) {
-        ServiceableComponent<ServiceRegistry> component = service.getServiceableComponent();
-        if (null == component) {
-            log.error("ServiceRegistry '{}': error looking up service registry: Invalid configuration.", getId());
-            return null;
+        ServiceableComponent<ServiceRegistry> component = null;
+        try {
+            component = service.getServiceableComponent();
+            if (null == component) {
+                log.error("ServiceRegistry '{}': error looking up service registry: Invalid configuration.", getId());
+                return null;
+            }
+            return component.getComponent().lookup(serviceURL);
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
         }
-        return component.getComponent().lookup(serviceURL);
     }
 }
