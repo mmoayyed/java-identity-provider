@@ -10,10 +10,11 @@
 	   default-init-method="initialize"
        default-destroy-method="destroy">
 
+    <import resource="../../conf/cas-protocol.xml" />
+
     <bean id="cas.TicketService" class="net.shibboleth.idp.cas.ticket.SimpleTicketService"
           c:service-ref="%{idp.cas.StorageService:shibboleth.StorageService}" />
 
     <bean id="cas.ProxyAuthenticator" class="net.shibboleth.idp.cas.proxy.HttpClientProxyAuthenticator" />
 
-    <import resource="../../conf/cas-protocol.xml" />
 </beans>
