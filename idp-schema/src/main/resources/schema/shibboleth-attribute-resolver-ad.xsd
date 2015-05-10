@@ -183,12 +183,12 @@
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
                 <choice>
-                    <element name="Script" type="string" minOccurs="0">
+                    <element name="Script" type="string">
                         <annotation>
                             <documentation>The script to evaluate to construct the attribute.</documentation>
                         </annotation>
                     </element>
-                    <element name="ScriptFile" type="string" minOccurs="0">
+                    <element name="ScriptFile" type="string">
                         <annotation>
                             <documentation>
                                 The filesystem path to the script to evaluate to construct the attribute.
