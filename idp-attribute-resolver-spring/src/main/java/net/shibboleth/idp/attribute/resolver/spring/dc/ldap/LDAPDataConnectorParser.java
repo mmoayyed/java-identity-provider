@@ -74,13 +74,14 @@ import org.w3c.dom.Element;
 public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
+    @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
 
     /** Local name of attribute. */
-    public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
+    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME =
+            new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(LDAPDataConnectorParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(LDAPDataConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<LDAPDataConnector> getNativeBeanClass() {
@@ -112,7 +113,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
     // CheckStyle: MethodLength OFF
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-        log.debug("{} parsing v2 configuration {}", getLogPrefix(), config);
+        log.debug("{} Parsing v2 configuration {}", getLogPrefix(), config);
 
         final V2Parser v2Parser = new V2Parser(config);
 
@@ -661,4 +662,5 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             return handlers;
         }
     }
+    
 }

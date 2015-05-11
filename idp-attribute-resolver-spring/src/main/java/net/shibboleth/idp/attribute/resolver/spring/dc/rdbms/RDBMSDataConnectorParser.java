@@ -48,13 +48,15 @@ import org.w3c.dom.Element;
 public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "RelationalDatabase");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(DataConnectorNamespaceHandler.NAMESPACE, "RelationalDatabase");
 
     /** Local name of attribute. */
-    public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
+    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME =
+            new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(RDBMSDataConnectorParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(RDBMSDataConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<RDBMSDataConnector> getNativeBeanClass() {
@@ -65,7 +67,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        log.debug("parsing v2 configuration {}", config);
+        log.debug("{} Parsing v2 configuration {}", getLogPrefix(), config);
 
         final V2Parser v2Parser = new V2Parser(config);
 
@@ -276,4 +278,5 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             return DOMTypeSupport.durationToLong(duration) / divisor;
         }
     }
+    
 }

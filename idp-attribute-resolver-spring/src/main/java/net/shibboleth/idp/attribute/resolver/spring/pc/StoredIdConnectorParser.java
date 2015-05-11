@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
 
     /** Schema type name. */
-    public static final QName ELEMENT_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "StoredId");
+    @Nonnull public static final QName TYPE_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "StoredId");
 
     /** {@inheritDoc} */
     @Override protected void addSAMLDecoders(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
@@ -76,7 +76,7 @@ public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
         }
     }
 
-    /** Helper clas to allow us to put *something* into a the principalConnector. */
+    /** Helper class to allow us to put *something* into a the principalConnector. */
     public static class NotImplementedNameIdentifierDecoder implements NameIdentifierDecoder {
 
         /** {@inheritDoc} */
@@ -86,4 +86,5 @@ public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
         }
 
     }
+
 }

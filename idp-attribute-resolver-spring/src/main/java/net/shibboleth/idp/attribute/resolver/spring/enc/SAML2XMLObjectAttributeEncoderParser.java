@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2XMLObjectAttributeEncoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -32,13 +33,14 @@ import org.w3c.dom.Element;
 public class SAML2XMLObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2XMLObject");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2XMLObject");
 
     /** Local name of name format attribute. */
-    public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
+    @Nonnull @NotEmpty public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
 
     /** Local name of friendly name attribute. */
-    public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
+    @Nonnull @NotEmpty public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
 
     /** Constructor. */
     public SAML2XMLObjectAttributeEncoderParser() {
@@ -46,7 +48,7 @@ public class SAML2XMLObjectAttributeEncoderParser extends BaseAttributeEncoderPa
     }
 
     /** {@inheritDoc} */
-    @Override protected Class<SAML2XMLObjectAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML2XMLObjectAttributeEncoder> getBeanClass(@Nullable final Element element) {
         return SAML2XMLObjectAttributeEncoder.class;
     }
 

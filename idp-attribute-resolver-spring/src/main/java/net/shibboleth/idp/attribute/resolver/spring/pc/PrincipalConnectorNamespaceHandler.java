@@ -17,7 +17,10 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.pc;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * Namespace handler for the principal connector. This is a noop and is here purely to allow us to have a handler
@@ -26,16 +29,17 @@ import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 public class PrincipalConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for principal connector (which have not handlers). */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:pc";
+    @Nonnull @NotEmpty public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:pc";
 
     /** {@inheritDoc} */
     @Override public void init() {
-        registerBeanDefinitionParser(DirectConnectorParser.ELEMENT_NAME, new DirectConnectorParser());
+        registerBeanDefinitionParser(DirectConnectorParser.TYPE_NAME, new DirectConnectorParser());
 
-        registerBeanDefinitionParser(TransientConnectorParser.ELEMENT_NAME, new TransientConnectorParser());
+        registerBeanDefinitionParser(TransientConnectorParser.TYPE_NAME, new TransientConnectorParser());
 
-        registerBeanDefinitionParser(CryptoTransientConnectorParser.ELEMENT_NAME, new CryptoTransientConnectorParser());
+        registerBeanDefinitionParser(CryptoTransientConnectorParser.TYPE_NAME, new CryptoTransientConnectorParser());
 
-        registerBeanDefinitionParser(StoredIdConnectorParser.ELEMENT_NAME, new StoredIdConnectorParser());
+        registerBeanDefinitionParser(StoredIdConnectorParser.TYPE_NAME, new StoredIdConnectorParser());
     }
+    
 }

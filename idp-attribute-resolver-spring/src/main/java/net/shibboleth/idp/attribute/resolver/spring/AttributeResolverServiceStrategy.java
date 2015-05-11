@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
@@ -44,10 +45,10 @@ import com.google.common.base.Function;
  * and bunging them into the Attribute Resolver which we then initialize.
  */
 public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitializableComponent implements
-        Function<ApplicationContext, ServiceableComponent<AttributeResolver>> {
+        Function<ApplicationContext,ServiceableComponent<AttributeResolver>> {
 
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceStrategy.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverServiceStrategy.class);
 
     /** {@inheritDoc} */
     @Override @Nullable public ServiceableComponent<AttributeResolver> apply(
@@ -69,9 +70,10 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
 
         try {
             resolver.initialize();
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             throw new ServiceException("Unable to initialize attribute resolver for " + appContext.getDisplayName(), e);
         }
         return resolver;
     }
+    
 }

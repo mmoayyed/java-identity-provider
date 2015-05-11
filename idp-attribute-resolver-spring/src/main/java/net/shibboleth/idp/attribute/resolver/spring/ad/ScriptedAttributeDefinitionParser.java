@@ -40,17 +40,18 @@ import org.w3c.dom.Element;
 public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
 
     /** Script file element name. */
-    public static final QName SCRIPT_FILE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "ScriptFile");
+    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile");
 
     /** Inline Script element name. */
-    public static final QName SCRIPT_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
+    @Nonnull public static final QName SCRIPT_ELEMENT_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<ScriptedAttributeDefinition> getBeanClass(@Nullable Element element) {
@@ -67,7 +68,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
         scriptBuilder.addPropertyValue("sourceId", getLogPrefix());
         if (config.hasAttributeNS(null, "language")) {
             final String scriptLanguage = config.getAttributeNS(null, "language");
-            log.debug("{} scripting language: {}.", getLogPrefix(), scriptLanguage);
+            log.debug("{} Scripting language: {}", getLogPrefix(), scriptLanguage);
             scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }
         
@@ -75,19 +76,19 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
         final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
         if (scriptElem != null && scriptElem.size() > 0) {
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
-                log.info("Attribute definition {}: definition contains both <Script> "
-                        + "and <ScriptFile> elements, taking the <Script> element", getDefinitionId());
+                log.warn("{} Attribute definition {}: definition contains both <Script> "
+                        + "and <ScriptFile> elements, taking the <Script> element", getLogPrefix(), getDefinitionId());
             }
             final String script = scriptElem.get(0).getTextContent();
-            log.debug("{} script {}.", getLogPrefix(), script);
+            log.debug("{} Script: {}", getLogPrefix(), script);
             scriptBuilder.addPropertyValue("script", script);
         } else if (scriptFileElem != null && scriptFileElem.size() > 0) {
             final String scriptFile = scriptFileElem.get(0).getTextContent();
-            log.debug("{} script file {}.", getLogPrefix(), scriptFile);
+            log.debug("{} Script file: {}", getLogPrefix(), scriptFile);
             scriptBuilder.addPropertyValue("resource", scriptFile);
         } else {
-            log.error("{} No script specified for this attribute definition");
-            throw new BeanCreationException("No script specified for this attribute definition");
+            log.error("{} No script or script file specified for this attribute definition", getLogPrefix());
+            throw new BeanCreationException("No script or script file specified for this attribute definition");
         }
 
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
@@ -97,4 +98,5 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
+    
 }

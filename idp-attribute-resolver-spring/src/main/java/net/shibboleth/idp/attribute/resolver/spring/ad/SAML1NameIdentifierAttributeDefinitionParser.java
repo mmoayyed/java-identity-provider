@@ -34,11 +34,11 @@ import org.w3c.dom.Element;
 public class SAML1NameIdentifierAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "SAML1NameIdentifier");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SAML1NameIdentifier");
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<SAML1NameIdentifierAttributeDefinition> getBeanClass(@Nullable Element element) {
@@ -55,10 +55,10 @@ public class SAML1NameIdentifierAttributeDefinitionParser extends BaseAttributeD
 
         if (config.hasAttributeNS(null, "nameIdFormat")) {
             final String nameIdFormat = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdFormat"));
-            log.debug("{} nameIdFormat '{}', nameIdQualifier '{}'.", getLogPrefix(), nameIdFormat, nameIdQualifier);
+            log.debug("{} nameIdFormat '{}', nameIdQualifier '{}'", getLogPrefix(), nameIdFormat, nameIdQualifier);
             builder.addPropertyValue("nameIdFormat", nameIdFormat);
         } else {
-            log.debug("{} nameIdQualifier '{}'.", getLogPrefix(), nameIdQualifier);
+            log.debug("{} nameIdQualifier '{}'", getLogPrefix(), nameIdQualifier);
         }
     }
 
@@ -66,4 +66,5 @@ public class SAML1NameIdentifierAttributeDefinitionParser extends BaseAttributeD
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
+    
 }

@@ -19,6 +19,8 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -29,13 +31,13 @@ import org.w3c.dom.Element;
 public abstract class BaseScopedAttributeEncoderParser extends BaseAttributeEncoderParser {
 
     /** Local name of scope type attribute. */
-    public static final String SCOPE_TYPE_ATTRIBUTE_NAME = "scopeType";
+    @Nonnull @NotEmpty public static final String SCOPE_TYPE_ATTRIBUTE_NAME = "scopeType";
 
     /** Local name of scope delimiter attribute. */
-    public static final String SCOPE_DELIMITER_ATTRIBUTE_NAME = "scopeDelimiter";
+    @Nonnull @NotEmpty public static final String SCOPE_DELIMITER_ATTRIBUTE_NAME = "scopeDelimiter";
 
     /** Local name of scope attribute attribute. */
-    public static final String SCOPE_ATTRIBUTE_ATTRIBUTE_NAME = "scopeAttribute";
+    @Nonnull @NotEmpty public static final String SCOPE_ATTRIBUTE_ATTRIBUTE_NAME = "scopeAttribute";
 
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,

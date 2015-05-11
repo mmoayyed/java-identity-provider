@@ -35,10 +35,11 @@ import org.w3c.dom.Element;
 public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SourceValue");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SourceValue");
 
-    /** log. */
-    private Logger log = LoggerFactory.getLogger(SourceValueParser.class);
+    /** Class logger. */
+    @Nonnull private Logger log = LoggerFactory.getLogger(SourceValueParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<SourceValue> getBeanClass(@Nullable final Element element) {
@@ -78,4 +79,5 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+    
 }

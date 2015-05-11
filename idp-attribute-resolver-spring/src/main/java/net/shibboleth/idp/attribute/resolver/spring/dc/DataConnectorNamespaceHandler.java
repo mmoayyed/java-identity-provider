@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.LDAPDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.RDBMSDataConnectorParser;
@@ -25,7 +27,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.RDBMSDataConnectorP
 public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:dc";
+    @Nonnull public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:dc";
 
     /** {@inheritDoc} */
     @Override public void init() {
@@ -36,4 +38,5 @@ public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(LDAPDataConnectorParser.TYPE_NAME, new LDAPDataConnectorParser());
         registerBeanDefinitionParser(ScriptDataConnectorParser.TYPE_NAME, new ScriptDataConnectorParser());
     }
+    
 }

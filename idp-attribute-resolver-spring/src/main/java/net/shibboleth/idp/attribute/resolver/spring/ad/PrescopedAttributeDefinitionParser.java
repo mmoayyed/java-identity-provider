@@ -33,13 +33,14 @@ import org.w3c.dom.Element;
 public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Prescoped");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Prescoped");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<PrescopedAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<PrescopedAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return PrescopedAttributeDefinition.class;
     }
 
@@ -50,7 +51,7 @@ public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionP
 
         if (config.hasAttributeNS(null, "scopeDelimiter")) {
             final String scopeDelimiter = config.getAttributeNS(null, "scopeDelimiter");
-            log.debug("{} scope delimiter of {} specified.", getLogPrefix(), scopeDelimiter);
+            log.debug("{} Scope delimiter of {} specified.", getLogPrefix(), scopeDelimiter);
             builder.addPropertyValue("scopeDelimiter", scopeDelimiter);
         }
     }
@@ -59,4 +60,5 @@ public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionP
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
+    
 }

@@ -35,13 +35,14 @@ import org.w3c.dom.Element;
 public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Dependency");
+    @Nonnull public static final QName ELEMENT_NAME =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Dependency");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ResolverPluginDependencyParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ResolverPluginDependencyParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<ResolverPluginDependency> getBeanClass(@Nullable Element element) {
+    @Override protected Class<ResolverPluginDependency> getBeanClass(@Nullable final Element element) {
         return ResolverPluginDependency.class;
     }
 
@@ -49,7 +50,7 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         final String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
-        log.info("Parsing configuration for {} with pluginId : {}", config.getLocalName(), pluginId);
+        log.info("Parsing configuration for {} with pluginId: {}", config.getLocalName(), pluginId);
         builder.addConstructorArgValue(pluginId);
     }
 
@@ -57,4 +58,5 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+    
 }

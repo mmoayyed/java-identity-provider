@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1StringAttributeEncoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.BeanCreationException;
@@ -35,10 +36,10 @@ import org.w3c.dom.Element;
 public class SAML1StringAttributeEncoderParser extends BaseAttributeEncoderParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1String");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1String");
 
     /** Local name of namespace attribute. */
-    public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+    @Nonnull @NotEmpty public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
 
     /** Constructor. */
     public SAML1StringAttributeEncoderParser() {
@@ -46,7 +47,7 @@ public class SAML1StringAttributeEncoderParser extends BaseAttributeEncoderParse
     }
 
     /** {@inheritDoc} */
-    @Override protected Class<SAML1StringAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML1StringAttributeEncoder> getBeanClass(@Nullable final Element element) {
         return SAML1StringAttributeEncoder.class;
     }
 
@@ -65,4 +66,5 @@ public class SAML1StringAttributeEncoderParser extends BaseAttributeEncoderParse
             throw new BeanCreationException("SAML 1 attribute encoders must contain a name");
         }
     }
+    
 }

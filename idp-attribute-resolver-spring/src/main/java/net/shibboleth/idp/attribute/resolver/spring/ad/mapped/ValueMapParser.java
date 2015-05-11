@@ -43,14 +43,14 @@ import org.w3c.dom.Element;
 public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ValueMap");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ValueMap");
 
     /** return Value element name. */
-    public static final QName RETURN_VALUE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "ReturnValue");
+    @Nonnull public static final QName RETURN_VALUE_ELEMENT_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ReturnValue");
 
-    /** log. */
-    private Logger log = LoggerFactory.getLogger(ValueMapParser.class);
+    /** Class logger. */
+    @Nonnull private Logger log = LoggerFactory.getLogger(ValueMapParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<ValueMap> getBeanClass(@Nullable final Element element) {
@@ -94,4 +94,5 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+    
 }

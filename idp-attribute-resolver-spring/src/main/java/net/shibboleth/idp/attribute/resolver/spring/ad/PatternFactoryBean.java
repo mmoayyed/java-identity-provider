@@ -19,7 +19,11 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * Factory bean for {@link Pattern}. Allows us to inject property based case sensitivity.
@@ -27,10 +31,10 @@ import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 public class PatternFactoryBean extends AbstractComponentAwareFactoryBean<Pattern> {
 
     /** Whether the we are case sensitive or not. */
-    private Boolean caseSensitive;
+    @Nullable private Boolean caseSensitive;
 
     /** The regular expressions. */
-    private String regexp;
+    @Nullable private String regexp;
 
     /** {@inheritDoc} */
     @Override public Class<?> getObjectType() {
@@ -51,7 +55,7 @@ public class PatternFactoryBean extends AbstractComponentAwareFactoryBean<Patter
      * 
      * @param what The value to set.
      */
-    public void setCaseSensitive(Boolean what) {
+    public void setCaseSensitive(@Nullable final Boolean what) {
         caseSensitive = what;
     }
 
@@ -60,7 +64,7 @@ public class PatternFactoryBean extends AbstractComponentAwareFactoryBean<Patter
      * 
      * @return Returns the regexp.
      */
-    public String getRegexp() {
+    @Nullable public String getRegexp() {
         return regexp;
     }
 
@@ -69,12 +73,14 @@ public class PatternFactoryBean extends AbstractComponentAwareFactoryBean<Patter
      * 
      * @param what what to set.
      */
-    public void setRegexp(String what) {
+    public void setRegexp(@Nonnull final String what) {
         regexp = what;
     }
 
     /** {@inheritDoc} */
     @Override protected Pattern doCreateInstance() throws Exception {
+        Constraint.isNotNull(regexp, "Regular expression cannot be null");
+        
         if (null == getCaseSensitive() || getCaseSensitive()) {
             return Pattern.compile(regexp, 0);
         } else {

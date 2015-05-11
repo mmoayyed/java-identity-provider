@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.BeanCreationException;
@@ -33,7 +34,7 @@ import org.w3c.dom.Element;
 public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefinitionParser {
 
     /** Local name of name attribute. */
-    public static final String NAME_ATTRIBUTE_NAME = "name";
+    @Nonnull @NotEmpty public static final String NAME_ATTRIBUTE_NAME = "name";
 
     /** Whether the name property is required or not. */
     private boolean nameRequired;
@@ -81,8 +82,8 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     }
     
     /** {@inheritDoc}. <br/> We parse the attribute "name" and we do not want Spring to. see #IDP-571. */
-    @Override
-    protected boolean shouldParseNameAsAliases() {
+    @Override protected boolean shouldParseNameAsAliases() {
         return false;
     }
+    
 }

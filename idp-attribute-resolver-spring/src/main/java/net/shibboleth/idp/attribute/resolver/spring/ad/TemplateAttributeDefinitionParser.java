@@ -40,19 +40,18 @@ import org.w3c.dom.Element;
 public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Template");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Template");
 
     /** SourceValue element name. */
-    public static final QName TEMPLATE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "Template");
+    @Nonnull public static final QName TEMPLATE_ELEMENT_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Template");
 
     /** SourceValue element name. */
-    public static final QName SOURCE_ATTRIBUTE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "SourceAttribute");
+    @Nonnull public static final QName SOURCE_ATTRIBUTE_ELEMENT_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SourceAttribute");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory
-            .getLogger(TemplateAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override
@@ -70,7 +69,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
 
         if (null != templateElements && templateElements.size() >= 1) {
             final String templateText = StringSupport.trimOrNull(templateElements.get(0).getTextContent());
-            log.debug("{} template is '{}'", getLogPrefix(), templateText);
+            log.debug("{} Template is '{}'", getLogPrefix(), templateText);
 
             builder.addPropertyValue("templateText", templateText);
         }
@@ -82,7 +81,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
             for (Element element : sourceAttributeElements) {
                 sourceAttributes.add(StringSupport.trimOrNull(element.getTextContent()));
             }
-            log.debug("{} source attributes are '{}'.", getLogPrefix(), sourceAttributes);
+            log.debug("{} Source attributes are '{}'.", getLogPrefix(), sourceAttributes);
             builder.addPropertyValue("sourceAttributes", sourceAttributes);
         }
 
@@ -90,7 +89,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
         if (null == velocityEngineRef) {
             velocityEngineRef = "shibboleth.VelocityEngine";
         }
-        log.debug("{} velocity engine reference '{}'.", getLogPrefix(), velocityEngineRef);
+        log.debug("{} Velocity engine reference '{}'.", getLogPrefix(), velocityEngineRef);
         builder.addPropertyReference("velocityEngine", velocityEngineRef);
     }
     

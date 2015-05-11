@@ -47,15 +47,15 @@ import org.w3c.dom.Element;
 public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-            "AttributeDefinition");
+    @Nonnull public static final QName ELEMENT_NAME =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "AttributeDefinition");
 
     /** Local name of attribute encoder. */
-    public static final QName ATTRIBUTE_ENCODER_ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-            "AttributeEncoder");
+    @Nonnull public static final QName ATTRIBUTE_ENCODER_ELEMENT_NAME =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "AttributeEncoder");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     // CheckStyle: CyclomaticComplexity OFF
@@ -68,7 +68,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
                         "DisplayName"));
         if (displayNames != null && !displayNames.isEmpty()) {
             final Map<Locale, String> names = processLocalizedElement(displayNames);
-            log.debug("{} setting displayNames {}.", getLogPrefix(), names);
+            log.debug("{} Setting displayNames {}", getLogPrefix(), names);
             builder.addPropertyValue("displayNames", names);
         }
 
@@ -77,26 +77,26 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
                         "DisplayDescription"));
         if (displayDescriptions != null && !displayDescriptions.isEmpty()) {
             final Map<Locale, String> names = processLocalizedElement(displayDescriptions);
-            log.debug("{} setting displayDescriptions {}.", getLogPrefix(), names);
+            log.debug("{} Setting displayDescriptions {}", getLogPrefix(), names);
             builder.addPropertyValue("displayDescriptions", names);
         }
 
         if (config.hasAttributeNS(null, "dependencyOnly")) {
             String dependencyOnly = config.getAttributeNS(null, "dependencyOnly");
-            log.debug("{} setting dependencyOnly {}.", getLogPrefix(), dependencyOnly);
+            log.debug("{} Setting dependencyOnly {}", getLogPrefix(), dependencyOnly);
             builder.addPropertyValue("dependencyOnly", dependencyOnly);
         }
 
         if (config.hasAttributeNS(null, "sourceAttributeID")) {
             final String sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
-            log.debug("{} setting sourceAttributeID {}.", getLogPrefix(), sourceAttributeId);
+            log.debug("{} Setting sourceAttributeID {}", getLogPrefix(), sourceAttributeId);
             builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
             if (!needsAttributeSourceID()) {
-                log.warn("{} sourceAttributeID was specified but is meaningless.  Add {} as a <Dependency> instead.",
+                log.warn("{} sourceAttributeID was specified but is meaningless, add {} as a <Dependency> instead",
                         getLogPrefix(), sourceAttributeId);
             }
         } else if (needsAttributeSourceID()) {
-            log.warn("{} sourceAttributeID was not specified but is required.", getLogPrefix());
+            log.warn("{} sourceAttributeID was not specified but is required", getLogPrefix());
         }
 
         final List<Element> attributeEncoders =
@@ -104,7 +104,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
                         "AttributeEncoder"));
 
         if (attributeEncoders != null && !attributeEncoders.isEmpty()) {
-            log.debug("{} adding {} encoders.", getLogPrefix(), attributeEncoders.size());
+            log.debug("{} Adding {} encoders", getLogPrefix(), attributeEncoders.size());
             builder.addPropertyValue("attributeEncoders",
                     SpringSupport.parseCustomElements(attributeEncoders, parserContext));
         }
@@ -145,4 +145,5 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
      * @return Whether the attribute definition for this parser meeds attributeSourceID.
      */
     protected abstract boolean needsAttributeSourceID();
+    
 }

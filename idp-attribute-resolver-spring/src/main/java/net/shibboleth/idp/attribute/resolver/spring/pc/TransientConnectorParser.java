@@ -37,10 +37,10 @@ import org.w3c.dom.Element;
 public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
 
     /** Schema type name. */
-    public static final QName ELEMENT_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "Transient");
+    @Nonnull public static final QName TYPE_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "Transient");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(TransientConnectorParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TransientConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected void addSAMLDecoders(@Nonnull Element config, @Nonnull ParserContext parserContext,
@@ -63,7 +63,7 @@ public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
         
         if (config.hasAttributeNS(null, "noResultIsError")) {
-            log.warn("Transient Principal Connector does not support 'noResultIsError'");
+            log.warn("Transient PrincipalConnector does not support 'noResultIsError' attribute");
         }
         
         // NameIdentifier

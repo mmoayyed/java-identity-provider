@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 public class ComputedIDDataConnectorParser extends BaseComputedIDDataConnectorParser {
 
     /** Schema type. */
-    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "ComputedId");
+    @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "ComputedId");
 
     /** {@inheritDoc} */
     @Override protected Class<ComputedIDDataConnector> getBeanClass(Element element) {
@@ -44,4 +44,5 @@ public class ComputedIDDataConnectorParser extends BaseComputedIDDataConnectorPa
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "computedId");
     }
+    
 }

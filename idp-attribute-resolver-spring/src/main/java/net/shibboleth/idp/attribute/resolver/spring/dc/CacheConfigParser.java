@@ -43,10 +43,10 @@ import com.google.common.cache.CacheBuilder;
 public class CacheConfigParser {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(CacheConfigParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CacheConfigParser.class);
 
     /** Base XML element. */
-    private final Element configElement;
+    @Nonnull private final Element configElement;
 
     /**
      * Creates a new cache config parser with the supplied ResultsCache element.

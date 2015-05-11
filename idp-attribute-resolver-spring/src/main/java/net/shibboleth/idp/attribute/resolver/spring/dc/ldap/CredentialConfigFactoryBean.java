@@ -20,6 +20,9 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 
 import org.ldaptive.ssl.CredentialConfig;
@@ -35,14 +38,14 @@ import org.springframework.beans.factory.BeanCreationException;
  */
 public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBean<CredentialConfig> {
 
-    /** Log. */
-    private static Logger log = LoggerFactory.getLogger(CredentialConfigFactoryBean.class);
+    /** Class logger. */
+    @Nonnull private static Logger log = LoggerFactory.getLogger(CredentialConfigFactoryBean.class);
 
     /** The credential of the LDAP server. */
-    private Credential trustCredential;
+    @Nullable private Credential trustCredential;
 
     /** Our authentication credential for the LDAP connection. */
-    private Credential authCredential;
+    @Nullable private Credential authCredential;
 
     /** {@inheritDoc} */
     @Override public Class<?> getObjectType() {
@@ -87,7 +90,7 @@ public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBe
      * 
      * @return Returns the authnCredential.
      */
-    public Credential getAuthCredential() {
+    @Nullable public Credential getAuthCredential() {
         return authCredential;
     }
 
@@ -96,7 +99,7 @@ public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBe
      * 
      * @param credential What to set.
      */
-    public void setAuthCredential(Credential credential) {
+    public void setAuthCredential(@Nullable final Credential credential) {
         authCredential = credential;
     }
 
@@ -105,7 +108,7 @@ public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBe
      * 
      * @return Returns the trustCredential.
      */
-    public Credential getTrustCredential() {
+    @Nullable public Credential getTrustCredential() {
         return trustCredential;
     }
 
@@ -114,7 +117,7 @@ public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBe
      * 
      * @param credential What to set.
      */
-    public void setTrustCredential(Credential credential) {
+    public void setTrustCredential(@Nullable final Credential credential) {
         trustCredential = credential;
     }
 }

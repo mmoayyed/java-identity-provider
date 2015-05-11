@@ -22,6 +22,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -36,17 +37,17 @@ import org.w3c.dom.Element;
 public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinitionParser {
 
     /** An Id for the definition, used for debugging messages and creating names of children. */
-    private String defnId = "<Unnamed Attribute or Connector>";
+    @Nonnull @NotEmpty private String defnId = "<Unnamed Attribute or Connector>";
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(BaseResolverPluginParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseResolverPluginParser.class);
 
     /**
      * Helper for logging.
      * 
      * @return the definition ID
      */
-    @Nonnull protected String getDefinitionId() {
+    @Nonnull @NotEmpty protected String getDefinitionId() {
         return defnId;
     }
 
@@ -55,7 +56,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
-        log.info("Parsing configuration for {} plugin with id : {}", config.getLocalName(), id);
+        log.info("Parsing configuration for {} plugin with id: {}", config.getLocalName(), id);
         builder.addPropertyValue("id", id);
         if (null != id) {
             defnId = id;
@@ -72,8 +73,9 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
                     config.getAttributeNS(null, "profileContextStrategyRef"));
         }
 
-        List<Element> dependencyElements =
+        final List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);
         builder.addPropertyValue("dependencies", SpringSupport.parseCustomElements(dependencyElements, parserContext));
     }
+    
 }

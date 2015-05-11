@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
 
     /** Schema type name. */
-    public static final QName ELEMENT_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "Direct");
+    @Nonnull public static final QName TYPE_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "Direct");
 
     /** {@inheritDoc} */
     @Override protected void addSAMLDecoders(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
@@ -48,7 +48,6 @@ public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
         subBuilder.addPropertyValue("id", id);
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
         
-
         subBuilder = BeanDefinitionBuilder.genericBeanDefinition(TransformingNameIdentifierDecoder.class);
         subBuilder.setInitMethodName("initialize");
         subBuilder.setDestroyMethodName("destroy");

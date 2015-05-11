@@ -37,10 +37,11 @@ import org.w3c.dom.Element;
 public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "RegexSplit");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "RegexSplit");
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<RegexSplitAttributeDefinition> getBeanClass(@Nullable Element element) {
@@ -74,4 +75,5 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
+    
 }

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
@@ -30,11 +31,12 @@ import org.w3c.dom.Element;
 public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalName");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalName");
 
     /** {@inheritDoc} */
     @Override
-    protected Class<PrincipalNameAttributeDefinition> getBeanClass(@Nullable Element element) {
+    protected Class<PrincipalNameAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return PrincipalNameAttributeDefinition.class;
     }
 
@@ -42,4 +44,5 @@ public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinit
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
+    
 }

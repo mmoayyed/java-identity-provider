@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
@@ -64,7 +65,7 @@ public abstract class AbstractResolverPluginFactoryBean<T extends AbstractResolv
     /** Set the component Id.
      * @param id the id.
      */
-    @Nullable public void setId(@Nullable String id) {
+    @Nullable public void setId(@Nullable final String id) {
         componentId = id;
     }
     
@@ -146,7 +147,7 @@ public abstract class AbstractResolverPluginFactoryBean<T extends AbstractResolv
      * Set the locally define values into the object under construction.
      * @param what the object being built.
      */
-    protected void setValues(T what) {   
+    protected void setValues(@Nonnull final T what) {   
         if (null != getId()) {
             what.setId(getId());
         }
@@ -163,4 +164,5 @@ public abstract class AbstractResolverPluginFactoryBean<T extends AbstractResolv
             what.setPropagateResolutionExceptions(getPropagateResolutionExceptions());
         }
     }
+    
 }

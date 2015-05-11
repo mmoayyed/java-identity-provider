@@ -45,26 +45,27 @@ import org.w3c.dom.Element;
 public abstract class AbstractDataConnectorParser extends BaseResolverPluginParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DataConnector");
+    @Nonnull public static final QName ELEMENT_NAME =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DataConnector");
 
     /** semi colon separated resources to indicate external config. */
-    public static final String ATTR_SPRING_RESOURCE = "springResources";
+    @Nonnull @NotEmpty public static final String ATTR_SPRING_RESOURCE = "springResources";
 
     /** A bean name for a {@link java.util.Collection<org.springframework.core.io.Resource>}.. */
-    public static final String ATTR_SPRING_RESOURCE_REF = "springResourcesRef";
+    @Nonnull @NotEmpty public static final String ATTR_SPRING_RESOURCE_REF = "springResourcesRef";
 
     /** A bean name for a {@link List<org.springframework.beans.factory.config.BeanFactoryPostProcessor>}. */
-    public static final String ATTR_FACTORY_POSTPROCESSORS_REF = "factoryPostProcessorsRef";
+    @Nonnull @NotEmpty public static final String ATTR_FACTORY_POSTPROCESSORS_REF = "factoryPostProcessorsRef";
 
     /** A bean name for a {@link List<org.springframework.beans.factory.config.BeanPostProcessor>}. */
-    public static final String ATTR_POSTPROCESSORS_REF = "postProcessorsRef";
+    @Nonnull @NotEmpty public static final String ATTR_POSTPROCESSORS_REF = "postProcessorsRef";
 
     /** Failover data connector attribute name. */
-    public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
-            AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
+    @Nonnull public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
 
     /** Log4j logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
 
     /**
      * Returns whether the element configuration is native spring or custom.
@@ -95,14 +96,13 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     /** {@inheritDoc} */
     @Override protected final void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-
         super.doParse(config, parserContext, builder);
 
         final List<Element> failoverConnector =
                 ElementSupport.getChildElements(config, FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
         if (failoverConnector != null && !failoverConnector.isEmpty()) {
-            String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
-            log.debug("{} setting the following failover data connector dependencies {}", getLogPrefix(), connectorId);
+            final String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
+            log.debug("{} Setting the following failover data connector dependencies: {}", getLogPrefix(), connectorId);
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
         if (isNative(config)) {
@@ -113,11 +113,11 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             builder.setDestroyMethodName(null);
             if (config.hasAttributeNS(null, ATTR_SPRING_RESOURCE)) {
                 final String[] resources = config.getAttributeNS(null, ATTR_SPRING_RESOURCE).split(";");
-                log.debug("{} native configuration from {}", getLogPrefix(), resources);
+                log.debug("{} Native configuration from {}", getLogPrefix(), resources);
                 builder.addPropertyValue("resources", resources);
             } else {
                 final String resourceRef = config.getAttributeNS(null, ATTR_SPRING_RESOURCE_REF);
-                log.debug("{} native configuration from bean {}", getLogPrefix(), resourceRef);
+                log.debug("{} Native configuration from bean {}", getLogPrefix(), resourceRef);
                 builder.addPropertyReference("resources", resourceRef);
             }
             if (config.hasAttribute(ATTR_FACTORY_POSTPROCESSORS_REF)) {
@@ -125,7 +125,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
                 log.debug("{} Factory Bean Post Processors {}", getLogPrefix(), factoryPostProcessorsRef);
                 builder.addPropertyReference("beanFactoryPostProcessors", factoryPostProcessorsRef);
             } else {
-                log.debug("{} Adding default Factory Bean Post Processors "
+                log.debug("{} Adding default Factory Bean Post Processor: "
                         + "shibboleth.PropertySourcesPlaceholderConfigurer", getLogPrefix());
                 builder.addPropertyReference("beanFactoryPostProcessors",
                         "shibboleth.PropertySourcesPlaceholderConfigurer");
@@ -157,7 +157,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * @return "Attribute Definition: '<definitionID>' :"
      */
     @Nonnull @NotEmpty protected String getLogPrefix() {
-        StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
+        final StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
         return builder.toString();
     }
 }

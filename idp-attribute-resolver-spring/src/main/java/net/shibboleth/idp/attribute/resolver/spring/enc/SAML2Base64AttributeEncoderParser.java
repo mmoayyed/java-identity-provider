@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2ByteAttributeEncoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -34,13 +35,13 @@ import org.w3c.dom.Element;
 public class SAML2Base64AttributeEncoderParser extends BaseAttributeEncoderParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2Base64");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2Base64");
 
     /** Local name of name format attribute. */
-    public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
+    @Nonnull @NotEmpty public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
 
     /** Local name of friendly name attribute. */
-    public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
+    @Nonnull @NotEmpty public static final String FRIENDLY_NAME_ATTRIBUTE_NAME = "friendlyName";
 
     /** Constructor. */
     public SAML2Base64AttributeEncoderParser() {
@@ -48,7 +49,7 @@ public class SAML2Base64AttributeEncoderParser extends BaseAttributeEncoderParse
     }
 
     /** {@inheritDoc} */
-    @Override protected Class<SAML2ByteAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML2ByteAttributeEncoder> getBeanClass(@Nullable final Element element) {
         return SAML2ByteAttributeEncoder.class;
     }
 
@@ -64,4 +65,5 @@ public class SAML2Base64AttributeEncoderParser extends BaseAttributeEncoderParse
 
         builder.addPropertyValue("friendlyName", config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME));
     }
+    
 }

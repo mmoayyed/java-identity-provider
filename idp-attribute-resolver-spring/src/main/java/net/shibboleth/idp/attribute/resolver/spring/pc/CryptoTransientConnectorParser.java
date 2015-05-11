@@ -36,18 +36,18 @@ import org.w3c.dom.Element;
 public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorParser {
 
     /** Schema type name. */
-    public static final QName ELEMENT_NAME = new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "CryptoTransient");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "CryptoTransient");
 
     /** {@inheritDoc} */
     @Override protected void addSAMLDecoders(@Nonnull Element config, @Nonnull ParserContext parserContext,
             @Nonnull BeanDefinitionBuilder builder) {
 
-        String dataSealer = StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef"));
+        final String dataSealer = StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef"));
         if (dataSealer == null) {
             throw new BeanCreationException("dataSealerRef attribute is required");
         }
         
-
         // NameID
         BeanDefinitionBuilder subBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(CryptoTransientNameIDDecoder.class);

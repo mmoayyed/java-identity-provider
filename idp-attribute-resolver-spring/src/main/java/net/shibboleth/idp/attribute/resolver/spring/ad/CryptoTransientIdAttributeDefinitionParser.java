@@ -25,6 +25,8 @@ import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefin
 import net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -36,7 +38,11 @@ import org.w3c.dom.Element;
 public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "CryptoTransientId");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "CryptoTransientId");
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<TransientIdAttributeDefinition> getBeanClass(@Nullable Element element) {
@@ -62,10 +68,13 @@ public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDef
                 StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef")));
 
         builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
+        
+        log.warn("{} This feature is DEPRECATED in favor of a TransientSAML2NameIDGenerator", getLogPrefix());
     }
 
     /** {@inheritDoc}. So source Attribute for this. */
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
+    
 }

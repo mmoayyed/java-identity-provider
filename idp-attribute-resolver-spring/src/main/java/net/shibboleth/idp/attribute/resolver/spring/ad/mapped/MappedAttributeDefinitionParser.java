@@ -42,14 +42,14 @@ import org.w3c.dom.Element;
 public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Mapped");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Mapped");
 
     /** return Value element name. */
-    public static final QName DEFAULT_VALUE_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "DefaultValue");
+    @Nonnull public static final QName DEFAULT_VALUE_ELEMENT_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "DefaultValue");
 
-    /** log. */
-    private Logger log = LoggerFactory.getLogger(MappedAttributeDefinitionParser.class);
+    /** Class logger. */
+    @Nonnull private Logger log = LoggerFactory.getLogger(MappedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<MappedAttributeDefinition> getBeanClass(@Nullable final Element element) {
@@ -71,7 +71,7 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
 
             if (defaultValueElement.hasAttributeNS(null, "passThru")) {
                 if (null != defaultValue) {
-                    log.info("Attribute Definition: '{}' default value and passThru both specified", getDefinitionId());
+                    log.info("{} Default value and passThru both specified", getLogPrefix(), getDefinitionId());
                 }
                 passThru = defaultValueElement.getAttributeNS(null, "passThru");
                 builder.addPropertyValue("passThru", passThru);
@@ -87,9 +87,9 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
 
         final List<BeanDefinition> valueMaps = SpringSupport.parseCustomElements(valueMapElements, parserContext);
 
-        log.debug("{} passThru = {}, defaultValue = {}, {} value maps.", new Object[] {getLogPrefix(), passThru,
+        log.debug("{} passThru = {}, defaultValue = {}, {} value maps", new Object[] {getLogPrefix(), passThru,
                 defaultValue, valueMaps.size(),});
-        log.trace("{} value maps {}", getLogPrefix(), valueMaps);
+        log.trace("{} Value maps {}", getLogPrefix(), valueMaps);
 
         builder.addPropertyValue("defaultValue", defaultValue);
         builder.addPropertyValue("valueMaps", valueMaps);
@@ -99,4 +99,5 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
+    
 }

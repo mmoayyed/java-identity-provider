@@ -26,6 +26,8 @@ import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHa
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -40,7 +42,11 @@ import org.w3c.dom.Element;
 public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBeanDefinitionParser {
 
     /** Relying Parties. */
-    public static final QName RELYING_PARTY = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "RelyingParty");
+    @Nonnull public static final QName RELYING_PARTY =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "RelyingParty");
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractPrincipalConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<PrincipalConnector> getBeanClass(Element element) {
@@ -50,6 +56,8 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+        
+        log.warn("PrincipalConnector feature is DEPRECATED in favor of subject c14n flows");
         
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
@@ -90,6 +98,5 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
      */
     protected abstract void addSAMLDecoders(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder);
-
 
 }

@@ -38,10 +38,11 @@ import org.w3c.dom.Element;
 public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "TransientId");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "TransientId");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<TransientIdAttributeDefinition> getBeanClass(@Nullable Element element) {
@@ -72,10 +73,13 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
         strategyBuilder.addPropertyReference("idStore", idStore);
 
         builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
+        
+        log.warn("{} This feature is DEPRECATED in favor of a TransientSAML2NameIDGenerator", getLogPrefix());
     }
 
     /** {@inheritDoc}. No input. */
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
+    
 }

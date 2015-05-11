@@ -34,10 +34,11 @@ import org.w3c.dom.Element;
 public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SAML2NameID");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SAML2NameID");
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<SAML2NameIDAttributeDefinition> getBeanClass(@Nullable Element element) {
@@ -61,7 +62,7 @@ public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitio
         final String nameIdSPQualifier = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIdSPQualifier"));
         builder.addPropertyValue("nameIdSPQualifier", nameIdSPQualifier);
 
-        log.debug("{} nameIdQualifier '{}', nameIdSPQualifier '{}'.", getLogPrefix(), nameIdQualifier,
+        log.debug("{} nameIdQualifier '{}', nameIdSPQualifier '{}'", getLogPrefix(), nameIdQualifier,
                 nameIdSPQualifier);
     }
 
@@ -69,4 +70,5 @@ public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitio
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
+    
 }

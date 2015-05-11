@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalAuthenticationMethodAttributeDefinition;
@@ -29,8 +30,8 @@ import org.w3c.dom.Element;
 public class PrincipalAuthenticationMethodAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "PrincipalAuthenticationMethod");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalAuthenticationMethod");
 
     /** {@inheritDoc} */
     @Override protected Class<PrincipalAuthenticationMethodAttributeDefinition> getBeanClass(Element element) {
@@ -41,4 +42,5 @@ public class PrincipalAuthenticationMethodAttributeDefinitionParser extends Base
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
+    
 }

@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1XMLObjectAttributeEncoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -32,10 +33,11 @@ import org.w3c.dom.Element;
 public class SAML1XMLObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1XMLObject");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1XMLObject");
 
     /** Local name of namespace attribute. */
-    public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
+    @Nonnull @NotEmpty public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
 
     /** Constructor. */
     public SAML1XMLObjectAttributeEncoderParser() {

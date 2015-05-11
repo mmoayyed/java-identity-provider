@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
 
     /** {@inheritDoc} */
     @Override
@@ -50,4 +50,5 @@ public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionPars
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
+    
 }

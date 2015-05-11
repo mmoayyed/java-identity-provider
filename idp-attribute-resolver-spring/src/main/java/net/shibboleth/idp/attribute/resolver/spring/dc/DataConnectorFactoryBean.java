@@ -60,7 +60,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
         ApplicationContextAware {
 
     /** Log4j logger. */
-    private final Logger log = LoggerFactory.getLogger(DataConnectorFactoryBean.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(DataConnectorFactoryBean.class);
 
     /** The class that we are implementing. */
     @Nonnull private Class<? extends AbstractDataConnector> connectorClass;
@@ -89,7 +89,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * @param claz what we are making
      */
     public DataConnectorFactoryBean(@Nonnull final Class<? extends AbstractDataConnector> claz) {
-        connectorClass = Constraint.isNotNull(claz, "injected class must be non null");
+        connectorClass = Constraint.isNotNull(claz, "Injected class must be non-null");
     }
 
     /**
@@ -229,19 +229,20 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
                 Introspector.getBeanInfo(connectorClass, AbstractDataConnector.class).getPropertyDescriptors();
 
         for (PropertyDescriptor descriptor : descriptors) {
-            log.debug("parsing property descriptor {}", descriptor);
+            log.debug("Parsing property descriptor: {}", descriptor);
             final Map<String, ?> beans = appContext.getBeansOfType(descriptor.getPropertyType());
 
             if (null == beans || beans.isEmpty()) {
                 continue;
             }
             if (beans.size() > 1) {
-                log.info("Too many beans of type {} found only the first will be used", descriptor.getPropertyType());
+                log.info("Too many beans of type {} found, only the first will be used", descriptor.getPropertyType());
             }
             final Object bean = beans.values().iterator().next();
-            log.debug("added property value {}", bean);
+            log.debug("Added property value: {}", bean);
             descriptor.getWriteMethod().invoke(result, bean);
         }
         return result;
     }
+    
 }

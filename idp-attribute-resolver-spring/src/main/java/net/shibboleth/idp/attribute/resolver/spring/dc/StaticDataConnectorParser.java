@@ -46,7 +46,7 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
             new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(StaticDataConnectorParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StaticDataConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<StaticDataConnector> getNativeBeanClass() {
@@ -73,7 +73,7 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
                 final BeanDefinitionBuilder value =
                         BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValue.class);
                 value.addConstructorArgValue(val.getTextContent());
-                log.trace("{} Attribute: {}, adding value {} ",
+                log.trace("{} Attribute: {}, adding value {}",
                         new Object[] {getLogPrefix(), attrId, val.getTextContent(),});
                 inValues.add(value.getBeanDefinition());
             }

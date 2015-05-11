@@ -17,10 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.MappedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.SourceValueParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.ValueMapParser;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /**
  * Namespace handler for {@link net.shibboleth.idp.attribute.resolver.AttributeDefinition}s.
@@ -28,7 +31,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.ValueMapParser;
 public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:ad";
+    @Nonnull @NotEmpty public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:ad";
 
     /** {@inheritDoc} */
     @Override
@@ -64,4 +67,5 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
         registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME,
                 new MappedAttributeDefinitionParser());
     }
+    
 }

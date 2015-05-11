@@ -43,10 +43,10 @@ import org.w3c.dom.Element;
 public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "StoredId");
+    @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "StoredId");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<StoredIDDataConnector> getBeanClass(Element element) {
@@ -57,11 +57,12 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
-        log.debug("doParse {}", config);
+        
+        log.debug("{} doParse {}", getLogPrefix(), config);
         final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
         final String beanDataSource = getBeanDataSourceID(config);
         if (springResources != null) {
-            log.warn("{} springResources is depreceated for the StoredIDDataConnector"
+            log.warn("{} springResources is deprecated for the StoredIDDataConnector"
                     + ", consider using BeanManagedConnection", getLogPrefix());
             builder.addPropertyValue("dataSource", getDataSource(springResources.split(";")));
         } else if (beanDataSource != null) {
@@ -98,7 +99,7 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
      * @param springResource location of a spring resource.
      * @return the DataSource
      */
-    protected DataSource getDataSource(@Nonnull String... springResource) {
+    protected DataSource getDataSource(@Nonnull final String... springResource) {
         final BeanFactory beanFactory = createBeanFactory(springResource);
         return beanFactory.getBean(DataSource.class);
     }
@@ -126,8 +127,9 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
      * @return the DataSource
      */
     protected BeanDefinition getv2DataSource(@Nonnull Element config) {
-        log.debug("parsing v2 configuration");
+        log.debug("{} Parsing v2 configuration", getLogPrefix());
         final ManagedConnectionParser parser = new ManagedConnectionParser(config);
         return parser.createDataSource();
     }
+    
 }

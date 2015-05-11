@@ -40,8 +40,8 @@ import org.w3c.dom.Element;
  */
 public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPluginParser {
 
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(BaseComputedIDDataConnectorParser.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseComputedIDDataConnectorParser.class);
 
     /**
      * Parse the common definitions for {@link net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector}
@@ -66,7 +66,7 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
                 AbstractDataConnectorParser.FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
         if (failoverConnector != null && !failoverConnector.isEmpty()) {
             String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
-            log.debug("{} setting the following failover data connector dependencies {}", getLogPrefix(), connectorId);
+            log.debug("{} Setting the following failover data connector dependencies: {}", getLogPrefix(), connectorId);
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
 
@@ -76,11 +76,11 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         final byte[] saltBytes;
         if (null == salt) {
             saltBytes = null;
-            log.debug("{} generated Attribute : '{}', sourceAttribute = '{}', no salt provided.", new Object[] {
+            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', no salt provided", new Object[] {
                     getLogPrefix(), generatedAttribute, sourceAttribute,});
         } else {
             saltBytes = salt.getBytes();
-            log.debug("{} generated Attribute : '{}', sourceAttribute = '{}', salt: '{}'.", new Object[] {
+            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', salt: '{}'", new Object[] {
                     getLogPrefix(), generatedAttribute, sourceAttribute, saltBytes,});
         }
 
@@ -97,4 +97,5 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
         return builder.toString();
     }
+    
 }

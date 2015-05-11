@@ -35,10 +35,10 @@ import org.w3c.dom.Element;
 public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Scoped");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Scoped");
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinitionParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
     @Override
@@ -54,7 +54,7 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
 
 
         String scope = config.getAttributeNS(null, "scope");
-        log.debug("{} setting scope to '{}'.", getLogPrefix(), scope);
+        log.debug("{} Setting scope to '{}'.", getLogPrefix(), scope);
         builder.addPropertyValue("scope", scope);
     }
 
@@ -62,4 +62,5 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
+    
 }

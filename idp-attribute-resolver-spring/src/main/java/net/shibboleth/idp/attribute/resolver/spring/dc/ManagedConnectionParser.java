@@ -45,7 +45,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 public class ManagedConnectionParser {
 
     /** Data source XML element. */
-    private final Element configElement;
+    @Nonnull private final Element configElement;
 
     /**
      * Creates a new ManagedConnectionParser with the supplied element.
@@ -246,4 +246,5 @@ public class ManagedConnectionParser {
         }
         return jdbcDriver;
     }
+    
 }

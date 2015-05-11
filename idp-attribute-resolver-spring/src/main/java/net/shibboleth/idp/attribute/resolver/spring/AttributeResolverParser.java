@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
@@ -45,12 +46,12 @@ import org.w3c.dom.Element;
 public class AttributeResolverParser implements BeanDefinitionParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME =
+    @Nonnull public static final QName ELEMENT_NAME =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "AttributeResolver");
 
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
-            "AttributeResolverType");
+    @Nonnull public static final QName SCHEMA_TYPE =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "AttributeResolverType");
 
     /**
      * {@inheritDoc}
@@ -70,4 +71,5 @@ public class AttributeResolverParser implements BeanDefinitionParser {
         SpringSupport.parseCustomElements(children, context);
         return null;
     }
+    
 }
