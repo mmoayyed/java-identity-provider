@@ -18,8 +18,6 @@
 package net.shibboleth.idp.spring;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.TreeSet;
@@ -52,7 +50,7 @@ public class IdPPropertiesApplicationContextInitializer implements
 
     /** IdP home property. */
     @Nonnull @NotEmpty public static final String IDP_HOME_PROPERTY = "idp.home";
-
+    
     /** Property that points to more property sources. */
     @Nonnull @NotEmpty public static final String IDP_ADDITIONAL_PROPERTY = "idp.additionalProperties";
 
@@ -60,39 +58,27 @@ public class IdPPropertiesApplicationContextInitializer implements
     @Nonnull public static final String IDP_PROPERTIES = "/conf/idp.properties";
 
     /** Well known search locations. */
-    @Nonnull public static final String[] SEARCH_LOCATIONS = {System.getProperty("idp.home", "/opt/shibboleth-idp"),};
+    @Nonnull public static final String[] SEARCH_LOCATIONS =
+        {
+            System.getProperty("idp.home", "/opt/shibboleth-idp"),
+        };
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
 
-    // Checkstyle: CyclomaticComplexity OFF
-    // Checkstyle: MethodLength OFF
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
 
         log.debug("Attempting to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
-        for (final String location : getSearchLocations()) {
-            
-            String searchLocation = location;
-            String searchPath = searchLocation + getSearchTarget();
+        for (String searchLocation : getSearchLocations()) {
+
+            final String searchPath = searchLocation + getSearchTarget();
 
             log.debug("Attempting to find resource '{}'", searchPath);
-            Resource resource = applicationContext.getResource(searchPath);
-            final boolean decoded;
+            final Resource resource = applicationContext.getResource(searchPath);
 
-            if (!resource.exists()) {
-                try {
-                    searchLocation = URLDecoder.decode(searchLocation, "UTF-8");
-                    searchPath = searchLocation + getSearchTarget();
-                } catch (UnsupportedEncodingException e) {
-                    continue;
-                }
-                resource = applicationContext.getResource(searchPath);
-                decoded = true;
-            } else {
-                decoded = false;
-            }
             if (resource.exists()) {
                 log.debug("Found resource '{}' at search path '{}'", resource, searchPath);
 
@@ -103,12 +89,12 @@ public class IdPPropertiesApplicationContextInitializer implements
                 }
 
                 if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
-                    setIdPHomeProperty(searchLocation, properties, decoded);
+                    setIdPHomeProperty(searchLocation, properties);
                 } else {
                     final String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
-                    setIdPHomeProperty(searchLocationAbsolutePath, properties, decoded);
+                    setIdPHomeProperty(searchLocationAbsolutePath, properties);
                 }
-
+                
                 // Load any additional property sources.
                 final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
                 if (additionalSources != null) {
@@ -140,14 +126,12 @@ public class IdPPropertiesApplicationContextInitializer implements
                 applicationContext.getEnvironment().getPropertySources().addLast(propertySource);
 
                 return;
-            }// loop
+            }
         }
 
         log.warn("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
     }
-    // Checkstyle: CyclomaticComplexity ON
-    // Checkstyle: MethodLength ON
-
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Get the target resource to be searched for {@link #IDP_PROPERTIES}.
@@ -191,7 +175,7 @@ public class IdPPropertiesApplicationContextInitializer implements
             return null;
         }
     }
-
+    
     /**
      * Log property names and values at debug level, suppressing properties whose name matches 'password'.
      * 
@@ -229,39 +213,26 @@ public class IdPPropertiesApplicationContextInitializer implements
      * 
      * @param path the property value
      * @param properties the properties
-     * @param overwriteProperty - whether we need to replace an existing property. 
      */
-    public void setIdPHomeProperty(@Nonnull final String path, @Nonnull final Properties properties,
-            final boolean overwriteProperty) {
+    public void setIdPHomeProperty(@Nonnull final String path, @Nonnull final Properties properties) {
         Constraint.isNotNull(path, "Path cannot be null");
         Constraint.isNotNull(properties, "Properties cannot be null");
 
-        final String normalizedPath = normalizePath(path);
-
         if (properties.getProperty(IDP_HOME_PROPERTY) != null) {
-            if (overwriteProperty) {
-                properties.setProperty(IDP_HOME_PROPERTY, normalizedPath);               
-            } else {
-                log.debug("Will not set '{}' property because it is already set.", IDP_HOME_PROPERTY);
-            }
-            properties.setProperty(IDP_HOME_PROPERTY + ".internal", normalizedPath);
+            log.debug("Will not set '{}' property because it is already set.", IDP_HOME_PROPERTY);
             return;
         }
 
         if (System.getProperty(IDP_HOME_PROPERTY) != null) {
-            if (overwriteProperty) {
-                System.setProperty(IDP_HOME_PROPERTY, normalizedPath);
-            } else {
-                log.debug("Will not set '{}' property because it is already set as a system property '{}'",
-                        IDP_HOME_PROPERTY, System.getProperty(IDP_HOME_PROPERTY));
-            }
-            properties.setProperty(IDP_HOME_PROPERTY + ".internal", normalizedPath);
+            log.debug("Will not set '{}' property because it is already set as a system property '{}'",
+                    IDP_HOME_PROPERTY, System.getProperty(IDP_HOME_PROPERTY));
             return;
         }
 
+        final String normalizedPath = normalizePath(path);
+
         log.debug("Setting '{}' property to '{}'", IDP_HOME_PROPERTY, normalizedPath);
 
-        properties.setProperty(IDP_HOME_PROPERTY + ".internal", normalizedPath);
         properties.setProperty(IDP_HOME_PROPERTY, normalizedPath);
     }
 
