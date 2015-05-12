@@ -92,12 +92,11 @@
     -->
 
     <!-- This set of resources supports a native Spring relying-party.xml file. -->
-    <!-- Uncomment the following to customize relying party resource locations.
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>%{idp.home}/conf/relying-party.xml</value>
         <value>%{idp.home}/conf/credentials.xml</value>
         <value>%{idp.home}/system/conf/relying-party-system.xml</value>
-    </util:list>-->
+    </util:list>
 
     <!-- This set of resources supports a legacy 2.x relying-party.xml file. -->
     <util:list id="shibboleth.LegacyRelyingPartyResolverResources">
@@ -105,36 +104,31 @@
         <value>%{idp.home}/system/conf/legacy-relying-party-defaults.xml</value>
     </util:list>
 
-    <!-- Uncomment the following to customize metadata resource locations.
     <util:list id="shibboleth.MetadataResolverResources">
         <value>%{idp.home}/conf/metadata-providers.xml</value>
         <value>%{idp.home}/system/conf/metadata-providers-system.xml</value>
-    </util:list>-->
+    </util:list>
 
-    <!-- Uncomment the following to customize attribute resolver resource locations.
     <util:list id ="shibboleth.AttributeResolverResources">
         <value>%{idp.home}/conf/attribute-resolver.xml</value>
-    </util:list>-->
+    </util:list>
 
-    <!-- Uncomment the following to customize attribute filter resource locations.
     <util:list id ="shibboleth.AttributeFilterResources">
         <value>%{idp.home}/conf/attribute-filter.xml</value>
-    </util:list>-->
+    </util:list>
 
-    <!-- Uncomment the following to customize name ID generation resource locations.
     <util:list id ="shibboleth.NameIdentifierGenerationResources">
         <value>%{idp.home}/conf/saml-nameid.xml</value>
         <value>%{idp.home}/system/conf/saml-nameid-system.xml</value>
-    </util:list>-->
-
-    <!-- Uncomment the following to customize access control resource locations.
+    </util:list>
+    
     <util:list id="shibboleth.AccessControlResources">
         <value>%{idp.home}/conf/access-control.xml</value>
         <value>%{idp.home}/system/conf/access-control-system.xml</value>
-    </util:list>-->
+    </util:list>
 
-    <!-- Uncomment the following to customize CAS service registry resource locations.
-    <util:list id="cas.ServiceRegistryResources">
+    <!-- Uncomment this element to customize CAS service registry resources
+    <util:list id="shibboleth.CASServiceRegistryResources">
         <value>%{idp.home}/conf/cas-protocol.xml</value>
     </util:list>-->
 

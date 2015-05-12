@@ -15,7 +15,7 @@
        |
        | This bean is reloaded periodically according to %{idp.home}/conf/services.properties.
        -->
-    <bean id="cas.ReloadingServiceRegistry"
+    <bean id="reloadableServiceRegistry"
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">
         <property name="definitions">
             <list>

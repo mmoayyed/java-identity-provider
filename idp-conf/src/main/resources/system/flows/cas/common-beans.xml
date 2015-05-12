@@ -17,7 +17,7 @@
 
     <bean id="buildRelyingPartyContextAction"
           class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
-          c:registry-ref="cas.ServiceRegistry"/>
+          c:registry-ref="shibboleth.CASServiceRegistry"/>
 
     <bean id="buildSAMLMetadataContextAction"
           class="net.shibboleth.idp.cas.flow.BuildSAMLMetadataContextAction" />

@@ -15,7 +15,7 @@
         <value>classpath:/conf/credentials.xml</value>
     </util:list>
 
-    <bean id="cas.ServiceRegistry"
+    <bean id="shibboleth.CASServiceRegistry"
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">
         <property name="definitions">
             <list>
