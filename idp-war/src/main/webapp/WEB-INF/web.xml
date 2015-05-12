@@ -13,7 +13,7 @@
     
     <context-param>
         <param-name>contextClass</param-name>
-        <param-value>net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext</param-value>
+        <param-value>net.shibboleth.ext.spring.context.DelimiterAwareDeferPlaceholderFileSystemXmlWebApplicationContext</param-value>
     </context-param>
     
     <context-param>
@@ -131,11 +131,11 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>${idp.home}/system/conf/mvc-beans.xml ${idp.home}/system/conf/webflow-config.xml</param-value>
+            <param-value>${idp.home}/system/conf/mvc-beans.xml, ${idp.home}/system/conf/webflow-config.xml</param-value>
         </init-param>
         <init-param>
             <param-name>contextClass</param-name>
-            <param-value>net.shibboleth.ext.spring.context.DeferPlaceholderFileSystemXmlWebApplicationContext</param-value>
+            <param-value>net.shibboleth.ext.spring.context.DelimiterAwareDeferPlaceholderFileSystemXmlWebApplicationContext</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
