@@ -127,10 +127,9 @@
         <value>%{idp.home}/system/conf/access-control-system.xml</value>
     </util:list>
 
-    <!-- Uncomment this element to customize CAS service registry resources
     <util:list id="shibboleth.CASServiceRegistryResources">
         <value>%{idp.home}/conf/cas-protocol.xml</value>
-    </util:list>-->
+    </util:list>
 
     <!--
     This collection of resources differs slightly in that it should not include the file extension.
