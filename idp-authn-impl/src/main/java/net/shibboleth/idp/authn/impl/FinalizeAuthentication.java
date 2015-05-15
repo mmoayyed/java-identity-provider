@@ -30,6 +30,8 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.session.context.SessionContext;
 
@@ -82,6 +84,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
     /** The principal name extracted from the context tree. */
     @Nullable private String canonicalPrincipalName;
     
+// Checkstyle: MethodLength|CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -104,24 +107,68 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             }
         }
         
-        // Check for a requested Principal and make sure it's in the result.
+        // Check for requested Principal criteria and make sure the result accomodates the criteria.
+        // This is required because flow selection is based (generally) on statically-defined information
+        // and the actual result produced may be a subset (and therefore could be an inadequate subset).
         final RequestedPrincipalContext requestedPrincipalCtx =
                 authenticationContext.getSubcontext(RequestedPrincipalContext.class);
         if (requestedPrincipalCtx != null) {
+            final AuthenticationResult latest = authenticationContext.getAuthenticationResult();
+            if (latest == null) {
+                log.warn("{} Authentication result missing from context?", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+                return false;
+            }
+            
+            // If a matching principal is set, re-verify it. Normally this will work.
             final Principal match = requestedPrincipalCtx.getMatchingPrincipal();
             if (match != null) {
-                final AuthenticationResult latest = authenticationContext.getAuthenticationResult();
-                if (latest == null || !latest.getSupportedPrincipals(match.getClass()).contains(match)) {
-                    log.warn("{} Authentication result for flow {} did not satisfy the requested Principal {}",
-                            getLogPrefix(), latest != null ? latest.getAuthenticationFlowId() : "(none)", match);
-                    ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
-                    return false;
+                if (!latest.getSupportedPrincipals(match.getClass()).contains(match)) {
+                    log.debug("{} Authentication result lacks originally projected matching principal '{}',"
+                            + " reevaluating", getLogPrefix(), match.getName());
+                    requestedPrincipalCtx.setMatchingPrincipal(null);
                 }
             }
+            
+            // It didn't work, so we have to run the machinery over the request principals and
+            // evaluate the result more fully.
+            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                log.debug("{} Checking result for compatibility with operator '{}' and principal '{}'",
+                        getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
+                final PrincipalEvalPredicateFactory factory =
+                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                p.getClass(), requestedPrincipalCtx.getOperator());
+                if (factory != null) {
+                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                    if (predicate.apply(latest)) {
+                        // This will be rechecked at the end of the authentication flow.
+                        requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
+                        log.debug("{} Authentication result satisfies request for principal '{}'", getLogPrefix(),
+                                p.getName());
+                    }
+                } else {
+                    log.warn("{} Configuration does not support requested principal evaluation with "
+                            + "operator '{}' and type '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                            p.getClass());
+                }
+            }
+
+            // If it's still null, then the result didn't meet our needs.
+            if (requestedPrincipalCtx.getMatchingPrincipal() == null) {
+                log.warn("{} Authentication result for flow {} did not satisfy the request", getLogPrefix(),
+                        latest.getAuthenticationFlowId());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+                return false;
+            }
+            
+        } else {
+            log.debug("{} Request did not have explicit authentication requirements, result is accepted",
+                    getLogPrefix());
         }
         
         return super.doPreExecute(profileRequestContext, authenticationContext);
     }
+// Checkstyle: MethodLength|CyclomaticComplexity ON
     
     /** {@inheritDoc} */
     @Override

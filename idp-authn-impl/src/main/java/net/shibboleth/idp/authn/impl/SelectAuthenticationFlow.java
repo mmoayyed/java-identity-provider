@@ -180,6 +180,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                         if (factory != null) {
                             final PrincipalEvalPredicate predicate = factory.getPredicate(p);
                             if (predicate.apply(activeResult)) {
+                                // This will be rechecked at the end of the authentication flow.
                                 requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                                 selectActiveResult(profileRequestContext, authenticationContext, activeResult);
                                 return;
@@ -207,6 +208,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 if (factory != null) {
                     final PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     if (predicate.apply(flow)) {
+                        // This will be rechecked at the end of the authentication flow.
                         requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                         selectInactiveFlow(profileRequestContext, authenticationContext, flow);
                         return;
@@ -367,7 +369,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         // Also omit anything in the intermediates collection already.
         for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
             log.debug("{} Checking for an inactive flow compatible with operator '{}' and principal '{}'",
-                    getLogPrefix(), requestedPrincipalCtx.getOperator(), p);
+                    getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
             final PrincipalEvalPredicateFactory factory =
                     authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
                             p.getClass(), requestedPrincipalCtx.getOperator());
@@ -376,6 +378,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
                             && predicate.apply(descriptor)) {
+                        // This will be rechecked at the end of the authentication flow.
                         requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                         selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                         return;
@@ -411,7 +414,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             // Check each active result for compatibility with request.
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 log.debug("{} Checking for an active result compatible with operator '{}' and principal '{}'",
-                        getLogPrefix(), requestedPrincipalCtx.getOperator(), p);
+                        getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
                 final PrincipalEvalPredicateFactory factory =
                         authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
                                 p.getClass(), requestedPrincipalCtx.getOperator());
@@ -419,6 +422,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     final PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     for (final AuthenticationResult result : activeResults.values()) {
                         if (predicate.apply(result)) {
+                            // This will be rechecked at the end of the authentication flow.
                             requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                             selectActiveResult(profileRequestContext, authenticationContext, result);
                             return;
@@ -443,7 +447,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             // higher in request precedence than an active result.
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 log.debug("{} Checking for an inactive flow or active result compatible with "
-                        + "operator '{}' and principal '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(), p);
+                        + "operator '{}' and principal '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
+                        p.getName());
                 final PrincipalEvalPredicateFactory factory =
                         authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
                                 p.getClass(), requestedPrincipalCtx.getOperator());
@@ -461,6 +466,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                             } else {
                                 selectActiveResult(profileRequestContext, authenticationContext, result);
                             }
+                            // This will be rechecked at the end of the authentication flow.
                             requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
                             return;
                         }

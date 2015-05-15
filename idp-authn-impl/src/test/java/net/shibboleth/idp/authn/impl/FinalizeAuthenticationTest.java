@@ -17,7 +17,9 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.security.Principal;
 import java.util.Arrays;
+import java.util.Collections;
 
 import javax.security.auth.Subject;
 
@@ -28,6 +30,7 @@ import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
+import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
 
@@ -72,16 +75,47 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setAuthenticationResult(active);
+        authCtx.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "florp", new ExactPrincipalEvalPredicateFactory());
         
         final RequestedPrincipalContext rpCtx = new RequestedPrincipalContext();
         rpCtx.setMatchingPrincipal(new TestPrincipal("bar1"));
+        rpCtx.setOperator("florp");
+        rpCtx.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("bar1")));
         authCtx.addSubcontext(rpCtx);
         
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
-    
+
+    @Test public void testSwitchesPrincipal() {
+        prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
+        
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("bar2"));
+        
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setAuthenticationResult(active);
+        authCtx.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "florp", new ExactPrincipalEvalPredicateFactory());
+        
+        final RequestedPrincipalContext rpCtx = new RequestedPrincipalContext();
+        rpCtx.setMatchingPrincipal(new TestPrincipal("bar1"));
+        rpCtx.setOperator("florp");
+        rpCtx.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("bar2")));
+        authCtx.addSubcontext(rpCtx);
+        
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertProceedEvent(event);
+        SubjectContext sc = prc.getSubcontext(SubjectContext.class);
+        Assert.assertNotNull(sc);
+        Assert.assertEquals(sc.getPrincipalName(), "foo");
+        Assert.assertEquals(sc.getAuthenticationResults().size(), 1);
+        Assert.assertEquals(rpCtx.getMatchingPrincipal().getName(), "bar2");
+    }
+
     @Test public void testNothingActive() {
         prc.getSubcontext(SubjectCanonicalizationContext.class, true).setPrincipalName("foo");
         
