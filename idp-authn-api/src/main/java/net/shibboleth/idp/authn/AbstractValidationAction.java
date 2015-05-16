@@ -78,8 +78,8 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
     /** Basis for {@link AuthenticationResult}. */
     @Nonnull private final Subject authenticatedSubject;
     
-    /** Track whether custom principals have been explicitly set (including the empty set). */
-    private boolean principalsAdded;
+    /** Whether to inject the authentication flow's default custom principals into the subject. */
+    private boolean addDefaultPrincipals;
     
     /** Indicates whether to clear any existing {@link AuthenticationErrorContext} before execution. */
     private boolean clearErrorContext;
@@ -98,6 +98,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
     
     /** Constructor. */
     public AbstractValidationAction() {
+        addDefaultPrincipals = true;
         authenticatedSubject = new Subject();
         clearErrorContext = true;
         classifiedMessages = Collections.emptyMap();
@@ -105,6 +106,27 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         responderLookupStrategy = new ResponderIdLookupFunction();
     }
 
+    /**
+     * Get whether to inject the authentication flow's default custom principals into the subject.
+     * 
+     * <p>This is the default behavior, and works for static flows in which the principal set can
+     * be statically determined from the flow.</p>
+     * 
+     * @return whether to inject the authentication flow's default custom principals into the subject
+     */
+    public boolean addDefaultPrincipals() {
+        return addDefaultPrincipals;
+    }
+    
+    /**
+     * Set whether to inject the authentication flow's default custom principals into the subject.
+     * 
+     * @param flag flag to set
+     */
+    public void setAddDefaultPrincipals(final boolean flag) {
+        addDefaultPrincipals = flag;
+    }
+    
     /**
      * Get the error messages classified by specific error conditions.
      * 
@@ -186,7 +208,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
     
     /**
      * Set supported non-user-specific principals that the action will include in the subjects
-     * it generates.
+     * it generates, in place of any default principals from the flow.
      * 
      * @param <T> a type of principal to add, if not generic
      * @param principals supported principals to include
@@ -195,7 +217,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(principals, "Principal collection cannot be null");
         
-        principalsAdded = true;
+        addDefaultPrincipals = false;
         authenticatedSubject.getPrincipals().clear();
         authenticatedSubject.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
     }
@@ -225,9 +247,10 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         
         // If the request mandates particular principals, evaluate this validating component to see if it
         // can produce a matching principal. This skips validators chained together in flows that aren't
-        // able to satisfy the request.
+        // able to satisfy the request. This step only applies if the validator has been injected with
+        // specific principals, otherwise the flow's capabilities have already been examined.
         final RequestedPrincipalContext rpCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
-        if (principalsAdded && rpCtx != null && rpCtx.getOperator() != null) {
+        if (rpCtx != null && rpCtx.getOperator() != null && !authenticatedSubject.getPrincipals().isEmpty()) {
             log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
             for (Principal p : rpCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =
@@ -270,7 +293,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        if (!principalsAdded && authenticationContext.getAttemptedFlow() != null) {
+        if (addDefaultPrincipals && authenticationContext.getAttemptedFlow() != null) {
             log.debug("{} Adding custom Principal(s) defined on underlying flow descriptor", getLogPrefix());
             authenticatedSubject.getPrincipals().addAll(
                     authenticationContext.getAttemptedFlow().getSupportedPrincipals());
