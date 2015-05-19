@@ -17,16 +17,21 @@
 
 package net.shibboleth.idp.authn.context;
 
+import java.security.Principal;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
+import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -343,6 +348,40 @@ public final class AuthenticationContext extends BaseContext {
         return this;
     }
 
+    /**
+     * Helper method that evaluates a {@link Principal} against a {@link RequestedPrincipalContext} child
+     * of this context, if present, to determine if the input is compatible with it.
+     * 
+     * @param <T> type of principal
+     * @param principal principal to evaluate
+     * 
+     * @return true iff the input is compatible with the requested authentication requirements or if
+     *  no such requirements have been imposed
+     */
+    public <T extends Principal> boolean isAcceptable(@Nonnull final T principal) {
+        final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
+        if (rpCtx != null) {
+            final PrincipalEvalPredicateFactory factory =
+                    evalRegistry.lookup(principal.getClass(), rpCtx.getOperator());
+            if (factory != null) {
+                
+                final PrincipalSupportingComponent pseudoComponent = new PrincipalSupportingComponent() {
+                    public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
+                        return Collections.<TT>singleton((TT) principal);
+                    }
+                };
+                
+                for (final Principal requestedPrincipal : rpCtx.getRequestedPrincipals()) {
+                    if (factory.getPredicate(requestedPrincipal).apply(pseudoComponent)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public String toString() {
