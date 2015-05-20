@@ -1,0 +1,17 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+
+    <view-state id="LocalStorageRead" view="/local-storage/local-storage-read">
+        <transition to="proceed" />
+    </view-state>
+
+    <end-state id="proceed">
+        <output name="localStorage" value="requestParameters.shib_idp_ls" />
+        <output name="localStorageSupport" value="requestParameters.shib_idp_ls_support" />
+    </end-state> 
+
+</flow>

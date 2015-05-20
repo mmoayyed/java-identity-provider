@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.ext.spring.factory.X509CertificateFactoryBean;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.idp.test.InMemoryDirectory;
+import net.shibboleth.idp.test.PreferFileSystemApplicationContextInitializer;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -87,8 +88,9 @@ import com.unboundid.ldap.sdk.LDAPException;
  * Abstract flow test.
  */
 @ContextConfiguration(locations = {"/system/conf/global-system.xml", "/system/conf/mvc-beans.xml",
-        "/system/conf/webflow-config.xml", "/test/test-beans.xml", "/test/override-beans.xml", },
-        initializers = IdPPropertiesApplicationContextInitializer.class, loader = PreferFileSystemContextLoader.class)
+        "/system/conf/webflow-config.xml", "/test/test-beans.xml", "/test/override-beans.xml",}, initializers = {
+        PreferFileSystemApplicationContextInitializer.class, IdPPropertiesApplicationContextInitializer.class},
+        loader = PreferFileSystemContextLoader.class)
 @WebAppConfiguration
 public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests {
 
@@ -183,7 +185,7 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * Set the 'idp.home' property to "classpath:".
      */
     public static void setIdPHomeProperty() {
-        System.setProperty("idp.home", "classpath:");
+        System.setProperty("idp.home", "classpath*:");
     }
 
     /**

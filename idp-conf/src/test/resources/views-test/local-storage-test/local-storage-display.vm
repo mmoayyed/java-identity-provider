@@ -1,0 +1,12 @@
+<html>
+    <head>
+        <title>Local Storage Test View</title>
+    </head>
+    <body>
+        <script>
+            #include( "local-storage-test/local-storage-display.js" )
+        </script>
+        <p id="localStorage"><textarea>$!localStorage</textarea></p>
+        <p id="localStorageSupport"><textarea>$!localStorageSupport</textarea></p>
+    </body>
+</html>

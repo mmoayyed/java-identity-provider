@@ -1,0 +1,27 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <action-state id="Initialize">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="LocalStorageRead" />
+    </action-state>
+
+    <subflow-state id="LocalStorageRead" subflow="local-storage/read">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="LocalStorageView">
+            <set name="flashScope.localStorage" value="currentEvent.attributes.localStorage" />
+            <set name="flashScope.localStorageSupport" value="currentEvent.attributes.localStorageSupport" />
+        </transition>
+    </subflow-state>
+
+    <view-state id="LocalStorageView" view="/local-storage-test/local-storage-display">
+        <!-- TODO -->
+    </view-state>
+
+    <end-state id="proceed" />
+
+    <bean-import resource="../local-storage-test-beans.xml" />
+
+</flow>

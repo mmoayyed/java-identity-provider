@@ -1,0 +1,17 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+
+    <!-- The value to be written to local storage. -->
+    <input name="localStorageValue" type="string" required="true" />
+
+    <view-state id="LocalStorageWrite" view="/local-storage/local-storage-write">
+        <transition on="formSubmitted" to="proceed" />
+    </view-state>
+
+    <end-state id="proceed" />
+
+</flow>
