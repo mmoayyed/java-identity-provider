@@ -153,7 +153,7 @@ public class ValidateX509Certificate extends AbstractValidationAction {
 
     /** {@inheritDoc} */
     @Override
-    protected Subject populateSubject(Subject subject) {
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         subject.getPrincipals().add(((X509Certificate) certContext.getCertificate()).getSubjectX500Principal());
         subject.getPublicCredentials().add(certContext.getCertificate());
         return subject;
