@@ -85,7 +85,7 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
      * 
      * @param map   map to set
      */
-    public void setWeightMap(@Nonnull @NonnullElements final Map<T,Integer> map) {
+    public void setWeightMap(@Nullable @NonnullElements final Map<T,Integer> map) {
         if (map == null) {
             weightMap = Collections.emptyMap();
             return;
