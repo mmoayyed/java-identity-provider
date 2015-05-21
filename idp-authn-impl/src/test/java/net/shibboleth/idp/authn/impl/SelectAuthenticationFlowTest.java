@@ -108,7 +108,6 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
-        Assert.assertNull(rpc.getMatchingPrincipal());
     }
 
     @Test public void testRequestNoneActive() {
@@ -124,7 +123,6 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
-        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
     @Test public void testRequestNoneActiveIntermediate() {
@@ -143,7 +141,6 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
-        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
     
     @Test public void testRequestPickInactive() {
@@ -163,7 +160,6 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get("test3"));
-        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
     @Test public void testRequestPickActive() {
@@ -183,7 +179,6 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
-        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test3");
     }
 
     @Test public void testRequestFavorSSO() {
@@ -204,6 +199,5 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
-        Assert.assertEquals(rpc.getMatchingPrincipal().getName(), "test2");
     }
 }
