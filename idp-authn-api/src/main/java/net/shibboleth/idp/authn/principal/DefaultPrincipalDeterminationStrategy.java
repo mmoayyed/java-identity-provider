@@ -119,7 +119,7 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
         final Set<T> principals = ac.getAuthenticationResult().getSupportedPrincipals(principalType);
         if (principals.isEmpty()) {
             return defaultPrincipal;
-        } else if (principals.size() == 1) {
+        } else if (principals.size() == 1 || weightMap.isEmpty()) {
             return principals.iterator().next();
         }
             
