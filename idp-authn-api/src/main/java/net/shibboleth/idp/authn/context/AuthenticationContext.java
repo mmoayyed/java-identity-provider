@@ -361,25 +361,30 @@ public final class AuthenticationContext extends BaseContext {
     public <T extends Principal> boolean isAcceptable(@Nonnull final T principal) {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
-            final PrincipalEvalPredicateFactory factory =
-                    evalRegistry.lookup(principal.getClass(), rpCtx.getOperator());
-            if (factory != null) {
-                
-                final PrincipalSupportingComponent pseudoComponent = new PrincipalSupportingComponent() {
-                    public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
-                        return Collections.<TT>singleton((TT) principal);
-                    }
-                };
-                
-                for (final Principal requestedPrincipal : rpCtx.getRequestedPrincipals()) {
+            // Wrap candidate in the collection interface needed to drive the predicates.
+            final PrincipalSupportingComponent pseudoComponent = new PrincipalSupportingComponent() {
+                public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
+                    return Collections.<TT>singleton((TT) principal);
+                }
+            };
+            
+            for (final Principal requestedPrincipal : rpCtx.getRequestedPrincipals()) {
+                final PrincipalEvalPredicateFactory factory =
+                        evalRegistry.lookup(requestedPrincipal.getClass(), rpCtx.getOperator());
+                if (factory != null) {
                     if (factory.getPredicate(requestedPrincipal).apply(pseudoComponent)) {
                         return true;
                     }
                 }
             }
+            
+            // Nothing matched the candidate.
             return false;
+            
+        } else {
+            // No requirements so anything is acceptable.
+            return true;
         }
-        return true;
     }
     
     /** {@inheritDoc} */
