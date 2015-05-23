@@ -251,6 +251,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
                     throw new ResolutionException("Unable to create or locate AttributeContext to populate");
                 }
                 attributeCtx.setIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
+                attributeCtx.setUnfilteredIdPAttributes(resolutionContext.getResolvedIdPAttributes().values());
             }
         } catch (final ResolutionException e) {
             log.error("{} Error resolving attributes", getLogPrefix(), e);

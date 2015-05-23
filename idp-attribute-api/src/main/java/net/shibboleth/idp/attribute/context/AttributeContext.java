@@ -32,6 +32,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NullableEleme
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.messaging.context.BaseContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -43,15 +45,22 @@ import com.google.common.collect.ImmutableMap;
 public class AttributeContext extends BaseContext {
 
     /** The attributes tracked by this context. */
-    private Map<String, IdPAttribute> attributes;
-
+    @Nonnull private Map<String, IdPAttribute> attributes;
+    
+    /** The attributes tracked by this context prior to filtering. */
+    @Nullable private Map<String, IdPAttribute> unfilteredAttributes;
+    
+    /** Log. */
+    private final Logger log;
+    
     /** Constructor. */
     public AttributeContext() {
         attributes = Collections.emptyMap();
+        log = LoggerFactory.getLogger(AttributeContext.class);
     }
 
     /**
-     * Gets the collection of attributes, indexed by attribute ID, tracked by this context.
+     * Gets the map of attributes, indexed by attribute ID, tracked by this context.
      * 
      * @return the collection of attributes indexed by attribute ID
      */
@@ -80,4 +89,41 @@ public class AttributeContext extends BaseContext {
         attributes = ImmutableMap.copyOf(checkedAttributes);
     }
     
+    
+    /**
+     * Gets the map of unfiltered attributes, indexed by attribute ID, tracked by this context.
+     * 
+     * @return the collection of attributes indexed by attribute ID
+     */
+    @Nonnull @NonnullElements @Unmodifiable public Map<String, IdPAttribute> getUnfilteredIdPAttributes() {
+        if (null == unfilteredAttributes) {
+            log.error("No Attributes have been set in this flow.");
+            return Collections.emptyMap();
+        }
+        return unfilteredAttributes;
+    }
+
+    /**
+     * Sets the unfiltered attributes tracked by this context.
+     * 
+     * @param newAttributes the attributes
+     */
+    public void setUnfilteredIdPAttributes(@Nullable @NullableElements Collection<IdPAttribute> newAttributes) {
+        if (null != unfilteredAttributes) {
+            log.error("Unfiltered attributes have already been set in this flow.");
+        }
+        if (newAttributes == null) {
+            unfilteredAttributes = Collections.emptyMap();
+            return;
+        }
+
+        final HashMap<String,IdPAttribute> checkedAttributes = new HashMap<>();
+        for (final IdPAttribute attribute : newAttributes) {
+            if (attribute != null) {
+                checkedAttributes.put(attribute.getId(), attribute);
+            }
+        }
+
+        unfilteredAttributes = ImmutableMap.copyOf(checkedAttributes);
+    }
 }

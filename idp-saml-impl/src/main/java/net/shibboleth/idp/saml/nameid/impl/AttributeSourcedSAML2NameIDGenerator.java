@@ -53,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -67,13 +68,16 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
 
     /** Strategy function to lookup AttributeContext. */
     @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
-    
+
+    /** Predicate to select whether to look at filtered or unfiltered attributes. */
+    @Nonnull private Predicate<ProfileRequestContext> useUnfilteredAttributes;
+
     /** Delimiter to use for scoped attribute serialization. */
     private char delimiter;
-    
+
     /** Attribute(s) to use as an identifier source. */
     @Nonnull @NonnullElements private List<String> attributeSourceIds;
-    
+
     /** Constructor. */
     public AttributeSourcedSAML2NameIDGenerator() {
         attributeContextLookupStrategy = Functions.compose(
@@ -83,6 +87,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
         attributeSourceIds = Collections.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
+        useUnfilteredAttributes = Predicates.alwaysFalse();
     }
 
     /**
@@ -93,11 +98,11 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     public void setAttributeContextLookupStrategy(
             @Nonnull final Function<ProfileRequestContext, AttributeContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
-                "AttributeContext lookup strategy cannot be null");
+            "AttributeContext lookup strategy cannot be null");
     }
-    
+
     /**
      * Set the delimiter to use for serializing scoped attribute values.
      * 
@@ -105,37 +110,45 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
      */
     public void setScopedDelimiter(final char ch) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
+
         delimiter = ch;
-    }    
-    
+    }
+
     /**
      * Set the attribute sources to pull from.
      * 
-     * @param ids   attribute IDs to pull from
+     * @param ids attribute IDs to pull from
      */
     public void setAttributeSourceIds(@Nonnull @NonnullElements final List<String> ids) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(ids, "Attribute ID collection cannot be null");
-        
+
         attributeSourceIds = new ArrayList<>(Collections2.filter(ids, Predicates.notNull()));
     }
 
+    /**
+     * Set the Predicate which decides where to source the input attributes. If the predicate returns true then the
+     * unfiltered attributes are used. Otherwise the filtered ones (default behavior)
+     * 
+     * @param what the {@link Predicate} to set.
+     */
+    public void setUseUnfilteredAttributes(@Nonnull Predicate<ProfileRequestContext> what) {
+        useUnfilteredAttributes = Constraint.isNotNull(what, "UseUnfilteredAttributes predicate should be non null");
+    }
+
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
+
         if (attributeSourceIds.isEmpty()) {
             throw new ComponentInitializationException("Attribute source ID list cannot be empty");
         }
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected NameID doGenerate(@Nonnull final ProfileRequestContext profileRequestContext)
+    @Override @Nullable protected NameID doGenerate(@Nonnull final ProfileRequestContext profileRequestContext)
             throws SAMLException {
-        
+
         // Check for a natively generated NameIdentifier attribute value.
 
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
@@ -143,15 +156,21 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
             log.warn("Unable to locate AttributeContext");
             return null;
         }
-        
-        final Map<String, IdPAttribute> attributes = attributeCtx.getIdPAttributes();
+
+        final Map<String, IdPAttribute> attributes;
+        if (useUnfilteredAttributes.apply(profileRequestContext)) {
+            attributes = attributeCtx.getUnfilteredIdPAttributes();
+        } else {
+            attributes = attributeCtx.getIdPAttributes();
+        }
+
         for (final String sourceId : attributeSourceIds) {
-            
+
             final IdPAttribute attribute = attributes.get(sourceId);
             if (attribute == null) {
                 continue;
             }
-            
+
             final List<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof XMLObjectAttributeValue && value.getValue() instanceof NameID) {
@@ -165,34 +184,38 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
                 }
             }
         }
-        
+
         // Fall into base class version which will ask us for an identifier.
-        
+
         return super.doGenerate(profileRequestContext);
     }
-    
+
     /** {@inheritDoc} */
-    @Override
-    @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
+    @Override @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws SAMLException {
-        
+
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
-        
-        final Map<String, IdPAttribute> attributes = attributeCtx.getIdPAttributes();
+
+        final Map<String, IdPAttribute> attributes;
+        if (useUnfilteredAttributes.apply(profileRequestContext)) {
+            attributes = attributeCtx.getUnfilteredIdPAttributes();
+        } else {
+            attributes = attributeCtx.getIdPAttributes();
+        }
         for (final String sourceId : attributeSourceIds) {
             log.debug("Checking for source attribute {}", sourceId);
-            
+
             final IdPAttribute attribute = attributes.get(sourceId);
             if (attribute == null) {
                 continue;
             }
-            
+
             final List<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof ScopedStringAttributeValue) {
                     log.debug("Generating NameID from Scoped String-valued attribute {}", sourceId);
-                    return ((ScopedStringAttributeValue) value).getValue()
-                            + delimiter + ((ScopedStringAttributeValue) value).getScope(); 
+                    return ((ScopedStringAttributeValue) value).getValue() + delimiter
+                            + ((ScopedStringAttributeValue) value).getScope();
                 } else if (value instanceof StringAttributeValue) {
                     final String strVal = StringSupport.trimOrNull((String) value.getValue());
                     if (strVal == null) {
@@ -209,7 +232,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
                 }
             }
         }
-        
+
         log.info("Attribute sources {} did not produce a usable identifier", attributeSourceIds);
         return null;
     }

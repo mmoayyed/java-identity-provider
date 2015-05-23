@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -77,17 +78,20 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
     /** Generation strategy for IDs. */
     @NonnullAfterInit private PersistentIdGenerationStrategy persistentIdStrategy;
 
+    /** Predicate to select whether to look at filtered or unfiltered attributes. */
+    @Nonnull private Predicate<ProfileRequestContext> useUnfilteredAttributes;
+
     /** Constructor. */
     public PersistentSAML2NameIDGenerator() {
         setFormat(NameID.PERSISTENT);
         subjectContextLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
-        attributeContextLookupStrategy =
-                Functions.compose(
-                        new ChildContextLookup<RelyingPartyContext, AttributeContext>(AttributeContext.class),
-                        new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
+        attributeContextLookupStrategy = Functions.compose(
+                new ChildContextLookup<RelyingPartyContext, AttributeContext>(AttributeContext.class),
+                new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
         attributeSourceIds = Collections.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
+        useUnfilteredAttributes = Predicates.alwaysFalse();
     }
 
     /**
@@ -138,6 +142,16 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
         persistentIdStrategy = Constraint.isNotNull(strategy, "PersistentIdGenerationStrategy cannot be null");
     }
 
+    /**
+     * Set the Predicate which decides where to source the input attributes. If the predicate returns true then the
+     * unfiltered attributes are used. Otherwise the filtered ones (default behavior)
+     * 
+     * @param what the {@link Predicate} to set.
+     */
+    public void setUseUnfilteredAttributes(@Nonnull Predicate<ProfileRequestContext> what) {
+        useUnfilteredAttributes = Constraint.isNotNull(what, "UseUnfilteredAttributes predicate should be non null");
+    }
+
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -149,7 +163,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
         }
     }
 
-    // Checkstyle: CyclomaticComplexity OFF
+    // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override @Nullable protected String getIdentifier(@Nonnull final ProfileRequestContext profileRequestContext)
             throws SAMLException {
@@ -184,7 +198,12 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
             return null;
         }
 
-        final Map<String, IdPAttribute> attributes = attributeCtx.getIdPAttributes();
+        final Map<String, IdPAttribute> attributes;
+        if (useUnfilteredAttributes.apply(profileRequestContext)) {
+            attributes = attributeCtx.getUnfilteredIdPAttributes();
+        } else {
+            attributes = attributeCtx.getIdPAttributes();
+        }
         for (final String sourceId : attributeSourceIds) {
             log.debug("Checking for source attribute {}", sourceId);
 
@@ -218,6 +237,6 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
         log.info("Attribute sources {} did not produce a usable source identifier", attributeSourceIds);
         return null;
     }
-    // Checkstyle: CyclomaticComplexity ON
+    // Checkstyle: CyclomaticComplexity|MethodLength ON
 
 }
