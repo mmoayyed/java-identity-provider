@@ -133,7 +133,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
         
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
                 Collections.singleton(new IdPAttribute("SOURCE")));
         Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
     }
@@ -153,7 +153,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotNull(id);
@@ -182,7 +182,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         NameID id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotNull(id);
@@ -245,7 +245,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         
         final IdPAttribute source = new IdPAttribute("SOURCE");
         source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
-        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setIdPAttributes(
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
                 Collections.singleton(source));
         NameID id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotNull(id);

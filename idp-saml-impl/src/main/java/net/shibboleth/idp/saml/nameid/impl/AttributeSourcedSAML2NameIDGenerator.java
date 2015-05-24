@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
@@ -69,8 +68,8 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     /** Strategy function to lookup AttributeContext. */
     @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
 
-    /** Predicate to select whether to look at filtered or unfiltered attributes. */
-    @Nonnull private Predicate<ProfileRequestContext> useUnfilteredAttributes;
+    /** Whether to look at filtered or unfiltered attributes. */
+    private boolean useUnfilteredAttributes;
 
     /** Delimiter to use for scoped attribute serialization. */
     private char delimiter;
@@ -87,7 +86,7 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
         attributeSourceIds = Collections.emptyList();
         setDefaultIdPNameQualifierLookupStrategy(new ResponderIdLookupFunction());
         setDefaultSPNameQualifierLookupStrategy(new RelyingPartyIdLookupFunction());
-        useUnfilteredAttributes = Predicates.alwaysFalse();
+        useUnfilteredAttributes = false;
     }
 
     /**
@@ -127,13 +126,12 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
     }
 
     /**
-     * Set the Predicate which decides where to source the input attributes. If the predicate returns true then the
-     * unfiltered attributes are used. Otherwise the filtered ones (default behavior)
+     * Set whether to source the input attributes from the unfiltered set.
      * 
-     * @param what the {@link Predicate} to set.
+     * @param flag flag to set
      */
-    public void setUseUnfilteredAttributes(@Nonnull Predicate<ProfileRequestContext> what) {
-        useUnfilteredAttributes = Constraint.isNotNull(what, "UseUnfilteredAttributes predicate should be non null");
+    public void setUseUnfilteredAttributes(final boolean flag) {
+        useUnfilteredAttributes = flag;
     }
 
     /** {@inheritDoc} */
@@ -157,12 +155,8 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
             return null;
         }
 
-        final Map<String, IdPAttribute> attributes;
-        if (useUnfilteredAttributes.apply(profileRequestContext)) {
-            attributes = attributeCtx.getUnfilteredIdPAttributes();
-        } else {
-            attributes = attributeCtx.getIdPAttributes();
-        }
+        final Map<String,IdPAttribute> attributes = useUnfilteredAttributes ? attributeCtx.getUnfilteredIdPAttributes()
+                : attributeCtx.getIdPAttributes();
 
         for (final String sourceId : attributeSourceIds) {
 
@@ -196,12 +190,9 @@ public class AttributeSourcedSAML2NameIDGenerator extends AbstractSAML2NameIDGen
 
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
 
-        final Map<String, IdPAttribute> attributes;
-        if (useUnfilteredAttributes.apply(profileRequestContext)) {
-            attributes = attributeCtx.getUnfilteredIdPAttributes();
-        } else {
-            attributes = attributeCtx.getIdPAttributes();
-        }
+        final Map<String,IdPAttribute> attributes = useUnfilteredAttributes ? attributeCtx.getUnfilteredIdPAttributes()
+                : attributeCtx.getIdPAttributes();
+        
         for (final String sourceId : attributeSourceIds) {
             log.debug("Checking for source attribute {}", sourceId);
 
