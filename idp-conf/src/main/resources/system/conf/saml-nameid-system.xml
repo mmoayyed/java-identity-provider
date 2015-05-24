@@ -27,6 +27,7 @@
 
     <bean id="shibboleth.SAML2PersistentGenerator" lazy-init="true"
             class="net.shibboleth.idp.saml.nameid.impl.PersistentSAML2NameIDGenerator"
+            p:useUnfilteredAttributes="%{idp.persistentId.useUnfilteredAttributes:true}"
             p:persistentIdGenerator-ref="%{idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}">
         <property name="attributeSourceIds">
             <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.persistentId.sourceAttribute:}" />
