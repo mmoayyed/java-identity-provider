@@ -63,6 +63,9 @@ public class SimpleAttributePredicate implements Predicate<ProfileRequestContext
     /** Strategy function to lookup {@link AttributeContext}. */
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
 
+    /** Whether to look at filtered or unfiltered attributes. */
+    private boolean useUnfilteredAttributes;
+
     /** Map of attribute IDs to values. */
     @Nonnull @NonnullElements private ListMultimap<String,String> attributeValueMap;
     
@@ -70,7 +73,7 @@ public class SimpleAttributePredicate implements Predicate<ProfileRequestContext
     public SimpleAttributePredicate() {
         attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
-        
+        useUnfilteredAttributes = true;
         attributeValueMap = ArrayListMultimap.create();
     }
 
@@ -84,6 +87,17 @@ public class SimpleAttributePredicate implements Predicate<ProfileRequestContext
 
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set whether to source the input attributes from the unfiltered set.
+     * 
+     * <p>Defaults to true.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setUseUnfilteredAttributes(final boolean flag) {
+        useUnfilteredAttributes = flag;
     }
     
     /**
@@ -111,10 +125,13 @@ public class SimpleAttributePredicate implements Predicate<ProfileRequestContext
             return attributeValueMap.isEmpty();
         }
         
+        final Map<String,IdPAttribute> attributes = useUnfilteredAttributes ? attributeCtx.getUnfilteredIdPAttributes()
+                : attributeCtx.getIdPAttributes();
+        
         for (final String id : attributeValueMap.keySet()) {
             log.debug("Checking for attribute: {}", id);
             
-            final IdPAttribute attribute = attributeCtx.getIdPAttributes().get(id);
+            final IdPAttribute attribute = attributes.get(id);
             if (attribute == null) {
                 log.info("Attribute {} not found in context", id);
                 return false;
