@@ -1,12 +1,66 @@
 <html>
     <head>
         <title>Local Storage Test View</title>
-    </head>
-    <body>
         <script>
             #include( "local-storage-test/local-storage-display.js" )
         </script>
-        <p id="localStorage"><textarea>$!localStorage</textarea></p>
-        <p id="localStorageSupport"><textarea>$!localStorageSupport</textarea></p>
+    </head>
+    <body onload="localStorageGetItem('$localStorageKey')">
+        <table>
+            <tr>
+                <td>localStorageKey</td>
+                <td>
+                    <p id="localStorageKey">
+                        <textarea>$!localStorageKey</textarea>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>localStorageGetItem</td>
+                <td>
+                    <p id="localStorageGetItem" />
+                </td>
+            </tr>
+            <tr>
+                <td>localStorageValue</td>
+                <td>
+                    <p id="localStorageValue">
+                        <textarea>$!localStorageValue</textarea>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>localStorageVersion</td>
+                <td>
+                    <p id="localStorageVersion">
+                        <textarea>$!localStorageVersion</textarea>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>localStorageSuccess</td>
+                <td>
+                    <p id="localStorageSuccess">
+                        <textarea>$!localStorageSuccess</textarea>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>localStorageSupport</td>
+                <td>
+                    <p id="localStorageSupport">
+                        <textarea>$!localStorageSupport</textarea>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>localStorageException</td>
+                <td>
+                    <p id="localStorageException">
+                        <textarea>$!localStorageException</textarea>
+                    </p>
+                </td>
+            </tr>
+        </table>
     </body>
 </html>

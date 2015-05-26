@@ -9,7 +9,7 @@
             #include( "local-storage/local-storage-write.js" )
         </script>
     </head>
-    <body onload="writeLocalStorageAndSubmit()">
+    <body onload="writeLocalStorageAndSubmit('$localStorageKey', '$localStorageValue')">
         <noscript>
             <p>
                 <strong>Note:</strong>
@@ -19,7 +19,8 @@
         </noscript>
         <form name="form1" action="${flowExecutionUrl}&_eventId=formSubmitted" method="post">
             <div>
-                <input name="shib_idp_ls" value="$localStorageValue"  />
+                <input name="shib_idp_ls_success" />
+                <input name="shib_idp_ls_exception" />
             </div>
             <noscript>
                 <div>

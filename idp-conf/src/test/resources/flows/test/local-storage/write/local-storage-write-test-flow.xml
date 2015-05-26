@@ -2,6 +2,11 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
+    <on-start>
+        <evaluate expression="requestParameters.localStorageKey" result="flowScope.localStorageKey" />
+        <evaluate expression="requestParameters.localStorageValue" result="flowScope.localStorageValue" />
+    </on-start>
+
     <action-state id="Initialize">
         <evaluate expression="InitializeProfileRequestContext" />
         <evaluate expression="'proceed'" />
@@ -10,9 +15,14 @@
 
     <subflow-state id="LocalStorageWrite" subflow="local-storage/write">
         <input name="calledAsSubflow" value="true" />
-        <!-- TODO request parameter name -->
-        <input name="localStorageValue" type="string" value="requestParameters.localStorageValue" />
-        <transition to="LocalStorageView" />
+
+        <input name="localStorageKey" type="string" value="flowScope.localStorageKey" />
+        <input name="localStorageValue" type="string" value="flowScope.localStorageValue" />
+
+        <transition to="LocalStorageView">
+            <set name="flowScope.localStorageSuccess" value="currentEvent.attributes.localStorageSuccess" />
+            <set name="flowScope.localStorageException" value="currentEvent.attributes.localStorageException" />
+        </transition>
     </subflow-state>
 
     <view-state id="LocalStorageView" view="/local-storage-test/local-storage-display">

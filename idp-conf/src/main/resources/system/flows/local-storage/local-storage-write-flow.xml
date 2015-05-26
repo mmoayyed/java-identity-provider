@@ -5,13 +5,17 @@
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
 
-    <!-- The value to be written to local storage. -->
+    <!-- The key and value of the item written to local storage. -->
+    <input name="localStorageKey" type="string" required="true" />
     <input name="localStorageValue" type="string" required="true" />
 
     <view-state id="LocalStorageWrite" view="/local-storage/local-storage-write">
         <transition on="formSubmitted" to="proceed" />
     </view-state>
 
-    <end-state id="proceed" />
+    <end-state id="proceed">
+        <output name="localStorageSuccess" value="requestParameters.shib_idp_ls_success" />
+        <output name="localStorageException" value="requestParameters.shib_idp_ls_exception" />
+    </end-state>
 
 </flow>

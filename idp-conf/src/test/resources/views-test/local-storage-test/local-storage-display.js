@@ -1,1 +1,3 @@
-document.write("<p id=shib_idp_ls><textarea>" + localStorage.getItem('shib_idp_ls') + "</textarea></pr>");
+function localStorageGetItem(key) {
+    document.getElementById("localStorageGetItem").innerHTML = "<textarea>" + localStorage.getItem(key) + "</textarea>";
+}
