@@ -115,7 +115,8 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         
         evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
     }
-    
+
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -126,7 +127,12 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
                     getLogPrefix());
             authenticationContext.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
         }
-
+        
+        if (availableFlows.isEmpty()) {
+            log.warn("{} No authentication flows are available for this request", getLogPrefix());
+            return;
+        }
+        
         final Collection<String> activeFlows = activeFlowsLookupStrategy.apply(profileRequestContext);
 
         if (activeFlows != null && !activeFlows.isEmpty()) {
@@ -155,8 +161,13 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
             }
         }
 
-        log.debug("{} Installed {} authentication flows into AuthenticationContext", getLogPrefix(),
-                authenticationContext.getPotentialFlows().size());
+        if (authenticationContext.getPotentialFlows().isEmpty()) {
+            log.warn("{} No authentication flows are active for this request", getLogPrefix());
+        } else {
+            log.debug("{} Installed {} authentication flows into AuthenticationContext", getLogPrefix(),
+                    authenticationContext.getPotentialFlows().size());
+        }
     }
+// Checkstyle: CyclomaticComplexity ON
     
 }
