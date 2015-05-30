@@ -22,7 +22,9 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
+
 import org.joda.time.DateTime;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
@@ -67,21 +69,20 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
      * Creates a new instance with required parameters.
      *
      * @param strategy SAML identifier generation strategy.
-     * @param entityID IdP entity ID.
+     * @param id IdP entity ID.
      */
-    public BuildSamlValidationSuccessMessageAction(final IdentifierGenerationStrategy strategy, final String entityID) {
+    public BuildSamlValidationSuccessMessageAction(final IdentifierGenerationStrategy strategy, final String id) {
         Constraint.isNotNull(strategy, "IdentifierGenerationStrategy cannot be null");
-        Constraint.isNotNull(strategy, "EntityID cannot be null");
-        this.identifierGenerationStrategy = strategy;
-        this.entityID = entityID;
+        identifierGenerationStrategy = strategy;
+        entityID = Constraint.isNotNull(StringSupport.trimOrNull(id), "EntityID cannot be null");
     }
 
 
     @Nonnull
     @Override
     protected Response buildSamlResponse(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
+            @Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
 
         final DateTime now = DateTime.now();
 
