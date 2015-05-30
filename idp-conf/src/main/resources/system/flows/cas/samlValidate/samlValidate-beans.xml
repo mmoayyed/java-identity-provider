@@ -26,7 +26,7 @@
     <bean id="buildSamlValidationSuccessMessageAction"
           class="net.shibboleth.idp.cas.flow.BuildSamlValidationSuccessMessageAction"
           c:strategy-ref="shibboleth.DefaultIdentifierGenerationStrategy"
-          c:entityID="%{idp.entityID}" />
+          c:id="%{idp.entityID}" />
 
     <bean id="buildSamlValidationFailureMessageAction"
           class="net.shibboleth.idp.cas.flow.BuildSamlValidationFailureMessageAction" />
