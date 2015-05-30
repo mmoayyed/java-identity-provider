@@ -120,17 +120,17 @@
     <bean id="shibboleth.DefaultSecurityConfiguration" class="net.shibboleth.idp.profile.config.SecurityConfiguration">
     
         <property name="signatureSigningConfiguration">
-            <ref bean="%{idp.signing.config:shibboleth.SigningConfiguration.SHA256}" />
+            <ref bean="#{'%{idp.signing.config:shibboleth.SigningConfiguration.SHA256}'.trim()}" />
         </property>
         
         <property name="signatureValidationConfiguration">
             <bean parent="shibboleth.BasicSignatureValidationConfiguration" 
-                p:signatureTrustEngine-ref="%{idp.trust.signatures:shibboleth.ChainingSignatureTrustEngine}" />
+                p:signatureTrustEngine-ref="#{'%{idp.trust.signatures:shibboleth.ChainingSignatureTrustEngine}'.trim()}" />
         </property>
 
         <property name="clientTLSValidationConfiguration">
             <bean parent="shibboleth.BasicClientTLSValidationConfiguration"
-                p:x509TrustEngine-ref="%{idp.trust.certificates:shibboleth.ChainingX509TrustEngine}" />
+                p:x509TrustEngine-ref="#{'%{idp.trust.certificates:shibboleth.ChainingX509TrustEngine}'.trim()}" />
         </property>
         
         <property name="encryptionConfiguration">

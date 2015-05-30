@@ -35,7 +35,7 @@
 
     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
             p:cacheSeconds="%{idp.message.cacheSeconds:300}"
-            p:basenames-ref="%{idp.message.resources:shibboleth.MessageSourceResources}"
+            p:basenames-ref="#{'%{idp.message.resources:shibboleth.MessageSourceResources}'.trim()}"
             p:defaultEncoding="UTF-8" />
 
     <import resource="../../conf/global.xml" />
@@ -72,7 +72,7 @@
                 <prop key="file.resource.loader.class">
                     org.apache.velocity.runtime.resource.loader.FileResourceLoader
                 </prop>
-                <prop key="file.resource.loader.path">#{ '%{idp.views:%{idp.home}/views}'.trim() }</prop>
+                <prop key="file.resource.loader.path">#{'%{idp.views:%{idp.home}/views}'.trim()}</prop>
                 <prop key="file.resource.loader.cache">false</prop>
             </props>
         </property>
@@ -191,11 +191,11 @@
         p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy" />
 
     <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LoggingService"
-        p:storage-ref="%{idp.replayCache.StorageService:shibboleth.StorageService}" p:strict="true" />
+        p:storage-ref="#{'%{idp.replayCache.StorageService:shibboleth.StorageService}'.trim()}" p:strict="true" />
 
     <bean id="shibboleth.SAMLArtifactMap" depends-on="shibboleth.StorageService"
         class="org.opensaml.saml.common.binding.artifact.impl.StorageServiceSAMLArtifactMap"
-        p:storageService-ref="%{idp.artifact.StorageService:shibboleth.StorageService}" />
+        p:storageService-ref="#{'%{idp.artifact.StorageService:shibboleth.StorageService}'.trim()}" />
 
     <bean id="shibboleth.DefaultIdentifierGenerationStrategy"
         class="net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy" />

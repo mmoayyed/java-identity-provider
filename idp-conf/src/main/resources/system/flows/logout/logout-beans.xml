@@ -50,7 +50,7 @@
             p:activationCondition="%{idp.logout.elaboration:false}"
             p:httpServletRequest-ref="shibboleth.HttpServletRequest">
         <property name="fallbackLanguages">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
         </property>
         <property name="metadataContextLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose">

@@ -35,7 +35,7 @@
     <!-- Parent bean for attribute release consent flows. -->
     <bean id="shibboleth.consent.AttributeReleaseFlow" abstract="true"
             class="net.shibboleth.idp.consent.flow.ar.AttributeReleaseFlowDescriptor"
-            p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
+            p:storageService-ref="#{'%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}'.trim()}"
             p:doNotRememberConsentAllowed="%{idp.consent.allowDoNotRemember:true}"
             p:globalConsentAllowed="%{idp.consent.allowGlobal:true}"
             p:perAttributeConsentEnabled="%{idp.consent.allowPerAttribute:false}"
@@ -60,7 +60,7 @@
     <!-- Parent bean for terms of use consent flows. -->
     <bean id="shibboleth.consent.TermsOfUseFlow" abstract="true"
         class="net.shibboleth.idp.consent.flow.ConsentFlowDescriptor"
-        p:storageService-ref="%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}"
+        p:storageService-ref="#{'%{idp.consent.StorageService:shibboleth.ClientPersistentStorageService}'.trim()}"
         p:compareValues="%{idp.consent.compareValues:false}"
         p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
         p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"

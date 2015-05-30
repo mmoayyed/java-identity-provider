@@ -19,14 +19,15 @@
     services are generally defined in the services.xml file edited by deployers.
     -->
 
-    <bean id="shibboleth.LoggingService" class="%{idp.service.logging.class:net.shibboleth.idp.log.LogbackLoggingService}"
+    <bean id="shibboleth.LoggingService"
+        class="%{idp.service.logging.class:net.shibboleth.idp.log.LogbackLoggingService}"
         p:loggingConfiguration="%{idp.service.logging.resource:%{idp.home}/conf/logback.xml}"
         p:reloadCheckDelay="%{idp.service.logging.checkInterval:PT0S}"
         p:failFast="%{idp.service.logging.failFast:true}" />
     
     <bean id="shibboleth.AttributeFilterService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
             depends-on="shibboleth.VelocityEngine"
-            p:serviceConfigurations-ref="%{idp.service.attribute.filter.resources:shibboleth.AttributeFilterResources}"
+            p:serviceConfigurations-ref="#{'%{idp.service.attribute.filter.resources:shibboleth.AttributeFilterResources}'.trim()}"
             p:failFast="%{idp.service.attribute.filter.failFast:false}"
             p:reloadCheckDelay="%{idp.service.attribute.filter.checkInterval:PT0S}"
             p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
@@ -39,7 +40,7 @@
 
     <bean id="shibboleth.AttributeResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
             depends-on="shibboleth.VelocityEngine"
-            p:serviceConfigurations-ref="%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}"
+            p:serviceConfigurations-ref="#{'%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}'.trim()}"
             p:failFast="%{idp.service.attribute.resolver.failFast:false}"
             p:reloadCheckDelay="%{idp.service.attribute.resolver.checkInterval:PT0S}"
             p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
@@ -52,14 +53,14 @@
 
     <bean id="shibboleth.NameIdentifierGenerationService" class="net.shibboleth.ext.spring.service.ReloadableSpringService" 
         c:claz="net.shibboleth.idp.saml.nameid.NameIdentifierGenerationService"
-        p:serviceConfigurations-ref="%{idp.service.nameidGeneration.resources:shibboleth.NameIdentifierGenerationResources}"
+        p:serviceConfigurations-ref="#{'%{idp.service.nameidGeneration.resources:shibboleth.NameIdentifierGenerationResources}'.trim()}"
         p:failFast="%{idp.service.nameidGeneration.failFast:false}"
         p:reloadCheckDelay="%{idp.service.nameidGeneration.checkInterval:PT0S}"
         p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
         p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
 
     <bean id="shibboleth.RelyingPartyResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
-            p:serviceConfigurations-ref="%{idp.service.relyingparty.resources:shibboleth.RelyingPartyResolverResources}"
+            p:serviceConfigurations-ref="#{'%{idp.service.relyingparty.resources:shibboleth.RelyingPartyResolverResources}'.trim()}"
             p:failFast="%{idp.service.relyingparty.failFast:false}"
             p:reloadCheckDelay="%{idp.service.relyingparty.checkInterval:PT0S}"
             p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
@@ -73,7 +74,7 @@
 
     <bean id="shibboleth.MetadataResolverService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
             depends-on="shibboleth.AttributeResolverService" 
-            p:serviceConfigurations-ref="%{idp.service.metadata.resources:shibboleth.MetadataResolverResources}"
+            p:serviceConfigurations-ref="#{'%{idp.service.metadata.resources:shibboleth.MetadataResolverResources}'.trim()}"
             p:failFast="%{idp.service.metadata.failFast:false}"
             p:reloadCheckDelay="%{idp.service.metadata.checkInterval:PT0S}"
             p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
@@ -89,7 +90,7 @@
 
     <bean id="shibboleth.ReloadableAccessControlService" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
         c:claz="net.shibboleth.utilities.java.support.security.AccessControlService" 
-        p:serviceConfigurations-ref="%{idp.service.access.resources:shibboleth.AccessControlResources}"
+        p:serviceConfigurations-ref="#{'%{idp.service.access.resources:shibboleth.AccessControlResources}'.trim()}"
         p:failFast="%{idp.service.access.failFast:true}"
         p:reloadCheckDelay="%{idp.service.access.checkInterval:PT0S}"
         p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
@@ -98,8 +99,8 @@
     <bean id="shibboleth.ReloadableCASServiceRegistry" class="net.shibboleth.ext.spring.service.ReloadableSpringService"
           c:claz="net.shibboleth.idp.cas.service.ServiceRegistry"
           p:serviceConfigurations-ref="#{
-            getObject('%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}') != null
-                ? '%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'
+            getObject('%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'.trim()) != null
+                ? '%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'.trim()
                 : 'shibboelth.DefaultCASServiceRegistryResources' }"
           p:failFast="%{idp.service.cas.registry.failFast:false}"
           p:reloadCheckDelay="%{idp.service.cas.registry.checkInterval:PT0S}"

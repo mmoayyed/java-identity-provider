@@ -23,20 +23,20 @@
 
     <bean id="shibboleth.SAML2TransientGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.TransientSAML2NameIDGenerator"
-        p:transientIdGenerator-ref="%{idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
+        p:transientIdGenerator-ref="#{'%{idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}'.trim()}" />
 
     <bean id="shibboleth.SAML2PersistentGenerator" lazy-init="true"
             class="net.shibboleth.idp.saml.nameid.impl.PersistentSAML2NameIDGenerator"
             p:useUnfilteredAttributes="%{idp.persistentId.useUnfilteredAttributes:true}"
-            p:persistentIdGenerator-ref="%{idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}">
+            p:persistentIdGenerator-ref="#{'%{idp.persistentId.generator:shibboleth.ComputedPersistentIdGenerator}'.trim()}">
         <property name="attributeSourceIds">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.persistentId.sourceAttribute:}" />
+            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.persistentId.sourceAttribute:}'.trim()}" />
         </property>
     </bean>
 
     <bean id="shibboleth.SAML1TransientGenerator"
         class="net.shibboleth.idp.saml.nameid.impl.TransientSAML1NameIdentifierGenerator"
-        p:transientIdGenerator-ref="%{idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}" />
+        p:transientIdGenerator-ref="#{'%{idp.transientId.generator:shibboleth.CryptoTransientIdGenerator}'.trim()}" />
 
     <!--
     These are strategy implementations for generating transient and persistent identifiers.
@@ -63,7 +63,7 @@
 
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
-        p:computedIdStrategy="#{getObject('%{idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}')}"
+        p:computedIdStrategy="#{getObject('%{idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}'.trim())}"
         p:IDStore="#{getObject('%{idp.persistentId.store:}')}" />
     
     <!-- These two beans handle legacy support for NameID generation in the Attribute Resolver. -->
@@ -81,12 +81,12 @@
         <property name="SAML1NameIdentifierGenerator">
             <bean class="org.opensaml.saml.saml1.profile.impl.ChainingSAML1NameIdentifierGenerator"
                 p:generators-ref="shibboleth.SAML1NameIdentifierGenerators"
-                p:defaultGenerator="#{getObject('%{idp.nameid.saml1.legacyGenerator:}')}" />    
+                p:defaultGenerator="#{getObject('%{idp.nameid.saml1.legacyGenerator:}'.trim())}" />    
         </property>
         <property name="SAML2NameIDGenerator">
             <bean class="org.opensaml.saml.saml2.profile.impl.ChainingSAML2NameIDGenerator"
                 p:generators-ref="shibboleth.SAML2NameIDGenerators"
-                p:defaultGenerator="#{getObject('%{idp.nameid.saml2.legacyGenerator:}')}" />    
+                p:defaultGenerator="#{getObject('%{idp.nameid.saml2.legacyGenerator:}'.trim())}" />    
         </property>
     </bean>
         

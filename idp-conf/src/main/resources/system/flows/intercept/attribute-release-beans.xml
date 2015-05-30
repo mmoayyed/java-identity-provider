@@ -104,7 +104,7 @@
         class="net.shibboleth.idp.consent.flow.PopulateConsentContext" scope="prototype"
         c:currentConsentsFunction-ref="AttributeReleaseConsentFunction"  />
 
-    <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="%{idp.ui.fallbackLanguages:}" />
+    <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
 
     <bean id="SetRPUIInformation"
             class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
