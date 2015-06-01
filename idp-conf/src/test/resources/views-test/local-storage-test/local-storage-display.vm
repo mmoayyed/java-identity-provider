@@ -8,32 +8,18 @@
     <body onload="localStorageGetItem('$localStorageKey')">
         <table>
             <tr>
+                <td>localStorageException</td>
+                <td>
+                    <p id="localStorageException">
+                        <textarea>$!localStorageException</textarea>
+                    </p>
+                </td>
+            </tr>
+            <tr>
                 <td>localStorageKey</td>
                 <td>
                     <p id="localStorageKey">
                         <textarea>$!localStorageKey</textarea>
-                    </p>
-                </td>
-            </tr>
-            <tr>
-                <td>localStorageGetItem</td>
-                <td>
-                    <p id="localStorageGetItem" />
-                </td>
-            </tr>
-            <tr>
-                <td>localStorageValue</td>
-                <td>
-                    <p id="localStorageValue">
-                        <textarea>$!localStorageValue</textarea>
-                    </p>
-                </td>
-            </tr>
-            <tr>
-                <td>localStorageVersion</td>
-                <td>
-                    <p id="localStorageVersion">
-                        <textarea>$!localStorageVersion</textarea>
                     </p>
                 </td>
             </tr>
@@ -46,18 +32,32 @@
                 </td>
             </tr>
             <tr>
-                <td>localStorageSupport</td>
+                <td>localStorageSupported</td>
                 <td>
-                    <p id="localStorageSupport">
-                        <textarea>$!localStorageSupport</textarea>
+                    <p id="localStorageSupported">
+                        <textarea>$!localStorageSupported</textarea>
                     </p>
                 </td>
             </tr>
             <tr>
-                <td>localStorageException</td>
+                <td>localStorageValue</td>
                 <td>
-                    <p id="localStorageException">
-                        <textarea>$!localStorageException</textarea>
+                    <p id="localStorageValue">
+                        <textarea>$!localStorageValue</textarea>
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>localStorageGetItem</td>
+                <td>
+                    <p id="localStorageGetItem" />
+                </td>
+            </tr>
+            <tr>
+                <td>localStorageVersion</td>
+                <td>
+                    <p id="localStorageVersion">
+                        <textarea>$!localStorageVersion</textarea>
                     </p>
                 </td>
             </tr>
