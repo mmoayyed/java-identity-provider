@@ -9,7 +9,7 @@
             #include( "local-storage/local-storage-read.js" )
         </script>
     </head>
-    <body onload="readLocalStorageAndSubmit('$localStorageKey')">
+    <body onload="readLocalStorageAndSubmit('$localStorageKey', '$localStorageVersion')">
         <noscript>
             <p>
                 <strong>Note:</strong>

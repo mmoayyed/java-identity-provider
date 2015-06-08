@@ -1,10 +1,19 @@
-function readLocalStorageAndSubmit(key) {
+function readLocalStorageAndSubmit(key, version) {
     var localStorageSupported = isLocalStorageSupported();
     document.form1["shib_idp_ls_supported"].value = localStorageSupported;
     if (localStorageSupported) {
         var success;
         try {
-            document.form1["shib_idp_ls_value"].value = localStorage.getItem(key);
+            var clientVersion = localStorage.getItem("shib_idp_ls_version");
+            if (clientVersion != null) {
+                document.form1["shib_idp_ls_version"].value = clientVersion;
+                if (clientVersion > version) {
+                    var value = localStorage.getItem(key);
+                    if (value != null) {
+                        document.form1["shib_idp_ls_value"].value = value;
+                    }
+                }
+            }
             success = "true";
         } catch (e) {
             success = "false";

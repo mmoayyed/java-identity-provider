@@ -1,7 +1,8 @@
-function writeLocalStorageAndSubmit(key, value) {
+function writeLocalStorageAndSubmit(key, value, version) {
     var success;
     try {
-        localStorage.setItem(key, value);
+    	localStorage.setItem(key, value);
+    	localStorage.setItem("shib_idp_ls_version", version);
         success = "true";
     } catch (e) {
         success = "false";

@@ -2,10 +2,11 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <!-- For this test local storage write flow, get the key and value from the request instead of the StorageService. -->
+    <!-- For this test flow to write to local storage, get variables from the request instead of the StorageService. -->
     <on-start>
         <evaluate expression="requestParameters.localStorageKey" result="flowScope.localStorageKey" />
         <evaluate expression="requestParameters.localStorageValue" result="flowScope.localStorageValue" />
+        <evaluate expression="requestParameters.localStorageVersion" result="flowScope.localStorageVersion" />
     </on-start>
 
     <action-state id="Initialize">
@@ -20,6 +21,7 @@
         <!-- The input attributes contain the strings actually written to local storage. -->
         <input name="localStorageKey" type="string" value="flowScope.localStorageKey" />
         <input name="localStorageValue" type="string" value="flowScope.localStorageValue" />
+        <input name="localStorageVersion" type="string" value="flowScope.localStorageVersion" />
 
         <!-- Store the returned parameters in flow scope for testing purposes. -->
         <transition to="LocalStorageView">

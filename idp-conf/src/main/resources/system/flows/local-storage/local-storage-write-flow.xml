@@ -9,6 +9,9 @@
     <input name="localStorageKey" type="string" required="true" />
     <input name="localStorageValue" type="string" required="true" />
 
+    <!-- The 'version' of the item written to local storage. -->
+    <input name="localStorageVersion" type="string" required="true" />
+
     <view-state id="LocalStorageWrite" view="/local-storage/local-storage-write">
         <transition on="formSubmitted" to="proceed" />
     </view-state>

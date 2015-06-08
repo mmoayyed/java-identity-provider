@@ -8,6 +8,9 @@
     <!-- The key of the item read from local storage. -->
     <input name="localStorageKey" type="string" required="true" />
 
+    <!-- The 'version' of the item written to local storage. -->
+    <input name="localStorageVersion" type="string" required="true" />
+
     <view-state id="LocalStorageRead" view="/local-storage/local-storage-read">
         <transition to="proceed" />
     </view-state>

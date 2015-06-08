@@ -2,9 +2,10 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <!-- For this test local storage read flow, get the key from the request instead of the StorageService. -->
+    <!-- For this test flow to read from local storage, get variables from the request instead of the StorageService. -->
     <on-start>
         <evaluate expression="requestParameters.localStorageKey" result="flowScope.localStorageKey" />
+        <evaluate expression="requestParameters.localStorageVersion" result="flowScope.localStorageVersion" />
     </on-start>
 
     <action-state id="Initialize">
@@ -16,8 +17,9 @@
     <subflow-state id="LocalStorageRead" subflow="local-storage/read">
         <input name="calledAsSubflow" value="true" />
 
-        <!-- The input attribute contains the string actually read from local storage. -->
+         <!-- The input attributes contain the strings actually written to local storage. -->
         <input name="localStorageKey" type="string" value="flowScope.localStorageKey" />
+        <input name="localStorageVersion" type="string" value="flowScope.localStorageVersion" />
 
         <!-- Store the returned parameters in flow scope for testing purposes. -->
         <transition to="LocalStorageView">
