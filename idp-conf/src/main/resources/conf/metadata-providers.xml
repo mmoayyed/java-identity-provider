@@ -28,11 +28,11 @@
     <!--
     Example HTTP metadata provider.  Use this if you want to download the metadata
     from a remote source.
-     
+
     You *MUST* provide the SignatureValidationFilter in order to function securely.
-    Get the PubLic key, and validate it via some out of band mechanism, from the
-    party publishing the metadata
-     
+    Get the public key from the party publishing the metadata, and validate it
+    with them via some out of band mechanism.
+
     The EntityRoleWhiteList saves memory by only loading metadata from SAML roles
     that the IdP needs to interoperate with. 
     -->
