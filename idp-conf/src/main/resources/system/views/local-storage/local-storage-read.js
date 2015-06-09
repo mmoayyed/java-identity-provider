@@ -4,14 +4,31 @@ function readLocalStorageAndSubmit(key, version) {
     if (localStorageSupported) {
         var success;
         try {
-            var clientVersion = localStorage.getItem("shib_idp_ls_version");
-            if (clientVersion != null) {
-                document.form1["shib_idp_ls_version"].value = clientVersion;
-                if (clientVersion > version) {
-                    var value = localStorage.getItem(key);
-                    if (value != null) {
-                        document.form1["shib_idp_ls_value"].value = value;
-                    }
+            // TODO trim key and version
+            // TODO The key typeof check might be unnecessary.
+            if (typeof key != 'string') {
+                throw ("Key [" + key + "] must be a string");
+            }
+            if (isNaN(version)) {
+                throw ("Version [" + version + "] must be a number");
+            }
+            var versionedValue = localStorage.getItem(key);
+            if (versionedValue != null) {
+                // TODO test
+                var splitPoint = versionedValue.indexOf(":");
+                if (splitPoint < 0) {
+                    throw "Unable to determine version of item value";
+                }
+                // TODO test
+                var localVersion = versionedValue.substring(0, splitPoint);
+                if (isNaN(localVersion)) {
+                    throw ("Local version [" + localVersion + "] must be a number");
+                }
+                document.form1["shib_idp_ls_version"].value = localVersion;
+                if (Number(localVersion) > Number(version)) {
+                    var value = versionedValue.substring(splitPoint + 1);
+                    // TODO check something here ?
+                    document.form1["shib_idp_ls_value"].value = value;
                 }
             }
             success = "true";
