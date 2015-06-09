@@ -1,3 +1,4 @@
+"use strict";
 function writeLocalStorageAndSubmit(key, value, version) {
     var success;
     try {

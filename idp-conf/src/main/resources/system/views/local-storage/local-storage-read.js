@@ -1,3 +1,4 @@
+"use strict";
 function readLocalStorageAndSubmit(key, version) {
     var localStorageSupported = isLocalStorageSupported();
     document.form1["shib_idp_ls_supported"].value = localStorageSupported;
