@@ -115,11 +115,13 @@ public final class RelyingPartyConfigurationSupport {
      * 
      * @param candidates the candidate rules
      * @param trim true iff tag values in metadata should be trimmed before comparison
+     * @param matchAll true iff all the candidate rules are required to match
      * 
      * @return  a default-constructed configuration with the appropriate condition set
      */
     @Nonnull public static RelyingPartyConfiguration byTag(
-            @Nonnull @NonnullElements final Collection<Candidate> candidates, final boolean trim) {
+            @Nonnull @NonnullElements final Collection<Candidate> candidates, final boolean trim,
+            final boolean matchAll) {
         Constraint.isNotNull(candidates, "Candidate list cannot be null");
         
         // We adapt an OpenSAML Predicate applying to an EntityDescriptor by indirecting the lookup of the
@@ -128,7 +130,7 @@ public final class RelyingPartyConfigurationSupport {
         final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
                 new StrategyIndirectedPredicate<>(
                         Functions.compose(new EntityDescriptorLookupFunction(),new SAMLMetadataContextLookupFunction()),
-                        new EntityAttributesPredicate(candidates, trim));
+                        new EntityAttributesPredicate(candidates, trim, matchAll));
         
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setActivationCondition(indirectPredicate);
