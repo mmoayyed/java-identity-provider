@@ -39,12 +39,27 @@
     <!-- Parent bean for RelyingParty overrides based on activation by tag. -->
     <bean id="RelyingPartyByTag" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
-        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" c:trim="false" c:matchAll="false" />
-        
+        p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" c:trim="false" c:matchAll="false" />    
+
     <bean id="TagCandidate" abstract="true"
         class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate"
         c:format="#{null}" />
 
+    <!-- Parent bean for building custom predicates that act on the RP's EntityDescriptor. -->
+    <bean id="EntityDescriptorPredicate" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg>
+                    <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
+                </constructor-arg>
+                <constructor-arg>
+                    <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+        
     <!-- Default Profile Configurations, also usable as parent beans in overrides. -->
     
     <bean id="Shibboleth.SSO"
