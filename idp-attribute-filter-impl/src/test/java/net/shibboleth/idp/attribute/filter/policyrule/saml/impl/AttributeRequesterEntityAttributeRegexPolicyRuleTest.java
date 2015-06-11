@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 public class AttributeRequesterEntityAttributeRegexPolicyRuleTest  extends BaseMetadataTests {
 
     private AttributeRequesterEntityAttributeRegexPolicyRule getMatcher() throws ComponentInitializationException {
-        Pattern pattern = Pattern.compile("urn\\:example.org\\:policy\\:12.*");
+        Pattern pattern = Pattern.compile("urn\\:example.org\\:policy\\:56.*");
         return getMatcher("urn:example.org:policies", pattern, null);
     }
 
@@ -57,6 +57,6 @@ public class AttributeRequesterEntityAttributeRegexPolicyRuleTest  extends BaseM
     }
 
     @Test public void getter() throws ComponentInitializationException {
-        Assert.assertEquals(getMatcher().getValueRegex().pattern(), "urn\\:example.org\\:policy\\:12.*");
+        Assert.assertEquals(getMatcher().getValueRegex().pattern(), "urn\\:example.org\\:policy\\:56.*");
     }
 }

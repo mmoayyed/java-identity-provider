@@ -14,6 +14,9 @@
                     <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"  xsi:type="xs:string">urn:example.org:policy:ABCD</saml:AttributeValue>
                     <saml:AttributeValue>urn:example.org:policy:1234</saml:AttributeValue>
                 </saml:Attribute>
+                <saml:Attribute Name="urn:example.org:policies">
+                    <saml:AttributeValue>urn:example.org:policy:5678</saml:AttributeValue>
+                </saml:Attribute>
                 <saml:Attribute Name="urn:example.org:entitlements" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
                     <saml:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema"  xsi:type="xs:boolean">32</saml:AttributeValue>
                     <saml:AttributeValue>urn:example.org:entitlements:ABCD</saml:AttributeValue>

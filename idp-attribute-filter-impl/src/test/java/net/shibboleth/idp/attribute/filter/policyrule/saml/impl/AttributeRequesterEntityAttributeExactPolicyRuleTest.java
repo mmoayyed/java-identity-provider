@@ -87,6 +87,18 @@ public class AttributeRequesterEntityAttributeExactPolicyRuleTest extends BaseMe
         Assert.assertEquals(matcher.matches(metadataContext(noneEntity, "Principal")), Tristate.FALSE);
     }
 
+    @Test public void testSplitAttribute() throws ComponentInitializationException {
+
+        AttributeRequesterEntityAttributeExactPolicyRule matcher =
+                getMatcher("urn:example.org:policies", "urn:example.org:policy:1234", null);
+        Assert.assertEquals(matcher.matches(metadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        Assert.assertEquals(matcher.matches(metadataContext(jiraEntity, "Principal")), Tristate.FALSE);
+
+        matcher = getMatcher("urn:example.org:policies", "urn:example.org:policy:5678", null);
+        Assert.assertEquals(matcher.matches(metadataContext(idpEntity, "Principal")), Tristate.TRUE);
+        Assert.assertEquals(matcher.matches(metadataContext(noneEntity, "Principal")), Tristate.FALSE);
+    }
+
     @Test public void testUnpopulated()
             throws ComponentInitializationException {
         Assert.assertEquals(getMatcher().matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
