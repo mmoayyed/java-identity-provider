@@ -625,7 +625,7 @@ public class MetadataGenerator {
         // Logo
         writer.write("                <");
         writeNameSpaceQualified(SAMLConstants.SAML20MDUI_PREFIX, Logo.DEFAULT_ELEMENT_LOCAL_NAME);
-        writer.write(" height=\"HeightInPixels\" width=\"WidthInPixels\">");
+        writer.write(" height=\"80\" width=\"80\">");
         writer.write("https://");
         writer.write(getDNSName());
         writer.write("/Path/To/Logo.png");
