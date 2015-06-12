@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,7 +121,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         mappings.put("UnknownUsername", Collections.singleton("DN_RESOLUTION_FAILURE"));
         mappings.put("InvalidPassword", Collections.singleton("INVALID_CREDENTIALS"));
         mappings.put("ExpiringPassword", Collections.singleton("ACCOUNT_WARNING"));
-        mappings.put("ExpiredPassword", Collections.singleton("PASSWORD_EXPIRED"));
+        mappings.put("ExpiredPassword", Arrays.asList("PASSWORD_EXPIRED", "CHANGE_AFTER_RESET"));
         action.setClassifiedMessages(mappings);
 
         action.setHttpServletRequest(new MockHttpServletRequest());
@@ -297,6 +298,48 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         Assert.assertEquals(aec.getClassifiedErrors().size(), 2);
         Assert.assertTrue(aec.isClassifiedError("ExpiredPassword"));
         Assert.assertTrue(aec.isClassifiedError("InvalidPassword"));
+    }
+
+    @Test public void testChangeAfterReset() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        Authenticator errorAuthenticator = new Authenticator(dnResolver, authHandler);
+        errorAuthenticator.setAuthenticationResponseHandlers(new AuthenticationResponseHandler() {            
+            public void handle(AuthenticationResponse response) throws LdapException {
+                response.setAccountState(new PasswordPolicyAccountState(PasswordPolicyControl.Error.CHANGE_AFTER_RESET));
+            }
+        });
+        action.setAuthenticator(errorAuthenticator);
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        AuthenticationResult result = ac.getAuthenticationResult();
+        Assert.assertNotNull(result);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNull(aec);
+        AuthenticationWarningContext awc = ac.getSubcontext(AuthenticationWarningContext.class, false);
+        Assert.assertNotNull(awc);
+        ActionTestingSupport.assertEvent(event, "ExpiredPassword");
+        Assert.assertEquals(awc.getClassifiedWarnings().size(), 1);
+        Assert.assertTrue(awc.isClassifiedWarning("ExpiredPassword"));
+
+        UsernamePrincipal up = result.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next();
+        Assert.assertNotNull(up);
+        Assert.assertEquals(up.getName(), "PETER_THE_PRINCIPAL");
+        LdapPrincipal lp = result.getSubject().getPrincipals(LdapPrincipal.class).iterator().next();
+        Assert.assertNotNull(lp);
+        Assert.assertEquals(lp.getName(), "PETER_THE_PRINCIPAL");
+        Assert.assertNotNull(lp.getLdapEntry());
     }
 
     @Test public void testExpiringPassword() throws Exception {

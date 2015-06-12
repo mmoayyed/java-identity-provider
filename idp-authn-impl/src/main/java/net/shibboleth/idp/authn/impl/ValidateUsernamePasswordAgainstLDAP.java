@@ -124,24 +124,22 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        
+
         if (authenticator == null) {
             throw new ComponentInitializationException("Authenticator cannot be null");
         }
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    @Override protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
-        
+
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
             return false;
         }
-        
+
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -168,8 +166,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         try {
             log.debug("{} Attempting to authenticate user {}", getLogPrefix(), upContext.getUsername());
@@ -183,11 +180,12 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
                 authenticationContext.getSubcontext(LDAPResponseContext.class, true)
                         .setAuthenticationResponse(response);
                 if (response.getAccountState() != null) {
+                    final AccountState.Error error = response.getAccountState().getError();
                     handleWarning(
                             profileRequestContext,
                             authenticationContext,
-                            String.format("%s:%s:%s", "ACCOUNT_WARNING", response.getResultCode(),
-                                    response.getMessage()), AuthnEventIds.ACCOUNT_WARNING);
+                            String.format("%s:%s:%s", error != null ? error : "ACCOUNT_WARNING",
+                                    response.getResultCode(), response.getMessage()), AuthnEventIds.ACCOUNT_WARNING);
                 }
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
             } else {
@@ -205,8 +203,9 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
                             state.getError(), response.getResultCode(), response.getMessage()),
                             AuthnEventIds.ACCOUNT_ERROR);
                 } else {
-                    handleError(profileRequestContext, authenticationContext, String.format("%s:%s",
-                            response.getResultCode(), response.getMessage()), AuthnEventIds.INVALID_CREDENTIALS);
+                    handleError(profileRequestContext, authenticationContext,
+                            String.format("%s:%s", response.getResultCode(), response.getMessage()),
+                            AuthnEventIds.INVALID_CREDENTIALS);
                 }
             }
         } catch (LdapException e) {
@@ -216,8 +215,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractValidationActio
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
+    @Override @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
         subject.getPrincipals().add(new LdapPrincipal(upContext.getUsername(), response.getLdapEntry()));
         return subject;
