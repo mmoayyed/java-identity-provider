@@ -225,7 +225,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
             return Collections.emptyMap();
         }
 
-        final Map<String,OutType> output = new HashMap<String,OutType>(inputValues.size());
+        final Map<String,OutType> output = new HashMap<>(inputValues.size());
 
         log.debug("{} attribute id {} and aliases {} will be created", getLogPrefix(), getId(), getAttributeIds());
 

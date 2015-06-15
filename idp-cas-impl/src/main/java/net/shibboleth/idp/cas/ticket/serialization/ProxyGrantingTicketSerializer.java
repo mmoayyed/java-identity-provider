@@ -33,7 +33,7 @@ public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<Prox
     @Override
     @NotEmpty
     protected String[] extractFields(@Nonnull final ProxyGrantingTicket ticket) {
-        final ArrayList<String> fields = new ArrayList<String>(4);
+        final ArrayList<String> fields = new ArrayList<>(4);
         fields.add(ticket.getSessionId());
         fields.add(ticket.getService());
         fields.add(String.valueOf(ticket.getExpirationInstant().getMillis()));
