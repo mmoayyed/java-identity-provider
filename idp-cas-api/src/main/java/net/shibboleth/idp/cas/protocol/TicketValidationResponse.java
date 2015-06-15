@@ -36,7 +36,7 @@ public class TicketValidationResponse {
 
     @Nullable private String pgtIou;
 
-    @Nonnull private List<String> proxies = new ArrayList<String>();
+    @Nonnull private List<String> proxies = new ArrayList<>();
 
     @Nonnull public String getUserName() {
         return userName;

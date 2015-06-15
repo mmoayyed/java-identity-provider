@@ -87,7 +87,7 @@ public final class SAML1ActionTestingSupport extends org.opensaml.saml.saml1.pro
      * @return the constructed {@link ProfileConfiguration}
      */
     public static Collection<ProfileConfiguration> buildProfileConfigurations() {
-        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
+        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();
 
         SecurityConfiguration securityConfig = new SecurityConfiguration();
 

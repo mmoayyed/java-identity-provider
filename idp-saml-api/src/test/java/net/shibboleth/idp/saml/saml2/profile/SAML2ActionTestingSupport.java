@@ -87,7 +87,7 @@ public final class SAML2ActionTestingSupport extends org.opensaml.saml.saml2.pro
      * @return the constructed {@link ProfileConfiguration}
      */
     public static Collection<ProfileConfiguration> buildProfileConfigurations() {
-        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<ProfileConfiguration>();
+        ArrayList<ProfileConfiguration> profileConfigs = new ArrayList<>();
 
         SecurityConfiguration securityConfig = new SecurityConfiguration();
 

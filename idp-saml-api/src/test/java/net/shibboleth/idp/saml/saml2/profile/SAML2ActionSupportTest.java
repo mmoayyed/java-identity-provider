@@ -42,7 +42,7 @@ public class SAML2ActionSupportTest extends OpenSAMLInitBaseTestCase {
 
     /** Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}. */
     private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy =
-            new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class, false);
+            new ChildContextLookup<>(RelyingPartyContext.class);
 
     /**
      * Test that when an assertion is added to response it goes there.
