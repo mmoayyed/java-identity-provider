@@ -149,7 +149,14 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
         for (final InType prototype : prototypes) {
             for (final AttributeMapper<InType,OutType> mapper : mappers) {
 
-                final Map<String,OutType> mappedAttributes = mapper.mapAttribute(prototype);
+                final Map<String,OutType> mappedAttributes;
+                try {
+                    mappedAttributes = mapper.mapAttribute(prototype); 
+                } catch (Exception e) {
+                    log.error("{} Attempt to map SAML attribute '{}' with mapper '{}' failed: ", getLogPrefix(),
+                            prototype.getName(),mapper.getId(), e);
+                    throw e;
+                }
 
                 log.debug("{} SAML attribute '{}' mapped to {} attributes by mapper '{}'", getLogPrefix(),
                         prototype.getName(), mappedAttributes.size(), mapper.getId());
