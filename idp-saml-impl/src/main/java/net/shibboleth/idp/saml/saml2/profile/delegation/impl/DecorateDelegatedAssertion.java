@@ -42,6 +42,7 @@ import org.openliberty.xmltooling.disco.SecurityMechID;
 import org.openliberty.xmltooling.disco.ServiceType;
 import org.openliberty.xmltooling.security.Token;
 import org.openliberty.xmltooling.soapbinding.Framework;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.schema.XSAny;
@@ -68,9 +69,9 @@ import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-import org.opensaml.saml.security.impl.MetadataCredentialResolver;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.CredentialResolver;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.soap.wsaddressing.Address;
@@ -130,8 +131,8 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     /** The manager used to generated KeyInfo instances from Credentials. */
     @Nonnull private KeyInfoGeneratorManager keyInfoGeneratorManager;
     
-    /** The metadata credential resolver used to resolve HoK Credentials for the peer. */
-    @Nonnull private MetadataCredentialResolver metadataCredentialResolver;
+    /** The credential resolver used to resolve HoK Credentials for the peer. */
+    @Nonnull private CredentialResolver credentialResolver;
     
     
     // Runtime data
@@ -233,14 +234,18 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     }
     
     /**
-     * Set the {@link MetadataCredentialResolver} instance to use to resolve HoK {@link Credential} 
-     * from the peer's {@link RoleDescriptor}.
+     * Set the {@link CredentialResolver} instance to use to resolve HoK {@link Credential}.
+     * 
+     * <p>
+     * Typically this should be a metadata-based resolver which accepts input as the 
+     * peer's {@link RoleDescriptor}.
+     * </p>
      * 
      * @param resolver the resolver instance to use
      */
-    public void setMetadataCredentialResolver(@Nonnull final MetadataCredentialResolver resolver) {
+    public void setCredentialResolver(@Nonnull final CredentialResolver resolver) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        metadataCredentialResolver = Constraint.isNotNull(resolver, "MetadataCredentialResolver may not be null");
+        credentialResolver = Constraint.isNotNull(resolver, "CredentialResolver may not be null");
     }
     
     /**
@@ -284,8 +289,8 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         if (keyInfoGeneratorManager == null) {
             throw new ComponentInitializationException("KeyInfoGeneratorManager may not be null");
         }
-        if (metadataCredentialResolver == null) {
-            throw new ComponentInitializationException("MetadataCredentialResolver may not be null");
+        if (credentialResolver == null) {
+            throw new ComponentInitializationException("CredentialResolver may not be null");
         }
     }
 
@@ -561,13 +566,17 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     private void addSAMLPeerSubjectConfirmation(@Nonnull final ProfileRequestContext requestContext,
             @Nonnull final Assertion assertion) {
         
-        // Add holder-of-key confirmation for all signing keys present for SP in metadata
+        // Add holder-of-key confirmation for all signing keys present for SP, typically from metadata
         CriteriaSet criteriaSet = new CriteriaSet();
         criteriaSet.add(new RoleDescriptorCriterion(roleDescriptor));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
+        // Add an entityID criterion just in case don't have a MetadataCredentialResolver,
+        // and want to resolve via entityID + usage only, e.g. from a CollectionCredentialResolver
+        // or other more general resolver type.
+        criteriaSet.add(new EntityIdCriterion(relyingPartyId));
         
         try {
-            addHoKSubjectConfirmation(assertion, metadataCredentialResolver.resolve(criteriaSet).iterator());
+            addHoKSubjectConfirmation(assertion, credentialResolver.resolve(criteriaSet).iterator());
         } catch (ResolverException e) {
             log.error("Error resolving holder-of-key credentials for SP '{}': {})", relyingPartyId, e.getMessage());
             //TODO error handling
