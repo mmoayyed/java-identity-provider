@@ -27,9 +27,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * test for parser for ShemaValidation filter
+ * test for parser for SchemaValidation filter
  */
-public class ShemaValidationParserTest extends AbstractMetadataParserTest {
+public class SchemaValidationParserTest extends AbstractMetadataParserTest {
 
     @Test public void validUntil() throws IOException {
         MetadataResolver resolver = getBean(MetadataResolver.class, "filter/schemaValidation.xml", "beans.xml");
