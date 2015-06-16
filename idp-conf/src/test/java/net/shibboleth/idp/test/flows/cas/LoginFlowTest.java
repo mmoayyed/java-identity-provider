@@ -24,18 +24,29 @@ import static org.testng.Assert.assertTrue;
 import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 
+import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Tests the flow behind the <code>/login</code> endpoint.
@@ -43,7 +54,7 @@ import org.testng.annotations.Test;
  * @author Marvin S. Addison
  */
 @ContextConfiguration(locations = {
-        "/test/test-cas-beans.xml",
+        "/test/test-cas-beans.xml"
 })
 public class LoginFlowTest extends AbstractFlowTest {
 
@@ -56,6 +67,16 @@ public class LoginFlowTest extends AbstractFlowTest {
 
     @Autowired
     private StorageBackedSessionManager sessionManager;
+
+    @Autowired
+    @Qualifier("shibboleth.RelyingPartyConfigurationResolver")
+    private RelyingPartyConfigurationResolver relyingPartyConfigurationResolver;
+
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        setPostAuthenticationFlows(Collections.<String>emptyList());
+    }
 
 
     @Test
@@ -88,6 +109,32 @@ public class LoginFlowTest extends AbstractFlowTest {
     }
 
     @Test
+    public void testLoginWithConsent() throws Exception {
+        final String service = "https://start.example.org/";
+        externalContext.getMockRequestParameterMap().put("service", service);
+        setPostAuthenticationFlows(Collections.singletonList("attribute-release"));
+        overrideEndStateOutput("cas/login", "redirectToService");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(result.getOutcome().getId(), "redirectToService");
+        final String url = externalContext.getExternalRedirectUrl();
+        assertTrue(url.contains("ticket=ST-"));
+        final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        final Ticket st = ticketService.removeServiceTicket(ticketId);
+        assertNotNull(st);
+        final IdPSession session = sessionManager.resolveSingle(
+                new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
+        assertNotNull(session);
+
+        // Ensure we passed through the consent intercept subflow
+        final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
+        assertNotNull(prc);
+        assertNotNull(prc.getSubcontext(ConsentContext.class, false));
+    }
+
+    @Test
     public void testLoginExistingSession() throws Exception {
         final String service = "https://existing.example.org/";
         final IdPSession existing = sessionManager.createSession("aurora");
@@ -114,5 +161,20 @@ public class LoginFlowTest extends AbstractFlowTest {
         final String responseBody = response.getContentAsString();
         assertEquals(result.getOutcome().getId(), "error");
         assertTrue(responseBody.contains("serviceNotSpecified"));
+    }
+
+    private void setPostAuthenticationFlows(final List<String> flowIdentifiers) throws Exception {
+        final ProfileRequestContext prc = new ProfileRequestContext();
+        prc.setProfileId(LoginConfiguration.PROFILE_ID);
+        final RelyingPartyConfiguration rpConfig = relyingPartyConfigurationResolver.resolveSingle(prc);
+        if (rpConfig == null) {
+            throw new IllegalStateException("Relying party configuration not found");
+        }
+        final LoginConfiguration loginConfiguration =
+                (LoginConfiguration) rpConfig.getProfileConfiguration(LoginConfiguration.PROFILE_ID);
+        if (loginConfiguration == null) {
+            throw new IllegalStateException("CAS login profile configuration not found");
+        }
+        loginConfiguration.setPostAuthenticationFlows(flowIdentifiers);
     }
 }

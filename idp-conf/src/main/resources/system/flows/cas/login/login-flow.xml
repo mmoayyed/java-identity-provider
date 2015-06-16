@@ -21,7 +21,7 @@
     <action-state id="checkAuthenticationRequired">
         <evaluate expression="checkAuthenticationRequiredAction"/>
         <transition on="sessionNotFound" to="buildAuthenticationContext" />
-        <transition on="sessionFound" to="grantServiceTicket" />
+        <transition on="sessionFound" to="checkResolveAttributes" />
         <transition on="renewRequested" to="buildAuthenticationContext" />
         <transition on="gatewayRequested" to="gatewayRedirect" />
     </action-state>
@@ -32,6 +32,30 @@
     </action-state>
 
     <subflow-state id="authenticate" subflow="authn">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="checkResolveAttributes" />
+    </subflow-state>
+
+    <decision-state id="checkResolveAttributes">
+        <if test="loginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
+            then="resolveAttributes"
+            else="grantServiceTicket" />
+    </decision-state>
+
+    <action-state id="resolveAttributes">
+        <evaluate expression="resolveAttributes" />
+        <evaluate expression="filterAttributes" />
+        <evaluate expression="populatePostAuthnInterceptContext" />
+        <evaluate expression="'finished'" />
+        <transition on="finished" to="checkPostAuthnInterceptContext" />
+    </action-state>
+
+    <decision-state id="checkPostAuthnInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="grantServiceTicket" else="doPostAuthnInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="doPostAuthnInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="grantServiceTicket" />
     </subflow-state>

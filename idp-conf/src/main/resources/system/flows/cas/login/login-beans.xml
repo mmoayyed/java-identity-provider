@@ -37,4 +37,31 @@
           p:httpServletRequest-ref="shibboleth.HttpServletRequest"
           p:sessionResolver-ref="shibboleth.SessionManager" />
 
+    <bean id="loginConfigLookup"
+          class="net.shibboleth.idp.cas.config.ConfigLookupFunction"
+          c:clazz="net.shibboleth.idp.cas.config.LoginConfiguration" />
+
+    <bean id="resolveAttributes"
+          class="net.shibboleth.idp.profile.impl.ResolveAttributes"
+          scope="prototype"
+          c:resolverService-ref="shibboleth.AttributeResolverService"
+          p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
+
+    <bean id="filterAttributes"
+          class="net.shibboleth.idp.profile.impl.FilterAttributes"
+          scope="prototype"
+          c:filterService-ref="shibboleth.AttributeFilterService"
+          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}" />
+
+    <bean id="extractAttributesAction"
+          class="net.shibboleth.idp.cas.flow.ExtractAttributesAction" />
+
+    <bean id="populatePostAuthnInterceptContext"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
+          p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.authn.config.navigate.PostAuthenticationFlowsLookupFunction" />
+        </property>
+    </bean>
+
 </beans>

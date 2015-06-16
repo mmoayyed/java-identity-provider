@@ -22,14 +22,14 @@ import com.google.common.base.Functions;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml1.core.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
@@ -55,6 +55,12 @@ public class ExtractAttributesAction extends
                     new ChildContextLookup<>(AttributeContext.class),
                     new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
 
+    /** Function used to retrieve subject principal. */
+    private Function<ProfileRequestContext,String> principalLookupFunction =
+            Functions.compose(
+                    new SessionContextPrincipalLookupFunction(),
+                    new ChildContextLookup<ProfileRequestContext, SessionContext>(SessionContext.class));
+
 
     @Nonnull
     @Override
@@ -68,14 +74,14 @@ public class ExtractAttributesAction extends
             return ProtocolError.IllegalState.event(this);
         }
 
-        final SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, false);
-        if (sc == null) {
-            log.info("SubjectContext not found in profile request context.");
+        final String principal = principalLookupFunction.apply(profileRequestContext);
+        if (principal == null) {
+            log.info("Subject principal not found in profile request context.");
             return ProtocolError.IllegalState.event(this);
         }
 
         final TicketValidationResponse response = getCASResponse(profileRequestContext);
-        response.setUserName(sc.getPrincipalName());
+        response.setUserName(principal);
         for (IdPAttribute attribute : ac.getIdPAttributes().values()) {
             log.debug("Processing {}", attribute);
             for (IdPAttributeValue<?> value : attribute.getValues()) {

@@ -77,6 +77,9 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     @NonnullElements
     private List<String> nameIDFormatPrecedence = Collections.emptyList();
 
+    /** Flag to indicate whether attributes should be resolved at login. */
+    private boolean resolveAttributes = true;
+
 
     /** Creates a new instance. */
     public LoginConfiguration() {
@@ -165,7 +168,22 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
 
         nameIDFormatPrecedence = new ArrayList<>(Collections2.filter(formats, Predicates.notNull()));
     }
-    
+
+    /** @return True if attribute resolution enabled for login flow, false otherwise. */
+    public boolean isResolveAttributes() {
+        return resolveAttributes;
+    }
+
+    /**
+     * Enables or disables attribute resolution. Note that disabling attribute resolution also disables invocation of
+     * post-authentication interceptors since all out-of-box interceptors rely on attributes.
+     *
+     * @param resolveAttributes True to enable attribute resolution (default), false otherwise.
+     */
+    public void setResolveAttributes(boolean resolveAttributes) {
+        this.resolveAttributes = resolveAttributes;
+    }
+
     @Override
     @Nonnull
     protected String getDefaultTicketPrefix() {

@@ -54,7 +54,6 @@
     </action-state>
 
     <action-state id="resolveAttributes">
-        <evaluate expression="buildAttributeContextAction" />
         <evaluate expression="resolveAttributes" />
         <evaluate expression="filterAttributes" />
         <evaluate expression="extractAttributesAction" />
