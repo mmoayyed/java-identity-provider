@@ -73,6 +73,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
+import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.credential.CredentialResolver;
@@ -516,11 +517,8 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     private void addIdPAudienceRestriction(@Nonnull final ProfileRequestContext requestContext, 
             @Nonnull final Assertion assertion) {
         
-        Conditions conditions = assertion.getConditions();
-        if (conditions == null) {
-            conditions = (Conditions) XMLObjectSupport.buildXMLObject(Conditions.DEFAULT_ELEMENT_NAME);
-            assertion.setConditions(conditions);
-        }
+        SAML2ActionSupport.addConditionsToAssertion(this, assertion);
+        
         List<AudienceRestriction> audienceRestrictions = assertion.getConditions().getAudienceRestrictions();
         AudienceRestriction audienceRestriction = null;
         if (audienceRestrictions.isEmpty()) {
