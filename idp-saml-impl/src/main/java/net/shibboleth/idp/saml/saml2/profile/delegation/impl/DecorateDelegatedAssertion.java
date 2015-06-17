@@ -17,11 +17,13 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -51,6 +53,7 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -63,6 +66,7 @@ import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.KeyInfoConfirmationDataType;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
@@ -80,6 +84,7 @@ import org.opensaml.soap.wsaddressing.Metadata;
 import org.opensaml.xmlsec.keyinfo.KeyInfoGenerator;
 import org.opensaml.xmlsec.keyinfo.KeyInfoGeneratorFactory;
 import org.opensaml.xmlsec.keyinfo.KeyInfoGeneratorManager;
+import org.opensaml.xmlsec.keyinfo.NamedKeyInfoGeneratorManager;
 import org.opensaml.xmlsec.signature.KeyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,20 +121,20 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     /** Default delegation request value. */
     private DelegationRequest defaultDelegationRequested = DelegationRequest.REQUESTED_OPTIONAL;
     
+    /** The URL at which the IdP will accept Liberty ID-WSF SSOS requests. */
+    private String libertySSOSEndpointURL;
+    
     /** Strategy used to lookup the RelyingPartyContext. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** Strategy used to lookup the SAMLMetadataContext. */
     @Nonnull private Function<ProfileRequestContext, SAMLMetadataContext> samlMetadataContextLookupStrategy;
     
-    /** Strategy used to lookup the AttributeConsumingService. */
-    @Nonnull private Function<ProfileRequestContext, AttributeConsumingService> attributeConsumingServiceLookupStrategy;
-    
     /** Strategy used to locate the {@link Assertion}s on which to operate. */
     @Nonnull private Function<ProfileRequestContext,List<Assertion>> assertionLookupStrategy;
     
-    /** The manager used to generated KeyInfo instances from Credentials. */
-    @Nonnull private KeyInfoGeneratorManager keyInfoGeneratorManager;
+    /** The manager used to generate KeyInfo instances from Credentials. */
+    @Nonnull private NamedKeyInfoGeneratorManager keyInfoGeneratorManager;
     
     /** The credential resolver used to resolve HoK Credentials for the peer. */
     @Nonnull private CredentialResolver credentialResolver;
@@ -167,15 +172,20 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         samlMetadataContextLookupStrategy = new SAMLMetadataContextLookupFunction();
-        
-        //TODO need default impl?
-        //attributeConsumingServiceLookupStrategy = null
-        
-        //TODO need default impl
-        //assertionLookupStrategy = new AssertionStrategy();
+        assertionLookupStrategy = new AssertionStrategy();
         
     }
     
+    /**
+     * Set the URL at which the IdP will accept Liberty ID-WSF SSOS requests. 
+     * 
+     * @param url the Liberty ID-WSF SSOS endpoint URL
+     */
+    public void setLibertySSOSEndpointURL(@Nonnull final String url) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        libertySSOSEndpointURL = Constraint.isNotNull(StringSupport.trimOrNull(url), 
+                "Liberty SSOS endpoint URL may not be null");
+    }
     
     /**
      * Set the strategy used to locate the current {@link RelyingPartyContext}.
@@ -200,17 +210,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         samlMetadataContextLookupStrategy = Constraint.isNotNull(strategy, 
                 "SAMLMetadataContext lookup strategy may not be null");
     }
-    /**
-     * Set the strategy used to locate the current {@link AttributeConsumingService}.
-     * 
-     * @param strategy strategy used to locate the current {@link AttributeConsumingService}
-     */
-    public void setAttributeConsumingServiceLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, AttributeConsumingService> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        attributeConsumingServiceLookupStrategy = Constraint.isNotNull(strategy, 
-                "AttributeConsumingServicelookup strategy may not be null");
-    }
     
     /**
      * Set the strategy used to locate the {@link Assertion} to operate on.
@@ -228,9 +227,9 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * 
      * @param manager the manager instance to use
      */
-    public void setKeyInfoGeneratorManager(@Nonnull final KeyInfoGeneratorManager manager) {
+    public void setKeyInfoGeneratorManager(@Nonnull final NamedKeyInfoGeneratorManager manager) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        keyInfoGeneratorManager = Constraint.isNotNull(manager, "KeyInfoGeneratorManager may not be null");
+        keyInfoGeneratorManager = Constraint.isNotNull(manager, "NamedKeyInfoGeneratorManager may not be null");
     }
     
     /**
@@ -280,9 +279,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         if (samlMetadataContextLookupStrategy == null) {
             throw new ComponentInitializationException("SAMLMetadataContext lookup strategy may not be null");
         }
-        if (attributeConsumingServiceLookupStrategy == null) {
-            throw new ComponentInitializationException("AttributeConsumingService lookup strategy may not be null");
-        }
         if (assertionLookupStrategy == null) {
             throw new ComponentInitializationException("Assertion lookup strategy may not be null");
         }
@@ -292,23 +288,14 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         if (credentialResolver == null) {
             throw new ComponentInitializationException("CredentialResolver may not be null");
         }
+        if (libertySSOSEndpointURL == null) {
+            throw new ComponentInitializationException("Liberty SSOS endpoint URL may not be null");
+        }
     }
 
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        //TODO do we need to do store a proceed event in the case where processing should successfully be skipped?
-        
-        delegationRequested = getDelegationRequested(profileRequestContext);
-        if (DelegationRequest.NOT_REQUESTED.equals(delegationRequested)) {
-            log.debug("Issuance of a delegated Assertion is not in effect, skipping further processing");
-            return false;
-        }
-        
-        assertions = assertionLookupStrategy.apply(profileRequestContext);
-        if (assertions == null || assertions.isEmpty()) {
-            log.debug("No Assertions found to decorate, skipping further processing");
-            return false;
-        }
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyContext == null) {
@@ -341,18 +328,34 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         if (samlMetadataContext == null) {
             log.warn("No SAMLMetadataContext was available");
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
         }
         
         roleDescriptor = samlMetadataContext.getRoleDescriptor();
         if (roleDescriptor == null) {
             log.warn("No RoleDescriptor was available");
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
         }
         
-        attributeConsumingService = attributeConsumingServiceLookupStrategy.apply(profileRequestContext);
+        AttributeConsumingServiceContext acsContext = 
+                samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class);
+        attributeConsumingService = acsContext != null ? acsContext.getAttributeConsumingService() : null;
         if (attributeConsumingService == null) {
             log.debug("No AttributeConsumingService was resolved, won't be able to determine " 
                     + "delegation requested status via metadata");
+        }
+        
+        delegationRequested = getDelegationRequested(profileRequestContext);
+        if (DelegationRequest.NOT_REQUESTED.equals(delegationRequested)) {
+            log.debug("Issuance of a delegated Assertion is not in effect, skipping further processing");
+            return false;
+        }
+        
+        assertions = assertionLookupStrategy.apply(profileRequestContext);
+        if (assertions == null || assertions.isEmpty()) {
+            log.debug("No Assertions found to decorate, skipping further processing");
+            return false;
         }
         
         return super.doPreExecute(profileRequestContext);
@@ -360,37 +363,43 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
-        switch (delegationRequested) {
-            case NOT_REQUESTED:
-                log.debug("Delegation was not requested, skipping delegation decoration");
-                break;
-            case REQUESTED_OPTIONAL:
-                if (delegationAllowed) {
-                    log.debug("Delegation token issuance was requested (optional) and allowed");
-                    decorateDelegatedAssertion(profileRequestContext);
-                } else {
-                    log.debug("Delegation token issuance was requested (optional), but not allowed, " 
-                            + "skipping delegation decoration");
-                    return;
-                }
-                break;
-            case REQUESTED_REQUIRED:
-                if (delegationAllowed) {
-                    log.debug("Delegation token issuance was requested (required) and allowed");
-                    decorateDelegatedAssertion(profileRequestContext);
-                } else {
-                    log.warn("Delegation token issuance was requested (required), but disallowed by policy");
-                    //TODO error reporting
-                    /**
-                    requestContext.setFailureStatus(buildStatus(StatusCode.REQUESTER_URI, StatusCode.REQUEST_DENIED_URI,
-                            "A delegation token was requested but was disallowed by policy"));
-                    throw new ProfileException("Delegation was requested and required, but disallowed by policy");
-                    */
-                }
-                break;
-            default:
-                log.error("Unknown value '{}' for delegation request state", delegationRequested);
+        try {
+            switch (delegationRequested) {
+                case NOT_REQUESTED:
+                    log.debug("Delegation was not requested, skipping delegation decoration");
+                    break;
+                case REQUESTED_OPTIONAL:
+                    if (delegationAllowed) {
+                        log.debug("Delegation token issuance was requested (optional) and allowed");
+                        decorateDelegatedAssertion(profileRequestContext);
+                    } else {
+                        log.debug("Delegation token issuance was requested (optional), but not allowed, " 
+                                + "skipping delegation decoration");
+                        return;
+                    }
+                    break;
+                case REQUESTED_REQUIRED:
+                    if (delegationAllowed) {
+                        log.debug("Delegation token issuance was requested (required) and allowed");
+                        decorateDelegatedAssertion(profileRequestContext);
+                    } else {
+                        log.warn("Delegation token issuance was requested (required), but disallowed by policy");
+                        //TODO what is right event type here - need to define new one?
+                        ActionSupport.buildEvent(profileRequestContext, EventIds.ACCESS_DENIED);
+                    }
+                    break;
+                default:
+                    log.error("Unknown value '{}' for delegation request state", delegationRequested);
+            }
+        } catch (EventException e) {
+            if (Objects.equals(EventIds.PROCEED_EVENT_ID, e.getEvent())) {
+                log.debug("Decoration of Assertion for delegation terminated with explicit proceed signal");
+            } else {
+                log.warn("Decoration of Assertion for delegation terminated with explicit non-proceed signal", e);
+                ActionSupport.buildEvent(profileRequestContext, e.getEvent());
+            }
         }
     }
     
@@ -450,7 +459,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             @Nonnull final Assertion assertion) {
         
         Address address = (Address) XMLObjectSupport.buildXMLObject(Address.ELEMENT_NAME);
-        address.setValue(getIdPEPRAddress(requestContext));
+        address.setValue(libertySSOSEndpointURL);
         
         MetadataAbstract libertyAbstract = (MetadataAbstract) XMLObjectSupport.buildXMLObject(
                 LibertyConstants.DISCO_ABSTRACT_ELEMENT_NAME);
@@ -499,32 +508,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     }
 
     /**
-     * Get the endpoint address for the IdP's Liberty ID-WSF SSOS service endpoint.
-     * 
-     * @param requestContext the current request context
-     * @return the ID-WSF SSOS endpoint address
-     */
-    @Nonnull private String getIdPEPRAddress(@Nonnull final ProfileRequestContext requestContext) {
-        //TODO need new approach, don't have own metadata anymore
-        return null;
-        
-        /*
-        BasicEndpointSelector endpointSelector = new BasicEndpointSelector();
-        endpointSelector.setEndpointType(SingleSignOnService.DEFAULT_ELEMENT_NAME);
-        endpointSelector.setEntityRoleMetadata(requestContext.getLocalEntityRoleMetadata());
-        endpointSelector.getSupportedIssuerBindings().add(LibertyConstants.SOAP_BINDING_20_URI);
-        
-        Endpoint endpoint = endpointSelector.selectEndpoint();
-        if (endpoint == null || DatatypeHelper.isEmpty(endpoint.getLocation())) {
-            log.error("The IdP's Liberty ID-WSF SSOS service endpoint address could not be resolved");
-            requestContext.setFailureStatus(buildStatus(StatusCode.RESPONDER_URI, null, INTERNAL_ERR_MSG));
-            throw new ProfileException("IdP Liberty ID-WSF SSOS service endpoint address could not be resolved");
-        }
-        return endpoint.getLocation();
-        */
-    }
-
-    /**
      * An an AudienceRestriction condition indicating the IdP as an acceptable Audience.
      * 
      * @param requestContext the current request context
@@ -533,6 +516,11 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     private void addIdPAudienceRestriction(@Nonnull final ProfileRequestContext requestContext, 
             @Nonnull final Assertion assertion) {
         
+        Conditions conditions = assertion.getConditions();
+        if (conditions == null) {
+            conditions = (Conditions) XMLObjectSupport.buildXMLObject(Conditions.DEFAULT_ELEMENT_NAME);
+            assertion.setConditions(conditions);
+        }
         List<AudienceRestriction> audienceRestrictions = assertion.getConditions().getAudienceRestrictions();
         AudienceRestriction audienceRestriction = null;
         if (audienceRestrictions.isEmpty()) {
@@ -578,11 +566,8 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         try {
             addHoKSubjectConfirmation(assertion, credentialResolver.resolve(criteriaSet).iterator());
         } catch (ResolverException e) {
-            log.error("Error resolving holder-of-key credentials for SP '{}': {})", relyingPartyId, e.getMessage());
-            //TODO error handling
-            return;
-            //requestContext.setFailureStatus(buildStatus(StatusCode.RESPONDER_URI, null, INTERNAL_ERR_MSG));
-            //throw new ProfileException("Error resolving holder-of-key credentials", e);
+            log.warn("Error resolving holder-of-key credentials for SP '{}': {})", relyingPartyId, e.getMessage());
+            throw new EventException(EventIds.MESSAGE_PROC_ERROR, "Error resolving holder-of-key credentials", e);
         }
         
     }
@@ -598,27 +583,31 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             @Nonnull final Iterator<Credential> credIterator) {
         
         if (!credIterator.hasNext()) {
-            log.error("No credentials were available from SP '{}' for HoK assertion", relyingPartyId);
-            //TODO error reporting
-            //throw new ProfileException("No credentials were available for creating HoK subject confirmation");
-            return;
+            log.warn("No credentials were available from SP '{}' for HoK assertion", relyingPartyId);
+            //TODO this is perhaps the wrong event ID
+            //TODO perhaps this shouldn't be fatal. Since we haven't mutated the assertion yet, could
+            //     maybe just return 'proceed'.
+            throw new EventException(EventIds.MESSAGE_PROC_ERROR,
+                    "No credentials were available for creating HoK subject confirmation");
         }
         
-        KeyInfoConfirmationDataType scData = (KeyInfoConfirmationDataType) XMLObjectSupport.buildXMLObject(
-                SubjectConfirmationData.DEFAULT_ELEMENT_NAME, KeyInfoConfirmationDataType.TYPE_NAME);
+        KeyInfoConfirmationDataType scData = 
+                (KeyInfoConfirmationDataType) XMLObjectSupport.getBuilder(KeyInfoConfirmationDataType.TYPE_NAME)
+                .buildObject(SubjectConfirmationData.DEFAULT_ELEMENT_NAME, KeyInfoConfirmationDataType.TYPE_NAME);
+        
+        //TODO could support some strategy for using different named managers, rather than always the default manager.
+        KeyInfoGeneratorManager kigm = keyInfoGeneratorManager.getDefaultManager();
         
         while (credIterator.hasNext()) {
             Credential cred = credIterator.next();
-            KeyInfoGeneratorFactory kigf = keyInfoGeneratorManager.getFactory(cred);
+            KeyInfoGeneratorFactory kigf = kigm.getFactory(cred);
             KeyInfoGenerator kig = kigf.newInstance();
             try {
                 KeyInfo keyInfo = kig.generate(cred);
                 scData.getKeyInfos().add(keyInfo);
             } catch (SecurityException e) {
-                log.error("Error generating KeyInfo from peer credential: {}", e.getMessage());
-                //TODO error reporting
-                //throw new ProfileException("Error generating KeyInfo from credential", e);
-                return;
+                log.warn("Error generating KeyInfo from peer credential: {}", e.getMessage());
+                throw new EventException(EventIds.MESSAGE_PROC_ERROR, "Error generating KeyInfo from credential", e);
             }
         }
         
@@ -774,4 +763,95 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
                 && isDelegationAllowed(requestContext);
     }
     */
+    
+    /**
+     * Default strategy for obtaining assertion to modify.
+     * 
+     * <p>If the outbound context is empty, a new assertion is created and stored there. If the outbound
+     * message is already an assertion, it's returned. If the outbound message is a response, then either
+     * an existing or new assertion in the response is returned, depending on the action setting. If the
+     * outbound message is anything else, null is returned.</p>
+     */
+    private class AssertionStrategy implements Function<ProfileRequestContext,List<Assertion>> {
+
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public List<Assertion> apply(@Nullable final ProfileRequestContext input) {
+            if (input != null && input.getOutboundMessageContext() != null) {
+                final Object outboundMessage = input.getOutboundMessageContext().getMessage();
+                if (outboundMessage == null) {
+                    log.debug("No outbound message found, nothing to decorate");
+                    return Collections.emptyList();
+                } else if (outboundMessage instanceof Assertion) {
+                    log.debug("Found Assertion to decorate as outbound message");
+                    return Collections.singletonList((Assertion) outboundMessage);
+                } else if (outboundMessage instanceof Response) {
+                    Response response = (Response) outboundMessage;
+                    if (response.getAssertions().isEmpty()) {
+                        log.debug("Outbound Response contained no Assertions, nothing to decorate");
+                        return Collections.emptyList();
+                    } else { 
+                        //TODO What should be approach when have 2+ Assertions?  See other actions' options for details.
+                        log.debug("Found Assertion to decorate in outbound Response");
+                        return Collections.singletonList(response.getAssertions().get(0));
+                    }
+                } else {
+                    log.debug("Found no Assertion to decorate");
+                    return null;
+                }
+            } else {
+                log.debug("Input ProfileRequestContext or outbound MessageContext was null");
+                return null;
+            }
+        }
+        
+    }
+    
+    /**
+     * Internal runtime exception class used to terminate processing and communicate 
+     * a failure event up the call stack to a common location for production of the action event to 
+     * be returned.
+     */
+    private static class EventException extends RuntimeException {
+        
+        /** Serial version UID. */
+        private static final long serialVersionUID = -9159689696046606020L;
+        
+        /** The event ID. */
+        private final String eventID;
+
+        /**
+         * Constructor.
+         *
+         * @param event the event ID
+         * @param message the exception details message
+         * @param cause the exception cause
+         */
+        public EventException(@Nonnull final String event, @Nullable final String message, 
+                @Nullable final Throwable cause) {
+            super(message, cause);
+            eventID = Constraint.isNotNull(StringSupport.trimOrNull(event), "Event ID may not be null");
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param event the event ID
+         * @param message the exception details message
+         */
+        public EventException(@Nonnull final String event, @Nullable final String message) {
+            super(message);
+            eventID = Constraint.isNotNull(StringSupport.trimOrNull(event), "Event ID may not be null");
+        }
+        
+        /**
+         * Get the event represented by this exception.
+         * 
+         * @return the event ID
+         */
+        @Nonnull public String getEvent() {
+            return eventID;
+        }
+        
+    }
 }
