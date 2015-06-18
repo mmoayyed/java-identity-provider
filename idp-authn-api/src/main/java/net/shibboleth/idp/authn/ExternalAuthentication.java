@@ -80,7 +80,7 @@ public class ExternalAuthentication {
     @Nonnull @NotEmpty public static String startExternalAuthentication(@Nonnull final HttpServletRequest request)
             throws ExternalAuthenticationException {
         final String conv = request.getParameter(CONVERSATION_KEY);
-        if (conv == null) {
+        if (conv == null || conv.isEmpty()) {
             throw new ExternalAuthenticationException("No conversation key found in request");
         }
         
