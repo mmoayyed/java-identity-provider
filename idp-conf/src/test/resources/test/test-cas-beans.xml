@@ -9,29 +9,6 @@
 
        default-init-method="initialize" default-destroy-method="destroy">
 
-    <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
-    <bean id="shibboleth.SPSessionSerializerRegistry" parent="shibboleth.DefaultSPSessionSerializerRegistry">
-        <property name="mappings">
-            <map merge="true">
-                <entry key="#{T(net.shibboleth.idp.cas.session.CASSPSession)}">
-                    <bean class="net.shibboleth.idp.cas.session.CASSPSessionSerializer"
-                          c:offset="%{idp.session.slop:PT0S}" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-
-    <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
-    <bean id="shibboleth.SessionTypeProtocolMap" parent="shibboleth.DefaultSessionTypeProtocolMap">
-        <property name="sourceMap">
-            <map merge="true">
-                <entry key="#{T(net.shibboleth.idp.cas.session.CASSPSession)}">
-                    <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-
     <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
           depends-on="shibboleth.OpenSAMLConfig"
           p:httpServletRequest-ref="shibboleth.HttpServletRequest"
