@@ -74,7 +74,8 @@ public class PatternServiceRegistry extends AbstractServiceableComponent<Service
             log.debug("Evaluating whether {} matches {}", serviceURL, def);
             if (def.matches(serviceURL)) {
                 log.debug("Found match");
-                return new Service(serviceURL, def.getGroup(), def.isAuthorizedToProxy());
+                return new Service(serviceURL, def.getGroup(), def.isAuthorizedToProxy(),
+                        def.isSingleLogoutParticipant());
             }
         }
         return null;

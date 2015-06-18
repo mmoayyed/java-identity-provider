@@ -44,8 +44,12 @@ public class Service implements Principal {
     /** Proxy authorization flag. */
     private final boolean authorizedToProxy;
 
+    /** Indicates whether a service wants to receive SLO messages. */
+    private final boolean singleLogoutParticipant;
+
+
     /**
-     * Creates a new service from given URL and group name.
+     * Creates a new service that does not participate in SLO.
      *
      * @param url CAS service URL.
      * @param group Group to which service belongs.
@@ -55,9 +59,26 @@ public class Service implements Principal {
             @Nonnull @NotEmpty final String url,
             @Nullable @NotEmpty final String group,
             final boolean proxy) {
+        this(url, group, proxy, false);
+    }
+
+    /**
+     * Creates a new service that MAY participate in SLO.
+     *
+     * @param url CAS service URL.
+     * @param group Group to which service belongs.
+     * @param proxy True to authorize proxying, false otherwise.
+     * @param wantsSLO True to indicate the service wants to receive SLO messages, false otherwise.
+     */
+    public Service(
+            @Nonnull @NotEmpty final String url,
+            @Nullable @NotEmpty final String group,
+            final boolean proxy,
+            final boolean wantsSLO) {
         this.serviceURL = Constraint.isNotNull(StringSupport.trimOrNull(url), "Service URL cannot be null or empty");
         this.group = StringSupport.trimOrNull(group);
         this.authorizedToProxy = proxy;
+        this.singleLogoutParticipant = wantsSLO;
     }
 
     /** @return Service URL. */
@@ -75,6 +96,11 @@ public class Service implements Principal {
     /** @return True if proxying is authorized, false otherwise. */
     public boolean isAuthorizedToProxy() {
         return authorizedToProxy;
+    }
+
+    /** @return True to indicate the service wants to receive SLO messages, false otherwise. */
+    public boolean isSingleLogoutParticipant() {
+        return singleLogoutParticipant;
     }
 
     @Override

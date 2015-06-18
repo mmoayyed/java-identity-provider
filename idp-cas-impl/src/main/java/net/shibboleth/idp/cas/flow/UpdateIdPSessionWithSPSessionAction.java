@@ -22,7 +22,6 @@ import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.session.CASSPSession;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
@@ -39,12 +38,16 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 
 /**
- * Updates the {@link net.shibboleth.idp.session.IdPSession} with a {@link CASSPSession} that describes the service
- * granted access to and the ticket that was successfully validated to grant access.
+ * Conditionally updates the {@link net.shibboleth.idp.session.IdPSession} with a {@link CASSPSession} to support SLO.
+ * If the service granted access to indicates participation in SLO via {@link Service#singleLogoutParticipant},
+ * then a {@link CASSPSession} is created to track the SP session in order that it may receive SLO messages upon
+ * a request to the CAS <code>/logout</code> URI.
+ * <p>
  * Requires the following to be available under the {@link ProfileRequestContext}:
  * <ul>
  *     <li>{@link SessionContext}</li>
  *     <li>{@link TicketContext}</li>
+ *     <li>{@link net.shibboleth.idp.cas.service.ServiceContext ServiceContext}</li>
  * </ul>
  *
  * @author Marvin S. Addison
@@ -78,6 +81,10 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final Ticket ticket = getCASTicket(profileRequestContext);
+        final Service service = getCASService(profileRequestContext);
+        if (!service.isSingleLogoutParticipant()) {
+            return Events.Success.event(this);
+        }
         final IdPSession session = getIdPSession(profileRequestContext);
         final long now = System.currentTimeMillis();
         final SPSession sps = new CASSPSession(

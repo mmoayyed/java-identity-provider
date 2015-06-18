@@ -9,6 +9,45 @@
 
        default-init-method="initialize" default-destroy-method="destroy">
 
+    <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
+    <bean id="shibboleth.SPSessionSerializerRegistry" parent="shibboleth.DefaultSPSessionSerializerRegistry">
+        <property name="mappings">
+            <map merge="true">
+                <entry key="#{T(net.shibboleth.idp.cas.session.CASSPSession)}">
+                    <bean class="net.shibboleth.idp.cas.session.CASSPSessionSerializer"
+                          c:offset="%{idp.session.slop:PT0S}" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Modify only to add extension types associated with non-built-in SSO protocols. -->
+    <bean id="shibboleth.SessionTypeProtocolMap" parent="shibboleth.DefaultSessionTypeProtocolMap">
+        <property name="sourceMap">
+            <map merge="true">
+                <entry key="#{T(net.shibboleth.idp.cas.session.CASSPSession)}">
+                    <util:constant static-field="net.shibboleth.idp.cas.config.AbstractProtocolConfiguration.PROTOCOL_URI" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.SessionManager" class="net.shibboleth.idp.session.impl.StorageBackedSessionManager"
+          depends-on="shibboleth.OpenSAMLConfig"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+          p:authenticationFlowDescriptors="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows:}'.trim() + ')']}"
+          p:cookieManager-ref="shibboleth.CookieManager"
+          p:storageService-ref="shibboleth.StorageService"
+          p:consistentAddress="%{idp.session.consistentAddress:true}"
+          p:sessionTimeout="%{idp.session.timeout:PT60M}"
+          p:sessionSlop="%{idp.session.slop:PT0S}"
+          p:maskStorageFailure="%{idp.session.maskStorageFailure:false}"
+          p:trackSPSessions="true"
+          p:secondaryServiceIndex="%{idp.session.secondaryServiceIndex:false}"
+          p:IDGenerator-ref="shibboleth.SessionIDGenerator"
+          p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
+
     <util:list id="shibboleth.RelyingPartyResolverResources">
         <value>classpath:/test/test-relying-party-cas.xml</value>
         <value>classpath:/system/conf/relying-party-system.xml</value>
@@ -19,6 +58,11 @@
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">
         <property name="definitions">
             <list>
+                <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
+                      c:regex="https://slo\.example\.org(:\d+)?/.*"
+                      p:group="proxying-services"
+                      p:authorizedToProxy="true"
+                      p:singleLogoutParticipant="true" />
                 <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
                       c:regex="https://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
                       p:group="proxying-services"

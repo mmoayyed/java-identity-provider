@@ -42,6 +42,9 @@ public class ServiceDefinition {
     /** Proxy authorization flag. */
     private boolean authorizedToProxy;
 
+    /** Indicates whether a service wants to receive SLO messages. */
+    private boolean singleLogoutParticipant;
+
 
     /**
      * Creates a new instance with the given regular expression match pattern.
@@ -90,6 +93,20 @@ public class ServiceDefinition {
      */
     public void setAuthorizedToProxy(final boolean proxy) {
         this.authorizedToProxy = proxy;
+    }
+
+    /** @return True to indicate the service wants to receive SLO messages, false otherwise. */
+    public boolean isSingleLogoutParticipant() {
+        return singleLogoutParticipant;
+    }
+
+    /**
+     * Determines whether the service participates in SLO.
+     *
+     * @param wantsSLO True to indicate the service wants to receive SLO messages, false otherwise.
+     */
+    public void setSingleLogoutParticipant(final boolean wantsSLO) {
+        this.singleLogoutParticipant = wantsSLO;
     }
 
     /**

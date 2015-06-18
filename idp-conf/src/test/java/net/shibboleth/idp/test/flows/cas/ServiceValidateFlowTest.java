@@ -20,9 +20,7 @@ package net.shibboleth.idp.test.flows.cas;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 
@@ -35,8 +33,11 @@ import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
+import net.shibboleth.idp.session.SessionResolver;
+import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.joda.time.DateTime;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
@@ -66,6 +67,9 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     private SessionManager sessionManager;
 
     @Autowired
+    private SessionResolver sessionResolver;
+
+    @Autowired
     private TestProxyAuthenticator testProxyAuthenticator;
 
     @Test
@@ -93,6 +97,43 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
         assertFalse(responseBody.contains("<cas:proxies>"));
+
+        final IdPSession updatedSession = sessionResolver.resolveSingle(
+                new CriteriaSet(new SessionIdCriterion(session.getId())));
+        assertNotNull(updatedSession);
+        assertEquals(updatedSession.getSPSessions().size(), 0);
+    }
+
+    @Test
+    public void testSuccessWithSLOParticipant() throws Exception {
+        final String principal = "john";
+        final IdPSession session = sessionManager.createSession(principal);
+        session.addAuthenticationResult(
+                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
+
+        final ServiceTicket ticket = ticketService.createServiceTicket(
+                "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
+                DateTime.now().plusSeconds(5).toInstant(),
+                session.getId(),
+                "https://slo.example.org/",
+                false);
+
+        externalContext.getMockRequestParameterMap().put("service", ticket.getService());
+        externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        assertEquals(result.getOutcome().getId(), "validateSuccess");
+        assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
+        assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
+        assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
+        assertFalse(responseBody.contains("<cas:proxies>"));
+
+        final IdPSession updatedSession = sessionResolver.resolveSingle(
+                new CriteriaSet(new SessionIdCriterion(session.getId())));
+        assertNotNull(updatedSession);
+        assertEquals(updatedSession.getSPSessions().size(), 1);
     }
 
     @Test
