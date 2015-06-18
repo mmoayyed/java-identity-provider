@@ -71,6 +71,12 @@ public final class LibertyConstants {
     /** Liberty SSOS WS-Addressing outbound Action URI (Response).*/
     public static final String SSOS_RESPONSE_WSA_ACTION_URI = "urn:liberty:ssos:2006-08:Response";
     
+    /** The default path at the IdP for the SSOS endpoint, relative to the IdP context path. */
+    public static final String DEFAULT_SSOS_ENDPOINT_URL_RELATIVE_PATH = "/profile/IDWSF/SSOS";
+    
+    /** The default port at the IdP for the SSOS endpoint. */
+    public static final String DEFAULT_SSOS_ENDPOINT_URL_PORT = "8443";
+    
     /** Constructor.  Prevent instantiation. */
     private LibertyConstants() { }
 

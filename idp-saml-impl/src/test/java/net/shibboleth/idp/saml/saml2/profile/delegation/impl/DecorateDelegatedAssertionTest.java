@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.servlet.http.HttpServletRequest;
+
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
@@ -31,6 +33,8 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.delegation.impl.DecorateDelegatedAssertion.LibertySSOSEndpointURLStrategy;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -72,6 +76,8 @@ import org.opensaml.soap.wsaddressing.EndpointReference;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.opensaml.xmlsec.signature.KeyInfo;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -107,6 +113,10 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     
     private DecorateDelegatedAssertion action;
     
+    private MockServletContext servletContext;
+    
+    private MockHttpServletRequest servletRequest;
+    
     private RequestContext rc;
     
     private ProfileRequestContext prc;
@@ -120,6 +130,15 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     
     @BeforeMethod
     protected void setUp() throws ComponentInitializationException {
+        servletContext = new MockServletContext();
+        servletContext.setContextPath("/idp");
+        servletRequest = new MockHttpServletRequest(servletContext);
+        servletRequest.setScheme("https");
+        servletRequest.setServerName("idp.example.org");
+        servletRequest.setServerPort(443);
+        servletRequest.setRequestURI("/idp/profile/SAML2/Redirect/SSO");
+        servletRequest.setContextPath("/idp");
+        
         authnRequest = SAML2ActionTestingSupport.buildAuthnRequest();
         authnRequest.setIssuer(SAML2ActionTestingSupport.buildIssuer(ActionTestingSupport.INBOUND_MSG_ISSUER));
         
@@ -140,6 +159,8 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         profileConfigs.add(browserSSOProfileConfig);
         
         rc = new RequestContextBuilder()
+            .setServletContext(servletContext)
+            .setHttpRequest(servletRequest)
             .setInboundMessage(authnRequest)
             .setOutboundMessage(response)
             .setRelyingPartyProfileConfigurations(profileConfigs)
@@ -159,6 +180,7 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         mcr.initialize();
         
         action = new DecorateDelegatedAssertion();
+        action.setHttpServletRequest(servletRequest);
         action.setLibertySSOSEndpointURL(ssosURL);
         action.setCredentialResolver(mcr);
         action.setKeyInfoGeneratorManager(DefaultSecurityConfigurationBootstrap.buildBasicKeyInfoGeneratorManager());
@@ -185,8 +207,10 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test(expectedExceptions=ComponentInitializationException.class)
-    public void testNoConfiguredEndpoint() throws Exception {
+    public void testNoConfiguredEndpointNoStrategy() throws Exception {
         action = new DecorateDelegatedAssertion();
+        action.setLibertySSOSEndpointURL(null);
+        action.setLibertySSOSEndpointURLLookupStrategy(null);
         action.setCredentialResolver(new CollectionCredentialResolver());
         action.setKeyInfoGeneratorManager(DefaultSecurityConfigurationBootstrap.buildBasicKeyInfoGeneratorManager());
         action.initialize();
@@ -317,6 +341,32 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertEvent(result, EventIds.MESSAGE_PROC_ERROR);
+    }
+    
+    @Test
+    public void testEndpointViaDefaultStrategy() throws Exception {
+        action.setLibertySSOSEndpointURL(null);
+        
+        authnRequest.setConditions(buildDelegationRequestConditions());
+        
+        browserSSOProfileConfig.setAllowingDelegation(true);
+        
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
+        
+        testDecoratedAssertion();
+    }
+    
+    @Test
+    public void testDefaultEndpointStrategy() {
+        // Sanity check
+        Assert.assertEquals(servletRequest.getRequestURL().toString(), "https://idp.example.org/idp/profile/SAML2/Redirect/SSO");
+        
+        Pair<ProfileRequestContext, HttpServletRequest> input = new Pair<>(prc, (HttpServletRequest)servletRequest);
+        
+        LibertySSOSEndpointURLStrategy strategy = new DecorateDelegatedAssertion.LibertySSOSEndpointURLStrategy();
+        Assert.assertEquals(strategy.apply(input), ssosURL);
     }
     
     

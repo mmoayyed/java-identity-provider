@@ -24,12 +24,14 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.Prototype;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -125,6 +127,10 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     /** The URL at which the IdP will accept Liberty ID-WSF SSOS requests. */
     private String libertySSOSEndpointURL;
     
+    /** The strategy used to resolve the URL at which the IdP will accept Liberty ID-WSF SSOS requests. */
+    @Nullable private Function<Pair<ProfileRequestContext, HttpServletRequest>,String> 
+        libertySSOSEndpointURLLookupStrategy;
+    
     /** Strategy used to lookup the RelyingPartyContext. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
@@ -171,6 +177,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     public DecorateDelegatedAssertion() {
         super();
         
+        libertySSOSEndpointURLLookupStrategy = new LibertySSOSEndpointURLStrategy();
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         samlMetadataContextLookupStrategy = new SAMLMetadataContextLookupFunction();
         assertionLookupStrategy = new AssertionStrategy();
@@ -178,14 +185,24 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     }
     
     /**
-     * Set the URL at which the IdP will accept Liberty ID-WSF SSOS requests. 
+     * Set the statically-configured URL at which the IdP will accept Liberty ID-WSF SSOS requests. 
      * 
-     * @param url the Liberty ID-WSF SSOS endpoint URL
+     * @param url the Liberty ID-WSF SSOS endpoint URL, or null
      */
-    public void setLibertySSOSEndpointURL(@Nonnull final String url) {
+    public void setLibertySSOSEndpointURL(@Nullable final String url) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        libertySSOSEndpointURL = Constraint.isNotNull(StringSupport.trimOrNull(url), 
-                "Liberty SSOS endpoint URL may not be null");
+        libertySSOSEndpointURL = StringSupport.trimOrNull(url);
+    }
+    
+    /**
+     * Set strategy used to resolve the URL at which the IdP will accept Liberty ID-WSF SSOS requests. 
+     * 
+     * @param strategy the Liberty ID-WSF SSOS endpoint URL lookup strategy, or null
+     */
+    public void setLibertySSOSEndpointURLLookupStrategy(
+            @Nullable final Function<Pair<ProfileRequestContext, HttpServletRequest>,String> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        libertySSOSEndpointURLLookupStrategy = strategy;
     }
     
     /**
@@ -289,14 +306,22 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         if (credentialResolver == null) {
             throw new ComponentInitializationException("CredentialResolver may not be null");
         }
-        if (libertySSOSEndpointURL == null) {
-            throw new ComponentInitializationException("Liberty SSOS endpoint URL may not be null");
+        if (libertySSOSEndpointURL == null && libertySSOSEndpointURLLookupStrategy == null) {
+            throw new ComponentInitializationException("Either Liberty SSOS endpoint URL " 
+                    + "or its lookup strategy must be non-null");
         }
     }
 
     /** {@inheritDoc} */
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
+        resolveLibertySSOSEndpointURL(profileRequestContext);
+        if (libertySSOSEndpointURL == null) {
+            log.warn("No Liberty SSOS endpoint URL was available");
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false; 
+        }
         
         relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyContext == null) {
@@ -360,6 +385,30 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
         
         return super.doPreExecute(profileRequestContext);
+    }
+
+    /**
+     * Resolve and store the effective Liberty SSOS endpoint URL to use.
+     * 
+     * @param profileRequestContext  the current request context
+     * 
+     */
+    private void resolveLibertySSOSEndpointURL(ProfileRequestContext profileRequestContext) {
+        if (libertySSOSEndpointURL != null) {
+            log.debug("Using explicitly configured Liberty SSOS endpoint URL: {}", libertySSOSEndpointURL);
+            return;
+        }
+        if (libertySSOSEndpointURLLookupStrategy != null) {
+            libertySSOSEndpointURL = libertySSOSEndpointURLLookupStrategy.apply(
+                    new Pair<ProfileRequestContext,HttpServletRequest>(profileRequestContext, getHttpServletRequest()));
+            if (libertySSOSEndpointURL != null) {
+                log.debug("Using Liberty SSOS endpoint URL resolved via strategy: {}", libertySSOSEndpointURL);
+                return;
+            } else {
+                log.debug("Liberty SSOS endpoint URL strategy was unable to resolve a value");
+            }
+        }
+        log.debug("No effective Liberty SSOS endpoint URL could be determined");
     }
 
     /** {@inheritDoc} */
@@ -803,6 +852,33 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             }
         }
         
+    }
+    
+    /** Strategy that builds the SSOS endpoint URL based on the current HTTP request
+     * using default values for scheme, port and URI path suffix. */
+    public static class LibertySSOSEndpointURLStrategy 
+        implements Function<Pair<ProfileRequestContext,HttpServletRequest>, String> {
+        
+        /** Logger. */
+        private Logger log = LoggerFactory.getLogger(LibertySSOSEndpointURLStrategy.class);
+
+        /** {@inheritDoc} */
+        @Nullable public String apply(@Nullable Pair<ProfileRequestContext, HttpServletRequest> input) {
+            if (input == null) {
+                log.debug("Input Pair<ProfileRequestContext,HttpServletRequest> was null");
+                return null;
+            }
+            if (input.getSecond() != null) {
+                HttpServletRequest request = input.getSecond();
+                return String.format("https://%s:%s%s", request.getServerName(), 
+                        LibertyConstants.DEFAULT_SSOS_ENDPOINT_URL_PORT,
+                        request.getServletContext().getContextPath() 
+                            + LibertyConstants.DEFAULT_SSOS_ENDPOINT_URL_RELATIVE_PATH);
+            } else {
+                log.debug("Input HttpServletRequest was null");
+                return null;
+            }
+        }
     }
     
     /**
