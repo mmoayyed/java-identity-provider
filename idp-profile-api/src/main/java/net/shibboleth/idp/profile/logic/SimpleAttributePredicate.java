@@ -21,26 +21,19 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
@@ -55,51 +48,20 @@ import com.google.common.collect.ListMultimap;
  * <p>For the special case of checking for an attribute's presence, regardless of values, the '*' value is
  * supported.</p>
  */
-public class SimpleAttributePredicate implements Predicate<ProfileRequestContext> {
+public class SimpleAttributePredicate extends AbstractAttributePredicate {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SimpleAttributePredicate.class);
-
-    /** Strategy function to lookup {@link AttributeContext}. */
-    @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
-
-    /** Whether to look at filtered or unfiltered attributes. */
-    private boolean useUnfilteredAttributes;
 
     /** Map of attribute IDs to values. */
     @Nonnull @NonnullElements private ListMultimap<String,String> attributeValueMap;
     
     /** Constructor. */
     public SimpleAttributePredicate() {
-        attributeContextLookupStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class),
-                new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
-        useUnfilteredAttributes = true;
+        super();
         attributeValueMap = ArrayListMultimap.create();
     }
 
-    /**
-     * Set the lookup strategy to use to locate the {@link AttributeContext}.
-     * 
-     * @param strategy lookup function to use
-     */
-    public void setAttributeContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,AttributeContext> strategy) {
-
-        attributeContextLookupStrategy =
-                Constraint.isNotNull(strategy, "AttributeContext lookup strategy cannot be null");
-    }
-    
-    /**
-     * Set whether to source the input attributes from the unfiltered set.
-     * 
-     * <p>Defaults to true.</p>
-     * 
-     * @param flag flag to set
-     */
-    public void setUseUnfilteredAttributes(final boolean flag) {
-        useUnfilteredAttributes = flag;
-    }
-    
     /**
      * Set the map of attribute/value pairs (as a map of string collections) to check for.
      * 
@@ -115,45 +77,37 @@ public class SimpleAttributePredicate implements Predicate<ProfileRequestContext
         }
     }
 
-    /** {@inheritDoc} */
     @Override
-    public boolean apply(@Nullable final ProfileRequestContext input) {
-        
-        final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(input);
-        if (attributeCtx == null) {
-            log.warn("No AttributeContext located for evaluation");
-            return attributeValueMap.isEmpty();
-        }
-        
-        final Map<String,IdPAttribute> attributes = useUnfilteredAttributes ? attributeCtx.getUnfilteredIdPAttributes()
-                : attributeCtx.getIdPAttributes();
-        
+    protected boolean allowNullAttributeContext() {
+        return attributeValueMap.isEmpty();
+    }
+
+    @Override
+    protected boolean hasMatch(final Map<String, IdPAttribute> attributeMap) {
         for (final String id : attributeValueMap.keySet()) {
             log.debug("Checking for attribute: {}", id);
-            
-            final IdPAttribute attribute = attributes.get(id);
+
+            final IdPAttribute attribute = attributeMap.get(id);
             if (attribute == null) {
                 log.info("Attribute {} not found in context", id);
                 return false;
             }
-            
+
             boolean matched = false;
-            
+
             for (final String value : attributeValueMap.get(id)) {
                 if (findMatch(value, attribute)) {
                     matched = true;
                     break;
                 }
             }
-            
+
             if (!matched) {
                 log.info("Attribute {} values not matched", id);
                 return false;
             }
         }
-        
-        log.debug("Context satisfied requirements");
-        return true;
+        return false;
     }
 
     /**
@@ -164,7 +118,7 @@ public class SimpleAttributePredicate implements Predicate<ProfileRequestContext
      * 
      * @return true iff the value is one of the attribute's values
      */
-    private boolean findMatch(@Nonnull @NotEmpty final String toMatch, @Nonnull final IdPAttribute attribute) {
+    protected boolean findMatch(@Nonnull @NotEmpty final String toMatch, @Nonnull final IdPAttribute attribute) {
         
         if ("*".equals(toMatch)) {
             log.debug("Wildcard (*) value rule for attribute {}", attribute.getId());
