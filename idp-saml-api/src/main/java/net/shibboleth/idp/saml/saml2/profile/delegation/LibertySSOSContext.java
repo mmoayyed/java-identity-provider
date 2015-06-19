@@ -24,35 +24,13 @@ import org.opensaml.saml.saml2.core.Assertion;
  * Context for storing information related to Liberty SSOS delegation.
  */
 public class LibertySSOSContext extends BaseContext {
-    
-    /** The entityID of the presenter of the AuthnRequest. */
-    private String presenterEntityId;
-    
+
     /** The SAML 2 Assertion which serves as the authentication token for the AuthnRequest and
      * has been successfully attested by the AuthnRequest presenter. */
     private Assertion attestedToken;
     
     /** Get the confirmation method that was successfully used by the attesting entity. */
     private String attestedSubjectConfirmationMethod;
-    
-    /**
-     * Get the entityID of the presenter of the AuthnRequest.
-     * 
-     * @return Returns the presenter entityId
-     */
-    public String getPresenterEntityId() {
-        return presenterEntityId;
-    }
-
-    /**
-     * Set the entityID of the presenter of the AuthnRequest.
-     * 
-     * @param newPresenterEntityId The presenter entityId to set
-     */
-    public void setPresenterEntityId(String newPresenterEntityId) {
-        presenterEntityId = newPresenterEntityId;
-    }
-
     
     /**
      * Get the SAML 2 Assertion which serves as the authentication token for the AuthnRequest and

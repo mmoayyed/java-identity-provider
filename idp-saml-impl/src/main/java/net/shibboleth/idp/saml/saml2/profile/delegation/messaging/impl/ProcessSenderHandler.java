@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -30,6 +29,7 @@ import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
+import org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>
  * If the header is present, the providerId value is stored in the message context via
- * {@link LibertySSOSContext#setPresenterEntityId(String)}.
+ * {@link SAMLPresenterEntityContext#setEntityId(String)}.
  * </p>
  */
 public class ProcessSenderHandler extends AbstractMessageHandler {
@@ -53,7 +53,7 @@ public class ProcessSenderHandler extends AbstractMessageHandler {
         String headerValue = header != null ? StringSupport.trimOrNull(header.getProviderID()) : null;
         log.debug("Extracted inbound Liberty ID-WSF Sender providerId value: {}", headerValue);
         if (header != null && headerValue != null) {
-            messageContext.getSubcontext(LibertySSOSContext.class, true).setPresenterEntityId(headerValue);
+            messageContext.getSubcontext(SAMLPresenterEntityContext.class, true).setEntityId(headerValue);
             SOAPMessagingSupport.registerUnderstoodHeader(messageContext, header);
         }
     }

@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl;
 
-import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.openliberty.xmltooling.soapbinding.Sender;
 import org.opensaml.messaging.handler.MessageHandlerException;
+import org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext;
 import org.opensaml.soap.SOAPMessagingBaseTestCase;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
 import org.testng.Assert;
@@ -50,7 +50,7 @@ public class ProcessSenderHandlerTest extends SOAPMessagingBaseTestCase {
         handler.initialize();
         handler.invoke(getMessageContext());
         
-        Assert.assertEquals(getMessageContext().getSubcontext(LibertySSOSContext.class, true).getPresenterEntityId(), "urn:test:foo");
+        Assert.assertEquals(getMessageContext().getSubcontext(SAMLPresenterEntityContext.class, true).getEntityId(), "urn:test:foo");
         
         Assert.assertTrue(SOAPMessagingSupport.checkUnderstoodHeader(getMessageContext(), sender));
     }
@@ -60,7 +60,7 @@ public class ProcessSenderHandlerTest extends SOAPMessagingBaseTestCase {
         handler.initialize();
         handler.invoke(getMessageContext());
         
-        Assert.assertNull(getMessageContext().getSubcontext(LibertySSOSContext.class, true).getPresenterEntityId());
+        Assert.assertNull(getMessageContext().getSubcontext(SAMLPresenterEntityContext.class, true).getEntityId());
     }
     
     @Test
@@ -72,7 +72,7 @@ public class ProcessSenderHandlerTest extends SOAPMessagingBaseTestCase {
         handler.initialize();
         handler.invoke(getMessageContext());
         
-        Assert.assertNull(getMessageContext().getSubcontext(LibertySSOSContext.class, true).getPresenterEntityId());
+        Assert.assertNull(getMessageContext().getSubcontext(SAMLPresenterEntityContext.class, true).getEntityId());
         
         Assert.assertFalse(SOAPMessagingSupport.checkUnderstoodHeader(getMessageContext(), sender));
     }
