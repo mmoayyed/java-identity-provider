@@ -33,8 +33,8 @@ import java.util.Map;
 /**
  * Provides a date/time matching predicate that compares a date-based attribute value against
  * current system time with optional offset. By convention the predicate returns true if and only if
- * the date represented by the attribute value is after the current system time; false otherwise. Thus
- * the default semantics are suitable for measuring cases such as expiration dates.
+ * the date represented by the attribute value is after the current system time; false otherwise.
+ * Thus the semantics are well-suited for cases such as evaluation of expiration dates.
  *
  * @author Marvin S. Addison
  */
