@@ -15,5 +15,7 @@
  * limitations under the License.
  */
 
-/** Profile processing components related to SAML 2 delegation. */
-package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
+/**
+ *
+ */
+package net.shibboleth.idp.saml.saml2.profile.delegation;
