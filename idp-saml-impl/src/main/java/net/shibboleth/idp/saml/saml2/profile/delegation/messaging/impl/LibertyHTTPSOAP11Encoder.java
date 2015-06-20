@@ -37,6 +37,7 @@ import org.opensaml.messaging.encoder.servlet.BaseHttpServletResponseXMLMessageE
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.encoding.SAMLMessageEncoder;
 import org.opensaml.soap.common.SOAPObjectBuilder;
+import org.opensaml.soap.messaging.SOAPMessagingSupport;
 import org.opensaml.soap.messaging.context.SOAP11Context;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
@@ -83,15 +84,26 @@ public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageE
     /** {@inheritDoc} */
     public void prepareContext() throws MessageEncodingException {
         MessageContext<SAMLObject> messageContext = getMessageContext();
-        SAMLObject message = messageContext.getMessage();
-        if (message == null) {
-            throw new MessageEncodingException("No outbound message contained in message context");
+        XMLObject payload = null;
+        
+        Fault fault = SOAPMessagingSupport.getSOAP11Fault(messageContext);
+        if (fault != null) {
+            log.debug("Saw SOAP 1.1 Fault payload with fault code, replacing any existing context message: {}", 
+                    fault.getCode() != null ? fault.getCode().getValue() : null);
+            payload = fault;
+            messageContext.setMessage(null);
+        } else {
+            payload = messageContext.getMessage();
         }
         
-        if (message instanceof Envelope) {
-            storeSOAPEnvelope((Envelope) message);
+        if (payload == null) {
+            throw new MessageEncodingException("No outbound message or Fault contained in message context");
+        }
+        
+        if (payload instanceof Envelope) {
+            storeSOAPEnvelope((Envelope) payload);
         } else {
-            buildAndStoreSOAPMessage(message);
+            buildAndStoreSOAPMessage(payload);
         }
         
     }
