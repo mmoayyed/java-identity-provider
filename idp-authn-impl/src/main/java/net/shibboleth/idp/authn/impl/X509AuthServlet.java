@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
@@ -96,6 +97,7 @@ public class X509AuthServlet extends HttpServlet {
         }
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void service(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
@@ -155,6 +157,12 @@ public class X509AuthServlet extends HttpServlet {
             subject.getPrincipals().add(cert.getSubjectX500Principal());
 
             httpRequest.setAttribute(ExternalAuthentication.SUBJECT_KEY, subject);
+            
+            final String revokeConsent =
+                    httpRequest.getParameter(ProfileInterceptorFlowDescriptor.REVOKE_CONSENT_PARAM);
+            if (revokeConsent != null && ("1".equals(revokeConsent) || "true".equals(revokeConsent))) {
+                httpRequest.setAttribute(ExternalAuthentication.REVOKECONSENT_KEY, Boolean.TRUE);
+            }
 
             ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
             
@@ -162,5 +170,6 @@ public class X509AuthServlet extends HttpServlet {
             throw new ServletException("Error processing external authentication request", e);
         }
     }
+// Checkstyle: CyclomaticComplexity ON
     
 }
