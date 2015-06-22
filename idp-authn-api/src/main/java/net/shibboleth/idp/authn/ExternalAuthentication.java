@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.net.URISupport;
 
 /** Public interface supporting external authentication outside the webflow engine. */
 public class ExternalAuthentication {
@@ -72,6 +74,33 @@ public class ExternalAuthentication {
 
     /** Request attribute that provides the entity ID of the relying party that is requesting authentication. */
     @Nonnull @NotEmpty public static final String RELYING_PARTY_PARAM = "relyingParty";
+    
+    /**
+     * Computes the appropriate location to pass control to to invoke an external authentication mechanism.
+     * 
+     *  <p>The input location should be suitable for use in a Spring "externalRedirect" expression, and may
+     *  contain a query string. The result will include any additional parameters needed to invoke the
+     *  mechanism.</p>
+     * 
+     * @param baseLocation the base location to build off of
+     * @param conversationValue the value to include as a conversation ID
+     * 
+     * @return the computed location
+     * 
+     * @since 3.2.0
+     */
+    @Nonnull @NotEmpty public static String getExternalRedirect(@Nonnull @NotEmpty final String baseLocation,
+            @Nonnull @NotEmpty final String conversationValue) {
+        Constraint.isNotEmpty(baseLocation, "Base location cannot be null or empty");
+        
+        final StringBuilder url = new StringBuilder(baseLocation);
+        
+        // Add a parameter separator for the conversation ID.
+        url.append(baseLocation.indexOf('?') == -1 ? '?' : '&');
+        url.append(CONVERSATION_KEY).append('=').append(URISupport.doURLEncode(conversationValue));
+        
+        return url.toString();
+    }
     
     /**
      * Initialize a request for external authentication by seeking out the information stored in
