@@ -53,7 +53,14 @@ public class ExternalAuthentication {
 
     /** Request attribute to which a signal not to cache the result may be bound. */
     @Nonnull @NotEmpty public static final String DONOTCACHE_KEY = "doNotCache";
-    
+
+    /**
+     * Request attribute to which a signal to revoke consent for attribute release may be bound.
+     * 
+     * @since 3.2.0
+     */
+    @Nonnull @NotEmpty public static final String REVOKECONSENT_KEY = "revokeConsent";
+
     /** Request attribute that indicates whether the authentication request requires forced authentication. */
     @Nonnull @NotEmpty public static final String FORCE_AUTHN_PARAM = "forceAuthn";
 

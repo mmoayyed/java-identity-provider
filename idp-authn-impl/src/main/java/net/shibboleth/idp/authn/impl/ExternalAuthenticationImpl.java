@@ -39,6 +39,7 @@ import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
@@ -157,7 +158,13 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
             extContext.setDoNotCache((Boolean) attr);
         }
         
-        response.sendRedirect(extContext.getFlowExecutionUrl());
+        attr = request.getAttribute(REVOKECONSENT_KEY);
+        if (attr != null && attr instanceof Boolean && ((Boolean) attr).booleanValue()) {
+            response.sendRedirect(extContext.getFlowExecutionUrl()
+                    + "&" + ProfileInterceptorFlowDescriptor.REVOKE_CONSENT_PARAM + "=1");        
+        } else {
+            response.sendRedirect(extContext.getFlowExecutionUrl());
+        }
     }
 // Checkstyle: CyclomaticComplexity OFF
 
