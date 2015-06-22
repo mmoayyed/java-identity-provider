@@ -107,7 +107,7 @@ public class SimpleAttributePredicate extends AbstractAttributePredicate {
                 return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
