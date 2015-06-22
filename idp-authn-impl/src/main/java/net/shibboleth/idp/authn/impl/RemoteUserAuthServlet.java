@@ -259,6 +259,12 @@ public class RemoteUserAuthServlet extends HttpServlet {
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                 return;
             }
+
+            final String revokeConsent =
+                    httpRequest.getParameter(ProfileInterceptorFlowDescriptor.REVOKE_CONSENT_PARAM);
+            if (revokeConsent != null && ("1".equals(revokeConsent) || "true".equals(revokeConsent))) {
+                httpRequest.setAttribute(ExternalAuthentication.REVOKECONSENT_KEY, Boolean.TRUE);
+            }
             
             if (authnMethodHeader != null) {
                 // Check for authentication methods.
@@ -294,14 +300,10 @@ public class RemoteUserAuthServlet extends HttpServlet {
                 }
                 
                 httpRequest.setAttribute(ExternalAuthentication.PRINCIPAL_NAME_KEY, username);
+            } else {
+                httpRequest.setAttribute(ExternalAuthentication.PRINCIPAL_NAME_KEY, username);
             }
-            
-            final String revokeConsent =
-                    httpRequest.getParameter(ProfileInterceptorFlowDescriptor.REVOKE_CONSENT_PARAM);
-            if (revokeConsent != null && ("1".equals(revokeConsent) || "true".equals(revokeConsent))) {
-                httpRequest.setAttribute(ExternalAuthentication.REVOKECONSENT_KEY, Boolean.TRUE);
-            }
-            
+                        
             ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
             
         } catch (final ExternalAuthenticationException e) {
