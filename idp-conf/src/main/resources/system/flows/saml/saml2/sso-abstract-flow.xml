@@ -89,6 +89,7 @@
         <evaluate expression="AddProxyRestrictionToAssertions" />
         <evaluate expression="AddChannelBindingsToAssertions" />
         <evaluate expression="AddGeneratedKeyToAssertions" />
+        <evaluate expression="DecorateDelegatedAssertion" />
 
         <!-- Need access to unencrypted NameID and Assertion. -->
         <evaluate expression="PostAssertionPopulateAuditContext" />

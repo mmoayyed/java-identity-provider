@@ -101,6 +101,16 @@
             <bean class="net.shibboleth.idp.saml.profile.config.navigate.ProxyCountLookupFunction" />
         </property>
     </bean>
+    
+    <bean id="DecorateDelegatedAssertion"
+            class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.DecorateDelegatedAssertion" scope="prototype"
+            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+            p:libertySSOSEndpointURL="%{idp.delegation.saml2.libertySSOSEndpointURL:#{null}}">
+        <property name="keyInfoGeneratorManager">
+            <bean factory-method="buildBasicKeyInfoGeneratorManager" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap" />
+        </property>
+        <property name="credentialResolver" ref="shibboleth.MetadataCredentialResolver" />
+    </bean>
 
     <bean id="AddChannelBindingsToAssertions"
         class="org.opensaml.saml.saml2.profile.impl.AddChannelBindingsToAssertions" scope="prototype" />
