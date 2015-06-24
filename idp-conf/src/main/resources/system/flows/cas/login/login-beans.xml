@@ -41,7 +41,7 @@
           class="net.shibboleth.idp.cas.config.ConfigLookupFunction"
           c:clazz="net.shibboleth.idp.cas.config.LoginConfiguration" />
 
-    <bean id="resolveAttributes"
+    <bean id="resolveAttributesFromSubjectPrincipal"
           class="net.shibboleth.idp.profile.impl.ResolveAttributes"
           scope="prototype"
           c:resolverService-ref="shibboleth.AttributeResolverService"

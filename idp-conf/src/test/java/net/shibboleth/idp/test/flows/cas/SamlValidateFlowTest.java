@@ -17,16 +17,20 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import org.joda.time.DateTime;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 
@@ -79,13 +83,16 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         request.setMethod("POST");
         request.setContent(requestBody.getBytes("UTF-8"));
         externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
+        overrideEndStateOutput("cas/samlValidate", "validateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateSuccess");
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "validateSuccess");
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"saml1p:Success\"/>"));
         assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 
     @Test
@@ -122,5 +129,14 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("<saml1p:StatusMessage>E_SESSION_EXPIRED</saml1p:StatusMessage>"));
+    }
+
+    private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
+        assertNotNull(prc);
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, false);
+        assertNotNull(rpc);
+        final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
+        assertNotNull(ac);
+        assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }
 }

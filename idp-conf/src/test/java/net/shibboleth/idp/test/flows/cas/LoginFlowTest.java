@@ -17,17 +17,15 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
 import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.session.IdPSession;
@@ -47,6 +45,8 @@ import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.List;
+
+import static org.testng.Assert.*;
 
 /**
  * Tests the flow behind the <code>/login</code> endpoint.
@@ -95,9 +95,11 @@ public class LoginFlowTest extends AbstractFlowTest {
     public void testLoginStartSession() throws Exception {
         final String service = "https://start.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
+        overrideEndStateOutput("cas/login", "redirectToService");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
-        assertEquals(result.getOutcome().getId(), "redirectToService");
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "redirectToService");
         final String url = externalContext.getExternalRedirectUrl();
         assertTrue(url.contains("ticket=ST-"));
         final String ticketId = url.substring(url.indexOf("ticket=") + 7);
@@ -106,6 +108,8 @@ public class LoginFlowTest extends AbstractFlowTest {
         final IdPSession session = sessionManager.resolveSingle(
                 new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
         assertNotNull(session);
+
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 
     @Test
@@ -139,11 +143,13 @@ public class LoginFlowTest extends AbstractFlowTest {
         final String service = "https://existing.example.org/";
         final IdPSession existing = sessionManager.createSession("aurora");
         externalContext.getMockRequestParameterMap().put("service", service);
+        overrideEndStateOutput("cas/login", "redirectToService");
         request.setCookies(new Cookie("shib_idp_session", existing.getId()));
         initializeThreadLocals();
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
-        assertEquals(result.getOutcome().getId(), "redirectToService");
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "redirectToService");
         final String url = externalContext.getExternalRedirectUrl();
         assertTrue(url.contains("ticket=ST-"));
         final String ticketId = url.substring(url.indexOf("ticket=") + 7);
@@ -153,6 +159,8 @@ public class LoginFlowTest extends AbstractFlowTest {
                 new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
         assertNotNull(session);
         assertEquals(session.getId(), existing.getId());
+
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 
     @Test
@@ -176,5 +184,14 @@ public class LoginFlowTest extends AbstractFlowTest {
             throw new IllegalStateException("CAS login profile configuration not found");
         }
         loginConfiguration.setPostAuthenticationFlows(flowIdentifiers);
+    }
+
+    private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
+        assertNotNull(prc);
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, false);
+        assertNotNull(rpc);
+        final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
+        assertNotNull(ac);
+        assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }
 }

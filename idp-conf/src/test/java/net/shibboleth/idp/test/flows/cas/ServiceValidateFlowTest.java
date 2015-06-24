@@ -26,11 +26,13 @@ import java.net.URI;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.session.SessionResolver;
@@ -39,10 +41,12 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.joda.time.DateTime;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 
@@ -88,15 +92,18 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
+        overrideEndStateOutput("cas/serviceValidate", "validateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateSuccess");
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "validateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
         assertFalse(responseBody.contains("<cas:proxies>"));
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
 
         final IdPSession updatedSession = sessionResolver.resolveSingle(
                 new CriteriaSet(new SessionIdCriterion(session.getId())));
@@ -120,15 +127,18 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
+        overrideEndStateOutput("cas/serviceValidate", "validateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateSuccess");
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "validateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
         assertFalse(responseBody.contains("<cas:proxies>"));
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
 
         final IdPSession updatedSession = sessionResolver.resolveSingle(
                 new CriteriaSet(new SessionIdCriterion(session.getId())));
@@ -192,11 +202,13 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateSuccess");
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "validateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertTrue(responseBody.contains("<cas:proxyGrantingTicket>"));
         assertFalse(responseBody.contains("<cas:proxies>"));
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 
     @Test
@@ -216,6 +228,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
         externalContext.getMockRequestParameterMap().put("pgtUrl", "https://proxy.example.com/");
+        overrideEndStateOutput("cas/serviceValidate", "validateSuccess");
 
         testProxyAuthenticator.setFailureFlag(true);
 
@@ -225,6 +238,16 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertEquals(result.getOutcome().getId(), "validateFailure");
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_REQUEST\""));
         assertTrue(responseBody.contains("E_PROXY_CALLBACK_AUTH_FAILURE"));
+    }
+
+
+    private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {
+        assertNotNull(prc);
+        final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class, false);
+        assertNotNull(rpc);
+        final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
+        assertNotNull(ac);
+        assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
     }
 
     @SuppressWarnings("unused")

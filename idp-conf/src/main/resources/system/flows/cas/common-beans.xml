@@ -42,4 +42,23 @@
     <bean id="validateIdPSessionAction"
           class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
           c:resolver-ref="shibboleth.SessionManager" />
+
+    <bean id="sessionPrincipalLookupFunction"
+          class="com.google.common.base.Functions"
+          factory-method="compose">
+        <constructor-arg index="0">
+            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction" />
+        </constructor-arg>
+        <constructor-arg index="1">
+            <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+                  c:type="net.shibboleth.idp.session.context.SessionContext" />
+        </constructor-arg>
+    </bean>
+
+    <bean id="resolveAttributesFromSessionPrincipal"
+          class="net.shibboleth.idp.profile.impl.ResolveAttributes"
+          scope="prototype"
+          c:resolverService-ref="shibboleth.AttributeResolverService"
+          p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
+          p:principalNameLookupStrategy-ref="sessionPrincipalLookupFunction" />
 </beans>
