@@ -8,12 +8,15 @@
 		AuthnRequestsSigned="false">
 		<Extensions>
 			<mdui:UIInfo>
+                <mdui:DisplayName>Invalid name with no language</mdui:DisplayName>
 				<mdui:DisplayName xml:lang="en">TEST SP (display Name)</mdui:DisplayName>
 				<mdui:Description xml:lang="en">TEST SP (description)</mdui:Description>
 				<mdui:Description xml:lang="fr">TEST SP (en francais
 					dans la texte)</mdui:Description>
 
+                <mdui:InformationURL>Invalid URL with no language</mdui:InformationURL>
 				<mdui:InformationURL xml:lang="en">https://www.example.org</mdui:InformationURL>
+                <mdui:PrivacyStatementURL>Invalid URL with no language</mdui:PrivacyStatementURL>
 				<mdui:PrivacyStatementURL xml:lang="en">https://www.example.org/privacy</mdui:PrivacyStatementURL>
 				<mdui:Logo height="65" width="150">https://shibboleth.net/images/shibboleth.png</mdui:Logo>
                 <mdui:Logo height="65" width="150" xml:lang="de">https://shibboleth.net/images/shibboleth.pngde</mdui:Logo>
@@ -21,8 +24,10 @@
 		</Extensions>
         <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:1.0:profiles:artifact-01" Location="https://example.org/sp/ACS" index="6"/>
 		<AttributeConsumingService index="1">
+            <ServiceName>Invalid name with no language</ServiceName>
             <ServiceName xml:lang="de">Der Service Name</ServiceName>
             <ServiceName xml:lang="fr">le Service Name</ServiceName>
+            <ServiceDescription>Invalid description with no language</ServiceDescription>
             <ServiceDescription xml:lang="fr">Le ServiceDescription</ServiceDescription>
             <ServiceDescription xml:lang="de">Das ServiceDescription</ServiceDescription>
             <ServiceDescription xml:lang="en">The ServiceDescription</ServiceDescription>
@@ -31,10 +36,13 @@
 
 	</SPSSODescriptor>
 	<Organization>
+        <OrganizationName>Invalid name with no language</OrganizationName>
 		<OrganizationName xml:lang="is">TSC</OrganizationName>
         <OrganizationName xml:lang="es">LCS</OrganizationName>
+        <OrganizationDisplayName>Invalid name with no language</OrganizationDisplayName>
         <OrganizationDisplayName xml:lang="fr">Le Consortium 'Shibboleth'</OrganizationDisplayName>
         <OrganizationDisplayName xml:lang="en">The Shibboleth Consortium</OrganizationDisplayName>
+        <OrganizationURL>Invalid URL with no language</OrganizationURL>
         <OrganizationURL xml:lang="de">http://shibboleth.net/de</OrganizationURL>
         <OrganizationURL xml:lang="fr">script:moreBadness();</OrganizationURL>
 	</Organization>

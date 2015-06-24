@@ -306,8 +306,8 @@ public class RelyingPartyUIContext extends BaseContext {
         if (getRPUInfo() != null) {
             for (final DisplayName name : getRPUInfo().getDisplayNames()) {
                 log.trace("Found name in UIInfo, language '{}'", name.getXMLLang());
-                if (name.getXMLLang().equals(lang)) {
-                    log.debug("Language match, Returning name from UIInfo '{}'", name.getValue());
+                if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
+                    log.debug("Returning name from UIInfo '{}'", name.getValue());
                     return name.getValue();
                 }
             }
@@ -330,7 +330,7 @@ public class RelyingPartyUIContext extends BaseContext {
 
         for (ServiceName name : getRPAttributeConsumingService().getNames()) {
             log.trace("Found name in AttributeConsumingService, language '{}'", name.getXMLLang());
-            if (name.getXMLLang().equals(lang)) {
+            if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
                 log.debug("Returning name from AttributeConsumingService '{}", name.getValue());
                 return name.getValue();
             }
@@ -357,14 +357,14 @@ public class RelyingPartyUIContext extends BaseContext {
             final String scheme = entityId.getScheme();
 
             if ("http".equals(scheme) || "https".equals(scheme)) {
-                log.debug("found matching schema, returning name of '{}'", entityId.getHost());
+                log.debug("Found matching scheme, returning name of '{}'", entityId.getHost());
                 return entityId.getHost();
             }
-            log.debug("Not a usual schema returning name of '{}'", spName);
+            log.debug("Not a usual scheme, returning name of '{}'", spName);
 
             return spName;
-        } catch (URISyntaxException e) {
-            log.debug("Not a URI returning name of '{}'", spName);
+        } catch (final URISyntaxException e) {
+            log.debug("Not a URI, returning name of '{}'", spName);
             return spName;
         }
     }
@@ -382,8 +382,8 @@ public class RelyingPartyUIContext extends BaseContext {
         }
         for (final Description desc : getRPUInfo().getDescriptions()) {
             log.trace("Found description in UIInfo, language '{}'", desc.getXMLLang());
-            if (desc.getXMLLang().equals(lang)) {
-                log.trace("Found language match, returning description from UIInfo '{}'", desc.getValue());
+            if (desc.getXMLLang() != null && desc.getXMLLang().equals(lang)) {
+                log.trace("Returning description from UIInfo '{}'", desc.getValue());
                 return desc.getValue();
             }
         }
@@ -404,8 +404,8 @@ public class RelyingPartyUIContext extends BaseContext {
         }
         for (final ServiceDescription desc : getRPAttributeConsumingService().getDescriptions()) {
             log.trace("Found name in AttributeConsumingService, language=" + desc.getXMLLang());
-            if (desc.getXMLLang().equals(lang)) {
-                log.debug("returning name from AttributeConsumingService " + desc.getValue());
+            if (desc.getXMLLang() != null && desc.getXMLLang().equals(lang)) {
+                log.debug("Returning name from AttributeConsumingService " + desc.getValue());
                 return desc.getValue();
             }
         }
@@ -542,16 +542,11 @@ public class RelyingPartyUIContext extends BaseContext {
             return null;
         }
         for (final String lang : getUsableLanguages()) {
-
             for (final OrganizationDisplayName name : org.getDisplayNames()) {
-                if (name.getXMLLang() == null) {
-                    continue;
-                } else {
-                    log.trace("Found OrganizationDisplayName in Organization, language={}", name.getXMLLang());
-                }
+                log.trace("Found OrganizationDisplayName in Organization, language={}", name.getXMLLang());
 
-                if (name.getXMLLang().equals(lang)) {
-                    log.debug("returning OrganizationDisplayName from Organization, {}", name.getValue());
+                if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
+                    log.debug("Returning OrganizationDisplayName from Organization, {}", name.getValue());
                     return name.getValue();
                 }
             }
@@ -572,16 +567,11 @@ public class RelyingPartyUIContext extends BaseContext {
             return null;
         }
         for (final String lang : getUsableLanguages()) {
-
             for (final OrganizationName name : org.getOrganizationNames()) {
-                if (name.getXMLLang() == null) {
-                    continue;
-                } else {
-                    log.trace("Found OrganizationName in Organization, language={}", name.getXMLLang());
-                }
+                log.trace("Found OrganizationName in Organization, language={}", name.getXMLLang());
 
-                if (name.getXMLLang().equals(lang)) {
-                    log.debug("returning OrganizationName from Organization, {}", name.getValue());
+                if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
+                    log.debug("Returning OrganizationName from Organization, {}", name.getValue());
                     return name.getValue();
                 }
             }
@@ -602,16 +592,11 @@ public class RelyingPartyUIContext extends BaseContext {
             return null;
         }
         for (final String lang : getUsableLanguages()) {
-
             for (final OrganizationURL url : org.getURLs()) {
-                if (url.getXMLLang() == null) {
-                    continue;
-                } else {
-                    log.trace("Found OrganizationURL in Organization, language={}", url.getXMLLang());
-                }
+                log.trace("Found OrganizationURL in Organization, language={}", url.getXMLLang());
 
-                if (url.getXMLLang().equals(lang)) {
-                    log.debug("returning OrganizationURL from Organization, {}", url.getValue());
+                if (url.getXMLLang() != null && url.getXMLLang().equals(lang)) {
+                    log.debug("Returning OrganizationURL from Organization, {}", url.getValue());
                     return policeURLNonLogo(url.getValue());
                 }
             }
@@ -678,14 +663,10 @@ public class RelyingPartyUIContext extends BaseContext {
         }
         for (final String lang : getUsableLanguages()) {
             for (final InformationURL url : rpUIInfo.getInformationURLs()) {
-                if (url.getXMLLang() == null) {
-                    continue;
-                } else {
-                    log.trace("Found InformationURL, language={}", url.getXMLLang());
-                }
+                log.trace("Found InformationURL, language={}", url.getXMLLang());
 
-                if (url.getXMLLang().equals(lang)) {
-                    log.debug("returning InformationURL, {}", url.getValue());
+                if (url.getXMLLang() != null && url.getXMLLang().equals(lang)) {
+                    log.debug("Returning InformationURL, {}", url.getValue());
                     return policeURLNonLogo(url.getValue());
                 }
             }
@@ -707,14 +688,10 @@ public class RelyingPartyUIContext extends BaseContext {
         }
         for (final String lang : getUsableLanguages()) {
             for (final PrivacyStatementURL url : rpUIInfo.getPrivacyStatementURLs()) {
-                if (url.getXMLLang() == null) {
-                    continue;
-                } else {
-                    log.trace("Found PrivacyStatementURL, language={}", url.getXMLLang());
-                }
+                log.trace("Found PrivacyStatementURL, language={}", url.getXMLLang());
 
-                if (url.getXMLLang().equals(lang)) {
-                    log.debug("returning PrivacyStatementURL, {}", url.getValue());
+                if (url.getXMLLang() != null && url.getXMLLang().equals(lang)) {
+                    log.debug("Returning PrivacyStatementURL, {}", url.getValue());
                     return policeURLNonLogo(url.getValue());
                 }
             }
@@ -750,17 +727,14 @@ public class RelyingPartyUIContext extends BaseContext {
      */
     @Nullable private String getLogoByLanguage(@Nonnull String lang, int minWidth, int minHeight, int maxWidth,
             int maxHeight) {
-        for (Logo logo : rpUIInfo.getLogos()) {
-            if (null == logo.getXMLLang()) {
-                continue;
-            }
+        for (final Logo logo : rpUIInfo.getLogos()) {
             log.trace("Found logo in UIInfo, '{}' ({} x {})", logo.getXMLLang(), logo.getWidth(), logo.getHeight());
-            if (!logo.getXMLLang().equals(lang)) {
+            if (logo.getXMLLang() == null || !logo.getXMLLang().equals(lang)) {
                 log.trace("Language mismatch against '{}'");
                 continue;
             }
             if (!logoFits(logo, minWidth, minHeight, maxWidth, maxHeight)) {
-                log.trace("Size Mismatch");
+                log.trace("Size mismatch");
                 continue;
             }
             log.debug("Returning logo from UIInfo, '{}' ({} x {}) : {}", logo.getXMLLang(), logo.getWidth(),
@@ -771,7 +745,7 @@ public class RelyingPartyUIContext extends BaseContext {
     }
 
     /**
-     * Get the Logo of the given language which fits the size.
+     * Get a Logo without a language which fits the size.
      * 
      * @param minWidth the minimum width to allow.
      * @param minHeight the minimum height to allow.
@@ -780,7 +754,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @return an appropriate logo URL or null.
      */
     @Nullable private String getLogoNoLanguage(int minWidth, int minHeight, int maxWidth, int maxHeight) {
-        for (Logo logo : rpUIInfo.getLogos()) {
+        for (final Logo logo : rpUIInfo.getLogos()) {
             if (null != logo.getXMLLang()) {
                 continue;
             }
