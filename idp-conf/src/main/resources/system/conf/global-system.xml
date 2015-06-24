@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+<?xml version="1.0" encoding="UTF-8"?>
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
@@ -254,7 +254,15 @@
         class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
         factory-method="buildBasicInlineKeyInfoCredentialResolver" />
         
-    <!--  These are the common caching HttpClients wired to by multiple components, such as HTTPResources. -->
+    <!--  These are the common HttpClients wired to by multiple components, such as HTTPResources. -->
+
+    <bean id="shibboleth.NonCachingHttpClient"
+        lazy-init="true"
+        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
+        p:tLSSocketFactory="#{ %{idp.httpclient.useTrustEngineTLSSocketFactory:false} ? @'shibboleth.TrustEngineTLSSocketFactory' : null }"
+        p:connectionDisregardTLSCertificate="%{idp.httpclient.connectionDisregardTLSCertificate:false}"
+        p:connectionTimeout="%{idp.httpclient.connectionTimeout:-1}" />
+    
     <bean id="shibboleth.FileCachingHttpClient"
         lazy-init="true"
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean"
