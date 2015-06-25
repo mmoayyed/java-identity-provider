@@ -35,13 +35,6 @@
           c:proxyAuthenticator-ref="cas.ProxyAuthenticator"
           c:ticketService-ref="cas.TicketService" />
 
-    <bean id="filterAttributes"
-          class="net.shibboleth.idp.profile.impl.FilterAttributes"
-          scope="prototype"
-          c:filterService-ref="shibboleth.AttributeFilterService"
-          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
-          p:principalNameLookupStrategy-ref="sessionPrincipalLookupFunction" />
-
     <bean id="extractAttributesAction"
           class="net.shibboleth.idp.cas.flow.ExtractAttributesAction" />
 

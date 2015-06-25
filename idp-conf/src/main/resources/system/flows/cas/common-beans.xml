@@ -55,10 +55,19 @@
         </constructor-arg>
     </bean>
 
-    <bean id="resolveAttributesFromSessionPrincipal"
+    <bean id="populateSubjectContext"
+          class="net.shibboleth.idp.profile.impl.PopulateSubjectContext"
+          scope="prototype"
+          p:principalNameLookupStrategy-ref="sessionPrincipalLookupFunction" />
+
+    <bean id="resolveAttributes"
           class="net.shibboleth.idp.profile.impl.ResolveAttributes"
           scope="prototype"
-          c:resolverService-ref="shibboleth.AttributeResolverService"
-          p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
-          p:principalNameLookupStrategy-ref="sessionPrincipalLookupFunction" />
+          c:resolverService-ref="shibboleth.AttributeResolverService" />
+
+    <bean id="filterAttributes"
+          class="net.shibboleth.idp.profile.impl.FilterAttributes"
+          scope="prototype"
+          c:filterService-ref="shibboleth.AttributeFilterService"
+          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}" />
 </beans>

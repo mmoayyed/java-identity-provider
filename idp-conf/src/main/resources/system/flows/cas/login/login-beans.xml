@@ -41,17 +41,9 @@
           class="net.shibboleth.idp.cas.config.ConfigLookupFunction"
           c:clazz="net.shibboleth.idp.cas.config.LoginConfiguration" />
 
-    <bean id="resolveAttributesFromSubjectPrincipal"
-          class="net.shibboleth.idp.profile.impl.ResolveAttributes"
-          scope="prototype"
-          c:resolverService-ref="shibboleth.AttributeResolverService"
-          p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
-
-    <bean id="filterAttributes"
-          class="net.shibboleth.idp.profile.impl.FilterAttributes"
-          scope="prototype"
-          c:filterService-ref="shibboleth.AttributeFilterService"
-          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}" />
+    <bean id="subjectContextLookup"
+          class="org.opensaml.messaging.context.navigate.ChildContextLookup"
+          c:type="net.shibboleth.idp.authn.context.SubjectContext" />
 
     <bean id="extractAttributesAction"
           class="net.shibboleth.idp.cas.flow.ExtractAttributesAction" />

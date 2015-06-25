@@ -54,7 +54,8 @@
     </action-state>
 
     <action-state id="resolveAttributes">
-        <evaluate expression="resolveAttributesFromSessionPrincipal" />
+        <evaluate expression="populateSubjectContext" />
+        <evaluate expression="resolveAttributes" />
         <evaluate expression="filterAttributes" />
         <evaluate expression="extractAttributesAction" />
         <evaluate expression="'finished'" />

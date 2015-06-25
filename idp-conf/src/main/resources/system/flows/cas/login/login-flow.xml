@@ -43,29 +43,24 @@
 
     <decision-state id="checkResolveAttributes">
         <if test="loginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
-            then="resolveAttributes"
+            then="checkForSubjectContext"
             else="grantServiceTicket" />
     </decision-state>
 
-    <decision-state id="resolveAttributes">
-        <if test="flowScope.hasAuthenticationContext"
-            then="resolveAttributesFromSubjectPrincipal"
-            else="resolveAttributesFromSessionPrincipal" />
+    <decision-state id="checkForSubjectContext">
+        <if test="subjectContextLookup.apply(opensamlProfileRequestContext) == null"
+            then="populateSubjectContext"
+            else="resolveAttributes" />
     </decision-state>
 
-    <action-state id="resolveAttributesFromSubjectPrincipal">
-        <evaluate expression="resolveAttributesFromSubjectPrincipal" />
+    <action-state id="populateSubjectContext">
+        <evaluate expression="populateSubjectContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="filterAttributes" />
+        <transition on="proceed" to="resolveAttributes" />
     </action-state>
 
-    <action-state id="resolveAttributesFromSessionPrincipal">
-        <evaluate expression="resolveAttributesFromSessionPrincipal" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="filterAttributes" />
-    </action-state>
-
-    <action-state id="filterAttributes">
+    <action-state id="resolveAttributes">
+        <evaluate expression="resolveAttributes" />
         <evaluate expression="filterAttributes" />
         <evaluate expression="populatePostAuthnInterceptContext" />
         <evaluate expression="'finished'" />
