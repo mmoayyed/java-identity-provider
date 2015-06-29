@@ -400,7 +400,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
         if (libertySSOSEndpointURLLookupStrategy != null) {
             libertySSOSEndpointURL = libertySSOSEndpointURLLookupStrategy.apply(
-                    new Pair<ProfileRequestContext,HttpServletRequest>(profileRequestContext, getHttpServletRequest()));
+                    new Pair<>(profileRequestContext, getHttpServletRequest()));
             if (libertySSOSEndpointURL != null) {
                 log.debug("Using Liberty SSOS endpoint URL resolved via strategy: {}", libertySSOSEndpointURL);
                 return;
