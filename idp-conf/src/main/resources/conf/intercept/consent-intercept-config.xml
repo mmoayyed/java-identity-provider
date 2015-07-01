@@ -72,7 +72,8 @@
     -->
     <alias alias="shibboleth.consent.attribute-release.AttributeIDComparator"
             name="shibboleth.consent.attribute-release.DefaultAttributeIDComparator" />
-            
+    
+    <!-- TODO IDP-624 Fix this user-space dependency on a non-API class. -->
     <bean id="shibboleth.consent.attribute-release.DefaultAttributeIDComparator"
         class="net.shibboleth.idp.consent.logic.PreferExplicitOrderComparator"
         c:order-ref="shibboleth.consent.attribute-release.WhitelistedAttributeIDs" />
