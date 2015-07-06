@@ -12,6 +12,8 @@
 <%@ page import="org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver" %>
 <%@ page import="net.shibboleth.idp.Version" %>
 <%@ page import="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider" %>
+<%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
+<%@ page import="net.shibboleth.idp.attribute.resolver.DataConnector" %>
 <%@ page import="net.shibboleth.utilities.java.support.component.IdentifiedComponent" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ReloadableService" %>
 <%@ page import="net.shibboleth.utilities.java.support.service.ServiceableComponent" %>
@@ -20,7 +22,7 @@ final RequestContext requestContext = (RequestContext) request.getAttribute("flo
 final DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis();
 final DateTime now = DateTime.now();
 final DateTime startupTime = new DateTime(requestContext.getActiveFlow().getApplicationContext().getStartupDate());
-%>### Operating Environment Information
+%>##YY# Operating Environment Information
 operating_system: <%= System.getProperty("os.name") %>
 operating_system_version: <%= System.getProperty("os.version") %>
 operating_system_architecture: <%= System.getProperty("os.arch") %>
@@ -92,8 +94,30 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
         } finally {
             if (null != component) {
                 component.unpinComponent();
-            }
+            } 
         }
-    }
+    } else if (((IdentifiedComponent) service).getId().contains("AttributeResolver")) {
+        final ServiceableComponent<AttributeResolver> component = service.getServiceableComponent();
+        try {
+            AttributeResolver resolver = component.getComponent();
+            final Collection<DataConnector> connectors = resolver.getDataConnectors().values();
+            
+            for (final DataConnector connector: connectors) {
+                final long lastFail = connector.getLastFail();
+                if (0 != lastFail) {
+                    DateTime failDateTime = new DateTime(lastFail);
+                    out.println("\tDataConnector " +  connector.getId() + ": last failed at " + failDateTime.toString(dateTimeFormatter));
+                } else {
+                    out.println("\tDataConnector " +  connector.getId() + ": has never failed");
+                }
+                out.println();
+            }
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            } 
+        }
+    
+    }    
 }
 %>
