@@ -28,6 +28,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.MultipleResultAnErrorResolutionException;
+import net.shibboleth.idp.attribute.resolver.NoResultAnErrorResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.AbstractMappingStrategy;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -57,11 +59,11 @@ public class StringAttributeValueMappingStrategy extends AbstractMappingStrategy
         if (results.size() == 0) {
             log.debug("Results did not contain any entries, nothing to map");
             if (isNoResultAnError()) {
-                throw new ResolutionException("No entries returned from search");
+                throw new NoResultAnErrorResolutionException("No entries returned from search");
             }
             return null;
         } else if (results.size() > 1 && isMultipleResultsAnError()) {
-            throw new ResolutionException("Multiple entries returned from search");
+            throw new MultipleResultAnErrorResolutionException("Multiple entries returned from search");
         }
 
         final Map<String,IdPAttribute> attributes = new HashMap<>(results.size());
