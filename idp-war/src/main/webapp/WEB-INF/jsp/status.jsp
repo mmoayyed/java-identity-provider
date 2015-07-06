@@ -22,7 +22,7 @@ final RequestContext requestContext = (RequestContext) request.getAttribute("flo
 final DateTimeFormatter dateTimeFormatter = ISODateTimeFormat.dateTimeNoMillis();
 final DateTime now = DateTime.now();
 final DateTime startupTime = new DateTime(requestContext.getActiveFlow().getApplicationContext().getStartupDate());
-%>##YY# Operating Environment Information
+%>### Operating Environment Information
 operating_system: <%= System.getProperty("os.name") %>
 operating_system_version: <%= System.getProperty("os.version") %>
 operating_system_architecture: <%= System.getProperty("os.arch") %>
