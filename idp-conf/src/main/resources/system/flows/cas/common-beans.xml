@@ -69,5 +69,9 @@
           class="net.shibboleth.idp.profile.impl.FilterAttributes"
           scope="prototype"
           c:filterService-ref="shibboleth.AttributeFilterService"
-          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}" />
+          p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}">
+        <property name="metadataContextLookupStrategy">
+            <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
+        </property>
+    </bean>
 </beans>
