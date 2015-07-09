@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterNameIDFormatExactPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
@@ -60,7 +61,8 @@ public class AttributeRequesterNameIdFormatRuleParser extends BasePolicyRulePars
                     SCHEMA_TYPE.getLocalPart());
         }
 
-        builder.addPropertyValue("nameIdFormat", element.getAttributeNS(null, "nameIdFormat"));
+        builder.addPropertyValue("nameIdFormat", 
+                StringSupport.trimOrNull(element.getAttributeNS(null, "nameIdFormat")));
     }
 
 }

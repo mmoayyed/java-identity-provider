@@ -38,7 +38,8 @@ public abstract class AbstractStringMatcherParser extends BaseAttributeValueMatc
         builder.addPropertyValue("matchString", StringSupport.trimOrNull(element.getAttributeNS(null, "value")));
 
         if (element.hasAttributeNS(null, "ignoreCase")) {
-            builder.addPropertyValue("ignoreCase", element.getAttributeNS(null, "ignoreCase"));
+            builder.addPropertyValue("ignoreCase", 
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "ignoreCase")));
         }
     }
 }

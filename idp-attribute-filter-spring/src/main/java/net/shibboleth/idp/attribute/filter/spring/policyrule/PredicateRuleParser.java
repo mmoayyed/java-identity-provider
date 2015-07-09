@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PredicatePolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -43,10 +44,12 @@ public class PredicateRuleParser extends BasePolicyRuleParser {
     /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull Element element, @Nonnull ParserContext parserContext,
             @Nonnull BeanDefinitionBuilder builder) {
-        
-        builder.addPropertyReference("rulePredicate", element.getAttributeNS(null, "rulePredicateRef"));
-        if (element.hasAttributeNS(null, "contextStrategyRef")){
-            builder.addPropertyReference("profileContextStrategy", element.getAttributeNS(null, "contextStrategyRef"));
+
+        builder.addPropertyReference("rulePredicate",
+                StringSupport.trimOrNull(element.getAttributeNS(null, "rulePredicateRef")));
+        if (element.hasAttributeNS(null, "contextStrategyRef")) {
+            builder.addPropertyReference("profileContextStrategy",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "contextStrategyRef")));
         }
     }
 }

@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,8 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
             @Nonnull BeanDefinitionBuilder builder) {
 
         if (element.hasAttributeNS(null, MATCH_IF_METADATA_SILENT_ATTR_NAME)) {
-            String matchIfSilent = element.getAttributeNS(null, MATCH_IF_METADATA_SILENT_ATTR_NAME);
+            String matchIfSilent =
+                    StringSupport.trimOrNull(element.getAttributeNS(null, MATCH_IF_METADATA_SILENT_ATTR_NAME));
             log.debug("Registration Authority Filter: Match if Metadata silent = {}", matchIfSilent);
             builder.addPropertyValue("matchIfMetadataSilent", matchIfSilent);
         }

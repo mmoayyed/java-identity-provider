@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.MappedAttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -47,12 +48,14 @@ public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatch
         super.doParse(config, builder);
 
         if (config.hasAttributeNS(null, "onlyIfRequired")) {
-            builder.addPropertyValue("onlyIfRequired", config.getAttributeNS(null, "onlyIfRequired"));
+            builder.addPropertyValue("onlyIfRequired",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "onlyIfRequired")));
         }
 
         if (config.hasAttributeNS(null, "matchIfMetadataSilent")) {
-            builder.addPropertyValue("matchIfMetadataSilent",  config.getAttributeNS(null, "matchIfMetadataSilent"));
+            builder.addPropertyValue("matchIfMetadataSilent",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "matchIfMetadataSilent")));
         }
     }
-    
+
 }

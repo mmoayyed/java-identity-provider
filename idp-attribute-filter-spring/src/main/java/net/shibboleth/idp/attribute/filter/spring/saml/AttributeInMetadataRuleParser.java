@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -31,7 +32,7 @@ import org.w3c.dom.Element;
  * Bean definition parser for {@link AttributeInMetadataMatcher}.
  */
 public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
-    
+
     /** Schema type. */
     public static final QName ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeInMetadata");
@@ -47,21 +48,23 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
         super.doParse(config, builder);
 
         if (config.hasAttributeNS(null, "onlyIfRequired")) {
-            builder.addPropertyValue("onlyIfRequired", config.getAttributeNS(null, "onlyIfRequired"));
+            builder.addPropertyValue("onlyIfRequired",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "onlyIfRequired")));
         }
 
         if (config.hasAttributeNS(null, "matchIfMetadataSilent")) {
-            builder.addPropertyValue("matchIfMetadataSilent", 
-                    config.getAttributeNS(null, "matchIfMetadataSilent"));
+            builder.addPropertyValue("matchIfMetadataSilent",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "matchIfMetadataSilent")));
         }
-        
+
         if (config.hasAttributeNS(null, "attributeName")) {
-            builder.addPropertyValue("attributeName", config.getAttributeNS(null, "attributeName"));
+            builder.addPropertyValue("attributeName",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "attributeName")));
         }
 
         if (config.hasAttributeNS(null, "attributeNameFormat")) {
-            builder.addPropertyValue("attributeNameFormat", config.getAttributeNS(null, "attributeNameFormat"));
+            builder.addPropertyValue("attributeNameFormat",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "attributeNameFormat")));
         }
     }
-    
 }

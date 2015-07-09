@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -32,13 +33,15 @@ import org.w3c.dom.Element;
 public abstract class AbstractEntityAttributeRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
-    protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        builder.addPropertyValue("attributeName", element.getAttributeNS(null, "attributeName"));
+        builder.addPropertyValue("attributeName",
+                StringSupport.trimOrNull(element.getAttributeNS(null, "attributeName")));
 
         if (element.hasAttributeNS(null, "attributeNameFormat")) {
-            builder.addPropertyValue("nameFormat", element.getAttributeNS(null, "attributeNameFormat"));
+            builder.addPropertyValue("nameFormat",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "attributeNameFormat")));
         }
     }
 }

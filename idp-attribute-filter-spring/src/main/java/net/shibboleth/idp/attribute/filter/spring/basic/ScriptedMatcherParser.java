@@ -26,6 +26,7 @@ import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.filter.matcher.impl.ScriptedMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.ScriptedPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -75,7 +76,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
                 BeanDefinitionBuilder.genericBeanDefinition(EvaluableScriptFactoryBean.class);
         scriptBuilder.addPropertyValue("sourceId",  logPrefix);
         if (config.hasAttributeNS(null, "language")) {
-            final String scriptLanguage = config.getAttributeNS(null, "language");
+            final String scriptLanguage =  StringSupport.trimOrNull(config.getAttributeNS(null, "language"));
             log.debug("{} scripting language: {}.",  logPrefix , scriptLanguage);
             scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }
