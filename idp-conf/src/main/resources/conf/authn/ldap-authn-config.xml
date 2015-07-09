@@ -34,7 +34,7 @@
     </bean>
     <bean id="keyStoreTrust" class="org.ldaptive.ssl.SslConfig">
         <property name="credentialConfig">
-            <bean parent="shibboleth.KeystoreResourceCredentialConfig" p:trustStore="%{idp.authn.LDAP.trustStore}" /> 
+            <bean parent="shibboleth.KeystoreResourceCredentialConfig" p:truststore="%{idp.authn.LDAP.trustStore}" /> 
         </property>
     </bean>
 
