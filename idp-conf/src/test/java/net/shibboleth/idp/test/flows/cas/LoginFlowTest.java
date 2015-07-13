@@ -88,7 +88,7 @@ public class LoginFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "gatewayRedirect");
+        assertEquals(result.getOutcome().getId(), "GatewayRedirect");
         assertEquals(externalContext.getExternalRedirectUrl(), service);
     }
 
@@ -96,11 +96,11 @@ public class LoginFlowTest extends AbstractFlowTest {
     public void testLoginStartSession() throws Exception {
         final String service = "https://start.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
-        overrideEndStateOutput("cas/login", "redirectToService");
+        overrideEndStateOutput("cas/login", "RedirectToService");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final FlowExecutionOutcome outcome = result.getOutcome();
-        assertEquals(outcome.getId(), "redirectToService");
+        assertEquals(outcome.getId(), "RedirectToService");
         final String url = externalContext.getExternalRedirectUrl();
         assertTrue(url.contains("ticket=ST-"));
         final String ticketId = url.substring(url.indexOf("ticket=") + 7);
@@ -120,12 +120,12 @@ public class LoginFlowTest extends AbstractFlowTest {
         final String service = "https://start.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
         setPostAuthenticationFlows(Collections.singletonList("attribute-release"));
-        overrideEndStateOutput("cas/login", "redirectToService");
+        overrideEndStateOutput("cas/login", "RedirectToService");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final FlowExecutionOutcome outcome = result.getOutcome();
-        assertEquals(result.getOutcome().getId(), "redirectToService");
+        assertEquals(result.getOutcome().getId(), "RedirectToService");
         final String url = externalContext.getExternalRedirectUrl();
         assertTrue(url.contains("ticket=ST-"));
         final String ticketId = url.substring(url.indexOf("ticket=") + 7);
@@ -147,13 +147,13 @@ public class LoginFlowTest extends AbstractFlowTest {
         final String service = "https://existing.example.org/";
         final IdPSession existing = sessionManager.createSession("aurora");
         externalContext.getMockRequestParameterMap().put("service", service);
-        overrideEndStateOutput("cas/login", "redirectToService");
+        overrideEndStateOutput("cas/login", "RedirectToService");
         request.setCookies(new Cookie("shib_idp_session", existing.getId()));
         initializeThreadLocals();
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final FlowExecutionOutcome outcome = result.getOutcome();
-        assertEquals(outcome.getId(), "redirectToService");
+        assertEquals(outcome.getId(), "RedirectToService");
         final String url = externalContext.getExternalRedirectUrl();
         assertTrue(url.contains("ticket=ST-"));
         final String ticketId = url.substring(url.indexOf("ticket=") + 7);
@@ -173,8 +173,8 @@ public class LoginFlowTest extends AbstractFlowTest {
     public void testErrorNoService() throws Exception {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "error");
-        assertTrue(responseBody.contains("serviceNotSpecified"));
+        assertEquals(result.getOutcome().getId(), "Error");
+        assertTrue(responseBody.contains("ServiceNotSpecified"));
     }
 
     private void setPostAuthenticationFlows(final List<String> flowIdentifiers) throws Exception {

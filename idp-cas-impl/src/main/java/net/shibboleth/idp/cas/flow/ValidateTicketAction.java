@@ -40,12 +40,12 @@ import javax.annotation.Nonnull;
  * CAS protocol service ticket validation action emits one of the following events based on validation result:
  *
  * <ul>
- *     <li>{@link Events#ServiceTicketValidated serviceTicketValidated}</li>
- *     <li>{@link Events#ProxyTicketValidated proxyTicketValidated}</li>
- *     <li>{@link ProtocolError#InvalidTicketFormat invalidTicketFormat}</li>
- *     <li>{@link ProtocolError#ServiceMismatch serviceMismatch}</li>
- *     <li>{@link ProtocolError#TicketExpired ticketExpired}</li>
- *     <li>{@link ProtocolError#TicketRetrievalError ticketRetrievalError}</li>
+ *     <li>{@link Events#ServiceTicketValidated ServiceTicketValidated}</li>
+ *     <li>{@link Events#ProxyTicketValidated ProxyTicketValidated}</li>
+ *     <li>{@link ProtocolError#InvalidTicketFormat InvalidTicketFormat}</li>
+ *     <li>{@link ProtocolError#ServiceMismatch ServiceMismatch}</li>
+ *     <li>{@link ProtocolError#TicketExpired TicketExpired}</li>
+ *     <li>{@link ProtocolError#TicketRetrievalError TicketRetrievalError}</li>
  * </ul>
  *
  * @author Marvin S. Addison

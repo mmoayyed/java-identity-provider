@@ -15,35 +15,35 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
 
-    <bean id="buildRelyingPartyContextAction"
+    <bean id="BuildRelyingPartyContext"
           class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
           c:registry-ref="shibboleth.CASServiceRegistry"/>
 
-    <bean id="buildSAMLMetadataContextAction"
+    <bean id="BuildSAMLMetadataContext"
           class="net.shibboleth.idp.cas.flow.BuildSAMLMetadataContextAction" />
 
-    <bean id="publishProtocolRequestAction"
+    <bean id="PublishProtocolRequest"
           class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
           c:isRequest="true" />
 
-    <bean id="publishProtocolResponseAction"
+    <bean id="PublishProtocolResponse"
           class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
           c:isRequest="false" />
 
-    <bean id="selectProfileConfiguration"
+    <bean id="SelectProfileConfiguration"
           class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration"
           scope="prototype" />
 
-    <bean id="selectRelyingPartyConfiguration"
+    <bean id="SelectRelyingPartyConfiguration"
           class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration"
           scope="prototype"
           p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
-    <bean id="validateIdPSessionAction"
+    <bean id="ValidateIdPSession"
           class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
           c:resolver-ref="shibboleth.SessionManager" />
 
-    <bean id="sessionPrincipalLookupFunction"
+    <bean id="SessionPrincipalLookupFunction"
           class="com.google.common.base.Functions"
           factory-method="compose">
         <constructor-arg index="0">
@@ -55,17 +55,17 @@
         </constructor-arg>
     </bean>
 
-    <bean id="populateSubjectContext"
+    <bean id="PopulateSubjectContext"
           class="net.shibboleth.idp.profile.impl.PopulateSubjectContext"
           scope="prototype"
-          p:principalNameLookupStrategy-ref="sessionPrincipalLookupFunction" />
+          p:principalNameLookupStrategy-ref="SessionPrincipalLookupFunction" />
 
-    <bean id="resolveAttributes"
+    <bean id="ResolveAttributes"
           class="net.shibboleth.idp.profile.impl.ResolveAttributes"
           scope="prototype"
           c:resolverService-ref="shibboleth.AttributeResolverService" />
 
-    <bean id="filterAttributes"
+    <bean id="FilterAttributes"
           class="net.shibboleth.idp.profile.impl.FilterAttributes"
           scope="prototype"
           c:filterService-ref="shibboleth.AttributeFilterService"

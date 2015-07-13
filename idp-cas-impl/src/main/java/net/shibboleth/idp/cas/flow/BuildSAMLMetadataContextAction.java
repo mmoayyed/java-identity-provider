@@ -16,8 +16,8 @@
  */
 package net.shibboleth.idp.cas.flow;
 
+import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.ServiceEntityDescriptor;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
@@ -28,7 +28,11 @@ import javax.annotation.Nonnull;
 
 /**
  * Builds a {@link SAMLMetadataContext} child of {@link RelyingPartyContext} to facilitate relying party selection
- * by group name.
+ * by group name. Possible outcomes:
+ * <ul>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#IllegalState IllegalState}</li>
+ * </ul>
  *
  * @author Marvin S. Addison
  */
@@ -40,12 +44,12 @@ public class BuildSAMLMetadataContextAction extends AbstractCASProtocolAction {
             final @Nonnull ProfileRequestContext profileRequestContext) {
         final RelyingPartyContext rpCtx = profileRequestContext.getSubcontext(RelyingPartyContext.class, false);
         if (rpCtx == null) {
-            throw new IllegalArgumentException("RelyingPartyContext not found");
+            throw new IllegalStateException("RelyingPartyContext not found");
         }
         final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
         mdCtx.setEntityDescriptor(new ServiceEntityDescriptor(getCASService(profileRequestContext)));
         rpCtx.setRelyingPartyIdContextTree(mdCtx);
 
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

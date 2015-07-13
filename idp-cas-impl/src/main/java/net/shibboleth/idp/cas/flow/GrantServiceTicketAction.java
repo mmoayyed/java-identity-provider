@@ -38,8 +38,8 @@ import javax.annotation.Nonnull;
 /**
  * Generates and stores a CAS protocol service ticket. Possible outcomes:
  * <ul>
- *     <li>{@link Events#Success success}</li>
- *     <li>{@link ProtocolError#TicketCreationError ticketCreationError}</li>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#TicketCreationError TicketCreationError}</li>
  * </ul>
  *
  * @author Marvin S. Addison
@@ -78,12 +78,11 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         final IdPSession session = getIdPSession(profileRequestContext);
         final LoginConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
-            log.info("Service ticket configuration undefined");
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException("Service ticket configuration undefined");
         }
         if (config.getSecurityConfiguration() == null || config.getSecurityConfiguration().getIdGenerator() == null) {
-            log.info("Invalid service ticket configuration: SecurityConfiguration#idGenerator undefined");
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException(
+                    "Invalid service ticket configuration: SecurityConfiguration#idGenerator undefined");
         }
         final ServiceTicket ticket;
         try {
@@ -104,6 +103,6 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             response.setSaml(true);
         }
         setCASResponse(profileRequestContext, response);
-        return Events.Success.event(this);
+        return null;
     }
 }

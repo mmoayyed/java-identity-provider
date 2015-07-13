@@ -42,7 +42,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(request, null)
                 .build();
-        assertEquals(action.execute(context).getId(), Events.GatewayRequested.id());
+        assertEquals(action.execute(context).getId(), Events.GatewayRequested.name());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("b"), null)
                 .build();
-        assertEquals(action.execute(context).getId(), Events.SessionNotFound.id());
+        assertEquals(action.execute(context).getId(), Events.SessionNotFound.name());
     }
 
     @Test
@@ -59,7 +59,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
                 .addProtocolContext(new ServiceTicketRequest("c"), null)
                 .addSessionContext(mockSession("ABCDE", false))
                 .build();
-        assertEquals(action.execute(context).getId(), Events.SessionNotFound.id());
+        assertEquals(action.execute(context).getId(), Events.SessionNotFound.name());
     }
 
     @Test
@@ -68,7 +68,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
                 .addProtocolContext(new ServiceTicketRequest("d"), null)
                 .addSessionContext(mockSession("12345", true))
                 .build();
-        assertEquals(action.execute(context).getId(), Events.SessionFound.id());
+        assertEquals(action.execute(context).getId(), Events.SessionFound.name());
     }
 
     @Test
@@ -79,6 +79,6 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
                 .addProtocolContext(request, null)
                 .addSessionContext(mockSession("98765", true))
                 .build();
-        assertEquals(action.execute(context).getId(), Events.RenewRequested.id());
+        assertEquals(action.execute(context).getId(), Events.RenewRequested.name());
     }
 }

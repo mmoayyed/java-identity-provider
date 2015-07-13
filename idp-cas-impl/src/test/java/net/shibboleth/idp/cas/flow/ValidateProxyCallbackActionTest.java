@@ -22,11 +22,9 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
 import org.joda.time.Instant;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
 
@@ -43,16 +41,13 @@ import static org.testng.Assert.*;
  */
 public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
 
-    @Autowired
-    private TicketService ticketService;
-
     @Test
     public void testValidateProxySuccess() throws Exception {
         final ValidateProxyCallbackAction action = new ValidateProxyCallbackAction(
                 mockProxyAuthenticator(null), ticketService);
         action.initialize();
         final RequestContext context = newRequestContext("https://test.example.org/");
-        assertEquals(action.execute(context).getId(), Events.Success.id());
+        assertNull(action.execute(context));
         final TicketValidationResponse response = action.getCASResponse(getProfileContext(context));
         assertNotNull(response);
         assertNotNull(response.getPgtIou());
@@ -65,7 +60,7 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
         action.initialize();
         assertEquals(
                 action.execute(newRequestContext("https://test.example.org/")).getId(),
-                ProtocolError.ProxyCallbackAuthenticationFailure.id());
+                ProtocolError.ProxyCallbackAuthenticationFailure.name());
     }
 
     private static ProxyAuthenticator<TrustEngine<? super X509Credential>> mockProxyAuthenticator(final Exception toBeThrown)

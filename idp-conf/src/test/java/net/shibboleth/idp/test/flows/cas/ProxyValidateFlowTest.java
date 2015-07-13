@@ -85,7 +85,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateSuccess");
+        assertEquals(result.getOutcome().getId(), "ValidateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
@@ -99,7 +99,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_TICKET_EXPIRED"));
@@ -114,7 +114,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_SESSION_EXPIRED"));
@@ -138,7 +138,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateSuccess");
+        assertEquals(result.getOutcome().getId(), "ValidateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertTrue(responseBody.contains("<cas:proxyGrantingTicket>"));
@@ -163,7 +163,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_REQUEST\""));
         assertTrue(responseBody.contains("E_PROXY_CALLBACK_AUTH_FAILURE"));
     }
@@ -185,7 +185,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_BROKEN_PROXY_CHAIN"));
     }

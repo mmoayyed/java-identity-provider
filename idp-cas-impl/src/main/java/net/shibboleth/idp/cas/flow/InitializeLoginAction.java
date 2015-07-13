@@ -22,7 +22,6 @@ import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.SamlParam;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
-import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
@@ -33,8 +32,8 @@ import javax.annotation.Nonnull;
 /**
  * Initializes the CAS protocol interaction at the <code>/login</code> URI. Possible outcomes:
  * <ul>
- *     <li>{@link Events#Proceed proceed}</li>
- *     <li>{@link ProtocolError#ServiceNotSpecified serviceNotSpecified}</li>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#ServiceNotSpecified ServiceNotSpecified}</li>
  * </ul>
  *
  * @author Marvin S. Addison
@@ -74,6 +73,6 @@ public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTick
 
         setCASRequest(profileRequestContext, serviceTicketRequest);
 
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

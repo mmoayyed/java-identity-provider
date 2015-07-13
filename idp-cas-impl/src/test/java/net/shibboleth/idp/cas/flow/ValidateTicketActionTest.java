@@ -30,8 +30,7 @@ import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 /**
  * Unit test for {@link ValidateTicketAction} class.
@@ -48,7 +47,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, "AB-1234-012346abcdef"), null)
                 .addRelyingPartyContext(TEST_SERVICE, true, new ValidateConfiguration())
                 .build();
-        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.InvalidTicketFormat.id());
+        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.InvalidTicketFormat.name());
     }
 
     @Test
@@ -58,7 +57,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new TicketValidationRequest("mismatch", ticket.getId()), null)
                 .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
-        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.ServiceMismatch.id());
+        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.ServiceMismatch.name());
     }
 
     @Test
@@ -70,7 +69,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .build();
         // Remove the ticket prior to validation to simulate expiration
         ticketService.removeServiceTicket(ticket.getId());
-        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.TicketExpired.id());
+        assertEquals(newAction(ticketService).execute(context).getId(), ProtocolError.TicketExpired.name());
     }
 
     @Test
@@ -83,7 +82,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .build();
         assertEquals(
                 newAction(throwingTicketService).execute(context).getId(),
-                ProtocolError.TicketRetrievalError.id());
+                ProtocolError.TicketRetrievalError.name());
     }
 
     @Test
@@ -94,7 +93,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
         final ValidateTicketAction action = newAction(ticketService);
-        assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.id());
+        assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.name());
         assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 
@@ -106,7 +105,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addRelyingPartyContext(ticket.getService(), true, new ValidateConfiguration())
                 .build();
         final ValidateTicketAction action = newAction(ticketService);
-        assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.id());
+        assertEquals(action.execute(context).getId(), Events.ServiceTicketValidated.name());
         assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 
@@ -120,7 +119,7 @@ public class ValidateTicketActionTest extends AbstractFlowActionTest {
                 .addRelyingPartyContext(pt.getService(), true, new ValidateConfiguration())
                 .build();
         final ValidateTicketAction action = newAction(ticketService);
-        assertEquals(action.execute(context).getId(), Events.ProxyTicketValidated.id());
+        assertEquals(action.execute(context).getId(), Events.ProxyTicketValidated.name());
         assertNotNull(action.getCASResponse(getProfileContext(context)));
     }
 

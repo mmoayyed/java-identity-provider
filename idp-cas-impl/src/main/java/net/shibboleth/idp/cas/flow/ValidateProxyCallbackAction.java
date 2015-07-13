@@ -47,8 +47,8 @@ import java.net.URISyntaxException;
  * the proxy callback is successfully authenticated. Possible outcomes:
  *
  * <ul>
- *     <li>{@link Events#Success success}</li>
- *     <li>{@link ProtocolError#ProxyCallbackAuthenticationFailure}</li>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#ProxyCallbackAuthenticationFailure ProxyCallbackAuthenticationFailure}</li>
  * </ul>
  *
  * On success, the PGTIOU is accessible at {@link TicketValidationResponse#getPgtIou()}.
@@ -98,16 +98,14 @@ public class ValidateProxyCallbackAction
         final Ticket ticket = getCASTicket(profileRequestContext);
         final ValidateConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
-            log.info("Proxy-granting ticket configuration undefined");
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException("Proxy-granting ticket configuration undefined");
         }
         if (config.getSecurityConfiguration() == null || config.getSecurityConfiguration().getIdGenerator() == null) {
-            log.info("Invalid proxy-granting ticket configuration: SecurityConfiguration#idGenerator undefined");
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException(
+                    "Invalid proxy-granting ticket configuration: SecurityConfiguration#idGenerator undefined");
         }
         if (config.getPGTIOUGenerator() == null) {
-            log.info("Invalid proxy-granting ticket configuration: PGTIOUGenerator undefined");
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException("Invalid proxy-granting ticket configuration: PGTIOUGenerator undefined");
         }
         final ProxyIdentifiers proxyIds = new ProxyIdentifiers(
                 config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
@@ -142,6 +140,6 @@ public class ValidateProxyCallbackAction
             log.info("Proxy authentication failed for " + request.getPgtUrl() + ": " + e);
             return ProtocolError.ProxyCallbackAuthenticationFailure.event(this);
         }
-        return Events.Success.event(this);
+        return null;
     }
 }

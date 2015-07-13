@@ -34,9 +34,9 @@ import javax.annotation.Nonnull;
  * Action that builds the chain of visited proxies for a successful proxy ticket validation event. Possible outcomes:
  *
  * <ul>
- *     <li>{@link Events#Proceed proceed}</li>
- *     <li>{@link ProtocolError#BrokenProxyChain brokenProxyChain}</li>
- *     <li>{@link ProtocolError#InvalidTicketType invalidTicketType}</li>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#BrokenProxyChain BrokenProxyChain}</li>
+ *     <li>{@link ProtocolError#InvalidTicketType InvalidTicketType}</li>
  * </ul>
  *
  * @author Marvin S. Addison
@@ -78,12 +78,13 @@ public class BuildProxyChainAction
         do {
             pgt = ticketService.fetchProxyGrantingTicket(pgtId);
             if (pgt == null) {
+                log.debug("PGT {} not found", pgtId);
                 return ProtocolError.BrokenProxyChain.event(this);
             }
             response.addProxy(pgt.getService());
             pgtId = pgt.getParentId();
         } while (pgtId != null);
 
-        return Events.Proceed.event(this);
+        return null;
     }
 }

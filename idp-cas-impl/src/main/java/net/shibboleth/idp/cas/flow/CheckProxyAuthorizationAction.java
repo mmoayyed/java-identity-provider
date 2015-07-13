@@ -30,8 +30,12 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 
 /**
- * Checks the current {@link ServiceContext} to determine whether the service is authorized to proxy.
- * Raises {@link ProtocolError#ProxyNotAuthorized} if not authorized.
+ * Checks the current {@link ServiceContext} to determine whether the service/relying party is authorized to proxy.
+ * Possible outcomes:
+ * <ul>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#ProxyNotAuthorized ProxyNotAuthorized}</li>
+ * </ul>
  *
  * @author Marvin S. Addison
  */
@@ -50,6 +54,6 @@ public class CheckProxyAuthorizationAction extends AbstractCASProtocolAction {
             log.info("{} is not authorized to proxy", service.getName());
             return ProtocolError.ProxyNotAuthorized.event(this);
         }
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

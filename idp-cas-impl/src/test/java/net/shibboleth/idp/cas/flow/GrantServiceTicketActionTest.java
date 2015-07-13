@@ -26,8 +26,7 @@ import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 /**
  * Unit test for {@link GrantServiceTicketAction}.
@@ -57,7 +56,7 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
                 .addSessionContext(mockSession("1234567890", true))
                 .addRelyingPartyContext(request.getService(), true, new LoginConfiguration())
                 .build();
-        assertEquals(action.execute(context).getId(), Events.Success.id());
+        assertNull(action.execute(context));
         final ServiceTicketResponse response = action.getCASResponse(getProfileContext(context));
         assertNotNull(response);
         assertNotNull(response.getTicket());

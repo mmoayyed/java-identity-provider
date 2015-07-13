@@ -24,7 +24,6 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.cas.ticket.TicketService;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -38,11 +37,11 @@ import javax.annotation.Nonnull;
 /**
  * Initializes the CAS protocol interaction at the <code>/proxy</code> URI and returns one of the following events:
  * <ul>
- *     <li>{@link Events#Proceed proceed}</li>
- *     <li>{@link ProtocolError#ServiceNotSpecified serviceNotSpecified}</li>
- *     <li>{@link ProtocolError#TicketExpired ticketExpired}</li>
- *     <li>{@link ProtocolError#TicketNotSpecified ticketNotSpecified}</li>
- *     <li>{@link ProtocolError#TicketRetrievalError ticketRetrievalError}</li>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#ServiceNotSpecified ServiceNotSpecified}</li>
+ *     <li>{@link ProtocolError#TicketExpired TicketExpired}</li>
+ *     <li>{@link ProtocolError#TicketNotSpecified TicketNotSpecified}</li>
+ *     <li>{@link ProtocolError#TicketRetrievalError TicketRetrievalError}</li>
  * </ul>
  * <p>
  * Creates the following contexts on success:
@@ -95,6 +94,6 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
             log.error("Failed looking up " + proxyTicketRequest.getPgt(), e);
             return ProtocolError.TicketRetrievalError.event(this);
         }
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

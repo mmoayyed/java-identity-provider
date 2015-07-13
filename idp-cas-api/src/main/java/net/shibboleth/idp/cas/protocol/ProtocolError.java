@@ -93,16 +93,7 @@ public enum ProtocolError {
     }
 
     /**
-     * Converts enumeration name to an identifier suitable for a Spring Webflow event identifier.
-     *
-     * @return Events enumeration name with first letter lower-cased.
-     */
-    public String id() {
-        return this.name().substring(0, 1).toLowerCase() + this.name().substring(1);
-    }
-
-    /**
-     * Creates a Spring webflow event whose ID is given by {@link #id()}} and contains the following attributes:
+     * Creates a Spring webflow event whose ID is given by {@link #name()}} and contains the following attributes:
      *
      * <ul>
      *     <li>code</li>
@@ -119,6 +110,6 @@ public enum ProtocolError {
         final LocalAttributeMap attributes = new LocalAttributeMap();
         attributes.put("code", this.code);
         attributes.put("detailCode", this.detailCode);
-        return new Event(source, id(), attributes);
+        return new Event(source, name(), attributes);
     }
 }

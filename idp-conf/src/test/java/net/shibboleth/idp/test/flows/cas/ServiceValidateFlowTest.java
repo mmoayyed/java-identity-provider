@@ -17,11 +17,6 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.testng.Assert.*;
-
 import java.net.URI;
 
 import javax.annotation.Nonnull;
@@ -49,6 +44,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.testng.Assert.*;
 
 /**
  * Tests the flow behind the <code>/serviceValidate</code> endpoint.
@@ -92,13 +92,13 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-        overrideEndStateOutput("cas/serviceValidate", "validateSuccess");
+        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
         final FlowExecutionOutcome outcome = result.getOutcome();
-        assertEquals(outcome.getId(), "validateSuccess");
+        assertEquals(outcome.getId(), "ValidateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
@@ -127,13 +127,13 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-        overrideEndStateOutput("cas/serviceValidate", "validateSuccess");
+        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
         final FlowExecutionOutcome outcome = result.getOutcome();
-        assertEquals(outcome.getId(), "validateSuccess");
+        assertEquals(outcome.getId(), "ValidateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
@@ -153,7 +153,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_TICKET_EXPIRED"));
@@ -173,7 +173,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_SESSION_EXPIRED"));
@@ -203,7 +203,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         final String responseBody = response.getContentAsString();
         final FlowExecutionOutcome outcome = result.getOutcome();
-        assertEquals(outcome.getId(), "validateSuccess");
+        assertEquals(outcome.getId(), "ValidateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
         assertTrue(responseBody.contains("<cas:proxyGrantingTicket>"));
@@ -228,14 +228,14 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
         externalContext.getMockRequestParameterMap().put("pgtUrl", "https://proxy.example.com/");
-        overrideEndStateOutput("cas/serviceValidate", "validateSuccess");
+        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
 
         testProxyAuthenticator.setFailureFlag(true);
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_REQUEST\""));
         assertTrue(responseBody.contains("E_PROXY_CALLBACK_AUTH_FAILURE"));
     }

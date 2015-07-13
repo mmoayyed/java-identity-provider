@@ -56,6 +56,6 @@ public class LoginFlowTicketCreationErrorTest extends AbstractFlowTest {
         initializeThreadLocals();
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
-        assertEquals(result.getOutcome().getId(), "error");
+        assertEquals(result.getOutcome().getId(), "Error");
     }
 }

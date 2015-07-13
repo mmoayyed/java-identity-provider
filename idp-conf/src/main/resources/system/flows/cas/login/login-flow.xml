@@ -4,96 +4,98 @@
       xsi:schemaLocation="
           http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-    <action-state id="initializeLogin">
+    <action-state id="InitializeLogin">
         <on-entry>
             <evaluate result="flowScope.hasAuthenticationContext" expression="false" />
         </on-entry>
-        <evaluate expression="initializeProfileRequestContext"/>
-        <evaluate expression="populateSessionContext"/>
-        <evaluate expression="initializeLoginAction" />
-        <evaluate expression="buildRelyingPartyContextAction" />
-        <evaluate expression="buildSAMLMetadataContextAction" />
-        <evaluate expression="selectRelyingPartyConfiguration" />
-        <evaluate expression="selectProfileConfiguration" />
-        <evaluate expression="publishProtocolRequestAction" />
+        <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="PopulateSessionContext"/>
+        <evaluate expression="InitializeLogin" />
+        <evaluate expression="BuildRelyingPartyContext" />
+        <evaluate expression="BuildSAMLMetadataContext" />
+        <evaluate expression="SelectRelyingPartyConfiguration" />
+        <evaluate expression="SelectProfileConfiguration" />
+        <evaluate expression="PublishProtocolRequest" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="checkAuthenticationRequired" />
-        <transition on="serviceNotSpecified" to="error" />
+        <transition on="proceed" to="CheckAuthenticationRequired" />
+        <transition on="ServiceNotSpecified" to="Error" />
     </action-state>
 
-    <action-state id="checkAuthenticationRequired">
-        <evaluate expression="checkAuthenticationRequiredAction"/>
-        <transition on="sessionNotFound" to="buildAuthenticationContext" />
-        <transition on="sessionFound" to="checkResolveAttributes" />
-        <transition on="renewRequested" to="buildAuthenticationContext" />
-        <transition on="gatewayRequested" to="gatewayRedirect" />
+    <action-state id="CheckAuthenticationRequired">
+        <evaluate expression="CheckAuthenticationRequired"/>
+        <transition on="SessionNotFound" to="BuildAuthenticationContext" />
+        <transition on="SessionFound" to="CheckResolveAttributes" />
+        <transition on="RenewRequested" to="BuildAuthenticationContext" />
+        <transition on="GatewayRequested" to="GatewayRedirect" />
     </action-state>
 
-    <action-state id="buildAuthenticationContext">
-        <evaluate expression="buildAuthenticationContextAction"/>
-        <transition on="proceed" to="authenticate" />
+    <action-state id="BuildAuthenticationContext">
+        <evaluate expression="BuildAuthenticationContext"/>
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="DoAuthenticationSubflow" />
     </action-state>
 
-    <subflow-state id="authenticate" subflow="authn">
+    <subflow-state id="DoAuthenticationSubflow" subflow="authn">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="checkResolveAttributes">
+        <transition on="proceed" to="CheckResolveAttributes">
             <evaluate result="flowScope.hasAuthenticationContext" expression="true" />
         </transition>
     </subflow-state>
 
-    <decision-state id="checkResolveAttributes">
-        <if test="loginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
-            then="checkForSubjectContext"
-            else="grantServiceTicket" />
+    <decision-state id="CheckResolveAttributes">
+        <if test="LoginConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
+            then="CheckForSubjectContext"
+            else="GrantServiceTicket" />
     </decision-state>
 
-    <decision-state id="checkForSubjectContext">
-        <if test="subjectContextLookup.apply(opensamlProfileRequestContext) == null"
-            then="populateSubjectContext"
-            else="resolveAttributes" />
+    <decision-state id="CheckForSubjectContext">
+        <if test="SubjectContextLookup.apply(opensamlProfileRequestContext) == null"
+            then="PopulateSubjectContext"
+            else="ResolveAttributes" />
     </decision-state>
 
-    <action-state id="populateSubjectContext">
-        <evaluate expression="populateSubjectContext" />
+    <action-state id="PopulateSubjectContext">
+        <evaluate expression="PopulateSubjectContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="resolveAttributes" />
+        <transition on="proceed" to="ResolveAttributes" />
     </action-state>
 
-    <action-state id="resolveAttributes">
-        <evaluate expression="resolveAttributes" />
-        <evaluate expression="filterAttributes" />
-        <evaluate expression="populatePostAuthnInterceptContext" />
-        <evaluate expression="'finished'" />
-        <transition on="finished" to="checkPostAuthnInterceptContext" />
+    <action-state id="ResolveAttributes">
+        <evaluate expression="ResolveAttributes" />
+        <evaluate expression="FilterAttributes" />
+        <evaluate expression="PopulatePostAuthnInterceptContext" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="CheckPostAuthnInterceptContext" />
     </action-state>
 
-    <decision-state id="checkPostAuthnInterceptContext">
+    <decision-state id="CheckPostAuthnInterceptContext">
         <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
-            then="grantServiceTicket" else="doPostAuthnInterceptSubflow" />
+            then="GrantServiceTicket" else="DoPostAuthnInterceptSubflow" />
     </decision-state>
 
-    <subflow-state id="doPostAuthnInterceptSubflow" subflow="intercept">
+    <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="grantServiceTicket" />
+        <transition on="proceed" to="GrantServiceTicket" />
     </subflow-state>
 
-    <action-state id="grantServiceTicket">
-        <evaluate expression="grantServiceTicketAction" />
-        <transition on="success" to="redirectToService" />
-        <transition on="ticketCreationError" to="error" />
+    <action-state id="GrantServiceTicket">
+        <evaluate expression="GrantServiceTicket" />
+        <evaluate expression="'proceed'" />
+        <transition on="proceed" to="RedirectToService" />
+        <transition on="TicketCreationError" to="Error" />
     </action-state>
 
     <!-- Redirect end states -->
-    <end-state id="redirectToService" view="externalRedirect:#{requestScope.serviceTicketResponse.redirectUrl}">
+    <end-state id="RedirectToService" view="externalRedirect:#{requestScope.serviceTicketResponse.redirectUrl}">
         <on-entry>
-            <evaluate expression="publishProtocolResponseAction" />
+            <evaluate expression="PublishProtocolResponse" />
         </on-entry>
     </end-state>
 
-    <end-state id="gatewayRedirect" view="externalRedirect:#{requestScope.serviceTicketRequest.service}" />
+    <end-state id="GatewayRedirect" view="externalRedirect:#{requestScope.serviceTicketRequest.service}" />
 
     <!-- View end state -->
-    <end-state id="error" view="error">
+    <end-state id="Error" view="error">
         <on-entry>
             <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
@@ -105,13 +107,13 @@
     </end-state>
 
     <global-transitions>
-        <transition on-exception="java.lang.RuntimeException" to="error">
+        <transition on-exception="java.lang.RuntimeException" to="Error">
             <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.cas').error('Uncaught runtime exception', flowExecutionException.getCause())" />
         </transition>
         <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
-                    to="error" />
-        <transition on="illegalState" to="error" />
-        <transition on="protocolViolation" to="error" />
+                    to="Error" />
+        <transition on="IllegalState" to="Error" />
+        <transition on="ProtocolViolation" to="Error" />
     </global-transitions>
 
     <bean-import resource="login-beans.xml" />

@@ -46,7 +46,7 @@ public class GrantProxyTicketActionTest extends AbstractFlowActionTest {
                 .addTicketContext(pgt)
                 .addRelyingPartyContext(service, true, new ProxyConfiguration())
                 .build();
-        assertEquals(action.execute(context).getId(), Events.Success.id());
+        assertNull(action.execute(context));
         final ProxyTicketResponse response = action.getCASResponse(getProfileContext(context));
         assertNotNull(response);
         assertNotNull(response.getPt());

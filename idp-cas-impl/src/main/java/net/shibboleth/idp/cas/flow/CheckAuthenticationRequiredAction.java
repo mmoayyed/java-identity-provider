@@ -34,10 +34,10 @@ import javax.annotation.Nonnull;
  * service ticket request message. Returns one of the following events:
  *
  * <ul>
- *     <li>{@link Events#GatewayRequested gatewayRequested} - Authentication not required since no ticket is requested.</li>
- *     <li>{@link Events#RenewRequested renewRequested} - Authentication required regardless of existing session.</li>
- *     <li>{@link Events#SessionFound sessionFound} - Authentication not required since session already exists.</li>
- *     <li>{@link Events#SessionNotFound sessionNotFound} - Authentication required since no active session exists.</li>
+ *     <li>{@link Events#GatewayRequested GatewayRequested} - Authentication not required since no ticket is requested.</li>
+ *     <li>{@link Events#RenewRequested RenewRequested} - Authentication required regardless of existing session.</li>
+ *     <li>{@link Events#SessionFound SessionFound} - Authentication not required since session already exists.</li>
+ *     <li>{@link Events#SessionNotFound SessionNotFound} - Authentication required since no active session exists.</li>
  * </ul>
  *
  * @author Marvin S. Addison
@@ -60,11 +60,11 @@ public class CheckAuthenticationRequiredAction extends
         // Per http://www.jasig.org/cas/protocol section 2.1.1
         // It is RECOMMENDED that renew supersede gateway
         if (request.isRenew()) {
-            return new Event(this, Events.RenewRequested.id());
+            return Events.RenewRequested.event(this);
         }
 
         if (request.isGateway()) {
-            return new Event(this, Events.GatewayRequested.id());
+            return Events.GatewayRequested.event(this);
         }
 
         try {

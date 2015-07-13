@@ -39,9 +39,9 @@ import javax.annotation.Nonnull;
 /**
  * IdP session validation for back-channel ticket request and validation. Possible outcomes:
  * <ul>
- *     <li>{@link ProtocolError#SessionExpired sessionExpired}</li>
- *     <li>{@link ProtocolError#SessionRetrievalError sessionRetrievalError}</li>
- *     <li>{@link Events#Success success}</li>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#SessionExpired SessionExpired}</li>
+ *     <li>{@link ProtocolError#SessionRetrievalError SessionRetrievalError}</li>
  * </ul>
  * <p>
  * Requires a {@link TicketContext} bound to the {@link ProfileRequestContext} that is provided to the action.
@@ -100,6 +100,6 @@ public class ValidateIdpSessionAction extends AbstractCASProtocolAction {
         final SessionContext sessionContext = new SessionContext();
         sessionContext.setIdPSession(session);
         profileRequestContext.addSubcontext(sessionContext);
-        return Events.Success.event(this);
+        return null;
     }
 }

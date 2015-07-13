@@ -10,7 +10,7 @@
     <import resource="../abstractValidate/abstractValidate-beans.xml" />
 
     <!-- Action beans -->
-    <bean id="buildProxyChainAction"
+    <bean id="BuildProxyChain"
           class="net.shibboleth.idp.cas.flow.BuildProxyChainAction"
           c:ticketService-ref="cas.TicketService" />
 

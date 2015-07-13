@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
  * Ensures that a service ticket validation request that specifies renew=true matches the renew flag on the ticket
  * that is presented for validation. Possible outcomes:
  * <ul>
- *     <li>{@link Events#Success success}</li>
+ *     <li><code>null</code> on success</li>
  *     <li>{@link ProtocolError#TicketNotFromRenew ticketNotFromRenew}</li>
  *     <li>{@link ProtocolError#RenewIncompatibleWithProxy renewIncompatibleWithProxy}</li>
  * </ul>
@@ -68,6 +68,6 @@ public class ValidateRenewAction extends AbstractCASProtocolAction<TicketValidat
                 return ProtocolError.RenewIncompatibleWithProxy.event(this);
             }
         }
-        return Events.Success.event(this);
+        return null;
     }
 }

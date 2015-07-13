@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
+import com.google.common.base.Function;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
@@ -26,6 +27,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import javax.annotation.Nonnull;
@@ -36,6 +38,17 @@ import javax.annotation.Nonnull;
  * @author Marvin S. Addison
  */
 public abstract class AbstractCASProtocolAction<RequestType, ResponseType> extends AbstractProfileAction {
+
+    /** Looks up a CAS protocol context from IdP profile request context. */
+    private final Function<ProfileRequestContext, ProtocolContext<RequestType, ResponseType>> protocolLookupFunction;
+
+    /** Looks up an IdP session context from IdP profile request context. */
+    private final Function<ProfileRequestContext, SessionContext> sessionContextFunction;
+
+    public AbstractCASProtocolAction() {
+        protocolLookupFunction = new ChildContextLookup(ProtocolContext.class, true);
+        sessionContextFunction = new ChildContextLookup(SessionContext.class, false);
+    }
 
     @Nonnull
     protected RequestType getCASRequest(final ProfileRequestContext prc) {
@@ -94,20 +107,19 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
 
     @Nonnull
     protected IdPSession getIdPSession(final ProfileRequestContext prc) {
-        final SessionContext sessionContext = prc.getSubcontext(SessionContext.class);
+        final SessionContext sessionContext = sessionContextFunction.apply(prc);
         if (sessionContext == null || sessionContext.getIdPSession() == null) {
             throw new IllegalStateException("Cannot locate IdP session");
         }
         return sessionContext.getIdPSession();
     }
 
+    @Nonnull
     protected ProtocolContext<RequestType, ResponseType> getProtocolContext(final ProfileRequestContext prc) {
-        ProtocolContext<RequestType, ResponseType> casCtx = prc.getSubcontext(ProtocolContext.class, false);
-        if (casCtx != null) {
-            return casCtx;
+        final ProtocolContext<RequestType, ResponseType> casCtx = protocolLookupFunction.apply(prc);
+        if (casCtx == null) {
+            throw new IllegalArgumentException("CAS ProtocolContext not found in ProfileRequestContext");
         }
-        casCtx = new ProtocolContext<>();
-        prc.addSubcontext(casCtx);
         return casCtx;
     }
 }

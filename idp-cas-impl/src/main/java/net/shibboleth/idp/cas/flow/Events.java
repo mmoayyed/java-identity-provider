@@ -48,29 +48,17 @@ public enum Events {
     Success,
 
     /** Generic failure event. */
-    Failure,
-
-    /** Generic proceed event. */
-    Proceed;
-
-    /**
-     * Converts enumeration name to an identifier suitable for a Spring Webflow event identifier.
-     *
-     * @return Events enumeration name with first letter lower-cased.
-     */
-    public String id() {
-        return this.name().substring(0, 1).toLowerCase() + this.name().substring(1);
-    }
+    Failure;
 
 
     /**
-     * Creates a Spring webflow event whose ID is given by {@link #id()}.
+     * Creates a Spring webflow event whose ID is given by {@link #name()}.
      *
      * @param source Event source.
      *
      * @return Spring webflow event.
      */
     public Event event(final Object source) {
-        return new Event(source, id());
+        return new Event(source, name());
     }
 }

@@ -11,34 +11,34 @@
     <import resource="../common-beans.xml" />
 
     <!-- Action beans -->
-    <bean id="initializeProfileRequestContext"
+    <bean id="InitializeProfileRequestContext"
           class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
           p:profileId="#{T(net.shibboleth.idp.cas.config.ValidateConfiguration).PROFILE_ID}"
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="false" />
 
-    <bean id="initializeValidateAction"
+    <bean id="InitializeValidate"
           class="net.shibboleth.idp.cas.flow.InitializeValidateAction" />
 
-    <bean id="validateTicketAction"
+    <bean id="ValidateTicket"
           class="net.shibboleth.idp.cas.flow.ValidateTicketAction"
           c:ticketService-ref="cas.TicketService" />
 
-    <bean id="validateRenewAction"
+    <bean id="ValidateRenew"
           class="net.shibboleth.idp.cas.flow.ValidateRenewAction" />
 
-    <bean id="checkProxyAuthorizationAction"
+    <bean id="CheckProxyAuthorization"
           class="net.shibboleth.idp.cas.flow.CheckProxyAuthorizationAction" />
 
-    <bean id="validateProxyCallbackAction"
+    <bean id="ValidateProxyCallback"
           class="net.shibboleth.idp.cas.flow.ValidateProxyCallbackAction"
           c:proxyAuthenticator-ref="cas.ProxyAuthenticator"
           c:ticketService-ref="cas.TicketService" />
 
-    <bean id="extractAttributesAction"
+    <bean id="ExtractAttributes"
           class="net.shibboleth.idp.cas.flow.ExtractAttributesAction" />
 
-    <bean id="updateIdPSessionWithSPSessionAction"
+    <bean id="UpdateIdPSessionWithSPSession"
           class="net.shibboleth.idp.cas.flow.UpdateIdPSessionWithSPSessionAction"
           c:lifetime="%{idp.session.defaultSPlifetime:PT2H}" />
 

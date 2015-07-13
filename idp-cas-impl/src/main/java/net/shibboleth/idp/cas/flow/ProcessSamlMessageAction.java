@@ -18,9 +18,11 @@
 package net.shibboleth.idp.cas.flow;
 
 import net.shibboleth.idp.cas.config.ValidateConfiguration;
-import net.shibboleth.idp.cas.protocol.*;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.ActionSupport;
+import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.protocol.ProtocolParam;
+import net.shibboleth.idp.cas.protocol.SamlParam;
+import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
+import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -36,6 +38,13 @@ import javax.annotation.Nonnull;
 
 /**
  * Processes the ticket validation request message from decoded SAML 1.1 message and request parameters.
+ * Possible outcomes:
+ * <ul>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#ProtocolViolation ProtocolViolation}</li>
+ *     <li>{@link ProtocolError#ServiceNotSpecified ServiceNotSpecified}</li>
+ *     <li>{@link ProtocolError#TicketNotSpecified TicketNotSpecified}</li>
+ * </ul>
  *
  * @author Marvin S. Addison
  */
@@ -85,6 +94,6 @@ public class ProcessSamlMessageAction extends
 
         setCASRequest(profileRequestContext, ticketValidationRequest);
 
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

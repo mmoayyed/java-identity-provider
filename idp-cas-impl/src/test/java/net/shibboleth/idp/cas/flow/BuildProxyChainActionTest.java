@@ -28,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 /**
  * Unit test for {@link BuildProxyChainAction}.
@@ -52,7 +52,7 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(request, response)
                 .addTicketContext(ptB)
                 .build();
-        assertEquals(action.execute(context).getId(), Events.Proceed.id());
+        assertNull(action.execute(context));
         assertEquals(response.getProxies().size(), 2);
         assertEquals(response.getProxies().get(0), "proxiedByA");
         assertEquals(response.getProxies().get(1), "proxyA");
@@ -76,6 +76,6 @@ public class BuildProxyChainActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(request, response)
                 .addTicketContext(ptB)
                 .build();
-        assertEquals(action.execute(context).getId(), ProtocolError.BrokenProxyChain.id());
+        assertEquals(action.execute(context).getId(), ProtocolError.BrokenProxyChain.name());
     }
 }

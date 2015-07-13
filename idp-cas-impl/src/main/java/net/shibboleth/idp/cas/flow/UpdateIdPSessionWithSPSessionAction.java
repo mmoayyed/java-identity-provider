@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.session.CASSPSession;
 import net.shibboleth.idp.cas.ticket.Ticket;
@@ -83,7 +82,7 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
         final Ticket ticket = getCASTicket(profileRequestContext);
         final Service service = getCASService(profileRequestContext);
         if (!service.isSingleLogoutParticipant()) {
-            return Events.Success.event(this);
+            return null;
         }
         final IdPSession session = getIdPSession(profileRequestContext);
         final long now = System.currentTimeMillis();
@@ -96,9 +95,8 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
         try {
             session.addSPSession(sps);
         } catch (SessionException e) {
-            log.warn("Failed updating IdP session with CAS SP session: {}", e.getMessage());
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException("Failed updating IdP session with CAS SP session", e);
         }
-        return Events.Success.event(this);
+        return null;
     }
 }

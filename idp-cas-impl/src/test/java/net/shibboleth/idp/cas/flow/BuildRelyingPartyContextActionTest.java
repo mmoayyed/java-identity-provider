@@ -39,7 +39,7 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
         final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest(serviceURL), null)
                 .build();
-        action.execute(requestContext);
+        assertNull(action.execute(requestContext));
         final Service service = action.getCASService(getProfileContext(requestContext));
         assertEquals(serviceURL, service.getName());
         assertEquals("allowedToProxy", service.getGroup());
@@ -52,7 +52,7 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
         final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new TicketValidationRequest(serviceURL, "ST-123"), null)
                 .build();
-        action.execute(requestContext);
+        assertNull(action.execute(requestContext));
         final Service service = action.getCASService(getProfileContext(requestContext));
         assertEquals(serviceURL, service.getName());
         assertEquals("notAllowedToProxy", service.getGroup());
@@ -65,7 +65,7 @@ public class BuildRelyingPartyContextActionTest extends AbstractFlowActionTest {
         final RequestContext requestContext = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ProxyTicketRequest("PGT-123", serviceURL), null)
                 .build();
-        action.execute(requestContext);
+        assertNull(action.execute(requestContext));
         final Service service = action.getCASService(getProfileContext(requestContext));
         assertEquals(serviceURL, service.getName());
         assertEquals(BuildRelyingPartyContextAction.UNVERIFIED_GROUP, service.getGroup());

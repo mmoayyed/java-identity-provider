@@ -46,6 +46,6 @@ public class BuildAuthenticationContextAction extends
 
         profileRequestContext.addSubcontext(ac, true);
         profileRequestContext.setBrowserProfile(true);
-        return Events.Proceed.event(this);
+        return null;
     }
 }

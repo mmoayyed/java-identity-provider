@@ -1,6 +1,5 @@
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -44,6 +43,6 @@ public class PublishProtocolMessageAction extends AbstractCASProtocolAction {
         final String className = message.getClass().getSimpleName();
         final String keyName = className.substring(0, 1).toLowerCase() + className.substring(1);
         springRequestContext.getRequestScope().put(keyName, message);
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

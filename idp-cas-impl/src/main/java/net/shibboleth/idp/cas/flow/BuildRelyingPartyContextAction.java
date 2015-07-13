@@ -20,7 +20,6 @@ package net.shibboleth.idp.cas.flow;
 import net.shibboleth.idp.cas.protocol.*;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
-import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -72,8 +71,7 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
         } else if (request instanceof TicketValidationRequest) {
             serviceURL = ((TicketValidationRequest) request).getService();
         } else {
-            log.info("Service URL not found in flow state");
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException("Service URL not found in flow state");
         }
         Service service = serviceRegistry.lookup(serviceURL);
         final RelyingPartyContext rpc = new RelyingPartyContext();
@@ -87,6 +85,6 @@ public class BuildRelyingPartyContextAction extends AbstractCASProtocolAction {
         }
         profileRequestContext.addSubcontext(rpc);
         setCASService(profileRequestContext, service);
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

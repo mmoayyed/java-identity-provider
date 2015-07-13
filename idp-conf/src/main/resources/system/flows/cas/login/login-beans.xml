@@ -11,44 +11,44 @@
     <import resource="../common-beans.xml" />
 
     <!-- Action beans -->
-    <bean id="initializeProfileRequestContext"
+    <bean id="InitializeProfileRequestContext"
           class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
           p:profileId="#{T(net.shibboleth.idp.cas.config.LoginConfiguration).PROFILE_ID}"
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="true" />
 
-    <bean id="initializeLoginAction"
+    <bean id="InitializeLogin"
           class="net.shibboleth.idp.cas.flow.InitializeLoginAction" />
 
-    <bean id="checkAuthenticationRequiredAction"
+    <bean id="CheckAuthenticationRequired"
           class="net.shibboleth.idp.cas.flow.CheckAuthenticationRequiredAction" />
 
-    <bean id="buildAuthenticationContextAction"
+    <bean id="BuildAuthenticationContext"
           class="net.shibboleth.idp.cas.flow.BuildAuthenticationContextAction" />
 
-    <bean id="grantServiceTicketAction"
+    <bean id="GrantServiceTicket"
           class="net.shibboleth.idp.cas.flow.GrantServiceTicketAction"
           c:ticketService-ref="cas.TicketService" />
 
-    <bean id="populateSessionContext"
+    <bean id="PopulateSessionContext"
           class="net.shibboleth.idp.session.impl.PopulateSessionContext"
           scope="prototype"
           p:activationCondition="%{idp.session.enabled:true}"
           p:httpServletRequest-ref="shibboleth.HttpServletRequest"
           p:sessionResolver-ref="shibboleth.SessionManager" />
 
-    <bean id="loginConfigLookup"
+    <bean id="LoginConfigLookup"
           class="net.shibboleth.idp.cas.config.ConfigLookupFunction"
           c:clazz="net.shibboleth.idp.cas.config.LoginConfiguration" />
 
-    <bean id="subjectContextLookup"
+    <bean id="SubjectContextLookup"
           class="org.opensaml.messaging.context.navigate.ChildContextLookup"
           c:type="net.shibboleth.idp.authn.context.SubjectContext" />
 
-    <bean id="extractAttributesAction"
+    <bean id="ExtractAttributes"
           class="net.shibboleth.idp.cas.flow.ExtractAttributesAction" />
 
-    <bean id="populatePostAuthnInterceptContext"
+    <bean id="PopulatePostAuthnInterceptContext"
           class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
           p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
         <property name="activeFlowsLookupStrategy">

@@ -48,6 +48,6 @@ public class CheckProxyAuthorizationActionTest extends AbstractFlowActionTest {
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addServiceContext(new Service("https://serviceB.example.org/", "no-proxy", false))
                 .build();
-        assertEquals(action.execute(context).getId(), ProtocolError.ProxyNotAuthorized.id());
+        assertEquals(action.execute(context).getId(), ProtocolError.ProxyNotAuthorized.name());
     }
 }

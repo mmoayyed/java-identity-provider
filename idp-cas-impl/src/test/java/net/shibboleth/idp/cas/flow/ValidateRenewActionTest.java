@@ -23,12 +23,11 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.*;
 
 /**
  * Unit test for {@link ValidateRenewAction}.
@@ -42,9 +41,6 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
     @Autowired
     private ValidateRenewAction action;
 
-    @Autowired
-    private TicketService ticketService;
-
     @Test
     public void testTicketNotFromRenew() throws Exception {
         final ServiceTicket ticket = createServiceTicket(TEST_SERVICE, true);
@@ -52,7 +48,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, ticket.getId()), null)
                 .addTicketContext(ticket)
                 .build();
-        assertEquals(action.execute(context).getId(), ProtocolError.TicketNotFromRenew.id());
+        assertEquals(action.execute(context).getId(), ProtocolError.TicketNotFromRenew.name());
     }
 
     @Test
@@ -66,7 +62,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(request, null)
                 .addTicketContext(pt)
                 .build();
-        assertEquals(action.execute(context).getId(), ProtocolError.RenewIncompatibleWithProxy.id());
+        assertEquals(action.execute(context).getId(), ProtocolError.RenewIncompatibleWithProxy.name());
     }
 
     @Test
@@ -78,7 +74,7 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(request, null)
                 .addTicketContext(ticket)
                 .build();
-        assertEquals(action.execute(context).getId(), Events.Success.id());
+        assertNull(action.execute(context));
     }
 
     @Test
@@ -90,6 +86,6 @@ public class ValidateRenewActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new TicketValidationRequest(TEST_SERVICE, pt.getId()), null)
                 .addTicketContext(pt)
                 .build();
-        assertEquals(action.execute(context).getId(), Events.Success.id());
+        assertNull(action.execute(context));
     }
 }

@@ -30,9 +30,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
+import static org.mockito.Mockito.*;
+import static org.testng.Assert.*;
 
 public class ValidateIdpSessionActionTest extends AbstractFlowActionTest {
 
@@ -56,14 +55,14 @@ public class ValidateIdpSessionActionTest extends AbstractFlowActionTest {
     public void testSuccess() throws Exception {
         action = new ValidateIdpSessionAction(mockResolver(mockSession(TEST_SESSION_ID, true)));
         action.initialize();
-        assertEquals(action.execute(context).getId(), Events.Success.id());
+        assertNull(action.execute(context));
     }
 
     @Test
     public void testSessionExpired() throws Exception {
         action = new ValidateIdpSessionAction(mockResolver(mockSession(TEST_SESSION_ID, false)));
         action.initialize();
-        assertEquals(action.execute(context).getId(), ProtocolError.SessionExpired.id());
+        assertEquals(action.execute(context).getId(), ProtocolError.SessionExpired.name());
     }
 
     @Test
@@ -72,7 +71,7 @@ public class ValidateIdpSessionActionTest extends AbstractFlowActionTest {
         when(throwingSessionResolver.resolveSingle(any(CriteriaSet.class))).thenThrow(new ResolverException("Broken"));
         action = new ValidateIdpSessionAction(throwingSessionResolver);
         action.initialize();
-        assertEquals(action.execute(context).getId(), ProtocolError.SessionRetrievalError.id());
+        assertEquals(action.execute(context).getId(), ProtocolError.SessionRetrievalError.name());
     }
 
     private SessionResolver mockResolver(final IdPSession session) {

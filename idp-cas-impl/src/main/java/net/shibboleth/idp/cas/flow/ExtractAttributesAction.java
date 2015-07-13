@@ -39,7 +39,11 @@ import javax.annotation.Nonnull;
 
 /**
  * Extracts {@link IdPAttribute}s from a populated {@link AttributeContext} and places them in the
- * {@link TicketValidationResponse}.
+ * {@link TicketValidationResponse}. Possible outcomes:
+ * <ul>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#IllegalState IllegalState}</li>
+ * </ul>
  *
  * @author Marvin S. Addison
  */
@@ -70,14 +74,12 @@ public class ExtractAttributesAction extends
 
         final AttributeContext ac = attributeContextFunction.apply(profileRequestContext);
         if (ac == null) {
-            log.info("AttributeContext not found in profile request context.");
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException("AttributeContext not found in profile request context.");
         }
 
         final String principal = principalLookupFunction.apply(profileRequestContext);
         if (principal == null) {
-            log.info("Subject principal not found in profile request context.");
-            return ProtocolError.IllegalState.event(this);
+            throw new IllegalStateException("Subject principal not found in profile request context.");
         }
 
         final TicketValidationResponse response = getCASResponse(profileRequestContext);
@@ -88,6 +90,6 @@ public class ExtractAttributesAction extends
                 response.addAttribute(attribute.getId(), value.getValue().toString());
             }
         }
-        return Events.Proceed.event(this);
+        return null;
     }
 }

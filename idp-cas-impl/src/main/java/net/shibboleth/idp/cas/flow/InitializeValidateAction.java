@@ -21,7 +21,6 @@ import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ProtocolParam;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.core.collection.ParameterMap;
 import org.springframework.webflow.execution.Event;
@@ -33,9 +32,9 @@ import javax.annotation.Nonnull;
  * Initializes the CAS protocol interaction at the <code>/login</code> URI and returns one of the following events:
  *
  * <ul>
- *     <li>{@link Events#Proceed proceed}</li>
- *     <li>{@link ProtocolError#ServiceNotSpecified serviceNotSpecified}</li>
- *     <li>{@link ProtocolError#TicketNotSpecified ticketNotSpecified}</li>
+ *     <li><code>null</code> on success</li>
+ *     <li>{@link ProtocolError#ServiceNotSpecified ServiceNotSpecified}</li>
+ *     <li>{@link ProtocolError#TicketNotSpecified TicketNotSpecified}</li>
  * </ul>
  *
  * @author Marvin S. Addison
@@ -67,6 +66,6 @@ public class InitializeValidateAction extends
 
         setCASRequest(profileRequestContext, ticketValidationRequest);
 
-        return ActionSupport.buildProceedEvent(this);
+        return null;
     }
 }

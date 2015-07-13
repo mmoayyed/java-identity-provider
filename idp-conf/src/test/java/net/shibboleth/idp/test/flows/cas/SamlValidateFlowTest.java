@@ -83,13 +83,13 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         request.setMethod("POST");
         request.setContent(requestBody.getBytes("UTF-8"));
         externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
-        overrideEndStateOutput("cas/samlValidate", "validateSuccess");
+        overrideEndStateOutput("cas/samlValidate", "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
         final FlowExecutionOutcome outcome = result.getOutcome();
-        assertEquals(outcome.getId(), "validateSuccess");
+        assertEquals(outcome.getId(), "ValidateSuccess");
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"saml1p:Success\"/>"));
         assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
@@ -104,7 +104,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("<saml1p:StatusMessage>E_TICKET_EXPIRED</saml1p:StatusMessage>"));
@@ -125,7 +125,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "validateFailure");
+        assertEquals(result.getOutcome().getId(), "ValidateFailure");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("<saml1p:StatusMessage>E_SESSION_EXPIRED</saml1p:StatusMessage>"));
