@@ -82,7 +82,7 @@ public class ProxyFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "ProxyFailure");
+        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<cas:proxyFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_TICKET_EXPIRED"));
@@ -97,7 +97,7 @@ public class ProxyFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "ProxyFailure");
+        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<cas:proxyFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_SESSION_EXPIRED"));

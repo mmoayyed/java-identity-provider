@@ -10,16 +10,12 @@
         <evaluate expression="InitializeProfileRequestContext"/>
         <evaluate expression="InitializeValidate" />
         <evaluate expression="'proceed'" />
-        <transition on="ServiceNotSpecified" to="ValidateFailure" />
-        <transition on="TicketNotSpecified" to="ValidateFailure" />
         <transition on="proceed" to="InitializeRelyingParty" />
     </action-state>
 
     <action-state id="HandleValidProxyTicket">
         <evaluate expression="BuildProxyChain" />
         <evaluate expression="'proceed'" />
-        <transition on="BrokenProxyChain" to="ValidateFailure" />
-        <transition on="InvalidTicketType" to="ValidateFailure" />
         <transition on="proceed" to="ValidateIdPSession" />
     </action-state>
 

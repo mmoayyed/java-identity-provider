@@ -3,7 +3,14 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="
           http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd"
-      abstract="true">
+      abstract="true"
+      parent="cas.abstract">
+
+    <!-- Base flow for all CAS protocol ticket validation operations -->
+
+    <on-start>
+        <set name="flowScope.casProtocolErrorView" value="'validateFailure'" />
+    </on-start>
 
     <action-state id="InitializeRelyingParty">
         <evaluate expression="PublishProtocolRequest" />
@@ -17,10 +24,10 @@
 
     <action-state id="ValidateTicket">
         <evaluate expression="ValidateTicket" />
-        <transition on="InvalidTicketFormat" to="ValidateFailure" />
-        <transition on="ServiceMismatch" to="ValidateFailure" />
-        <transition on="TicketExpired" to="ValidateFailure" />
-        <transition on="TicketRetrievalError" to="ValidateFailure" />
+        <transition on="InvalidTicketFormat" to="ProtocolErrorView" />
+        <transition on="ServiceMismatch" to="ProtocolErrorView" />
+        <transition on="TicketExpired" to="ProtocolErrorView" />
+        <transition on="TicketRetrievalError" to="ProtocolErrorView" />
         <transition on="ServiceTicketValidated" to="ValidateIdPSession" />
         <transition on="ProxyTicketValidated" to="HandleValidProxyTicket" />
     </action-state>
@@ -28,16 +35,12 @@
     <action-state id="ValidateIdPSession">
         <evaluate expression="ValidateIdPSession" />
         <evaluate expression="'proceed'" />
-        <transition on="SessionRetrievalError" to="ValidateFailure" />
-        <transition on="SessionExpired" to="ValidateFailure" />
         <transition on="proceed" to="ValidateRenew" />
     </action-state>
 
     <action-state id="ValidateRenew">
         <evaluate expression="ValidateRenew" />
         <evaluate expression="'proceed'" />
-        <transition on="TicketNotFromRenew" to="ValidateFailure" />
-        <transition on="RenewIncompatibleWithProxy" to="ValidateFailure" />
         <transition on="proceed" to="CheckForProxy" />
     </action-state>
 
@@ -52,8 +55,6 @@
         <evaluate expression="ValidateProxyCallback" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="ResolveAttributes" />
-        <transition on="ProxyCallbackAuthenticationFailure" to="ValidateFailure" />
-        <transition on="TicketCreationError" to="ValidateFailure" />
     </action-state>
 
     <action-state id="ResolveAttributes">
@@ -83,21 +84,6 @@
         </on-entry>
     </end-state>
 
-    <end-state id="ValidateFailure" view="cas/validateFailure">
-        <on-entry>
-            <set name="flashScope.code" value="currentEvent.attributes.code?:'INTERNAL_ERROR'" />
-            <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode?:'E_ILLEGAL_STATE'" />
-        </on-entry>
-        <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
-    </end-state>
-
-    <global-transitions>
-        <transition on-exception="java.lang.RuntimeException" to="ValidateFailure">
-            <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.cas').error('Uncaught runtime exception', flowExecutionException.getCause())" />
-        </transition>
-        <transition on="#{currentEvent.id.startsWith('Invalid') or currentEvent.id.startsWith('Unable')}"
-                    to="ValidateFailure" />
-        <transition on="IllegalState" to="ValidateFailure" />
-        <transition on="ProtocolViolation" to="ValidateFailure" />
-    </global-transitions>
+    <!-- The import references the parent folder because the abstract flow is used only from one level down. -->
+    <bean-import resource="../validate-abstract-beans.xml" />
 </flow>

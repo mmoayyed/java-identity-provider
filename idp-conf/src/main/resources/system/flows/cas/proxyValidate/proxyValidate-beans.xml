@@ -7,8 +7,6 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-init-method="initialize">
 
-    <import resource="../abstractValidate/abstractValidate-beans.xml" />
-
     <!-- Action beans -->
     <bean id="BuildProxyChain"
           class="net.shibboleth.idp.cas.flow.BuildProxyChainAction"

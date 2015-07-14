@@ -153,7 +153,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "ValidateFailure");
+        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_TICKET_EXPIRED"));
@@ -173,7 +173,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "ValidateFailure");
+        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("E_SESSION_EXPIRED"));
@@ -235,7 +235,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "ValidateFailure");
+        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_REQUEST\""));
         assertTrue(responseBody.contains("E_PROXY_CALLBACK_AUTH_FAILURE"));
     }

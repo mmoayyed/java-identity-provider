@@ -8,8 +8,6 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-init-method="initialize">
 
-    <import resource="../common-beans.xml" />
-
     <!-- Action beans -->
     <bean id="InitializeProfileRequestContext"
           class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"

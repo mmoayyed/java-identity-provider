@@ -14,6 +14,12 @@
           p:placeholderSuffix="}" />
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
+    <import resource="../../conf/audit-system.xml" />
+
+    <!-- These are beans that are common to all CAS protocol flows. -->
 
     <bean id="BuildRelyingPartyContext"
           class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
@@ -74,4 +80,20 @@
             <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
         </property>
     </bean>
+
+    <bean id="MapEventToView"
+          class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"
+          p:defaultView-ref="shibboleth.DefaultErrorView"
+          p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
+
+    <bean id="WriteAuditLog"
+          class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog"
+          scope="prototype"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
+    <bean id="ErrorViewPopulateAuditContext"
+          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext"
+          scope="prototype"
+          p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 </beans>

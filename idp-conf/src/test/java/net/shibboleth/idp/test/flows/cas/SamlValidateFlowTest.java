@@ -104,7 +104,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "ValidateFailure");
+        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("<saml1p:StatusMessage>E_TICKET_EXPIRED</saml1p:StatusMessage>"));
@@ -125,7 +125,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "ValidateFailure");
+        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("<saml1p:StatusMessage>E_SESSION_EXPIRED</saml1p:StatusMessage>"));

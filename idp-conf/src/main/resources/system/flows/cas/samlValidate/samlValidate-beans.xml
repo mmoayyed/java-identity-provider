@@ -8,8 +8,6 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd"
        default-init-method="initialize">
 
-    <import resource="../abstractValidate/abstractValidate-beans.xml" />
-
     <bean id="DecodeMessage"
           class="org.opensaml.profile.action.impl.DecodeMessage"
           scope="prototype"

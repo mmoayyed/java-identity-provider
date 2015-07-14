@@ -173,7 +173,7 @@ public class LoginFlowTest extends AbstractFlowTest {
     public void testErrorNoService() throws Exception {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final String responseBody = response.getContentAsString();
-        assertEquals(result.getOutcome().getId(), "Error");
+        assertEquals(result.getOutcome().getId(), "AuditedErrorView");
         assertTrue(responseBody.contains("ServiceNotSpecified"));
     }
 
