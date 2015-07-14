@@ -80,6 +80,11 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
         builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplateBuilder());
 
+        final String connectionReadOnly = v2Parser.getConnectionReadOnly();
+        if (connectionReadOnly != null) {
+            builder.addPropertyValue("connectionReadOnly", connectionReadOnly);
+        }
+
         final String mappingStrategyID = v2Parser.getBeanMappingStrategyID();
         if (mappingStrategyID != null) {
             builder.addPropertyReference("mappingStrategy", mappingStrategyID);
@@ -136,6 +141,15 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             final ManagedConnectionParser parser = new ManagedConnectionParser(configElement);
             return parser.createDataSource();
         }
+
+        /**
+         * Get the connectionReadOnly attribute value.
+         *
+         * @return  whether connections should be read only
+         */
+        @Nullable public String getConnectionReadOnly() {
+            return AttributeSupport.getAttributeValue(configElement, new QName("readOnlyConnection"));
+         }
 
         /**
          * Get the bean ID of an externally defined data source.

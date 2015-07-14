@@ -6,6 +6,9 @@
         p:jdbcUrl="jdbc:hsqldb:mem:RDBMSDataConnectorStore" p:user="SA" p:password="" p:acquireIncrement="3"
         p:acquireRetryAttempts="24" p:acquireRetryDelay="5000" p:breakAfterAcquireFailure="true" p:minPoolSize="1"
         p:maxPoolSize="5" p:maxIdleTime="300" p:idleConnectionTestPeriod="360" />
+    <bean id="connectionReadOnly" class="java.lang.Boolean" factory-method="valueOf">
+        <constructor-arg value="false" />
+    </bean>
     <bean id="cacheBuilder" class="com.google.common.cache.CacheBuilder" factory-method="from">
         <constructor-arg value="expireAfterAccess=10s,maximumSize=25" />
     </bean>

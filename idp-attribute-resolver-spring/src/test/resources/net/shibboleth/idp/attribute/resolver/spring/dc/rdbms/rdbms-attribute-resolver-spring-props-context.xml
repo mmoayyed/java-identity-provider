@@ -9,6 +9,9 @@
         p:acquireRetryDelay="%{datasource.acquireRetryDelay}" p:breakAfterAcquireFailure="%{datasource.breakAfterAcquireFailure}"
         p:minPoolSize="%{datasource.minPoolSize}" p:maxPoolSize="%{datasource.maxPoolSize}" p:maxIdleTime="%{datasource.maxIdleTime}"
         p:idleConnectionTestPeriod="%{datasource.idleConnectionTestPeriod}" />
+    <bean id="connectionReadOnly" class="java.lang.Boolean" factory-method="valueOf">
+        <constructor-arg value="%{dataConnector.readOnlyConnection}" />
+    </bean>
     <bean id="cacheBuilder" class="com.google.common.cache.CacheBuilder" factory-method="from">
         <constructor-arg value="%{cache.cacheBuilderSpec}" />
     </bean>

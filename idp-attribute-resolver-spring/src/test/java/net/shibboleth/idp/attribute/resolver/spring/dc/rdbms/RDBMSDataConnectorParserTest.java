@@ -163,6 +163,7 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals(300, dataSource.getMaxIdleTime());
         Assert.assertEquals(360, dataSource.getIdleConnectionTestPeriod());
 
+        Assert.assertFalse(dataConnector.isConnectionReadOnly());
         final Validator validator = dataConnector.getValidator();
         Assert.assertNotNull(validator);
 
