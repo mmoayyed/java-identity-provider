@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.flow;
 
+import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml1.core.Response;
@@ -43,16 +44,14 @@ public class BuildSamlValidationFailureMessageAction extends AbstractOutgoingSam
             @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext) {
 
-        final String code = (String) springRequestContext.getFlashScope().get("code");
-        final String detailCode = (String) springRequestContext.getFlashScope().get("detailCode");
-
+        final TicketValidationResponse validationResponse = getCASResponse(profileRequestContext);
         final Response response = newSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
         final Status status = newSAMLObject(Status.class, Status.DEFAULT_ELEMENT_NAME);
         final StatusCode statusCode = newSAMLObject(StatusCode.class, StatusCode.DEFAULT_ELEMENT_NAME);
-        statusCode.setValue(new QName(NAMESPACE, code));
+        statusCode.setValue(new QName(NAMESPACE, validationResponse.getErrorCode()));
         status.setStatusCode(statusCode);
         final StatusMessage message = newSAMLObject(StatusMessage.class, StatusMessage.DEFAULT_ELEMENT_NAME);
-        message.setMessage(detailCode);
+        message.setMessage(validationResponse.getErrorDetail());
         status.setStatusMessage(message);
         response.setStatus(status);
 

@@ -30,7 +30,13 @@ import java.util.*;
  * @author Marvin S. Addison
  */
 public class TicketValidationResponse {
-    @Nonnull private String userName;
+    /** CAS protocol error code populated on ticket validation failure. */
+    @Nullable private String errorCode;
+
+    /** CAS protocol error detail populated on ticket validation failure. */
+    @Nullable private String errorDetail;
+
+    @Nullable private String userName;
 
     @Nonnull private Map<String, List<String>> attributes = new HashMap<>();
 
@@ -38,7 +44,27 @@ public class TicketValidationResponse {
 
     @Nonnull private List<String> proxies = new ArrayList<>();
 
-    @Nonnull public String getUserName() {
+
+    /** @return Non-null error code on a ticket validation failure condition. */
+    @Nullable public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(@Nonnull String code) {
+        this.errorCode = code;
+    }
+
+    /** @return Non-null error detail on a ticket validation failure condition. */
+    @Nullable public String getErrorDetail() {
+        return errorDetail;
+    }
+
+    public void setErrorDetail(@Nonnull String code) {
+        this.errorDetail = code;
+    }
+
+    /** @return Non-null subject principal on ticket validation success. */
+    @Nullable public String getUserName() {
         return userName;
     }
 
@@ -48,7 +74,7 @@ public class TicketValidationResponse {
     }
 
     /** @return Immutable map of user attributes. */
-    public Map<String, List<String>> getAttributes() {
+    @Nonnull public Map<String, List<String>> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
 

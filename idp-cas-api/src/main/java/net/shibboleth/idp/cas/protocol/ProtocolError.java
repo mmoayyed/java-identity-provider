@@ -20,6 +20,8 @@ package net.shibboleth.idp.cas.protocol;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 
+import javax.annotation.Nonnull;
+
 /**
  * CAS protocol errors.
  *
@@ -92,6 +94,14 @@ public enum ProtocolError {
         this.detailCode = detailCode;
     }
 
+    @Nonnull public String getCode() {
+        return code;
+    }
+
+    @Nonnull public String getDetailCode() {
+        return detailCode;
+    }
+
     /**
      * Creates a Spring webflow event whose ID is given by {@link #name()}} and contains the following attributes:
      *
@@ -106,7 +116,7 @@ public enum ProtocolError {
      *
      * @return Spring webflow event.
      */
-    public Event event(final Object source) {
+    @Nonnull public Event event(final Object source) {
         final LocalAttributeMap attributes = new LocalAttributeMap();
         attributes.put("code", this.code);
         attributes.put("detailCode", this.detailCode);

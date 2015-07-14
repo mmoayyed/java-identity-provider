@@ -96,4 +96,7 @@
           scope="prototype"
           p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
           p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
+    <bean id="PopulateProtocolError"
+          class="net.shibboleth.idp.cas.flow.PopulateProtocolErrorAction" />
 </beans>

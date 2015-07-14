@@ -38,8 +38,8 @@
     <!-- View end state that produces a CAS protocol error message sent to requesting service/relying party -->
     <end-state id="ProtocolErrorView" view="cas/#{flowScope.casProtocolErrorView}">
         <on-entry>
-            <set name="flashScope.code" value="currentEvent.attributes.code?:'INTERNAL_ERROR'" />
-            <set name="flashScope.detailCode" value="currentEvent.attributes.detailCode?:'E_ILLEGAL_STATE'" />
+            <evaluate expression="PopulateProtocolError" />
+            <evaluate expression="PublishProtocolResponse" />
         </on-entry>
         <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </end-state>

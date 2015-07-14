@@ -1,5 +1,5 @@
 #include("cas/header.vm")
-  <cas:proxyFailure code="$code">
-    $detailCode
+  <cas:proxyFailure code="$ticketValidationResponse.errorCode">
+    $ticketValidationResponse.errorDetail
   </cas:proxyFailure>
 #include("cas/footer.vm")
