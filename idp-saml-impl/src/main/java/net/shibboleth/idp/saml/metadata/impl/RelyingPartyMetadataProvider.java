@@ -124,7 +124,8 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
                 sortKeyValue++;
                 sortKey = new Integer(sortKeyValue);
             }
-            log.info("Top level Metadata Provider '{}' did not have a sort key giving it value {}");
+            log.info("Top level Metadata Provider '{}' did not have a sort key; giving it value '{}'",
+                    getId(), sortKey);
         }
     }
 
