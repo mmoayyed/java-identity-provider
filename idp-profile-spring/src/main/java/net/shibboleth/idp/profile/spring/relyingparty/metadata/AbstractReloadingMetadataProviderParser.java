@@ -27,10 +27,10 @@ import org.w3c.dom.Element;
  * Parser for all types which extend the &lt;ReloadingMetadataProviderType&gt;.
  */
 public abstract class AbstractReloadingMetadataProviderParser extends AbstractMetadataProviderParser {
-    
+
     /** The reference to the system parser pool that we set up. */
     private static final String DEFAULT_PARSER_POOL_REF = "shibboleth.ParserPool";
-    
+
     /**
      * 
      * {@inheritDoc}
@@ -38,32 +38,35 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
      * We assume that we will be summoning up a class which extends an
      * {@link org.opensaml.saml.metadata.resolver.impl.AbstractReloadingMetadataResolver}.
      */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+    @Override protected void doNativeParse(Element element, ParserContext parserContext,
             BeanDefinitionBuilder builder) {
 
         super.doNativeParse(element, parserContext, builder);
-        
+
         // If there's a timer bean reference, that's the first c'tor argument.
         final String timerRef = getTaskTimerRef(element);
         if (timerRef != null) {
             builder.addConstructorArgReference(timerRef);
         }
-        
+
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
-            builder.addPropertyValue("refreshDelayFactor", element.getAttributeNS(null,"refreshDelayFactor"));
+            builder.addPropertyValue("refreshDelayFactor",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "refreshDelayFactor")));
         }
-        
+
         if (element.hasAttributeNS(null, "maxRefreshDelay")) {
-            builder.addPropertyValue("maxRefreshDelay", element.getAttributeNS(null,"maxRefreshDelay"));
+            builder.addPropertyValue("maxRefreshDelay",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maxRefreshDelay")));
         }
-        
+
         if (element.hasAttributeNS(null, "minRefreshDelay")) {
-            builder.addPropertyValue("minRefreshDelay", element.getAttributeNS(null,"minRefreshDelay"));
+            builder.addPropertyValue("minRefreshDelay",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "minRefreshDelay")));
         }
-        
+
         builder.addPropertyReference("parserPool", getParserPoolRef(element));
     }
-    
+
     /**
      * Gets the default task timer reference for the metadata provider.
      * 
@@ -78,7 +81,7 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
             return null;
         }
     }
-    
+
     /**
      * Gets the default parser pool reference for the metadata provider.
      * 

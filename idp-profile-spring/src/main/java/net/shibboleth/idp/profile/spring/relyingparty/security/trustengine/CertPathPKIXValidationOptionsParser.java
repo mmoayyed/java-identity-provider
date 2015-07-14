@@ -54,19 +54,23 @@ public class CertPathPKIXValidationOptionsParser extends PKIXValidationOptionsPa
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "forceRevocationEnabled")) {
-            builder.addPropertyValue("forceRevocationEnabled", element.getAttributeNS(null, "forceRevocationEnabled"));
+            builder.addPropertyValue("forceRevocationEnabled",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "forceRevocationEnabled")));
         }
 
         if (element.hasAttributeNS(null, "revocationEnabled")) {
-            builder.addPropertyValue("revocationEnabled", element.getAttributeNS(null, "revocationEnabled"));
+            builder.addPropertyValue("revocationEnabled",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "revocationEnabled")));
         }
 
         if (element.hasAttributeNS(null, "policyMappingInhibit")) {
-            builder.addPropertyValue("policyMappingInhibit", element.getAttributeNS(null, "policyMappingInhibit"));
+            builder.addPropertyValue("policyMappingInhibit",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "policyMappingInhibit")));
         }
 
         if (element.hasAttributeNS(null, "anyPolicyInhibit")) {
-            builder.addPropertyValue("anyPolicyInhibit", element.getAttributeNS(null, "anyPolicyInhibit"));
+            builder.addPropertyValue("anyPolicyInhibit",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "anyPolicyInhibit")));
         }
 
         final List<Element> childElems = ElementSupport.getChildElements(element, POLICY_OID_ELEMENT);

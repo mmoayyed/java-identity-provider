@@ -25,6 +25,7 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.RelyingPartyGroupParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -128,7 +129,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
             builder.addConstructorArgValue(childBeanDefinitionBuilder.getBeanDefinition());
 
             if (element.hasAttributeNS(null, "sortKey")) {
-                builder.addPropertyValue("sortKey", element.getAttributeNS(null, "sortKey"));
+                builder.addPropertyValue("sortKey", StringSupport.trimOrNull(element.getAttributeNS(null, "sortKey")));
             }
         } else {
             if (element.hasAttributeNS(null, "sortKey")) {
@@ -155,14 +156,16 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         builder.setDestroyMethodName("destroy");
         builder.setLazyInit(true);
 
-        builder.addPropertyValue("id", element.getAttributeNS(null, "id"));
+        builder.addPropertyValue("id", StringSupport.trimOrNull(element.getAttributeNS(null, "id")));
 
         if (isPresentNotChaining(element, "failFastInitialization")) {
-            builder.addPropertyValue("failFastInitialization", element.getAttributeNS(null, "failFastInitialization"));
+            builder.addPropertyValue("failFastInitialization",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "failFastInitialization")));
         }
 
         if (isPresentNotChaining(element, "requireValidMetadata")) {
-            builder.addPropertyValue("requireValidMetadata", element.getAttributeNS(null, "requireValidMetadata"));
+            builder.addPropertyValue("requireValidMetadata",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "requireValidMetadata")));
         }
 
         final List<Element> filters =

@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.filter.impl.SchemaValidationFilter;
@@ -57,7 +58,8 @@ public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
         List<Element> schemaNameElements = ElementSupport.getChildElements(element, EXTENSION_SCHEMA_NAME);
 
         if (element.hasAttributeNS(null, "schemaBuilderRef")) {
-            builder.addConstructorArgReference(element.getAttributeNS(null, "schemaBuilderRef"));            
+            builder.addConstructorArgReference(StringSupport.trimOrNull(element
+                    .getAttributeNS(null, "schemaBuilderRef")));            
         } else {
             builder.addConstructorArgReference("shibboleth.SchemaBuilder");
         }

@@ -132,7 +132,7 @@ public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationPars
 
         if (element.hasAttributeNS(null, "includeAttributeStatement")) {
             builder.addPropertyValue("includeAttributeStatement",
-                    element.getAttributeNS(null, "includeAttributeStatement"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "includeAttributeStatement")));
         }
 
         setAuthnProfileFromRelyingParty(element, builder);

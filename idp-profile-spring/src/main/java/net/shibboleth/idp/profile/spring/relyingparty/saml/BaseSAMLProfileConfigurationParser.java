@@ -76,17 +76,18 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSAMLArtifactConfiguration.class);
 
         if (element.hasAttributeNS(null, "artifactType")) {
-            definition.addPropertyValue("artifactType", element.getAttributeNS(null, "artifactType"));
+            definition.addPropertyValue("artifactType",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "artifactType")));
         }
 
         if (element.hasAttributeNS(null, "artifactResolutionServiceURL")) {
             definition.addPropertyValue("artifactResolutionServiceURL",
-                    element.getAttributeNS(null, "artifactResolutionServiceURL"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "artifactResolutionServiceURL")));
         }
 
         if (element.hasAttributeNS(null, "artifactResolutionServiceIndex")) {
             definition.addPropertyValue("artifactResolutionServiceIndex",
-                    element.getAttributeNS(null, "artifactResolutionServiceIndex"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "artifactResolutionServiceIndex")));
         } else {
             definition.addPropertyReference("artifactResolutionServiceIndex", getProfileBeanNamePrefix()
                     + "ArtifactServiceIndex");
@@ -157,7 +158,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
 
         final String credentialRef;
         if (element.hasAttributeNS(null, "signingCredentialRef")) {
-            credentialRef = element.getAttributeNS(null, "signingCredentialRef");
+            credentialRef = StringSupport.trimOrNull(element.getAttributeNS(null, "signingCredentialRef"));
             log.debug("using explicit signing credential reference {}", credentialRef);
         } else {
             log.debug("Looking for default signing credential reference");
@@ -177,7 +178,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                 // no defaults
                 return;
             }
-            credentialRef = relyingParty.getAttributeNS(null, "defaultSigningCredentialRef");
+            credentialRef = StringSupport.trimOrNull(relyingParty.getAttributeNS(null, "defaultSigningCredentialRef"));
             log.debug("Using default signing credential reference '{}'", credentialRef);
         }
 
@@ -196,21 +197,22 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
     // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        
+
         builder.setLazyInit(true);
 
-        log.debug("Parsing Legacy SAML profile.  Destination type: '{}'", builder.getBeanDefinition()
-                .getBeanClass().getName());
+        log.debug("Parsing Legacy SAML profile.  Destination type: '{}'", builder.getBeanDefinition().getBeanClass()
+                .getName());
         setSecurityConfiguration(element, builder, parserContext);
 
         if (element.hasAttributeNS(null, "assertionLifetime")) {
             // Set as a string and let the converter to the work
-            builder.addPropertyValue("assertionLifetime", element.getAttributeNS(null, "assertionLifetime"));
+            builder.addPropertyValue("assertionLifetime", StringSupport.trimOrNull(StringSupport.trimOrNull(element
+                    .getAttributeNS(null, "assertionLifetime"))));
         }
 
         if (element.hasAttributeNS(null, "includeConditionsNotBefore")) {
-            builder.addPropertyValue("includeConditionsNotBefore",
-                    element.getAttributeNS(null, "includeConditionsNotBefore"));
+            builder.addPropertyValue("includeConditionsNotBefore", StringSupport.trimOrNull(StringSupport
+                    .trimOrNull(element.getAttributeNS(null, "includeConditionsNotBefore"))));
         }
 
         if (artifactAware) {
@@ -218,18 +220,18 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         }
 
         if (element.hasAttributeNS(null, "attributeAuthority")) {
-            log.warn("Deprecated attribute 'attributeAuthority=\"{}\"' has been ignored",
-                    element.getAttributeNS(null, "attributeAuthority"));
+            log.warn("Deprecated attribute 'attributeAuthority=\"{}\"' has been ignored", StringSupport
+                    .trimOrNull(StringSupport.trimOrNull(element.getAttributeNS(null, "attributeAuthority"))));
         }
 
         if (element.hasAttributeNS(null, "securityPolicyRef")) {
             log.warn("Deprecated attribute 'securityPolicyRef=\"{}\"' has been ignored",
-                    element.getAttributeNS(null, "securityPolicyRef"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "securityPolicyRef")));
         }
 
         if (element.hasAttributeNS(null, "outboundArtifactType")) {
             log.warn("Deprecated attribute 'outboundArtifactType=\"{}\"' has been ignored",
-                    element.getAttributeNS(null, "outboundArtifactType"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "outboundArtifactType")));
         }
 
         // Install a defaulted flow ID for inbound security policy handling.
@@ -238,14 +240,15 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
 
         if (element.hasAttributeNS(null, "signAssertions")) {
             builder.addPropertyValue("signAssertions",
-                    predicateForSigning(element.getAttributeNS(null, "signAssertions")));
+                    predicateForSigning(StringSupport.trimOrNull(element.getAttributeNS(null, "signAssertions"))));
         }
         if (element.hasAttributeNS(null, "signRequests")) {
-            builder.addPropertyValue("signRequests", predicateForSigning(element.getAttributeNS(null, "signRequests")));
+            builder.addPropertyValue("signRequests",
+                    predicateForSigning(StringSupport.trimOrNull(element.getAttributeNS(null, "signRequests"))));
         }
         if (element.hasAttributeNS(null, "signResponses")) {
             builder.addPropertyValue("signResponses",
-                    predicateForSigning(element.getAttributeNS(null, "signResponses")));
+                    predicateForSigning(StringSupport.trimOrNull(element.getAttributeNS(null, "signResponses"))));
         }
         builder.addPropertyValue("additionalAudienceForAssertion", getAudiences(element));
     }

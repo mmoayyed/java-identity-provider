@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -30,7 +31,7 @@ import org.w3c.dom.Element;
  * Parser for a &lt;RequiredValidUntil&gt; filter.
  */
 public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Element name. */
     public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "RequiredValidUntil");
 
@@ -40,10 +41,10 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         if (element.hasAttributeNS(null, "maxValidityInterval")) {
-            builder.addPropertyValue("maxValidityInterval", element.getAttributeNS(null, "maxValidityInterval"));
+            builder.addPropertyValue("maxValidityInterval",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maxValidityInterval")));
         }
     }
 

@@ -38,36 +38,37 @@ import org.w3c.dom.Element;
  * Parser for concrete dynamic HTTP metadata resolvers, based on {@link FunctionDrivenDynamicHTTPMetadataResolver}.
  */
 public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetadataProviderParser {
-    
+
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE,
             "DynamicHTTPMetadataProvider");
-    
+
     /** Template child element name. */
     private static final QName TEMPLATE = new QName(MetadataNamespaceHandler.NAMESPACE, "Template");
-    
+
     /** Regex child element name. */
     private static final QName REGEX = new QName(MetadataNamespaceHandler.NAMESPACE, "Regex");
-    
+
     /** MetadataQueryProtocol child element name. */
-    private static final QName METADATA_QUERY_PROTOCOL = new QName(MetadataNamespaceHandler.NAMESPACE, 
+    private static final QName METADATA_QUERY_PROTOCOL = new QName(MetadataNamespaceHandler.NAMESPACE,
             "MetadataQueryProtocol");
-    
+
     /** Name of default VelocityEngine bean to use. */
     private static final String DEFAULT_VELOCITY_ENGINE_REF = "shibboleth.VelocityEngine";
 
     /** {@inheritDoc} */
+    @Override
     protected Class<? extends MetadataResolver> getNativeBeanClass(Element element) {
         return FunctionDrivenDynamicHTTPMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+    @Override protected void doNativeParse(Element element, ParserContext parserContext,
             BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
-        
+
         builder.addPropertyValue("requestURLBuilder", getRequestURLBuilder(element));
-        
+
     }
 
     /**
@@ -77,9 +78,9 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
      * @return the function
      */
     protected BeanDefinition getRequestURLBuilder(Element element) {
-        // Note: we have to do this BeanDefinitionBuilder business b/c for the template one, we need to 
-        // inject the VelocityEngine.  Otherwise would be easier to just return the Function directly.
-        
+        // Note: we have to do this BeanDefinitionBuilder business b/c for the template one, we need to
+        // inject the VelocityEngine. Otherwise would be easier to just return the Function directly.
+
         // Template child
         Element template = ElementSupport.getFirstChildElement(element, TEMPLATE);
         if (template != null) {
@@ -91,14 +92,16 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
             if (encoded == null) {
                 encoded = true;
             }
-            String velocityEngineRef = StringSupport.trimOrNull(template.getAttributeNS(null, "velocityEngine"));
+            String velocityEngineRef =
+                    StringSupport.trimOrNull(StringSupport.trimOrNull(template.getAttributeNS(null, "velocityEngine")));
             if (null == velocityEngineRef) {
                 velocityEngineRef = DEFAULT_VELOCITY_ENGINE_REF;
             }
-            String transformRef = StringSupport.trimOrNull(template.getAttributeNS(null, "transformRef"));
-            
-            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(
-                    TemplateRequestURLBuilder.class);
+            String transformRef =
+                    StringSupport.trimOrNull(StringSupport.trimOrNull(template.getAttributeNS(null, "transformRef")));
+
+            BeanDefinitionBuilder builder =
+                    BeanDefinitionBuilder.genericBeanDefinition(TemplateRequestURLBuilder.class);
             builder.addConstructorArgReference(velocityEngineRef);
             builder.addConstructorArgValue(templateString);
             builder.addConstructorArgValue(encoded);
@@ -107,37 +110,38 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
             }
             return builder.getBeanDefinition();
         }
-        
+
         // Regex child
         Element regex = ElementSupport.getFirstChildElement(element, REGEX);
         if (regex != null) {
             String replacement = StringSupport.trimOrNull(ElementSupport.getElementContentAsString(regex));
-            String match =  StringSupport.trimOrNull(regex.getAttributeNS(null, "match"));
-            
+            String match = StringSupport.trimOrNull(StringSupport.trimOrNull(regex.getAttributeNS(null, "match")));
+
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(RegexRequestURLBuilder.class);
             builder.addConstructorArgValue(match);
             builder.addConstructorArgValue(replacement);
             return builder.getBeanDefinition();
         }
-        
+
         // MetadataQueryProtocol child
         Element mdq = ElementSupport.getFirstChildElement(element, METADATA_QUERY_PROTOCOL);
         if (mdq != null) {
             String baseURL = ElementSupport.getElementContentAsString(mdq);
-            String transformRef = StringSupport.trimOrNull(mdq.getAttributeNS(null, "transformRef"));
-            
-            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(
-                    MetadataQueryProtocolRequestURLBuilder.class);
+            String transformRef =
+                    StringSupport.trimOrNull(StringSupport.trimOrNull(mdq.getAttributeNS(null, "transformRef")));
+
+            BeanDefinitionBuilder builder =
+                    BeanDefinitionBuilder.genericBeanDefinition(MetadataQueryProtocolRequestURLBuilder.class);
             builder.addConstructorArgValue(baseURL);
             if (transformRef != null) {
                 builder.addConstructorArgReference(transformRef);
             }
             return builder.getBeanDefinition();
         }
-        
+
         // None of the above, so return the well-known location one. Takes no args or properties.
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(
-                HTTPEntityIDRequestURLBuilder.class);
+        BeanDefinitionBuilder builder =
+                BeanDefinitionBuilder.genericBeanDefinition(HTTPEntityIDRequestURLBuilder.class);
         return builder.getBeanDefinition();
     }
 

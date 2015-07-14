@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
@@ -65,17 +66,17 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
 
         if (element.hasAttributeNS(null, "removeEmptyEntitiesDescriptors")) {
             builder.addPropertyValue("removeEmptyEntitiesDescriptors",
-                    element.getAttributeNS(null, "removeEmptyEntitiesDescriptors"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "removeEmptyEntitiesDescriptors")));
         }
 
         final BeanDefinitionBuilder directionBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(PredicateFilterDirectionFactoryBean.class);
-        directionBuilder.addConstructorArgValue(element.getAttributeNS(null, "direction"));
+        directionBuilder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "direction")));
         builder.addConstructorArgValue(directionBuilder.getBeanDefinition());
 
         if (element.hasAttributeNS(null, "conditionRef")) {
             log.info("Found conditionRef attribute, ignoring embedded Entity/Group/Tag elements");
-            builder.addConstructorArgReference(element.getAttributeNS(null, "conditionRef"));
+            builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "conditionRef")));
         } else {
             builder.addConstructorArgValue(parseCustomElements(element));
         }
@@ -192,8 +193,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             final ManagedList<BeanDefinition> managedTagList = new ManagedList<>(tagList.size());
             for (final Element tag : tagList) {
                 final BeanDefinitionBuilder tagBuilder = BeanDefinitionBuilder.genericBeanDefinition(Candidate.class);
-                tagBuilder.addConstructorArgValue(tag.getAttributeNS(null, "name"));
-                tagBuilder.addConstructorArgValue(tag.getAttributeNS(null, "nameFormat"));
+                tagBuilder.addConstructorArgValue(StringSupport.trimOrNull(tag.getAttributeNS(null, "name")));
+                tagBuilder.addConstructorArgValue(StringSupport.trimOrNull(tag.getAttributeNS(null, "nameFormat")));
                 final List<Element> valueList =
                         ElementSupport.getChildElementsByTagNameNS(tag, MetadataNamespaceHandler.NAMESPACE, "Value");
                 if (!valueList.isEmpty()) {
@@ -206,7 +207,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             final BeanDefinitionBuilder builder =
                     BeanDefinitionBuilder.genericBeanDefinition(EntityAttributesPredicate.class);
             builder.addConstructorArgValue(managedTagList);
-            builder.addConstructorArgValue(element.getAttributeNS(null, "trim"));
+            builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "trim")));
             return builder;
         }
 

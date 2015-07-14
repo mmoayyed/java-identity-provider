@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -53,10 +54,11 @@ public class SAML2SSOSProfileParser extends SAML2BrowserSSOProfileParser {
         super.doParse(element, parserContext, builder);
         if (element.hasAttributeNS(null, "maximumTokenDelegationChainLength")) {
             builder.addPropertyValue("maximumTokenDelegationChainLength",
-                    element.getAttributeNS(null, "maximumTokenDelegationChainLength"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maximumTokenDelegationChainLength")));
         }
         if (element.hasAttributeNS(null, "delegationPredicateRef")) {
-            builder.addPropertyReference("delegationPredicate", element.getAttributeNS(null, "delegationPredicateRef"));
+            builder.addPropertyReference("delegationPredicate",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "delegationPredicateRef")));
         }
     }
 }

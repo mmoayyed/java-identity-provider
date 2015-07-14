@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.spring.resource;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -41,7 +43,7 @@ public class ClasspathResourceParser extends AbstractSingleBeanDefinitionParser 
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         builder.setLazyInit(true);
-        builder.addConstructorArgValue(element.getAttributeNS(null, "file"));
+        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
     }
 
     /** {@inheritDoc} */

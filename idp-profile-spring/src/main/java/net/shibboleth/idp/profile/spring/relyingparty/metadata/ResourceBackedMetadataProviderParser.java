@@ -25,6 +25,7 @@ import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.profile.spring.resource.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.ResourceNamespaceHandler;
 import net.shibboleth.idp.profile.spring.resource.SVNResourceParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -183,7 +184,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         clientBuilder.setLazyInit(true);
 
         builder.addConstructorArgValue(clientBuilder.getBeanDefinition());
-        builder.addConstructorArgValue(element.getAttributeNS(null, "url"));
+        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "url")));
     }
 
     /**
@@ -198,7 +199,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
             parseFileBackedHTTPResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
 
         parseHTTPResource(element, parserContext, builder);
-        builder.addConstructorArgValue(element.getAttributeNS(null, "file"));
+        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
     }
 
 /**
@@ -211,7 +212,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param builder the builder for the {@link FilesystemMetadataResolver}.
      */
     private void parseFilesystemResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        builder.addConstructorArgValue(element.getAttributeNS(null, "file"));
+        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
     }
 
 }

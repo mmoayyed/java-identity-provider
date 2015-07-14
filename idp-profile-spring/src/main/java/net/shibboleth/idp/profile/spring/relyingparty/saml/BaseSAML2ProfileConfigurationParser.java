@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 import java.util.List;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -51,23 +52,25 @@ public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfil
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "encryptionOptional")) {
-            builder.addPropertyValue("encryptionOptional", element.getAttributeNS(null, "encryptionOptional"));
+            builder.addPropertyValue("encryptionOptional",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "encryptionOptional")));
         }
 
         if (element.hasAttributeNS(null, "encryptAssertions")) {
-            builder.addPropertyValue("encryptAssertions",
-                    predicateForEncryption(element.getAttributeNS(null, "encryptAssertions")));
+            builder.addPropertyValue("encryptAssertions", predicateForEncryption(
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "encryptAssertions"))));
         }
         if (element.hasAttributeNS(null, "encryptNameIds")) {
-            builder.addPropertyValue("encryptNameIDs",
-                    predicateForEncryption(element.getAttributeNS(null, "encryptNameIds")));
+            builder.addPropertyValue("encryptNameIDs", predicateForEncryption(
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "encryptNameIds"))));
         }
         if (element.hasAttributeNS(null, "encryptAttributes")) {
-            builder.addPropertyValue("encryptAttributes",
-                    predicateForEncryption(element.getAttributeNS(null, "encryptAttributes")));
+            builder.addPropertyValue("encryptAttributes", predicateForEncryption(
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "encryptAttributes"))));
         }
         if (element.hasAttributeNS(null, "assertionProxyCount")) {
-            builder.addPropertyValue("proxyCount", element.getAttributeNS(null, "assertionProxyCount"));
+            builder.addPropertyValue("proxyCount",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "assertionProxyCount")));
         }
         builder.addPropertyValue("proxyAudiences", getProxyAudiences(element));
     }

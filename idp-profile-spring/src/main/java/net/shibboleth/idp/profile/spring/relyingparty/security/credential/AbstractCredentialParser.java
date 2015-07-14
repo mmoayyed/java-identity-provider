@@ -46,7 +46,7 @@ public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinit
     /** {@inheritDoc} */
     @Override protected String resolveId(final Element element, final AbstractBeanDefinition definition,
             final ParserContext parserContext) {
-        return element.getAttributeNS(null, "id");
+        return StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
     }
 
     /** {@inheritDoc} */

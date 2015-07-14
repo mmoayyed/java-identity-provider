@@ -150,7 +150,7 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
         }
         log.debug("Found a secret key <Supressed>");
         builder.addPropertyValue("secretKeyInfo", value);
-        builder.addPropertyValue("secretKeyAlgorithm", key.getAttributeNS(null, "algorithm"));
-        builder.addPropertyValue("secretKeyEncoding", key.getAttributeNS(null, "encoding"));
+        builder.addPropertyValue("secretKeyAlgorithm", StringSupport.trimOrNull(key.getAttributeNS(null, "algorithm")));
+        builder.addPropertyValue("secretKeyEncoding", StringSupport.trimOrNull(key.getAttributeNS(null, "encoding")));
     }
 }

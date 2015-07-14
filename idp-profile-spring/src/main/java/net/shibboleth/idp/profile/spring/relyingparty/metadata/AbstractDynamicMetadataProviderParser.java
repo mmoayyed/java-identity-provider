@@ -23,15 +23,14 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-
 /**
  * Parser for {@link org.opensaml.saml.metadata.resolver.impl.AbstractDynamicMetadataResolver}.
  */
 public abstract class AbstractDynamicMetadataProviderParser extends AbstractMetadataProviderParser {
-    
+
     /** The reference to the system parser pool that we set up. */
     private static final String DEFAULT_PARSER_POOL_REF = "shibboleth.ParserPool";
-    
+
     /**
      * 
      * {@inheritDoc}
@@ -49,34 +48,40 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
         if (timerRef != null) {
             builder.addConstructorArgReference(timerRef);
         }
-        
+
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
-            builder.addPropertyValue("refreshDelayFactor", element.getAttributeNS(null,"refreshDelayFactor"));
+            builder.addPropertyValue("refreshDelayFactor",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "refreshDelayFactor")));
         }
-        
+
         if (element.hasAttributeNS(null, "minCacheDuration")) {
-            builder.addPropertyValue("minCacheDuration", element.getAttributeNS(null,"minCacheDuration"));
+            builder.addPropertyValue("minCacheDuration",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "minCacheDuration")));
         }
-        
+
         if (element.hasAttributeNS(null, "maxCacheDuration")) {
-            builder.addPropertyValue("maxCacheDuration", element.getAttributeNS(null,"maxCacheDuration"));
+            builder.addPropertyValue("maxCacheDuration",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maxCacheDuration")));
         }
-        
+
         if (element.hasAttributeNS(null, "maxIdleEntityData")) {
-            builder.addPropertyValue("maxIdleEntityData", element.getAttributeNS(null,"maxIdleEntityData"));
+            builder.addPropertyValue("maxIdleEntityData",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maxIdleEntityData")));
         }
-        
+
         if (element.hasAttributeNS(null, "removeIdleEntityData")) {
-            builder.addPropertyValue("removeIdleEntityData", element.getAttributeNS(null,"removeIdleEntityData"));
+            builder.addPropertyValue("removeIdleEntityData",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "removeIdleEntityData")));
         }
-        
+
         if (element.hasAttributeNS(null, "cleanupTaskInterval")) {
-            builder.addPropertyValue("cleanupTaskInterval", element.getAttributeNS(null,"cleanupTaskInterval"));
+            builder.addPropertyValue("cleanupTaskInterval",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "cleanupTaskInterval")));
         }
-        
+
         builder.addPropertyReference("parserPool", getParserPoolRef(element));
     }
-    
+
     /**
      * Gets the default task timer reference for the metadata provider.
      * 
@@ -85,14 +90,14 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
      * @return task timer reference
      */
     protected String getTaskTimerRef(Element element) {
-        
+
         if (element.hasAttributeNS(null, "taskTimerRef")) {
-            return StringSupport.trimOrNull(element.getAttributeNS(null, "taskTimerRef"));
+            return StringSupport.trimOrNull(StringSupport.trimOrNull(element.getAttributeNS(null, "taskTimerRef")));
         } else {
             return null;
         }
     }
-    
+
     /**
      * Gets the default parser pool reference for the metadata provider.
      * 
@@ -103,7 +108,8 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
     protected String getParserPoolRef(Element element) {
         String parserPoolRef = null;
         if (element.hasAttributeNS(null, "parserPoolRef")) {
-            parserPoolRef = StringSupport.trimOrNull(element.getAttributeNS(null, "parserPoolRef"));
+            parserPoolRef =
+                    StringSupport.trimOrNull(StringSupport.trimOrNull(element.getAttributeNS(null, "parserPoolRef")));
         }
 
         if (parserPoolRef == null) {

@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -39,10 +41,10 @@ public class FileBackedHTTPMetadataProviderParser extends HTTPMetadataProviderPa
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+    @Override protected void doNativeParse(Element element, ParserContext parserContext,
             BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
-        builder.addConstructorArgValue(element.getAttributeNS(null, "backingFile"));
+        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "backingFile")));
     }
 }

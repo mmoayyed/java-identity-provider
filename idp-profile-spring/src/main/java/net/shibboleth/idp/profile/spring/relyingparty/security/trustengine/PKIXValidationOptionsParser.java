@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.security.x509.PKIXValidationOptions;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -45,20 +46,23 @@ public class PKIXValidationOptionsParser extends AbstractSingleBeanDefinitionPar
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "processEmptyCRLs")) {
-            builder.addPropertyValue("processEmptyCRLs", element.getAttributeNS(null, "processEmptyCRLs"));
+            builder.addPropertyValue("processEmptyCRLs",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "processEmptyCRLs")));
         }
 
         if (element.hasAttributeNS(null, "processExpiredCRLs")) {
-            builder.addPropertyValue("processExpiredCRLs", element.getAttributeNS(null, "processExpiredCRLs"));
+            builder.addPropertyValue("processExpiredCRLs",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "processExpiredCRLs")));
         }
 
         if (element.hasAttributeNS(null, "processCredentialCRLs")) {
-            builder.addPropertyValue("processCredentialCRLs", element.getAttributeNS(null, "processCredentialCRLs"));
+            builder.addPropertyValue("processCredentialCRLs",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "processCredentialCRLs")));
         }
 
         if (element.hasAttributeNS(null, "defaultVerificationDepth")) {
             builder.addPropertyValue("defaultVerificationDepth",
-                    element.getAttributeNS(null, "defaultVerificationDepth"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "defaultVerificationDepth")));
         }
     }
 

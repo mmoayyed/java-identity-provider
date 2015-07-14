@@ -96,7 +96,7 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
             final BeanDefinitionBuilder methodBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(AuthnContextClassRefPrincipal.class);
             methodBuilder.addConstructorArgValue(method);
-            
+
             final List<BeanDefinition> methodsList = new ManagedList<>(1);
             methodsList.add(methodBuilder.getBeanDefinition());
             builder.addPropertyValue("defaultAuthenticationMethods", methodsList);
@@ -128,21 +128,22 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
 
         if (element.hasAttributeNS(null, "includeAttributeStatement")) {
             builder.addPropertyValue("includeAttributeStatement",
-                    element.getAttributeNS(null, "includeAttributeStatement"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "includeAttributeStatement")));
         }
 
         if (element.hasAttributeNS(null, "maximumSPSessionLifetime")) {
             builder.addPropertyValue("maximumSPSessionLifetime",
-                    element.getAttributeNS(null, "maximumSPSessionLifetime"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maximumSPSessionLifetime")));
         }
 
         if (element.hasAttributeNS(null, "skipEndpointValidationWhenSigned")) {
             builder.addPropertyValue("skipEndpointValidationWhenSigned",
-                    element.getAttributeNS(null, "skipEndpointValidationWhenSigned"));
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "skipEndpointValidationWhenSigned")));
         }
 
         if (element.hasAttributeNS(null, "allowDelegation")) {
-            builder.addPropertyValue("allowingDelegation", element.getAttributeNS(null, "allowDelegation"));
+            builder.addPropertyValue("allowingDelegation",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "allowDelegation")));
         }
 
         setPropertiesFromRelyingParty(element, builder);

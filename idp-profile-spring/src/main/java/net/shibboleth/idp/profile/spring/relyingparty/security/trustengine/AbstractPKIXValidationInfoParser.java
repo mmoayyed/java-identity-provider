@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -49,9 +50,10 @@ public abstract class AbstractPKIXValidationInfoParser extends AbstractSingleBea
         super.doParse(element, parserContext, builder);
 
         builder.addPropertyValue("configDescription", parserContext.getReaderContext().getResource().getDescription());
-        
+
         if (element.hasAttributeNS(null, "verifyDepth")) {
-            builder.addPropertyValue("verifyDepth", element.getAttributeNS(null, "verifyDepth"));
+            builder.addPropertyValue("verifyDepth",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "verifyDepth")));
         }
 
         final List<Element> certificates = ElementSupport.getChildElements(element, CERTIFICATE);
