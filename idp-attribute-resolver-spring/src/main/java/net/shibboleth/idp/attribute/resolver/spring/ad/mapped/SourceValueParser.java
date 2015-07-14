@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
 import net.shibboleth.idp.attribute.resolver.spring.ad.AttributeDefinitionNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
 
         String ignoreCase = null;
         if (config.hasAttributeNS(null, "ignoreCase")) {
-            ignoreCase = config.getAttributeNS(null, "ignoreCase");
+            ignoreCase = StringSupport.trimOrNull(config.getAttributeNS(null, "ignoreCase"));
             builder.addConstructorArgValue(ignoreCase);
         } else {
             builder.addConstructorArgValue(null);
@@ -64,7 +65,7 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
 
         String partialMatch = null;
         if (config.hasAttributeNS(null, "partialMatch")) {
-            partialMatch = config.getAttributeNS(null, "partialMatch");
+            partialMatch = StringSupport.trimOrNull(config.getAttributeNS(null, "partialMatch"));
             builder.addConstructorArgValue(partialMatch);
         } else {
             builder.addConstructorArgValue(null);

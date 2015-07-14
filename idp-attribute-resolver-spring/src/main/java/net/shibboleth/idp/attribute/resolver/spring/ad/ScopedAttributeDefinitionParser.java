@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
         super.doParse(config, parserContext, builder);
 
 
-        String scope = config.getAttributeNS(null, "scope");
+        String scope = StringSupport.trimOrNull(config.getAttributeNS(null, "scope"));
         log.debug("{} Setting scope to '{}'.", getLogPrefix(), scope);
         builder.addPropertyValue("scope", scope);
     }

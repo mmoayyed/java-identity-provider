@@ -35,8 +35,8 @@ import org.w3c.dom.Element;
 public class SAML2ScopedStringAttributeEncoderParser extends BaseScopedAttributeEncoderParser {
 
     /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
-            new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2ScopedString");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+            "SAML2ScopedString");
 
     /** Local name of name format attribute. */
     @Nonnull @NotEmpty public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
@@ -60,7 +60,8 @@ public class SAML2ScopedStringAttributeEncoderParser extends BaseScopedAttribute
         super.doParse(config, parserContext, builder);
 
         if (config.hasAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME)) {
-            builder.addPropertyValue("scopeType", config.getAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME));
+            builder.addPropertyValue("scopeType",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME)));
         }
 
         if (config.hasAttributeNS(null, NAME_FORMAT_ATTRIBUTE_NAME)) {
@@ -68,7 +69,8 @@ public class SAML2ScopedStringAttributeEncoderParser extends BaseScopedAttribute
             builder.addPropertyValue("nameFormat", nameFormat);
         }
 
-        builder.addPropertyValue("friendlyName", config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME));
+        builder.addPropertyValue("friendlyName",
+                StringSupport.trimOrNull(config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME)));
     }
 
 }

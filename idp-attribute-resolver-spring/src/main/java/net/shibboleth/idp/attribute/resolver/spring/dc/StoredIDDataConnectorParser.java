@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -57,7 +58,7 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder, "storedId");
-        
+
         log.debug("{} doParse {}", getLogPrefix(), config);
         final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
         final String beanDataSource = getBeanDataSourceID(config);
@@ -72,7 +73,8 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         }
 
         if (config.hasAttributeNS(null, "queryTimeout")) {
-            builder.addPropertyValue("queryTimeout", config.getAttributeNS(null, "queryTimeout"));
+            builder.addPropertyValue("queryTimeout",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "queryTimeout")));
         }
     }
 
@@ -131,5 +133,5 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         final ManagedConnectionParser parser = new ManagedConnectionParser(config);
         return parser.createDataSource();
     }
-    
+
 }

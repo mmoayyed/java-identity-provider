@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -45,11 +46,13 @@ public abstract class BaseScopedAttributeEncoderParser extends BaseAttributeEnco
         super.doParse(config, parserContext, builder);
 
         if (config.hasAttributeNS(null, SCOPE_DELIMITER_ATTRIBUTE_NAME)) {
-            builder.addPropertyValue("scopeDelimiter", config.getAttributeNS(null, SCOPE_DELIMITER_ATTRIBUTE_NAME));
+            builder.addPropertyValue("scopeDelimiter",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, SCOPE_DELIMITER_ATTRIBUTE_NAME)));
         }
 
         if (config.hasAttributeNS(null, SCOPE_ATTRIBUTE_ATTRIBUTE_NAME)) {
-            builder.addPropertyValue("scopeAttributeName", config.getAttributeNS(null, SCOPE_ATTRIBUTE_ATTRIBUTE_NAME));
+            builder.addPropertyValue("scopeAttributeName",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, SCOPE_ATTRIBUTE_ATTRIBUTE_NAME)));
         }
     }
 

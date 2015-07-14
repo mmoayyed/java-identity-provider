@@ -57,7 +57,7 @@ public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
         subBuilder.setDestroyMethodName("destroy");
         
         subBuilder.addPropertyReference("idStore", idStore);
-        final String id = config.getAttributeNS(null, "id");
+        final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         subBuilder.addPropertyValue("id", id);
                 
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());

@@ -36,8 +36,8 @@ import org.w3c.dom.Element;
 public class SAML1StringNameIdentifierEncoderParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type. */
-    @Nonnull public static final QName SCHEMA_TYPE =
-            new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1StringNameIdentifier");
+    @Nonnull public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+            "SAML1StringNameIdentifier");
 
     /** Local name of name format attribute. */
     @Nonnull @NotEmpty public static final String FORMAT_ATTRIBUTE_NAME = "nameFormat";
@@ -61,7 +61,8 @@ public class SAML1StringNameIdentifierEncoderParser extends AbstractSingleBeanDe
         }
         builder.setInitMethodName(null);
 
-        builder.addPropertyValue("nameQualifier", config.getAttributeNS(null, NAMEQUALIFIER_ATTRIBUTE_NAME));
+        builder.addPropertyValue("nameQualifier",
+                StringSupport.trimOrNull(config.getAttributeNS(null, NAMEQUALIFIER_ATTRIBUTE_NAME)));
     }
 
     /** {@inheritDoc} */

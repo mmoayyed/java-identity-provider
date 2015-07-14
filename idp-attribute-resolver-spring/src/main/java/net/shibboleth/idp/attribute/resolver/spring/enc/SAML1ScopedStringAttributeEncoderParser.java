@@ -35,8 +35,8 @@ import org.w3c.dom.Element;
 public class SAML1ScopedStringAttributeEncoderParser extends BaseScopedAttributeEncoderParser {
 
     /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
-            new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1ScopedString");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+            "SAML1ScopedString");
 
     /** Local name of namespace attribute. */
     @Nonnull @NotEmpty public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
@@ -57,7 +57,8 @@ public class SAML1ScopedStringAttributeEncoderParser extends BaseScopedAttribute
         super.doParse(config, parserContext, builder);
 
         if (config.hasAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME)) {
-            builder.addPropertyValue("scopeType", config.getAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME));
+            builder.addPropertyValue("scopeType",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, SCOPE_TYPE_ATTRIBUTE_NAME)));
         }
 
         if (config.hasAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME)) {

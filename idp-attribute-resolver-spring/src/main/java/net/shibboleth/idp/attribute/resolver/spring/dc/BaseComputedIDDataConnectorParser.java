@@ -57,7 +57,7 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         super.doParse(config, parserContext, builder);
         final String generatedAttribute;
         if (config.hasAttributeNS(null, "generatedAttributeID")) {
-            generatedAttribute = config.getAttributeNS(null, "generatedAttributeID");
+            generatedAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "generatedAttributeID"));
         } else {
             generatedAttribute = generatedIdDefaultName;
         }
@@ -70,7 +70,7 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
 
-        final String sourceAttribute = config.getAttributeNS(null, "sourceAttributeID");
+        final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
 
         final String salt = StringSupport.trimOrNull(config.getAttributeNS(null, "salt"));
         final byte[] saltBytes;

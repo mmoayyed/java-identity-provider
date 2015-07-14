@@ -28,6 +28,7 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -82,7 +83,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
         }
 
         if (config.hasAttributeNS(null, "dependencyOnly")) {
-            String dependencyOnly = config.getAttributeNS(null, "dependencyOnly");
+            String dependencyOnly = StringSupport.trimOrNull(config.getAttributeNS(null, "dependencyOnly"));
             log.debug("{} Setting dependencyOnly {}", getLogPrefix(), dependencyOnly);
             builder.addPropertyValue("dependencyOnly", dependencyOnly);
         }

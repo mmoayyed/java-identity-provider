@@ -33,8 +33,8 @@ import org.w3c.dom.Element;
 public class SAML2XMLObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
 
     /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
-            new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML2XMLObject");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+            "SAML2XMLObject");
 
     /** Local name of name format attribute. */
     @Nonnull @NotEmpty public static final String NAME_FORMAT_ATTRIBUTE_NAME = "nameFormat";
@@ -62,7 +62,8 @@ public class SAML2XMLObjectAttributeEncoderParser extends BaseAttributeEncoderPa
             builder.addPropertyValue("nameFormat", nameFormat);
         }
 
-        builder.addPropertyValue("friendlyName", config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME));
+        builder.addPropertyValue("friendlyName",
+                StringSupport.trimOrNull(config.getAttributeNS(null, FRIENDLY_NAME_ATTRIBUTE_NAME)));
     }
 
 }

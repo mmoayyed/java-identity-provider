@@ -63,11 +63,12 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
         }
 
         if (config.hasAttributeNS(null, "activationConditionRef")) {
-            builder.addPropertyReference("activationCondition", config.getAttributeNS(null, "activationConditionRef"));
+            builder.addPropertyReference("activationCondition",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
         }
 
         if (config.hasAttributeNS(null, "encodeType")) {
-            builder.addPropertyValue("encodeType", config.getAttributeNS(null, "encodeType"));
+            builder.addPropertyValue("encodeType", StringSupport.trimOrNull(config.getAttributeNS(null, "encodeType")));
         }
 
         builder.setInitMethodName("initialize");
@@ -80,10 +81,13 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     @Override public boolean shouldGenerateId() {
         return true;
     }
-    
-    /** {@inheritDoc}. <br/> We parse the attribute "name" and we do not want Spring to. see #IDP-571. */
+
+    /**
+     * {@inheritDoc}. <br/>
+     * We parse the attribute "name" and we do not want Spring to. see #IDP-571.
+     */
     @Override protected boolean shouldParseNameAsAliases() {
         return false;
     }
-    
+
 }

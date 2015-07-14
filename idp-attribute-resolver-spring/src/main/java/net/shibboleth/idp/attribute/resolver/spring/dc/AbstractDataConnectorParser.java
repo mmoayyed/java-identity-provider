@@ -45,8 +45,8 @@ import org.w3c.dom.Element;
 public abstract class AbstractDataConnectorParser extends BaseResolverPluginParser {
 
     /** Element name. */
-    @Nonnull public static final QName ELEMENT_NAME =
-            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "DataConnector");
+    @Nonnull public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
+            "DataConnector");
 
     /** semi colon separated resources to indicate external config. */
     @Nonnull @NotEmpty public static final String ATTR_SPRING_RESOURCE = "springResources";
@@ -61,8 +61,8 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     @Nonnull @NotEmpty public static final String ATTR_POSTPROCESSORS_REF = "postProcessorsRef";
 
     /** Failover data connector attribute name. */
-    @Nonnull public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME =
-            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
+    @Nonnull public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
+            AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
 
     /** Log4j logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
@@ -112,16 +112,19 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             builder.setInitMethodName(null);
             builder.setDestroyMethodName(null);
             if (config.hasAttributeNS(null, ATTR_SPRING_RESOURCE)) {
-                final String[] resources = config.getAttributeNS(null, ATTR_SPRING_RESOURCE).split(";");
+                final String[] resources =
+                        StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_SPRING_RESOURCE)).split(";");
                 log.debug("{} Native configuration from {}", getLogPrefix(), resources);
                 builder.addPropertyValue("resources", resources);
             } else {
-                final String resourceRef = config.getAttributeNS(null, ATTR_SPRING_RESOURCE_REF);
+                final String resourceRef =
+                        StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_SPRING_RESOURCE_REF));
                 log.debug("{} Native configuration from bean {}", getLogPrefix(), resourceRef);
                 builder.addPropertyReference("resources", resourceRef);
             }
             if (config.hasAttribute(ATTR_FACTORY_POSTPROCESSORS_REF)) {
-                final String factoryPostProcessorsRef = config.getAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF);
+                final String factoryPostProcessorsRef =
+                        StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF));
                 log.debug("{} Factory Bean Post Processors {}", getLogPrefix(), factoryPostProcessorsRef);
                 builder.addPropertyReference("beanFactoryPostProcessors", factoryPostProcessorsRef);
             } else {
@@ -131,7 +134,8 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
                         "shibboleth.PropertySourcesPlaceholderConfigurer");
             }
             if (config.hasAttribute(ATTR_POSTPROCESSORS_REF)) {
-                final String postProcessorsRef = config.getAttributeNS(null, ATTR_POSTPROCESSORS_REF);
+                final String postProcessorsRef =
+                        StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_POSTPROCESSORS_REF));
                 log.debug("{} Bean Post Processors {}", getLogPrefix(), postProcessorsRef);
                 builder.addPropertyReference("beanPostProcessors", postProcessorsRef);
             }

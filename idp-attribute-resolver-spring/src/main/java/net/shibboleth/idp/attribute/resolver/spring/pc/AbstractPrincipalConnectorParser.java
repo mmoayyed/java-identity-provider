@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -67,11 +68,11 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
         // First up, add the per type decoders
         addSAMLDecoders(config, parserContext, builder);
 
-        final String format = config.getAttributeNS(null, "nameIDFormat");
+        final String format = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIDFormat"));
         builder.addConstructorArgValue(format);
 
 
-        final String id = config.getAttributeNS(null, "id");
+        final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         builder.addPropertyValue("id", id);
 
         final List<Element> children = ElementSupport.getChildElements(config, RELYING_PARTY);

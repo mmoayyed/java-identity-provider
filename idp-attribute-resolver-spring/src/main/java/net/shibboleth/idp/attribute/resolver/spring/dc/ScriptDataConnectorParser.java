@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ScriptedDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.ScriptedAttributeDefinitionParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
                 BeanDefinitionBuilder.genericBeanDefinition(EvaluableScriptFactoryBean.class);
         scriptBuilder.addPropertyValue("sourceId", getLogPrefix());
         if (config.hasAttributeNS(null, "language")) {
-            final String scriptLanguage = config.getAttributeNS(null, "language");
+            final String scriptLanguage = StringSupport.trimOrNull(config.getAttributeNS(null, "language"));
             log.debug("{} Scripting language: {}", getLogPrefix(), scriptLanguage);
             scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }

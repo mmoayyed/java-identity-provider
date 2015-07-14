@@ -38,8 +38,8 @@ import org.w3c.dom.Element;
 public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "TransientId");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "TransientId");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinitionParser.class);
@@ -58,10 +58,11 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
                 BeanDefinitionBuilder.genericBeanDefinition(StoredTransientIdGenerationStrategy.class);
 
         strategyBuilder.setInitMethodName("initialize");
-        strategyBuilder.addPropertyValue("id", "StoredTransientIdGenerationStrategy:"+getDefinitionId());
+        strategyBuilder.addPropertyValue("id", "StoredTransientIdGenerationStrategy:" + getDefinitionId());
 
         if (config.hasAttributeNS(null, "lifetime")) {
-            strategyBuilder.addPropertyValue("idLifetime", config.getAttributeNS(null, "lifetime"));
+            strategyBuilder.addPropertyValue("idLifetime",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "lifetime")));
         }
 
         String idStore = "shibboleth.StorageService";
@@ -73,7 +74,7 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
         strategyBuilder.addPropertyReference("idStore", idStore);
 
         builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
-        
+
         log.warn("{} This feature is DEPRECATED in favor of a TransientSAML2NameIDGenerator", getLogPrefix());
     }
 
@@ -81,5 +82,5 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
-    
+
 }

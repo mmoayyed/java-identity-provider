@@ -73,7 +73,7 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
                 if (null != defaultValue) {
                     log.info("{} Default value and passThru both specified", getLogPrefix(), getDefinitionId());
                 }
-                passThru = defaultValueElement.getAttributeNS(null, "passThru");
+                passThru = StringSupport.trimOrNull(defaultValueElement.getAttributeNS(null, "passThru"));
                 builder.addPropertyValue("passThru", passThru);
             }
         }

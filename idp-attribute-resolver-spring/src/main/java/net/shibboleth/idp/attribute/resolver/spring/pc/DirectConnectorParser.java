@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder;
 import net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -44,7 +45,7 @@ public class DirectConnectorParser extends AbstractPrincipalConnectorParser {
         subBuilder.setInitMethodName("initialize");
         subBuilder.setDestroyMethodName("destroy");
         
-        final String id = config.getAttributeNS(null, "id");
+        final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         subBuilder.addPropertyValue("id", id);
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());
         

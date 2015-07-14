@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrescopedAttributeDefinition;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionP
         super.doParse(config, parserContext, builder);
 
         if (config.hasAttributeNS(null, "scopeDelimiter")) {
-            final String scopeDelimiter = config.getAttributeNS(null, "scopeDelimiter");
+            final String scopeDelimiter = StringSupport.trimOrNull(config.getAttributeNS(null, "scopeDelimiter"));
             log.debug("{} Scope delimiter of {} specified.", getLogPrefix(), scopeDelimiter);
             builder.addPropertyValue("scopeDelimiter", scopeDelimiter);
         }

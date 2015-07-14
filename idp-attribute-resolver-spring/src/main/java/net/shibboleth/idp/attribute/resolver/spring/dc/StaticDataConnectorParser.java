@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
 
         for (final Element child : children) {
 
-            final String attrId = child.getAttributeNS(null, "id");
+            final String attrId = StringSupport.trimOrNull(child.getAttributeNS(null, "id"));
             final BeanDefinitionBuilder attributeDefn = BeanDefinitionBuilder.genericBeanDefinition(IdPAttribute.class);
             attributeDefn.addConstructorArgValue(attrId);
 

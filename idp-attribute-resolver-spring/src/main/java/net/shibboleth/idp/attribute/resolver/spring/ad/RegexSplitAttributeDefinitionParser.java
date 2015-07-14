@@ -65,7 +65,8 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
         pattern.addPropertyValue("regexp", regexp);
 
         if (config.hasAttributeNS(null, "caseSensitive")) {
-            pattern.addPropertyValue("caseSensitive", config.getAttributeNS(null, "caseSensitive"));
+            pattern.addPropertyValue("caseSensitive", 
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "caseSensitive")));
         }
 
         builder.addPropertyValue("regularExpression", pattern.getBeanDefinition());

@@ -55,7 +55,7 @@ public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorPa
         subBuilder.setDestroyMethodName("destroy");
         
         subBuilder.addPropertyReference("dataSealer", dataSealer);
-        final String id = config.getAttributeNS(null, "id");
+        final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         subBuilder.addPropertyValue("id", id);
 
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());

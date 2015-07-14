@@ -26,6 +26,7 @@ import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdDecoder;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -48,13 +49,13 @@ public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
         BeanDefinitionBuilder subBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(EmbeddedStoredPersistentIdDecoder.class);
 
-        final String dataConnector = config.getAttributeNS(null, "storedIdDataConnectorRef");
+        final String dataConnector = StringSupport.trimOrNull(config.getAttributeNS(null, "storedIdDataConnectorRef"));
         subBuilder.addConstructorArgReference(dataConnector);
 
         subBuilder.setInitMethodName("initialize");
         subBuilder.setDestroyMethodName("destroy");
 
-        final String id = config.getAttributeNS(null, "id");
+        final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         subBuilder.addPropertyValue("id", id);
 
         builder.addConstructorArgValue(subBuilder.getBeanDefinition());

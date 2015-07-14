@@ -65,17 +65,17 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
         builder.setDestroyMethodName("destroy");
 
         if (config.hasAttributeNS(null, "activationConditionRef")) {
-            builder.addPropertyReference("activationCondition", config.getAttributeNS(null, "activationConditionRef"));
+            builder.addPropertyReference("activationCondition",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
         }
 
         if (config.hasAttributeNS(null, "profileContextStrategyRef")) {
             builder.addPropertyReference("profileContextStrategy",
-                    config.getAttributeNS(null, "profileContextStrategyRef"));
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "profileContextStrategyRef")));
         }
 
         final List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);
         builder.addPropertyValue("dependencies", SpringSupport.parseCustomElements(dependencyElements, parserContext));
     }
-    
 }

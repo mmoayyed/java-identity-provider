@@ -38,8 +38,8 @@ import org.w3c.dom.Element;
 public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "CryptoTransientId");
+    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "CryptoTransientId");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CryptoTransientIdAttributeDefinitionParser.class);
@@ -61,14 +61,15 @@ public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDef
         strategyBuilder.addPropertyValue("id", "CryptoTransientIdGenerationStrategy:" + getDefinitionId());
 
         if (config.hasAttributeNS(null, "lifetime")) {
-            strategyBuilder.addPropertyValue("idLifetime", config.getAttributeNS(null, "lifetime"));
+            strategyBuilder.addPropertyValue("idLifetime",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "lifetime")));
         }
 
         strategyBuilder.addPropertyReference("dataSealer",
                 StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef")));
 
         builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
-        
+
         log.warn("{} This feature is DEPRECATED in favor of a TransientSAML2NameIDGenerator", getLogPrefix());
     }
 
@@ -76,5 +77,5 @@ public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDef
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
-    
+
 }
