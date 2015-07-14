@@ -7,7 +7,7 @@ final String noMetadata = springContext.getEnvironment().getProperty("idp.no.met
 if (null != noMetadata && Boolean.valueOf(noMetadata.trim())) {
    response.sendError(404);
   } else {
-  try (final java.io.FileInputStream in = new java.io.FileInputStream(path)) {
+  try (final java.io.InputStreamReader in = new java.io.InputStreamReader(new java.io.FileInputStream(path),"UTF8")) {
       int i;
       while ((i = in.read()) != -1) {
           out.write(i);
