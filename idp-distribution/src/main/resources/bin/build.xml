@@ -85,7 +85,7 @@
     <target name="getkeystorepassword" if="idp.ask.keystore.password" depends="checkproperties">
         <TGT>getkeystorepassword</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
-        <input message="TLS Private Key Password: " addproperty="idp.keystore.password">
+        <input message="Backchannel PKCS12 Password: " addproperty="idp.keystore.password">
             <handler classname="net.shibboleth.idp.installer.ant.PasswordHandler"/>
         </input>
     </target>
@@ -391,7 +391,7 @@
 
     <target name="backchannel-key" unless="idp.relying.party.present" depends="getkeystorepassword, gethostname, geturisubjectaltname">
         <TGT>backchannel-key</TGT>
-        <echo>Creating TLS keystore, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
+        <echo>Creating Backchannel keystore, CN = ${idp.host.name} URI = ${idp.uri.subject.alt.name} ...</echo>
         <mkdir dir="${idp.target.dir}/credentials"/>
         <selfsignedcert hostname="${idp.host.name}" keystoreFile="${idp.target.dir}/credentials/idp-backchannel.p12" certificateFile="${idp.target.dir}/credentials/idp-backchannel.crt" keystorePassword="${idp.keystore.password}" uriSubjectAltNames="${idp.uri.subject.alt.name}" />
         <echo>...done</echo>
