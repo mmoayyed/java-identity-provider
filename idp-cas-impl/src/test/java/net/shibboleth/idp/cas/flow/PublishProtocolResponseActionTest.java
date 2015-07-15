@@ -42,7 +42,7 @@ public class PublishProtocolResponseActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new ServiceTicketRequest("A"), new ServiceTicketResponse("A", "B"))
                 .build();
         action.execute(context);
-        final ServiceTicketRequest request = (ServiceTicketRequest) context.getRequestScope().get(
+        final ServiceTicketRequest request = (ServiceTicketRequest) context.getFlowScope().get(
                 "serviceTicketRequest");
         assertNotNull(request);
         assertEquals(request.getService(), "A");
@@ -56,7 +56,7 @@ public class PublishProtocolResponseActionTest extends AbstractFlowActionTest {
                 .addProtocolContext(new ServiceTicketRequest("A"), new ServiceTicketResponse("A", "B"))
                 .build();
         action.execute(context);
-        final ServiceTicketResponse response = (ServiceTicketResponse) context.getRequestScope().get(
+        final ServiceTicketResponse response = (ServiceTicketResponse) context.getFlowScope().get(
                 "serviceTicketResponse");
         assertNotNull(response);
         assertEquals(response.getTicket(), "B");

@@ -54,4 +54,9 @@
         </property>
     </bean>
 
+    <bean id="PopulateAuditContext"
+          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+          p:fieldExtractors-ref="shibboleth.CASLoginAuditExtractors"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
 </beans>

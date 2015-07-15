@@ -481,5 +481,60 @@
             </map>
         </property>
     </bean>
+
+    <bean id="shibboleth.DefaultCASValidationAuditExtractors"
+          class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_URL"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.cas.audit.ServiceLookupFunction" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_TICKET"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.cas.audit.TicketLookupFunction" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.USER"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                          c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                          c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.STATUS_CODE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.cas.audit.StatusCodeLookupFunction" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.STATUS_DETAIL"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.cas.audit.StatusDetailLookupFunction" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.DefaultCASProxyAuditExtractors"
+          class="org.springframework.beans.factory.config.MapFactoryBean"
+          parent="shibboleth.DefaultCASValidationAuditExtractors" abstract="true">
+        <property name="sourceMap">
+            <map merge="true">
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.GRANTING_TICKET"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.cas.audit.ProxyGrantingTicketLookupFunction" />
+                </entry>
+            </map>
+        </property>
+    </bean>
     
 </beans>

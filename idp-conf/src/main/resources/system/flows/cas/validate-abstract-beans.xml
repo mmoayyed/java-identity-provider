@@ -40,4 +40,8 @@
           class="net.shibboleth.idp.cas.flow.UpdateIdPSessionWithSPSessionAction"
           c:lifetime="%{idp.session.defaultSPlifetime:PT2H}" />
 
+    <bean id="PopulateAuditContext"
+          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+          p:fieldExtractors-ref="shibboleth.CASValidationAuditExtractors"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 </beans>

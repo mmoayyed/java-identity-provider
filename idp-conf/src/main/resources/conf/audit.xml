@@ -71,5 +71,26 @@
             </map>
         </property>
     </bean>
+
+    <bean id="shibboleth.CASLoginAuditExtractors" parent="shibboleth.DefaultCASLoginAuditExtractors" lazy-init="true">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.CASValidationAuditExtractors" parent="shibboleth.DefaultCASValidationAuditExtractors" lazy-init="true">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
+
+    <bean id="shibboleth.CASProxyAuditExtractors" parent="shibboleth.DefaultCASProxyAuditExtractors" lazy-init="true">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
     
 </beans>

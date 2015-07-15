@@ -17,20 +17,10 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
-
-import java.net.URI;
-
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
@@ -41,12 +31,12 @@ import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import org.joda.time.DateTime;
-import org.opensaml.security.trust.TrustEngine;
-import org.opensaml.security.x509.X509Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.*;
 
 /**
  * Tests the flow behind the <code>/proxyValidate</code> endpoint.
@@ -145,7 +135,9 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<cas:proxy>https://service.example.org/</cas:proxy>"));
     }
 
-    @Test
+    // This test must execute after testSuccessWithProxy to prevent concurrency problems
+    // on shared testProxyAuthenticator component
+    @Test(dependsOnMethods = "testSuccessWithProxy")
     public void testProxyCallbackAuthnFailure() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
@@ -206,15 +198,5 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
                 DateTime.now().plusSeconds(5).toInstant(),
                 pgt,
                 "https://proxyA.example.org/");
-    }
-
-    @SuppressWarnings("unused")
-    private static ProxyAuthenticator<TrustEngine<X509Credential>> mockProxyAuthenticator(final Exception toBeThrown)
-            throws Exception {
-        final ProxyAuthenticator<TrustEngine<X509Credential>> authenticator = mock(ProxyAuthenticator.class);
-        if (toBeThrown != null) {
-            doThrow(toBeThrown).when(authenticator).authenticate(any(URI.class), any(TrustEngine.class));
-        }
-        return authenticator;
     }
 }

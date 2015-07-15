@@ -23,4 +23,9 @@
           class="net.shibboleth.idp.cas.flow.GrantProxyTicketAction"
           c:ticketService-ref="cas.TicketService" />
 
+    <bean id="PopulateAuditContext"
+          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+          p:fieldExtractors-ref="shibboleth.CASProxyAuditExtractors"
+          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
 </beans>

@@ -1,17 +1,34 @@
+/*
+ * Licensed to the University Corporation for Advanced Internet Development,
+ * Inc. (UCAID) under one or more contributor license agreements.  See the
+ * NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The UCAID licenses this file to You under the Apache
+ * License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package net.shibboleth.idp.cas.flow;
+
+import javax.annotation.Nonnull;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * Action to publish the CAS protocol request or response messages, i.e.
  * {@link net.shibboleth.idp.cas.protocol.ProtocolContext#getResponse()}, in Spring Webflow
- * request scope to make available in views. The key in request scope is the protocol response simple class name
+ * flow scope to make available in views. The key name is the protocol object simple class name
  * converted to variable case, e.g. <code>TicketValidationResponse</code> is accessible as
- * <code>requestScope.ticketValidationResponse</code>.
+ * <code>flowScope.ticketValidationResponse</code>.
  *
  * @author Marvin S. Addison
  */
@@ -42,7 +59,7 @@ public class PublishProtocolMessageAction extends AbstractCASProtocolAction {
         }
         final String className = message.getClass().getSimpleName();
         final String keyName = className.substring(0, 1).toLowerCase() + className.substring(1);
-        springRequestContext.getRequestScope().put(keyName, message);
+        springRequestContext.getFlowScope().put(keyName, message);
         return null;
     }
 }

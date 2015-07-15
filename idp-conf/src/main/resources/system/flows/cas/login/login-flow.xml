@@ -26,7 +26,9 @@
         <transition on="SessionNotFound" to="BuildAuthenticationContext" />
         <transition on="SessionFound" to="CheckResolveAttributes" />
         <transition on="RenewRequested" to="BuildAuthenticationContext" />
-        <transition on="GatewayRequested" to="GatewayRedirect" />
+        <transition on="GatewayRequested" to="RedirectToService">
+            <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />
+        </transition>
     </action-state>
 
     <action-state id="BuildAuthenticationContext">
@@ -80,18 +82,20 @@
 
     <action-state id="GrantServiceTicket">
         <evaluate expression="GrantServiceTicket" />
+        <evaluate expression="PublishProtocolResponse" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="RedirectToService" />
+        <transition on="proceed" to="RedirectToService">
+            <set name="flowScope.redirectUrl" value="flowScope.serviceTicketResponse.redirectUrl" />
+        </transition>
     </action-state>
 
     <!-- Redirect end states -->
-    <end-state id="RedirectToService" view="externalRedirect:#{requestScope.serviceTicketResponse.redirectUrl}">
+    <end-state id="RedirectToService" view="externalRedirect:#{flowScope.redirectUrl}">
         <on-entry>
-            <evaluate expression="PublishProtocolResponse" />
+            <evaluate expression="PopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
         </on-entry>
     </end-state>
-
-    <end-state id="GatewayRedirect" view="externalRedirect:#{requestScope.serviceTicketRequest.service}" />
 
     <bean-import resource="login-beans.xml" />
 

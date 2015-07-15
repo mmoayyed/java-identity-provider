@@ -39,6 +39,8 @@
     <end-state id="ProtocolErrorView" view="cas/#{flowScope.casProtocolErrorView}">
         <on-entry>
             <evaluate expression="PopulateProtocolError" />
+            <evaluate expression="PopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
             <evaluate expression="PublishProtocolResponse" />
         </on-entry>
         <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>

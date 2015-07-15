@@ -17,9 +17,9 @@
 
 package net.shibboleth.idp.cas.flow;
 
-import net.shibboleth.idp.cas.protocol.ProtocolError;
-import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
-import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import javax.annotation.Nonnull;
+
+import net.shibboleth.idp.cas.protocol.*;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,19 +27,26 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 
 /**
- * Populates error information on ticket validation failure.
+ * Populates error information needed for protocol error messages.
  *
  * @author Marvin S. Addison
  */
-public class PopulateProtocolErrorAction
-        extends AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
+public class PopulateProtocolErrorAction extends AbstractCASProtocolAction {
 
     @Nonnull
     @Override
     protected Event doExecute(
             @Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
-        final TicketValidationResponse response = new TicketValidationResponse();
+        final Object request = getCASRequest(profileRequestContext);
+        final AbstractProtocolResponse response;
+        if (request instanceof ProxyTicketRequest) {
+            response = new ProxyTicketResponse();
+        } else if (request instanceof TicketValidationRequest) {
+            response = new TicketValidationResponse();
+        } else {
+            throw new IllegalArgumentException("Invalid request type: " + request);
+        }
         String code = (String) springRequestContext.getCurrentEvent().getAttributes().get("code");
         String detail = (String) springRequestContext.getCurrentEvent().getAttributes().get("detailCode");
         if (code == null) {

@@ -36,8 +36,9 @@
     <!-- View end states -->
     <end-state id="ProxySuccess" view="cas/proxySuccess">
         <on-entry>
+            <evaluate expression="PopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
             <evaluate expression="PublishProtocolResponse" />
-            <set name="flashScope.pt" value="requestScope.proxyTicketResponse.pt" />
             <set name="flashScope.escapeUtils" value="T(org.apache.commons.lang.StringEscapeUtils)" />
         </on-entry>
     </end-state>

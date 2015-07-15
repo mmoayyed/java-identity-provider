@@ -23,6 +23,9 @@ import javax.annotation.Nonnull;
 
 /**
  * Constants to use for audit logging fields stored in an {@link net.shibboleth.idp.profile.context.AuditContext}.
+ *
+ * @author Marvin S. Addison
+ * @since 3.2.0
  */
 public final class CASAuditFields {
 
@@ -44,11 +47,11 @@ public final class CASAuditFields {
     /** User name released to CAS client. */
     @Nonnull @NotEmpty public static final String USER = "n";
 
-    /** CAS ticket validation failure error code. */
-    @Nonnull @NotEmpty public static final String ERROR_CODE = "S";
+    /** CAS ticket validation status code. */
+    @Nonnull @NotEmpty public static final String STATUS_CODE = "S";
 
-    /** CAS ticket validation failure error detail. */
-    @Nonnull @NotEmpty public static final String ERROR_DETAIL = "SM";
+    /** CAS ticket validation status detail. */
+    @Nonnull @NotEmpty public static final String STATUS_DETAIL = "SM";
 
 
     /** Constructor. */

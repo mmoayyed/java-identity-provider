@@ -21,40 +21,42 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
+import net.shibboleth.idp.cas.protocol.AbstractProtocolResponse;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
-import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * Looks up the value of the CAS renew parameter from the request to the /login URI.
+ * Looks up the protocol message status detail from a CAS protocol message response. The status detail is only
+ * populated in case of errors.
  *
  * @author Marvin S. Addison
  */
-public class RenewLookupFunction implements Function<ProfileRequestContext, Boolean> {
+public class StatusDetailLookupFunction implements Function<ProfileRequestContext, String> {
+
     @Nonnull
     private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
 
-    public RenewLookupFunction() {
+    public StatusDetailLookupFunction() {
         this(new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
     }
 
-    public RenewLookupFunction(@Nonnull final Function<ProfileRequestContext, ProtocolContext> protocolLookup) {
+    public StatusDetailLookupFunction(@Nonnull final Function<ProfileRequestContext, ProtocolContext> protocolLookup) {
         protocolContextFunction = Constraint.isNotNull(protocolLookup, "ProtocolContext lookup cannot be null");
     }
 
     @Nullable
     @Override
-    public Boolean apply(@Nonnull final ProfileRequestContext input) {
+    public String apply(@Nonnull final ProfileRequestContext input) {
         final ProtocolContext protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
             return null;
         }
-        final Object request = protocolContext.getRequest();
-        if (request instanceof ServiceTicketRequest) {
-            return ((ServiceTicketRequest) request).isRenew();
+        final Object response = protocolContext.getResponse();
+        if (response instanceof AbstractProtocolResponse) {
+            return ((AbstractProtocolResponse) response).getErrorDetail();
         }
-        throw new IllegalArgumentException("Unsupported request type: " + request);
+        return null;
     }
 }

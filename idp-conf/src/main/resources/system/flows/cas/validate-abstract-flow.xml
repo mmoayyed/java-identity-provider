@@ -45,7 +45,7 @@
     </action-state>
 
     <decision-state id="CheckForProxy">
-        <if test="requestScope.ticketValidationRequest.pgtUrl != null"
+        <if test="flowScope.ticketValidationRequest.pgtUrl != null"
             then="ValidateProxyCallback"
             else="ResolveAttributes"/>
     </decision-state>
@@ -75,11 +75,9 @@
     <!-- View end states -->
     <end-state id="ValidateSuccess" view="cas/validateSuccess">
         <on-entry>
+            <evaluate expression="PopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
             <evaluate expression="PublishProtocolResponse" />
-            <set name="flashScope.userName" value="requestScope.ticketValidationResponse.userName" />
-            <set name="flashScope.attributes" value="requestScope.ticketValidationResponse.attributes" />
-            <set name="flashScope.pgtIou" value="requestScope.ticketValidationResponse.pgtIou" />
-            <set name="flashScope.proxies" value="requestScope.ticketValidationResponse.proxies" />
             <set name="flashScope.escapeUtils" value="T(org.apache.commons.lang.StringEscapeUtils)" />
         </on-entry>
     </end-state>

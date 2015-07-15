@@ -17,34 +17,39 @@
 
 package net.shibboleth.idp.cas.protocol;
 
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Container for proxy ticket response parameters returned from <code>/proxy</code> URI.
+ * Abstract base class for protocol response messages.
  *
  * @author Marvin S. Addison
+ * @since 3.2.0
  */
-public class ProxyTicketResponse extends AbstractProtocolResponse {
-    @Nullable private String pt;
+public class AbstractProtocolResponse {
 
-    /** Default no-arg constructor. */
-    public ProxyTicketResponse() {}
+    /** CAS protocol error code populated on failure. */
+    @Nullable private String errorCode;
 
-    /**
-     * Creates a new instance with given parameters.
-     *
-     * @param pt Proxy ticket ID.
-     */
-    public ProxyTicketResponse(@Nonnull final String pt) {
-        Constraint.isNotNull(pt, "PT cannot be null");
-        this.pt = pt;
+    /** CAS protocol error detail populated on failure. */
+    @Nullable private String errorDetail;
+
+
+    /** @return Non-null error code on a ticket validation failure condition. */
+    @Nullable public String getErrorCode() {
+        return errorCode;
     }
 
-    /** @return Proxy ticket ID. */
-    @Nullable public String getPt() {
-        return pt;
+    public void setErrorCode(@Nonnull String code) {
+        this.errorCode = code;
+    }
+
+    /** @return Non-null error detail on a ticket validation failure condition. */
+    @Nullable public String getErrorDetail() {
+        return errorDetail;
+    }
+
+    public void setErrorDetail(@Nonnull String code) {
+        this.errorDetail = code;
     }
 }

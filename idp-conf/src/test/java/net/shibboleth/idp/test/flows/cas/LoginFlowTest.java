@@ -88,7 +88,7 @@ public class LoginFlowTest extends AbstractFlowTest {
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
-        assertEquals(result.getOutcome().getId(), "GatewayRedirect");
+        assertEquals(result.getOutcome().getId(), "RedirectToService");
         assertEquals(externalContext.getExternalRedirectUrl(), service);
     }
 

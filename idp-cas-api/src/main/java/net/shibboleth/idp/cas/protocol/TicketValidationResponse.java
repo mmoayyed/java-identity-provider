@@ -29,12 +29,7 @@ import java.util.*;
  *
  * @author Marvin S. Addison
  */
-public class TicketValidationResponse {
-    /** CAS protocol error code populated on ticket validation failure. */
-    @Nullable private String errorCode;
-
-    /** CAS protocol error detail populated on ticket validation failure. */
-    @Nullable private String errorDetail;
+public class TicketValidationResponse extends AbstractProtocolResponse {
 
     @Nullable private String userName;
 
@@ -44,24 +39,6 @@ public class TicketValidationResponse {
 
     @Nonnull private List<String> proxies = new ArrayList<>();
 
-
-    /** @return Non-null error code on a ticket validation failure condition. */
-    @Nullable public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(@Nonnull String code) {
-        this.errorCode = code;
-    }
-
-    /** @return Non-null error detail on a ticket validation failure condition. */
-    @Nullable public String getErrorDetail() {
-        return errorDetail;
-    }
-
-    public void setErrorDetail(@Nonnull String code) {
-        this.errorDetail = code;
-    }
 
     /** @return Non-null subject principal on ticket validation success. */
     @Nullable public String getUserName() {
