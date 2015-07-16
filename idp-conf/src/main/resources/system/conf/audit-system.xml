@@ -518,6 +518,12 @@
                     </key>
                     <bean class="net.shibboleth.idp.cas.audit.StatusDetailLookupFunction" />
                 </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
+                </entry>
             </map>
         </property>
     </bean>
