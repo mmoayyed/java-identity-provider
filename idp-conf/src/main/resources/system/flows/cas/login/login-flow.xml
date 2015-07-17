@@ -23,17 +23,34 @@
 
     <action-state id="CheckAuthenticationRequired">
         <evaluate expression="CheckAuthenticationRequired"/>
-        <transition on="SessionNotFound" to="BuildAuthenticationContext" />
+        <transition on="SessionNotFound" to="CheckInitialAuthenticationRequired" />
         <transition on="SessionFound" to="CheckResolveAttributes" />
-        <transition on="RenewRequested" to="BuildAuthenticationContext" />
+        <transition on="RenewRequested" to="CheckInitialAuthenticationRequired" />
         <transition on="GatewayRequested" to="RedirectToService">
             <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />
         </transition>
     </action-state>
 
-    <action-state id="BuildAuthenticationContext">
+    <decision-state id="CheckInitialAuthenticationRequired">
+        <if test="InitialAuthenticationFlag" then="PreInitialSetup" else="PostInitialSetup" />
+    </decision-state>
+
+    <action-state id="PreInitialSetup">
         <evaluate expression="BuildAuthenticationContext"/>
         <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="DoInitialAuthenticationSubflow" />
+    </action-state>
+
+    <subflow-state id="DoInitialAuthenticationSubflow" subflow="authn-initial">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="PostInitialSetup" />
+    </subflow-state>
+
+    <action-state id="PostInitialSetup">
+        <evaluate expression="BuildAuthenticationContext"/>
+        <evaluate expression="'proceed'" />
+
         <transition on="proceed" to="DoAuthenticationSubflow" />
     </action-state>
 

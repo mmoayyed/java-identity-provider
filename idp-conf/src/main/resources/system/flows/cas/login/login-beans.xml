@@ -59,4 +59,7 @@
           p:fieldExtractors-ref="shibboleth.CASLoginAuditExtractors"
           p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
+    <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
+        <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
+    </bean>
 </beans>
