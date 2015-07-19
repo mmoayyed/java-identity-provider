@@ -143,8 +143,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     /** Is the relying party "verified" in SAML terms? */
     private boolean verified;
     
-    /** Whether to bypass endpoint validation when message is signed. */
-    private boolean skipValidationWhenSigned;
+    /** Whether to bypass endpoint validation because message is signed. */
+    private boolean skipValidationSinceSigned;
     
     /** Constructor. */
     public PopulateBindingAndEndpointContexts() {
@@ -312,6 +312,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         }
     }
     
+ // Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -336,8 +337,10 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                             ((SAMLArtifactAwareProfileConfiguration) profileConfiguration).getArtifactConfiguration();
                 }
                 if (profileConfiguration instanceof BrowserSSOProfileConfiguration) {
-                    skipValidationWhenSigned =
-                            ((BrowserSSOProfileConfiguration) profileConfiguration).skipEndpointValidationWhenSigned();
+                    skipValidationSinceSigned =
+                            ((BrowserSSOProfileConfiguration) profileConfiguration).skipEndpointValidationWhenSigned()
+                            && inboundMessage instanceof AuthnRequest
+                            && SAMLBindingSupport.isMessageSigned(profileRequestContext.getInboundMessageContext()); 
                 }
             }
         }
@@ -352,7 +355,6 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         return true;
     }
 
-// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
@@ -524,11 +526,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                 log.debug("{} Defaulting binding in \"unverified\" request to {}", getLogPrefix(), unverifiedBinding);
             }
             return new EndpointCriterion(endpoint, true);
-        } else if (skipValidationWhenSigned && inboundMessage instanceof AuthnRequest
-                && ((AuthnRequest) inboundMessage).isSigned()) {
-            return new EndpointCriterion(endpoint, true);
         } else {
-            return new EndpointCriterion(endpoint, false);
+            // Here we only skip endpoint validation if the skip flag has been set.
+            return new EndpointCriterion(endpoint, skipValidationSinceSigned);
         }
     }
 
