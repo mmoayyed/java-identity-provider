@@ -56,7 +56,10 @@
 
     <bean id="PopulateAuditContext"
           class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-          p:fieldExtractors-ref="shibboleth.CASLoginAuditExtractors"
+          p:fieldExtractors-ref="#{
+            getObject('shibboleth.CASLoginAuditExtractors') != null
+                ? 'shibboleth.CASLoginAuditExtractors'
+                : 'shibboleth.DefaultCASLoginAuditExtractors' }"
           p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">

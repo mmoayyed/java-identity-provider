@@ -430,7 +430,7 @@
     </bean>
 
     <bean id="shibboleth.DefaultCASLoginAuditExtractors"
-          class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+          class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry>
@@ -483,7 +483,7 @@
     </bean>
 
     <bean id="shibboleth.DefaultCASValidationAuditExtractors"
-          class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+          class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry>
@@ -543,7 +543,7 @@
 
     <bean id="shibboleth.DefaultCASProxyAuditExtractors"
           class="org.springframework.beans.factory.config.MapFactoryBean"
-          parent="shibboleth.DefaultCASValidationAuditExtractors" abstract="true">
+          parent="shibboleth.DefaultCASValidationAuditExtractors">
         <property name="sourceMap">
             <map merge="true">
                 <entry>

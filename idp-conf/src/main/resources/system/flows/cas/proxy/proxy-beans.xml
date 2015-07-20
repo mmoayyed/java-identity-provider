@@ -25,7 +25,10 @@
 
     <bean id="PopulateAuditContext"
           class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-          p:fieldExtractors-ref="shibboleth.CASProxyAuditExtractors"
+          p:fieldExtractors-ref="#{
+            getObject('shibboleth.CASProxyAuditExtractors') != null
+                ? 'shibboleth.CASProxyAuditExtractors'
+                : 'shibboleth.DefaultCASProxyAuditExtractors'}"
           p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
 </beans>
