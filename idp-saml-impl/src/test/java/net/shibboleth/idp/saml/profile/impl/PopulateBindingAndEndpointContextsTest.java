@@ -30,8 +30,10 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
@@ -71,6 +73,8 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
     private static final String LOCATION_ART = "https://sp.example.org/Art2";
 
     private RequestContext rc;
+
+    private BrowserSSOProfileConfiguration profileConfig;
     
     private ProfileRequestContext prc;
     
@@ -81,7 +85,11 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         final AuthnRequest request = SAML2ActionTestingSupport.buildAuthnRequest();
         request.setAssertionConsumerServiceURL(LOCATION_POST);
         request.setProtocolBinding(SAMLConstants.SAML2_POST_BINDING_URI);
-        rc = new RequestContextBuilder().setInboundMessage(request).buildRequestContext();
+        
+        profileConfig = new BrowserSSOProfileConfiguration();
+        
+        rc = new RequestContextBuilder().setInboundMessage(request).setRelyingPartyProfileConfigurations(
+                Collections.<ProfileConfiguration>singletonList(profileConfig)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
         prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class, true).setRelayState(RELAY_STATE);
         
@@ -169,6 +177,41 @@ public class PopulateBindingAndEndpointContextsTest extends XMLObjectBaseTestCas
         ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
     }
 
+    /** An SP with no endpoints in metadata interacting with signed requests. */
+    @Test
+    public void testSignedNoEndpoints() throws UnmarshallingException {
+        final EntityDescriptor entity = loadMetadata("/net/shibboleth/idp/saml/impl/profile/SPNoEndpoints.xml");
+        final SAMLMetadataContext mdCtx = new SAMLMetadataContext();
+        mdCtx.setEntityDescriptor(entity);
+        mdCtx.setRoleDescriptor(entity.getSPSSODescriptor("required"));
+        prc.getOutboundMessageContext().getSubcontext(SAMLPeerEntityContext.class, true).addSubcontext(mdCtx);
+        
+        Event event = action.execute(rc);
+        ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
+        
+        // Allow signed, but request isn't.
+        profileConfig.setSkipEndpointValidationWhenSigned(true);
+        event = action.execute(rc);
+        ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
+        
+        // Request is signed but we don't care.
+        profileConfig.setSkipEndpointValidationWhenSigned(false);
+        prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setHasBindingSignature(true);
+        event = action.execute(rc);
+        ActionTestingSupport.assertEvent(event, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
+
+        // Request is signed and we care.
+        profileConfig.setSkipEndpointValidationWhenSigned(true);
+        prc.getInboundMessageContext().getSubcontext(SAMLBindingContext.class).setHasBindingSignature(true);
+        event = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(event);
+        final SAMLBindingContext bindingCtx = prc.getOutboundMessageContext().getSubcontext(SAMLBindingContext.class);
+        Assert.assertNotNull(bindingCtx);
+        Assert.assertNotNull(bindingCtx.getBindingDescriptor());
+        Assert.assertEquals(bindingCtx.getRelayState(), RELAY_STATE);
+        Assert.assertEquals(bindingCtx.getBindingUri(), SAMLConstants.SAML2_POST_BINDING_URI);
+    }
+    
     /** No endpoint with the location requested. */
     @Test
     public void testBadLocation() throws UnmarshallingException {
