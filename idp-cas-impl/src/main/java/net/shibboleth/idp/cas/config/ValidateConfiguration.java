@@ -23,6 +23,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Comparator;
 
 /**
@@ -54,6 +55,10 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
     /** Component responsible for enforcing ticket requestor matches ticket validator. */
     @Nonnull
     private Comparator<String> serviceComparator = new DefaultServiceComparator();
+
+    /** Name of IdP attribute to use for user returned in CAS ticket validation response. */
+    @Nullable
+    private String userAttribute;
 
 
     /** Creates a new instance. */
@@ -97,5 +102,20 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
     @Nonnull
     protected int getDefaultTicketLength() {
         return DEFAULT_TICKET_LENGTH;
+    }
+
+    /** @return Name of IdP attribute to use for username returned in CAS ticket validation response. */
+    @Nullable
+    public String getUserAttribute() {
+        return userAttribute;
+    }
+
+    /**
+     * Sets the name of IdP attribute to use for username returned in CAS ticket validation response.
+     *
+     * @param attribute Attribute name to use
+     */
+    public void setUserAttribute(@Nullable String attribute) {
+        this.userAttribute = attribute;
     }
 }

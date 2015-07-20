@@ -31,6 +31,10 @@
         <value>classpath:/conf/credentials.xml</value>
     </util:list>
 
+    <util:list id ="shibboleth.AttributeFilterResources">
+        <value>classpath:/test/test-attribute-filter-cas.xml</value>
+    </util:list>
+
     <bean id="shibboleth.CASServiceRegistry"
           class="net.shibboleth.idp.cas.service.PatternServiceRegistry">
         <property name="definitions">

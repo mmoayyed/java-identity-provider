@@ -101,6 +101,10 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertEquals(outcome.getId(), "ValidateSuccess");
         assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
         assertTrue(responseBody.contains("<cas:user>john</cas:user>"));
+        assertTrue(responseBody.contains("<cas:attributes>"));
+        assertTrue(responseBody.contains("<cas:uid>john</cas:uid>"));
+        assertTrue(responseBody.contains("<cas:eduPersonPrincipalName>john</cas:eduPersonPrincipalName>"));
+        assertTrue(responseBody.contains("<cas:mail>john@example.org</cas:mail>"));
         assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
         assertFalse(responseBody.contains("<cas:proxies>"));
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
@@ -238,6 +242,41 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
         assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_REQUEST\""));
         assertTrue(responseBody.contains("E_PROXY_CALLBACK_AUTH_FAILURE"));
+    }
+
+    @Test
+    public void testSuccessWithAltUsername() throws Exception {
+        final String principal = "john";
+        final IdPSession session = sessionManager.createSession(principal);
+        session.addAuthenticationResult(
+                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
+
+        final ServiceTicket ticket = ticketService.createServiceTicket(
+                "ST-1415133132-pnqph79ygxKyX9BPwPuw0hESQBjuA",
+                DateTime.now().plusSeconds(5).toInstant(),
+                session.getId(),
+                "https://alt-username.example.org/",
+                false);
+
+        externalContext.getMockRequestParameterMap().put("service", ticket.getService());
+        externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
+        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "ValidateSuccess");
+        assertTrue(responseBody.contains("<cas:authenticationSuccess>"));
+        assertTrue(responseBody.contains("<cas:user>john@example.org</cas:user>"));
+        assertFalse(responseBody.contains("<cas:proxyGrantingTicket>"));
+        assertFalse(responseBody.contains("<cas:proxies>"));
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
+
+        final IdPSession updatedSession = sessionResolver.resolveSingle(
+                new CriteriaSet(new SessionIdCriterion(session.getId())));
+        assertNotNull(updatedSession);
+        assertEquals(updatedSession.getSPSessions().size(), 0);
     }
 
 

@@ -22,6 +22,8 @@ import com.google.common.base.Functions;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.cas.config.ConfigLookupFunction;
+import net.shibboleth.idp.cas.config.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
@@ -36,6 +38,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Extracts {@link IdPAttribute}s from a populated {@link AttributeContext} and places them in the
@@ -65,6 +68,10 @@ public class ExtractAttributesAction extends
                     new SessionContextPrincipalLookupFunction(),
                     new ChildContextLookup<ProfileRequestContext, SessionContext>(SessionContext.class));
 
+    /** Profile configuration lookup function. */
+    private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction =
+            new ConfigLookupFunction<>(ValidateConfiguration.class);
+
 
     @Nonnull
     @Override
@@ -77,9 +84,27 @@ public class ExtractAttributesAction extends
             throw new IllegalStateException("AttributeContext not found in profile request context.");
         }
 
-        final String principal = principalLookupFunction.apply(profileRequestContext);
+        final ValidateConfiguration validateConfiguration = configLookupFunction.apply(profileRequestContext);
+        if (validateConfiguration == null) {
+            throw new IllegalArgumentException("Cannot locate ValidateConfiguration");
+        }
+
+        final String principal;
+        if (validateConfiguration.getUserAttribute() != null) {
+            log.debug("Using {} for CAS username", validateConfiguration.getUserAttribute());
+            final IdPAttribute attribute = ac.getIdPAttributes().get(validateConfiguration.getUserAttribute());
+            if (attribute != null && !attribute.getValues().isEmpty()) {
+                principal = attribute.getValues().get(0).getValue().toString();
+            } else {
+                log.debug("Filtered attribute " + validateConfiguration.getUserAttribute() + " has no value");
+                principal = null;
+            }
+        } else {
+            principal = principalLookupFunction.apply(profileRequestContext);
+        }
+
         if (principal == null) {
-            throw new IllegalStateException("Subject principal not found in profile request context.");
+            throw new IllegalStateException("Principal cannot be null");
         }
 
         final TicketValidationResponse response = getCASResponse(profileRequestContext);

@@ -11,20 +11,30 @@
 
     <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
-            <util:list />
+            <list />
         </property>
     </bean>
 
     <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
-            <util:list>
+            <list>
                 <ref bean="CAS.LoginConfiguration" />
                 <ref bean="CAS.ProxyConfiguration" />
                 <ref bean="CAS.ValidateConfiguration" />
-            </util:list>
+            </list>
         </property>
     </bean>
 
-    <util:list id="shibboleth.RelyingPartyOverrides" />
+    <util:list id="shibboleth.RelyingPartyOverrides">
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://alt-username.example.org/">
+            <property name="profileConfigurations">
+                <list>
+                    <ref bean="CAS.LoginConfiguration" />
+                    <ref bean="CAS.ProxyConfiguration" />
+                    <bean parent="CAS.ValidateConfiguration" p:userAttribute="mail" />
+                </list>
+            </property>
+        </bean>
+    </util:list>
 
 </beans>
