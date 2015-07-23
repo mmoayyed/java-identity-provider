@@ -17,10 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc;
 
+import java.util.Collections;
+
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -40,7 +45,8 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         connector.initialize();
     }
 
-    @Test(enabled=false) public void withoutSalt()  {
+    @Test(enabled=false) public void withoutSalt()  { 
+        // Needs schema change
         ComputedIDDataConnector connector = getDataConnector("computedNoSalt.xml", ComputedIDDataConnector.class);
         
         Assert.assertEquals(connector.getId(), "computedNoSalt");
@@ -54,6 +60,20 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         } catch (ComponentInitializationException e) {
             // OK
         }
+    }
+
+    @Test(enabled=false) public void propertySalt()  {
+        GenericApplicationContext context = new GenericApplicationContext();
+        final String salt = "0123456789ABCDEF";
+        context.setDisplayName("ApplicationContext");
+        final  ConfigurableEnvironment env = context.getEnvironment();
+        env.getPropertySources().addLast(new MapPropertySource("foo", Collections.singletonMap("the.ComputedIDDataConnector.salt", (Object)salt)));
+        env.setPlaceholderPrefix("%{");
+        env.setPlaceholderSuffix("}");
+        
+        final ComputedIDDataConnector connector =  getBean(DATACONNECTOR_FILE_PATH + "computedProperty.xml", ComputedIDDataConnector.class, context, false);
+        
+        Assert.assertEquals(connector.getSalt(), salt.getBytes());
     }
 
 }

@@ -74,7 +74,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         loadFile(fileName, context, false);
     }
 
-    private <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
+    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
             boolean supressValid) {
 
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
@@ -152,6 +152,8 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     protected <Type extends DataConnector> Type getDataConnector(String fileName, Class<Type> claz) {
         return getDataConnector(fileName, claz, false);
     }
+    
+    
 
     private <Type extends DataConnector> Type
             getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
