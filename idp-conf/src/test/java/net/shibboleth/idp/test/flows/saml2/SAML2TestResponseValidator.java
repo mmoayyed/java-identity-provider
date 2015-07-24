@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.test.flows.saml2;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.utilities.java.support.net.IPRange;
 
 import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.impl.XSAnyBuilder;
@@ -60,6 +62,8 @@ import org.opensaml.xmlsec.encryption.support.InlineEncryptedKeyResolver;
 import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
 import org.testng.Assert;
 
+import com.google.common.net.InetAddresses;
+
 /**
  * SAML 2 {@link #org.opensaml.saml.saml2.core.Response} validator.
  */
@@ -76,6 +80,9 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
 
     /** Expected subject confirmation method. */
     @Nonnull public String subjectConfirmationMethod = SubjectConfirmation.METHOD_BEARER;
+    
+    /** Expected subject confirmation data address range. Defaults to "127.0.0.1/32". */
+    @Nonnull public IPRange subjectConfirmationDataAddressRange = IPRange.parseCIDRBlock("127.0.0.1/32");
 
     /** Whether authn statements should be validated. */
     @Nonnull public boolean validateAuthnStatements = true;
@@ -407,7 +414,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     /**
      * Assert that :
      * <ul>
-     * <li>the subject confirmation data address is "127.0.0.1"</li>
+     * <li>the subject confirmation data address is in the expected range</li>
      * <li>the subject confirmation data NotOnOrAfter is not null</li>
      * <li>the subject confirmation data recipient is not null nor empty</li>
      * </ul>
@@ -415,7 +422,8 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      * @param subjectConfirmationData the subject confirmation data
      */
     public void assertSubjectConfirmationData(@Nullable final SubjectConfirmationData subjectConfirmationData) {
-        Assert.assertEquals(subjectConfirmationData.getAddress(), "127.0.0.1");
+        final InetAddress address = InetAddresses.forString(subjectConfirmationData.getAddress());
+        Assert.assertTrue(subjectConfirmationDataAddressRange.contains(address));
         // TODO only in some cases ? Assert.assertNotNull(subjectConfirmationData.getNotBefore());
         Assert.assertNotNull(subjectConfirmationData.getNotOnOrAfter());
         Assert.assertNotNull(subjectConfirmationData.getRecipient());
