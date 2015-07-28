@@ -185,7 +185,8 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * Set the 'idp.home' property to "classpath:".
      */
     public static void setIdPHomeProperty() {
-        System.setProperty("idp.home", "classpath*:");
+        System.setProperty("idp.home", "classpath:");
+        System.setProperty("idp.webflows", "classpath*:/flows");
     }
 
     /**
