@@ -19,7 +19,11 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,14 +33,17 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
+import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
 import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
@@ -68,6 +75,9 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     /** Lookup strategy function for obtaining {@link AuthnRequest}. */
     @Nonnull private Function<ProfileRequestContext,AuthnRequest> authnRequestLookupStrategy;
 
+    /** Context URIs to ignore in a request. */
+    @Nonnull @NonnullElements private Set<String> ignoredContexts;
+    
     /** The request message to read from. */
     @Nullable private AuthnRequest authnRequest;
     
@@ -75,6 +85,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     public ProcessRequestedAuthnContext() {
         authnRequestLookupStrategy =
                 Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
+        ignoredContexts = Collections.singleton(AuthnContext.UNSPECIFIED_AUTHN_CTX);
     }
 
     /**
@@ -86,6 +97,26 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         authnRequestLookupStrategy = Constraint.isNotNull(strategy, "AuthnRequest lookup strategy cannot be null");
+    }
+    
+    /**
+     * Set the context class or declaration URIs to ignore if found in a request.
+     * 
+     * <p>This defaults to only {@link AuthnContext#UNSPECIFIED_AUTHN_CTX}.</p>
+     * 
+     * @param contexts  contexts to ignore
+     */
+    public void setIgnoredContexts(@Nonnull @NonnullElements final Collection<String> contexts) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        final Collection<String> trimmed = StringSupport.normalizeStringCollection(contexts);
+        
+        if (trimmed.isEmpty()) {
+            ignoredContexts = Collections.emptySet();
+        } else {
+            ignoredContexts = new HashSet<>(trimmed.size());
+            ignoredContexts.addAll(trimmed);
+        }
     }
     
     /** {@inheritDoc} */
@@ -120,13 +151,21 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         if (!requestedCtx.getAuthnContextClassRefs().isEmpty()) {
             for (final AuthnContextClassRef ref : requestedCtx.getAuthnContextClassRefs()) {
                 if (ref.getAuthnContextClassRef() != null) {
-                    principals.add(new AuthnContextClassRefPrincipal(ref.getAuthnContextClassRef()));
+                    if (!ignoredContexts.contains(ref.getAuthnContextClassRef())) {
+                        principals.add(new AuthnContextClassRefPrincipal(ref.getAuthnContextClassRef()));
+                    } else {
+                        log.info("{} Ignoring AuthnContextClassRef: {}", getLogPrefix(), ref.getAuthnContextClassRef());
+                    }
                 }
             }
         } else if (!requestedCtx.getAuthnContextDeclRefs().isEmpty()) {
             for (final AuthnContextDeclRef ref : requestedCtx.getAuthnContextDeclRefs()) {
                 if (ref.getAuthnContextDeclRef() != null) {
-                    principals.add(new AuthnContextDeclRefPrincipal(ref.getAuthnContextDeclRef()));
+                    if (!ignoredContexts.contains(ref.getAuthnContextDeclRef())) {
+                        principals.add(new AuthnContextDeclRefPrincipal(ref.getAuthnContextDeclRef()));
+                    } else {
+                        log.info("{} Ignoring AuthnContextDeclRef: {}", getLogPrefix(), ref.getAuthnContextDeclRef());
+                    }
                 }
             }
         }

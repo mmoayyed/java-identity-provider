@@ -27,6 +27,8 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import java.util.Collections;
+
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.common.SAMLObjectBuilder;
@@ -160,4 +162,35 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(rpc.getRequestedPrincipals().size(), 2);
     }
 
+    @Test public void testIgnore() {
+        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        final RequestedAuthnContext rac = racBuilder.buildObject();
+        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        final AuthnContextClassRef ref = classBuilder.buildObject();
+        ref.setAuthnContextClassRef(AuthnContext.UNSPECIFIED_AUTHN_CTX);
+        rac.getAuthnContextClassRefs().add(ref);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, false); 
+        Assert.assertNull(rpc);
+    }
+
+    @Test public void testIgnore2() throws ComponentInitializationException {
+        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        final RequestedAuthnContext rac = racBuilder.buildObject();
+        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        final AuthnContextClassRef ref = classBuilder.buildObject();
+        ref.setAuthnContextClassRef(AuthnContext.PPT_AUTHN_CTX);
+        rac.getAuthnContextClassRefs().add(ref);
+
+        action = new ProcessRequestedAuthnContext();
+        action.setIgnoredContexts(Collections.singletonList(AuthnContext.PPT_AUTHN_CTX));
+        action.initialize();
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, false); 
+        Assert.assertNull(rpc);
+    }
 }

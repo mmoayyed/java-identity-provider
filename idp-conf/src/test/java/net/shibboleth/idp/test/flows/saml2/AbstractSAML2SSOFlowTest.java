@@ -32,10 +32,13 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
+import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.saml.saml2.encryption.Encrypter.KeyPlacement;
@@ -133,6 +136,16 @@ public abstract class AbstractSAML2SSOFlowTest extends AbstractSAML2FlowTest {
         subject.setEncryptedID(getEncrypter().encrypt(nameID));
         authnRequest.setSubject(subject);
 
+        final RequestedAuthnContext reqAC =
+                (RequestedAuthnContext) builderFactory.getBuilder(RequestedAuthnContext.DEFAULT_ELEMENT_NAME).buildObject(
+                        RequestedAuthnContext.DEFAULT_ELEMENT_NAME);
+        final AuthnContextClassRef ac =
+                (AuthnContextClassRef) builderFactory.getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME).buildObject(
+                        AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        ac.setAuthnContextClassRef(AuthnContext.UNSPECIFIED_AUTHN_CTX);
+        reqAC.getAuthnContextClassRefs().add(ac);
+        authnRequest.setRequestedAuthnContext(reqAC);
+        
         return authnRequest;
     }
 
