@@ -25,7 +25,7 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.cas.config.LoginConfiguration;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
-import net.shibboleth.idp.consent.context.ConsentContext;
+import net.shibboleth.idp.consent.context.impl.ConsentContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;

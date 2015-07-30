@@ -12,7 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Consent</name>
-    <artifactId>idp-consent</artifactId>
+    <artifactId>idp-consent-impl</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
