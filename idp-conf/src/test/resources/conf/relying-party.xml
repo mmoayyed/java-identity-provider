@@ -62,7 +62,7 @@
                     </bean>
                     <ref bean="SAML1.AttributeQuery" />
                     <ref bean="SAML1.ArtifactResolution" />
-                    <bean parent="SAML2.SSO" p:postAuthenticationFlows="#{{'terms-of-use', 'attribute-release'}}">
+                    <bean parent="SAML2.SSO">
                         <!--
                         <property name="defaultAuthenticationMethods">
                             <util:list>
