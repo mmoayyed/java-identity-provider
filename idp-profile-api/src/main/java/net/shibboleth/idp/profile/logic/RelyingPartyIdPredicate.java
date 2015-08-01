@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.logic;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
@@ -44,6 +45,15 @@ public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<Profile
      */
     public RelyingPartyIdPredicate(@Nonnull @NonnullElements final Collection<String> candidates) {
         super(new RelyingPartyIdLookupFunction(), StringSupport.normalizeStringCollection(candidates));
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param candidate a single value to check against
+     */
+    public RelyingPartyIdPredicate(@Nonnull @NonnullElements final String candidate) {
+        this(Collections.singleton(candidate));
     }
 
     /**
