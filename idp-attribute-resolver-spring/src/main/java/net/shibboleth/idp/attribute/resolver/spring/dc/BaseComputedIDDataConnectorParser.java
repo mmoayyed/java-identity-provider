@@ -73,20 +73,17 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
 
         final String salt = StringSupport.trimOrNull(config.getAttributeNS(null, "salt"));
-        final byte[] saltBytes;
         if (null == salt) {
-            saltBytes = null;
-            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', no salt provided", new Object[] {
-                    getLogPrefix(), generatedAttribute, sourceAttribute,});
+            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', no salt provided", 
+                    getLogPrefix(), generatedAttribute, sourceAttribute);
         } else {
-            saltBytes = salt.getBytes();
-            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', salt: '{}'", new Object[] {
-                    getLogPrefix(), generatedAttribute, sourceAttribute, saltBytes,});
+            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', salt (or property): '{}'", 
+                    getLogPrefix(), generatedAttribute, sourceAttribute, salt);
         }
 
         builder.addPropertyValue("generatedAttributeId", generatedAttribute);
         builder.addPropertyValue("sourceAttributeId", sourceAttribute);
-        builder.addPropertyValue("salt", saltBytes);
+        builder.addPropertyValue("salt", salt);
     }
     /**
      * return a string which is to be prepended to all log messages.

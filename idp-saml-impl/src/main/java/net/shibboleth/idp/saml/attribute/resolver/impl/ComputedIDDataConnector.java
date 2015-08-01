@@ -79,8 +79,30 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
     public void setSalt(@Nullable byte[] salt) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        idStrategy.setSalt(salt);
+        if (null != salt) {
+            log.debug("{} Salt set as bytes to {}", getLogPrefix(), salt.toString());
+            idStrategy.setSalt(salt);
+        } else {
+            log.debug("{} Null salt passed, nothing set", getLogPrefix());
+        }
     }
+    
+    /**
+     * Set the salt used when computing the ID.
+     * 
+     * @param salt used when computing the ID
+     */
+    public void setSalt(@Nullable String salt) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        if (null != salt) {
+            log.debug("{} Salt set as bytes to {}", getLogPrefix(), salt.toString());
+            idStrategy.setSalt(salt.getBytes());
+        } else {
+            log.debug("{} Null salt passed, nothing set", getLogPrefix());
+        }
+    }
+
 
     /**
      * Set the JCE algorithm name of the digest algorithm to use (default is SHA).
