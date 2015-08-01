@@ -89,5 +89,23 @@ public class OrPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
+    
+    @Test public void testSingletons() throws ComponentInitializationException {
+        OrPolicyRule rule = new OrPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_NONE));
+        rule.setId("Test");
+        rule.initialize();
+        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
+
+        rule = new OrPolicyRule(Collections.singletonList(PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
+        rule.setId("Test");
+        rule.initialize();
+        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+
+        rule = new OrPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_ALL));
+        rule.setId("Test");
+        rule.initialize();
+        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
+    }
+
 
 }

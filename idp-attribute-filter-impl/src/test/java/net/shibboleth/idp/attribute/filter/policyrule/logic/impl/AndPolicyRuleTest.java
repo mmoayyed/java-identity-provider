@@ -24,7 +24,6 @@ import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
-import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.AndPolicyRule;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
@@ -79,5 +78,22 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+    }
+    
+    @Test public void testSingletons() throws ComponentInitializationException {
+        AndPolicyRule rule = new AndPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_NONE));
+        rule.setId("Test");
+        rule.initialize();
+        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
+
+        rule = new AndPolicyRule(Collections.singletonList(PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
+        rule.setId("Test");
+        rule.initialize();
+        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
+
+        rule = new AndPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_ALL));
+        rule.setId("Test");
+        rule.initialize();
+        Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
     }
 }

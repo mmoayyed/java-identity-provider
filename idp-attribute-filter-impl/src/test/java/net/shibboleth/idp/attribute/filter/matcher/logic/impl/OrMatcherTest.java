@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.matcher.impl.MockValuePredicateMatcher;
-import net.shibboleth.idp.attribute.filter.matcher.logic.impl.OrMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -74,6 +73,22 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
             // expected this
         }
     }
+    
+    @Test public void testSingleton() throws Exception {
+        final OrMatcher matcher =
+                new OrMatcher(Collections.singletonList((Matcher) new MockValuePredicateMatcher(or(equalTo(value1),
+                        equalTo(value2)))));
+
+        matcher.setId("test");
+        matcher.initialize();
+
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.contains(value2));
+        Assert.assertTrue(result.contains(value1));
+
+    }
+
 
     @Test public void testGetMatchingValues() throws Exception {
         OrMatcher matcher =

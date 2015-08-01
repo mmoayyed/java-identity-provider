@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.matcher.impl.MockValuePredicateMatcher;
-import net.shibboleth.idp.attribute.filter.matcher.logic.impl.AndMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -73,9 +72,24 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         }
     }
 
+    @Test public void testSingleton() throws Exception {
+        final AndMatcher matcher =
+                new AndMatcher(Collections.singletonList((Matcher) new MockValuePredicateMatcher(or(equalTo(value1),
+                        equalTo(value2)))));
+
+        matcher.setId("test");
+        matcher.initialize();
+
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.contains(value2));
+        Assert.assertTrue(result.contains(value1));
+
+    }
+
     @Test public void testGetMatchingValues() throws Exception {
-        AndMatcher matcher =
-                new AndMatcher(Arrays.<Matcher>asList(
+        final AndMatcher matcher =
+                new AndMatcher(Arrays.<Matcher> asList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(or(equalTo(value2), equalTo(value3)))));
 
@@ -104,14 +118,14 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testFails() throws Exception {
-        AndMatcher matcher = new AndMatcher(Arrays.<Matcher>asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
+        AndMatcher matcher = new AndMatcher(Arrays.<Matcher> asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
         matcher.setId("test");
         matcher.initialize();
 
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNull(result);
 
-        matcher = new AndMatcher(Arrays.<Matcher>asList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));
+        matcher = new AndMatcher(Arrays.<Matcher> asList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));
         matcher.setId("test");
         matcher.initialize();
 
@@ -128,7 +142,7 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void emptyResults() throws ComponentInitializationException {
         AndMatcher matcher =
-                new AndMatcher(Arrays.<Matcher>asList(
+                new AndMatcher(Arrays.<Matcher> asList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(equalTo(value3))));
 

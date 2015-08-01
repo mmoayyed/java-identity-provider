@@ -53,6 +53,23 @@ public class OrTest extends BaseAttributeFilterParserTest {
         Assert.assertEquals(children.size(), 2);
         Assert.assertEquals(children.get(0).getClass(), NotPolicyRule.class);
         Assert.assertEquals(children.get(1).getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
-
     }
+    
+    @Test public void matcherSingleton() throws ComponentInitializationException {
+        OrMatcher what = (OrMatcher) getMatcher("orSingleton.xml");
+
+        final List<Matcher> children = what.getComposedMatchers();
+
+        Assert.assertEquals(children.size(), 1);
+        Assert.assertEquals(children.get(0).getClass(), NotMatcher.class);
+    }
+
+    @Test public void policySingleton() throws ComponentInitializationException {
+        OrPolicyRule what = (OrPolicyRule) getPolicyRule("orSingleton.xml");
+
+        final List<PolicyRequirementRule> children = what.getComposedRules();
+        Assert.assertEquals(children.size(), 1);
+        Assert.assertEquals(children.get(0).getClass(), PolicyRequirementRule.MATCHES_ALL.getClass());
+    }
+
 }

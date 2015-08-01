@@ -22,7 +22,7 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <choice minOccurs="2" maxOccurs="unbounded">
+                <choice maxOccurs="unbounded">
                     <element name="Rule" type="afp:MatchFunctorType">
                         <annotation>
                             <documentation>
@@ -50,7 +50,7 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <choice minOccurs="2" maxOccurs="unbounded">
+                <choice maxOccurs="unbounded">
                     <element name="Rule" type="afp:MatchFunctorType">
                         <annotation>
                             <documentation>
