@@ -252,12 +252,12 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
 
     /**
      * Delete storage records until the number of records stored is one less than
-     * {@link net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor#getMaximumNumberOfStoredRecords()} so that a new
-     * record may be stored.
+     * {@link net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor#getMaximumNumberOfStoredRecords()}
+     * so that a new record may be stored.
      * 
      * Storage records will be pruned if
-     * {@link net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor#getMaximumNumberOfStoredRecords()} is greater than
-     * zero.
+     * {@link net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor#getMaximumNumberOfStoredRecords()}
+     * is greater than zero.
      * 
      * The function used to determine the records to be deleted may be set by calling
      * {@link #setStorageKeysStrategy(Function)}. By default, records are deleted on a first-in-first-out basis,
