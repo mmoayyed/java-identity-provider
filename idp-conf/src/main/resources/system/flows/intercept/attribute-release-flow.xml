@@ -28,7 +28,8 @@
     <!-- If consent revocation was requested, skip reading from storage. -->
 
     <decision-state id="TestForRevokeConsent">
-        <if test="requestParameters._shib_idp_revokeConsent" then="RevokeConsent" else="ReadConsentFromStorage" />
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.consent.context.ConsentManagementContext), true).getRevokeConsent()"
+            then="RevokeConsent" else="ReadConsentFromStorage" />
     </decision-state>
 
     <!-- Revoke consent by deleting consent storage records. -->

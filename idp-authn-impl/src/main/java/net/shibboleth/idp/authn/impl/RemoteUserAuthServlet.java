@@ -39,7 +39,6 @@ import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
-import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -258,12 +257,6 @@ public class RemoteUserAuthServlet extends HttpServlet {
                 log.info("User identity not found in request");
                 ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                 return;
-            }
-
-            final String revokeConsent =
-                    httpRequest.getParameter(ProfileInterceptorFlowDescriptor.REVOKE_CONSENT_PARAM);
-            if (revokeConsent != null && ("1".equals(revokeConsent) || "true".equals(revokeConsent))) {
-                httpRequest.setAttribute(ExternalAuthentication.REVOKECONSENT_KEY, Boolean.TRUE);
             }
             
             if (authnMethodHeader != null) {

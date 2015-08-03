@@ -38,6 +38,7 @@ import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
+import net.shibboleth.idp.consent.context.ConsentManagementContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorFlowDescriptor;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -160,8 +161,9 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         
         attr = request.getAttribute(REVOKECONSENT_KEY);
         if (attr != null && attr instanceof Boolean && ((Boolean) attr).booleanValue()) {
-            response.sendRedirect(extContext.getFlowExecutionUrl()
-                    + "&" + ProfileInterceptorFlowDescriptor.REVOKE_CONSENT_PARAM + "=1");        
+            final ConsentManagementContext consentCtx =
+                    getProfileRequestContext(request).getSubcontext(ConsentManagementContext.class, true);
+            consentCtx.setRevokeConsent(true);
         } else {
             response.sendRedirect(extContext.getFlowExecutionUrl());
         }

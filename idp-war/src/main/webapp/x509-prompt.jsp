@@ -59,13 +59,21 @@ final boolean identifiedRP = rpUIContext != null && !rpContext.getRelyingPartyId
               Please make sure that your user certificate is properly configured in your web browser
               and click on the <strong>Certificate Login </strong> button.
               </section>
-
+              <br/>
               <section>
+                <div class="form-element-wrapper">
+                <input type="checkbox" name="<%= ExternalAuthentication.REVOKECONSENT_KEY %>" value="true">
+                <spring:message code="idp.attribute-release.revoke"
+                    text="Clear prior granting of permission for release of your information to this service." />
+                </div>
+                <div class="form-element-wrapper">
                 <input type="checkbox" name="x509passthrough" value="true" tabindex="2">
                 Do not show this page in the future.
-
+                </div>
+                <div class="form-element-wrapper">
                 <button class="form-element form-button" type="submit" name="login" value="1"
                     tabindex="1" accesskey="l">Certificate Login</button>
+                </div>
               </section>
             </form>
 

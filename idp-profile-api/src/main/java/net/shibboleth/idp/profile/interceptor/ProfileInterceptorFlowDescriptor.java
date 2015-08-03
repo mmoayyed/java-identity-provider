@@ -46,14 +46,6 @@ public class ProfileInterceptorFlowDescriptor extends AbstractIdentifiableInitia
 
     /** Prefix convention for flow IDs. */
     @Nonnull @NotEmpty public static final String FLOW_ID_PREFIX = "intercept/";
-
-    /**
-     * A standardized parameter to signal revocation of prior consent for any interceptor flows
-     * implementing such.
-     * 
-     * @since 3.2.0
-     */
-    @Nonnull @NotEmpty public static final String REVOKE_CONSENT_PARAM = "_shib_idp_revokeConsent";
     
     /** Predicate that must be true for this flow to be usable for a given request. */
     @Nonnull private Predicate<ProfileRequestContext> activationCondition;
