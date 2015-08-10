@@ -39,20 +39,36 @@
             </Component>
             <!-- Jetty Configuration-->
             <Component Id="JettyConfig" Directory="INSTALLDIR" Guid="{FE729EF2-8293-493A-80C9-69CF54DC4565}" KeyPath="yes" Win64="no">
-                <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM">
+                <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Java" Root="HKLM" ForceCreateOnInstall="yes">
+                    <Permission User="Administrators" GenericAll="yes" />
+                    <Permission User="SYSTEM" GenericAll="yes" />
                     <RegistryValue Name="Options" Type="multiString">
+                        <Permission User="Administrators" GenericAll="yes" />
+                        <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>-Didp.home=[JAVA_IDP_HOME]</MultiStringValue>
                     </RegistryValue>
-                    <RegistryValue Name="JvmMx" Value="[JAVA_JVMMX]" Type="string" /><!-- Its an integer, but we added the # -->
+                    <RegistryValue Name="JvmMx" Value="[JAVA_JVMMX]" Type="string">
+                        <!-- Its an integer, but we added the # -->
+                        <Permission User="Administrators" GenericAll="yes" />
+                        <Permission User="SYSTEM" GenericAll="yes" />
+                    </RegistryValue>
                 </RegistryKey>
-                <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Start" Root="HKLM">
+                <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Start" Root="HKLM" ForceCreateOnInstall="yes">
+                    <Permission User="Administrators" GenericAll="yes" />
+                    <Permission User="SYSTEM" GenericAll="yes" />
                     <RegistryValue Name="Params" Type="multiString" Action="append">
+                        <Permission User="Administrators" GenericAll="yes" />
+                        <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
                         <MultiStringValue>jetty.logs=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
                 </RegistryKey>
-                <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Stop" Root="HKLM">
+                <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Stop" Root="HKLM" ForceCreateOnInstall="yes">
+                    <Permission User="Administrators" GenericAll="yes" />
+                    <Permission User="SYSTEM" GenericAll="yes" />
                     <RegistryValue Name="Params" Type="multiString" Action="append">
+                        <Permission User="Administrators" GenericAll="yes" />
+                        <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
                         <MultiStringValue>jetty.logs=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
