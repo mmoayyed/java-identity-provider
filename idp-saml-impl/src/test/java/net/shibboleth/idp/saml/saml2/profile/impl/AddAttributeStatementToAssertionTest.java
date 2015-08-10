@@ -64,6 +64,9 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     /** The name of the second attribute. */
     private final static String MY_NAME_2 = "myName2";
 
+    /** The second name of the first attribute. */
+    private final static String MY_ALTNAME_1 = "myAltName1";
+
     /** The value of the first attribute. */
     private final static String MY_VALUE_1 = "myValue1";
 
@@ -256,7 +259,12 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
         attributeEncoder1.setNameFormat(MY_NAMESPACE);
         attributeEncoder1.initialize();
 
-        final Collection collection1 = Arrays.asList(attributeEncoder1);
+        final SAML2StringAttributeEncoder attributeEncoder1_2 = new SAML2StringAttributeEncoder();
+        attributeEncoder1_2.setName(MY_ALTNAME_1);
+        attributeEncoder1_2.setNameFormat(MY_NAMESPACE);
+        attributeEncoder1_2.initialize();
+
+        final Collection collection1 = Arrays.asList(attributeEncoder1, attributeEncoder1_2);
         attribute1.setEncoders(collection1);
 
         final IdPAttribute attribute2 = new IdPAttribute(MY_NAME_2);
@@ -284,8 +292,10 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
     private void testAttributeStatement(AttributeStatement attributeStatement) {
 
         Assert.assertNotNull(attributeStatement.getAttributes());
-        Assert.assertEquals(attributeStatement.getAttributes().size(), 2);
+        Assert.assertEquals(attributeStatement.getAttributes().size(), 3);
 
+        boolean one = false, altone = false, two = false;
+        
         for (final Attribute samlAttr : attributeStatement.getAttributes()) {
             Assert.assertNotNull(samlAttr.getAttributeValues());
             Assert.assertEquals(samlAttr.getAttributeValues().size(), 1);
@@ -293,11 +303,21 @@ public class AddAttributeStatementToAssertionTest extends OpenSAMLInitBaseTestCa
             Assert.assertTrue(xmlObject instanceof XSStringImpl);
             if (samlAttr.getName().equals(MY_NAME_1)) {
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_1);
+                one = true;
             } else if (samlAttr.getName().equals(MY_NAME_2)) {
                 Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_2);
+                altone = true;
+            } else if (samlAttr.getName().equals(MY_ALTNAME_1)) {
+                Assert.assertEquals(((XSStringImpl) xmlObject).getValue(), MY_VALUE_1);
+                two = true;
             } else {
                 Assert.fail("Incorrect attribute name.");
             }
+        }
+
+        
+        if (!one || !altone || !two) {
+            Assert.fail("Missing attribute");
         }
     }
 

@@ -35,6 +35,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.idp.saml.attribute.encoding.SAML2AttributeEncoder;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAttributeStatementToAssertion;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -140,10 +141,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
 
         final ArrayList<Attribute> encodedAttributes = new ArrayList<>(attributes.size());
         for (final IdPAttribute attribute : Collections2.filter(attributes, Predicates.notNull())) {
-            final Attribute encodedAttribute = encodeAttribute(profileRequestContext, attribute);
-            if (encodedAttribute != null) {
-                encodedAttributes.add(encodedAttribute);
-            }
+            encodeAttribute(profileRequestContext, attribute, encodedAttributes);
         }
 
         if (encodedAttributes.isEmpty()) {
@@ -161,24 +159,27 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
     }
 
     /**
-     * Encodes a {@link IdPAttribute} into a {@link Attribute} if a proper encoder is available.
+     * Encodes a {@link IdPAttribute} into zero or more {@link Attribute} objects if a proper encoder is available.
      * 
      * @param profileRequestContext current profile request context
      * @param attribute the attribute to be encoded
+     * @param results collection to add the encoded SAML attributes to
      * 
-     * @return the encoded attribute, or null if the attribute could not be encoded
      * @throws AttributeEncodingException thrown if there is a problem encoding an attribute
      */
-    @Nullable private Attribute encodeAttribute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final IdPAttribute attribute) throws AttributeEncodingException {
+    private void encodeAttribute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final IdPAttribute attribute, @Nonnull @NonnullElements final Collection<Attribute> results)
+                    throws AttributeEncodingException {
 
         log.debug("{} Attempting to encode attribute {} as a SAML 2 Attribute", getLogPrefix(), attribute.getId());
         
         final Set<AttributeEncoder<?>> encoders = attribute.getEncoders();
         if (encoders.isEmpty()) {
             log.debug("{} Attribute {} does not have any encoders, nothing to do", getLogPrefix(), attribute.getId());
-            return null;
+            return;
         }
+
+        boolean added = false;
 
         for (final AttributeEncoder<?> encoder : encoders) {
             if (SAMLConstants.SAML20P_NS.equals(encoder.getProtocol())
@@ -186,7 +187,8 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
                     && encoder.getActivationCondition().apply(profileRequestContext)) {
                 log.debug("{} Encoding attribute {} as a SAML 2 Attribute", getLogPrefix(), attribute.getId());
                 try {
-                    return (Attribute) encoder.encode(attribute);
+                    results.add((Attribute) encoder.encode(attribute));
+                    added = true;
                 } catch (final AttributeEncodingException e) {
                     if (isIgnoringUnencodableAttributes()) {
                         log.debug("{} Unable to encode attribute {} as SAML 2 attribute", getLogPrefix(),
@@ -198,11 +200,12 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
             }
         }
 
-        log.debug("{} Attribute {} did not have a usable SAML 2 Attribute encoder associated with it, nothing to do",
-                getLogPrefix(), attribute.getId());
-        return null;
+        if (!added) {
+            log.debug(
+                    "{} Attribute {} did not have a usable SAML 2 Attribute encoder associated with it, nothing to do",
+                    getLogPrefix(), attribute.getId());
+        }
     }
-
     
     /**
      * Default strategy for obtaining assertion to modify.
