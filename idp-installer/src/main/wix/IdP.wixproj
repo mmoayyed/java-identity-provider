@@ -32,6 +32,7 @@
     <Compile Include="ShibbolethIdP-main.wxs" />
     <Compile Include="ShibbolethIdP-registry.wxs" />
     <Compile Include="ShibbolethIdP-update-dlg.wxs" />
+    <Compile Include="ShibbolethIdP-warndir-dlg.wxs" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <!--

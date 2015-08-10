@@ -79,8 +79,11 @@
             NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID&lt;&gt;"1"
           </Publish>
                     <Publish Event="NewDialog" Value="VerifyReadyDlg">
-            (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE"
-          </Publish>
+		(WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE" AND (INSTALL_JETTY OR (INSTALLDIR=DefaultInstallDir))
+	  </Publish>
+                    <Publish Event="NewDialog" Value="WarnDirDlgShib">
+            (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD &lt;&gt;"TRUE" AND NOT (INSTALL_JETTY OR (INSTALLDIR=DefaultInstallDir))
+	  </Publish>
                     <Publish Event="NewDialog" Value="ConfigADDlg">
             (WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1") AND CONFIGURE_AD="TRUE"
 	  </Publish>

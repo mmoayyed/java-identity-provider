@@ -42,10 +42,10 @@
             <Feature Id="InstallJetty" Title="Jetty">
                 <MergeRef Id="jetty" />
                 <ComponentRef Id="JettyPermissions" />
-                <ComponentRef Id="Shibd_idpw"/>
+                <ComponentRef Id="Shibd_idpw" />
             </Feature>
-	    <ComponentGroupRef Id="DeleteFiles"/>
-	    <ComponentGroupRef Id="IdPGroup" />
+            <ComponentGroupRef Id="DeleteFiles" />
+            <ComponentGroupRef Id="IdPGroup" />
             <ComponentGroupRef Id="SaveRegistry" />
             <ComponentRef Id="IdPPermissions" />
         </Feature>
@@ -62,8 +62,8 @@
                         </Directory>
                         <Directory Id="BinFolder" Name="bin">
                             <Component Id="Shibd_idpw" Guid="{30E1130E-BEBF-4167-83A0-BBDE083968C4}" Win64="no">
-                              <RegistryValue Id="Shibd_idpw_r" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="Shibd_idpw" Value="TRUE" Type="string" KeyPath="yes" />
-                                <Shortcut Id="Shibd_idpw_shortcut" Name="shibd_idpw.exe" Target="[ProgramFilesFolder]\Shibboleth\Procrun\shibd_idpw.exe"/>
+                                <RegistryValue Id="Shibd_idpw_r" Root="HKLM" Key="SOFTWARE\Shibboleth\IdP" Name="Shibd_idpw" Value="TRUE" Type="string" KeyPath="yes" />
+                                <Shortcut Id="Shibd_idpw_shortcut" Name="shibd_idpw.exe" Target="[ProgramFilesFolder]\Shibboleth\Procrun\shibd_idpw.exe" />
                             </Component>
                         </Directory>
                         <Component Id="IdPPermissions" Guid="{5672474B-3CD2-44EB-9942-871844A2B089}" Win64="no">
@@ -111,6 +111,7 @@
         <CustomAction Id="SetJavaIdpHome" BinaryKey="SetJavaIdpHomeSrc" VBScriptCall="" Execute="immediate" />
         <CustomAction Id="SetWriteConfigFiles" Property="WriteConfigFiles" Value="[INSTALLDIR];@;[DNSNAME];@;[INSTALL_JETTY];@;[IDP_SCOPE];@;[DEBUG_INSTALL];@;[CONFIGURE_AD];@;[AD_DOMAIN];@;[AD_USER];@;[AD_PASS];@;[AD_USE_GC]" />
 
+        <CustomAction Id="SetDefaultInstallDir" Property="DefaultInstallDir" Value="[WindowsVolume]opt\shibboleth-idp\" />
 
         <!-- Ant actions -->
         <CustomAction Id="SetIdpAnt" Property="QtIdpAnt" Value="&quot;[JAVA_EXECUTABLE]&quot; -cp &quot;[INSTALLDIR]\bin\lib\*;[INSTALLDIR]\webapp\WEB-INF\lib\*&quot; -Didp.home=&quot;[JAVA_IDP_HOME]&quot; org.apache.tools.ant.Main -e -f &quot;[INSTALLDIR]\bin\build.xml&quot; -Didp.property.file=idp.install.properties install-nocopy" />
@@ -123,7 +124,7 @@
 
         <?if $(var.msitype) = "x86" ?>
         <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#768" />
-        <?else?>
+        <?else ?>
         <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#1024" />
         <?endif ?>
 
@@ -131,7 +132,9 @@
 
             <!-- inherit installationDir if there is something to inherit (Conditions set in ShibolethIdP-registry) -->
             <Custom Action="InheritQIInstallDir" After="AppSearch">QI_INSTALL_DIR</Custom>
+            <Custom Action="SetDefaultInstallDir" After="AppSearch" />
             <Custom Action="InheritInstallDir" After="InheritQIInstallDir">OLD_INSTALLDIR</Custom>
+
 
             <!-- Set up defaults for AD and Jetty if we are a QI upgrade -->
             <Custom Action="InheritQIInstallJetty" After="AppSearch">QI_INSTALLED</Custom>

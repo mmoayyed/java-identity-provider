@@ -67,7 +67,8 @@
                 </Control>
 
                 <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Text="&amp;Next" Default="yes">
-                    <Publish Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+                    <Publish Event="NewDialog" Value="WarnDirDlgShib">NOT (INSTALL_JETTY OR (INSTALLDIR=DefaultInstallDir))</Publish>
+                    <Publish Event="NewDialog" Value="VerifyReadyDlg">INSTALL_JETTY OR (INSTALLDIR=DefaultInstallDir)</Publish>
                 </Control>
 
                 <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Text="&amp;Cancel" Cancel="yes">
