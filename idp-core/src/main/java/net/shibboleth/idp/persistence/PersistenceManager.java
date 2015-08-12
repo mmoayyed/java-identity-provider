@@ -23,6 +23,8 @@ import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
  * Interface describing behavior for IdP components that persist and manage a particular type of stored data.
  * 
  * @param <ItemType> type of item stored and managed
+ * 
+ * @deprecated
  */
 public interface PersistenceManager<ItemType> extends IdentifiedComponent {
 
