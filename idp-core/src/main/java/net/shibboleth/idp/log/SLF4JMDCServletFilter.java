@@ -41,6 +41,12 @@ import org.slf4j.MDC;
  */
 public class SLF4JMDCServletFilter implements Filter {
     
+    /** MDC attribute name for host name of the server to which the current request was sent. */
+    @Nonnull @NotEmpty public static final String SERVER_ADDRESS_MDC_ATTRIBUTE = "idp.server_hostname";
+
+    /** MDC attribute name for port number to which the current request was sent. */
+    @Nonnull @NotEmpty public static final String SERVER_PORT_MDC_ATTRIBUTE = "idp.server_port";
+    
     /** MDC attribute name for client address. */
     @Nonnull @NotEmpty public static final String CLIENT_ADDRESS_MDC_ATTRIBUTE = "idp.remote_addr";
 
@@ -54,6 +60,8 @@ public class SLF4JMDCServletFilter implements Filter {
         try {
             MDC.put(Version.MDC_ATTRIBUTE, Version.getVersion());
             MDC.put(CLIENT_ADDRESS_MDC_ATTRIBUTE, request.getRemoteAddr());
+            MDC.put(SERVER_ADDRESS_MDC_ATTRIBUTE, request.getServerName());
+            MDC.put(SERVER_PORT_MDC_ATTRIBUTE, Integer.toString(request.getServerPort()));
             if (request instanceof HttpServletRequest) {
                 final HttpSession session = ((HttpServletRequest) request).getSession();
                 if (session != null) {
