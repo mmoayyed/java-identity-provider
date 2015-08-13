@@ -67,6 +67,12 @@
             p:encoderBeanId="shibboleth.Encoders.SAML2SOAPEncoder" />
     </util:list>
 
+    <util:list id="shibboleth.OutgoingIDWSFSSOSBindings">
+        <!-- Special case, the binding is technically SOAP, but response endpoint checking based on PAOS. -->
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+            p:encoderBeanId="shibboleth.Encoders.IDWSFSOAPEncoder" />
+    </util:list>
+
     <!--
     These are the actual MessageEncoder beans that implement the outgoing binding requirements.
     There is generally never any reason to change these. The init-method is being nulled below to
@@ -108,6 +114,10 @@
           
     <bean id="shibboleth.Encoders.SAML2SOAPEncoder"
           class="org.opensaml.saml.saml2.binding.encoding.impl.HTTPSOAP11Encoder" scope="prototype" init-method=""
+          p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
+          
+    <bean id="shibboleth.Encoders.IDWSFSOAPEncoder"
+          class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.LibertyHTTPSOAP11Encoder" scope="prototype" init-method=""
           p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
 
 </beans>

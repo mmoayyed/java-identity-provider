@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+        p:profileId="#{T(net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration).PROFILE_ID}"
+        p:loggingId="%{idp.service.logging.saml2sso:SSO}"
+        p:browserProfile="false" />
+
+    <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
+        <constructor-arg>
+            <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.LibertyHTTPSOAP11Decoder" scope="prototype">
+                <property name="parserPool" ref="shibboleth.ParserPool" />
+                <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+    <alias name="shibboleth.OutgoingIDWSFSSOSBindings" alias="shibboleth.OutgoingBindings"/>
+    
+    <bean id="shibboleth.BindingSpecificMessageHandler"
+            class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">
+        <property name="handlers">
+            <util:list>
+                <!-- Liberty SOAP binding-specific handlers. -->
+                <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.AddFrameworkHandler" scope="prototype" />
+                <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.AddSenderHandler" scope="prototype" />
+                
+                <!-- Standard WS-Addressing and WS-Security handlers. -->
+                <bean class="org.opensaml.soap.wssecurity.messaging.impl.AddTimestampHandler" scope="prototype" />
+                <bean class="org.opensaml.soap.wsaddressing.messaging.impl.AddMessageIDHandler" scope="prototype" />
+                <bean class="org.opensaml.soap.wsaddressing.messaging.impl.AddRelatesToHandler" scope="prototype" />
+                <bean class="org.opensaml.soap.wsaddressing.messaging.impl.AddActionHandler" scope="prototype">
+                    <property name="actionURI">
+                        <util:constant static-field="net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants.SSOS_RESPONSE_WSA_ACTION_URI" />
+                    </property>
+                </bean>
+                
+                <!-- ECP-specific handlers. -->
+                <bean class="org.opensaml.saml.saml2.binding.impl.AddECPResponseHeaderHandler" scope="prototype" />
+                <!-- TODO Since this is really sub-profile of ECP, should we include the standard ECP stuff below?.
+                     Some of this is new since the original delegation work. -->
+                <!--
+                <bean class="org.opensaml.saml.saml2.binding.impl.AddRelayStateHeaderHandler" scope="prototype" />
+                <bean class="org.opensaml.saml.saml2.binding.impl.AddRequestAuthenticatedHeaderHandler" scope="prototype" />
+                <bean class="org.opensaml.saml.saml2.binding.impl.AddGeneratedKeyHeaderHandler" scope="prototype" />
+                <bean class="org.opensaml.saml.common.binding.impl.AddChannelBindingsHeaderHandler" scope="prototype" />
+                -->
+            </util:list>
+        </property>
+    </bean>
+    
+</beans>

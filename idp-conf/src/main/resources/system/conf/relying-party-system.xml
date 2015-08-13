@@ -102,11 +102,10 @@
         p:inboundInterceptorFlows="security-policy/saml-soap"
         p:encryptionOptional="%{idp.encryption.optional:false}" />
 
-    <!--
-    TBD: not yet implemented    
     <bean id="Liberty.SSOS"
-        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" />
-    -->
+        class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration" 
+            p:inboundInterceptorFlows="security-policy/saml2-idwsf-ssos" 
+            p:encryptionOptional="%{idp.encryption.optional:false}" />
 
     <bean id="CAS.LoginConfiguration"
           class="net.shibboleth.idp.cas.config.LoginConfiguration" />
