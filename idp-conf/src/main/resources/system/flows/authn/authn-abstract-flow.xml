@@ -18,6 +18,7 @@
     <end-state id="InvalidCredentials" />
     <end-state id="InvalidProfileContext" />
     <end-state id="InvalidSubjectContext" />
+    <end-state id="InvalidSubjectCanonicalizationContext" />
     <end-state id="NoCredentials" />
     <end-state id="NoPassive" />
     <end-state id="NoPotentialFlow" />
