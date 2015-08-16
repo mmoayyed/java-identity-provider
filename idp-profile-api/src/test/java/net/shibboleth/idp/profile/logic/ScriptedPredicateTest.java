@@ -21,7 +21,6 @@ import javax.script.ScriptException;
 
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.logic.ScriptedPredicate;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -34,59 +33,71 @@ import org.testng.annotations.Test;
  * Tests for {@link ScriptedPredicate}.
  */
 public class ScriptedPredicateTest {
-    
+
     private ProfileRequestContext withChild;
-    
+
     private ProfileRequestContext noChild;
-    
-    @BeforeClass public void setup(){
+
+    @BeforeClass public void setup() {
         withChild = new ProfileRequestContext<>();
         withChild.getSubcontext(RelyingPartyContext.class, true);
         noChild = new ProfileRequestContext<>();
     }
-    
+
     @Test public void simple() throws ScriptException {
         ScriptedPredicate test = ScriptedPredicate.inlineScript("new java.lang.Boolean(true);");
         Assert.assertTrue(test.apply(withChild));
-        
+
         test = ScriptedPredicate.inlineScript("true");
         Assert.assertTrue(test.apply(withChild));
 
         test = ScriptedPredicate.inlineScript("false");
         Assert.assertFalse(test.apply(withChild));
-        
+
         test = ScriptedPredicate.inlineScript("\"thirty\"");
         Assert.assertFalse(test.apply(withChild));
     }
 
     @Test public void inlineBean() throws ScriptException {
-     
+
         GenericApplicationContext ctx = new GenericApplicationContext();
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
+        try {
+            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                    new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
-        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource("/net/shibboleth/idp/profile/logic/inlineBean.xml"));
+            beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
+                    "/net/shibboleth/idp/profile/logic/inlineBean.xml"));
 
-        ctx.refresh();
-        final ScriptedPredicate rule = ctx.getBean(ScriptedPredicate.class);
+            ctx.refresh();
+            final ScriptedPredicate rule = ctx.getBean(ScriptedPredicate.class);
 
-        Assert.assertTrue(rule.apply(withChild));
+            Assert.assertTrue(rule.apply(withChild));
 
-        Assert.assertFalse(rule.apply(noChild));
+            Assert.assertFalse(rule.apply(noChild));
+        } finally {
+            ctx.close();
+        }
     }
-    
+
     @Test public void resourceBean() throws ScriptException {
-        
+
         GenericApplicationContext ctx = new GenericApplicationContext();
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
+        try {
+            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                    new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
-        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource("/net/shibboleth/idp/profile/logic/resourceBean.xml"));
+            beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
+                    "/net/shibboleth/idp/profile/logic/resourceBean.xml"));
 
-        ctx.refresh();
-        final ScriptedPredicate rule = ctx.getBean(ScriptedPredicate.class);
+            ctx.refresh();
+            final ScriptedPredicate rule = ctx.getBean(ScriptedPredicate.class);
 
-        Assert.assertTrue(rule.apply(withChild));
+            Assert.assertTrue(rule.apply(withChild));
 
-        Assert.assertFalse(rule.apply(noChild));        
+            Assert.assertFalse(rule.apply(noChild));
+        } finally {
+            ctx.close();
+        }
     }
 
 }
