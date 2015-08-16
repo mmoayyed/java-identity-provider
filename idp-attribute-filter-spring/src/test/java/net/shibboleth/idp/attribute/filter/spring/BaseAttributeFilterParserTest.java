@@ -41,7 +41,7 @@ import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterMethod;
 
 import com.google.common.base.Function;
 
@@ -58,7 +58,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
     
     private GenericApplicationContext pendingTeardownContext = null;
     
-    @AfterTest public void tearDownTestContext() {
+    @AfterMethod public void tearDownTestContext() {
         if (null == pendingTeardownContext ) {
             return;
         }

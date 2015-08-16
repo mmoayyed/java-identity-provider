@@ -38,7 +38,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
-import org.testng.annotations.AfterTest;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -53,7 +53,7 @@ public class AttributeFilterServiceTest {
     
     private GenericApplicationContext testContext = null;
     
-    @AfterTest public void tearDownTestContext() {
+    @AfterMethod public void tearDownTestContext() {
         if (null == testContext) {
             return;
         }
