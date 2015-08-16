@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -82,6 +83,21 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     private static final String DB_DATA_FILE = "/net/shibboleth/idp/attribute/resolver/spring/RdbmsData.sql";
 
     private DataSource datasource;
+    
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
 
     @BeforeTest public void setupDataConnectors() throws LDAPException {
 
@@ -108,6 +124,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     
     private ReloadableService<AttributeResolver> getResolver(String file) {
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
@@ -306,6 +323,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void selective() throws ResolutionException {
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
@@ -337,6 +355,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     
     @Test public void selectiveNavigate() throws ResolutionException {
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =

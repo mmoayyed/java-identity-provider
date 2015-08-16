@@ -30,10 +30,11 @@ import org.testng.annotations.Test;
 /** A work in progress to test the attribute resolver service. */
 
 public class DependencyTest extends BaseAttributeDefinitionParserTest {
-
+    
     private ResolverPluginDependency getDependency(String fileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + DependencyTest.class);
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, ResolverPluginDependency.class, context);

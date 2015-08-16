@@ -61,6 +61,21 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
 
     private File theDir;
 
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
+
     protected void assertEquals(IdPAttributeValue<?> value, String[] expected) {
         if (value instanceof StringAttributeValue) {
             StringAttributeValue stringValue = (StringAttributeValue) value;
@@ -100,6 +115,7 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void attributesTest() throws ResolutionException, SVNException {
         final GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
         final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =

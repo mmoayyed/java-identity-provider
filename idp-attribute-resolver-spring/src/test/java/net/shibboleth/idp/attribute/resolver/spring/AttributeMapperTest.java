@@ -39,15 +39,32 @@ import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 /** test the Auto generation of the attribute mapper */
 
 public class AttributeMapperTest extends OpenSAMLInitBaseTestCase {
 
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
+
     @Test public void mapper() throws ComponentInitializationException, ServiceException, ResolutionException {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeMapperTest.class);
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =

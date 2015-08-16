@@ -42,6 +42,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePropertySource;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -56,6 +57,21 @@ public class RDBMSDataConnectorParserTest {
     private static final String DATA_FILE = "/net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/RdbmsData.sql";
 
     private DataSource datasource;
+
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
 
     /**
      * Creates an HSQLDB database instance.
@@ -121,6 +137,7 @@ public class RDBMSDataConnectorParserTest {
     }
     protected RDBMSDataConnector getRdbmsDataConnector(Resource properties, final String... beanDefinitions) throws IOException {
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
         
         if (null != properties) {

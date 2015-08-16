@@ -41,6 +41,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 
 /**
  * Base class for tests for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
@@ -59,6 +60,21 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     public static final String ENCODER_FILE_PATH = BEAN_FILE_PATH + "enc/";
 
     public static final String PRINCIPALCONNECTOR_FILE_PATH = BEAN_FILE_PATH + "pc/";
+    
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
 
     private void loadFile(String fileName, GenericApplicationContext context, boolean supressValid) {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
@@ -120,6 +136,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
             Class<Type> claz, boolean supressValidation) {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
@@ -144,6 +161,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
             boolean supressValid) {
 
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
 
         return getAttributeDefn(fileName, claz, context, supressValid);
@@ -159,6 +177,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
             getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
 
         return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context, supressValid);
@@ -167,6 +186,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     protected <Type extends AttributeEncoder> Type getAttributeEncoder(String fileName, Class<Type> claz) {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
 
         return getAttributeEncoder(fileName, claz, context);
@@ -183,6 +203,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     protected PrincipalConnector getPrincipalConnector(String fileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
 
         return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
@@ -191,6 +212,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
     protected PrincipalConnector getPrincipalConnector(String fileName, String beanFileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 

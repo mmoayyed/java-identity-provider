@@ -53,6 +53,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourcePropertySource;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -72,6 +73,21 @@ public class LDAPDataConnectorParserTest {
 
     /** In-memory directory server. */
     private InMemoryDirectoryServer directoryServer;
+    
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
 
     /**
      * Creates an UnboundID in-memory directory server. Leverages LDIF found in test resources.
@@ -182,6 +198,7 @@ public class LDAPDataConnectorParserTest {
      */
     @Test public void IdP338Canary() {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
 
         XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
@@ -230,6 +247,7 @@ public class LDAPDataConnectorParserTest {
 
     protected LDAPDataConnector getLdapDataConnector(Resource properties, final String[] beanDefinitions) throws IOException {
         GenericApplicationContext context = new FilesystemGenericApplicationContext() ;
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
         
         if (null != properties) {

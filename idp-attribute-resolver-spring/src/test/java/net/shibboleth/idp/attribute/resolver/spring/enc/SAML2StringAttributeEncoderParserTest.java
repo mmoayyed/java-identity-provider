@@ -59,6 +59,7 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
     
     @Test public void conditional() {
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
 
         loadFile(ENCODER_FILE_PATH + "predicates.xml", context);
         

@@ -71,6 +71,7 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         mockEnvVars.setProperty("the.ComputedIDDataConnector.salt", salt);
 
         GenericApplicationContext context = new FilesystemGenericApplicationContext() ;
+        setTestContext(context);
         context.setDisplayName("ApplicationContext");
 
         MutablePropertySources propertySources = context.getEnvironment().getPropertySources();

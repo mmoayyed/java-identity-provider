@@ -75,6 +75,7 @@ public class StoredIdTest extends BaseAttributeDefinitionParserTest {
     protected void setupConnectors(String fileName) {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
 
         principalConnector = getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);

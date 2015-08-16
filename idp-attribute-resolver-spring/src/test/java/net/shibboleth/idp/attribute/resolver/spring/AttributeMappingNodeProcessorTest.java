@@ -34,6 +34,7 @@ import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -50,6 +51,21 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
 
     private AttributeMappingNodeProcessor processor;
 
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
+
     @BeforeClass public void setup() {
         entityDescriptor = unmarshallElement("/net/shibboleth/idp/attribute/resolver/filter/withAttributes.xml");
         Assert.assertNotNull(entityDescriptor);
@@ -60,6 +76,7 @@ public class AttributeMappingNodeProcessorTest extends XMLObjectBaseTestCase {
 
     private ReloadableService<AttributeResolver> getService() {
         GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: ");
 
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
