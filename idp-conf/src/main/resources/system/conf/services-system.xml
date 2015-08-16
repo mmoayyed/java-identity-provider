@@ -101,12 +101,12 @@
           p:serviceConfigurations-ref="#{
             getObject('%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'.trim()) != null
                 ? '%{idp.service.cas.registry.resources:shibboleth.CASServiceRegistryResources}'.trim()
-                : 'shibboelth.DefaultCASServiceRegistryResources' }"
+                : 'shibboleth.DefaultCASServiceRegistryResources' }"
           p:failFast="%{idp.service.cas.registry.failFast:false}"
           p:reloadCheckDelay="%{idp.service.cas.registry.checkInterval:PT0S}"
           p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
           p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer" />
-    <util:list id="shibboelth.DefaultCASServiceRegistryResources">
+    <util:list id="shibboleth.DefaultCASServiceRegistryResources">
         <value>%{idp.home}/conf/cas-protocol.xml</value>
     </util:list>
 
@@ -142,5 +142,14 @@
     <bean id="shibboleth.CASServiceRegistry"
           class="net.shibboleth.idp.cas.service.ReloadingServiceRegistry"
           c:delegate-ref="shibboleth.ReloadableCASServiceRegistry" />
+
+    <!-- List of ClientStorageService plugins needed for injection into storage read/write flows. -->
+    <bean id="shibboleth.DefaultClientStorageServices"
+            class="org.springframework.beans.factory.config.ListFactoryBean" abstract="true">
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
 
  </beans>
