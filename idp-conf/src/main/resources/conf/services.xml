@@ -141,5 +141,13 @@
         <value>%{idp.home}/messages/consent-messages</value>
         <value>%{idp.home}/messages/error-messages</value>
     </util:list>
+
+    <!-- List of client-side storage service plugins if you define any special ones of your own. -->
+    <bean id="shibboleth.ClientStorageServices" parent="shibboleth.DefaultClientStorageServices">
+        <property name="sourceList">
+            <list merge="true">
+            </list>
+        </property>
+    </bean>
     
 </beans>
