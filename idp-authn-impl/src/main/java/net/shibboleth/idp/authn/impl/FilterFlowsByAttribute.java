@@ -160,10 +160,10 @@ public class FilterFlowsByAttribute extends AbstractAuthenticationAction {
      */
     @Nullable private String getMatch(@Nonnull final AuthenticationFlowDescriptor flow) {
 
-        log.trace("{} Looking for match for flow {} against values for attribute {}", getLogPrefix(), flow.getId(),
+        log.debug("{} Looking for match for flow {} against values for attribute {}", getLogPrefix(), flow.getId(),
                 attribute.getId());
         for (final Principal p : flow.getSupportedPrincipals()) {
-            log.trace("{} Comparing principal {} against attribute values {}", getLogPrefix(), p.getName(),
+            log.debug("{} Comparing principal {} against attribute values {}", getLogPrefix(), p.getName(),
                     attribute.getValues());
             for (final IdPAttributeValue val : attribute.getValues()) {
                 if (val instanceof StringAttributeValue && Objects.equals(val.getValue(), p.getName())) {
