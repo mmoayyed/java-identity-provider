@@ -37,6 +37,7 @@ public class MappedAttributeInMetadataRuleParserTest extends  BaseAttributeFilte
     @Test public void mapped() throws ComponentInitializationException {
         
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        setTestContext(context);
         context.setDisplayName("ApplicationContext: Matcher");
         
         final AttributeRule rule = getBean(MATCHER_PATH + "mappedInMetadata.xml", AttributeRule.class, context);

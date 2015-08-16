@@ -41,6 +41,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
     @Test public void policy() throws ComponentInitializationException {
 
         GenericApplicationContext ctx = new GenericApplicationContext();
+        setTestContext(ctx);
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
@@ -63,6 +64,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
     @Test public void strategy() throws ComponentInitializationException {
 
         GenericApplicationContext ctx = new GenericApplicationContext();
+        setTestContext(ctx);
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
@@ -89,6 +91,7 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
     @Test public void rp() throws Exception {
 
         GenericApplicationContext ctx = new GenericApplicationContext();
+        setTestContext(ctx);
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH

@@ -38,6 +38,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -49,6 +50,16 @@ public class AttributeFilterServiceTest {
 
     /** The service configuration dir. */
     private final static String SERVICE_CONFIG_DIR = "net/shibboleth/idp/attribute/filter/spring/";
+    
+    private GenericApplicationContext testContext = null;
+    
+    @AfterTest public void tearDownTestContext() {
+        if (null == testContext) {
+            return;
+        }
+        testContext.close();
+        testContext = null;
+    }
 
     /**
      * Instantiate a new service.
@@ -59,12 +70,16 @@ public class AttributeFilterServiceTest {
      * @throws ServiceException if an error occurs loading the service
      * @throws ComponentInitializationException
      */
-    private static AttributeFilter getFilter(String name) throws ServiceException, ComponentInitializationException {
+    private AttributeFilter getFilter(String name) throws ServiceException, ComponentInitializationException {
         final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name);
+        if (null != testContext) {
+            tearDownTestContext();
+        }
         final GenericApplicationContext context =
                 SpringSupport.newContext(name, Collections.singletonList(resource),
                         Collections.<BeanFactoryPostProcessor>emptyList(), Collections.<BeanPostProcessor>emptyList(),
                         Collections.<ApplicationContextInitializer>emptyList(), null);
+        testContext = context;
         final AttributeFilterServiceStrategy strategy = new AttributeFilterServiceStrategy();
         strategy.setId("ID");
         strategy.initialize();

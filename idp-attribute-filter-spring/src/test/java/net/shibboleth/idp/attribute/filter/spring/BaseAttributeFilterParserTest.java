@@ -41,6 +41,7 @@ import org.opensaml.saml.ext.saml2mdattr.EntityAttributes;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 
 import com.google.common.base.Function;
 
@@ -54,6 +55,21 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
     protected static final String MATCHER_PATH = "/net/shibboleth/idp/attribute/filter/matcher/";
 
     protected static final String POLICY_RULE_PATH = "/net/shibboleth/idp/attribute/filter/policyrule/";
+    
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterTest public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext .close();
+        pendingTeardownContext  = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
 
     /**
      * Helper function to return attributes pulled from a file (on the classpath). The file is expected to contain a
@@ -107,8 +123,10 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: Policy Rule");
 
+        setTestContext(context);
         final AttributeFilterPolicy policy =
                 getBean(POLICY_RULE_PATH + fileName, AttributeFilterPolicy.class, context);
+
         policy.initialize();
         return policy.getPolicyRequirementRule();
     }
@@ -117,8 +135,10 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
 
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: Matcher");
+        setTestContext(context);
 
         final AttributeRule rule = getBean(MATCHER_PATH + fileName, AttributeRule.class, context);
+
         rule.initialize();
         return rule.getMatcher();
 
