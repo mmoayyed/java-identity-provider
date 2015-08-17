@@ -43,44 +43,47 @@ public class RelyingPartyIdPredicateTest {
     @Test
     public void constructors() {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
-        context.setDisplayName("ApplicationContext: Matcher");
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/profile/spring/logic/relyingPartyIdPredicates.xml");
-
-        context.refresh();
-        
-        RelyingPartyIdPredicate bean = context.getBean("candidate", RelyingPartyIdPredicate.class);
-        Assert.assertTrue(testCandidate(bean, "Single"));
-        Assert.assertFalse(testCandidate(bean, "Double"));
-        Assert.assertFalse(testCandidate(bean, "Elephant"));
-        
-        bean = context.getBean("candidates", RelyingPartyIdPredicate.class);
-        Assert.assertTrue(testCandidate(bean, "Single"));
-        Assert.assertTrue(testCandidate(bean, "Double"));
-        Assert.assertFalse(testCandidate(bean, "Elephant"));
-        
-        bean = context.getBean("pred", RelyingPartyIdPredicate.class);
-        Assert.assertTrue(testCandidate(bean, "Single"));
-        Assert.assertTrue(testCandidate(bean, "Double"));
-        Assert.assertTrue(testCandidate(bean, "Elephant"));
-
-        bean = context.getBean("candidate_0", RelyingPartyIdPredicate.class);
-        Assert.assertTrue(testCandidate(bean, "Single"));
-        Assert.assertFalse(testCandidate(bean, "Double"));
-        Assert.assertFalse(testCandidate(bean, "Elephant"));
-        
-        bean = context.getBean("candidates_0", RelyingPartyIdPredicate.class);
-        Assert.assertTrue(testCandidate(bean, "Single"));
-        Assert.assertTrue(testCandidate(bean, "Double"));
-        Assert.assertFalse(testCandidate(bean, "Elephant"));
-        
-        bean = context.getBean("pred_0", RelyingPartyIdPredicate.class);
-        Assert.assertTrue(testCandidate(bean, "Single"));
-        Assert.assertTrue(testCandidate(bean, "Double"));
-        Assert.assertTrue(testCandidate(bean, "Elephant"));
-
+        try {
+            context.setDisplayName("ApplicationContext: Matcher");
+            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                    new SchemaTypeAwareXMLBeanDefinitionReader(context);
+    
+            beanDefinitionReader.loadBeanDefinitions("net/shibboleth/idp/profile/spring/logic/relyingPartyIdPredicates.xml");
+    
+            context.refresh();
+            
+            RelyingPartyIdPredicate bean = context.getBean("candidate", RelyingPartyIdPredicate.class);
+            Assert.assertTrue(testCandidate(bean, "Single"));
+            Assert.assertFalse(testCandidate(bean, "Double"));
+            Assert.assertFalse(testCandidate(bean, "Elephant"));
+            
+            bean = context.getBean("candidates", RelyingPartyIdPredicate.class);
+            Assert.assertTrue(testCandidate(bean, "Single"));
+            Assert.assertTrue(testCandidate(bean, "Double"));
+            Assert.assertFalse(testCandidate(bean, "Elephant"));
+            
+            bean = context.getBean("pred", RelyingPartyIdPredicate.class);
+            Assert.assertTrue(testCandidate(bean, "Single"));
+            Assert.assertTrue(testCandidate(bean, "Double"));
+            Assert.assertTrue(testCandidate(bean, "Elephant"));
+    
+            bean = context.getBean("candidate_0", RelyingPartyIdPredicate.class);
+            Assert.assertTrue(testCandidate(bean, "Single"));
+            Assert.assertFalse(testCandidate(bean, "Double"));
+            Assert.assertFalse(testCandidate(bean, "Elephant"));
+            
+            bean = context.getBean("candidates_0", RelyingPartyIdPredicate.class);
+            Assert.assertTrue(testCandidate(bean, "Single"));
+            Assert.assertTrue(testCandidate(bean, "Double"));
+            Assert.assertFalse(testCandidate(bean, "Elephant"));
+            
+            bean = context.getBean("pred_0", RelyingPartyIdPredicate.class);
+            Assert.assertTrue(testCandidate(bean, "Single"));
+            Assert.assertTrue(testCandidate(bean, "Double"));
+            Assert.assertTrue(testCandidate(bean, "Elephant"));
+        } finally {
+            context.close();
+        }
     }
 
 }

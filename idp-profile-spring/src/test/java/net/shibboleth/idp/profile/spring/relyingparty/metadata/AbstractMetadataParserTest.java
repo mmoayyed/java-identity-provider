@@ -89,6 +89,12 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
             f.delete();
         }
     }
+    
+    protected void registerContext(GenericApplicationContext context) {
+        synchronized(contexts) {
+            contexts.add(context);
+        }        
+    }
 
     @AfterSuite public void deleteTmpDir() {
         emptyDir(tempDir);
@@ -139,7 +145,8 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         }
 
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
-
+        registerContext(context);
+        
         setDirectoryPlaceholder(context);
 
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
@@ -155,10 +162,6 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
         configReader.loadBeanDefinitions(resources);
         context.refresh();
-        
-        synchronized(contexts) {
-            contexts.add(context);
-        }
         
         return context;
     }

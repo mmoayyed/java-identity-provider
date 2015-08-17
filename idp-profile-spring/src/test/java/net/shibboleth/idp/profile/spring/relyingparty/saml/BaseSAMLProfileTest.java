@@ -50,21 +50,25 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
         }
 
         final GenericApplicationContext context = new GenericApplicationContext();
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: " + claz);
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
-        service.afterPropertiesSet();
-
-        context.getBeanFactory().setConversionService(service.getObject());
-
-        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
-
-        configReader.setValidating(true);
-
-        configReader.loadBeanDefinitions(resources);
-        context.refresh();
-
-        return context.getBean(claz);
+        try {
+            ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+            context.setDisplayName("ApplicationContext: " + claz);
+            service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
+            service.afterPropertiesSet();
+    
+            context.getBeanFactory().setConversionService(service.getObject());
+    
+            final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+    
+            configReader.setValidating(true);
+    
+            configReader.loadBeanDefinitions(resources);
+            context.refresh();
+    
+            return context.getBean(claz);
+        } finally {
+            context.close();
+        }
     }
 
     protected static void assertTruePredicate(Predicate<ProfileRequestContext> predicate) {

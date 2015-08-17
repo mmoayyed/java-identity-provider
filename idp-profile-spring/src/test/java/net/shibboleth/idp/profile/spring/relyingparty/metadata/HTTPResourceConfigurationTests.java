@@ -73,6 +73,9 @@ public class HTTPResourceConfigurationTests {
         if (null != theContext) {
             theContext.destroy();
         }
+        if (null != globalContext) {
+            globalContext.destroy();
+        }
     }
     
     private void emptyDir(File dir) {

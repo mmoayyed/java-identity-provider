@@ -72,7 +72,8 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
     @Test public void multiple() throws ResolverException, IOException {
 
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
-
+        registerContext(context);
+        
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: ");
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));

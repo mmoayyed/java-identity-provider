@@ -59,6 +59,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -70,6 +71,21 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/";
 
     static private String workspaceDirName;
+
+    private GenericApplicationContext pendingTeardownContext = null;
+    
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
 
     @BeforeSuite public void setupDirs() throws IOException {
         final ClassPathResource resource = new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty");
@@ -84,6 +100,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         }
 
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        setTestContext(context);
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext");
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));

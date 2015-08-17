@@ -32,26 +32,31 @@ import org.testng.annotations.Test;
  */
 public class NativeSpringTest {
 
-    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
+    protected <Type> Type getBean(String fileName, Class<Type> claz) {
 
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
-                new SchemaTypeAwareXMLBeanDefinitionReader(context);
-
-        beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
-        beanDefinitionReader.loadBeanDefinitions(fileName);
-        
-        context.refresh();
-
-        Collection<Type> beans = context.getBeansOfType(claz).values();
-        Assert.assertEquals(beans.size(), 1);
-
-        return beans.iterator().next();
+        GenericApplicationContext context = new GenericApplicationContext();
+        try {
+            SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                    new SchemaTypeAwareXMLBeanDefinitionReader(context);
+    
+            beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
+            beanDefinitionReader.loadBeanDefinitions(fileName);
+            
+            context.refresh();
+    
+            Collection<Type> beans = context.getBeansOfType(claz).values();
+            Assert.assertEquals(beans.size(), 1);
+    
+            return beans.iterator().next();
+        } finally {
+            context.close();
+        }
     }
 
     
     @Test
     public void stringAttrValue() {
-        RequestedAttributesMapper map = getBean(MappingTests.FILE_PATH + "attributesMapper.xml", RequestedAttributesMapper.class, new GenericApplicationContext());
+        RequestedAttributesMapper map = getBean(MappingTests.FILE_PATH + "attributesMapper.xml", RequestedAttributesMapper.class);
         
         LoggerFactory.getLogger(NativeSpringTest.class).debug(map.toString());
     }

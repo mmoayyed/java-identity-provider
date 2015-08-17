@@ -49,34 +49,38 @@ public class RelyingPartyTest extends OpenSAMLInitBaseTestCase {
         resources[1] = new ClassPathResource(PATH + "relying-party.xml");
 
         final GenericApplicationContext context = new GenericApplicationContext();
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
-        context.setDisplayName("ApplicationContext: ");
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
-        service.afterPropertiesSet();
-
-        context.getBeanFactory().setConversionService(service.getObject());
-
-        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
-
-        configReader.setValidating(true);
-
-        configReader.loadBeanDefinitions(resources);
-        context.refresh();
-
-        RelyingPartyConfiguration rpConf = context.getBean(RelyingPartyConfiguration.class);
-
-        Assert.assertEquals(rpConf.getId(), "the_RP");
-        Assert.assertTrue(rpConf.isDetailedErrors());
-        Assert.assertEquals(rpConf.getProfileConfigurations().size(), 1);
-
-        ProfileRequestContext ctx = new ProfileRequestContext<>();
-        RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
-        rpCtx.setRelyingPartyId("the_RP");
-        
-        Assert.assertTrue(rpConf.apply(ctx));
-        //
-        // TODO the EntitiesGroup thing
-        //
+        try{
+            ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+            context.setDisplayName("ApplicationContext: ");
+            service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
+            service.afterPropertiesSet();
+    
+            context.getBeanFactory().setConversionService(service.getObject());
+    
+            final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+    
+            configReader.setValidating(true);
+    
+            configReader.loadBeanDefinitions(resources);
+            context.refresh();
+    
+            RelyingPartyConfiguration rpConf = context.getBean(RelyingPartyConfiguration.class);
+    
+            Assert.assertEquals(rpConf.getId(), "the_RP");
+            Assert.assertTrue(rpConf.isDetailedErrors());
+            Assert.assertEquals(rpConf.getProfileConfigurations().size(), 1);
+    
+            ProfileRequestContext ctx = new ProfileRequestContext<>();
+            RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
+            rpCtx.setRelyingPartyId("the_RP");
+            
+            Assert.assertTrue(rpConf.apply(ctx));
+            //
+            // TODO the EntitiesGroup thing
+            //
+        } finally {
+            context.close();
+        }
     }
 
 }

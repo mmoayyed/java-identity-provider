@@ -34,6 +34,7 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeSuite;
 
 /**
@@ -47,7 +48,22 @@ public class AbstractSecurityParserTest {
     protected static final String IDP_ID = "https://idp.example.org/idp/shibboleth";
     
     static private String workspaceDirName;
+
+    private GenericApplicationContext pendingTeardownContext = null;
     
+    @AfterMethod public void tearDownTestContext() {
+        if (null == pendingTeardownContext ) {
+            return;
+        }
+        pendingTeardownContext.close();
+        pendingTeardownContext = null;
+    }
+    
+    protected void setTestContext(GenericApplicationContext context) {
+        tearDownTestContext();
+        pendingTeardownContext = context;
+    }
+   
     @BeforeSuite public void setupDirs() throws IOException {
         final ClassPathResource resource = new ClassPathResource(PATH);
         workspaceDirName = resource.getFile().getAbsolutePath();
@@ -71,7 +87,6 @@ public class AbstractSecurityParserTest {
         placeholderConfig.setPropertySources(propertySources);
         
         context.addBeanFactoryPostProcessor(placeholderConfig);
-        
     }
     
     protected <T> T getBean(Class<T> claz,  boolean validating, String... files) throws IOException{
@@ -82,7 +97,7 @@ public class AbstractSecurityParserTest {
         }
         
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
-
+        setTestContext(context);
         setDirectoryPlaceholder(context);
         
         ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
