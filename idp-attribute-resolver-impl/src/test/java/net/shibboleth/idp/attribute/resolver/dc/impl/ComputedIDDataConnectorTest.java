@@ -17,17 +17,24 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
@@ -319,4 +326,40 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     }
 
+    @Test(enabled=false) public void nullValues() throws ComponentInitializationException, ResolutionException {
+        
+        final List<IdPAttributeValue> values = Collections.singletonList((IdPAttributeValue) new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
+
+        attr.setValues((Collection<? extends IdPAttributeValue<?>>) values);
+
+        final AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
+        
+        resolutionContext.setAttributeIssuerID(TestSources.IDP_ENTITY_ID);
+        resolutionContext.setAttributeRecipientID(TestSources.SP_ENTITY_ID);
+        resolutionContext.setPrincipal(TestSources.PRINCIPAL_ID);
+
+        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+
+
+        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
+        connector.setId(TEST_CONNECTOR_NAME);
+        connector.setDependencies(Collections.singleton(depend));
+        connector.setSourceAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+        connector.setSalt(salt);
+        connector.setGeneratedAttributeId("wibble");
+        connector.initialize();
+
+      final  Map<String, IdPAttribute> result = connector.resolve(resolutionContext);
+    final  IdPAttribute genAttr = result.get("wibble");
+
+        final List<IdPAttributeValue<?>> resultValues = genAttr.getValues();
+       Assert.assertEquals(resultValues.size(), 1);
+
+    }
+
+
+    
 }
