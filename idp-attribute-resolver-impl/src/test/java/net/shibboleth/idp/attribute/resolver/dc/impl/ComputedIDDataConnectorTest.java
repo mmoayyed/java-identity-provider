@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -328,10 +328,11 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(enabled=false) public void nullValues() throws ComponentInitializationException, ResolutionException {
         
-        final List<IdPAttributeValue> values = Collections.singletonList((IdPAttributeValue) new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(1);
+        values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
 
-        attr.setValues((Collection<? extends IdPAttributeValue<?>>) values);
+        attr.setValues(values);
 
         final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
