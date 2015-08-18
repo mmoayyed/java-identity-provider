@@ -17,17 +17,21 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
@@ -149,6 +153,41 @@ public class SimpleAttributeTest {
         Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT),
                 "looking for value " + TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING);
     }
+    
+    /**
+     * Test resolution of an empty definition to nothing.
+     * 
+     * @throws ResolutionException if resolution failed.
+     * @throws ComponentInitializationException if initialization fails (which it shouldn't).
+     */
+    @Test public void nullValue() throws ResolutionException, ComponentInitializationException {
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        values.add(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT);
+        values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        final IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+
+        attr.setValues(values);
+
+       final AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        simple.setId(TEST_ATTRIBUTE_NAME);
+        simple.setDependencies(Collections.singleton(depend));
+        simple.initialize();
+
+        final IdPAttribute result = simple.resolve(resolutionContext);
+
+       final List<IdPAttributeValue<?>> outValues = result.getValues();
+        Assert.assertEquals(outValues.size(), 2);
+        Assert.assertTrue(outValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
+        Assert.assertTrue(outValues.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
+
+    }
+
+
 
     /**
      * Test when dependent on a data connector and another attribute.

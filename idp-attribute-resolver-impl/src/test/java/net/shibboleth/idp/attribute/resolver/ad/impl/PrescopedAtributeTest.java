@@ -17,20 +17,24 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
-import net.shibboleth.idp.attribute.resolver.ad.impl.PrescopedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.saml.impl.TestSources;
@@ -151,6 +155,37 @@ public class PrescopedAtributeTest {
             //
         }
     }
+    
+    @Test(enabled=false) public void nullValueType() throws ComponentInitializationException, ResolutionException {
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        values.add(new StringAttributeValue("one@two"));
+        values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        values.add(new StringAttributeValue("three@four"));
+        final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
+
+        attr.setValues(values);
+
+        AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
+        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+
+        final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        attrDef.setScopeDelimiter("@");
+        attrDef.setDependencies(Collections.singleton(depend));
+        attrDef.initialize();
+        IdPAttribute result = attrDef.resolve(resolutionContext);
+        
+        final Collection f = result.getValues();
+
+        Assert.assertEquals(f.size(), 3);
+        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("one", "two")));
+        Assert.assertTrue(f.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
+        Assert.assertTrue(f.contains(new ScopedStringAttributeValue("three", "four")));
+
+    }
+
 
     @Test public void emptyValueType() throws ResolutionException, ComponentInitializationException {
         // Set the dependency on the data connector

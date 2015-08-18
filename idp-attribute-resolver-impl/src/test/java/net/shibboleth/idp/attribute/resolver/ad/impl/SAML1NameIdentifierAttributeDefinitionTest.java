@@ -17,16 +17,23 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML1NameIdentifierAttributeDefinition;
@@ -104,8 +111,53 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         Assert.assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
         Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
     }
+    
+    @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        values.add(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
+        values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        values.add(new StringAttributeValue(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
+        final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
+        attr.setValues(values);
+        
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
 
-    @Test public void nulls() throws ComponentInitializationException {
+        
+        final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
+        defn.setId(TEST_ATTRIBUTE_NAME);
+        // Set the dependency on the data connector
+        defn.setDependencies(Collections.singleton(depend));
+        defn.initialize();
+
+        // And resolve
+        final Set<AttributeDefinition> am = new LazySet<>();
+        am.add(defn);
+
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, Collections.singleton((DataConnector)ResolverTestSupport.buildDataConnector("connector1", attr)), null);
+        resolver.initialize();
+
+        AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
+        try {
+            resolver.resolveAttributes(context);
+        } catch (ResolutionException e) {
+            Assert.fail("resolution failed", e);
+        }
+        final Collection<IdPAttributeValue<?>> outValues = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
+
+        Assert.assertEquals(outValues.size(), 2);
+        Collection<String> nameValues = new HashSet<>(2);
+        for (IdPAttributeValue val : outValues) {
+            NameIdentifier id = (NameIdentifier) val.getValue();
+            Assert.assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
+            Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
+            nameValues.add(id.getValue());
+        }
+        Assert.assertTrue(nameValues.contains(TestSources.COMMON_ATTRIBUTE_VALUE_STRING));
+        Assert.assertTrue(nameValues.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_STRING));
+    }
+
+    @Test public void nullIssuerID() throws ComponentInitializationException {
         final SAML1NameIdentifierAttributeDefinition defn = new SAML1NameIdentifierAttributeDefinition();
         defn.setId(TEST_ATTRIBUTE_NAME);
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));

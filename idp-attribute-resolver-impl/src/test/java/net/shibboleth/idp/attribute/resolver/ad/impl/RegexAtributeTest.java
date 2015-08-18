@@ -17,14 +17,19 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -88,6 +93,38 @@ public class RegexAtributeTest {
         Assert.assertEquals(f.size(), 1);
         Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT), "looking for regexp result");
     }
+    
+    @Test(enabled=false) public void nullValueType() throws ComponentInitializationException, ResolutionException {
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        values.add(new StringAttributeValue(TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING));
+        values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        values.add(new StringAttributeValue("three"));
+        final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
+
+        attr.setValues(values);
+
+        AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
+        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
+
+
+        final RegexSplitAttributeDefinition attrDef = new RegexSplitAttributeDefinition();
+        attrDef.setId(TEST_ATTRIBUTE_NAME);
+        attrDef.setRegularExpression(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_PATTERN);
+        attrDef.setDependencies(Collections.singleton(depend));
+        attrDef.initialize();
+
+        IdPAttribute result = attrDef.resolve(resolutionContext);
+        
+        final Collection f = result.getValues();
+
+        Assert.assertEquals(f.size(), 1);
+        Assert.assertTrue(f.contains(new StringAttributeValue("Connect")));
+//        Assert.assertTrue(f.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
+
+    }
+
 
     @Test public void invalidValueType() throws ComponentInitializationException {
         IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);

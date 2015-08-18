@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -37,6 +38,7 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.SAMLAttributeDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
@@ -315,8 +317,48 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
         Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT));
-
     }
+    
+    
+    /**
+     * Test resolution of an script which looks at the provided attributes.
+     * 
+     * @throws ResolutionException if the resolve fails
+     * @throws ComponentInitializationException only if things go wrong
+     * @throws ScriptException
+     * @throws IOException
+     */
+    @Test public void attributesWithNull() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
+
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        values.add(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT);
+        values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        final IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+
+        attr.setValues(values);
+
+        AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
+        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+
+        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
+        scripted.setId(TEST_ATTRIBUTE_NAME);
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("attributes.script")));
+        scripted.setDependencies(Collections.singleton(depend));
+        scripted.initialize();
+
+        final IdPAttribute result = scripted.resolve(resolutionContext);
+        
+        
+        final List<IdPAttributeValue<?>> outValues = result.getValues();
+
+        Assert.assertEquals(outValues.size(), 2);
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
+        Assert.assertTrue(values.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
+    }
+    
 
     @Test public void nonString() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
