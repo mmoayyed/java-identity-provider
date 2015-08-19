@@ -23,6 +23,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -40,12 +41,18 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * An attribute definition that creates {@link ScopedStringAttributeValue}s by taking a source attribute value and
  * applying a static scope to each.
  */
 @ThreadSafe
 public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinition.class);
 
     /** Scope value. */
     @NonnullAfterInit private String scope;
@@ -87,6 +94,11 @@ public class ScopedAttributeDefinition extends AbstractAttributeDefinition {
         final List<StringAttributeValue> valueList = new ArrayList<>(dependencyValues.size());
 
         for (final IdPAttributeValue dependencyValue : dependencyValues) {
+            if (dependencyValue instanceof EmptyAttributeValue) {
+                final EmptyAttributeValue emptyVal = (EmptyAttributeValue) dependencyValue;
+                log.debug("{} ignored empty value of type {}", getLogPrefix(), emptyVal.getDisplayValue());
+                continue;
+            }
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                         + "This attribute definition only supports attribute value types of "

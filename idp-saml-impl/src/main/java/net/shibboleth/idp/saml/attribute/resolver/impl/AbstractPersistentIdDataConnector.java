@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -149,6 +150,11 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
                 return null;
             }
             val = (String) attributeValue.getValue();
+        } else if (attributeValue instanceof EmptyAttributeValue) {
+            final EmptyAttributeValue emptyVal = (EmptyAttributeValue) attributeValue;
+            log.warn("{} Source attribute {} value for connector {} was an empty value of type {}", getLogPrefix(),
+                    getSourceAttributeId(), getId(), emptyVal.getDisplayValue());
+            return null;
         } else {
             log.warn("{} Source attribute {} for connector {} was of an unsupported type: {}", getLogPrefix(),
                     getSourceAttributeId(), getId(), attributeValue.getClass().getName());

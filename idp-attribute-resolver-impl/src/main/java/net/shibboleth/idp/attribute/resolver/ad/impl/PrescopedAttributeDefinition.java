@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
@@ -96,6 +97,11 @@ public class PrescopedAttributeDefinition extends AbstractAttributeDefinition {
 
         final List<IdPAttributeValue<?>> valueList = new ArrayList<>(dependencyValues.size());
         for (final IdPAttributeValue<?> dependencyValue : dependencyValues) {
+            if (dependencyValue instanceof EmptyAttributeValue) {
+                final EmptyAttributeValue emptyVal = (EmptyAttributeValue) dependencyValue;
+                log.debug("{} ignored empty value of type {}", getLogPrefix(), emptyVal.getDisplayValue());
+                continue;
+            }
             if (!(dependencyValue instanceof StringAttributeValue)) {
                 throw new ResolutionException(new UnsupportedAttributeTypeException(getLogPrefix()
                         + "This attribute definition only supports attribute value types of "

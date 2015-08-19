@@ -156,7 +156,7 @@ public class PrescopedAtributeTest {
         }
     }
     
-    @Test(enabled=false) public void nullValueType() throws ComponentInitializationException, ResolutionException {
+    @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
         final List<IdPAttributeValue<?>> values = new ArrayList<>(4);
         values.add(new StringAttributeValue("one@two"));
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
@@ -180,9 +180,8 @@ public class PrescopedAtributeTest {
         
         final Collection f = result.getValues();
 
-        Assert.assertEquals(f.size(), 3);
+        Assert.assertEquals(f.size(), 2);
         Assert.assertTrue(f.contains(new ScopedStringAttributeValue("one", "two")));
-        Assert.assertTrue(f.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
         Assert.assertTrue(f.contains(new ScopedStringAttributeValue("three", "four")));
 
     }

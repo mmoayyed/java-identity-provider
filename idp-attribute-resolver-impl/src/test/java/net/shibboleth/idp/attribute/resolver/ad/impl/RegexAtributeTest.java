@@ -94,11 +94,12 @@ public class RegexAtributeTest {
         Assert.assertTrue(f.contains(TestSources.CONNECTOR_ATTRIBUTE_VALUE_REGEXP_RESULT), "looking for regexp result");
     }
     
-    @Test(enabled=false) public void nullValueType() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+    @Test public void nullValueType() throws ComponentInitializationException, ResolutionException {
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(4);
         values.add(new StringAttributeValue(TestSources.CONNECTOR_ATTRIBUTE_VALUE_STRING));
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         values.add(new StringAttributeValue("three"));
+        values.add(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE));
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
 
         attr.setValues(values);
@@ -121,8 +122,6 @@ public class RegexAtributeTest {
 
         Assert.assertEquals(f.size(), 1);
         Assert.assertTrue(f.contains(new StringAttributeValue("Connect")));
-//        Assert.assertTrue(f.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
-
     }
 
 

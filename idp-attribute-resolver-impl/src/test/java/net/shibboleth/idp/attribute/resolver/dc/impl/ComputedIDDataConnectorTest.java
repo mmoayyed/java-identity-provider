@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
@@ -325,10 +326,11 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     }
 
-    @Test(enabled=false) public void nullValues() throws ComponentInitializationException, ResolutionException {
+    @Test public void nullValue() throws ComponentInitializationException, ResolutionException {
         
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(1);
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(2);
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
+        values.add(new StringAttributeValue("calue"));
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
 
         attr.setValues(values);
@@ -352,16 +354,11 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setGeneratedAttributeId("wibble");
         connector.initialize();
 
-        try {
-            connector.resolve(resolutionContext);
-            Assert.fail("Should have thrown");
-        } catch (ResolutionException e) {
-            // OK
-        }
-
+        
+        Assert.assertNull(connector.resolve(resolutionContext));
     }
 
-    @Test(enabled=false) public void emptyValues() throws ComponentInitializationException, ResolutionException {
+    @Test public void emptyValue() throws ComponentInitializationException, ResolutionException {
         
         final List<IdPAttributeValue<?>> values = new ArrayList<>(1);
         values.add(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE));
@@ -388,13 +385,9 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setGeneratedAttributeId("wibble");
         connector.initialize();
 
-        try {
-            connector.resolve(resolutionContext);
-            Assert.fail("Should have thrown");
-        } catch (ResolutionException e) {
-            // OK
-        }
+        final Map<String, IdPAttribute> result = connector.resolve(resolutionContext);
             
+        Assert.assertNull(result);
 
     }
 
