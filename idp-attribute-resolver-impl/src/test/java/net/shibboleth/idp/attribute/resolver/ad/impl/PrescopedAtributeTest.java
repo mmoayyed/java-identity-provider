@@ -157,10 +157,11 @@ public class PrescopedAtributeTest {
     }
     
     @Test(enabled=false) public void nullValueType() throws ComponentInitializationException, ResolutionException {
-        final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
+        final List<IdPAttributeValue<?>> values = new ArrayList<>(4);
         values.add(new StringAttributeValue("one@two"));
         values.add(new EmptyAttributeValue(EmptyType.NULL_VALUE));
         values.add(new StringAttributeValue("three@four"));
+        values.add(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE));
         final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
 
         attr.setValues(values);
