@@ -6,15 +6,19 @@
     <!-- Default inbound security processing for IDWSF SSOS SAML 2 delegation profile. -->
 
     <action-state id="IDWSFSSOSSecurityPolicy">
+        <!-- TODO these don't really belong here. Need to figure out where/how to wire them. -->
         <evaluate expression="ExtractMessageIDHandler" />
         <evaluate expression="ValidateActionHandler" />
         <evaluate expression="ProcessFrameworkHandler" />
         <evaluate expression="ProcessSenderHandler" />
         
-        <!-- TODO SAML presenter context and metadata, RPC, etc, needs to be populated prior to this action, 
-             based on output of ProcessSenderHandler. -->
+        <!-- Note: SAMLPresenterContext entityID is populated by ProcessSenderHandler, 
+             so wherever the above wind up, these need to effectively run after that action. -->
+        <evaluate expression="SAMLProtocolAndRoleForPresenter" />
+        <evaluate expression="SAMLMetadataLookupForPresenter" />
         
-        <evaluate expression="SAMLMDClientCertAuthSecurityHandler" />
+        <evaluate expression="SAMLMDClientCertAuthSecurityHandlerForPresenter" />
+        <evaluate expression="CheckMandatoryAuthenticationForPresenter" />
         
         <!-- TODO Assertion token processing.  Need trust engine w/ IdP creds, etc. -->
         
@@ -23,9 +27,6 @@
         <evaluate expression="MessageLifetimeSecurityHandler" />
         <evaluate expression="SAMLProtocolMessageXMLSignatureSecurityHandler" />
         <evaluate expression="CheckMandatoryIssuer" />
-        <!-- TODO need to check *presenter* authenticated, probably just need a new plugin function for the below.
-        <evaluate expression="CheckMandatoryAuthentication" />
-        -->
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="proceed" />
