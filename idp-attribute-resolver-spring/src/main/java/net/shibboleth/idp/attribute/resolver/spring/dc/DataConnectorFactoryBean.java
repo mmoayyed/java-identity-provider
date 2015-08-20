@@ -236,7 +236,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
                 continue;
             }
             if (beans.size() > 1) {
-                log.info("Too many beans of type {} found, only the first will be used", descriptor.getPropertyType());
+                log.warn("Too many beans of type {} found, only the first will be used", descriptor.getPropertyType());
             }
             final Object bean = beans.values().iterator().next();
             log.debug("Added property value: {}", bean);
