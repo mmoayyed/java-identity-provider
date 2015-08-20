@@ -19,11 +19,10 @@
     
     <import resource="../security-beans.xml" />
     
-    <!-- TODO: these 2 constants are copied over from commons-beans.xml for now, pending where everything winds up. -->
-    <util:constant id="shibboleth.MetadataLookup.Protocol"
+    <util:constant id="shibboleth.Delegation.MetadataLookup.Protocol"
         static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
 
-    <util:constant id="shibboleth.MetadataLookup.Role"
+    <util:constant id="shibboleth.Delegation.MetadataLookup.Role"
         static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
     
     <!-- TODO: these probably don't belong here. -->
@@ -98,8 +97,8 @@
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype"
                 p:entityContextClass="org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext"
-                p:protocol-ref="shibboleth.MetadataLookup.Protocol"
-                p:role-ref="shibboleth.MetadataLookup.Role" />
+                p:protocol-ref="shibboleth.Delegation.MetadataLookup.Protocol"
+                p:role-ref="shibboleth.Delegation.MetadataLookup.Role" />
         </constructor-arg>
     </bean>
     
@@ -147,6 +146,71 @@
                 </property>
             </bean>
         </constructor-arg>
+        <property name="errorEvent">
+            <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_AUTHN_ERROR" />
+        </property>
+    </bean>
+    
+    <!-- TODO need to figure out a long-term strategy for this. To account for multiples, 
+         probably have to put this list up in conf/credentials.xml and make the deployer maintain it. 
+         Note: the credential beans are currently NOT loaded in any visible Spring context.  credentials.xml is just pulled into
+         the RelyingPartyConfigurationResolver. Or can we just get these directly from the RPCR? -->
+    <util:list id="shibboleth.Delegation.IdPSigningCredentials" >
+        <!-- TODO this doesn't work b/c it's not actually loaded as a bean that's visible.
+        <ref bean="shibboleth.DefaultSigningCredential" />
+        -->
+    </util:list>
+    
+    <bean id="shibboleth.Delegation.AssertionSignatureTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine">
+        <constructor-arg>
+            <bean class="org.opensaml.security.credential.impl.StaticCredentialResolver" 
+                c:_0-ref="shibboleth.Delegation.IdPSigningCredentials" />
+        </constructor-arg>
+        <constructor-arg ref="shibboleth.KeyInfoCredentialResolver" />
+    </bean>
+    
+    <bean id="shibboleth.Delegation.SAML2AssertionTokenValidator" class="org.opensaml.saml.saml2.assertion.SAML20AssertionValidator">
+        <!-- Condition validators. -->
+        <constructor-arg index="0">
+            <util:list>
+                <bean class="org.opensaml.saml.saml2.assertion.impl.AudienceRestrictionConditionValidator" />
+                <bean class="org.opensaml.saml.saml2.assertion.impl.OneTimeUseConditionValidator">
+                    <constructor-arg ref="shibboleth.ReplayCache" />
+                    <constructor-arg value="#{null}" />
+                </bean>
+            </util:list>
+        </constructor-arg>
+        <!-- SubjectConfirmation validators. -->
+        <constructor-arg index="1">
+            <util:list>
+                <bean class="org.opensaml.saml.saml2.assertion.impl.HolderOfKeySubjectConfirmationValidator" />
+            </util:list>
+        </constructor-arg>
+        <!-- Statement validators. -->
+        <constructor-arg index="2">
+            <util:list>
+                <!--Expected to be empty.  -->
+            </util:list>
+        </constructor-arg>
+        <constructor-arg index="3" ref="shibboleth.Delegation.AssertionSignatureTrustEngine" />
+        <constructor-arg index="4">
+            <bean class="org.opensaml.saml.security.impl.SAMLSignatureProfileValidator" />
+        </constructor-arg>
+    </bean>
+    
+    <bean id="WSSecuritySAML20AssertionTokenSecurityHandler"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.saml.saml2.wssecurity.messaging.impl.WSSecuritySAML20AssertionTokenSecurityHandler" scope="prototype"
+                    p:invalidFatal="true" 
+                    p:httpServletRequest-ref="shibboleth.HttpServletRequest" 
+                    p:assertionValidator-ref="shibboleth.Delegation.SAML2AssertionTokenValidator" />
+        </constructor-arg>
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="not"
+                c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
+        </property>
         <property name="errorEvent">
             <util:constant static-field="org.opensaml.profile.action.EventIds.MESSAGE_AUTHN_ERROR" />
         </property>

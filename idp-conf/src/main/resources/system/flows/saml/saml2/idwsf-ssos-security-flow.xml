@@ -6,6 +6,8 @@
     <!-- Default inbound security processing for IDWSF SSOS SAML 2 delegation profile. -->
 
     <action-state id="IDWSFSSOSSecurityPolicy">
+        <!-- First do everything related to TLS, the SOAP binding and WS-Security processing. -->
+        
         <!-- TODO these don't really belong here. Need to figure out where/how to wire them. -->
         <evaluate expression="ExtractMessageIDHandler" />
         <evaluate expression="ValidateActionHandler" />
@@ -20,8 +22,9 @@
         <evaluate expression="SAMLMDClientCertAuthSecurityHandlerForPresenter" />
         <evaluate expression="CheckMandatoryAuthenticationForPresenter" />
         
-        <!-- TODO Assertion token processing.  Need trust engine w/ IdP creds, etc. -->
+        <evaluate expression="WSSecuritySAML20AssertionTokenSecurityHandler" />
         
+        <!-- Now continue with standard SAML protocol message processing. -->
         <evaluate expression="ReceivedEndpointSecurityHandler" />
         <evaluate expression="MessageReplaySecurityHandler" />
         <evaluate expression="MessageLifetimeSecurityHandler" />
