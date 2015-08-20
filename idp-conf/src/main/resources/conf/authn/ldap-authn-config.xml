@@ -68,7 +68,7 @@
     <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
     <!-- Anonymous Search Configuration -->
-    <bean name="anonSearchAuthenticator" class="org.ldaptive.auth.Authenticator">
+    <bean name="anonSearchAuthenticator" class="org.ldaptive.auth.Authenticator" p:resolveEntryOnFailure="%{idp.authn.LDAP.resolveEntryOnFailure:false}">
         <constructor-arg index="0" ref="anonSearchDnResolver" />
         <constructor-arg index="1" ref="authHandler" />
     </bean>
@@ -85,7 +85,7 @@
     <bean id="anonSearchConnectionConfig" parent="connectionConfig" />
 
     <!-- Bind Search Configuration -->
-    <bean name="bindSearchAuthenticator" class="org.ldaptive.auth.Authenticator">
+    <bean name="bindSearchAuthenticator" class="org.ldaptive.auth.Authenticator" p:resolveEntryOnFailure="%{idp.authn.LDAP.resolveEntryOnFailure:false}">
         <constructor-arg index="0" ref="bindSearchDnResolver" />
         <constructor-arg index="1" ref="authHandler" />
     </bean>
@@ -110,7 +110,7 @@
     </bean>
 
     <!-- Direct Search Configuration -->
-    <bean name="directAuthenticator" class="org.ldaptive.auth.Authenticator">
+    <bean name="directAuthenticator" class="org.ldaptive.auth.Authenticator" p:resolveEntryOnFailure="%{idp.authn.LDAP.resolveEntryOnFailure:false}">
         <constructor-arg index="0" ref="formatDnResolver" />
         <constructor-arg index="1" ref="authHandler" />
     </bean>
@@ -120,7 +120,8 @@
         class="org.ldaptive.control.PasswordPolicyControl" /> add p:authenticationControls-ref="authenticationControl" to the authHandler -->
 
     <!-- Active Directory Configuration -->
-    <bean id="adAuthenticator" class="org.ldaptive.auth.Authenticator" p:authenticationResponseHandlers-ref="authenticationResponseHandler">
+    <bean id="adAuthenticator" class="org.ldaptive.auth.Authenticator" p:authenticationResponseHandlers-ref="authenticationResponseHandler"
+        p:resolveEntryOnFailure="%{idp.authn.LDAP.resolveEntryOnFailure:false}">
         <constructor-arg index="0" ref="formatDnResolver" />
         <constructor-arg index="1" ref="authHandler" />
     </bean>
