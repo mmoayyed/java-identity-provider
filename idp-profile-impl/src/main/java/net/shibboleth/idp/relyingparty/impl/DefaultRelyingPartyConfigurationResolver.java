@@ -45,6 +45,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.security.credential.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,12 +86,16 @@ public class DefaultRelyingPartyConfigurationResolver
     
     /** A global default security configuration. */
     @Nullable private SecurityConfiguration defaultSecurityConfiguration;
+    
+    /** The global list of all configured signing credentials. */
+    @Nullable private List<Credential> signingCredentials;
 
     /** Constructor. */
     public DefaultRelyingPartyConfigurationResolver() {
         rpConfigurations = Collections.emptyList();
         verificationPredicate = new VerifiedProfilePredicate();
         securityConfigurationMap = Collections.emptyMap();
+        signingCredentials = Collections.emptyList();
     }
 
     /**
@@ -312,6 +317,28 @@ public class DefaultRelyingPartyConfigurationResolver
     @Nullable public SecurityConfiguration getDefaultSecurityConfiguration(@Nonnull @NotEmpty final String profileId) {
         final SecurityConfiguration config = securityConfigurationMap.get(profileId);
         return config != null ? config : defaultSecurityConfiguration;
+    }
+    
+    /**
+     * Get the list of all configured signing credentials.
+     * 
+     * @return the list of signing credentials
+     */
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Credential> getSigningCredentials() {
+        return ImmutableList.copyOf(signingCredentials);
+    }
+    
+    /**
+     * Set the list of all configured signing credentials.
+     * 
+     * @param credentials the list of signing credentials, may be null
+     */
+    public void setSigningCredentials(@Nullable final List<Credential> credentials) {
+        if (credentials == null) {
+            signingCredentials = Collections.emptyList();
+            return;
+        }
+        signingCredentials = new ArrayList<>(Collections2.filter(credentials, Predicates.notNull()));
     }
 
     /** {@inheritDoc} */

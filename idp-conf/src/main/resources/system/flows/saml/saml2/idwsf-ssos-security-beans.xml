@@ -151,20 +151,10 @@
         </property>
     </bean>
     
-    <!-- TODO need to figure out a long-term strategy for this. To account for multiples, 
-         probably have to put this list up in conf/credentials.xml and make the deployer maintain it. 
-         Note: the credential beans are currently NOT loaded in any visible Spring context.  credentials.xml is just pulled into
-         the RelyingPartyConfigurationResolver. Or can we just get these directly from the RPCR? -->
-    <util:list id="shibboleth.Delegation.IdPSigningCredentials" >
-        <!-- TODO this doesn't work b/c it's not actually loaded as a bean that's visible.
-        <ref bean="shibboleth.DefaultSigningCredential" />
-        -->
-    </util:list>
-    
     <bean id="shibboleth.Delegation.AssertionSignatureTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine">
         <constructor-arg>
-            <bean class="org.opensaml.security.credential.impl.StaticCredentialResolver" 
-                c:_0-ref="shibboleth.Delegation.IdPSigningCredentials" />
+            <bean class="net.shibboleth.idp.relyingparty.impl.SigningCredentialsResolver" 
+                c:_0-ref="shibboleth.RelyingPartyResolverService" />
         </constructor-arg>
         <constructor-arg ref="shibboleth.KeyInfoCredentialResolver" />
     </bean>
