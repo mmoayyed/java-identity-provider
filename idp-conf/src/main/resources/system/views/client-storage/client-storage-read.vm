@@ -12,7 +12,7 @@
 ## response - HttpServletResponse
 ## environment - Spring Environment object for property resolution
 #set ($title = $springMacroRequestContext.getMessage("idp.title", "Web Login Service"))
-#set ($titleSuffix = $springMacroRequestContext.getMessage("idp.client-storage.suffix", "Loading Session State..."))
+#set ($titleSuffix = $springMacroRequestContext.getMessage("idp.client-storage-read.suffix", "Loading Session State..."))
 ##
 <!DOCTYPE html>
 <html>
@@ -24,7 +24,7 @@
         <!--
         #include( "client-storage/local-storage-read.js" )
 
-        function doLoad() {            
+        function doLoad() {
             var localStorageSupported = isLocalStorageSupported();
             document.form1["shib_idp_ls_supported"].value = localStorageSupported;
             if (localStorageSupported) {
