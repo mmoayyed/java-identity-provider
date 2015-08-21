@@ -199,7 +199,10 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
      * @return result of the merge operation
      */
     protected String merge(@Nonnull final VelocityContext context) {
-        final String result = template.merge(context);
+        String result = template.merge(context);
+        if (result != null) {
+            result = result.trim();
+        }
         log.debug("Template text {} yields {}", templateText, result);
         return result;
     }
