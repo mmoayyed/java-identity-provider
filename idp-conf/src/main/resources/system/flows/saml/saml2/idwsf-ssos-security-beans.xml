@@ -167,6 +167,7 @@
         <constructor-arg index="0">
             <util:list>
                 <bean class="org.opensaml.saml.saml2.assertion.impl.AudienceRestrictionConditionValidator" />
+                <bean class="org.opensaml.saml.saml2.assertion.impl.DelegationRestrictionConditionValidator" />
                 <bean class="org.opensaml.saml.saml2.assertion.impl.OneTimeUseConditionValidator">
                     <constructor-arg ref="shibboleth.ReplayCache" />
                     <constructor-arg value="#{null}" />
