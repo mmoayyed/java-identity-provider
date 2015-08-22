@@ -27,6 +27,9 @@
     
     <!-- TODO: these probably don't belong here. -->
     
+    <bean id="PopulateInboundMessageContextWithSAMLSelf" 
+        class="net.shibboleth.idp.saml.profile.impl.PopulateInboundMessageContextWithSAMLSelf" scope="prototype" />
+    
     <bean id="ProcessFrameworkHandler"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
             c:executionDirection="INBOUND">
