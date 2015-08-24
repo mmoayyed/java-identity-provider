@@ -32,7 +32,6 @@
 
     <action-state id="SaveCookieBackedClientStorageServices">
         <evaluate expression="SaveCookieBackedClientStorageServices" />
-        <evaluate expression="opensamlProfileRequestContext.removeSubcontext(T(org.opensaml.storage.impl.client.ClientStorageSaveContext))" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="proceed" />
