@@ -27,12 +27,22 @@
         p:loggingId="%{idp.service.logging.logout:Logout}"
         p:browserProfile="true" />
 
+    <bean id="PopulateClientStorageLoadContext"
+        class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
+        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
+            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+
     <bean id="ProcessLogout"
         class="net.shibboleth.idp.session.impl.ProcessLogout" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionResolver-ref="shibboleth.SessionManager" />
+    
+    <bean id="PopulateClientStorageSaveContext"
+        class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
+        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
+            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
     
     <bean id="LogoutPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"

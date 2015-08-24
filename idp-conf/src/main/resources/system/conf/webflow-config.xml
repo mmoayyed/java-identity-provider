@@ -134,6 +134,7 @@
 
         <!-- Client storage flows. -->
         <webflow:flow-location id="client-storage/read" path="../system/flows/client-storage/client-storage-read-flow.xml" />
+        <webflow:flow-location id="client-storage/write" path="../system/flows/client-storage/client-storage-write-flow.xml" />
     </webflow:flow-registry>
 
     <webflow:flow-executor id="flowExecutor">

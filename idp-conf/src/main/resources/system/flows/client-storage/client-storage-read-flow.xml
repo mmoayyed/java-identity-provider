@@ -4,9 +4,10 @@
 
     <!-- Rudimentary impediment to direct execution of subflow. -->
     <input name="calledAsSubflow" type="boolean" required="true" />
-    
-    <decision-state id="UseLocalStorage">
-        <if test="UseLocalStorage" then="LocalStorageRead" else="LoadClientStorageServices" />
+        
+    <decision-state id="CheckLocalStorage">
+        <if test="UseLocalStorage and opensamlProfileRequestContext.isBrowserProfile()"
+            then="LocalStorageRead" else="LoadClientStorageServices" />
     </decision-state>
 
     <view-state id="LocalStorageRead" view="/client-storage/client-storage-read">

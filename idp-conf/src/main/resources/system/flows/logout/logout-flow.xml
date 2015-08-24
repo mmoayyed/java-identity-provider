@@ -2,9 +2,53 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <action-state id="DoLogout">
+    <action-state id="InitializeProfileRequestContext">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="PopulateClientStorageLoadContext" />
+    </action-state>
+
+    <!-- Load client storage if needed. -->
+    
+    <action-state id="PopulateClientStorageLoadContext">
+        <evaluate expression="PopulateClientStorageLoadContext" />
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="ClientStorageLoad" />
+        <transition on="NoLoadNeeded" to="DoLogout" />
+    </action-state>
+    
+    <subflow-state id="ClientStorageLoad" subflow="client-storage/read">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="DoLogout"/>
+    </subflow-state>
+
+    <action-state id="DoLogout">
         <evaluate expression="ProcessLogout" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="PopulateClientStorageSaveContext" />
+    </action-state>
+
+    <!-- We may need to save client storage. -->
+    
+    <action-state id="PopulateClientStorageSaveContext">
+        <evaluate expression="PopulateClientStorageSaveContext" />
+        <evaluate expression="'proceed'" />
+
+        <transition on="proceed" to="ClientStorageSave" />
+        <transition on="NoSaveNeeded" to="CompleteLogout" />
+    </action-state>
+    
+    <subflow-state id="ClientStorageSave" subflow="client-storage/write">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="CompleteLogout"/>
+    </subflow-state>
+
+    <!-- Continue the logout process. -->
+
+    <action-state id="CompleteLogout">
         <evaluate expression="LogoutPopulateAuditContext" />
         <evaluate expression="PopulateMultiRPContextFromLogoutContext" />
         <evaluate expression="'proceed'" />

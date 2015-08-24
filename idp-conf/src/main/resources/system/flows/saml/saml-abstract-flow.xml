@@ -65,7 +65,7 @@
         <evaluate expression="'proceed'" />
         
         <!-- No subject to operate on, so just skip to the profile. -->
-        <transition on="NoSubject" to="CheckForBrowser" />
+        <transition on="NoSubject" to="DoProfileWork" />
         
         <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
@@ -79,29 +79,9 @@
         <evaluate expression="FinalizeSAMLSubjectCanonicalization" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="CheckForBrowser" />
+        <transition on="proceed" to="DoProfileWork" />
     </action-state>
-    
-    <!-- For browser-based flows, we may need to load client storage. -->
-    
-    <decision-state id="CheckForBrowser">
-        <if test="opensamlProfileRequestContext.isBrowserProfile()"
-            then="PopulateClientStorageLoadContext" else="DoProfileWork" />
-    </decision-state>
-    
-    <action-state id="PopulateClientStorageLoadContext">
-        <evaluate expression="PopulateClientStorageLoadContext" />
-        <evaluate expression="'proceed'" />
-
-        <transition on="proceed" to="ClientStorageLoad" />
-        <transition on="NoLoadNeeded" to="DoProfileWork" />
-    </action-state>
-    
-    <subflow-state id="ClientStorageLoad" subflow="client-storage/read">
-        <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="DoProfileWork"/>
-    </subflow-state>
-    
+        
     <!--
     The meat will be inserted here by defining DoProfileWork and transitioning
     from there to profile activity and eventually to the final stages below.
@@ -115,10 +95,12 @@
     a SAML protocol message regardless.
     -->
 
+    <!-- Pick back up with profile. -->
+
     <action-state id="ReturnToParentFlow">
-        <evaluate expression="PopulateOutboundInterceptContext" />        
+        <evaluate expression="PopulateOutboundInterceptContext" />
         <evaluate expression="'proceed'" />
-        
+    
         <transition on="proceed" to="CheckOutboundInterceptContext" />
         <transition to="HandleErrorWithView" />
     </action-state>
