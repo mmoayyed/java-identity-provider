@@ -22,7 +22,7 @@
         <constructor-arg value="%{idp.storage.htmlLocalStorage:false}" type="boolean" />
     </bean>
 
-    <bean id="SaveCookeBackedClientStorageServices"
+    <bean id="SaveCookieBackedClientStorageServices"
         class="org.opensaml.storage.impl.client.SaveCookieBackedClientStorageServices" scope="prototype"
         p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
             ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
