@@ -15,6 +15,18 @@
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="true" />
 
+    <bean id="PopulateClientStorageLoadContext"
+          class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext"
+          scope="prototype"
+          p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
+            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+
+    <bean id="PopulateClientStorageSaveContext"
+          class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext"
+          scope="prototype"
+          p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
+            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+
     <bean id="InitializeLogin"
           class="net.shibboleth.idp.cas.flow.InitializeLoginAction" />
 
