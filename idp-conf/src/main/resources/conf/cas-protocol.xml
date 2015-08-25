@@ -23,7 +23,8 @@
                 <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
                       c:regex="https://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
                       p:group="proxying-services"
-                      p:authorizedToProxy="true" />
+                      p:authorizedToProxy="true"
+                      p:singleLogoutParticipant="true" />
                 <bean class="net.shibboleth.idp.cas.service.ServiceDefinition"
                       c:regex="http://([A-Za-z0-9_-]+\.)*example\.org(:\d+)?/.*"
                       p:group="non-proxying-services"
