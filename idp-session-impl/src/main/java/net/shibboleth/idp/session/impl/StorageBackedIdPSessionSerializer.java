@@ -122,13 +122,17 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             }
 
             if (sessionManager.isTrackSPSessions()) {
-                final Set<SPSession> services = instance.getSPSessions();
-                if (!services.isEmpty()) {
-                    gen.writeStartArray(SERVICE_ID_ARRAY_FIELD);
-                    for (final SPSession service : services) {
-                        gen.write(service.getId());
+                if (sessionManager.storageServiceMeetsThreshold()) {
+                    final Set<SPSession> services = instance.getSPSessions();
+                    if (!services.isEmpty()) {
+                        gen.writeStartArray(SERVICE_ID_ARRAY_FIELD);
+                        for (final SPSession service : services) {
+                            gen.write(service.getId());
+                        }
+                        gen.writeEnd();
                     }
-                    gen.writeEnd();
+                } else {
+                    log.info("Unable to serialize SP session due to to storage service limitations");
                 }
             }
 

@@ -54,7 +54,6 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
-import org.opensaml.storage.RequestScopedStorageService;
 import org.opensaml.storage.StorageRecord;
 import org.opensaml.storage.StorageSerializer;
 import org.opensaml.storage.StorageService;
@@ -148,10 +147,13 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
     /** Name of cookie used to track sessions. */
     @Nonnull @NotEmpty private String cookieName;
-
+    
     /** The back-end for managing data. */
     @NonnullAfterInit private StorageService storageService;
 
+    /** Size boundary below which "large" data can't be stored. */
+    private long storageServiceThreshold;
+    
     /** Generator for XML ID attribute values. */
     @NonnullAfterInit private IdentifierGenerationStrategy idGenerator;
 
@@ -174,6 +176,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         flowDescriptorMap = new HashMap();
         consistentAddress = true;
         cookieName = DEFAULT_COOKIE_NAME;
+        storageServiceThreshold = 1024 * 1024;
     }
 
     /**
@@ -347,7 +350,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         cookieManager = Constraint.isNotNull(manager, "CookieManager cannot be null");
     }
-
+    
     /**
      * Get the {@link StorageService} back-end to use.
      * 
@@ -367,7 +370,38 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
         storageService = Constraint.isNotNull(storage, "StorageService cannot be null");
     }
-
+    
+    /**
+     * Get whether the configured {@link StorageService}'s
+     * {@link org.opensaml.storage.StorageCapabilities#getValueSize()} method meets the
+     * value set via {@link #setStorageServiceThreshold(int)}.
+     * 
+     * @return true iff the threshold is met
+     */
+    public boolean storageServiceMeetsThreshold() {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
+        return storageService.getCapabilities().getValueSize() >= storageServiceThreshold;
+    }
+    
+    /**
+     * Set the size in characters that the configured {@link StorageService} must support in order for
+     * "larger" data to be stored, specifically the data involved with the {@link #trackSPSessions}
+     * and {@link #secondaryServiceIndex} options.
+     * 
+     * <p>The implementation will query the configured service each time it needs to honor those options,
+     * to handle cases where the size limit can vary by request.</p>
+     * 
+     * <p>Defaults to 1024 * 1024 characters.</p>
+     * 
+     * @param size  size in characters
+     */
+    public void setStorageServiceThreshold(final long size) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        storageServiceThreshold = size;
+    }
+    
     /**
      * Set the generator to use when creating XML ID attribute values.
      * 
@@ -449,9 +483,6 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         } else if (cookieManager == null) {
             throw new ComponentInitializationException(
                     "Initialization of StorageBackedSessionManager requires non-null CookieManager");
-        } else if ((trackSPSessions || secondaryServiceIndex) && storageService 
-                instanceof RequestScopedStorageService) {
-            throw new ComponentInitializationException("Tracking SPSessions requires a server-side StorageService");
         } else if (trackSPSessions && spSessionSerializerRegistry == null) {
             throw new ComponentInitializationException("Tracking SPSessions requires a spSessionSerializerRegistry");
         }
@@ -590,7 +621,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
     }
 
     /**
-     * Insert or update a secondary index record from a SPSession to a parent IdPSession.
+     * Insert or update a secondary index record from an SPSession to a parent IdPSession.
      * 
      * @param idpSession the parent session
      * @param spSession the SPSession to index
@@ -605,7 +636,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             if (!maskStorageFailure) {
                 throw new SessionException("Exceeded retry attempts while adding to secondary index");
             }
-        } else if (secondaryServiceIndex) {
+        } else if (secondaryServiceIndex && storageServiceMeetsThreshold()) {
             String serviceId = spSession.getId();
             String serviceKey = spSession.getSPSessionKey();
             if (serviceKey == null) {

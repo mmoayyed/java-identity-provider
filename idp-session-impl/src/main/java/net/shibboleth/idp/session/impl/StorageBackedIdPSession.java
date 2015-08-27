@@ -319,7 +319,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<SPSession> getSPSessions() {
         
-        if (sessionManager.isTrackSPSessions()) {
+        if (sessionManager.isTrackSPSessions() && sessionManager.storageServiceMeetsThreshold()) {
             // Check for any sparse/null values in the map, which need to be loaded before returning a complete set.
             final Iterator<Map.Entry<String, Optional<SPSession>>> entries =
                     getSPSessionMap().entrySet().iterator();
@@ -347,7 +347,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     /** {@inheritDoc} */
     @Override
     @Nullable public SPSession getSPSession(@Nonnull @NotEmpty final String serviceId) {
-        if (sessionManager.isTrackSPSessions()) {
+        if (sessionManager.isTrackSPSessions() && sessionManager.storageServiceMeetsThreshold()) {
             // Check existing map.
             SPSession result = super.getSPSession(serviceId);
             if (result != null) {
@@ -383,6 +383,11 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     @Override
     @Nullable public SPSession addSPSession(@Nonnull final SPSession spSession) throws SessionException {
         if (sessionManager.isTrackSPSessions()) {
+            if (!sessionManager.storageServiceMeetsThreshold()) {
+                log.info("Unable to add SP session due to to storage service limitations");
+                return null;
+            }
+            
             try {
                 // Store the record.
                 if (!saveSPSessionToStorage(spSession) && !sessionManager.isMaskStorageFailure()) {
