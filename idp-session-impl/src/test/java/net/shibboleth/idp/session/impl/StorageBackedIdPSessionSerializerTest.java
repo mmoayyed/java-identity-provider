@@ -25,8 +25,14 @@ import java.net.URISyntaxException;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.session.BasicSPSession;
+import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.net.CookieManager;
+import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletRequestProxy;
+import net.shibboleth.utilities.java.support.net.ThreadLocalHttpServletResponseProxy;
+import net.shibboleth.utilities.java.support.security.SecureRandomIdentifierGenerationStrategy;
 
+import org.opensaml.storage.impl.MemoryStorageService;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -47,8 +53,27 @@ public class StorageBackedIdPSessionSerializerTest {
     private StorageBackedIdPSessionSerializer serializer;
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
+        final MemoryStorageService storageService = new MemoryStorageService();
+        storageService.setId("TestStorageService");
+        storageService.setCleanupInterval(0);
+        storageService.initialize();
+
+        CookieManager cookieManager = new CookieManager();
+        cookieManager.setHttpServletRequest(new ThreadLocalHttpServletRequestProxy());
+        cookieManager.setHttpServletResponse(new ThreadLocalHttpServletResponseProxy());
+        cookieManager.initialize();
+        
         manager = new StorageBackedSessionManager();
+        manager.setStorageService(storageService);
+        manager.setIDGenerator(new SecureRandomIdentifierGenerationStrategy());
+        manager.setHttpServletRequest(new ThreadLocalHttpServletRequestProxy());
+        manager.setHttpServletResponse(new ThreadLocalHttpServletResponseProxy());
+        manager.setCookieManager(cookieManager);
+        manager.setId("Test Session Manager");
         manager.setTrackSPSessions(true);
+        manager.setSPSessionSerializerRegistry(new SPSessionSerializerRegistry());
+        manager.initialize();
+
         serializer = new StorageBackedIdPSessionSerializer(manager, null);
         serializer.initialize();
     }
