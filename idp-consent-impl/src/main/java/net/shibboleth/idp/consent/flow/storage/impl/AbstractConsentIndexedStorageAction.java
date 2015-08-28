@@ -28,6 +28,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor;
 import net.shibboleth.idp.consent.storage.impl.CollectionSerializer;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.interceptor.ProfileInterceptorResult;
@@ -60,9 +61,6 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractConsentIndexedStorageAction.class);
-
-    /** Maximum number of records stored in the storage service. */
-    @Nonnull private int maxStoredRecords;
 
     /** Storage key of index record. */
     @Nullable private String storageIndexKey;
@@ -146,9 +144,6 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         if (!super.doPreExecute(profileRequestContext, interceptorContext)) {
             return false;
         }
-
-        maxStoredRecords = getConsentFlowDescriptor().getMaximumNumberOfStoredRecords();
-        log.trace("{} Maximum number of stored records '{}'", getLogPrefix(), maxStoredRecords);
 
         storageIndexKey = storageIndexKeyLookupStrategy.apply(profileRequestContext);
         log.trace("{} Storage index key '{}'", getLogPrefix(), storageIndexKey);
@@ -251,23 +246,26 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
     }
 
     /**
-     * Delete storage records until the number of records stored is one less than
-     * {@link net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor#getMaximumNumberOfStoredRecords()}
-     * so that a new record may be stored.
+     * Storage records will be pruned based on the record maximums set on the flow descriptor,
+     * and the storage service value size. Below a defined threshold, the basic maximum is applied, while at
+     * that storage size, an expanded maximum is applied.
      * 
-     * Storage records will be pruned if
-     * {@link net.shibboleth.idp.consent.flow.impl.ConsentFlowDescriptor#getMaximumNumberOfStoredRecords()}
-     * is greater than zero.
-     * 
-     * The function used to determine the records to be deleted may be set by calling
+     * <p>The function used to determine the records to be deleted may be set by calling
      * {@link #setStorageKeysStrategy(Function)}. By default, records are deleted on a first-in-first-out basis,
-     * meaning the oldest storage records are deleted first.
+     * meaning the oldest storage records are deleted first.</p>
      * 
      * @param profileRequestContext the profile request context
+     * 
      * @throws IOException if an error occurs writing to the storage service
      */
     protected void pruneStorageRecords(@Nonnull final ProfileRequestContext profileRequestContext) throws IOException {
 
+        final ConsentFlowDescriptor flowDescriptor = getConsentFlowDescriptor();
+        int maxStoredRecords = flowDescriptor.getMaximumNumberOfStoredRecords();
+        if (getStorageService().getCapabilities().getValueSize() >= flowDescriptor.getExpandedStorageThreshold()) {
+            maxStoredRecords = flowDescriptor.getExpandedNumberOfStoredRecords();
+        }
+        
         if (maxStoredRecords <= 0) {
             log.trace("{} Will not prune storage records, maximum number of records is not greater than zero",
                     getLogPrefix());

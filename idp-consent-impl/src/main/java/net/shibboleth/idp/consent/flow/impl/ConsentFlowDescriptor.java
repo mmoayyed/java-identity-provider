@@ -41,11 +41,18 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     @Nonnull @Duration @NonNegative private Long lifetime;
 
     /** Maximum number of records stored in the storage service. */
-    @Nonnull private int maxStoredRecords;
+    private int maxStoredRecords;
+
+    /** Expanded maximum number of records stored in the storage service. */
+    private int expandedMaxStoredRecords;
+    
+    /** Value size at which expanded maxium takes effect. */
+    private long expandedStorageThreshold;
 
     /** Constructor. */
     public ConsentFlowDescriptor() {
         lifetime = DOMTypeSupport.durationToLong("P1Y");
+        expandedStorageThreshold = 1024 * 1024;
     }
 
     /**
@@ -67,12 +74,30 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     }
 
     /**
-     * Get the maximum number of records stored in the storage service.
+     * Get the maximum number of records to keep in the storage service if the expanded size threshold is not met.
      * 
-     * @return the maximum number of records stored in the storage service
+     * @return the maximum number of records, or <=0 for no limit
      */
     public int getMaximumNumberOfStoredRecords() {
         return maxStoredRecords;
+    }
+
+    /**
+     * Get the maximum number of records to keep in the storage service if the expanded size threshold is met.
+     * 
+     * @return the maximum number of records, or <=0 for no limit
+     */
+    public int getExpandedNumberOfStoredRecords() {
+        return expandedMaxStoredRecords;
+    }
+    
+    /**
+     * Get the storage value size at which the expanded maximum record size kicks in.
+     * 
+     * @return  storage value size to enable expanded record maximum
+     */
+    public long getExpandedStorageThreshold() {
+        return expandedStorageThreshold;
     }
 
     /**
@@ -99,13 +124,38 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     }
 
     /**
-     * Set the maximum number of records stored in the storage service.
+     * Set the maximum number of records to keep in the storage service if the expanded size threshold is not met.
      * 
-     * @param maximum the maximum number of records stored in the storage service
+     * @param maximum the maximum number of records, or <=0 for no limit
      */
     public void setMaximumNumberOfStoredRecords(final int maximum) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
     
         maxStoredRecords = maximum;
     }
+
+    /**
+     * Set the maximum number of records to keep in the storage service if the expanded size threshold is met.
+     * 
+     * @param maximum the maximum number of records, or <=0 for no limit
+     */
+    public void setExpandedNumberOfStoredRecords(final int maximum) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+    
+        expandedMaxStoredRecords = maximum;
+    }
+
+    /**
+     * Set the storage value size at which the expanded maximum record size kicks in.
+     * 
+     * <p>Defaults to 1024^2</p>
+     * 
+     * @param size size threshold
+     */
+    public void setExpandedStorageThreshold(final long size) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+    
+        expandedStorageThreshold = size;
+    }
+    
 }

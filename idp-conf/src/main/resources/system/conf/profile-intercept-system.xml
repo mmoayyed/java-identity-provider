@@ -43,6 +43,8 @@
             p:compareValues="%{idp.consent.compareValues:false}"
             p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
             p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
+            p:expandedNumberOfStoredRecords="%{idp.consent.expandedMaxStoredRecords:0}"
+            p:expandedStorageThreshold="%{idp.consent.expandedStorageThreshold:1048576}"
             p:nonBrowserSupported="false">
         <property name="activationCondition">
             <bean parent="shibboleth.Conditions.OR">
@@ -65,6 +67,8 @@
         p:compareValues="%{idp.consent.compareValues:false}"
         p:lifetime="%{idp.consent.storageRecordLifetime:P1Y}"
         p:maximumNumberOfStoredRecords="%{idp.consent.maxStoredRecords:10}"
+        p:expandedNumberOfStoredRecords="%{idp.consent.expandedMaxStoredRecords:0}"
+        p:expandedStorageThreshold="%{idp.consent.expandedStorageThreshold:1048576}"
         p:nonBrowserSupported="false" />
 
     <!-- Function to lookup consent-specific audit context as a child of the consent context. -->

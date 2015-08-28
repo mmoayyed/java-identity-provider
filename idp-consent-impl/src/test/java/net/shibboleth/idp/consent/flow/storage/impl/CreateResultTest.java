@@ -150,6 +150,7 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
     }
 
     @Test public void testMaxStoredRecords() throws Exception {
+        descriptor.setExpandedNumberOfStoredRecords(2);
         descriptor.setMaximumNumberOfStoredRecords(2);
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
@@ -193,7 +194,8 @@ public class CreateResultTest extends AbstractConsentIndexedStorageActionTest {
     }
 
     @Test public void testNoMaxStoredRecords() throws Exception {
-        descriptor.setMaximumNumberOfStoredRecords(-1);
+        descriptor.setMaximumNumberOfStoredRecords(0);
+        descriptor.setExpandedNumberOfStoredRecords(0);
 
         final ConsentContext consentCtx = prc.getSubcontext(ConsentContext.class);
         consentCtx.getCurrentConsents().putAll(ConsentTestingSupport.newConsentMap());
