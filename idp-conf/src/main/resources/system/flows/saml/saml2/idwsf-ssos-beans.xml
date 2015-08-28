@@ -58,5 +58,105 @@
             </util:list>
         </property>
     </bean>
+    
+    <util:constant id="shibboleth.Delegation.MetadataLookup.Protocol"
+        static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML20P_NS" />
+
+    <util:constant id="shibboleth.Delegation.MetadataLookup.Role"
+        static-field="org.opensaml.saml.saml2.metadata.SPSSODescriptor.DEFAULT_ELEMENT_NAME" />
+    
+    <bean id="PopulateInboundMessageContextWithSAMLSelf" 
+        class="net.shibboleth.idp.saml.profile.impl.PopulateInboundMessageContextWithSAMLSelf" scope="prototype" />
+    
+    <bean id="ProcessFrameworkHandler"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.ProcessFrameworkHandler" />
+        </constructor-arg>
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="not"
+                c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
+        </property>
+        <property name="errorEvent">
+            <util:constant static-field="org.opensaml.profile.action.EventIds.INVALID_MESSAGE" />
+        </property>
+    </bean>
+    
+    <bean id="ProcessSenderHandler"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.ProcessSenderHandler" />
+        </constructor-arg>
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="not"
+                c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
+        </property>
+        <property name="errorEvent">
+            <util:constant static-field="org.opensaml.profile.action.EventIds.INVALID_MESSAGE" />
+        </property>
+    </bean>
+    
+    <bean id="ExtractMessageIDHandler"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.soap.wsaddressing.messaging.impl.ExtractMessageIDHandler" />
+        </constructor-arg>
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="not"
+                c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
+        </property>
+        <property name="errorEvent">
+            <util:constant static-field="org.opensaml.profile.action.EventIds.INVALID_MESSAGE" />
+        </property>
+    </bean>
+    
+    <bean id="ValidateActionHandler"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.soap.wsaddressing.messaging.impl.ValidateActionHandler">
+                <property name="expectedActionURI">
+                    <util:constant static-field="net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants.SSOS_AUTHN_REQUEST_WSA_ACTION_URI" />
+                </property>
+            </bean>
+        </constructor-arg>
+        <property name="activationCondition">
+            <bean class="com.google.common.base.Predicates" factory-method="not"
+                c:predicate-ref="shibboleth.Conditions.BrowserProfile" />
+        </property>
+        <property name="errorEvent">
+            <util:constant static-field="org.opensaml.profile.action.EventIds.INVALID_MESSAGE" />
+        </property>
+    </bean>
+    
+    <bean id="SAMLProtocolAndRoleForPresenter"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.saml.common.binding.impl.SAMLProtocolAndRoleHandler" scope="prototype"
+                p:entityContextClass="org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext"
+                p:protocol-ref="shibboleth.Delegation.MetadataLookup.Protocol"
+                p:role-ref="shibboleth.Delegation.MetadataLookup.Role" />
+        </constructor-arg>
+    </bean>
+    
+    <bean id="SAMLMetadataLookupForPresenter"
+            class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
+            c:executionDirection="INBOUND">
+        <constructor-arg name="messageHandler">
+            <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype"
+                p:entityContextClass="org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext">
+                <property name="roleDescriptorResolver">
+                    <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+                        c:mdResolver-ref="shibboleth.MetadataResolver" />
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="LibertyOutboundContexts" class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.PopulateOutboundMessageContext" scope="prototype" />
 
 </beans>

@@ -6,20 +6,7 @@
     <!-- Default inbound security processing for IDWSF SSOS SAML 2 delegation profile. -->
 
     <action-state id="IDWSFSSOSSecurityPolicy">
-        <!-- First do everything related to TLS, the SOAP binding and WS-Security processing. -->
-        
-        <!-- TODO these don't really belong here. Need to figure out where/how to wire them. -->
-        <evaluate expression="PopulateInboundMessageContextWithSAMLSelf" />
-        <evaluate expression="ExtractMessageIDHandler" />
-        <evaluate expression="ValidateActionHandler" />
-        <evaluate expression="ProcessFrameworkHandler" />
-        <evaluate expression="ProcessSenderHandler" />
-        
-        <!-- Note: SAMLPresenterContext entityID is populated by ProcessSenderHandler, 
-             so wherever the above wind up, these need to effectively run after that action. -->
-        <evaluate expression="SAMLProtocolAndRoleForPresenter" />
-        <evaluate expression="SAMLMetadataLookupForPresenter" />
-        
+        <!-- First do everything related to client TLS, the SOAP binding and WS-Security processing. -->
         <evaluate expression="SAMLMDClientCertAuthSecurityHandlerForPresenter" />
         <evaluate expression="CheckMandatoryAuthenticationForPresenter" />
         
