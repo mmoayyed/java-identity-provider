@@ -174,21 +174,29 @@
         p:cleanupInterval="%{idp.storage.cleanupInterval:PT10M}" />
 
     <bean id="shibboleth.ClientSessionStorageService"
-        class="%{idp.storage.ClientStorageService:org.opensaml.storage.impl.ServletRequestScopedStorageService}"
+        class="org.opensaml.storage.impl.client.ClientStorageService"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:cookieManager-ref="shibboleth.CookieManager"
-        p:cookieName="shib_idp_session_ss"
+        p:storageName="shib_idp_session_ss"
         p:dataSealer-ref="shibboleth.DataSealer" />
 
     <bean id="shibboleth.ClientPersistentStorageService"
-        class="%{idp.storage.ClientStorageService:org.opensaml.storage.impl.ServletRequestScopedStorageService}"
+        class="org.opensaml.storage.impl.client.ClientStorageService"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:cookieManager-ref="shibboleth.PersistentCookieManager"
-        p:cookieName="shib_idp_persistent_ss"
+        p:storageName="shib_idp_persistent_ss"
         p:dataSealer-ref="shibboleth.DataSealer"
         p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy" />
+
+    <!--
+    Default list of ClientStorageService plugins needed for injection into storage read/write flows.
+    Declared here for compatibility with pre-3.2 installs that don't declare this list inside
+    session-manager.xml
+    -->
+    <util:list id="shibboleth.DefaultClientStorageServices">
+        <ref bean="shibboleth.ClientSessionStorageService" />
+        <ref bean="shibboleth.ClientPersistentStorageService" />
+    </util:list>
 
     <bean id="shibboleth.ReplayCache" class="org.opensaml.storage.ReplayCache" depends-on="shibboleth.LoggingService"
         p:storage-ref="#{'%{idp.replayCache.StorageService:shibboleth.StorageService}'.trim()}" p:strict="true" />

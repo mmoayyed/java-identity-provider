@@ -31,4 +31,14 @@
         </property>
     </bean>
         
+    <!--
+    List of client-side storage service plugins. If you use server-side storage and don't need these
+    services, you can remove or comment out the <ref> elements, but don't remove the list bean or
+    a default list will be substituted for backward compatibility.
+    -->
+    <util:list id="shibboleth.ClientStorageServices">
+        <ref bean="shibboleth.ClientSessionStorageService" />
+        <ref bean="shibboleth.ClientPersistentStorageService" />
+    </util:list>
+    
 </beans>

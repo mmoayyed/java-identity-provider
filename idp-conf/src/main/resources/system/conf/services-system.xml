@@ -143,13 +143,4 @@
           class="net.shibboleth.idp.cas.service.ReloadingServiceRegistry"
           c:delegate-ref="shibboleth.ReloadableCASServiceRegistry" />
 
-    <!-- List of ClientStorageService plugins needed for injection into storage read/write flows. -->
-    <bean id="shibboleth.DefaultClientStorageServices"
-            class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
-
  </beans>
