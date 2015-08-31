@@ -139,6 +139,10 @@
 
     <webflow:flow-executor id="flowExecutor">
         <webflow:flow-execution-repository max-execution-snapshots="0" />
+        <webflow:flow-execution-listeners>
+            <webflow:listener ref="profileRequestContextFlowExecutionListener"
+                              criteria="%{idp.profile.exposeProfileRequestContextInSession:none}" />
+        </webflow:flow-execution-listeners>
     </webflow:flow-executor>
 
     <webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator" />
@@ -151,5 +155,8 @@
             </list>
         </property>
     </bean>
+
+    <bean id="profileRequestContextFlowExecutionListener"
+          class="net.shibboleth.idp.profile.support.ProfileRequestContextFlowExecutionListener" />
 
 </beans>
