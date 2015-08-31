@@ -45,24 +45,6 @@
         <filter-name>CookieBufferingFilter</filter-name>
         <filter-class>net.shibboleth.utilities.java.support.net.CookieBufferingFilter</filter-class>
     </filter>
-    <!-- Automates the unpack and pack of the cookie-based storage model. -->
-    <filter>
-        <filter-name>ClientSessionStorageServiceFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        <init-param>
-            <param-name>targetBeanName</param-name>
-            <param-value>shibboleth.ClientSessionStorageService</param-value>
-        </init-param>
-    </filter>
-    <!-- Automates the unpack and pack of the cookie-based storage model. -->
-    <filter>
-        <filter-name>ClientPersistentStorageServiceFilter</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-        <init-param>
-            <param-name>targetBeanName</param-name>
-            <param-value>shibboleth.ClientPersistentStorageService</param-value>
-        </init-param>
-    </filter>
     <!-- Automates TLS-based propagation of HttpServletRequest/Response into beans. -->
     <filter>
         <filter-name>RequestResponseContextFilter</filter-name>
@@ -84,28 +66,6 @@
         <url-pattern>/profile/SAML2/Redirect/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
-        <url-pattern>/profile/cas/login</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ClientSessionStorageServiceFilter</filter-name>
-        <url-pattern>/profile/Logout</url-pattern>
-        <url-pattern>/profile/Shibboleth/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/Redirect/SLO</url-pattern>
-        <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
-        <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
-        <url-pattern>/profile/cas/login</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>ClientPersistentStorageServiceFilter</filter-name>
-        <url-pattern>/profile/Shibboleth/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
-        <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
         <url-pattern>/profile/cas/login</url-pattern>
     </filter-mapping>
     <filter-mapping>
