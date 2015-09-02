@@ -22,7 +22,8 @@
 
 	<!-- Release affiliation to anyone in the InCommon group -->
 	<afp:AttributeFilterPolicy id="InCommonRelease">
-		<afp:PolicyRequirementRule xsi:type="basic:ANY" id="pq"/>
+        <!--  Turn on rule if an attribute call firstName has value "john" -->
+		<afp:PolicyRequirementRule xsi:type="basic:AttributeValueString" value="john" attributeID="firstName"/>
 
 		<afp:AttributeRuleReference ref="wobble"/>
 

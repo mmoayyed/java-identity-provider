@@ -20,7 +20,7 @@
 
 	</afp:AttributeFilterPolicy>
 
-	<afp:AttributeFilterPolicy id="InCommonRelease">
+	<afp:AttributeFilterPolicy id="InCommonRelease2">
 		<afp:PolicyRequirementRule xsi:type="basic:ANY" />
 
 		<afp:AttributeRule attributeID="affiliation">

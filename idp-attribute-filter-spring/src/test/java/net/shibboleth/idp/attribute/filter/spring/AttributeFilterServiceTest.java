@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
@@ -50,9 +51,9 @@ public class AttributeFilterServiceTest {
 
     /** The service configuration dir. */
     private final static String SERVICE_CONFIG_DIR = "net/shibboleth/idp/attribute/filter/spring/";
-    
+
     private GenericApplicationContext testContext = null;
-    
+
     @AfterMethod public void tearDownTestContext() {
         if (null == testContext) {
             return;
@@ -70,15 +71,17 @@ public class AttributeFilterServiceTest {
      * @throws ServiceException if an error occurs loading the service
      * @throws ComponentInitializationException
      */
-    private AttributeFilter getFilter(String name) throws ServiceException, ComponentInitializationException {
-        final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + name);
+    private AttributeFilter getFilter(String name, boolean nativeSpring) throws ServiceException,
+            ComponentInitializationException {
+        final Resource resource = new ClassPathResource(SERVICE_CONFIG_DIR + (nativeSpring ? "native/" : "") + name);
         if (null != testContext) {
             tearDownTestContext();
         }
         final GenericApplicationContext context =
                 SpringSupport.newContext(name, Collections.singletonList(resource),
-                        Collections.<BeanFactoryPostProcessor>emptyList(), Collections.<BeanPostProcessor>emptyList(),
-                        Collections.<ApplicationContextInitializer>emptyList(), null);
+                        Collections.<BeanFactoryPostProcessor> emptyList(),
+                        Collections.<BeanPostProcessor> singletonList(new IdentifiableBeanPostProcessor()),
+                        Collections.<ApplicationContextInitializer> emptyList(), null);
         testContext = context;
         final AttributeFilterServiceStrategy strategy = new AttributeFilterServiceStrategy();
         strategy.setId("ID");
@@ -111,8 +114,13 @@ public class AttributeFilterServiceTest {
     }
 
     @Test public void testPolicy2() throws ServiceException, AttributeFilterException, ComponentInitializationException {
+        testPolicy2(true);
+        testPolicy2(false);
+    }
 
-        final AttributeFilter filter = getFilter("policy2.xml");
+    public void testPolicy2(boolean nativeSpring) throws ServiceException, AttributeFilterException,
+            ComponentInitializationException {
+        final AttributeFilter filter = getFilter("policy2.xml", nativeSpring);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -139,8 +147,14 @@ public class AttributeFilterServiceTest {
     }
 
     @Test public void testPolicy3() throws ServiceException, AttributeFilterException, ComponentInitializationException {
+        testPolicy3(true);
+        testPolicy3(false);
+    }
 
-        final AttributeFilter filter = getFilter("policy3.xml");
+    public void testPolicy3(boolean nativeSpring) throws ServiceException, AttributeFilterException,
+            ComponentInitializationException {
+
+        final AttributeFilter filter = getFilter("policy3.xml", nativeSpring);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -167,17 +181,24 @@ public class AttributeFilterServiceTest {
 
     @Test public void testPolicy4() throws ServiceException, AttributeFilterException, ComponentInitializationException {
 
-        common45("policy4.xml");
+        common45("policy4.xml", true);
+        common45("policy4.xml", false);
     }
 
     @Test public void testPolicy5() throws ServiceException, AttributeFilterException, ComponentInitializationException {
 
-        common45("policy5.xml");
+        common45("policy5.xml", true);
+        common45("policy5.xml", false);
     }
 
     @Test public void testAll() throws ServiceException, AttributeFilterException, ComponentInitializationException {
+        testAll(true);
+        testAll(false);
+    }
 
-        final AttributeFilter filter = getFilter("policyAll.xml");
+    public void testAll(boolean nativeSpring) throws ServiceException, AttributeFilterException,
+            ComponentInitializationException {
+        final AttributeFilter filter = getFilter("policyAll.xml", nativeSpring);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -202,11 +223,10 @@ public class AttributeFilterServiceTest {
         Assert.assertNull(filteredAttributes.get("affiliation"));
     }
 
-
-    private void common45(String file) throws ServiceException, AttributeFilterException,
+    private void common45(String file, boolean nativeSpring) throws ServiceException, AttributeFilterException,
             ComponentInitializationException {
 
-        final AttributeFilter filter = getFilter(file);
+        final AttributeFilter filter = getFilter(file, nativeSpring);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
@@ -233,16 +253,18 @@ public class AttributeFilterServiceTest {
     }
 
     @Test public void deny1() throws ServiceException, AttributeFilterException, ComponentInitializationException {
-        denyTest("deny1.xml");
+        denyTest("deny1.xml", true);
+        denyTest("deny1.xml", false);
     }
 
     @Test public void deny2() throws ServiceException, AttributeFilterException, ComponentInitializationException {
-        denyTest("deny2.xml");
+        denyTest("deny2.xml", false);
+        denyTest("deny2.xml", true);
     }
 
-    private void denyTest(String file) throws ServiceException, AttributeFilterException,
+    private void denyTest(String file, boolean nativeSpring) throws ServiceException, AttributeFilterException,
             ComponentInitializationException {
-        final AttributeFilter filter = getFilter(file);
+        final AttributeFilter filter = getFilter(file, nativeSpring);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(attributesToBeFiltered.values());
