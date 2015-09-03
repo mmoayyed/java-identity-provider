@@ -16,6 +16,9 @@
     </action-state>
 
     <decision-state id="HandleError">
+        <on-entry>
+            <evaluate expression="LogEvent" />
+        </on-entry>
         <if test="opensamlProfileRequestContext.isBrowserProfile()"
             then="AuditedErrorView"
             else="ProtocolErrorView" />

@@ -318,6 +318,12 @@
             <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
         </property>
     </bean>
+
+    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype">
+        <property name="eventContextLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
+        </property>
+    </bean>
     
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"

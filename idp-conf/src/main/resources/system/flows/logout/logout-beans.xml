@@ -97,6 +97,12 @@
             </bean>
         </property>
     </bean>
+
+    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype">
+        <property name="eventContextLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
+        </property>
+    </bean>
     
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />

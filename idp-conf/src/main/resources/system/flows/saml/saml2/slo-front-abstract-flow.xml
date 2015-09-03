@@ -93,6 +93,7 @@
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="viewScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="viewScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext')" result="viewScope.custom" />
         </on-render>
         <transition on="proceed" to="CheckAsync" />
     </view-state>
@@ -118,6 +119,7 @@
             <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext')" result="requestScope.custom" />
         </on-entry>
     </end-state>
     
@@ -156,6 +158,7 @@
     <decision-state id="HandleError">
         <on-entry>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext), true).setRequestContext(flowRequestContext)" />
+            <evaluate expression="LogEvent" />
         </on-entry>
         <if test="LocalErrorPredicate.apply(opensamlProfileRequestContext)"
             then="HandleErrorWithView" else="HandleErrorWithResponse" />

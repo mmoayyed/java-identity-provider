@@ -18,6 +18,9 @@
     <!-- Unsuccessful terminal states. -->
     
     <decision-state id="HandleErrorWithView">
+        <on-entry>
+            <evaluate expression="LogEvent" />
+        </on-entry>
         <if test="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').containsKey(currentEvent.id) and flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').get(currentEvent.id)"
             then="AuditedErrorView" else="ErrorView" />
     </decision-state>
