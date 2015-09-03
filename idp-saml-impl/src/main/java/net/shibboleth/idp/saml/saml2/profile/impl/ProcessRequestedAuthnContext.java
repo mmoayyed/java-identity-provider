@@ -134,7 +134,8 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         
         return super.doPreExecute(profileRequestContext, authenticationContext);
     }
-    
+
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -187,5 +188,6 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         log.debug("{} RequestedPrincipalContext created with operator {} and {} custom principal(s)",
                 getLogPrefix(), rpCtx.getOperator(), principals.size());
     }
-
+// Checkstyle: CyclomaticComplexity ON
+    
 }
