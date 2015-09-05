@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
@@ -177,6 +178,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
             getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
 
         GenericApplicationContext context = new GenericApplicationContext();
+        context.getBeanFactory().addBeanPostProcessor(new IdentifiableBeanPostProcessor());
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
 

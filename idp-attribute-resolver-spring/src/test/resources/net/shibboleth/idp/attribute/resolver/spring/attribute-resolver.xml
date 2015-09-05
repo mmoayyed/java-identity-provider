@@ -42,7 +42,7 @@
         <resolver:Dependency ref="simpleEPE" />
         <resolver:Dependency ref="eduPersonAffiliation" />
     </resolver:AttributeDefinition>
-        
+<!--        
     <resolver:DataConnector id="staticAttributes" xsi:type="dc:Static">
         <dc:Attribute id="staticEpA">
             <dc:Value>member</dc:Value>
@@ -52,7 +52,7 @@
             <dc:Value>urn:mace:dir:entitlement:common-lib-terms</dc:Value>
         </dc:Attribute>
     </resolver:DataConnector>
-
+-->
     <!-- Schema: Core schema attributes-->
     
     <resolver:AttributeDefinition xsi:type="ad:Simple" id="uid" sourceAttributeID="uid">

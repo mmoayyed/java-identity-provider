@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 import javax.sql.DataSource;
 
+import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -124,6 +125,7 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
     
     private ReloadableService<AttributeResolver> getResolver(String file) {
         GenericApplicationContext context = new GenericApplicationContext();
+        context.getBeanFactory().addBeanPostProcessor(new IdentifiableBeanPostProcessor());
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
 
