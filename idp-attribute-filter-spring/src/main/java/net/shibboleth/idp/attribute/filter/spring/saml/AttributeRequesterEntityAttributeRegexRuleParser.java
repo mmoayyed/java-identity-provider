@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeRegexPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
@@ -34,11 +35,15 @@ import org.w3c.dom.Element;
  */
 public class AttributeRequesterEntityAttributeRegexRuleParser extends AbstractEntityAttributeRuleParser {
 
-    /** Schema type. */
+    /** Schema type - saml. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "EntityAttributeRegexMatch");
 
-    /** Schema type. */
+    /** Schema type - afp. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "EntityAttributeRegexMatch");
+
+    /** Schema type - v2. */
     public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeRequesterEntityAttributeRegexMatch");
 

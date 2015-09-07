@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.RegistrationAuthorityPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -36,8 +37,12 @@ import org.w3c.dom.Element;
 /** Spring bean definition parser that creates {@link RegistrationAuthorityPolicyRule} beans. */
 public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
-    /** Schema type. */
+    /** Schema type - saml. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+            "RegistrationAuthority");
+    
+    /** Schema type - afp. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "RegistrationAuthority");
 
     /** Name of the attribute carrying the Issuers list. */

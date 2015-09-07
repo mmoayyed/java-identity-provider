@@ -37,7 +37,13 @@ import net.shibboleth.idp.attribute.filter.spring.policyrule.NumOfAttributeValue
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PredicateRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRegexRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.AttributeInMetadataRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.AttributeRequesterEntityAttributeExactRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.AttributeRequesterEntityAttributeRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.AttributeRequesterInEntityGroupRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.AttributeRequesterNameIdFormatRuleParser;
 import net.shibboleth.idp.attribute.filter.spring.saml.MappedAttributeInMetadataRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.RegistrationAuthorityRuleParser;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
@@ -48,6 +54,7 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:afp";
 
     /** {@inheritDoc} */
+    // Checkstyle: MethodLength OFF
     @Override
     public void init() {
         BeanDefinitionParser parser = new AttributeFilterPolicyGroupParser();
@@ -61,7 +68,6 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         parser = new AttributeRuleParser();
         registerBeanDefinitionParser(AttributeRuleParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(AttributeRuleParser.TYPE_NAME, parser);
-        
         
         // BASIC
         
@@ -113,9 +119,27 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         
         registerBeanDefinitionParser(PredicateRuleParser.SCHEMA_TYPE_AFP, new PredicateRuleParser());
         
-        // SAML - TODO
+        // SAML - 
+        registerBeanDefinitionParser(AttributeRequesterEntityAttributeExactRuleParser.SCHEMA_TYPE_AFP,
+                new AttributeRequesterEntityAttributeExactRuleParser());
+
+        registerBeanDefinitionParser(AttributeRequesterEntityAttributeRegexRuleParser.SCHEMA_TYPE_AFP,
+                new AttributeRequesterEntityAttributeRegexRuleParser());
+
+        registerBeanDefinitionParser(AttributeRequesterNameIdFormatRuleParser.SCHEMA_TYPE_AFP,
+                new AttributeRequesterNameIdFormatRuleParser());
+
+        registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE_AFP,
+                new AttributeRequesterInEntityGroupRuleParser());
+
+        registerBeanDefinitionParser(AttributeInMetadataRuleParser.ATTRIBUTE_IN_METADATA_AFP,
+                new AttributeInMetadataRuleParser());
+
         registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.MAPPED_ATTRIBUTE_IN_METADATA_AFP,
                 new MappedAttributeInMetadataRuleParser());
 
+        registerBeanDefinitionParser(RegistrationAuthorityRuleParser.SCHEMA_TYPE_AFP,
+                new RegistrationAuthorityRuleParser());
     }
+    // Checkstyle: MethodLength ON
 }

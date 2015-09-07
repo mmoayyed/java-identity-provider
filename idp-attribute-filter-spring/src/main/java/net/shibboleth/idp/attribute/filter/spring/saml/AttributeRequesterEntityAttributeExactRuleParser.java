@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequesterEntityAttributeExactPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
@@ -34,12 +35,16 @@ import org.w3c.dom.Element;
  */
 public class AttributeRequesterEntityAttributeExactRuleParser extends AbstractEntityAttributeRuleParser {
 
-    /** Schema type. */
+    /** Schema type - v2. */
     public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeRequesterEntityAttributeExactMatch");
 
-    /** Schema type. */
+    /** Schema type -saml. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+            "EntityAttributeExactMatch");
+
+    /** Schema type -saml. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "EntityAttributeExactMatch");
 
     /** log. */

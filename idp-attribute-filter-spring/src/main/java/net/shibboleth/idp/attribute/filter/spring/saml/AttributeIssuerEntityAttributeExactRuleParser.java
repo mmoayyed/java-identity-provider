@@ -20,6 +20,8 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -33,8 +35,11 @@ public class AttributeIssuerEntityAttributeExactRuleParser extends AbstractEntit
     /** Schema name. */
     public static final String SCHEMA_NAME = "AttributeIssuerEntityAttributeExactMatch";
 
-    /** Schema type. */
+    /** Schema type - saml. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE, SCHEMA_NAME);
+    
+    /** Schema type - afp. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE, SCHEMA_NAME);
     
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeIssuerEntityAttributeExactRuleParser.class);

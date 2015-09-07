@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.saml;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 
 import org.slf4j.Logger;
@@ -37,8 +38,11 @@ public class AttributeIssuerInEntityGroupRuleParser extends BasePolicyRuleParser
     /** Schema name. */
     public static final String SCHEMA_NAME = "AttributeIssuerInEntityGroup";
 
-    /** Schema type. */
+    /** Schema type - saml. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE, SCHEMA_NAME);
+
+    /** Schema type - afp. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE, SCHEMA_NAME);
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeIssuerEntityAttributeExactRuleParser.class);

@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -33,8 +34,12 @@ import org.w3c.dom.Element;
  */
 public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
 
-    /** Schema type. */
+    /** Schema type - saml. */
     public static final QName ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+            "AttributeInMetadata");
+
+    /** Schema type - afp. */
+    public static final QName ATTRIBUTE_IN_METADATA_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "AttributeInMetadata");
 
     /** {@inheritDoc} */

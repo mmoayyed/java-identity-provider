@@ -30,14 +30,11 @@ import org.testng.annotations.Test;
 public class AttributeRequesterNameIdFormatRuleParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void v2() throws ComponentInitializationException {
-        AttributeRequesterNameIDFormatExactPolicyRule rule =
+        final AttributeRequesterNameIDFormatExactPolicyRule rule =
                 (AttributeRequesterNameIDFormatExactPolicyRule) getPolicyRule("requesterNameId.xml", false);
 
         Assert.assertEquals(rule.getNameIdFormat(), "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
 
-        rule = (AttributeRequesterNameIDFormatExactPolicyRule) getPolicyRule("requesterNameId.xml", true);
-
-        Assert.assertEquals(rule.getNameIdFormat(), "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
     }
 
     @Test public void basic() throws ComponentInitializationException {

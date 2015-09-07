@@ -35,23 +35,20 @@ public class AttributeRequesterEntityAttributeExactRuleParserTest extends BaseAt
 
         Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
         Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
-
-        rule = (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml", true);
+        
+        rule =
+                (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA2.xml", true);
 
         Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
         Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
     }
 
     @Test public void v2() throws ComponentInitializationException {
-        AttributeRequesterEntityAttributeExactPolicyRule rule =
+        final AttributeRequesterEntityAttributeExactPolicyRule rule =
                 (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA.xml", false);
 
         Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
         Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
 
-        rule = (AttributeRequesterEntityAttributeExactPolicyRule) getPolicyRule("requesterEA.xml", true);
-
-        Assert.assertEquals(rule.getValue(), "urn:example.org:policy:ABCD1234");
-        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
     }
 }
