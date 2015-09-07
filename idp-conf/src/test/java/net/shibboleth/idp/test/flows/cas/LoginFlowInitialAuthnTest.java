@@ -17,6 +17,12 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
@@ -25,6 +31,7 @@ import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,13 +40,6 @@ import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import javax.annotation.Nonnull;
-import javax.servlet.http.Cookie;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Tests login flow with initial-authn enabled.
