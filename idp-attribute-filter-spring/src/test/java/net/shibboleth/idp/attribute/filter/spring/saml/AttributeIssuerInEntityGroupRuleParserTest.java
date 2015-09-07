@@ -30,6 +30,6 @@ public class AttributeIssuerInEntityGroupRuleParserTest extends BaseAttributeFil
 
     @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
             throws ComponentInitializationException {
-        getPolicyRule("issuerEG.xml");
+        getPolicyRule("issuerEG.xml", false);
     }
 }

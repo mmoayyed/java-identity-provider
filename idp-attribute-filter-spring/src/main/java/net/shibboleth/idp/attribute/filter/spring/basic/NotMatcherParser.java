@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -25,6 +26,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.NotPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -40,6 +42,8 @@ public class NotMatcherParser extends BaseFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "NOT");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "NOT");
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
@@ -58,18 +62,26 @@ public class NotMatcherParser extends BaseFilterParser {
 
         builder.addPropertyValue("id", myId);
 
-        final List<Element> ruleElements =
+        final List<Element> ruleElementsBasic =
                 ElementSupport.getChildElementsByTagNameNS(configElement,
                         AttributeFilterBasicNamespaceHandler.NAMESPACE, "Rule");
-        final List<Element> ruleReference =
+        final List<Element> ruleReferenceBasic =
                 ElementSupport.getChildElementsByTagNameNS(configElement,
                         AttributeFilterBasicNamespaceHandler.NAMESPACE, "RuleReference");
 
+        final List<Element> ruleElementsAfp =
+                ElementSupport.getChildElementsByTagNameNS(configElement,
+                        AttributeFilterNamespaceHandler.NAMESPACE, "Rule");
+
+        final List<Element> ruleElements = new ArrayList<>(ruleElementsBasic.size() + ruleElementsAfp.size());
+        ruleElements.addAll(ruleElementsAfp);
+        ruleElements.addAll(ruleElementsBasic);
+        
         if (ruleElements != null && !ruleElements.isEmpty()) {
 
             builder.addConstructorArgValue(SpringSupport.parseCustomElements(ruleElements, parserContext).get(0));
             
-        } else if (ruleReference != null && !ruleReference.isEmpty()) {
+        } else if (ruleReferenceBasic != null && !ruleReferenceBasic.isEmpty()) {
             throw new BeanCreationException(parserContext.getReaderContext().getResource().getDescription(), myId,
                     "RuleReference is not supported");
         }

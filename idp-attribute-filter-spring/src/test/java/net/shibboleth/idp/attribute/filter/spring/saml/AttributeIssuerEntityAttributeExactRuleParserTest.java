@@ -30,7 +30,7 @@ public class AttributeIssuerEntityAttributeExactRuleParserTest extends BaseAttri
 
     @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
             throws ComponentInitializationException {
-        getPolicyRule("issuerEA.xml");
+        getPolicyRule("issuerEA.xml", false);
 
     }
 }

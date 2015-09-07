@@ -62,6 +62,7 @@ public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHand
 
         registerBeanDefinitionParser(AttributeInMetadataRuleParser.ATTRIBUTE_IN_METADATA,
                 new AttributeInMetadataRuleParser());
+
         registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.MAPPED_ATTRIBUTE_IN_METADATA,
                 new MappedAttributeInMetadataRuleParser());
 

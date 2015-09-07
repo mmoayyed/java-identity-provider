@@ -37,7 +37,13 @@ import org.testng.annotations.Test;
 public class OrTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
-        OrMatcher what = (OrMatcher) getMatcher("or.xml");
+        matcher( "or.xml", true);
+        matcher( "or.xml", false);
+    }
+
+    public void matcher(String path, boolean isAfp) throws ComponentInitializationException {
+
+        OrMatcher what = (OrMatcher) getMatcher(path,isAfp);
 
         final List<Matcher> children = what.getComposedMatchers();
 
@@ -47,7 +53,12 @@ public class OrTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policy() throws ComponentInitializationException {
-        OrPolicyRule what = (OrPolicyRule) getPolicyRule("or.xml");
+        policy("or.xml", true);
+        policy("or.xml", false);
+    }
+    
+    public void policy(String path, boolean isAfp) throws ComponentInitializationException {
+        OrPolicyRule what = (OrPolicyRule) getPolicyRule(path,isAfp );
 
         final List<PolicyRequirementRule> children = what.getComposedRules();
         Assert.assertEquals(children.size(), 2);
@@ -56,7 +67,13 @@ public class OrTest extends BaseAttributeFilterParserTest {
     }
     
     @Test public void matcherSingleton() throws ComponentInitializationException {
-        OrMatcher what = (OrMatcher) getMatcher("orSingleton.xml");
+        matcherSingleton( "orSingleton.xml", true);
+        matcherSingleton( "orSingleton.xml", false);
+    }
+
+    public void matcherSingleton(String path, boolean isAfp) throws ComponentInitializationException {
+
+        OrMatcher what = (OrMatcher) getMatcher( path,isAfp);
 
         final List<Matcher> children = what.getComposedMatchers();
 
@@ -65,7 +82,12 @@ public class OrTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policySingleton() throws ComponentInitializationException {
-        OrPolicyRule what = (OrPolicyRule) getPolicyRule("orSingleton.xml");
+        policySingleton( "orSingleton.xml", true);
+        policySingleton( "orSingleton.xml", false);
+    }
+
+    public void policySingleton(String path, boolean isAfp) throws ComponentInitializationException {
+        OrPolicyRule what = (OrPolicyRule) getPolicyRule(path,isAfp);
 
         final List<PolicyRequirementRule> children = what.getComposedRules();
         Assert.assertEquals(children.size(), 1);

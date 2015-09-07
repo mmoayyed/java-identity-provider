@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.filter.matcher.impl.ScriptedMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.ScriptedPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -44,12 +45,22 @@ public class ScriptedMatcherParser extends BaseFilterParser {
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "Script");
 
-    /** Script file element name. */
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "Script");
+
+    /** Script file element name - basic. */
     public static final QName SCRIPT_FILE_ELEMENT_NAME = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "ScriptFile");
 
-    /** Inline Script element name. */
+    /** Script file element name - afp. */
+    public static final QName SCRIPT_FILE_ELEMENT_NAME_AFP = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
+            "ScriptFile");
+
+    /** Inline Script element name - basic. */
     public static final QName SCRIPT_ELEMENT_NAME = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "Script");
+
+    /** Inline Script element name - afp. */
+    public static final QName SCRIPT_ELEMENT_NAME_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "Script");
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterBasicNamespaceHandler.class);
@@ -65,6 +76,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
     /**
      * {@inheritDoc} Both types of bean take the same constructor, so the parser is simplified.
      */
+    // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
@@ -74,26 +86,34 @@ public class ScriptedMatcherParser extends BaseFilterParser {
 
         final BeanDefinitionBuilder scriptBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(EvaluableScriptFactoryBean.class);
-        scriptBuilder.addPropertyValue("sourceId",  logPrefix);
+        scriptBuilder.addPropertyValue("sourceId", logPrefix);
         if (config.hasAttributeNS(null, "language")) {
-            final String scriptLanguage =  StringSupport.trimOrNull(config.getAttributeNS(null, "language"));
-            log.debug("{} scripting language: {}.",  logPrefix , scriptLanguage);
+            final String scriptLanguage = StringSupport.trimOrNull(config.getAttributeNS(null, "language"));
+            log.debug("{} scripting language: {}.", logPrefix, scriptLanguage);
             scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }
-        
-        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
-        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
+
+        List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
+        if (scriptElem == null || scriptElem.isEmpty()) {
+            scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME_AFP);
+        }
+
+        List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
+        if (scriptFileElem == null || scriptFileElem.isEmpty()) {
+            scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME_AFP);
+        }
+
         if (scriptElem != null && scriptElem.size() > 0) {
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
                 log.info("Attribute definition {}: definition contains both <Script> "
-                        + "and <ScriptFile> elements, taking the <Script> element",  logPrefix);
+                        + "and <ScriptFile> elements, taking the <Script> element", logPrefix);
             }
             final String script = scriptElem.get(0).getTextContent();
-            log.debug("{} script {}.",  logPrefix , script);
+            log.debug("{} script {}.", logPrefix, script);
             scriptBuilder.addPropertyValue("script", script);
         } else if (scriptFileElem != null && scriptFileElem.size() > 0) {
             final String scriptFile = scriptFileElem.get(0).getTextContent();
-            log.debug("{} script file {}.",  logPrefix , scriptFile);
+            log.debug("{} script file {}.", logPrefix, scriptFile);
             scriptBuilder.addPropertyValue("resource", scriptFile);
         } else {
             log.error("{} No script specified for this attribute definition");
@@ -104,4 +124,5 @@ public class ScriptedMatcherParser extends BaseFilterParser {
 
         builder.addConstructorArgValue(scriptBuilder.getBeanDefinition());
     }
+    // Checkstyle: CyclomaticComplexity ON
 }

@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeIssuerPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
@@ -31,8 +32,12 @@ public class AttributeIssuerRuleParser extends AbstractStringPolicyRuleParser {
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeIssuerString");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "AttributeIssuerString");
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<AttributeIssuerPolicyRule> getNativeBeanClass() {
         return AttributeIssuerPolicyRule.class;
     }

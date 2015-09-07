@@ -33,7 +33,13 @@ public class RegistrationAuthorityRuleParserTest extends BaseAttributeFilterPars
 
 
     @Test public void silentTrue() throws ComponentInitializationException {
-        final RegistrationAuthorityPolicyRule rule = (RegistrationAuthorityPolicyRule) getPolicyRule("registrationAuthorityOne.xml");
+        silentTrue("registrationAuthorityOne.xml", false);
+        silentTrue("registrationAuthorityOne.xml", true);
+    }
+
+    public void silentTrue(String path, boolean isAfp) throws ComponentInitializationException {
+
+        final RegistrationAuthorityPolicyRule rule = (RegistrationAuthorityPolicyRule) getPolicyRule(path, isAfp);
 
         Assert.assertTrue(rule.isMatchIfMetadataSilent());
         final Set<String> issuers = rule.getIssuers();
@@ -44,7 +50,12 @@ public class RegistrationAuthorityRuleParserTest extends BaseAttributeFilterPars
     }
 
     @Test public void silentFalse() throws ComponentInitializationException {
-        final RegistrationAuthorityPolicyRule rule = (RegistrationAuthorityPolicyRule) getPolicyRule("registrationAuthorityTwo.xml");
+        silentFalse("registrationAuthorityTwo.xml", false);
+        silentFalse("registrationAuthorityTwo.xml", true);
+    }
+    
+    public void silentFalse(String path, boolean isAfp) throws ComponentInitializationException {
+        final RegistrationAuthorityPolicyRule rule = (RegistrationAuthorityPolicyRule) getPolicyRule(path, isAfp);
 
         Assert.assertTrue(rule.isMatchIfMetadataSilent());
         final Set<String> issuers = rule.getIssuers();

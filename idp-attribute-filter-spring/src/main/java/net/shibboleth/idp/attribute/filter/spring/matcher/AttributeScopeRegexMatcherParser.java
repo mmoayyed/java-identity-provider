@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeRegexpMatcher;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
@@ -31,8 +32,12 @@ public class AttributeScopeRegexMatcherParser extends AbstractRegexMatcherParser
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeScopeRegex");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "AttributeScopeRegex");
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeScopeRegexpMatcher.class;
     }

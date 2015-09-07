@@ -30,6 +30,6 @@ public class AttributeIssuerEntityAttributeRegexRuleParserTest extends BaseAttri
 
     @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
             throws ComponentInitializationException {
-        getPolicyRule("issuerEARegex.xml");
+        getPolicyRule("issuerEARegex.xml", false);
     }
 }

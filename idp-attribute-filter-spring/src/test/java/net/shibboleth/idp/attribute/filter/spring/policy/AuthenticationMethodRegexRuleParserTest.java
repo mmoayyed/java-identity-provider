@@ -29,7 +29,10 @@ public class AuthenticationMethodRegexRuleParserTest extends BaseAttributeFilter
 
     @Test public void policy() throws ComponentInitializationException {
 
-        final AuthenticationMethodRegexpPolicyRule rule = (AuthenticationMethodRegexpPolicyRule) getPolicyRule("authenticationMethodRegex.xml");
+        AuthenticationMethodRegexpPolicyRule rule = (AuthenticationMethodRegexpPolicyRule) getPolicyRule("authenticationMethodRegex.xml", true);
+        Assert.assertEquals(rule.getRegularExpression(), "^urn:oasis:names:tc:SAML:2\\.0:ac:classes:[^:]*$");
+
+        rule = (AuthenticationMethodRegexpPolicyRule) getPolicyRule("authenticationMethodRegex.xml", false);
         Assert.assertEquals(rule.getRegularExpression(), "^urn:oasis:names:tc:SAML:2\\.0:ac:classes:[^:]*$");
     }
  

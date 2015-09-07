@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeStringMatcher;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
@@ -31,8 +32,12 @@ public class AttributeScopeMatcherParser extends AbstractStringMatcherParser {
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeScopeString");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "AttributeScopeString");
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeScopeStringMatcher.class;
     }

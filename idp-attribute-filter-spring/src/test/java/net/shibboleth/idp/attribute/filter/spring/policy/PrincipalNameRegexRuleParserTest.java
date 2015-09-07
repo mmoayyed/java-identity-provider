@@ -29,8 +29,11 @@ public class PrincipalNameRegexRuleParserTest extends BaseAttributeFilterParserT
 
     @Test public void policy() throws ComponentInitializationException {
 
-        final PrincipalNameRegexpPolicyRule rule = (PrincipalNameRegexpPolicyRule) getPolicyRule("principalNameRegex.xml");
+        PrincipalNameRegexpPolicyRule rule = (PrincipalNameRegexpPolicyRule) getPolicyRule("principalNameRegex.xml", true);
         Assert.assertEquals(rule.getRegularExpression(), "^jsmit.*$");
-    }
+
+        rule = (PrincipalNameRegexpPolicyRule) getPolicyRule("principalNameRegex.xml", false);
+        Assert.assertEquals(rule.getRegularExpression(), "^jsmit.*$");
+}
  
 }

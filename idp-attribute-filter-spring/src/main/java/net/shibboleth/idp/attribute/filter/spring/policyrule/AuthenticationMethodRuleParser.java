@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AuthenticationMethodPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
@@ -31,8 +32,12 @@ public class AuthenticationMethodRuleParser extends AbstractStringPolicyRulePars
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AuthenticationMethodString");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "AuthenticationMethodString");
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<AuthenticationMethodPolicyRule>getNativeBeanClass() {
         return AuthenticationMethodPolicyRule.class;
     }

@@ -30,13 +30,22 @@ import org.testng.annotations.Test;
 public class AttributeRequesterInEntityGroupRuleParserTest extends  BaseAttributeFilterParserTest {
 
     @Test public void v2() throws ComponentInitializationException {
-        AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG.xml");
+        AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG.xml", false);
      
         Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
+
+        rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG.xml", true);
+        
+        Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
     }
+    
     @Test public void basic() throws ComponentInitializationException {
-        AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml");
+        AttributeRequesterInEntityGroupPolicyRule rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml", false);
      
+        Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
+
+        rule = (AttributeRequesterInEntityGroupPolicyRule) getPolicyRule("requesterEG2.xml", true);
+        
         Assert.assertEquals(rule.getEntityGroup(), "urn:example.org");
     }
 }

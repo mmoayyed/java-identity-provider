@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.MappedAttributeInMetadataMatcher;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -35,6 +36,10 @@ public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatch
 
     /** Schema type. */
     public static final QName MAPPED_ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+            "MappedAttributeInMetadata");
+
+    /** Schema type. */
+    public static final QName MAPPED_ATTRIBUTE_IN_METADATA_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "MappedAttributeInMetadata");
 
     /** {@inheritDoc} */

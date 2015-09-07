@@ -39,12 +39,16 @@ import com.google.common.base.Predicate;
 public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void policy() throws ComponentInitializationException {
+        policy(true);
+        policy(false);
+    }
 
+    public void policy(boolean isAfp) throws ComponentInitializationException {
         GenericApplicationContext ctx = new GenericApplicationContext();
         setTestContext(ctx);
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
-        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH + (isAfp?"afp/":"")
                 + "predicate1.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
                 + "predicateBeans.xml"));
 
@@ -62,13 +66,17 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void strategy() throws ComponentInitializationException {
-
+        strategy(true);
+        strategy(false);
+    }
+    
+    public void strategy(boolean isAfp) throws ComponentInitializationException {
         GenericApplicationContext ctx = new GenericApplicationContext();
         setTestContext(ctx);
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
-        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
-                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
+        beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH 
+                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH + (isAfp?"afp/":"")
                 + "predicate2.xml"));
 
         ctx.refresh();
@@ -89,13 +97,17 @@ public class PredicateRuleParserTest extends BaseAttributeFilterParserTest {
     
 
     @Test public void rp() throws Exception {
-
+        rp(true);
+        rp(false);
+    }
+    
+    public void rp(boolean isAfp) throws Exception {
         GenericApplicationContext ctx = new GenericApplicationContext();
         setTestContext(ctx);
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader = new SchemaTypeAwareXMLBeanDefinitionReader(ctx);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
-                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH
+                + "predicateBeans.xml"), new ClassPathResource(BaseAttributeFilterParserTest.POLICY_RULE_PATH + (isAfp?"afp/":"")
                 + "predicateRp.xml"));
 
         ctx.refresh();

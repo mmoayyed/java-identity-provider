@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -25,6 +26,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.AndMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.AndPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -41,8 +43,11 @@ public class AndMatcherParser extends BaseFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "AND");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "AND");
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return AndPolicyRule.class;
@@ -51,6 +56,7 @@ public class AndMatcherParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doParse(@Nonnull final Element configElement, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
@@ -59,9 +65,16 @@ public class AndMatcherParser extends BaseFilterParser {
 
         builder.addPropertyValue("id", myId);
 
-        final List<Element> ruleElements =
+        final List<Element> ruleElementsBasic =
                 ElementSupport.getChildElementsByTagNameNS(configElement,
                         AttributeFilterBasicNamespaceHandler.NAMESPACE, "Rule");
+        final List<Element> ruleElementsAfp =
+                ElementSupport.getChildElementsByTagNameNS(configElement,
+                        AttributeFilterNamespaceHandler.NAMESPACE, "Rule");
+        
+        final List<Element> ruleElements = new ArrayList<>(ruleElementsBasic.size() + ruleElementsAfp.size());
+        ruleElements.addAll(ruleElementsBasic);
+        ruleElements.addAll(ruleElementsAfp);
 
         builder.addConstructorArgValue(SpringSupport.parseCustomElements(ruleElements, parserContext));
 

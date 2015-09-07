@@ -18,6 +18,26 @@
 package net.shibboleth.idp.attribute.filter.spring;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
+import net.shibboleth.idp.attribute.filter.spring.basic.AndMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.basic.AnyParser;
+import net.shibboleth.idp.attribute.filter.spring.basic.NotMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.basic.OrMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.basic.ScriptedMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeRegexMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeValueRegexMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeValueStringMatcherParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeIssuerRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeIssuerRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AttributeRequesterRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AuthenticationMethodRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.AuthenticationMethodRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.NumOfAttributeValuesRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.PredicateRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRegexRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.policyrule.PrincipalNameRuleParser;
+import net.shibboleth.idp.attribute.filter.spring.saml.MappedAttributeInMetadataRuleParser;
 
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
@@ -28,6 +48,7 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
     public static final String NAMESPACE = "urn:mace:shibboleth:2.0:afp";
 
     /** {@inheritDoc} */
+    @Override
     public void init() {
         BeanDefinitionParser parser = new AttributeFilterPolicyGroupParser();
         registerBeanDefinitionParser(AttributeFilterPolicyGroupParser.ELEMENT_NAME, parser);
@@ -40,5 +61,61 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         parser = new AttributeRuleParser();
         registerBeanDefinitionParser(AttributeRuleParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(AttributeRuleParser.TYPE_NAME, parser);
+        
+        
+        // BASIC
+        
+        registerBeanDefinitionParser(AnyParser.SCHEMA_TYPE_AFP, new AnyParser());
+
+        registerBeanDefinitionParser(AndMatcherParser.SCHEMA_TYPE_AFP, new AndMatcherParser());
+
+        registerBeanDefinitionParser(OrMatcherParser.SCHEMA_TYPE_AFP, new OrMatcherParser());
+
+        registerBeanDefinitionParser(NotMatcherParser.SCHEMA_TYPE_AFP, new NotMatcherParser());
+
+        // Attribute/Matcher
+        registerBeanDefinitionParser(AttributeValueStringMatcherParser.SCHEMA_TYPE_AFP,
+                new AttributeValueStringMatcherParser());
+
+        registerBeanDefinitionParser(AttributeScopeMatcherParser.SCHEMA_TYPE_AFP, new AttributeScopeMatcherParser());
+
+        registerBeanDefinitionParser(AttributeValueRegexMatcherParser.SCHEMA_TYPE_AFP,
+                new AttributeValueRegexMatcherParser());
+
+        registerBeanDefinitionParser(AttributeScopeRegexMatcherParser.SCHEMA_TYPE_AFP,
+                new AttributeScopeRegexMatcherParser());
+
+        // Policy
+        registerBeanDefinitionParser(AttributeRequesterRuleParser.SCHEMA_TYPE_AFP, new AttributeRequesterRuleParser());
+
+        registerBeanDefinitionParser(AttributeRequesterRegexRuleParser.SCHEMA_TYPE_AFP,
+                new AttributeRequesterRegexRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerRuleParser.SCHEMA_TYPE_AFP, new AttributeIssuerRuleParser());
+
+        registerBeanDefinitionParser(AttributeIssuerRegexRuleParser.SCHEMA_TYPE_AFP,
+                new AttributeIssuerRegexRuleParser());
+
+        registerBeanDefinitionParser(PrincipalNameRuleParser.SCHEMA_TYPE_AFP, new PrincipalNameRuleParser());
+
+        registerBeanDefinitionParser(PrincipalNameRegexRuleParser.SCHEMA_TYPE_AFP, new PrincipalNameRegexRuleParser());
+
+        registerBeanDefinitionParser(AuthenticationMethodRuleParser.SCHEMA_TYPE_AFP,
+                new AuthenticationMethodRuleParser());
+
+        registerBeanDefinitionParser(AuthenticationMethodRegexRuleParser.SCHEMA_TYPE_AFP,
+                new AuthenticationMethodRegexRuleParser());
+
+        registerBeanDefinitionParser(NumOfAttributeValuesRuleParser.SCHEMA_TYPE_AFP,
+                new NumOfAttributeValuesRuleParser());
+
+        registerBeanDefinitionParser(ScriptedMatcherParser.SCHEMA_TYPE_AFP, new ScriptedMatcherParser());
+        
+        registerBeanDefinitionParser(PredicateRuleParser.SCHEMA_TYPE_AFP, new PredicateRuleParser());
+        
+        // SAML - TODO
+        registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.MAPPED_ATTRIBUTE_IN_METADATA_AFP,
+                new MappedAttributeInMetadataRuleParser());
+
     }
 }

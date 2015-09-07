@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.NumOfAttributeValuesPolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -36,13 +37,18 @@ public class NumOfAttributeValuesRuleParser extends BasePolicyRuleParser {
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "NumberOfAttributeValues");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "NumberOfAttributeValues");
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<NumOfAttributeValuesPolicyRule> getNativeBeanClass() {
         return NumOfAttributeValuesPolicyRule.class;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);

@@ -67,10 +67,17 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
         epaUidJS = getAttributes("epa-uidwithjsmith.xml");
         uidEpaJS = getAttributes("uid-epawithjsmith.xml");
     }
-
+    
+    
+    
     @Test public void targetedPolicy() throws ComponentInitializationException {
+        targetedPolicy("attributeValueId.xml", true);
+        targetedPolicy("attributeValueId.xml", false);
+    }
 
-        final PolicyRequirementRule rule = getPolicyRule("attributeValueId.xml");
+    public void targetedPolicy(String path, boolean isAfp) throws ComponentInitializationException {
+
+        final PolicyRequirementRule rule = getPolicyRule(path, isAfp);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
@@ -86,8 +93,13 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
     }
 
     @Test public void unTargetedPolicy() throws ComponentInitializationException {
+        unTargetedPolicy("attributeValueNoId.xml", true);
+        unTargetedPolicy("attributeValueNoId.xml", false);
+    }
 
-        final PolicyRequirementRule rule = getPolicyRule("attributeValueNoId.xml");
+    public void unTargetedPolicy(String path, boolean isAfp) throws ComponentInitializationException {
+
+        final PolicyRequirementRule rule = getPolicyRule(path, isAfp);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
@@ -103,8 +115,13 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
     }
 
     @Test public void unTargetedMatcher() throws ComponentInitializationException {
+        unTargetedMatcher("attributeValueNoId.xml", true);
+        unTargetedMatcher("attributeValueNoId.xml", false);
+    }
 
-        final Matcher matcher = getMatcher("attributeValueNoId.xml");
+    public void unTargetedMatcher(String path, boolean isAfp) throws ComponentInitializationException {
+
+        final Matcher matcher = getMatcher(path, isAfp);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
@@ -127,8 +144,13 @@ public class AttributeValueMatcherParserTest extends BaseAttributeFilterParserTe
     }
 
     @Test public void targetedMatcher() throws ComponentInitializationException {
+        targetedMatcher("attributeValueId.xml", true); 
+        targetedMatcher("attributeValueId.xml", false); 
+    }
 
-        final Matcher matcher = getMatcher("attributeValueId.xml");
+    public void targetedMatcher(String path, boolean isAfp) throws ComponentInitializationException {
+
+        final Matcher matcher = getMatcher(path, isAfp);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());

@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -35,6 +36,8 @@ public class AnyParser extends BaseFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
     @Override

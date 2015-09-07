@@ -30,10 +30,15 @@ import org.testng.annotations.Test;
 public class AttributeScopeMatcherParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
-        AttributeScopeStringMatcher what = (AttributeScopeStringMatcher) getMatcher("attributeScope.xml");
+        AttributeScopeStringMatcher what = (AttributeScopeStringMatcher) getMatcher("attributeScope.xml", true);
         
         Assert.assertEquals(what.getMatchString(), "jSmItH");
         Assert.assertFalse(what.isIgnoreCase());
-    }
+
+        what = (AttributeScopeStringMatcher) getMatcher("attributeScope.xml", false);
+        
+        Assert.assertEquals(what.getMatchString(), "jSmItH");
+        Assert.assertFalse(what.isIgnoreCase());
+}
 
 }

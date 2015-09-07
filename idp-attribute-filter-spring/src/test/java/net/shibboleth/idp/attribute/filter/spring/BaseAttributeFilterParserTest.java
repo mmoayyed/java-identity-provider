@@ -118,26 +118,29 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         return getBean(claz, context);
     }
 
-    protected PolicyRequirementRule getPolicyRule(String fileName) throws ComponentInitializationException {
+    protected PolicyRequirementRule getPolicyRule(String fileName, boolean isAfp) throws ComponentInitializationException {
 
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: Policy Rule");
 
         setTestContext(context);
+        final String path = POLICY_RULE_PATH + (isAfp?"afp/":"") + fileName; 
         final AttributeFilterPolicy policy =
-                getBean(POLICY_RULE_PATH + fileName, AttributeFilterPolicy.class, context);
+                getBean(path, AttributeFilterPolicy.class, context);
 
         policy.initialize();
         return policy.getPolicyRequirementRule();
     }
 
-    protected Matcher getMatcher(String fileName) throws ComponentInitializationException {
+    protected Matcher getMatcher(String fileName, boolean isAfp) throws ComponentInitializationException {
 
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
         context.setDisplayName("ApplicationContext: Matcher");
         setTestContext(context);
+        
+        final String path = MATCHER_PATH + (isAfp?"afp/":"") + fileName; 
 
-        final AttributeRule rule = getBean(MATCHER_PATH + fileName, AttributeRule.class, context);
+        final AttributeRule rule = getBean(path, AttributeRule.class, context);
 
         rule.initialize();
         return rule.getMatcher();

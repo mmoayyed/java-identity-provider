@@ -19,7 +19,6 @@ package net.shibboleth.idp.attribute.filter.spring.matcher;
 
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeScopeRegexpMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
-import net.shibboleth.idp.attribute.filter.spring.matcher.AttributeScopeRegexMatcherParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
@@ -31,8 +30,13 @@ import org.testng.annotations.Test;
 public class AttributeScopeRegexMatcherParserTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
-        AttributeScopeRegexpMatcher what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml");
+
+        AttributeScopeRegexpMatcher what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml", true);
         
         Assert.assertEquals(what.getRegularExpression(), "^example^..*$");
-    }
+
+        what = (AttributeScopeRegexpMatcher) getMatcher("attributeScopeRegex.xml", false);
+        
+        Assert.assertEquals(what.getRegularExpression(), "^example^..*$");
+}
 }

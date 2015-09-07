@@ -35,12 +35,16 @@ import org.testng.annotations.Test;
 public class AttributeInMetadataRuleParserTest extends  BaseAttributeFilterParserTest {
 
     @Test public void requested() throws ComponentInitializationException {
-        
+        requested(false);
+//        requested(true);
+    }
+    
+    public void requested(boolean isAfp) throws ComponentInitializationException {
         GenericApplicationContext context = new FilesystemGenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: Matcher");
         
-        final AttributeRule rule = getBean(MATCHER_PATH + "requestedInMetadata.xml", AttributeRule.class, context);
+        final AttributeRule rule = getBean(MATCHER_PATH + (isAfp?"afp/":"") + "requestedInMetadata.xml", AttributeRule.class, context);
         rule.initialize();
         AttributeInMetadataMatcher matcher = (AttributeInMetadataMatcher) rule.getMatcher();
      

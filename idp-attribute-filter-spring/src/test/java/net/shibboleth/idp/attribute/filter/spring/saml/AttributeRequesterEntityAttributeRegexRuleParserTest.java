@@ -30,15 +30,25 @@ import org.testng.annotations.Test;
 public class AttributeRequesterEntityAttributeRegexRuleParserTest extends  BaseAttributeFilterParserTest {
 
     @Test public void basic() throws ComponentInitializationException {
-        AttributeRequesterEntityAttributeRegexPolicyRule rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex2.xml");
+        AttributeRequesterEntityAttributeRegexPolicyRule rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex2.xml", true);
      
+        Assert.assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
+        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+
+        rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex2.xml", false);
+        
         Assert.assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
         Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
     }
 
     @Test public void v2() throws ComponentInitializationException {
-        AttributeRequesterEntityAttributeRegexPolicyRule rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex.xml");
+        AttributeRequesterEntityAttributeRegexPolicyRule rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex.xml", false);
      
+        Assert.assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
+        Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
+
+        rule = (AttributeRequesterEntityAttributeRegexPolicyRule) getPolicyRule("requesterEARegex.xml", true);
+        
         Assert.assertEquals(rule.getValueRegex().pattern(), "^urn:example\\.org:policy:[^:]*$");
         Assert.assertEquals(rule.getAttributeName(), "urn:example.org:policy");
     }

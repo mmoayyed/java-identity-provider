@@ -17,9 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.spring.basic;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcher;
@@ -27,13 +24,21 @@ import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.NotPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 /**
  * test for {@link NotMatcherParser}.
  */
 public class NotTest extends BaseAttributeFilterParserTest {
 
     @Test public void matcher() throws ComponentInitializationException {
-        NotMatcher what = (NotMatcher) getMatcher("not.xml");
+        matcher("not.xml", true);
+        matcher("not.xml", false);
+    }
+    
+    public void matcher(String path, boolean isAfp) throws ComponentInitializationException {
+        NotMatcher what = (NotMatcher) getMatcher(path,isAfp);
 
         NotMatcher child = (NotMatcher) what.getNegatedMatcher();
 
@@ -41,7 +46,12 @@ public class NotTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policy() throws ComponentInitializationException {
-        NotPolicyRule what = (NotPolicyRule) getPolicyRule("not.xml");
+        policy("not.xml", true);
+        policy("not.xml", false);
+    }
+
+    public void policy(String path, boolean isAfp) throws ComponentInitializationException {
+        NotPolicyRule what = (NotPolicyRule) getPolicyRule(path,isAfp);
 
         NotPolicyRule child = (NotPolicyRule) what.getNegatedRule();
 

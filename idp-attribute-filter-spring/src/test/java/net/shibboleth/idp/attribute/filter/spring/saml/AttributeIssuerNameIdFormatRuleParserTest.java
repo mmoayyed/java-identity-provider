@@ -30,7 +30,7 @@ public class AttributeIssuerNameIdFormatRuleParserTest extends BaseAttributeFilt
 
     @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void basic()
             throws ComponentInitializationException {
-        getPolicyRule("issuerNameId.xml");
+        getPolicyRule("issuerNameId.xml", false);
 
     }
 }

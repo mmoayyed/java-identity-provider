@@ -56,8 +56,12 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
     }
 
     @Test public void policy() throws ComponentInitializationException {
+        policy("attributeRequester.xml", true);
+        policy("attributeRequester.xml", false);
+    }
 
-        final PolicyRequirementRule rule = getPolicyRule("attributeRequester.xml");
+    public void policy(String path, boolean isAfp) throws ComponentInitializationException {
+        final PolicyRequirementRule rule = getPolicyRule(path, isAfp);
 
         AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
@@ -70,8 +74,12 @@ public class AttributeRequesterRuleParserTest extends BaseAttributeFilterParserT
     }
  
     @Test public void matcher() throws ComponentInitializationException {
+        matcher("attributeRequester.xml", true);
+        matcher("attributeRequester.xml", false);
+    }
 
-        final Matcher matcher = getMatcher("attributeRequester.xml");
+    public void matcher(String path, boolean isAfp) throws ComponentInitializationException {
+        final Matcher matcher = getMatcher(path, isAfp);
 
         AttributeFilterContext filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
         filterContext.setPrefilteredIdPAttributes(epaUid.values());

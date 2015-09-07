@@ -60,10 +60,13 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     }
 
     @Test public void policy() throws ComponentInitializationException {
-        if (isV8()) {
-            //return;
-        }
-        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule(getScript());
+        policy(true);
+        policy(false);
+   }
+    
+   public void policy(boolean isAfp) throws ComponentInitializationException {
+
+        final ScriptedPolicyRule rule = (ScriptedPolicyRule) getPolicyRule(getScript(), isAfp);
 
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());
@@ -72,14 +75,16 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
     
     @Test(expectedExceptions={BeanCreationException.class,}) public void policyNotFound() throws ComponentInitializationException {
 
-        getPolicyRule("scriptedNotThere.xml");
+        getPolicyRule("scriptedNotThere.xml", false);
     }
     
     @Test public void matcher()  throws ComponentInitializationException {
-        if (isV8()) {
-         //   return;
-        }
-        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher(getScript());
+        matcher(false);
+        matcher(true);
+    }
+    
+    public void matcher(boolean isAfp)  throws ComponentInitializationException {
+        final ScriptedMatcher matcher = (ScriptedMatcher) getMatcher(getScript(), isAfp);
         
         AttributeFilterContext filterContext = new AttributeFilterContext();
         filterContext.setPrefilteredIdPAttributes(epaUid.values());

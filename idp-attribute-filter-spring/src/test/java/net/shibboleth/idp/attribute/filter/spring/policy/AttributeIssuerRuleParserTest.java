@@ -28,9 +28,13 @@ public class AttributeIssuerRuleParserTest extends BaseAttributeFilterParserTest
 
     @Test public void policy() throws ComponentInitializationException {
 
-        final AttributeIssuerPolicyRule arRule = (AttributeIssuerPolicyRule) getPolicyRule("attributeIssuer.xml");;
+        AttributeIssuerPolicyRule arRule = (AttributeIssuerPolicyRule) getPolicyRule("attributeIssuer.xml", true);
         Assert.assertEquals(arRule.getMatchString(), "urn:example:org:idp:foo");
         Assert.assertTrue(arRule.isIgnoreCase());
-    }
+
+        arRule = (AttributeIssuerPolicyRule) getPolicyRule("attributeIssuer.xml", false);
+        Assert.assertEquals(arRule.getMatchString(), "urn:example:org:idp:foo");
+        Assert.assertTrue(arRule.isIgnoreCase());
+}
  
 }

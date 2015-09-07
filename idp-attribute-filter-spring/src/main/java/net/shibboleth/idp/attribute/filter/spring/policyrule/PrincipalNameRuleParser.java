@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.PrincipalNamePolicyRule;
+import net.shibboleth.idp.attribute.filter.spring.AttributeFilterNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.basic.AttributeFilterBasicNamespaceHandler;
 
 /**
@@ -31,9 +32,13 @@ public class PrincipalNameRuleParser extends AbstractStringPolicyRuleParser {
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "PrincipalNameString");
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
+            "PrincipalNameString");
 
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull protected Class<PrincipalNamePolicyRule> getNativeBeanClass() {
         return PrincipalNamePolicyRule.class;
     }
