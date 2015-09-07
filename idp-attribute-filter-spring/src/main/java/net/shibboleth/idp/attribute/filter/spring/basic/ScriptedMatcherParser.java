@@ -53,7 +53,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
             "ScriptFile");
 
     /** Script file element name - afp. */
-    public static final QName SCRIPT_FILE_ELEMENT_NAME_AFP = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
+    public static final QName SCRIPT_FILE_ELEMENT_NAME_AFP = new QName(AttributeFilterNamespaceHandler.NAMESPACE,
             "ScriptFile");
 
     /** Inline Script element name - basic. */
