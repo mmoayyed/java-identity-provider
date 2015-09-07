@@ -232,7 +232,7 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <choice maxOccurs="unbounded">
+                <sequence maxOccurs="unbounded">
                     <element name="Rule" type="afp:MatchFunctorType">
                         <annotation>
                             <documentation>
@@ -240,14 +240,7 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="RuleReference" type="afp:ReferenceType">
-                        <annotation>
-                            <documentation>
-                                The set of match function rules to be ANDed.
-                            </documentation>
-                        </annotation>
-                    </element>
-                </choice>
+                </sequence>
             </extension>
         </complexContent>
     </complexType>
@@ -260,7 +253,7 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <choice maxOccurs="unbounded">
+                <sequence maxOccurs="unbounded">
                     <element name="Rule" type="afp:MatchFunctorType">
                         <annotation>
                             <documentation>
@@ -268,14 +261,7 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="RuleReference" type="afp:ReferenceType">
-                        <annotation>
-                            <documentation>
-                                The set of match function rules to be ORed.
-                            </documentation>
-                        </annotation>
-                    </element>
-                </choice>
+                </sequence>
             </extension>
         </complexContent>
     </complexType>
@@ -288,7 +274,7 @@
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType">
-                <choice>
+                <sequence minOccurs="1" maxOccurs="1">
                     <element name="Rule" type="afp:MatchFunctorType">
                         <annotation>
                             <documentation>
@@ -296,14 +282,7 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="RuleReference" type="afp:ReferenceType">
-                        <annotation>
-                            <documentation>
-                                The set of match function rules to be negated.
-                            </documentation>
-                        </annotation>
-                    </element>
-                </choice>
+                </sequence>
             </extension>
         </complexContent>
     </complexType>
