@@ -33,11 +33,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
-import net.shibboleth.idp.authn.AbstractValidationAction;
+import net.shibboleth.idp.authn.AbstractUsernamePasswordValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -51,8 +49,6 @@ import org.ietf.jgss.GSSException;
 import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.GSSName;
 import org.ietf.jgss.Oid;
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,17 +58,16 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by acquiring
  * a TGT and optional service ticket from Kerberos.
  *  
- * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link AuthnEventIds#AUTHN_EXCEPTION}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
- * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class, false) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
  * successful login. On a failed login, the {@link net.shibboleth.idp.authn.AbstractValidationAction#handleError(
  * ProfileRequestContext, AuthenticationContext, Exception, String)} method is called.
  */
-public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationAction {
+public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePasswordValidationAction {
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstKerberos.class);
@@ -97,9 +92,6 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
 
     /** JAAS options for server login. */
     @NonnullAfterInit private Map<String,String> serverOptions;
-
-    /** UsernamePasswordContext containing the credentials to validate. */
-    @Nullable private UsernamePasswordContext upContext;
     
     /** Constructor. */
     public ValidateUsernamePasswordAgainstKerberos() {
@@ -193,40 +185,6 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
     
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        
-        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-
-        if (authenticationContext.getAttemptedFlow() == null) {
-            log.debug("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-
-        upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class);
-        if (upContext == null) {
-            log.info("{} No UsernamePasswordContext available within authentication context", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
-            return false;
-        } else if (upContext.getUsername() == null) {
-            log.info("{} No username available within UsernamePasswordContext", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
-            return false;
-        } else if (upContext.getPassword() == null) {
-            log.info("{} No password available within UsernamePasswordContext", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
-                    AuthnEventIds.INVALID_CREDENTIALS);
-            return false;
-        }
-                
-        return true;
-    }
-    
-    /** {@inheritDoc} */
-    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
@@ -244,21 +202,22 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
                 verifyKDC();
             }
             
-            log.info("{} Login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
+            log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
             
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             log.error("{} Unable to instantiate JAAS module for Kerberos", getLogPrefix(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         } catch (final LoginException e) {
-            log.info("{} Login by {} failed", getLogPrefix(), upContext.getUsername(), e);
+            log.info("{} Login by {} failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
         } catch(final GSSException e) {
             log.warn("{} Login by {} failed during GSS context establishment to verify KDC", getLogPrefix(),
-                    upContext.getUsername(), e);
+                    getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
         } catch (final Exception e) {
-            log.warn("{} Login by {} produced unknown exception", getLogPrefix(), upContext.getUsername(), e);
+            log.warn("{} Login by {} produced unknown exception", getLogPrefix(),
+                    getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }
@@ -267,13 +226,11 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
     @Override
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
 
-        subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
-        
         if (!preserveTicket) {
             subject.getPrivateCredentials().clear();
         }
         
-        return subject;
+        return super.populateSubject(subject);
     }
 
     /**
@@ -283,7 +240,7 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
      */
     private void verifyKDC() throws Exception {
         log.debug("{} TGT acquired for {}, attempting to verify authenticity of TGT using service principal {}",
-                getLogPrefix(), upContext.getUsername(), servicePrincipal);
+                getLogPrefix(), getUsernamePasswordContext().getUsername(), servicePrincipal);
         
         final Oid mechOid = new Oid("1.2.840.113554.1.2.2");
         
@@ -374,10 +331,10 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractValidationA
             for (Callback cb : callbacks) {
                 if (cb instanceof NameCallback) {
                     NameCallback ncb = (NameCallback) cb;
-                    ncb.setName(upContext.getUsername());
+                    ncb.setName(getUsernamePasswordContext().getUsername());
                 } else if (cb instanceof PasswordCallback) {
                     PasswordCallback pcb = (PasswordCallback) cb;
-                    pcb.setPassword(upContext.getPassword().toCharArray());
+                    pcb.setPassword(getUsernamePasswordContext().getPassword().toCharArray());
                 }
             }
         }

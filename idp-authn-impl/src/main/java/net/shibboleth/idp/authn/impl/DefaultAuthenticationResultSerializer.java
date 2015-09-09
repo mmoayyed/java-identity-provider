@@ -24,6 +24,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -71,6 +72,12 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 
     /** Field name of principal array. */
     @Nonnull @NotEmpty private static final String PRINCIPAL_ARRAY_FIELD = "princ";
+
+    /** Field name of public credentials array. */
+    @Nonnull @NotEmpty private static final String PUB_CREDS_ARRAY_FIELD = "pub";
+
+    /** Field name of private credentials array. */
+    @Nonnull @NotEmpty private static final String PRIV_CREDS_ARRAY_FIELD = "priv";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(DefaultAuthenticationResultSerializer.class);
@@ -145,33 +152,33 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
                     .write(AUTHN_INSTANT_FIELD, instance.getAuthenticationInstant())
                     .writeStartArray(PRINCIPAL_ARRAY_FIELD);
 
-            for (Principal p : instance.getSubject().getPrincipals()) {
-                boolean serialized = false;
-                for (PrincipalSerializer<String> serializer : principalSerializers) {
-                    if (serializer.supports(p)) {
-                        final JsonReader reader = readerFactory.createReader(new StringReader(serializer.serialize(p)));
-                        try {
-                            gen.write(reader.readObject());
-                        } finally {
-                            reader.close();
-                        }
-                        serialized = true;
-                    }
+            for (final Principal p : instance.getSubject().getPrincipals()) {
+                serializePrincipal(gen, p);
+            }
+
+            gen.writeEnd();
+            
+            final Set<Principal> publicCreds = instance.getSubject().getPublicCredentials(Principal.class);
+            if (publicCreds != null && !publicCreds.isEmpty()) {
+                gen.writeStartArray(PUB_CREDS_ARRAY_FIELD);
+                for (final Principal p : publicCreds) {
+                    serializePrincipal(gen, p);
                 }
-                if (!serialized && genericSerializer.supports(p)) {
-                    final JsonReader reader =
-                            readerFactory.createReader(new StringReader(genericSerializer.serialize(p)));
-                    try {
-                        gen.write(reader.readObject());
-                    } finally {
-                        reader.close();
-                    }
+                gen.writeEnd();
+            }
+
+            final Set<Principal> privateCreds = instance.getSubject().getPrivateCredentials(Principal.class);
+            if (privateCreds != null && !privateCreds.isEmpty()) {
+                gen.writeStartArray(PRIV_CREDS_ARRAY_FIELD);
+                for (final Principal p : privateCreds) {
+                    serializePrincipal(gen, p);
                 }
+                gen.writeEnd();
             }
 
             // TODO handle custom creds
 
-            gen.writeEnd().writeEnd().close();
+            gen.writeEnd().close();
 
             return sink.toString();
         } catch (final JsonException e) {
@@ -179,8 +186,8 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             throw new IOException("Exception while serializing AuthenticationResult", e);
         }
     }
-
-// Checkstyle: CyclomaticComplexity OFF    
+    
+    // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     @Nonnull public AuthenticationResult deserialize(final long version, @Nonnull @NotEmpty final String context,
@@ -203,30 +210,37 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
 
             final String flowId = obj.getString(FLOW_ID_FIELD);
             long authnInstant = obj.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact();
-            final JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
 
             final AuthenticationResult result = new AuthenticationResult(flowId, new Subject());
             result.setAuthenticationInstant(authnInstant);
             result.setLastActivityInstant(expiration != null ? expiration : authnInstant);
 
-            for (JsonValue p : principals) {
-                if (p instanceof JsonObject) {
-                    final String json = ((JsonObject) p).toString();
-                    boolean deserialized = false;
-                    for (PrincipalSerializer serializer : principalSerializers) {
-                        if (serializer.supports(json)) {
-                            final Principal principal = serializer.deserialize(json);
-                            if (principal != null) {
-                                result.getSubject().getPrincipals().add(principal);
-                                deserialized = true;
-                            }
-                        }
+            final JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
+            if (principals != null) {
+                for (final JsonValue val : principals) {
+                    final Principal principal = deserializePrincipal(val);
+                    if (principal != null) {
+                        result.getSubject().getPrincipals().add(principal);
                     }
-                    if (!deserialized && genericSerializer.supports(json)) {
-                        final Principal principal = genericSerializer.deserialize(json);
-                        if (principal != null) {
-                            result.getSubject().getPrincipals().add(principal);
-                        }
+                }
+            }
+
+            final JsonArray publicCreds = obj.getJsonArray(PUB_CREDS_ARRAY_FIELD);
+            if (publicCreds != null) {
+                for (final JsonValue val : publicCreds) {
+                    final Principal principal = deserializePrincipal(val);
+                    if (principal != null) {
+                        result.getSubject().getPublicCredentials().add(principal);
+                    }
+                }
+            }
+
+            final JsonArray privateCreds = obj.getJsonArray(PRIV_CREDS_ARRAY_FIELD);
+            if (privateCreds != null) {
+                for (final JsonValue val : privateCreds) {
+                    final Principal principal = deserializePrincipal(val);
+                    if (principal != null) {
+                        result.getSubject().getPrivateCredentials().add(principal);
                     }
                 }
             }
@@ -241,5 +255,62 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         }
     }
  // Checkstyle: CyclomaticComplexity ON
+
+    /**
+     * Attempt to serialize a principal with the registered and default serializers.
+     *
+     * @param generator the JSON context to write into
+     * @param principal object to serialize
+     * 
+     * @throws IOException if serialization fails
+     */
+    private void serializePrincipal(@Nonnull final JsonGenerator generator, @Nonnull final Principal principal)
+            throws IOException {
+        boolean serialized = false;
+        for (final PrincipalSerializer<String> serializer : principalSerializers) {
+            if (serializer.supports(principal)) {
+                final JsonReader reader = readerFactory.createReader(new StringReader(serializer.serialize(principal)));
+                try {
+                    generator.write(reader.readObject());
+                } finally {
+                    reader.close();
+                }
+                serialized = true;
+            }
+        }
+        if (!serialized && genericSerializer.supports(principal)) {
+            final JsonReader reader =
+                    readerFactory.createReader(new StringReader(genericSerializer.serialize(principal)));
+            try {
+                generator.write(reader.readObject());
+            } finally {
+                reader.close();
+            }
+        }
+    }
+
+    /**
+     * Attempt to deserialize a principal with the registered and default serializers.
+     * 
+     * @param jsonValue the JSON object to parse
+     * 
+     * @return the {@link Principal} recovered, or null
+     * @throws IOException if an error occurs
+     */
+    @Nullable private Principal deserializePrincipal(@Nonnull final JsonValue jsonValue) throws IOException {
+        if (jsonValue instanceof JsonObject) {
+            final String json = ((JsonObject) jsonValue).toString();
+            for (final PrincipalSerializer serializer : principalSerializers) {
+                if (serializer.supports(json)) {
+                    return serializer.deserialize(json);
+                }
+            }
+            if (genericSerializer.supports(json)) {
+                return genericSerializer.deserialize(json);
+            }
+        }
+        
+        return null;
+    }
     
 }

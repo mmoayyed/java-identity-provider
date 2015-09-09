@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -33,11 +32,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginException;
 
-import net.shibboleth.idp.authn.AbstractValidationAction;
+import net.shibboleth.idp.authn.AbstractUsernamePasswordValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -46,7 +43,6 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,11 +53,8 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>Various optional properties are supported to control the JAAS configuration process.</p>
  *  
- * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
- * @event {@link AuthnEventIds#AUTHN_EXCEPTION}
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
- * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
@@ -69,13 +62,10 @@ import org.slf4j.LoggerFactory;
  * {@link AbstractValidationAction#handleError(ProfileRequestContext, AuthenticationContext, Exception, String)}
  * method is called.
  */
-public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationAction {
+public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswordValidationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstJAAS.class);
-
-    /** UsernamePasswordContext containing the credentials to validate. */
-    @Nullable private UsernamePasswordContext upContext;
     
     /** Type of JAAS Configuration to instantiate. */
     @Nullable private String loginConfigType;
@@ -147,40 +137,6 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
             throw new ConstraintViolationException("Configuration name list cannot be empty");
         }
     }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-        
-        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
-            return false;
-        }
-        
-        if (authenticationContext.getAttemptedFlow() == null) {
-            log.info("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class);
-        if (upContext == null) {
-            log.info("{} No UsernamePasswordContext available within authentication context", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
-            return false;
-        } else if (upContext.getUsername() == null) {
-            log.info("{} No username available within UsernamePasswordContext", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
-            return false;
-        } else if (upContext.getPassword() == null) {
-            log.info("{} No password available within UsernamePasswordContext", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
-                    AuthnEventIds.INVALID_CREDENTIALS);
-            return false;
-        }
-        
-        return true;
-    }
     
     /** {@inheritDoc} */
     @Override
@@ -189,27 +145,22 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
 
         for (String loginConfigName : loginConfigNames) {
             try {
-                log.debug("{} Attempting to authenticate user '{}'", getLogPrefix(), upContext.getUsername());
+                log.debug("{} Attempting to authenticate user '{}'", getLogPrefix(),
+                        getUsernamePasswordContext().getUsername());
                 authenticate(loginConfigName);
-                log.info("{} Login by '{}' succeeded", getLogPrefix(), upContext.getUsername());
+                log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 ActionSupport.buildProceedEvent(profileRequestContext);
                 return;
             } catch (LoginException e){ 
-                log.info("{} Login by {} failed", getLogPrefix(), upContext.getUsername(), e);
+                log.info("{} Login by {} failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
             } catch (Exception e) {
-                log.warn("{} Login by {} produced exception", getLogPrefix(), upContext.getUsername(), e);
+                log.warn("{} Login by {} produced exception", getLogPrefix(),
+                        getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
             }
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
-        subject.getPrincipals().add(new UsernamePrincipal(upContext.getUsername()));
-        return subject;
     }
     
     /**
@@ -264,10 +215,10 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractValidationActio
             for (Callback cb : callbacks) {
                 if (cb instanceof NameCallback) {
                     NameCallback ncb = (NameCallback) cb;
-                    ncb.setName(upContext.getUsername());
+                    ncb.setName(getUsernamePasswordContext().getUsername());
                 } else if (cb instanceof PasswordCallback) {
                     PasswordCallback pcb = (PasswordCallback) cb;
-                    pcb.setPassword(upContext.getPassword().toCharArray());
+                    pcb.setPassword(getUsernamePasswordContext().getPassword().toCharArray());
                 }
             }
         }

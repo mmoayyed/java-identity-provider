@@ -26,15 +26,22 @@ import java.util.Collections;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer;
+import net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.resource.TestResourceConverter;
+import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy;
+import net.shibboleth.utilities.java.support.security.DataSealer;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.jaas.LdapPrincipal;
+import org.springframework.core.io.ClassPathResource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -85,14 +92,14 @@ public class DefaultAuthenticationResultSerializerTest {
     @Test public void testSimple() throws Exception {
         serializer.initialize();
         
-        AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult result = createResult("test", new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         
-        String s = serializer.serialize(result);
-        String s2 = fileToString(DATAPATH + "simpleAuthenticationResult.json");
+        final String s = serializer.serialize(result);
+        final String s2 = fileToString(DATAPATH + "simpleAuthenticationResult.json");
         Assert.assertEquals(s, s2);
         
-        AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
         
         Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
@@ -120,20 +127,61 @@ public class DefaultAuthenticationResultSerializerTest {
         Assert.assertEquals(result.getSubject(), result2.getSubject());
     }
 
+    @Test public void testCreds() throws Exception {
+        final ClassPathResource keystoreResource = new ClassPathResource("/data/net/shibboleth/idp/authn/impl/SealerKeyStore.jks");
+        final ClassPathResource versionResource = new ClassPathResource("/data/net/shibboleth/idp/authn/impl/SealerKeyStore.kver");
+
+        final BasicKeystoreKeyStrategy strategy = new BasicKeystoreKeyStrategy();
+        strategy.setKeyAlias("secret");
+        strategy.setKeyPassword("kpassword");
+        strategy.setKeystorePassword("password");
+        strategy.setKeystoreResource(TestResourceConverter.of(keystoreResource));
+        strategy.setKeyVersionResource(TestResourceConverter.of(versionResource));
+
+        final DataSealer sealer = new DataSealer();
+        sealer.setKeyStrategy(strategy);
+
+        try {
+            strategy.initialize();
+            sealer.initialize();
+        } catch (ComponentInitializationException e) {
+            Assert.fail(e.getMessage());
+        }
+
+        final PasswordPrincipalSerializer pwSerializer = new PasswordPrincipalSerializer();
+        pwSerializer.setDataSealer(sealer);
+        pwSerializer.initialize();
+        serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(pwSerializer));
+        serializer.initialize();
+        
+        final AuthenticationResult result = createResult("test", new Subject());
+        result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
+        result.getSubject().getPrivateCredentials().add(new PasswordPrincipal("bar"));
+        
+        final String s = serializer.serialize(result);
+        
+        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s, ACTIVITY);
+        
+        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        Assert.assertEquals(result.getSubject(), result2.getSubject());
+    }
+
     @Test public void testSymbolic() throws Exception {
         serializer.getGenericPrincipalSerializer().setSymbolics(Collections.singletonMap(TestPrincipal.class.getName(), 1));
         serializer.initialize();
         
-        AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult result = createResult("test", new Subject());
         result.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
         result.getSubject().getPrincipals().add(new TestPrincipal("foo"));
         result.getSubject().getPrincipals().add(new TestPrincipal("bar"));
         
-        String s = serializer.serialize(result);
-        String s2 = fileToString(DATAPATH + "symbolicAuthenticationResult.json");
+        final String s = serializer.serialize(result);
+        final String s2 = fileToString(DATAPATH + "symbolicAuthenticationResult.json");
         Assert.assertEquals(s, s2);
         
-        AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
         
         Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
@@ -143,14 +191,14 @@ public class DefaultAuthenticationResultSerializerTest {
     
 
     @Test public void testLdap() throws Exception {
-        LDAPPrincipalSerializer lpSerializer = new LDAPPrincipalSerializer();
+        final LDAPPrincipalSerializer lpSerializer = new LDAPPrincipalSerializer();
         serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(lpSerializer));
         serializer.initialize();
         
-        AuthenticationResult result = createResult("test", new Subject());
-        LdapEntry entry = new LdapEntry(SortBehavior.SORTED);
+        final AuthenticationResult result = createResult("test", new Subject());
+        final LdapEntry entry = new LdapEntry(SortBehavior.SORTED);
         entry.setDn("uid=1234,ou=people,dc=shibboleth,dc=net");
-        LdapAttribute givenName = new LdapAttribute(SortBehavior.SORTED);
+        final LdapAttribute givenName = new LdapAttribute(SortBehavior.SORTED);
         givenName.setName("givenName");
         givenName.addStringValue("Bob", "Robert");
         entry.addAttribute(
@@ -160,11 +208,11 @@ public class DefaultAuthenticationResultSerializerTest {
                 new LdapAttribute("mail", "bob@shibboleth.net"));
         result.getSubject().getPrincipals().add(new LdapPrincipal("bob", entry));
 
-        String s = serializer.serialize(result);
-        String s2 = fileToString(DATAPATH + "LDAPAuthenticationResult.json");
+        final String s = serializer.serialize(result);
+        final String s2 = fileToString(DATAPATH + "LDAPAuthenticationResult.json");
         Assert.assertEquals(s, s2);
 
-        AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
 
         Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
         Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
@@ -176,7 +224,7 @@ public class DefaultAuthenticationResultSerializerTest {
     }
 
     private AuthenticationResult createResult(String flowId, Subject subject) {
-        AuthenticationResult result = new AuthenticationResult(flowId, subject);
+        final AuthenticationResult result = new AuthenticationResult(flowId, subject);
         result.setAuthenticationInstant(INSTANT);
         result.setLastActivityInstant(ACTIVITY);
         return result;
