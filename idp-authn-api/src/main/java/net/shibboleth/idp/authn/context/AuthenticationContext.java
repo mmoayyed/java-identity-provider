@@ -36,7 +36,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
-import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -44,7 +43,6 @@ import org.joda.time.DateTime;
 import org.opensaml.messaging.context.BaseContext;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * A context representing the state of an authentication attempt, this is the primary
@@ -119,8 +117,8 @@ public final class AuthenticationContext extends BaseContext {
      * 
      * @return authentication results currently active for the subject
      */
-    @Nonnull @NonnullElements @Unmodifiable public Map<String,AuthenticationResult> getActiveResults() {
-        return ImmutableMap.copyOf(activeResults);
+    @Nonnull @NonnullElements @Live public Map<String,AuthenticationResult> getActiveResults() {
+        return activeResults;
     }
 
     /**

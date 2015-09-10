@@ -17,11 +17,15 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.Arrays;
 import java.util.Collections;
+
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -42,7 +46,11 @@ public class FilterFlowsByAttributeTest extends PopulateAuthenticationContextTes
         
         action = new FilterFlowsByAttribute();
         action.setAttributeId("foo");
-        action.initialize();
+        
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final AuthenticationResult active = new AuthenticationResult("test3", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("test3"));
+        authCtx.setActiveResults(Arrays.asList(active));
     }
 
     @Test public void testNoAttributeID() throws ComponentInitializationException {
@@ -54,34 +62,41 @@ public class FilterFlowsByAttributeTest extends PopulateAuthenticationContextTes
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
+        Assert.assertEquals(authCtx.getActiveResults().size(), 1);
     }
 
-    @Test public void testNoAttribute() {
+    @Test public void testNoAttribute() throws ComponentInitializationException {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         
+        action.initialize();
         Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
+        Assert.assertEquals(authCtx.getActiveResults().size(), 1);
         
         authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(
                 Collections.singletonList(new IdPAttribute("foo")));
         event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
+        Assert.assertEquals(authCtx.getActiveResults().size(), 1);
     }
     
-    @Test public void testNoMatch() {
+    @Test public void testNoMatch() throws ComponentInitializationException {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         final IdPAttribute attr = new IdPAttribute("foo");
         authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
         attr.setValues(Collections.singleton(new StringAttributeValue("bar")));
         
+        action.setFilterActiveResults(false);
+        action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 0);
+        Assert.assertEquals(authCtx.getActiveResults().size(), 1);
     }
 
-    @Test public void testMatch() {
+    @Test public void testMatch() throws ComponentInitializationException {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         final IdPAttribute attr = new IdPAttribute("foo");
         authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
@@ -91,10 +106,39 @@ public class FilterFlowsByAttributeTest extends PopulateAuthenticationContextTes
         authCtx.getPotentialFlows().get("test2").getSupportedPrincipals().add(new TestPrincipal("bar"));
         authCtx.getPotentialFlows().get("test3").getSupportedPrincipals().add(new TestPrincipal("bay"));
         
+        action.setFilterActiveResults(false);
+        action.initialize();
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(authCtx.getPotentialFlows().size(), 1);
         Assert.assertEquals(authCtx.getPotentialFlows().entrySet().iterator().next().getValue().getId(), "test2");
+        Assert.assertEquals(authCtx.getActiveResults().size(), 1);
+    }
+    
+    @Test public void testMatchActive() throws ComponentInitializationException {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final IdPAttribute attr = new IdPAttribute("foo");
+        authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
+        attr.setValues(Collections.singleton(new StringAttributeValue("test3")));
+        
+        action.initialize();
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(authCtx.getPotentialFlows().size(), 0);
+        Assert.assertEquals(authCtx.getActiveResults().size(), 1);
+    }
+
+    @Test public void testNoMatchActive() throws ComponentInitializationException {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        final IdPAttribute attr = new IdPAttribute("foo");
+        authCtx.getSubcontext(AttributeContext.class, true).setIdPAttributes(Collections.singletonList(attr));
+        attr.setValues(Collections.singleton(new StringAttributeValue("test2")));
+        
+        action.initialize();
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(authCtx.getPotentialFlows().size(), 0);
+        Assert.assertEquals(authCtx.getActiveResults().size(), 0);
     }
     
 }
