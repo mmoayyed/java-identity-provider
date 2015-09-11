@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConnectorParser;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;

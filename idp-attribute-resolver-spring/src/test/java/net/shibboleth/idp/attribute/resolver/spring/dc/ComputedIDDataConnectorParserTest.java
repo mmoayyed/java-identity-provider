@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIDDataConnectorParser;
 import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 

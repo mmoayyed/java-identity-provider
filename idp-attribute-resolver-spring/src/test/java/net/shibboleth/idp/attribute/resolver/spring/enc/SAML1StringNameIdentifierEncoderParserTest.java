@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringNameIdentifierEncoderParser;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1StringNameIdentifierEncoder;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;

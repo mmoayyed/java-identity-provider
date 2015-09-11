@@ -32,7 +32,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.pc.StoredIdConnectorParser.NotImplementedNameIdentifierDecoder;
+import net.shibboleth.idp.attribute.resolver.spring.pc.impl.StoredIdConnectorParser.NotImplementedNameIdentifierDecoder;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;

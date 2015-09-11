@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.PrescopedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;

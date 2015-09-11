@@ -35,7 +35,7 @@
             value="net.shibboleth.idp.attribute.resolver.AttributeResolver" />
         <constructor-arg name="strategy">
             <bean
-                class="net.shibboleth.idp.attribute.resolver.spring.AttributeResolverServiceStrategy"
+                class="net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverServiceStrategy"
                 p:id="Shibboleth.Resolver" />
         </constructor-arg>
         <property name="serviceConfigurations">
