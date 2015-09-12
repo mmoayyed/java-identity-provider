@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.spring.saml;
 
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeIssuerEntityAttributeRegexRuleParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;

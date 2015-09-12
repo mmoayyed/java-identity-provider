@@ -26,6 +26,7 @@ import net.shibboleth.idp.attribute.filter.matcher.logic.impl.OrMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.NotPolicyRule;
 import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.OrPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.idp.attribute.filter.spring.basic.impl.OrMatcherParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;

@@ -33,7 +33,7 @@
             p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
         <constructor-arg name="claz" value="net.shibboleth.idp.attribute.filter.AttributeFilter" />
         <constructor-arg name="strategy">
-            <bean class="net.shibboleth.idp.attribute.filter.spring.AttributeFilterServiceStrategy"
+            <bean class="net.shibboleth.idp.attribute.filter.spring.impl.AttributeFilterServiceStrategy"
                 id="ShibbolethAttributeFilter"/>
         </constructor-arg>
     </bean>

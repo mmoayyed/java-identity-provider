@@ -16,8 +16,7 @@
  */
 
 /**
- * Parsers for the top level of the "urn:mace:shibboleth:2.0:afp" namespace.  <br/>
- * The base class for the other parsers is also located here.
+ * The base class for filter other parser is located here.
  */
 
 package net.shibboleth.idp.attribute.filter.spring;

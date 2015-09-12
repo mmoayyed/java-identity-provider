@@ -23,6 +23,7 @@ import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.matcher.saml.impl.AttributeInMetadataMatcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
+import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeInMetadataRuleParser;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.context.support.GenericApplicationContext;

@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.spring;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -44,11 +45,31 @@ import com.google.common.base.Strings;
  */
 public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParser {
 
+    /** Namespace The Top level filters. */
+    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:afp";
+
+    /** Element name. */
+    public static final QName AFP_ELEMENT_NAME = new QName(NAMESPACE,
+            "AttributeFilterPolicyGroup");
+
+    /** The PolicyRequirementRule QName. */
+    public static final QName POLICY_REQUIREMENT_RULE = new QName(BaseFilterParser.NAMESPACE,
+            "PolicyRequirementRule");
+
+    /** PermitValueRule. */
+    public static final QName PERMIT_VALUE_RULE = new QName(NAMESPACE,
+            "PermitValueRule");
+
+    /** DenyValueRule. */
+    public static final QName DENY_VALUE_RULE = new QName(NAMESPACE, "DenyValueRule");
+
     /** Generator of unique IDs. */
     private static IdentifierGenerationStrategy idGen = new RandomIdentifierGenerationStrategy();
 
+
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseFilterParser.class);
+
 
     /**
      * Generates an ID for a filter engine component. If the given localId is null a random one will be generated.
@@ -66,7 +87,7 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
 
         final StringBuilder qualifiedId = new StringBuilder();
         qualifiedId.append("/");
-        qualifiedId.append(AttributeFilterPolicyGroupParser.ELEMENT_NAME.getLocalPart());
+        qualifiedId.append(BaseFilterParser.AFP_ELEMENT_NAME.getLocalPart());
         qualifiedId.append(":");
         qualifiedId.append(policyGroupId);
         if (!Strings.isNullOrEmpty(componentNamespace)) {
@@ -171,10 +192,10 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
 
         Element elem = element;
         do {
-            if (ElementSupport.isElementNamed(elem, AttributeFilterPolicyParser.POLICY_REQUIREMENT_RULE)) {
+            if (ElementSupport.isElementNamed(elem, BaseFilterParser.POLICY_REQUIREMENT_RULE)) {
                 return true;
-            } else if (ElementSupport.isElementNamed(elem, AttributeRuleParser.DENY_VALUE_RULE)
-                    || ElementSupport.isElementNamed(elem, AttributeRuleParser.PERMIT_VALUE_RULE)) {
+            } else if (ElementSupport.isElementNamed(elem, BaseFilterParser.DENY_VALUE_RULE)
+                    || ElementSupport.isElementNamed(elem, BaseFilterParser.PERMIT_VALUE_RULE)) {
                 return false;
             }
             elem = ElementSupport.getElementAncestor(elem);
