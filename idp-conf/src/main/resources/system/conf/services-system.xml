@@ -83,7 +83,7 @@
             <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataResolverServiceStrategy" />
         </constructor-arg>
         <property name="beanPostProcessors">
-            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.NodeProcessingAttachingBeanPostProcessor"
+            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
                 c:service-ref="shibboleth.AttributeResolverService" />
         </property>
     </bean>
