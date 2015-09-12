@@ -23,7 +23,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.QNameSupport;
 
 import org.opensaml.saml.common.xml.SAMLConstants;

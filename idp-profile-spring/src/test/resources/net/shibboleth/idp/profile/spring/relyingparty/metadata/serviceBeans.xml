@@ -29,7 +29,7 @@
 			value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
 		<constructor-arg name="strategy">
 			<bean id="wibble" p:id="wibble"
-				class="net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataResolverServiceStrategy" />
+				class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataResolverServiceStrategy" />
 		</constructor-arg>
 	</bean>
 </beans>

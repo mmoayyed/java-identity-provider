@@ -22,8 +22,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.RelyingPartyGroupParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.impl.RelyingPartyGroupParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ChainingMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
 import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;

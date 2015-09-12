@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine;
 import java.io.IOException;
 
 import net.shibboleth.idp.profile.spring.relyingparty.security.AbstractSecurityParserTest;
+import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.PKIXValidationOptionsParser;
 
 import org.opensaml.security.x509.PKIXValidationOptions;
 import org.testng.Assert;

@@ -23,7 +23,7 @@
 		<constructor-arg name="claz"
 			value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
 		<constructor-arg name="strategy">
-			<bean id="strat" p:id="strat" class="net.shibboleth.idp.profile.spring.relyingparty.metadata.MetadataResolverServiceStrategy" />
+			<bean id="strat" p:id="strat" class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataResolverServiceStrategy" />
 		</constructor-arg>
 	</bean>
 </beans>
