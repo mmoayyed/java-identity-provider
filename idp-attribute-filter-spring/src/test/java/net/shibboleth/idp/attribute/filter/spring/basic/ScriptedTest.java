@@ -99,10 +99,7 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         
         final ScriptedMatcher what = (ScriptedMatcher) getMatcher(getScript(), false);
         
-        final Map custom = (Map) what.getCustomObject();
-     
-        Assert.assertEquals(custom.size(), 1);
-        Assert.assertEquals(custom.get("foo"), "bar");
+        Assert.assertNull(what.getCustomObject());
         
     }
 

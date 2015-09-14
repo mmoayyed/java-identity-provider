@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import java.util.Map;
-
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
@@ -51,10 +49,7 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
         Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
         Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
         
-        final Map custom = (Map) attrDef.getCustomObject();
-        
-        Assert.assertEquals(custom.size(), 1);
-        Assert.assertEquals(custom.get("foo"), "bar");
+        Assert.assertNull(attrDef.getCustomObject());
 
     }
 

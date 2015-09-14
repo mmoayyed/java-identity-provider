@@ -79,7 +79,7 @@
                     <annotation>
                         <documentation>
                             The name of a bean defined somewhere else which will be injected into the script as an
-                            object called "custom".  By default "shibboleth.CustomScriptObject"
+                            object called "custom".  If not supplied, nothing is injected.
                         </documentation>
                     </annotation>
                 </attribute>

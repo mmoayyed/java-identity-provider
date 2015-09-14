@@ -90,10 +90,9 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
-        if (null == customRef) {
-            customRef = "shibboleth.CustomScriptObject";
+        if (null != customRef) {
+            builder.addPropertyReference("customObject", customRef);
         }
-        builder.addPropertyReference("customObject", customRef);
 
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }

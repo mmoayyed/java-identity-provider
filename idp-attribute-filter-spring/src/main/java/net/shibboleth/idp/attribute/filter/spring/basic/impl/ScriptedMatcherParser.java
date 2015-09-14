@@ -120,10 +120,9 @@ public class ScriptedMatcherParser extends BaseFilterParser {
         }
         
         String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
-        if (null == customRef) {
-            customRef = "shibboleth.CustomScriptObject";
+        if (null != customRef) {
+            builder.addPropertyReference("customObject", customRef);
         }
-        builder.addPropertyReference("customObject", customRef);
         builder.addPropertyValue("id", myId);
 
         builder.addConstructorArgValue(scriptBuilder.getBeanDefinition());
