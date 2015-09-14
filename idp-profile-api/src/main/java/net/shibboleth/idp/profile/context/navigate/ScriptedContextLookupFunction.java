@@ -63,6 +63,9 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
     /** What class we want the output to test against. */
     @Nonnull private final Class<T> inputClass;
 
+    /** The custom object we can be injected into the script. */
+    @Nullable private Object customObject;
+
     /**
      * Constructor.
      * 
@@ -103,6 +106,22 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
         outputClass = outputType;
     }
 
+    /**
+     * Return the custom (externally provided) object.
+     * @return the custom object
+     */
+    @Nullable public Object getCustomObject() {
+        return customObject;
+    }
+
+    /**
+     * Set the custom (externally provided) object.
+     * @param object the custom object
+     */
+    @Nullable public void setCustomObject(Object object) {
+        customObject = object;
+    }
+
     /** {@inheritDoc} */
     @Override public Object apply(@Nullable T context) {
 
@@ -113,6 +132,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("profileContext", context, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
 
         try {
             Object output = script.eval(scriptContext);

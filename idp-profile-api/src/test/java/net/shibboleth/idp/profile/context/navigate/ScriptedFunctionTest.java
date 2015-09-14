@@ -68,6 +68,17 @@ public class ScriptedFunctionTest {
         Assert.assertEquals(integer.intValue(), 37);
     }
     
+    @Test public void custom() throws ScriptException {
+        ProfileRequestContext prc = new ProfileRequestContext<>();
+        
+        final ScriptedContextLookupFunction script = ScriptedContextLookupFunction.inlineScript("custom;");
+        script.setCustomObject("String");
+        Assert.assertEquals(script.apply(prc), "String");
+ 
+        script.setCustomObject(new Integer(37));
+        Assert.assertEquals(script.apply(prc), new Integer(37));
+    }    
+    
     
     @Test public void withType() throws ScriptException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         ProfileRequestContext prc = new ProfileRequestContext<>();

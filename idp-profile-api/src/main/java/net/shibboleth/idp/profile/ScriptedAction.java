@@ -59,6 +59,9 @@ public class ScriptedAction extends AbstractProfileAction {
     /** Debugging info. */
     @Nullable private final String logPrefix;
 
+    /** The custom object we can inject. */
+    @Nullable private Object customObject;
+
     /**
      * Constructor.
      * 
@@ -79,11 +82,28 @@ public class ScriptedAction extends AbstractProfileAction {
         script = Constraint.isNotNull(theScript, "Supplied script should not be null");
         logPrefix = "Anonymous Scripted Action :";
     }
+    
+    /**
+     * Return the custom (externally provided) object.
+     * @return the custom object
+     */
+    @Nullable public Object getCustomObject() {
+        return customObject;
+    }
+
+    /**
+     * Set the custom (externally provided) object.
+     * @param object the custom object
+     */
+    @Nullable public void setCustomObject(Object object) {
+        customObject = object;
+    }
 
     /** {@inheritDoc} */
     @Override public void doExecute(@Nullable final ProfileRequestContext profileContext) {
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("profileContext", profileContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
 
         try {
             final Object result = script.eval(scriptContext);

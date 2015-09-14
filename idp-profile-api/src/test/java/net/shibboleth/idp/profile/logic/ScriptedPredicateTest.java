@@ -57,7 +57,16 @@ public class ScriptedPredicateTest {
         test = ScriptedPredicate.inlineScript("\"thirty\"");
         Assert.assertFalse(test.apply(withChild));
     }
+    
+    @Test public void custom() throws ScriptException {
+        ScriptedPredicate test = ScriptedPredicate.inlineScript("custom;");
+        test.setCustomObject(new Boolean(true));
+        Assert.assertTrue(test.apply(withChild));
 
+        test.setCustomObject(new Boolean(false));
+        Assert.assertFalse(test.apply(withChild));
+
+    }
     @Test public void inlineBean() throws ScriptException {
 
         GenericApplicationContext ctx = new GenericApplicationContext();

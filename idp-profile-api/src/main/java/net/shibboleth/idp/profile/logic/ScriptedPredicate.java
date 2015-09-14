@@ -53,6 +53,9 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
     /** Debugging info. */
     @Nullable private final String logPrefix;
 
+    /** The custom object we can be injected into the script. */
+    @Nullable private Object customObject;
+
     /**
      * Constructor.
      * 
@@ -74,10 +77,28 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
         logPrefix = "Anonymous Scripted Predicate :";
     }
 
+
+    /**
+     * Return the custom (externally provided) object.
+     * @return the custom object
+     */
+    @Nullable public Object getCustomObject() {
+        return customObject;
+    }
+
+    /**
+     * Set the custom (externally provided) object.
+     * @param object the custom object
+     */
+    @Nullable public void setCustomObject(Object object) {
+        customObject = object;
+    }
+
     /** {@inheritDoc} */
     @Override public boolean apply(@Nullable ProfileRequestContext profileContext) {
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("profileContext", profileContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
 
         try {
             final Object result = script.eval(scriptContext);
