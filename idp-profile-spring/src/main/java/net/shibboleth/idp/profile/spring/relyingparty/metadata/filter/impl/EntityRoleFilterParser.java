@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -38,7 +38,8 @@ import org.w3c.dom.Element;
 public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "EntityRoleWhiteList");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "EntityRoleWhiteList");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
@@ -49,7 +50,8 @@ public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         List<QName> retainedRoles = new ArrayList<>();
         List<Element> retainedRoleElems =
-                ElementSupport.getChildElementsByTagNameNS(element, MetadataNamespaceHandler.NAMESPACE, "RetainedRole");
+                ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                        "RetainedRole");
         if (retainedRoleElems != null) {
             for (Element retainedRoleElem : retainedRoleElems) {
                 retainedRoles.add(ElementSupport.getElementContentAsQName(retainedRoleElem));

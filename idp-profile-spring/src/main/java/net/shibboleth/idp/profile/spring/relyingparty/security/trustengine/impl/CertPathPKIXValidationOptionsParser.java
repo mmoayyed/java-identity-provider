@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -37,11 +37,12 @@ import org.w3c.dom.Element;
  */
 public class CertPathPKIXValidationOptionsParser extends PKIXValidationOptionsParser {
     /** Schema type. */
-    public static final QName SCHEMA_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName SCHEMA_TYPE = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
             "CertPathValidationOptionsType");
 
     /** PolicyOid Element type. */
-    public static final QName POLICY_OID_ELEMENT = new QName(SecurityNamespaceHandler.NAMESPACE, "PolicyOID");
+    public static final QName POLICY_OID_ELEMENT = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "PolicyOID");
 
     /** {@inheritDoc} */
     @Override protected Class getBeanClass(final Element element) {

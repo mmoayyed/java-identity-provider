@@ -37,7 +37,7 @@ import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
-import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.idp.saml.saml1.profile.config.ArtifactResolutionProfileConfiguration;
 import net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration;
 import net.shibboleth.idp.saml.saml1.profile.config.BrowserSSOProfileConfiguration;

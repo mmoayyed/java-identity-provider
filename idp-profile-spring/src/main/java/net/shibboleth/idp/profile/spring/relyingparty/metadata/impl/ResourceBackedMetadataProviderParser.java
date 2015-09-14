@@ -22,7 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractReloadingMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.resource.impl.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.impl.ResourceNamespaceHandler;
@@ -54,11 +54,12 @@ import org.w3c.dom.Element;
 public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE,
+    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "ResourceBackedMetadataProvider");
 
     /** Element name for the resource elements. */
-    public static final QName RESOURCES_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "MetadataResource");
+    public static final QName RESOURCES_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "MetadataResource");
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
@@ -96,10 +97,10 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
+    @Override protected void doNativeParse(Element element, ParserContext parserContext,
             BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
-        
+
         if (element.hasAttributeNS(null, "maxCacheDuration")) {
             log.error("{}: maxCacheDuration is not supported", parserContext.getReaderContext().getResource()
                     .getDescription());
@@ -169,7 +170,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         builder.addConstructorArgValue(resourceConverter.getBeanDefinition());
     }
 
-/**
+    /**
      * Parse the provided &lt;Resource&gt; and populate an appropriate {@link HTTPMetadataResolver}.
      * 
      * <br/>
@@ -204,10 +205,11 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
     }
 
-/**
+    /**
      * Parse the provided &lt;Resource&gt; and populate an appropriate {@link FilesystemMetadataResolver}.
      * 
-     * <br/>See {@link FilesystemMetadataProviderParser#doParse(Element, ParserContext, BeanDefinitionBuilder)}.
+     * <br/>
+     * See {@link FilesystemMetadataProviderParser#doParse(Element, ParserContext, BeanDefinitionBuilder)}.
      * 
      * @param element the &lt;Resource&gt; element
      * @param parserContext the parser context

@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
 import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -42,7 +43,7 @@ import com.google.common.base.Predicates;
 public class RelyingPartyParser extends AbstractRelyingPartyParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingParty");
+    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.RP_NAMESPACE, "RelyingParty");
 
     /**
      * {@inheritDoc} The construction of the activation Condition is more complicated than one might suppose. The

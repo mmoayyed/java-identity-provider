@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 import java.util.List;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -41,7 +42,7 @@ public abstract class AbstractChainingParser extends AbstractTrustEngineParser {
         super.doParse(element, parserContext, builder);
 
         final List<Element> childEngines =
-                ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+                ElementSupport.getChildElements(element, AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
         final List<Element> childEngineRefs =
                 ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_REF);
         

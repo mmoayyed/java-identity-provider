@@ -23,10 +23,9 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicInlineCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.X509ResourceCredentialFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -54,10 +53,11 @@ import org.w3c.dom.Element;
 public class SignatureValidationParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "SignatureValidation");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "SignatureValidation");
 
     /** Element for embedded public keys. */
-    public static final QName PUBLIC_KEY = new QName(MetadataNamespaceHandler.NAMESPACE, "PublicKey");
+    public static final QName PUBLIC_KEY = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "PublicKey");
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(SignatureValidationParser.class);
@@ -70,13 +70,12 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, 
-            BeanDefinitionBuilder builder) {
+    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         final boolean hasEngineRef = element.hasAttributeNS(null, "trustEngineRef");
         final boolean hasCertFile = element.hasAttributeNS(null, "certificateFile");
         final List<Element> publicKeys = ElementSupport.getChildElements(element, PUBLIC_KEY);
         final List<Element> trustEngines =
-                ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+                ElementSupport.getChildElements(element, AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
 
         super.doParse(element, parserContext, builder);
 
@@ -112,12 +111,12 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
             buildTrustEngine(builder, buildCertificateCredential(element.getAttributeNS(null, "certificateFile")));
         } else if (null != trustEngines && !trustEngines.isEmpty()) {
             if (trustEngines.size() > 1) {
-                log.error("{}: Too many <TrustEngine>s", parserContext
-                        .getReaderContext().getResource().getDescription());
+                log.error("{}: Too many <TrustEngine>s", parserContext.getReaderContext().getResource()
+                        .getDescription());
                 throw new BeanCreationException("{}: Too many <TrustEngine>s");
             }
             ManagedList<BeanDefinition> engines = SpringSupport.parseCustomElements(trustEngines, parserContext);
-            
+
             builder.addConstructorArgValue(engines.get(0));
         } else {
             buildTrustEngine(builder, buildPublicKeyCredential(parserContext, publicKeys));
@@ -126,25 +125,26 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         if (element.hasAttributeNS(null, "requireSignedMetadata")) {
             builder.addPropertyValue("requireSignature", element.getAttributeNS(null, "requireSignedMetadata"));
         }
-        
+
         if (element.hasAttributeNS(null, "defaultCriteriaRef")) {
             builder.addPropertyReference("defaultCriteria", element.getAttributeNS(null, "defaultCriteriaRef"));
         } else {
-            //TODO refactor, if decide upon new strategy for (or against) well-known bean refs
+            // TODO refactor, if decide upon new strategy for (or against) well-known bean refs
             builder.addPropertyReference("defaultCriteria", "shibboleth.MetadataSignatureValidationStaticCriteria");
         }
-        
+
         if (element.hasAttributeNS(null, "signaturePrevalidatorRef")) {
-            builder.addPropertyReference("signaturePrevalidator", 
-                        element.getAttributeNS(null, "signaturePrevalidatorRef"));
+            builder.addPropertyReference("signaturePrevalidator",
+                    element.getAttributeNS(null, "signaturePrevalidatorRef"));
         }
-        
+
         if (element.hasAttributeNS(null, "dynamicTrustedNamesStrategyRef")) {
-            builder.addPropertyReference("dynamicTrustedNamesStrategy", 
+            builder.addPropertyReference("dynamicTrustedNamesStrategy",
                     element.getAttributeNS(null, "dynamicTrustedNamesStrategyRef"));
         }
-        
+
     }
+
     // Checkstyle: CyclomaticComplexity ON
     // Checkstyle: MethodLength ON
 

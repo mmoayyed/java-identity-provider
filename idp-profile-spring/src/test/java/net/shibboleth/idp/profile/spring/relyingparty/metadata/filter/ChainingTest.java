@@ -22,7 +22,7 @@ import java.io.IOException;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
 import org.testng.Assert;
 import org.testng.annotations.Test;

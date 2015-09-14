@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
@@ -32,20 +32,21 @@ import org.w3c.dom.Element;
  */
 public class X509ResourceCredentialParser extends AbstractX509CredentialParser {
 
-    /** Element Name for Filesystem.*/
-    public static final QName TYPE_NAME_FILESYSTEM = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Filesystem");
-    
+    /** Element Name for Filesystem. */
+    public static final QName TYPE_NAME_FILESYSTEM = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "X509Filesystem");
+
     /** Type for X509 credentials. */
-    public static final QName TYPE_NAME_RESOURCE = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName TYPE_NAME_RESOURCE = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
             "X509ResourceBacked");
-    
+
     /** log. */
     private final Logger log = LoggerFactory.getLogger(X509ResourceCredentialParser.class);
 
     @Override protected Class<?> getBeanClass(Element element) {
         return X509ResourceCredentialFactoryBean.class;
     }
-    
+
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, BeanDefinitionBuilder builder) {
         if (TYPE_NAME_FILESYSTEM.equals(DOMTypeSupport.getXSIType(element))) {

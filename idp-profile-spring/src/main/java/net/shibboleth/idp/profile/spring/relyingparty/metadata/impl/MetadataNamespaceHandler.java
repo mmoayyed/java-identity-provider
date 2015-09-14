@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.ChainingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.EntitiesDescriptorNameParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.EntityAttributesFilterParser;
@@ -36,22 +37,19 @@ import net.shibboleth.idp.profile.spring.resource.impl.SVNResourceParser;
 /** Namespace handler for <code>urn:mace:shibboleth:2.0:metadata</code>. */
 public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
 
-    /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
-
     /** Metadata provider element name. */
-    public static final QName METADATA_ELEMENT_NAME = new QName(NAMESPACE, "MetadataProvider");
-
-    /** Metadata filter Element name. */
-    public static final QName METADATA_FILTER_ELEMENT_NAME = new QName(NAMESPACE, "MetadataFilter");
+    public static final QName METADATA_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "MetadataProvider");
 
     /** Metadata node processor Element name. */
-    public static final QName METADATA_NODE_PROC_ELEMENT_NAME = new QName(NAMESPACE, "MetadataNodeProcessor");
-    
+    public static final QName METADATA_NODE_PROC_ELEMENT_NAME = new QName(
+            AbstractMetadataProviderParser.METADATA_NAMESPACE, "MetadataNodeProcessor");
+
     /** {@inheritDoc} */
     @Override public void init() {
         // Profile Configuration
-        registerBeanDefinitionParser(ChainingMetadataProviderParser.ELEMENT_NAME, new ChainingMetadataProviderParser());
+        registerBeanDefinitionParser(AbstractMetadataProviderParser.CHAINING_PROVIDER_ELEMENT_NAME,
+                new ChainingMetadataProviderParser());
         registerBeanDefinitionParser(InlineMetadataProviderParser.ELEMENT_NAME, new InlineMetadataProviderParser());
         registerBeanDefinitionParser(FilesystemMetadataProviderParser.ELEMENT_NAME,
                 new FilesystemMetadataProviderParser());
@@ -62,7 +60,7 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
                 new ResourceBackedMetadataProviderParser());
         registerBeanDefinitionParser(DynamicHTTPMetadataProviderParser.ELEMENT_NAME,
                 new DynamicHTTPMetadataProviderParser());
-        
+
         // Resources
         registerBeanDefinitionParser(ClasspathResourceParser.ELEMENT_NAME, new ClasspathResourceParser());
         registerBeanDefinitionParser(SVNResourceParser.ELEMENT_NAME, new SVNResourceParser());
@@ -76,10 +74,10 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(SchemaValidationParser.TYPE_NAME, new SchemaValidationParser());
         registerBeanDefinitionParser(SignatureValidationParser.TYPE_NAME, new SignatureValidationParser());
         registerBeanDefinitionParser(NodeProcessingParser.TYPE_NAME, new NodeProcessingParser());
-        
+
         // Node Processors
         registerBeanDefinitionParser(EntitiesDescriptorNameParser.TYPE_NAME, new EntitiesDescriptorNameParser());
         registerBeanDefinitionParser(KeyAuthorityParser.TYPE_NAME, new KeyAuthorityParser());
     }
-    
+
 }

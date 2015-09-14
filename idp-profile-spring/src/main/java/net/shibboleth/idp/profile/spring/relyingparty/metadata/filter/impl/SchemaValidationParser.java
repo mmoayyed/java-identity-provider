@@ -22,7 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -40,10 +40,12 @@ import org.w3c.dom.Element;
 public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "SchemaValidation");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "SchemaValidation");
 
     /** Element name for the extension Schema. */
-    public static final QName EXTENSION_SCHEMA_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ExtensionSchema");
+    public static final QName EXTENSION_SCHEMA_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "ExtensionSchema");
 
     /** logger. */
     private final Logger log = LoggerFactory.getLogger(SchemaValidationParser.class);
@@ -59,7 +61,7 @@ public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
 
         if (element.hasAttributeNS(null, "schemaBuilderRef")) {
             builder.addConstructorArgReference(StringSupport.trimOrNull(element
-                    .getAttributeNS(null, "schemaBuilderRef")));            
+                    .getAttributeNS(null, "schemaBuilderRef")));
         } else {
             builder.addConstructorArgReference("shibboleth.SchemaBuilder");
         }

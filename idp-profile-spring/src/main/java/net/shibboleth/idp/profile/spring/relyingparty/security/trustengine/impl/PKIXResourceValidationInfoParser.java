@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
@@ -30,16 +30,18 @@ import org.w3c.dom.Element;
 /**
  * Parser for &lt;ValidationInfo type="PKIXFilesystem"&gt; and &lt;ValidationInfo type="PKIXResourceBacked"&gt;.<br/>
  * 
- * All of the heavy lifting is done in the super class and the associated factory bean (which gets the parameters of
- * the type is wants by virtue of Springs type coercion.
+ * All of the heavy lifting is done in the super class and the associated factory bean (which gets the parameters of the
+ * type is wants by virtue of Springs type coercion.
  */
 public class PKIXResourceValidationInfoParser extends AbstractPKIXValidationInfoParser {
-    
-    /** Element Name.*/
-    public static final QName TYPE_NAME_FILESYSTEM = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXFilesystem");
-    
+
+    /** Element Name. */
+    public static final QName TYPE_NAME_FILESYSTEM = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "PKIXFilesystem");
+
     /** Schema type for PKIXResourceBackedValidationInformation. */
-    public static final QName TYPE_NAME_RESOURCE = new QName(SecurityNamespaceHandler.NAMESPACE, "PKIXResourceBacked");
+    public static final QName TYPE_NAME_RESOURCE = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "PKIXResourceBacked");
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(PKIXResourceValidationInfoParser.class);

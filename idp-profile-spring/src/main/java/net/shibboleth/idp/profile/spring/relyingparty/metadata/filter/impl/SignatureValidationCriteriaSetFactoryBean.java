@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
+package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;

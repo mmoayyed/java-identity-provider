@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractReloadingMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
@@ -39,7 +39,7 @@ public class FilesystemMetadataProviderParser extends AbstractReloadingMetadataP
 
     /** Element name. */
     public static final QName ELEMENT_NAME =
-            new QName(MetadataNamespaceHandler.NAMESPACE, "FilesystemMetadataProvider");
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "FilesystemMetadataProvider");
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(FilesystemMetadataProviderParser.class);

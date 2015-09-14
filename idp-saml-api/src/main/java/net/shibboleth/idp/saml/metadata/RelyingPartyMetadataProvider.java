@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.metadata.impl;
+package net.shibboleth.idp.saml.metadata;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

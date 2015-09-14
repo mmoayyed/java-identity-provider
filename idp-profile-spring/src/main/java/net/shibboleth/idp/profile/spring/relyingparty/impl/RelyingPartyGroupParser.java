@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
@@ -49,9 +50,6 @@ import org.w3c.dom.Element;
  * </p>
  */
 public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser {
-
-    /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "RelyingPartyGroup");
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(RelyingPartyGroupParser.class);
@@ -98,7 +96,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         SpringSupport.parseCustomElements(configChildren.get(SecurityNamespaceHandler.CREDENTIAL_ELEMENT_NAME),
                 parserContext);
         // <TrustEngine> (for metadata)
-        SpringSupport.parseCustomElements(configChildren.get(SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME),
+        SpringSupport.parseCustomElements(configChildren.get(AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME),
                 parserContext);
 
         // <SecurityPolicy> (warn and ignore).

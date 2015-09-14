@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
@@ -33,10 +33,12 @@ import org.w3c.dom.Element;
 public class BasicResourceCredentialParser extends AbstractBasicCredentialParser {
 
     /** Element Name for Filesystem. */
-    public static final QName TYPE_NAME_FILESYSTEM = new QName(SecurityNamespaceHandler.NAMESPACE, "BasicFilesystem");
+    public static final QName TYPE_NAME_FILESYSTEM = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "BasicFilesystem");
 
     /** Type for Resource. */
-    public static final QName TYPE_NAME_RESOURCE = new QName(SecurityNamespaceHandler.NAMESPACE,"BasicResourceBacked");
+    public static final QName TYPE_NAME_RESOURCE = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "BasicResourceBacked");
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(BasicResourceCredentialParser.class);

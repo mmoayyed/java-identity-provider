@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -51,7 +51,7 @@ import com.google.common.base.Predicates;
 public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "Predicate");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "Predicate");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PredicateFilterParser.class);
@@ -146,7 +146,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
      */
     @Nullable public BeanDefinitionBuilder parseEntityPredicate(@Nonnull final Element element) {
         final List<Element> entityList =
-                ElementSupport.getChildElementsByTagNameNS(element, MetadataNamespaceHandler.NAMESPACE, "Entity");
+                ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                        "Entity");
         if (!entityList.isEmpty()) {
             final ManagedList<String> managedEntityList = SpringSupport.getElementTextContentAsManagedList(entityList);
             final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(EntityIdPredicate.class);
@@ -167,7 +168,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
     @Nullable public BeanDefinitionBuilder parseGroupPredicate(@Nonnull final Element element) {
 
         final List<Element> groupList =
-                ElementSupport.getChildElementsByTagNameNS(element, MetadataNamespaceHandler.NAMESPACE, "Group");
+                ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                        "Group");
         if (!groupList.isEmpty()) {
             final ManagedList<String> managedGroupList = SpringSupport.getElementTextContentAsManagedList(groupList);
             final BeanDefinitionBuilder builder =
@@ -188,7 +190,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
      */
     @Nullable public BeanDefinitionBuilder parseTagPredicate(@Nonnull final Element element) {
         final List<Element> tagList =
-                ElementSupport.getChildElementsByTagNameNS(element, MetadataNamespaceHandler.NAMESPACE, "Tag");
+                ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                        "Tag");
         if (!tagList.isEmpty()) {
             final ManagedList<BeanDefinition> managedTagList = new ManagedList<>(tagList.size());
             for (final Element tag : tagList) {
@@ -196,7 +199,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
                 tagBuilder.addConstructorArgValue(StringSupport.trimOrNull(tag.getAttributeNS(null, "name")));
                 tagBuilder.addConstructorArgValue(StringSupport.trimOrNull(tag.getAttributeNS(null, "nameFormat")));
                 final List<Element> valueList =
-                        ElementSupport.getChildElementsByTagNameNS(tag, MetadataNamespaceHandler.NAMESPACE, "Value");
+                        ElementSupport.getChildElementsByTagNameNS(tag,
+                                AbstractMetadataProviderParser.METADATA_NAMESPACE, "Value");
                 if (!valueList.isEmpty()) {
                     final ManagedList<String> managedValueList =
                             SpringSupport.getElementTextContentAsManagedList(valueList);

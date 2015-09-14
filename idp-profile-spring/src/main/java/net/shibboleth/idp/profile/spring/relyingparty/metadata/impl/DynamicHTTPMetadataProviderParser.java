@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -40,17 +41,17 @@ import org.w3c.dom.Element;
 public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE,
+    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "DynamicHTTPMetadataProvider");
 
     /** Template child element name. */
-    private static final QName TEMPLATE = new QName(MetadataNamespaceHandler.NAMESPACE, "Template");
+    private static final QName TEMPLATE = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "Template");
 
     /** Regex child element name. */
-    private static final QName REGEX = new QName(MetadataNamespaceHandler.NAMESPACE, "Regex");
+    private static final QName REGEX = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "Regex");
 
     /** MetadataQueryProtocol child element name. */
-    private static final QName METADATA_QUERY_PROTOCOL = new QName(MetadataNamespaceHandler.NAMESPACE,
+    private static final QName METADATA_QUERY_PROTOCOL = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "MetadataQueryProtocol");
 
     /** Name of default VelocityEngine bean to use. */

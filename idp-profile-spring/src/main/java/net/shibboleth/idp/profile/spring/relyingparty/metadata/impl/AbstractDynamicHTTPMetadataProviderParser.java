@@ -22,10 +22,10 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
 import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -50,8 +50,8 @@ import org.w3c.dom.Element;
 public abstract class AbstractDynamicHTTPMetadataProviderParser extends AbstractDynamicMetadataProviderParser {
 
     /** TLSTrustEngine element name. */
-    public static final QName TLS_TRUST_ENGINE_ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE,
-            "TLSTrustEngine");
+    public static final QName TLS_TRUST_ENGINE_ELEMENT_NAME = new QName(
+            AbstractMetadataProviderParser.METADATA_NAMESPACE, "TLSTrustEngine");
 
     /** BASIC auth username. */
     private static final String BASIC_AUTH_USER = "basicAuthUser";
@@ -251,14 +251,14 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         if (tlsTrustEngine != null) {
             Element trustEngine =
                     ElementSupport.getFirstChildElement(tlsTrustEngine,
-                            SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+                            AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
             if (trustEngine != null) {
                 return SpringSupport.parseCustomElement(trustEngine, parserContext);
             } else {
                 // This should be schema-invalid, but log a warning just in case.
                 log.warn("{}:, Element {} did not contain a {} child element", parserContext.getReaderContext()
                         .getResource().getDescription(), TLS_TRUST_ENGINE_ELEMENT_NAME,
-                        SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+                        AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
             }
         }
 

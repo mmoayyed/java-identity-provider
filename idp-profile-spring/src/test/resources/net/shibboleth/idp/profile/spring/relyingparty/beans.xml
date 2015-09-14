@@ -122,7 +122,7 @@
     </bean>
            
     <bean id="shibboleth.MetadataSignatureValidationStaticCriteria" 
-            class="net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.SignatureValidationCriteriaSetFactoryBean" 
+            class="net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.SignatureValidationCriteriaSetFactoryBean" 
             p:includeOpenSAMLGlobalConfig="true">
         <property name="signatureValidationConfigurations">
             <util:list>

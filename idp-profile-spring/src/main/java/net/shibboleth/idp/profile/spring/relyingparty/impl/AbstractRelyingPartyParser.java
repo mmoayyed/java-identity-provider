@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -42,7 +43,7 @@ import org.w3c.dom.Element;
 public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName PROFILE_CONFIGURATION = new QName(RelyingPartyNamespaceHandler.NAMESPACE,
+    public static final QName PROFILE_CONFIGURATION = new QName(AbstractMetadataProviderParser.RP_NAMESPACE,
             "ProfileConfiguration");
 
     /** log. */

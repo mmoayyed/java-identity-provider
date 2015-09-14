@@ -23,7 +23,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.QNameSupport;
 
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -54,9 +54,9 @@ public class EntityRoleFilterParserTest extends AbstractMetadataParserTest {
         Assert.assertEquals(filter.getRemoveRolelessEntityDescriptors(), false);
         final List<QName> roles = filter.getRoleWhiteList();
         Assert.assertEquals(roles.size(), 2);
-        QName r1 = new QName(MetadataNamespaceHandler.NAMESPACE, "qname1");
+        QName r1 = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "qname1");
         Assert.assertTrue(r1.equals(roles.get(0)));
-        Assert.assertTrue(roles.contains(QNameSupport.constructQName(MetadataNamespaceHandler.NAMESPACE, "qname1", null)));
+        Assert.assertTrue(roles.contains(QNameSupport.constructQName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "qname1", null)));
         Assert.assertTrue(roles.contains(QNameSupport.constructQName(SAMLConstants.SAML20MD_NS, "qname2", null)));
     }
 

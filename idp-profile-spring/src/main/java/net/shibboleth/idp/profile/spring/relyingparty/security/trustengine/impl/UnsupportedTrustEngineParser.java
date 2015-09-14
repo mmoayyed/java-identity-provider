@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
@@ -34,27 +34,27 @@ import org.w3c.dom.Element;
 public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
 
     /** Schema type for MetadataPKIXSignature. */
-    public static final QName METADATA_PKIX_SIGNATURE_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
-            "MetadataPKIXSignature");
+    public static final QName METADATA_PKIX_SIGNATURE_TYPE = new QName(
+            AbstractMetadataProviderParser.SECURITY_NAMESPACE, "MetadataPKIXSignature");
 
     /** Schema type for MetadataExplicitKeySignature. */
-    public static final QName METADATA_EXPLICIT_KEY_SIGNATURE_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
-            "MetadataExplicitKeySignature");
+    public static final QName METADATA_EXPLICIT_KEY_SIGNATURE_TYPE = new QName(
+            AbstractMetadataProviderParser.SECURITY_NAMESPACE, "MetadataExplicitKeySignature");
 
     /** Schema type for MetadataPKIXX509Credential. */
-    public static final QName METADATA_PKIX_CREDENTIAL_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
-            "MetadataPKIXX509Credential");
+    public static final QName METADATA_PKIX_CREDENTIAL_TYPE = new QName(
+            AbstractMetadataProviderParser.SECURITY_NAMESPACE, "MetadataPKIXX509Credential");
 
     /** Schema type for MetadataExplicitKey. */
-    public static final QName METADATA_EXPLICIT_KEY_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName METADATA_EXPLICIT_KEY_TYPE = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
             "MetadataExplicitKey");
 
     /** Schema type for StaticPKIXX509Credential. */
-    public static final QName PKIX_CREDENTIAL = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName PKIX_CREDENTIAL = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
             "StaticPKIXX509Credential");
 
     /** Schema type for StaticPKIXX509Credential. */
-    public static final QName STATIC_EXPLICIT_KEY_TYPE = new QName(SecurityNamespaceHandler.NAMESPACE,
+    public static final QName STATIC_EXPLICIT_KEY_TYPE = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
             "StaticExplicitKey");
 
     /** log. */

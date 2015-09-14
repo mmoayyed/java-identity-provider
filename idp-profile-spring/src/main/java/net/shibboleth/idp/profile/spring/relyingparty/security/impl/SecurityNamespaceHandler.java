@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.impl;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicInlineCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.X509InlineCredentialParser;
@@ -39,20 +40,17 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.
 /** Namespace handler <em>{@value NAMESPACE}</em>. */
 public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
 
-    /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:security";
-
     /** Credential element name. */
-    public static final QName CREDENTIAL_ELEMENT_NAME = new QName(NAMESPACE, "Credential");
-
-    /** TrustEngine element name. */
-    public static final QName TRUST_ENGINE_ELEMENT_NAME = new QName(NAMESPACE, "TrustEngine");
+    public static final QName CREDENTIAL_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "Credential");
 
     /** SecurityPolicy element name. */
-    public static final QName SECURITY_POLICY_NAME = new QName(NAMESPACE, "SecurityPolicy");
+    public static final QName SECURITY_POLICY_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "SecurityPolicy");
 
     /** TrustEngineRef element name. */
-    public static final QName TRUST_ENGINE_REF= new QName(NAMESPACE, "TrustEngineRef");
+    public static final QName TRUST_ENGINE_REF = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "TrustEngineRef");
 
     /** {@inheritDoc} */
     @Override public void init() {
@@ -68,11 +66,12 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(BasicResourceCredentialParser.TYPE_NAME_RESOURCE,
                 new BasicResourceCredentialParser());
 
-        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.TYPE_NAME,new StaticExplicitKeySignatureParser());
+        registerBeanDefinitionParser(StaticExplicitKeySignatureParser.TYPE_NAME, 
+                new StaticExplicitKeySignatureParser());
         registerBeanDefinitionParser(StaticPKIXSignatureParser.TYPE_NAME, new StaticPKIXSignatureParser());
         registerBeanDefinitionParser(SignatureChainingParser.TYPE_NAME, new SignatureChainingParser());
 
-        // Metadata based unsupported 
+        // Metadata based unsupported
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_TYPE,
                 new UnsupportedTrustEngineParser());
         registerBeanDefinitionParser(UnsupportedTrustEngineParser.METADATA_EXPLICIT_KEY_SIGNATURE_TYPE,
@@ -93,7 +92,7 @@ public class SecurityNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(PKIXValidationOptionsParser.ELEMENT_NAME, new PKIXValidationOptionsParser());
         registerBeanDefinitionParser(CertPathPKIXValidationOptionsParser.ELEMENT_NAME,
                 new CertPathPKIXValidationOptionsParser());
-        
+
         //
         // Trust Engines needed for the HttpMetadataProvider
         //

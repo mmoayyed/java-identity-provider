@@ -22,10 +22,10 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
-import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -37,7 +37,8 @@ import org.w3c.dom.Element;
 public class ChainingParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ChainingFilter");
+    public static final QName TYPE_NAME =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "ChainingFilter");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
@@ -47,8 +48,8 @@ public class ChainingParser extends AbstractSingleBeanDefinitionParser {
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         List<Element> children =
-                ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_FILTER_ELEMENT_NAME);
-        
+                ElementSupport.getChildElements(element, AbstractMetadataProviderParser.METADATA_FILTER_ELEMENT_NAME);
+
         if (null != children && !children.isEmpty()) {
             builder.addPropertyValue("filters", SpringSupport.parseCustomElements(children, parserContext));
         }

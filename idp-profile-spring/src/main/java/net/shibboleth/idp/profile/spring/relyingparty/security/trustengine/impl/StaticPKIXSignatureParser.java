@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.signature.support.impl.PKIXSignatureTrustEngine;
@@ -33,7 +33,8 @@ import org.w3c.dom.Element;
 public class StaticPKIXSignatureParser extends AbstractStaticPKIXParser {
 
     /** Schema type. */
-    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXSignature");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "StaticPKIXSignature");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
@@ -43,11 +44,12 @@ public class StaticPKIXSignatureParser extends AbstractStaticPKIXParser {
     /**
      * {@inheritDoc} <br/>
      * We call into
-     * {@link PKIXSignatureTrustEngine#PKIXSignatureTrustEngine(
-     *  org.opensaml.security.x509.PKIXValidationInformationResolver,
-     *  org.opensaml.xmlsec.keyinfo.KeyInfoCredentialResolver, 
-     *  org.opensaml.security.x509.PKIXTrustEvaluator, 
-     *  org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
+     * {@link 
+     * PKIXSignatureTrustEngine#PKIXSignatureTrustEngine(
+     * org.opensaml.security.x509.PKIXValidationInformationResolver, 
+     * org.opensaml.xmlsec.keyinfo.KeyInfoCredentialResolver, 
+     * org.opensaml.security.x509.PKIXTrustEvaluator, 
+     * org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
      * .
      */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

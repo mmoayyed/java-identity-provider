@@ -19,19 +19,22 @@ package net.shibboleth.idp.profile.spring.relyingparty.impl;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
  * Parser for the &lt:rp:AnonymousRelyingParty&gt; element. <br/>
- * The {@link com.google.common.base.Predicate} which is injected
- * looks to see if there is metadata associated with the RelyingParty and if so says TRUE.
+ * The {@link com.google.common.base.Predicate} which is injected looks to see if there is metadata associated with the
+ * RelyingParty and if so says TRUE.
  */
 public class AnonymousRelyingPartyParser extends AbstractRelyingPartyParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartyNamespaceHandler.NAMESPACE, "AnonymousRelyingParty");
+    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.RP_NAMESPACE,
+            "AnonymousRelyingParty");
 
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

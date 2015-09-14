@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -37,7 +38,8 @@ import org.w3c.dom.Element;
 public class NodeProcessingParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "NodeProcessing");
+    public static final QName TYPE_NAME =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "NodeProcessing");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
@@ -52,7 +54,7 @@ public class NodeProcessingParser extends AbstractSingleBeanDefinitionParser {
 
         final List<Element> children =
                 ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_NODE_PROC_ELEMENT_NAME);
-        
+
         if (null != children && !children.isEmpty()) {
             builder.addPropertyValue("nodeProcessors", SpringSupport.parseCustomElements(children, parserContext));
         }
@@ -62,5 +64,5 @@ public class NodeProcessingParser extends AbstractSingleBeanDefinitionParser {
     @Override protected boolean shouldGenerateId() {
         return true;
     }
-    
+
 }

@@ -20,19 +20,16 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.util.List;
 
 import javax.annotation.Nonnull;
+import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.impl.RelyingPartyGroupParser;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ChainingMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
-import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -50,6 +47,23 @@ import org.w3c.dom.Node;
  * {@link RelyingPartyMetadataProvider} and inject what we would usually create into that.
  */
 public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanDefinitionParser {
+
+    /** Namespace for Security. */
+    public static final String SECURITY_NAMESPACE = "urn:mace:shibboleth:2.0:security";
+    /** Namespace for RelyingParty. */
+    public static final String RP_NAMESPACE = "urn:mace:shibboleth:2.0:relying-party";
+    /** Namespace for Metadata. */
+    public static final String METADATA_NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
+    
+    /** MetadataFilter Element name. */
+    public static final QName METADATA_FILTER_ELEMENT_NAME = new QName(METADATA_NAMESPACE, "MetadataFilter");
+    /** ChainingMetadataProviderElement name. */
+    public static final QName CHAINING_PROVIDER_ELEMENT_NAME = 
+            new QName(METADATA_NAMESPACE, "ChainingMetadataProvider");
+    /** RelyingPartyGroup Element name. */
+    public static final QName RELYING_PARTY_GROUP_ELEMENT_NAME = new QName(RP_NAMESPACE, "RelyingPartyGroup");
+    /** TrustEngine element name. */
+    public static final QName TRUST_ENGINE_ELEMENT_NAME = new QName(SECURITY_NAMESPACE, "TrustEngine");
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractMetadataProviderParser.class);
@@ -70,8 +84,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
             return false;
         }
 
-        if (ChainingMetadataProviderParser.ELEMENT_NAME.equals(DOMTypeSupport.getXSIType(element))) {
-            log.warn("{} is not valid for {}", attribute, ChainingMetadataProviderParser.ELEMENT_NAME.getLocalPart());
+        if (CHAINING_PROVIDER_ELEMENT_NAME.equals(DOMTypeSupport.getXSIType(element))) {
+            log.warn("{} is not valid for {}", attribute, CHAINING_PROVIDER_ELEMENT_NAME.getLocalPart());
             return false;
         }
         return true;
@@ -94,8 +108,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         if (parent.getNodeType() != Node.ELEMENT_NODE) {
             return false;
         }
-        return RelyingPartyGroupParser.ELEMENT_NAME.getLocalPart().equals(parent.getLocalName())
-                && RelyingPartyGroupParser.ELEMENT_NAME.getNamespaceURI().equals(parent.getNamespaceURI());
+        return RELYING_PARTY_GROUP_ELEMENT_NAME.getLocalPart().equals(parent.getLocalName())
+                && RELYING_PARTY_GROUP_ELEMENT_NAME.getNamespaceURI().equals(parent.getNamespaceURI());
     }
 
     /**
@@ -145,7 +159,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     /**
      * Parse the element into the provider builder. This has the same function as the more usual
      * {@link AbstractSingleBeanDefinitionParser#doParse(Element, ParserContext, BeanDefinitionBuilder)} but it may need
-     * to be shimmed in {@link AbstractMetadataProviderParser} which may need to insert an extra bean.
+     * to be shimmed in this class which may need to insert an extra bean.
      * 
      * @param element the XML element being parsed
      * @param parserContext the object encapsulating the current state of the parsing process
@@ -171,7 +185,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         }
 
         final List<Element> filters =
-                ElementSupport.getChildElements(element, MetadataNamespaceHandler.METADATA_FILTER_ELEMENT_NAME);
+                ElementSupport.getChildElements(element, METADATA_FILTER_ELEMENT_NAME);
 
         if (null != filters) {
             if (filters.size() == 1) {
@@ -187,7 +201,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
         }
 
         final List<Element> trustEngines =
-                ElementSupport.getChildElements(element, SecurityNamespaceHandler.TRUST_ENGINE_ELEMENT_NAME);
+                ElementSupport.getChildElements(element, TRUST_ENGINE_ELEMENT_NAME);
         if (trustEngines != null && !trustEngines.isEmpty()) {
             log.warn("{} Deprecated placement of <TrustEngine> inside <MetadataProvider>. "
                     + "Place inside the relevant filter", parserContext.getReaderContext().getResource()

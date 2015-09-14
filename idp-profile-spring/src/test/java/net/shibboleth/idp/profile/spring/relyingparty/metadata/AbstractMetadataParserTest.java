@@ -31,7 +31,7 @@ import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;

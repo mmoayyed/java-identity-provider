@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.saml.security.impl.KeyAuthorityNodeProcessor;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
 public class KeyAuthorityParser extends AbstractSingleBeanDefinitionParser {
     
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "KeyAuthority");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "KeyAuthority");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {

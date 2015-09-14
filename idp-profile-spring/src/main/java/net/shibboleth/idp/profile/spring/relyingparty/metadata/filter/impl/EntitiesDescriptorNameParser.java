@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 
 import org.opensaml.saml.metadata.resolver.filter.impl.EntitiesDescriptorNameProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -31,9 +31,10 @@ import org.w3c.dom.Element;
  * Parser for a &lt;EntitiesDescriptorName&gt; node processor.
  */
 public class EntitiesDescriptorNameParser extends AbstractSingleBeanDefinitionParser {
-    
+
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "EntitiesDescriptorName");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "EntitiesDescriptorName");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
@@ -41,14 +42,13 @@ public class EntitiesDescriptorNameParser extends AbstractSingleBeanDefinitionPa
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        
+    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+
     }
 
     /** {@inheritDoc} */
     @Override protected boolean shouldGenerateId() {
         return true;
     }
-    
+
 }

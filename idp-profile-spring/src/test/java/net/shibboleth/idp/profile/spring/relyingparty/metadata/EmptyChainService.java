@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import java.io.IOException;
 
-import net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider;
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 

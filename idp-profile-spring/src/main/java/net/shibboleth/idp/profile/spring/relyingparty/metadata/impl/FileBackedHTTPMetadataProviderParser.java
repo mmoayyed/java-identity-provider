@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
@@ -32,7 +33,7 @@ import org.w3c.dom.Element;
 public class FileBackedHTTPMetadataProviderParser extends HTTPMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE,
+    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "FileBackedHTTPMetadataProvider");
 
     /** {@inheritDoc} */

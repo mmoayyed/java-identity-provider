@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 /**
- * Parsers for the metadata filters.
+ * This package contains such  public class definitions as are needed to 
+ * bridge between the relying-party.xml schema and OpenSAML.
+
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
+package net.shibboleth.idp.saml.metadata;

@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.security.x509.PKIXValidationOptions;
@@ -34,7 +34,8 @@ import org.w3c.dom.Element;
 public class PKIXValidationOptionsParser extends AbstractSingleBeanDefinitionParser {
 
     /** Validation Options. */
-    public static final QName ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "ValidationOptions");
+    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "ValidationOptions");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {

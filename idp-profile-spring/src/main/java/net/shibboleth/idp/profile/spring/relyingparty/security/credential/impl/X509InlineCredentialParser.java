@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 
 import org.w3c.dom.Element;
 
@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 public class X509InlineCredentialParser extends AbstractX509CredentialParser {
 
     /** Element Name.*/
-    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "X509Inline");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "X509Inline");
 
     @Override protected Class<?> getBeanClass(Element element) {
         return X509InlineCredentialFactoryBean.class;

@@ -31,7 +31,7 @@
             value="org.opensaml.saml.metadata.resolver.MetadataResolver" />
         <constructor-arg name="strategy">
             <bean class="net.shibboleth.ext.spring.service.ClassBasedServiceStrategy"
-                c:serviceableClaz="net.shibboleth.idp.saml.metadata.impl.RelyingPartyMetadataProvider" />
+                c:serviceableClaz="net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider" />
         </constructor-arg>
         <property name="serviceConfigurations">
             <util:list>

@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -42,13 +42,16 @@ import org.w3c.dom.Element;
 public abstract class AbstractBasicCredentialParser extends AbstractCredentialParser {
 
     /** &lt;PrivateKey&gt;. */
-    public static final QName PRIVATE_KEY_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "PrivateKey");
+    public static final QName PRIVATE_KEY_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "PrivateKey");
 
     /** &lt;PublicKey&gt;. */
-    public static final QName PUBLIC_KEY_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "PublicKey");
+    public static final QName PUBLIC_KEY_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "PublicKey");
 
     /** &lt;SecretKey&gt;. */
-    public static final QName SECRET_KEY_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "SecretKey");
+    public static final QName SECRET_KEY_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "SecretKey");
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(AbstractBasicCredentialParser.class);
@@ -57,7 +60,7 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         builder.addPropertyValue("configDescription", parserContext.getReaderContext().getResource().getDescription());
-        
+
         parsePrivateKey(ElementSupport.getChildElements(element, PRIVATE_KEY_ELEMENT_NAME), parserContext, builder);
         parsePublicKey(ElementSupport.getChildElements(element, PUBLIC_KEY_ELEMENT_NAME), parserContext, builder);
         parseSecretKey(ElementSupport.getChildElements(element, SECRET_KEY_ELEMENT_NAME), parserContext, builder);

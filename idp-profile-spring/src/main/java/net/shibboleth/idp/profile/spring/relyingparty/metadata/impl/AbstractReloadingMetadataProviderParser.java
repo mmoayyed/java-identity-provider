@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.metadata;
+package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -35,7 +36,7 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
      * 
      * {@inheritDoc}
      * 
-     * We assume that we will be summoning up a class which extends an
+     * We assume in setting the that we will be summoning up a class which extends 
      * {@link org.opensaml.saml.metadata.resolver.impl.AbstractReloadingMetadataResolver}.
      */
     @Override protected void doNativeParse(Element element, ParserContext parserContext,

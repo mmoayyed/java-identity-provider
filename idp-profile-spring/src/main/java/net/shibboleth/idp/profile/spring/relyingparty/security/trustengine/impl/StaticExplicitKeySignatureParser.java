@@ -22,8 +22,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.AbstractCredentialParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
@@ -40,7 +40,7 @@ public class StaticExplicitKeySignatureParser extends AbstractTrustEngineParser 
 
     /** Schema type. */
     public static final QName TYPE_NAME =
-            new QName(SecurityNamespaceHandler.NAMESPACE, "StaticExplicitKeySignature");
+            new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "StaticExplicitKeySignature");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {

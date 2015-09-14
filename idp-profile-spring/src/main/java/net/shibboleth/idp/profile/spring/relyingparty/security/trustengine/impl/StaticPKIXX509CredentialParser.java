@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 
 import org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -32,7 +32,8 @@ import org.w3c.dom.Element;
 public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXParser {
 
     /** Schema type. */
-    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "StaticPKIXX509Credential");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "StaticPKIXX509Credential");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
@@ -43,9 +44,9 @@ public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXParser {
      * {@inheritDoc} <br/>
      * We call into
      * {@link PKIXX509CredentialTrustEngine#PKIXX509CredentialTrustEngine(
-     *    org.opensaml.security.x509.PKIXValidationInformationResolver, 
-     *    org.opensaml.security.x509.PKIXTrustEvaluator, 
-     *    org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
+     *   org.opensaml.security.x509.PKIXValidationInformationResolver,
+     *   org.opensaml.security.x509.PKIXTrustEvaluator,
+     *   org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
      * .
      */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {

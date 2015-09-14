@@ -19,8 +19,6 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -34,9 +32,6 @@ import org.w3c.dom.Element;
  * Parser for &lt;ChainingMetadataProvider&gt;.
  */
 public class ChainingMetadataProviderParser extends AbstractMetadataProviderParser {
-
-    /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "ChainingMetadataProvider");
 
     /** {@inheritDoc} */
     @Override protected Class<ChainingMetadataResolver> getNativeBeanClass(Element element) {

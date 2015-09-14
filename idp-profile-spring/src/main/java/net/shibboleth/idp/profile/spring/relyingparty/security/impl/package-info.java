@@ -17,6 +17,10 @@
 
 /**
  * Basis of all parsers in the
- * {@value net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler#NAMESPACE} schema.
+ * {@value 
+net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser#SECURITY_NAMESPACE
+} schema.
  */
+
 package net.shibboleth.idp.profile.spring.relyingparty.security.impl;
+

@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -44,13 +44,15 @@ import org.w3c.dom.Element;
 public abstract class AbstractX509CredentialParser extends AbstractCredentialParser {
 
     /** &lt;PrivateKey&gt;. */
-    public static final QName PRIVATE_KEY_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "PrivateKey");
+    public static final QName PRIVATE_KEY_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "PrivateKey");
 
     /** &lt;Certificate&gt;. */
-    public static final QName CERTIFICATE_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "Certificate");
+    public static final QName CERTIFICATE_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "Certificate");
 
     /** &lt;CRL&gt;. */
-    public static final QName CRL_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "CRL");
+    public static final QName CRL_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "CRL");
 
     /** log. */
     private Logger log = LoggerFactory.getLogger(AbstractX509CredentialParser.class);
@@ -106,8 +108,8 @@ public abstract class AbstractX509CredentialParser extends AbstractCredentialPar
             if (null == cert) {
                 throw new BeanCreationException("All <Certificate> elements must contain text.");
             }
-            if (elem.hasAttributeNS(null, "entityCertificate") && 
-                    AttributeSupport.getAttributeValueAsBoolean(elem.getAttributeNodeNS(null,
+            if (elem.hasAttributeNS(null, "entityCertificate")
+                    && AttributeSupport.getAttributeValueAsBoolean(elem.getAttributeNodeNS(null,
                             "entityCertificate"))) {
                 // Note the loss of property replacement for this undocumented extension
                 log.debug("Found a certficate marked as an entityCertificate {}", cert);

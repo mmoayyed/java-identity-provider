@@ -19,7 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 
 import org.w3c.dom.Element;
 
@@ -27,9 +27,10 @@ import org.w3c.dom.Element;
  * Parser for trust engines of type SignatureChaining.
  */
 public class SignatureChainingParser extends AbstractChainingParser {
-    
+
     /** Schema type. */
-    public static final QName TYPE_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "SignatureChaining");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "SignatureChaining");
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {

@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.impl;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML1ArtifactResolutionProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML1AttributeQueryProfileParser;
 import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML2ArtifactResolutionProfileParser;
@@ -31,9 +32,6 @@ import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.ShibbolethSSOPro
 // TODO incomplete
 /** Namespace handler for the relying party files. */
 public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
-
-    /** Namespace for this handler. */
-    public static final String NAMESPACE = "urn:mace:shibboleth:2.0:relying-party";
 
     /** {@inheritDoc} */
     @Override public void init() {
@@ -60,6 +58,7 @@ public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(DefaultRelyingPartyParser.ELEMENT_NAME, new DefaultRelyingPartyParser());
         registerBeanDefinitionParser(AnonymousRelyingPartyParser.ELEMENT_NAME, new AnonymousRelyingPartyParser());
 
-        registerBeanDefinitionParser(RelyingPartyGroupParser.ELEMENT_NAME, new RelyingPartyGroupParser());
+        registerBeanDefinitionParser(AbstractMetadataProviderParser.RELYING_PARTY_GROUP_ELEMENT_NAME,
+                new RelyingPartyGroupParser());
     }
 }

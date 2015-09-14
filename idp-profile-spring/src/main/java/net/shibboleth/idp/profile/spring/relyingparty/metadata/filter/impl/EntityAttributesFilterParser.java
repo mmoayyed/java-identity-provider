@@ -23,7 +23,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.core.xml.XMLObject;
@@ -48,11 +48,12 @@ import org.w3c.dom.Element;
 public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "EntityAttributes");
+    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "EntityAttributes");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(EntityAttributesFilterParser.class);
-    
+
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(Element element) {
         return EntityAttributesFilter.class;
@@ -60,7 +61,7 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
 
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
-        
+
         final Unmarshaller unmarshaller = XMLObjectSupport.getUnmarshaller(Attribute.DEFAULT_ELEMENT_NAME);
         if (unmarshaller == null) {
             throw new BeanCreationException("Unable to obtain Unmarshaller for Attribute objects");
@@ -68,9 +69,9 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
 
         // Accumulate Attribute objects to attach as rule values.
         final List<Attribute> accumulator = new ArrayList<>();
-        
-        final ManagedMap<Object,ManagedList<Attribute>> ruleMap = new ManagedMap();
-        
+
+        final ManagedMap<Object, ManagedList<Attribute>> ruleMap = new ManagedMap();
+
         Element child = ElementSupport.getFirstChildElement(element);
         while (child != null) {
             if (ElementSupport.isElementNamed(child, Attribute.DEFAULT_ELEMENT_NAME)) {
@@ -82,27 +83,29 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
                 } catch (final UnmarshallingException e) {
                     log.error("Error unmarshalling Attribute", e);
                 }
-            } else if (ElementSupport.isElementNamed(child, MetadataNamespaceHandler.NAMESPACE, "Entity")) {
+            } else if (ElementSupport
+                    .isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE, "Entity")) {
                 final BeanDefinitionBuilder entityIdBuilder =
                         BeanDefinitionBuilder.genericBeanDefinition(EntityIdPredicate.class);
                 entityIdBuilder.addConstructorArgValue(ElementSupport.getElementContentAsString(child));
                 final ManagedList<Attribute> forRule = new ManagedList(accumulator.size());
                 forRule.addAll(accumulator);
                 ruleMap.put(entityIdBuilder.getBeanDefinition(), forRule);
-            } else if (ElementSupport.isElementNamed(child, MetadataNamespaceHandler.NAMESPACE, "ConditionRef")) {
+            } else if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                    "ConditionRef")) {
                 final ManagedList<Attribute> forRule = new ManagedList(accumulator.size());
                 forRule.addAll(accumulator);
                 ruleMap.put(new RuntimeBeanReference(ElementSupport.getElementContentAsString(child)), forRule);
             }
             child = ElementSupport.getNextSiblingElement(child);
         }
-        
+
         builder.addPropertyValue("rules", ruleMap);
     }
-    
+
     /** {@inheritDoc} */
     @Override protected boolean shouldGenerateId() {
         return true;
     }
-    
+
 }

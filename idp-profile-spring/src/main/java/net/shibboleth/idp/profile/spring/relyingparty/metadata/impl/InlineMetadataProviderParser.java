@@ -34,7 +34,8 @@ import org.w3c.dom.Element;
 public class InlineMetadataProviderParser extends AbstractMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(MetadataNamespaceHandler.NAMESPACE, "InlineMetadataProvider");
+    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+            "InlineMetadataProvider");
 
     /** {@inheritDoc} */
     @Override protected Class<DOMMetadataResolver> getNativeBeanClass(Element element) {

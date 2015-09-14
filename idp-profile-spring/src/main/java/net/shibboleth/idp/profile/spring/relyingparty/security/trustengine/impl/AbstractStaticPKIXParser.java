@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -43,10 +43,12 @@ import org.w3c.dom.Element;
 public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser {
 
     /** Validation Information. */
-    public static final QName VALIDATION_INFO = new QName(SecurityNamespaceHandler.NAMESPACE, "ValidationInfo");
+    public static final QName VALIDATION_INFO = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "ValidationInfo");
 
     /** Trusted Names Information. */
-    public static final QName TRUSTED_NAMES = new QName(SecurityNamespaceHandler.NAMESPACE, "TrustedName");
+    public static final QName TRUSTED_NAMES = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "TrustedName");
 
     /**
      * Get the definition for the {@link org.opensaml.security.x509.PKIXValidationInformationResolver}. This is
@@ -123,8 +125,11 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
         /** Do we emit a {@link X509CredentialNameEvaluator} or not. */
         private boolean trustedNameCheckEnabled = true;
 
-        /** Setter for {@link #trustedNameCheckEnabled}.
-         * @param enabled whether we emit a the  {@link X509CredentialNameEvaluator} .*/
+        /**
+         * Setter for {@link #trustedNameCheckEnabled}.
+         * 
+         * @param enabled whether we emit a the {@link X509CredentialNameEvaluator} .
+         */
         public void setTrustedNameCheckEnabled(final boolean enabled) {
             trustedNameCheckEnabled = enabled;
         }

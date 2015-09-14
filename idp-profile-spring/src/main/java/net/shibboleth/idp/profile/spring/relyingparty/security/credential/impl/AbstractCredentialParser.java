@@ -22,7 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -38,10 +38,12 @@ import org.w3c.dom.Element;
 public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinitionParser {
 
     /** &lt;Credential&gt;. */
-    public static final QName CREDENTIAL_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "Credential");
+    public static final QName CREDENTIAL_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "Credential");
 
     /** &lt;KeyName&gt;. */
-    public static final QName KEY_NAME_ELEMENT_NAME = new QName(SecurityNamespaceHandler.NAMESPACE, "KeyName");
+    public static final QName KEY_NAME_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
+            "KeyName");
 
     /** {@inheritDoc} */
     @Override protected String resolveId(final Element element, final AbstractBeanDefinition definition,
@@ -53,9 +55,9 @@ public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinit
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        
+
         builder.setLazyInit(true);
-        
+
         parseAttributes(element, builder);
         parseKeyNames(ElementSupport.getChildElements(element, KEY_NAME_ELEMENT_NAME), builder);
     }

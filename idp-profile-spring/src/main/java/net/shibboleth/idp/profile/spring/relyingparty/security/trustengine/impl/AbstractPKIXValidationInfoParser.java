@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -39,10 +39,11 @@ import org.w3c.dom.Element;
 public abstract class AbstractPKIXValidationInfoParser extends AbstractSingleBeanDefinitionParser {
 
     /** The element &lt;Certificate&gt;. */
-    private static final QName CERTIFICATE = new QName(SecurityNamespaceHandler.NAMESPACE, "Certificate");
+    private static final QName CERTIFICATE =
+            new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "Certificate");
 
     /** The element &lt;CRL&gt;. */
-    private static final QName CRL = new QName(SecurityNamespaceHandler.NAMESPACE, "CRL");
+    private static final QName CRL = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "CRL");
 
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
