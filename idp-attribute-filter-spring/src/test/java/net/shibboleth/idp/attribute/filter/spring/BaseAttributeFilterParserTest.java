@@ -112,7 +112,7 @@ public class BaseAttributeFilterParserTest extends XMLObjectBaseTestCase {
         SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        beanDefinitionReader.loadBeanDefinitions(fileName);
+        beanDefinitionReader.loadBeanDefinitions(fileName, MATCHER_PATH + "customBean.xml");
 
         context.refresh();
         return getBean(claz, context);

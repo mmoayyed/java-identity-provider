@@ -49,4 +49,22 @@
     </util:map>
     -->
     
+    <!--
+    Similarly, if you need to define and inject custom Java object(s) into the various scripting
+    subsystems (AttributeDefinition, DataConnector, AttributePolicy & Matcher, Action,
+    ContextLookup, Predicate and so on), you can change the definition of the shibboleth.CustomScriptObject
+    bean defined below.  
+
+    The example below defines the bean as a map, which allows you to inject multiple objects under
+    named keys to expand the feature to support multiple injected objects.
+
+    There must always be a bean defined with this name.
+    -->
+    
+    <util:map id="shibboleth.CustomScriptObject">
+        <entry key="foo" value="bar"/>
+    </util:map>
+
+    
+    
 </beans>

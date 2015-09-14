@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.filter.policyrule.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
@@ -64,6 +65,9 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
     @Nonnull private Function<AttributeFilterContext, ProfileRequestContext> prcLookupStrategy;
 
+    /** The custom object we inject into all scripts. */
+    @Nullable private Object customObject;
+
     /**
      * Constructor.
      * 
@@ -75,6 +79,22 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
         prcLookupStrategy =
                 Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
                         new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
+    }
+
+    /**
+     * Return the custom (externally provided) object.
+     * @return the custom object
+     */
+    @Nullable public Object getCustomObject() {
+        return customObject;
+    }
+
+    /**
+     * Set the custom (externally provided) object.
+     * @param object the custom object
+     */
+    @Nullable public void setCustomObject(Object object) {
+        customObject = object;
     }
 
     /**
@@ -131,6 +151,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
         final ProfileRequestContext prc = prcLookupStrategy.apply(filterContext);
         if (null == prc) {
             log.error("{} Could not locate ProfileRequestContext", getLogPrefix());

@@ -94,5 +94,28 @@ public class ScriptedTest extends BaseAttributeFilterParserTest {
         Assert.assertTrue(val.equals("jsmith") || val.equals("daffyDuck"));
         
     }
+    
+    @Test public void customMatcher() throws ComponentInitializationException {
+        
+        final ScriptedMatcher what = (ScriptedMatcher) getMatcher(getScript(), false);
+        
+        final Map custom = (Map) what.getCustomObject();
+     
+        Assert.assertEquals(custom.size(), 1);
+        Assert.assertEquals(custom.get("foo"), "bar");
+        
+    }
 
+    @Test public void customPolicy() throws ComponentInitializationException {
+        
+        final ScriptedPolicyRule what = (ScriptedPolicyRule) getPolicyRule(getScript(), true);
+        
+        final Map custom = (Map) what.getCustomObject();
+     
+        Assert.assertEquals(custom.size(), 1);
+        Assert.assertEquals(custom.get("bar"), "foo");
+        
+    }
+
+    
 }

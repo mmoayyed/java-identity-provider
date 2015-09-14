@@ -54,6 +54,9 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     /** A script that returns an object other than a set. */
     private EvaluableScript invalidReturnObjectScript;
 
+    /** A script that returns the custom object. */
+    private EvaluableScript customReturnScript;
+
     @BeforeTest public void setup() throws Exception {
         super.setUp();
 
@@ -68,6 +71,8 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         falseReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(false);");
         
         prcReturnScript = new EvaluableScript("JavaScript", "new java.lang.Boolean(profileContext.getClass().getName().equals(\"org.opensaml.profile.context.ProfileRequestContext\"));");
+        
+        customReturnScript = new EvaluableScript("JavaScript", "custom;");
     }
 
     @Test public void testNullArguments() throws Exception {
@@ -178,7 +183,13 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule.setId("test");
         rule.initialize();
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
-        
+
+        rule = new ScriptedPolicyRule(customReturnScript);
+        rule.setCustomObject(new Boolean(true));
+        rule.setId("test");
+        rule.initialize();
+        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+
         rule = new ScriptedPolicyRule(falseReturnScript);
         rule.setId("test");
         rule.initialize();
@@ -187,7 +198,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         rule = new ScriptedPolicyRule(prcReturnScript);
         rule.setId("test");
         rule.initialize();
-
+        
         Assert.assertEquals(rule.matches(filterContext), Tristate.FAIL);
         
         new ProfileRequestContext<>().getSubcontext(RelyingPartyContext.class, true).addSubcontext(filterContext);

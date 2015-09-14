@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -89,5 +91,28 @@ public class ScriptedDataConnectorTest {
         Assert.assertTrue(values.contains(new StringAttributeValue(AttributeResolutionContext.class.getSimpleName())));
 
     }
+    
+    @Test public void custom() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
+
+        final ScriptedDataConnector connector = new ScriptedDataConnector();
+        connector.setId("Scripted");
+        
+        final IdPAttribute attribute = new IdPAttribute("attr");
+        attribute.setValues((Collection)Collections.singleton((IdPAttributeValue)new StringAttributeValue("bar")));
+        connector.setCustomObject(attribute);
+        
+        final EvaluableScript definitionScript = new EvaluableScript("javascript", getScript("custom.js"));
+        connector.setScript(definitionScript);
+
+        connector.initialize();
+
+        final AttributeResolutionContext context = new ProfileRequestContext<>().getSubcontext(AttributeResolutionContext.class,  true);
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        final Map<String, IdPAttribute> result = connector.resolve(context);
+
+        Assert.assertEquals(result.size(), 1);
+        Assert.assertEquals(result.get(attribute.getId()),attribute);
+    }
+
 
 }

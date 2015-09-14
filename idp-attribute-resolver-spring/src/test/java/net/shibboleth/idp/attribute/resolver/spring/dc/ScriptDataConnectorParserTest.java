@@ -23,7 +23,6 @@ import java.util.Map;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ScriptedDataConnector;
@@ -52,8 +51,15 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
         } else {
             source = "scriptedAttributes.xml";
         } 
-        DataConnector dataConnector = getDataConnector(source, ScriptedDataConnector.class);
+        ScriptedDataConnector dataConnector = getDataConnector(source, ScriptedDataConnector.class);
         dataConnector.initialize();
+        
+        final Map custom = (Map) dataConnector.getCustomObject();
+        
+        Assert.assertEquals(custom.size(), 1);
+        Assert.assertEquals(custom.get("bar"), "foo");
+
+        
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);

@@ -118,7 +118,12 @@ public class ScriptedMatcherParser extends BaseFilterParser {
             log.error("{} No script specified for this attribute definition");
             throw new BeanCreationException("No script specified for this attribute definition");
         }
-
+        
+        String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
+        if (null == customRef) {
+            customRef = "shibboleth.CustomScriptObject";
+        }
+        builder.addPropertyReference("customObject", customRef);
         builder.addPropertyValue("id", myId);
 
         builder.addConstructorArgValue(scriptBuilder.getBeanDefinition());

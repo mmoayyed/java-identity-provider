@@ -180,6 +180,21 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
     }
+    
+    @Test public void custom() throws Exception {
+        
+        final ScriptedMatcher matcher = new ScriptedMatcher(new EvaluableScript("custom;"));
+        final Set<IdPAttributeValue> custom = Collections.singleton((IdPAttributeValue)attribute.getValues().get(0));
+        matcher.setId("Test");
+        matcher.initialize();
+        matcher.setCustomObject(custom);
+
+        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(result.size(), 1);
+        Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
+    }
+
 
     @Test public void testNullReturnScript() throws Exception {
 
@@ -189,7 +204,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
         Assert.assertNull(matcher.getMatchingValues(attribute, filterContext));
     }
-
+    
     @Test public void testInvalidReturnObjectValue() throws Exception {
 
         final ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);

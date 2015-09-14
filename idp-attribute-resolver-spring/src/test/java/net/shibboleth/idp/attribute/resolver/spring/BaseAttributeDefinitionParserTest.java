@@ -85,7 +85,7 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         if (supressValid) {
            beanDefinitionReader.setValidating(false);
         }
-        beanDefinitionReader.loadBeanDefinitions(fileName);
+        beanDefinitionReader.loadBeanDefinitions(fileName, BEAN_FILE_PATH + "customBean.xml");
     }
 
     protected void loadFile(String fileName, GenericApplicationContext context) {

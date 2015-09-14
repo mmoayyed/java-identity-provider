@@ -125,6 +125,33 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     }
 
     /**
+     * Test resolution of an script which uses the custom bean
+     */
+    @Test public void custom() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
+
+        final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
+
+        test.setValues(Collections.singletonList(new StringAttributeValue(SIMPLE_VALUE)));
+
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        Assert.assertNull(attr.getScript());
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("custom.script")));
+        attr.setCustomObject(test.getValues().get(0));
+        attr.initialize();
+        Assert.assertNotNull(attr.getScript());
+
+        final IdPAttribute val = attr.resolve(generateContext());
+        final List<IdPAttributeValue<?>> results = val.getValues();
+
+        Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
+        Assert.assertEquals(results.size(), 1, "Scripted result value count");
+        Assert.assertEquals(results.get(0).getValue(), SIMPLE_VALUE, "Scripted result contains known value");
+    }
+
+
+    /**
      * Test resolution of an simple script (statically generated data).
      * 
      * @throws ResolutionException

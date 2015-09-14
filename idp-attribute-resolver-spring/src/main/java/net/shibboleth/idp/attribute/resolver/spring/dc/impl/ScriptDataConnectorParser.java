@@ -89,6 +89,12 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
             throw new BeanCreationException("No script or script file specified for this attribute definition");
         }
 
+        String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
+        if (null == customRef) {
+            customRef = "shibboleth.CustomScriptObject";
+        }
+        builder.addPropertyReference("customObject", customRef);
+
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
     
