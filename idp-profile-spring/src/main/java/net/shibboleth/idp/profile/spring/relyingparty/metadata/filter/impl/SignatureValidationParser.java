@@ -84,7 +84,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
             if (hasCertFile) {
                 log.error("{}: trustEngineRef and certificateFile are mutually exclusive", parserContext
                         .getReaderContext().getResource().getDescription());
-                throw new BeanCreationException("trustEngineRef and certificateFile are mutually exlusive");
+                throw new BeanCreationException("trustEngineRef and certificateFile are mutually exclusive");
             }
             if (trustEngines != null && !trustEngines.isEmpty()) {
                 log.error("{}: trustEngineRef and Embedded <TrustEngine>  are mutually exclusive", parserContext
