@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Multimap;
 
 /**
- * An implementation of {@link MetadataNodeProcessor} which extracts {@link IdPRequestedAttribute}s from and
+ * An implementation of {@link MetadataNodeProcessor} which extracts {@link IdPRequestedAttribute}s from any
  * {@link AttributeConsumingService} we find and {@link IdPAttribute}s from any {@link EntityDescriptor} that we find.
  */
 @NotThreadSafe
@@ -202,7 +202,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
     }
 
     /**
-     * look inside the {@link EntityDescriptor} for entities Attributes and map them.
+     * Look inside the {@link EntityDescriptor} for entities Attributes and map them.
      * 
      * @param entity the entity
      */
