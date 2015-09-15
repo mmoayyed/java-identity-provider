@@ -91,6 +91,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
 
     /**
      * Return the custom (externally provided) object.
+     * 
      * @return the custom object
      */
     @Nullable public Object getCustomObject() {
@@ -99,6 +100,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
 
     /**
      * Set the custom (externally provided) object.
+     * 
      * @param object the custom object
      */
     @Nullable public void setCustomObject(Object object) {
@@ -162,7 +164,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         final EvaluableScript currentScript = script;
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
         final ProfileRequestContext prc = prcLookupStrategy.apply(filterContext);
         if (null == prc) {
             log.error("{} Could not locate ProfileRequestContext", getLogPrefix());

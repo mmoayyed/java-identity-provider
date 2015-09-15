@@ -77,9 +77,9 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
         logPrefix = "Anonymous Scripted Predicate :";
     }
 
-
     /**
      * Return the custom (externally provided) object.
+     * 
      * @return the custom object
      */
     @Nullable public Object getCustomObject() {
@@ -88,6 +88,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
 
     /**
      * Set the custom (externally provided) object.
+     * 
      * @param object the custom object
      */
     @Nullable public void setCustomObject(Object object) {
@@ -98,7 +99,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
     @Override public boolean apply(@Nullable ProfileRequestContext profileContext) {
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("profileContext", profileContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
 
         try {
             final Object result = script.eval(scriptContext);
@@ -160,7 +161,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
         EvaluableScript script = new EvaluableScript(engineName, scriptSource);
         return new ScriptedPredicate(script, "Inline");
     }
-    
+
     /**
      * Factory to create {@link ScriptedPredicate} from inline data.
      * 
@@ -168,8 +169,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @return the predicate
      * @throws ScriptException if the compile fails
      */
-    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty String scriptSource)
-            throws ScriptException {
+    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty String scriptSource) throws ScriptException {
         EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedPredicate(script, "Inline");
     }

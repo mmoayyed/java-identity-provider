@@ -42,12 +42,12 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
     @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Script");
 
     /** Script file element name. */
-    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "ScriptFile");
+    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
+            "ScriptFile");
 
     /** Inline Script element name. */
-    @Nonnull public static final QName SCRIPT_ELEMENT_NAME =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "Script");
+    @Nonnull public static final QName SCRIPT_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
+            "Script");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
@@ -96,5 +96,5 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
 
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
-    
+
 }

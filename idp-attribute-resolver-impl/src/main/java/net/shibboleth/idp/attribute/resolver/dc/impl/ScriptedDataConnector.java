@@ -82,6 +82,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
     /**
      * Return the custom (externally provided) object.
+     * 
      * @return the custom object
      */
     @Nullable public Object getCustomObject() {
@@ -90,6 +91,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
     /**
      * Set the custom (externally provided) object.
+     * 
      * @param object the custom object
      */
     @Nullable public void setCustomObject(Object object) {
@@ -160,12 +162,12 @@ public class ScriptedDataConnector extends AbstractDataConnector {
         scriptContext.setAttribute("workContext", workContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("profileContext", prcLookupStrategy.apply(resolutionContext),
                 ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
 
-        final Map<String,List<IdPAttributeValue<?>>> dependencyAttributes =
+        final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
 
-        for (final Entry<String,List<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
+        for (final Entry<String, List<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
             log.debug("{} adding dependent attribute '{}' with the following values to the script context: {}",
                     new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
             final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());
@@ -187,7 +189,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
         if (null == attribute.getValues()) {
             log.info("{} Attribute '{}' has no values provided.", getLogPrefix(), attribute.getId());
-            attribute.setValues(Collections.<IdPAttributeValue<?>>emptyList());
+            attribute.setValues(Collections.<IdPAttributeValue<?>> emptyList());
             return;
         }
         log.debug("{} Attribute '{}' has {} values.", getLogPrefix(), attribute.getId(), attribute.getValues().size());

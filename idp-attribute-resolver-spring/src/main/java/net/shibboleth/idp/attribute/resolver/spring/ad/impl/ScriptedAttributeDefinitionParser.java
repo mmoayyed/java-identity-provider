@@ -45,12 +45,12 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
 
     /** Script file element name. */
-    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile");
+    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME = new QName(
+            AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile");
 
     /** Inline Script element name. */
-    @Nonnull public static final QName SCRIPT_ELEMENT_NAME =
-            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
+    @Nonnull public static final QName SCRIPT_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "Script");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
@@ -73,7 +73,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
             log.debug("{} Scripting language: {}", getLogPrefix(), scriptLanguage);
             scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }
-        
+
         final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
         final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
         if (scriptElem != null && scriptElem.size() > 0) {
@@ -105,5 +105,5 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
-    
+
 }

@@ -39,9 +39,10 @@ import org.springframework.core.io.Resource;
 /**
  * An action which calls out to a supplied script.
  * 
- * <p>The return value must be an event ID to signal. As this is a generic wrapper,
- * the action may return any event depending on the context of the activity, and may
- * manipulate the profile context tree as required.</p>
+ * <p>
+ * The return value must be an event ID to signal. As this is a generic wrapper, the action may return any event
+ * depending on the context of the activity, and may manipulate the profile context tree as required.
+ * </p>
  * 
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  */
@@ -82,9 +83,10 @@ public class ScriptedAction extends AbstractProfileAction {
         script = Constraint.isNotNull(theScript, "Supplied script should not be null");
         logPrefix = "Anonymous Scripted Action :";
     }
-    
+
     /**
      * Return the custom (externally provided) object.
+     * 
      * @return the custom object
      */
     @Nullable public Object getCustomObject() {
@@ -93,6 +95,7 @@ public class ScriptedAction extends AbstractProfileAction {
 
     /**
      * Set the custom (externally provided) object.
+     * 
      * @param object the custom object
      */
     @Nullable public void setCustomObject(Object object) {
@@ -103,7 +106,7 @@ public class ScriptedAction extends AbstractProfileAction {
     @Override public void doExecute(@Nullable final ProfileRequestContext profileContext) {
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("profileContext", profileContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
 
         try {
             final Object result = script.eval(scriptContext);
@@ -163,7 +166,7 @@ public class ScriptedAction extends AbstractProfileAction {
         EvaluableScript script = new EvaluableScript(engineName, scriptSource);
         return new ScriptedAction(script, "Inline");
     }
-    
+
     /**
      * Factory to create {@link ScriptedAction} from inline data.
      * 

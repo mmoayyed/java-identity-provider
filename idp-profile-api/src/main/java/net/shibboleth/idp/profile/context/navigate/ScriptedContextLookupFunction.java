@@ -108,6 +108,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
 
     /**
      * Return the custom (externally provided) object.
+     * 
      * @return the custom object
      */
     @Nullable public Object getCustomObject() {
@@ -116,6 +117,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
 
     /**
      * Set the custom (externally provided) object.
+     * 
      * @param object the custom object
      */
     @Nullable public void setCustomObject(Object object) {
@@ -132,7 +134,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("profileContext", context, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);   
+        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
 
         try {
             Object output = script.eval(scriptContext);

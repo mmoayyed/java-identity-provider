@@ -52,8 +52,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
             "ScriptFile");
 
     /** Script file element name - afp. */
-    public static final QName SCRIPT_FILE_ELEMENT_NAME_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "ScriptFile");
+    public static final QName SCRIPT_FILE_ELEMENT_NAME_AFP = new QName(BaseFilterParser.NAMESPACE, "ScriptFile");
 
     /** Inline Script element name - basic. */
     public static final QName SCRIPT_ELEMENT_NAME = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "Script");
@@ -118,7 +117,7 @@ public class ScriptedMatcherParser extends BaseFilterParser {
             log.error("{} No script specified for this attribute definition");
             throw new BeanCreationException("No script specified for this attribute definition");
         }
-        
+
         String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
         if (null != customRef) {
             builder.addPropertyReference("customObject", customRef);
