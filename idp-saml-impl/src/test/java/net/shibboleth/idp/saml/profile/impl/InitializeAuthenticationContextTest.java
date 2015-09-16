@@ -17,10 +17,13 @@
 
 package net.shibboleth.idp.saml.profile.impl;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+
+import javax.security.auth.Subject;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -49,6 +52,7 @@ public class InitializeAuthenticationContextTest {
         Assert.assertNotNull(authnCtx);
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
+        Assert.assertNull(authnCtx.getInitialAuthenticationResult());
     }
 
     /** Test that the action functions properly if there is no inbound message. */
@@ -66,6 +70,7 @@ public class InitializeAuthenticationContextTest {
         Assert.assertNotNull(authnCtx);
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
+        Assert.assertNull(authnCtx.getInitialAuthenticationResult());
     }
 
     /** Test that the action functions properly if the inbound message is not a SAML 2 AuthnRequest. */
@@ -86,6 +91,7 @@ public class InitializeAuthenticationContextTest {
         Assert.assertNotNull(authnCtx);
         Assert.assertFalse(authnCtx.isForceAuthn());
         Assert.assertFalse(authnCtx.isPassive());
+        Assert.assertNull(authnCtx.getInitialAuthenticationResult());
     }
 
     /** Test that the action proceeds properly if the inbound message is a SAML2 AuthnRequest. */
@@ -108,6 +114,29 @@ public class InitializeAuthenticationContextTest {
         Assert.assertNotNull(authnCtx);
         Assert.assertTrue(authnCtx.isForceAuthn());
         Assert.assertTrue(authnCtx.isPassive());
+        Assert.assertNull(authnCtx.getInitialAuthenticationResult());
     }
 
+    /** Test that the action functions properly if there's an initial result already. */
+    @Test public void testInitialResult() throws Exception {
+        final RequestContext requestCtx = new RequestContextBuilder().buildRequestContext();
+        final ProfileRequestContext prc = new WebflowRequestContextProfileRequestContextLookup().apply(requestCtx);
+        prc.setInboundMessageContext(null);
+
+        final InitializeAuthenticationContext action = new InitializeAuthenticationContext();
+        action.initialize();
+
+        final AuthenticationResult result = new AuthenticationResult("test", new Subject());
+        prc.getSubcontext(AuthenticationContext.class, true).setAuthenticationResult(result);
+        
+        final Event event = action.execute(requestCtx);
+        ActionTestingSupport.assertProceedEvent(event);
+
+        final AuthenticationContext authnCtx = prc.getSubcontext(AuthenticationContext.class);
+        Assert.assertNotNull(authnCtx);
+        Assert.assertFalse(authnCtx.isForceAuthn());
+        Assert.assertFalse(authnCtx.isPassive());
+        Assert.assertNotNull(authnCtx.getInitialAuthenticationResult());
+        Assert.assertEquals(authnCtx.getInitialAuthenticationResult(), result);
+    }
 }

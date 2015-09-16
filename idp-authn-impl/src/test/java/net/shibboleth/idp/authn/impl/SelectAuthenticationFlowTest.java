@@ -30,6 +30,7 @@ import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
@@ -78,6 +79,19 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
     @Test public void testNoRequestActive() {
         final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        authCtx.setActiveResults(Arrays.asList(active));
+        
+        final Event event = action.execute(src);
+        
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(active, authCtx.getAuthenticationResult());
+    }
+
+    @Test public void testNoRequestInitialForced() {
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        authCtx.setForceAuthn(true);
+        authCtx.setInitialAuthenticationResult(active);
         authCtx.setActiveResults(Arrays.asList(active));
         
         final Event event = action.execute(src);
@@ -162,6 +176,50 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get("test3"));
     }
 
+    @Test public void testRequestPickInactiveInitial() {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+                new TestPrincipal("test2"));
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
+        authCtx.addSubcontext(rpc, true);
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setInitialAuthenticationResult(active);
+        authCtx.setForceAuthn(true);
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        
+        action.execute(src);
+        
+        Assert.assertNull(authCtx.getAuthenticationResult());
+        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get("test3"));
+    }
+
+    @Test public void testRequestPickActiveInitial() throws ComponentInitializationException {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
+                new TestPrincipal("test2"));
+        final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(principals);
+        authCtx.addSubcontext(rpc, true);
+        final AuthenticationResult active = new AuthenticationResult("test2", new Subject());
+        active.getSubject().getPrincipals().add(new TestPrincipal("test2"));
+        authCtx.setActiveResults(Arrays.asList(active));
+        authCtx.setInitialAuthenticationResult(active);
+        authCtx.setForceAuthn(true);
+        authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
+        
+        action = new SelectAuthenticationFlow();
+        action.setFavorSSO(true);
+        action.initialize();
+        action.execute(src);
+        
+        Assert.assertEquals(active, authCtx.getAuthenticationResult());
+    }
+
     @Test public void testRequestPickActive() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
@@ -181,7 +239,7 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
     }
 
-    @Test public void testRequestFavorSSO() {
+    @Test public void testRequestFavorSSO() throws ComponentInitializationException {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
         final List<Principal> principals = Arrays.<Principal>asList(new TestPrincipal("test3"),
                 new TestPrincipal("test2"));
@@ -194,10 +252,13 @@ public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextT
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
+        action = new SelectAuthenticationFlow();
         action.setFavorSSO(true);
+        action.initialize();
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
     }
+    
 }
