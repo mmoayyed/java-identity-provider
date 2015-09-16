@@ -81,8 +81,11 @@ public final class AuthenticationContext extends BaseContext {
     
     /** Signals authentication flow to run next, to influence selection logic. */
     @Nullable private String signaledFlowId;
-    
-    /** A successfully processed authentication result (the output of the attempted flow, if any). */
+
+    /** A successful "initial" authentication result from the current request's initial-authn phase. */
+    @Nullable private AuthenticationResult initialAuthenticationResult;
+
+    /** A successful authentication result (the output of the attempted flow, if any). */
     @Nullable private AuthenticationResult authenticationResult;
 
     /** Result may be cached for reuse in the normal way. */
@@ -286,6 +289,31 @@ public final class AuthenticationContext extends BaseContext {
         signaledFlowId = StringSupport.trimOrNull(id);
         return this;
     }    
+
+    /**
+     * Get the "initial" authentication result produced during this request's initial-authn phase.
+     * 
+     * <p>This is used to make a previous result available for SSO even if the "forced authentication"
+     * feature is being used, since the result was produced as part of the same request.</p>
+     * 
+     * @return "initial" authentication result, if any
+     */
+    @Nullable public AuthenticationResult getInitialAuthenticationResult() {
+        return initialAuthenticationResult;
+    }
+
+    /**
+     * Set the "initial" authentication result produced during this request's initial-authn phase.
+     * 
+     * @param result "initial" authentication result, if any
+     * 
+     * @return this authentication context
+     */
+    @Nonnull public AuthenticationContext setInitialAuthenticationResult(
+            @Nullable final AuthenticationResult result) {
+        initialAuthenticationResult = result;
+        return this;
+    }
     
     /**
      * Get the authentication result produced by the attempted flow, or reused for SSO.
@@ -398,6 +426,8 @@ public final class AuthenticationContext extends BaseContext {
                 .add("attemptedFlow", attemptedFlow)
                 .add("signaledFlowId", signaledFlowId)
                 .add("resultCacheable", resultCacheable)
+                .add("initialAuthenticationResult", initialAuthenticationResult)
+                .add("authenticationResult", authenticationResult)
                 .add("completionInstant", new DateTime(completionInstant))
                 .toString();
     }

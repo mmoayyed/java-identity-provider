@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.flow;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,7 +28,11 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 
 /**
- * Builds an authentication context message from an incoming {@link ServiceTicketRequest} message.
+ * Builds an authentication context from an incoming {@link ServiceTicketRequest} message.
+ * 
+ * <p>If a previously populated {@link AuthenticationContext} is found, and it contains a successful
+ * {@link AuthenticationResult}, that result is copied to the new context via
+ * {@link AuthenticationContext#setInitialAuthenticationResult(net.shibboleth.idp.authn.AuthenticationResult)}.</p>
  *
  * @author Marvin S. Addison
  */
@@ -36,16 +41,22 @@ public class BuildAuthenticationContextAction extends
 
     @Nonnull
     @Override
-    protected Event doExecute(
-            final @Nonnull RequestContext springRequestContext,
-            final @Nonnull ProfileRequestContext profileRequestContext){
+    protected Event doExecute(@Nonnull final RequestContext springRequestContext,
+            @Nonnull final ProfileRequestContext profileRequestContext){
 
         final AuthenticationContext ac = new AuthenticationContext();
         ac.setForceAuthn(getCASRequest(profileRequestContext).isRenew());
         ac.setIsPassive(false);
 
+        final AuthenticationContext initialAuthnContext =
+                profileRequestContext.getSubcontext(AuthenticationContext.class);
+        if (initialAuthnContext != null) {
+            ac.setInitialAuthenticationResult(initialAuthnContext.getAuthenticationResult());
+        }
+        
         profileRequestContext.addSubcontext(ac, true);
         profileRequestContext.setBrowserProfile(true);
         return null;
     }
+    
 }

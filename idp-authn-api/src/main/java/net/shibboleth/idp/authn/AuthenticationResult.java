@@ -174,8 +174,8 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         }
 
         if (obj instanceof AuthenticationResult) {
-            return Objects.equals(getAuthenticationFlowId(),
-                    ((AuthenticationResult) obj).getAuthenticationFlowId());
+            return Objects.equals(getAuthenticationFlowId(), ((AuthenticationResult) obj).getAuthenticationFlowId())
+                    && getAuthenticationInstant() == ((AuthenticationResult) obj).getAuthenticationInstant();
         }
 
         return false;
