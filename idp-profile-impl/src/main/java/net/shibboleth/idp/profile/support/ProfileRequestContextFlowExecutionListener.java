@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development,
- * Inc. (UCAID) under one or more contributor license agreements.  See the
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache
- * License, Version 2.0 (the "License"); you may not use this file except in
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
  * compliance with the License.  You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -24,6 +24,8 @@ import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.ServletRequest;
 
 /**
@@ -62,7 +64,14 @@ public class ProfileRequestContextFlowExecutionListener extends FlowExecutionLis
         }
     }
 
-    private ProfileRequestContext getProfileRequestContext(final RequestContext context) {
+    /**
+     * Get the profile request context bound to conversation scope.
+     * 
+     * @param context Spring request context
+     * 
+     * @return the bound profile request context, or null
+     */
+    @Nullable private ProfileRequestContext getProfileRequestContext(@Nonnull final RequestContext context) {
         final Object prc = context.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
         if (prc instanceof ProfileRequestContext) {
             return (ProfileRequestContext) prc;
@@ -70,11 +79,19 @@ public class ProfileRequestContextFlowExecutionListener extends FlowExecutionLis
         return null;
     }
 
-    private ServletRequest getRequest(final RequestContext context) {
+    /**
+     * Get the servlet request.
+     * 
+     * @param context Spring request context
+     * 
+     * @return servlet request, or null
+     */
+    @Nullable private ServletRequest getRequest(@Nonnull final RequestContext context) {
         final Object o = context.getExternalContext().getNativeRequest();
         if (o instanceof ServletRequest) {
             return (ServletRequest) o;
         }
         return null;
     }
+
 }
