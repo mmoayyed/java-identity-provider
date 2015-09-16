@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -31,6 +32,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -106,6 +108,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
         requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
         if (requestedPrincipalCtx != null) {
             if (requestedPrincipalCtx.getOperator() == null
@@ -124,7 +130,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                     authenticationContext.getAttemptedFlow().getId(), authenticationContext.getAttemptedFlow());
         }
         
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
     
     /** {@inheritDoc} */
@@ -168,36 +174,45 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         log.debug("{} Attempting to honor signaled flow {}", getLogPrefix(), flow.getId());
 
-        // If not forced, check for an active result for that flow.
+        // If not forced, or we just did it, check for an active result for that flow.
+
+        final AuthenticationResult activeResult;
         if (!authenticationContext.isForceAuthn()) {
-            final AuthenticationResult activeResult = authenticationContext.getActiveResults().get(flow.getId());
-            if (activeResult != null) {
-                if (requestedPrincipalCtx != null) {
-                    for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-                        final PrincipalEvalPredicateFactory factory =
-                                authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                                        p.getClass(), requestedPrincipalCtx.getOperator());
-                        if (factory != null) {
-                            final PrincipalEvalPredicate predicate = factory.getPredicate(p);
-                            if (predicate.apply(activeResult)) {
-                                selectActiveResult(profileRequestContext, authenticationContext, activeResult);
-                                return;
-                            }
-                        } else {
-                            log.warn("{} Configuration does not support requested principal evaluation with "
-                                    + "operator '{}' and type '{}'", getLogPrefix(),
-                                    requestedPrincipalCtx.getOperator(), p.getClass());
+            activeResult = authenticationContext.getActiveResults().get(flow.getId());
+        } else if (authenticationContext.getInitialAuthenticationResult() != null
+                && authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId().equals(
+                        flow.getId())) {
+            activeResult = authenticationContext.getInitialAuthenticationResult();
+        } else {
+            activeResult = null;
+        }
+        
+        if (activeResult != null) {
+            if (requestedPrincipalCtx != null) {
+                for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                    final PrincipalEvalPredicateFactory factory =
+                            authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                    p.getClass(), requestedPrincipalCtx.getOperator());
+                    if (factory != null) {
+                        final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                        if (predicate.apply(activeResult)) {
+                            selectActiveResult(profileRequestContext, authenticationContext, activeResult);
+                            return;
                         }
+                    } else {
+                        log.warn("{} Configuration does not support requested principal evaluation with "
+                                + "operator '{}' and type '{}'", getLogPrefix(),
+                                requestedPrincipalCtx.getOperator(), p.getClass());
                     }
-                } else {
-                    selectActiveResult(profileRequestContext, authenticationContext, activeResult);
-                    return;
                 }
+            } else {
+                selectActiveResult(profileRequestContext, authenticationContext, activeResult);
+                return;
             }
         }
         
         // Try and use the inactive flow.
-        
+
         if (requestedPrincipalCtx != null) {
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =
@@ -238,8 +253,17 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         log.debug("{} No specific Principals requested", getLogPrefix());
         
+        // Check for initial authentication (valid even in presence of forced authentication).
+        if (authenticationContext.getInitialAuthenticationResult() != null
+                && authenticationContext.getPotentialFlows().containsKey(
+                        authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId())) {
+            selectActiveResult(profileRequestContext, authenticationContext,
+                    authenticationContext.getInitialAuthenticationResult());
+            return;
+        }
+        
         if (authenticationContext.isForceAuthn()) {
-            log.debug("{} forced authentication requested, selecting an inactive flow", getLogPrefix());
+            log.debug("{} Forced authentication requested, selecting an inactive flow", getLogPrefix());
             final AuthenticationFlowDescriptor flow =
                     getUnattemptedInactiveFlow(profileRequestContext, authenticationContext);
             if (flow == null) {
@@ -338,15 +362,24 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         log.debug("{} Specific principals requested with '{}' operator: {}", getLogPrefix(),
                 requestedPrincipalCtx.getOperator(), requestedPrincipalCtx.getRequestedPrincipals());
+
         
-        if (authenticationContext.isForceAuthn()) {
+        if (authenticationContext.getInitialAuthenticationResult() != null
+                && authenticationContext.getPotentialFlows().containsKey(
+                        authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId())) {
+            // Invoke possible SSO but with the initial result as the only possible reuse option.
+            selectRequestedFlow(profileRequestContext, authenticationContext,
+                    Collections.singletonMap(
+                            authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId(),
+                            authenticationContext.getInitialAuthenticationResult()));
+        } else if (authenticationContext.isForceAuthn()) {
             log.debug("{} Forced authentication requested, selecting an inactive flow", getLogPrefix());
             selectRequestedInactiveFlow(profileRequestContext, authenticationContext);
         } else if (authenticationContext.getActiveResults().isEmpty()) {
             log.debug("{} No active results available, selecting an inactive flow", getLogPrefix());
             selectRequestedInactiveFlow(profileRequestContext, authenticationContext);
         } else {
-            selectRequestedFlow(profileRequestContext, authenticationContext);
+            selectRequestedFlow(profileRequestContext, authenticationContext, authenticationContext.getActiveResults());
         }
     }
 
@@ -395,12 +428,12 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      * 
      * @param profileRequestContext the current IdP profile request context
      * @param authenticationContext the current authentication context
+     * @param activeResults active results that may be reused
      */
 // Checkstyle: MethodLength|CyclomaticComplexity OFF
     private void selectRequestedFlow(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext) {
-
-        final Map<String,AuthenticationResult> activeResults = authenticationContext.getActiveResults();
+            @Nonnull final AuthenticationContext authenticationContext,
+            @Nonnull @NonnullElements final Map<String,AuthenticationResult> activeResults) {
 
         if (favorSSO) {
             log.debug("{} Giving priority to active results that meet request requirements");
