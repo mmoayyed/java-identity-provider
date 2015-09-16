@@ -41,6 +41,10 @@ import com.google.common.base.Functions;
  * <p>If the incoming message is a SAML 2.0 {@link AuthnRequest}, then basic authentication policy (IsPassive,
  * ForceAuthn) is copied into the context from the request.</p>
  * 
+ * <p>If a previously populated {@link AuthenticationContext} is found, and it contains a successful
+ * {@link AuthenticationResult}, that result is copied to the new context via
+ * {@link AuthenticationContext#setInitialAuthenticationResult(net.shibboleth.idp.authn.AuthenticationResult)}.</p>
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @post ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != true
  * @post SAML 2.0 AuthnRequest policy flags are copied to the {@link AuthenticationContext}
@@ -77,12 +81,16 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         authnRequest = this.requestLookupStrategy.apply(profileRequestContext);
         if (authnRequest == null) {
             log.debug("{} No inbound AuthnRequest, passive and forced flags will be off", getLogPrefix());
         }
         
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
     
     /** {@inheritDoc} */
@@ -96,9 +104,15 @@ public class InitializeAuthenticationContext extends AbstractProfileAction {
             authnCtx.setIsPassive(authnRequest.isPassive());
         }
 
+        final AuthenticationContext initialAuthnContext =
+                profileRequestContext.getSubcontext(AuthenticationContext.class);
+        if (initialAuthnContext != null) {
+            authnCtx.setInitialAuthenticationResult(initialAuthnContext.getAuthenticationResult());
+        }
+        
         profileRequestContext.addSubcontext(authnCtx, true);
 
-        log.debug("{} Created authentication context {}", getLogPrefix(), authnCtx);
+        log.debug("{} Created authentication context: {}", getLogPrefix(), authnCtx);
     }
     
 }
