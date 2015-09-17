@@ -143,7 +143,7 @@
                        </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="metadataURL" type="anyURI" use="required">
+                <attribute name="metadataURL" type="string" use="required">
                     <annotation>
                         <documentation>The URL from which to retrieve the metadata.</documentation>
                     </annotation>
