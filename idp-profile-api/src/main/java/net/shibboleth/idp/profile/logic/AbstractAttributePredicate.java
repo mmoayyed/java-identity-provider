@@ -23,6 +23,7 @@ import com.google.common.base.Predicate;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -99,9 +100,22 @@ public abstract class AbstractAttributePredicate implements Predicate<ProfileReq
         return false;
     }
 
+    /**
+     * Get the result of the predicate in the case the attribute context is null.
+     * 
+     * @return null context result
+     */
     protected boolean allowNullAttributeContext() {
         return false;
     }
 
-    protected abstract boolean hasMatch(final Map<String,IdPAttribute> attributeMap);
+    /**
+     * Abstract implementation of the condition to evaluate.
+     * 
+     * @param attributeMap  the attributes to evaluate
+     * 
+     * @return the condition result
+     */
+    protected abstract boolean hasMatch(@Nonnull @NonnullElements final Map<String,IdPAttribute> attributeMap);
+    
 }

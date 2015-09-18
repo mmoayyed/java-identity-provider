@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development,
- * Inc. (UCAID) under one or more contributor license agreements.  See the
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache
- * License, Version 2.0 (the "License"); you may not use this file except in
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
  * compliance with the License.  You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -52,7 +52,6 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     /** Offset from system time used for date comparisons. */
     @Nonnull private Duration systemTimeOffset = Duration.ZERO;
 
-
     /**
      * Creates a new instance that performs date comparisons against the given attribute
      * using ISO date/time format parser by default.
@@ -79,11 +78,11 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      * Sets the system time offset, which affects the reference date for comparisons.
      * By default all comparisons are against system time, i.e. zero offset.
      *
-     * @param systemTimeOffset System time offset. A negative value decreases the target date (sooner);
+     * @param offset System time offset. A negative value decreases the target date (sooner);
      *                         a positive value increases the target date (later).
      */
-    public void setSystemTimeOffset(Duration systemTimeOffset) {
-        this.systemTimeOffset = Constraint.isNotNull(systemTimeOffset, "Offset cannot not be null");
+    public void setSystemTimeOffset(@Nonnull final Duration offset) {
+        systemTimeOffset = Constraint.isNotNull(offset, "Offset cannot not be null");
     }
 
     @Override
@@ -108,4 +107,5 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
         }
         return false;
     }
+    
 }

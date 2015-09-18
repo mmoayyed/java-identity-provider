@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -38,7 +37,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 /**
- * Predicate that evaluates an {@link AttributeContext} and checks for particular attribute/value pairs.
+ * Predicate that evaluates an {@link net.shibboleth.idp.attribute.context.AttributeContext} and checks
+ * for particular attribute/value pairs.
  * 
  * <p>A map to a collection of strings is used to represent the attribute(s) and value(s) to evaluate.
  * The values are evaluated as a disjunction (OR) and the attributes are evaluated as a conjunction (AND).</p>
