@@ -53,7 +53,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
     /** Debugging info. */
     @Nullable private final String logPrefix;
 
-    /** The custom object we can be injected into the script. */
+    /** A custom object to inject into the script. */
     @Nullable private Object customObject;
 
     /**
@@ -91,7 +91,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(Object object) {
+    public void setCustomObject(Object object) {
         customObject = object;
     }
 
