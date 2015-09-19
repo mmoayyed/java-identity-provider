@@ -24,11 +24,14 @@
     <bean id="shibboleth.Conditions.OR"
         class="com.google.common.base.Predicates" factory-method="or" abstract="true" />
     
-    <bean id="shibboleth.Conditions.RelyingPartyId"
-        class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate" abstract="true" />
-        
     <bean id="shibboleth.Conditions.BrowserProfile"
         class="org.opensaml.profile.logic.BrowserProfilePredicate" />
+    <bean id="shibboleth.Conditions.RelyingPartyId"
+        class="net.shibboleth.idp.profile.logic.RelyingPartyIdPredicate" abstract="true" />
+    <bean id="shibboleth.Conditions.Scripted"
+        class="net.shibboleth.idp.profile.logic.ScriptedPredicate" abstract="true" />
+    <bean id="shibboleth.Conditions.Expression"
+        class="net.shibboleth.idp.profile.logic.SpringExpressionPredicate" abstract="true" />
 
     <bean id="shibboleth.MessageContextLookup.Inbound"
         class="org.opensaml.profile.context.navigate.InboundMessageContextLookup" />
