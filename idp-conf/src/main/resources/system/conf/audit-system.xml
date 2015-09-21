@@ -254,7 +254,11 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
                     </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
+                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor">
+                        <property name="activationCondition">
+                            <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
+                        </property>
+                    </bean>
                 </entry>
                 <entry>
                     <key>
@@ -418,12 +422,6 @@
                             <ref bean="shibboleth.ChildLookup.SessionContext" />
                         </constructor-arg>
                     </bean>
-                </entry>
-                <entry>
-                    <key>
-                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.ATTRIBUTES"/>
-                    </key>
-                    <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor" />
                 </entry>
             </map>
         </property>

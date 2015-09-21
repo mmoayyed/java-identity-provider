@@ -28,6 +28,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Predicate;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
@@ -38,6 +39,9 @@ public class AttributesAuditExtractor implements Function<ProfileRequestContext,
 
     /** Extract the unfiltered attribute list instead of the filtered list. */
     private boolean useUnfiltered;
+    
+    /** A predicate to control whether attributes should be extracted for logging. */
+    @Nullable private Predicate<ProfileRequestContext> activationCondition;
     
     /** Lookup strategy for AttributeContext to read from. */
     @Nonnull private final Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
@@ -67,10 +71,27 @@ public class AttributesAuditExtractor implements Function<ProfileRequestContext,
     public void setUseUnfiltered(final boolean flag) {
         useUnfiltered = flag;
     }
+    
+    /**
+     * Set a condition to evaluate to control whether attributes are extracted for logging.
+     * 
+     * <p>This is used primarily to prevent logging of attributes for profiles in which attributes
+     * may be resolved, but not actually disclosed to a relying party.</p> 
+     * 
+     * @param condition condition to evaluate
+     */
+    public void setActivationCondition(@Nullable final Predicate<ProfileRequestContext> condition) {
+        activationCondition = condition;
+    }
 
     /** {@inheritDoc} */
     @Override
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+        
+        if (activationCondition != null && !activationCondition.apply(input)) {
+            return Collections.emptyList();
+        }
+        
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(input);
         if (attributeCtx != null) {
             return (useUnfiltered ? attributeCtx.getUnfilteredIdPAttributes()
