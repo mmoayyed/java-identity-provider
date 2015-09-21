@@ -40,14 +40,6 @@
 
     <alias name="shibboleth.OutgoingSOAPBindings" alias="shibboleth.OutgoingBindings"/>
 
-    <bean id="AddAttributeStatementToAssertion"
-            class="net.shibboleth.idp.saml.saml2.profile.impl.AddAttributeStatementToAssertion" scope="prototype">
-        <property name="identifierGeneratorLookupStrategy">
-            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
-                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
-        </property>
-    </bean>
-
     <bean id="CopyNameIDFromRequest"
             class="org.opensaml.saml.saml2.profile.impl.CopyNameIDFromRequest" scope="prototype" />
 
