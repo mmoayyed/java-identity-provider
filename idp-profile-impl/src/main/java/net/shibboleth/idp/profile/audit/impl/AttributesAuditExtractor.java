@@ -36,6 +36,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 /** {@link Function} that returns the attribute IDs from an {@link AttributeContext}. */
 public class AttributesAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
 
+    /** Extract the unfiltered attribute list instead of the filtered list. */
+    private boolean useUnfiltered;
+    
     /** Lookup strategy for AttributeContext to read from. */
     @Nonnull private final Function<ProfileRequestContext,AttributeContext> attributeContextLookupStrategy;
 
@@ -55,13 +58,23 @@ public class AttributesAuditExtractor implements Function<ProfileRequestContext,
         attributeContextLookupStrategy = Constraint.isNotNull(strategy,
                 "AttributeContext lookup strategy cannot be null");
     }
+    
+    /**
+     * Set whether to extract the list of unfiltered attributes instead of the filtered attributes.
+     * 
+     * @param flag  flag to set
+     */
+    public void setUseUnfiltered(final boolean flag) {
+        useUnfiltered = flag;
+    }
 
     /** {@inheritDoc} */
     @Override
     @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(input);
         if (attributeCtx != null) {
-            return attributeCtx.getIdPAttributes().keySet();
+            return (useUnfiltered ? attributeCtx.getUnfilteredIdPAttributes()
+                    : attributeCtx.getIdPAttributes()).keySet();
         } else {
             return Collections.emptyList();
         }
