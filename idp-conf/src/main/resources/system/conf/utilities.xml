@@ -33,6 +33,21 @@
     <bean id="shibboleth.Conditions.Expression"
         class="net.shibboleth.idp.profile.logic.SpringExpressionPredicate" abstract="true" />
 
+    <!-- Parent bean for building custom predicates that act on a RP's EntityDescriptor. -->
+    <bean id="shibboleth.Conditions.EntityDescriptor" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose">
+                <constructor-arg>
+                    <bean class="org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction" />
+                </constructor-arg>
+                <constructor-arg>
+                    <bean class="net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction" />
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+
     <bean id="shibboleth.MessageContextLookup.Inbound"
         class="org.opensaml.profile.context.navigate.InboundMessageContextLookup" />
     <bean id="shibboleth.MessageContextLookup.Outbound"
