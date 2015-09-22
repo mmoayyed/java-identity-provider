@@ -138,12 +138,15 @@
     </webflow:flow-registry>
 
     <webflow:flow-executor id="flowExecutor">
-        <webflow:flow-execution-repository max-execution-snapshots="0" />
+        <webflow:flow-execution-repository max-execution-snapshots="0" conversation-manager="conversationManager" />
         <webflow:flow-execution-listeners>
             <webflow:listener ref="profileRequestContextFlowExecutionListener"
                               criteria="%{idp.profile.exposeProfileRequestContextInServletRequest:none}" />
         </webflow:flow-execution-listeners>
     </webflow:flow-executor>
+
+    <bean id="conversationManager" class="org.springframework.webflow.conversation.impl.SessionBindingConversationManager"
+        p:lockTimeoutSeconds="%{idp.webflow.timeout:30}" p:maxConversations="%{idp.webflow.maxConversations:5}" />
 
     <webflow:flow-builder-services id="flowBuilderServices" view-factory-creator="mvcViewFactoryCreator" />
 
