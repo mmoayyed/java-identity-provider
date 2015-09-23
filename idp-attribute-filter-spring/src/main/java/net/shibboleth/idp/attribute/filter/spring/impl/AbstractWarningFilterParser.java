@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.filter.spring.basic.impl;
+package net.shibboleth.idp.attribute.filter.spring.impl;
 
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeFilterSAMLNamespaceHandler;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
@@ -56,17 +57,17 @@ public abstract class AbstractWarningFilterParser extends BaseFilterParser {
 
         QName suppliedQname = DOMTypeSupport.getXSIType(element);
         if (AttributeFilterSAMLNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
-            if (warnedSAML) {
+            if (!warnedSAML) {
                 warnedSAML = true;
-                log.warn("Configuration contains at least one element in the '{}' namespace.",
+                log.warn("Configuration contains at least one element in the deprecated '{}' namespace.",
                         AttributeFilterSAMLNamespaceHandler.NAMESPACE);
             }
             log.debug("saml: Namespace element {} in {}, consider using {} ", suppliedQname.toString(), parserContext
                     .getReaderContext().getResource().getDescription(), getAFPName().toString());
         } else if (AttributeFilterBasicNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
-            if (warnedBasic) {
+            if (!warnedBasic) {
                 warnedBasic = true;
-                log.warn("Configuration contains at least one element in the '{}' namespace.",
+                log.warn("Configuration contains at least one element in the deprecated '{}' namespace.",
                         AttributeFilterBasicNamespaceHandler.NAMESPACE);
             }
             log.debug("basic: Namespace element {} in {}, consider using {} ", suppliedQname.toString(), parserContext

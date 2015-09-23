@@ -27,6 +27,7 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.AndMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.logic.impl.AndPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.idp.attribute.filter.spring.impl.AbstractWarningFilterParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

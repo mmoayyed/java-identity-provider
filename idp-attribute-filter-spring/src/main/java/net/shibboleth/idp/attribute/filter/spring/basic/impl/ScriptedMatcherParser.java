@@ -26,6 +26,7 @@ import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.filter.matcher.impl.ScriptedMatcher;
 import net.shibboleth.idp.attribute.filter.policyrule.impl.ScriptedPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.idp.attribute.filter.spring.impl.AbstractWarningFilterParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 

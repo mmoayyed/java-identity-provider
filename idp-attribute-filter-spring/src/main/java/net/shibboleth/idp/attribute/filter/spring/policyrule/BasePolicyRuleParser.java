@@ -20,7 +20,7 @@ package net.shibboleth.idp.attribute.filter.spring.policyrule;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
-import net.shibboleth.idp.attribute.filter.spring.basic.impl.AbstractWarningFilterParser;
+import net.shibboleth.idp.attribute.filter.spring.impl.AbstractWarningFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.matcher.BaseAttributeValueMatcherParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
