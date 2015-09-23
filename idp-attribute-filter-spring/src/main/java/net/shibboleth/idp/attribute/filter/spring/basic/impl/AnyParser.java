@@ -31,22 +31,27 @@ import org.w3c.dom.Element;
 /**
  * Bean definition parser for {@link PolicyRequirementRule#MATCHES_ALL} objects.
  */
-public class AnyParser extends BaseFilterParser {
+public class AnyParser extends AbstractWarningFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "ANY");
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "ANY");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return PolicyRequirementRule.MATCHES_ALL.getClass();
         }
         return Matcher.MATCHES_ALL.getClass();
     }
-    
+
     @Override protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);

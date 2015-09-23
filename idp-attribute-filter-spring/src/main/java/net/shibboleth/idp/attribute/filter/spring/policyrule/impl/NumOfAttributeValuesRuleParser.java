@@ -38,19 +38,22 @@ public class NumOfAttributeValuesRuleParser extends BasePolicyRuleParser {
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "NumberOfAttributeValues");
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "NumberOfAttributeValues");
+    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "NumberOfAttributeValues");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<NumOfAttributeValuesPolicyRule> getNativeBeanClass() {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<NumOfAttributeValuesPolicyRule> getNativeBeanClass() {
         return NumOfAttributeValuesPolicyRule.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doNativeParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, builder);
 

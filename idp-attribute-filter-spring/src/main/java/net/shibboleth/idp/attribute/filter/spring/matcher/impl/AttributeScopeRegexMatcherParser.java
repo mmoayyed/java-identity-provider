@@ -27,18 +27,22 @@ import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasi
 /**
  * Bean definition parser for {@link AttributeScopeRegexpMatcher}s.
  */
-public class AttributeScopeRegexMatcherParser extends AbstractRegexMatcherParser  {
+public class AttributeScopeRegexMatcherParser extends AbstractRegexMatcherParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeScopeRegex");
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "AttributeScopeRegex");
+    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "ScopeRegex");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeScopeRegexpMatcher.class;
     }
 }

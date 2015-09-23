@@ -34,7 +34,12 @@ public class AttributeScopeMatcherParser extends AbstractStringMatcherParser {
             "AttributeScopeString");
     /** Schema type. */
     public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "AttributeScopeString");
+            "Scope");
+
+    /** {@inheritDoc} */
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
 
     /** {@inheritDoc} */
     @Override

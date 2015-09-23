@@ -32,13 +32,17 @@ public class AttributeValueRegexMatcherParser extends AbstractRegexMatcherParser
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeValueRegex");
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "AttributeValueRegex");
+    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "ValueRegex");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeValueRegexpMatcher.class;
     }
 }

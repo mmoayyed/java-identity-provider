@@ -66,7 +66,6 @@ public abstract class BaseFilterParser extends AbstractSingleBeanDefinitionParse
     /** Generator of unique IDs. */
     private static IdentifierGenerationStrategy idGen = new RandomIdentifierGenerationStrategy();
 
-
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(BaseFilterParser.class);
 

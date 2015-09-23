@@ -58,6 +58,11 @@ public class AttributeRequesterNameIdFormatRuleParser extends BasePolicyRulePars
     }
 
     /** {@inheritDoc} */
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 

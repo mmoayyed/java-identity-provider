@@ -54,10 +54,14 @@ public class AttributeIssuerInEntityGroupRuleParser extends BasePolicyRuleParser
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doNativeParse(@Nonnull Element element, @Nonnull ParserContext parserContext,
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doNativeParse(@Nonnull Element element, @Nonnull ParserContext parserContext,
             @Nonnull BeanDefinitionBuilder builder) {
         log.error("Unimplemented Attribute Filter {}.  Consider other implementation methods.", SCHEMA_NAME);
-        throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);        
+        throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);
     }
 }

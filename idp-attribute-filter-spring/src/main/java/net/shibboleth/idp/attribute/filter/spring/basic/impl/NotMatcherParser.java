@@ -37,12 +37,18 @@ import org.w3c.dom.Element;
 /**
  * Bean definition parser for {@link NotMatcher} or {@link NotPolicyRule} objects.
  */
-public class NotMatcherParser extends BaseFilterParser {
+public class NotMatcherParser extends AbstractWarningFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "NOT");
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "NOT");
+
+    /** {@inheritDoc} */
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
@@ -69,17 +75,16 @@ public class NotMatcherParser extends BaseFilterParser {
                         AttributeFilterBasicNamespaceHandler.NAMESPACE, "RuleReference");
 
         final List<Element> ruleElementsAfp =
-                ElementSupport.getChildElementsByTagNameNS(configElement,
-                        BaseFilterParser.NAMESPACE, "Rule");
+                ElementSupport.getChildElementsByTagNameNS(configElement, BaseFilterParser.NAMESPACE, "Rule");
 
         final List<Element> ruleElements = new ArrayList<>(ruleElementsBasic.size() + ruleElementsAfp.size());
         ruleElements.addAll(ruleElementsAfp);
         ruleElements.addAll(ruleElementsBasic);
-        
+
         if (ruleElements != null && !ruleElements.isEmpty()) {
 
             builder.addConstructorArgValue(SpringSupport.parseCustomElements(ruleElements, parserContext).get(0));
-            
+
         } else if (ruleReferenceBasic != null && !ruleReferenceBasic.isEmpty()) {
             throw new BeanCreationException(parserContext.getReaderContext().getResource().getDescription(), myId,
                     "RuleReference is not supported");

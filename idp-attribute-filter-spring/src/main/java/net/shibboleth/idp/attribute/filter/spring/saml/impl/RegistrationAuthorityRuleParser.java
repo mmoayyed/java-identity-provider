@@ -60,6 +60,11 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
     }
 
     /** {@inheritDoc} */
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull BeanDefinitionBuilder builder) {
 

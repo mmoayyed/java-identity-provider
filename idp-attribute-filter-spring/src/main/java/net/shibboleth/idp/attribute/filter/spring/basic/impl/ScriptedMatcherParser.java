@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
 /**
  * Bean definition parser for {@link ScriptedPolicyRule} or {@link ScriptedMatcher} objects.
  */
-public class ScriptedMatcherParser extends BaseFilterParser {
+public class ScriptedMatcherParser extends AbstractWarningFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "Script");
@@ -62,6 +62,11 @@ public class ScriptedMatcherParser extends BaseFilterParser {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(AttributeFilterBasicNamespaceHandler.class);
+
+    /** {@inheritDoc} */
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {

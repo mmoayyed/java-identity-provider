@@ -32,13 +32,17 @@ public class AttributeValueStringMatcherParser extends AbstractStringMatcherPars
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeValueString");
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "AttributeValueString");
+    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "Value");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<?> getNativeBeanClass() {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<?> getNativeBeanClass() {
         return AttributeValueStringMatcher.class;
     }
 }

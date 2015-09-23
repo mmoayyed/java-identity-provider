@@ -21,24 +21,31 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeIssuerRegexpPolicyRule;
-import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- *  Bean definition parser for {@link AttributeIssuerRegexpPolicyRule}.
+ * Bean definition parser for {@link AttributeIssuerRegexpPolicyRule}.
  */
 public class AttributeIssuerRegexRuleParser extends AbstractRegexPolicyRuleParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeIssuerRegex");
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "AttributeIssuerRegex");
+
+    /** Class logger. */
+    private final Logger log = LoggerFactory.getLogger(AttributeIssuerRuleParser.class);
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<AttributeIssuerRegexpPolicyRule> getNativeBeanClass() {
+    @Override @Nonnull protected Class<AttributeIssuerRegexpPolicyRule> getNativeBeanClass() {
+        log.warn("The {} element is deprecated and will be removed in future versions", SCHEMA_TYPE);
         return AttributeIssuerRegexpPolicyRule.class;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE;
     }
 }

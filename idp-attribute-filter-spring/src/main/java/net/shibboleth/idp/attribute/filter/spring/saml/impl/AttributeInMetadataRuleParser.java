@@ -43,6 +43,11 @@ public class AttributeInMetadataRuleParser extends BaseAttributeValueMatcherPars
             "AttributeInMetadata");
 
     /** {@inheritDoc} */
+    @Override protected QName getAFPName() {
+        return ATTRIBUTE_IN_METADATA_AFP;
+    }
+
+    /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeInMetadataMatcher> getNativeBeanClass() {
         return AttributeInMetadataMatcher.class;
     }

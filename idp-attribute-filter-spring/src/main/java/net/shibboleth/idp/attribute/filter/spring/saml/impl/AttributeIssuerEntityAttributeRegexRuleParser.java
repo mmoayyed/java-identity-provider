@@ -54,6 +54,11 @@ public class AttributeIssuerEntityAttributeRegexRuleParser extends AbstractEntit
     }
 
     /** {@inheritDoc} */
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE;
+    }
+
+    /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);

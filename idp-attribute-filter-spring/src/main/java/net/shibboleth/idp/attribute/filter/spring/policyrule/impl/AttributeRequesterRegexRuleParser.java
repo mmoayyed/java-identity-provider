@@ -25,20 +25,24 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 
 /**
- *  Bean definition parser for {@link AttributeRequesterRegexpPolicyRule}.
+ * Bean definition parser for {@link AttributeRequesterRegexpPolicyRule}.
  */
 public class AttributeRequesterRegexRuleParser extends AbstractRegexPolicyRuleParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AttributeRequesterRegex");
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "AttributeRequesterRegex");
+    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "RequesterRegex");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<AttributeRequesterRegexpPolicyRule> getNativeBeanClass() {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<AttributeRequesterRegexpPolicyRule> getNativeBeanClass() {
         return AttributeRequesterRegexpPolicyRule.class;
     }
 }

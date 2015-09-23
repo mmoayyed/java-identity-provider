@@ -25,21 +25,24 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 
 /**
- *  Bean definition parser for {@link PrincipalNamePolicyRule}.
+ * Bean definition parser for {@link PrincipalNamePolicyRule}.
  */
 public class PrincipalNameRuleParser extends AbstractStringPolicyRuleParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "PrincipalNameString");
-    /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "PrincipalNameString");
 
+    /** Schema type. */
+    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "PrincipalName");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<PrincipalNamePolicyRule> getNativeBeanClass() {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<PrincipalNamePolicyRule> getNativeBeanClass() {
         return PrincipalNamePolicyRule.class;
     }
 

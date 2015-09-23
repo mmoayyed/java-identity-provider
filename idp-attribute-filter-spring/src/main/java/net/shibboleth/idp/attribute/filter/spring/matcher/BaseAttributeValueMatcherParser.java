@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.filter.MatcherFromPolicy;
 import net.shibboleth.idp.attribute.filter.PolicyFromMatcher;
 import net.shibboleth.idp.attribute.filter.PolicyFromMatcherId;
-import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.idp.attribute.filter.spring.basic.impl.AbstractWarningFilterParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -52,7 +52,7 @@ import org.w3c.dom.Element;
  * </tr>
  * </table>
  */
-public abstract class BaseAttributeValueMatcherParser extends BaseFilterParser {
+public abstract class BaseAttributeValueMatcherParser extends AbstractWarningFilterParser {
     
     /** ATTRIBUTE ID string. */
     public static final String ATTRIBUTE_ID = "attributeID";

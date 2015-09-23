@@ -35,19 +35,24 @@ import org.w3c.dom.Element;
 
 /**
  * Bean definition parser for {@link AndMatcher} or {@link AndPolicyRule} objects.<br/>
- * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or {@link
- * net.shibboleth.idp.attribute.filter.PolicyRequirementRule} so the parsing code is common.
+ * These both take as a constructor a list of {@link net.shibboleth.idp.attribute.filter.Matcher} or
+ * {@link net.shibboleth.idp.attribute.filter.PolicyRequirementRule} so the parsing code is common.
  */
-public class AndMatcherParser extends BaseFilterParser {
+public class AndMatcherParser extends AbstractWarningFilterParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE, "AND");
+
     /** Schema type. */
     public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "AND");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<?> getBeanClass(@Nonnull final Element element) {
         if (isPolicyRule(element)) {
             return AndPolicyRule.class;
         }
@@ -55,8 +60,7 @@ public class AndMatcherParser extends BaseFilterParser {
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element configElement, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element configElement, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(configElement, parserContext, builder);
 
@@ -68,9 +72,8 @@ public class AndMatcherParser extends BaseFilterParser {
                 ElementSupport.getChildElementsByTagNameNS(configElement,
                         AttributeFilterBasicNamespaceHandler.NAMESPACE, "Rule");
         final List<Element> ruleElementsAfp =
-                ElementSupport.getChildElementsByTagNameNS(configElement,
-                        BaseFilterParser.NAMESPACE, "Rule");
-        
+                ElementSupport.getChildElementsByTagNameNS(configElement, BaseFilterParser.NAMESPACE, "Rule");
+
         final List<Element> ruleElements = new ArrayList<>(ruleElementsBasic.size() + ruleElementsAfp.size());
         ruleElements.addAll(ruleElementsBasic);
         ruleElements.addAll(ruleElementsAfp);

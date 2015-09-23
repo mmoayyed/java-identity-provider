@@ -25,20 +25,24 @@ import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 
 /**
- *  Bean definition parser for {@link AuthenticationMethodRegexpPolicyRule}.
+ * Bean definition parser for {@link AuthenticationMethodRegexpPolicyRule}.
  */
 public class AuthenticationMethodRegexRuleParser extends AbstractRegexPolicyRuleParser {
 
     /** Schema type. */
     public static final QName SCHEMA_TYPE = new QName(AttributeFilterBasicNamespaceHandler.NAMESPACE,
             "AuthenticationMethodRegex");
+
     /** Schema type. */
-    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
-            "AuthenticationMethodRegex");
+    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE, "AuthenticationMethodRegex");
 
     /** {@inheritDoc} */
-    @Override
-    @Nonnull protected Class<AuthenticationMethodRegexpPolicyRule> getNativeBeanClass() {
+    @Override protected QName getAFPName() {
+        return SCHEMA_TYPE_AFP;
+    }
+
+    /** {@inheritDoc} */
+    @Override @Nonnull protected Class<AuthenticationMethodRegexpPolicyRule> getNativeBeanClass() {
         return AuthenticationMethodRegexpPolicyRule.class;
     }
 }
