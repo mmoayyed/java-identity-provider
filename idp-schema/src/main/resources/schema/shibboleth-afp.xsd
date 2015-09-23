@@ -316,7 +316,7 @@
     </complexType>
 
     <!--  Literal String Match Functions -->
-    <complexType name="AttributeRequesterString">
+    <complexType name="Requester">
         <annotation>
             <documentation>
                 A match function that matches the attribute request against the specified value.
@@ -327,7 +327,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="PrincipalNameString">
+    <complexType name="PrincipalName">
         <annotation>
             <documentation>A match function that matches the principal name against the specified value.</documentation>
         </annotation>
@@ -336,7 +336,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="AuthenticationMethodString">
+    <complexType name="AuthenticationMethod">
         <annotation>
             <documentation>
                 A match function that matches the authentication method against the specified value.
@@ -347,7 +347,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeValueString">
+    <complexType name="Value">
         <annotation>
             <documentation>
                 A match function that matches the value of an attribute against the specified value. This match
@@ -355,22 +355,22 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="afp:AttributeTargetedStringMatchType"/>
+            <extension base="afp:TargetedStringMatchType"/>
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeScopeString">
+    <complexType name="Scope">
         <annotation>
             <documentation>
                 A match function that matches the attribute scope against the specified value.
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="afp:AttributeTargetedStringMatchType"/>
+            <extension base="afp:TargetedStringMatchType"/>
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeTargetedStringMatchType" abstract="true">
+    <complexType name="TargetedStringMatchType" abstract="true">
         <complexContent>
             <extension base="afp:StringMatchType">
                 <attribute name="attributeID" type="string">
@@ -405,7 +405,7 @@
     </complexType>
 
     <!--  Regular Expression Match Functions -->
-    <complexType name="AttributeRequesterRegex">
+    <complexType name="RequesterRegex">
         <annotation>
             <documentation>
                 A match function that matches the attribute requester against the specified regular expression.
@@ -438,7 +438,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeValueRegex">
+    <complexType name="ValueRegex">
         <annotation>
             <documentation>
                 A match function that matches an attribute value against the specified regular expression. This function
@@ -446,22 +446,22 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="afp:AttributeTargetedRegexMatchType"/>
+            <extension base="afp:TargetedRegexMatchType"/>
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeScopeRegex">
+    <complexType name="ScopeRegex">
         <annotation>
             <documentation>
                 A match function that matches the attribute scope against the specified regular expression.
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="afp:AttributeTargetedRegexMatchType"/>
+            <extension base="afp:TargetedRegexMatchType"/>
         </complexContent>
     </complexType>
 
-    <complexType name="AttributeTargetedRegexMatchType" abstract="true">
+    <complexType name="TargetedRegexMatchType" abstract="true">
         <complexContent>
             <extension base="afp:RegexMatchType">
                 <attribute name="attributeID" type="string">
