@@ -43,8 +43,7 @@
         p:responderId-ref="entityID" p:detailedErrors="%{idp.errors.detailed:false}" c:trim="false" c:matchAll="false" />    
 
     <bean id="TagCandidate" abstract="true"
-        class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate"
-        c:format="#{null}" />
+        class="org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate" />
         
     <!-- Default Profile Configurations, also usable as parent beans in overrides. -->
     
