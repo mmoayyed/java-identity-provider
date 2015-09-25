@@ -162,4 +162,23 @@
         class="net.shibboleth.idp.saml.profile.impl.InitializeOutboundMessageContextForError" scope="prototype"
         p:outboundBinding="urn:oasis:names:tc:SAML:2.0:bindings:PAOS" />
         
+    <bean id="AddAuthnStatementToAssertionFromInboundAssertionToken"
+        class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.AddAuthnStatementToAssertionFromInboundAssertionToken"
+        scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest">
+        <property name="identifierGeneratorLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction"
+                p:defaultIdentifierGenerationStrategy-ref="shibboleth.DefaultIdentifierGenerationStrategy" />
+        </property>
+        <property name="activationCondition">
+            <bean parent="shibboleth.Conditions.Expression">
+                <constructor-arg>
+                    <value>
+                        #profileContext.getProfileId().equals('http://shibboleth.net/ns/profiles/liberty/ssos')
+                    </value>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
+        
 </beans>

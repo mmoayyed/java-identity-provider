@@ -48,6 +48,19 @@
                 </constructor-arg>
             </bean>
         </property>
+        <property name="activationCondition">
+            <bean parent="shibboleth.Conditions.NOT">
+                <constructor-arg>
+                    <bean parent="shibboleth.Conditions.Expression">
+                        <constructor-arg>
+                            <value>
+                                #profileContext.getProfileId().equals('http://shibboleth.net/ns/profiles/liberty/ssos')
+                            </value>
+                        </constructor-arg>
+                    </bean>
+                </constructor-arg>
+            </bean>
+        </property>
     </bean>
 
     <bean id="AddAttributeStatementToAssertion"
