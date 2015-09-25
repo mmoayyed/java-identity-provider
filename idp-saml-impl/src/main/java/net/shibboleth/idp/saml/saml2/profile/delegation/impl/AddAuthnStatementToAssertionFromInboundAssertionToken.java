@@ -259,7 +259,9 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
      */
     @Nullable protected AuthnStatement getNewAuthnStatement() {
         try {
-            return XMLObjectSupport.cloneXMLObject(sourceStatement, true);
+            AuthnStatement statement = XMLObjectSupport.cloneXMLObject(sourceStatement);
+            statement.releaseChildrenDOM(true);
+            return statement;
         } catch (MarshallingException | UnmarshallingException e) {
             log.error("{} Error cloning Assertion AuthnStatement", getLogPrefix(), e);
             return null;
