@@ -213,16 +213,23 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * Set supported non-user-specific principals that the action will include in the subjects
      * it generates, in place of any default principals from the flow.
      * 
+     * <p>Setting to a null or empty collection will maintain the default behavior of relying on the flow.</p>
+     * 
      * @param <T> a type of principal to add, if not generic
      * @param principals supported principals to include
      */
-    public <T extends Principal> void setSupportedPrincipals(@Nonnull @NonnullElements final Collection<T> principals) {
+    public <T extends Principal> void setSupportedPrincipals(
+            @Nullable @NonnullElements final Collection<T> principals) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(principals, "Principal collection cannot be null");
         
-        addDefaultPrincipals = false;
         authenticatedSubject.getPrincipals().clear();
-        authenticatedSubject.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
+        
+        if (principals != null && !principals.isEmpty()) {
+            addDefaultPrincipals = false;
+            authenticatedSubject.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
+        } else {
+            addDefaultPrincipals = true;
+        }
     }
  
     /**
