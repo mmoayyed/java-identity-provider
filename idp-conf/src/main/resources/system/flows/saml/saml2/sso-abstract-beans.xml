@@ -180,5 +180,19 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="AddDelegationRestrictionToAssertions"
+        class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.AddDelegationRestrictionToAssertions"
+        scope="prototype">
+        <property name="activationCondition">
+            <bean parent="shibboleth.Conditions.Expression">
+                <constructor-arg>
+                    <value>
+                        #profileContext.getProfileId().equals('http://shibboleth.net/ns/profiles/liberty/ssos')
+                    </value>
+                </constructor-arg>
+            </bean>
+        </property>
+    </bean>
         
 </beans>

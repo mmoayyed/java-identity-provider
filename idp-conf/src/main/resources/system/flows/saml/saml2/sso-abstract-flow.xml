@@ -101,6 +101,7 @@
         <evaluate expression="AddNotBeforeConditionToAssertions" />
         <evaluate expression="AddNotOnOrAfterConditionToAssertions" />
         <evaluate expression="AddAudienceRestrictionToAssertions" />
+        <evaluate expression="AddDelegationRestrictionToAssertions" />
         <evaluate expression="AddProxyRestrictionToAssertions" />
         <evaluate expression="AddChannelBindingsToAssertions" />
         <evaluate expression="AddGeneratedKeyToAssertions" />
