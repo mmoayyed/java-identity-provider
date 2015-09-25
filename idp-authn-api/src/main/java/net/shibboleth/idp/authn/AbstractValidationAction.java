@@ -46,6 +46,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,9 @@ import com.google.common.collect.Iterables;
  * @param <InboundMessageType> type of in-bound message
  * @param <OutboundMessageType> type of out-bound message
  * 
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
+ * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
  */
 public abstract class AbstractValidationAction<InboundMessageType, OutboundMessageType>
         extends AbstractAuthenticationAction<InboundMessageType, OutboundMessageType>
@@ -239,8 +242,12 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
             return false;
+        } else if (authenticationContext.getAttemptedFlow() == null) {
+            log.info("{} No attempted flow within authentication context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
         }
-        
+
         if (clearErrorContext) {
             authenticationContext.removeSubcontext(AuthenticationErrorContext.class);
         }

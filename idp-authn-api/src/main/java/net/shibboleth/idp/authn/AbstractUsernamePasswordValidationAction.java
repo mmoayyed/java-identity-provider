@@ -27,8 +27,6 @@ import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +36,9 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by invoking
  * a subclass method.
  *  
- * @event {@link EventIds#PROCEED_EVENT_ID}
- * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
- * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
  * successful login. On a failed login, the
@@ -97,13 +93,7 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
         if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
             return false;
         }
-        
-        if (authenticationContext.getAttemptedFlow() == null) {
-            log.info("{} No attempted flow within authentication context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
+                
         upContext = authenticationContext.getSubcontext(UsernamePasswordContext.class);
         if (upContext == null) {
             log.info("{} No UsernamePasswordContext available within authentication context", getLogPrefix());
