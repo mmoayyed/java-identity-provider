@@ -62,8 +62,10 @@
     </util:list>
 
     <util:list id="shibboleth.OutgoingECPBindings">
-        <!-- Special case, the binding is technically SOAP, but response endpoint checking based on PAOS. -->
+        <!-- Special case, the binding is technically SOAP, but response endpoint checking based on PAOS or SAML-EC. -->
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:PAOS"
+            p:encoderBeanId="shibboleth.Encoders.SAML2SOAPEncoder" />
+        <bean parent="shibboleth.BindingDescriptor" p:id="urn:ietf:params:xml:ns:samlec"
             p:encoderBeanId="shibboleth.Encoders.SAML2SOAPEncoder" />
     </util:list>
 
