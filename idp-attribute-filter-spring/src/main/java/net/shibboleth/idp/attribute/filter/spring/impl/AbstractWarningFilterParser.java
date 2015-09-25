@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 /**
  * A special case version of {@link BaseFilterParser} which warns if the non legacy name is used.
  * 
- * Initially it will warn once per namesspace.
+ * Initially it will warn once per namespace.
  */
 public abstract class AbstractWarningFilterParser extends BaseFilterParser {
 
@@ -44,7 +44,7 @@ public abstract class AbstractWarningFilterParser extends BaseFilterParser {
     private static boolean warnedSAML;
 
     /**
-     * Whether we have ever warned because of basic:  content.
+     * Whether we have ever warned because of basic: content.
      */
     private static boolean warnedBasic;
 
@@ -52,26 +52,26 @@ public abstract class AbstractWarningFilterParser extends BaseFilterParser {
     private final Logger log = LoggerFactory.getLogger(AbstractWarningFilterParser.class);
 
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull Element element, @Nonnull ParserContext parserContext,
-            @Nonnull BeanDefinitionBuilder builder) {
+    @Override protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
-        QName suppliedQname = DOMTypeSupport.getXSIType(element);
+        final QName suppliedQname = DOMTypeSupport.getXSIType(element);
         if (AttributeFilterSAMLNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
             if (!warnedSAML) {
                 warnedSAML = true;
                 log.warn("Configuration contains at least one element in the deprecated '{}' namespace.",
                         AttributeFilterSAMLNamespaceHandler.NAMESPACE);
             }
-            log.debug("saml: Namespace element {} in {}, consider using {} ", suppliedQname.toString(), parserContext
-                    .getReaderContext().getResource().getDescription(), getAFPName().toString());
+            log.debug("saml: Namespace element {} in {}, consider using {}", suppliedQname.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(), getAFPName().toString());
         } else if (AttributeFilterBasicNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
             if (!warnedBasic) {
                 warnedBasic = true;
                 log.warn("Configuration contains at least one element in the deprecated '{}' namespace.",
                         AttributeFilterBasicNamespaceHandler.NAMESPACE);
             }
-            log.debug("basic: Namespace element {} in {}, consider using {} ", suppliedQname.toString(), parserContext
-                    .getReaderContext().getResource().getDescription(), getAFPName().toString());
+            log.debug("basic: Namespace element {} in {}, consider using {}", suppliedQname.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(), getAFPName().toString());
         }
 
         super.doParse(element, parserContext, builder);
@@ -79,6 +79,7 @@ public abstract class AbstractWarningFilterParser extends BaseFilterParser {
 
     /**
      * Helper function to assist rewrite from old to new prefix.
+     * 
      * @return the "new" type.
      */
     protected abstract QName getAFPName();

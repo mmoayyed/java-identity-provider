@@ -124,7 +124,7 @@ public class ScriptedMatcherParser extends AbstractWarningFilterParser {
             throw new BeanCreationException("No script specified for this attribute definition");
         }
 
-        String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
+        final String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
         if (null != customRef) {
             builder.addPropertyReference("customObject", customRef);
         }
