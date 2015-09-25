@@ -47,6 +47,35 @@
         <!-- If parent OutboundContextsAndSecurityParameters' transition changes on 'proceed', this needs to also change. -->
         <transition on="proceed" to="ExtractSubject" />
     </action-state>
+    
+    
+    
+    <action-state id="DoProfileWork">
+        <!-- Here we override, "splice in" actions to run after the this action defined in the parent flow.
+             We also "short-circuit" the entire authN and c14N process defined in the parent flow in favor of simpler inline approach here."  -->
+        <transition on="proceed" to="ProcessSAMLToken" />
+    </action-state>
+    
+    <action-state id="ProcessSAMLToken">
+        <evaluate expression="ProcessSAML20AssertionWSSToken" />
+        
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="CallSAMLSubjectCanonicalization" />
+    </action-state>
+    
+    <subflow-state id="CallSAMLSubjectCanonicalization" subflow="c14n/saml">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="FinalizeSAMLTokenProcessing" />
+    </subflow-state>
+    
+    <action-state id="FinalizeSAMLTokenProcessing">
+        <evaluate expression="FinalizeSAMLTokenProcessing" />
+        
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ResolveAttributes" />
+    </action-state>
 
     <bean-import resource="idwsf-ssos-beans.xml" />
 

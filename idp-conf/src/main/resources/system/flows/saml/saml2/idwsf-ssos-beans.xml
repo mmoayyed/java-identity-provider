@@ -158,5 +158,9 @@
     </bean>
     
     <bean id="LibertyOutboundContexts" class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.PopulateOutboundMessageContext" scope="prototype" />
+    
+    <bean id="ProcessSAML20AssertionWSSToken" class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.ProcessSAML20AssertionWSSToken" scope="prototype" />
+    
+    <bean id="FinalizeSAMLTokenProcessing" class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.FinalizeSAMLTokenProcessing" scope="prototype" />
 
 </beans>
