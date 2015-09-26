@@ -18,8 +18,9 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -375,30 +376,24 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Helper method that evaluates a {@link Principal} against a {@link RequestedPrincipalContext} child
-     * of this context, if present, to determine if the input is compatible with it.
+     * Helper method that evaluates a {@link PrincipalSupportingComponent} against a
+     * {@link RequestedPrincipalContext} child of this context, if present, to determine
+     * if the input is compatible with it.
      * 
      * @param <T> type of principal
-     * @param principal principal to evaluate
+     * @param component component to evaluate
      * 
      * @return true iff the input is compatible with the requested authentication requirements or if
      *  no such requirements have been imposed
      */
-    public <T extends Principal> boolean isAcceptable(@Nonnull final T principal) {
+    public <T extends Principal> boolean isAcceptable(@Nonnull final PrincipalSupportingComponent component) {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
-            // Wrap candidate in the collection interface needed to drive the predicates.
-            final PrincipalSupportingComponent pseudoComponent = new PrincipalSupportingComponent() {
-                public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
-                    return Collections.<TT>singleton((TT) principal);
-                }
-            };
-            
             for (final Principal requestedPrincipal : rpCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =
                         evalRegistry.lookup(requestedPrincipal.getClass(), rpCtx.getOperator());
                 if (factory != null) {
-                    if (factory.getPredicate(requestedPrincipal).apply(pseudoComponent)) {
+                    if (factory.getPredicate(requestedPrincipal).apply(component)) {
                         return true;
                     }
                 }
@@ -407,6 +402,31 @@ public final class AuthenticationContext extends BaseContext {
             // Nothing matched the candidate.
             return false;
             
+        } else {
+            // No requirements so anything is acceptable.
+            return true;
+        }
+    }
+    
+    
+    /**
+     * Helper method that evaluates {@link Principal} objects against a {@link RequestedPrincipalContext} child
+     * of this context, if present, to determine if the input is compatible with them.
+     * 
+     * @param <T> type of principal
+     * @param principals principal(s) to evaluate
+     * 
+     * @return true iff the input is compatible with the requested authentication requirements or if
+     *  no such requirements have been imposed
+     */
+    public <T extends Principal> boolean isAcceptable(@Nonnull final T... principals) {
+        final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
+        if (rpCtx != null) {
+            return isAcceptable(new PrincipalSupportingComponent() {
+                public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
+                    return new HashSet(Arrays.<TT>asList((TT[]) principals));
+                }
+            });
         } else {
             // No requirements so anything is acceptable.
             return true;

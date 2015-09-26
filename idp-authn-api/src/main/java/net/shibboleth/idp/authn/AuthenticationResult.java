@@ -42,8 +42,12 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Describes an act of authentication. The result may be composite, in the sense that it
- * may represent a combination of separate exchanges that make up a single overall result. 
+ * Describes an act of authentication.
+ *
+ * <p>Any authentication flow that succeeds must produce a single instance of this object.
+ * It may be composite, in the sense that it may represent a combination of separate exchanges
+ * that make up a single overall result, but the IdP always acts on a single result as the
+ * product of a given request for a login.</p>
  */
 @ThreadSafe
 public class AuthenticationResult implements PrincipalSupportingComponent {
