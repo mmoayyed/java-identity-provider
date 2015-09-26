@@ -129,6 +129,11 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         log.debug("{} Attempting to add an DelegationRestriction Condition to every Assertion in Response",
                 getLogPrefix());
 
