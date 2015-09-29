@@ -74,7 +74,14 @@ public class ExternalAuthentication {
 
     /** Request attribute that provides the entity ID of the relying party that is requesting authentication. */
     @Nonnull @NotEmpty public static final String RELYING_PARTY_PARAM = "relyingParty";
-    
+
+    /**
+     * Request attribute that indicates whether we're being called as an extension of another login flow.
+     * 
+     * @since 3.2.0
+     */
+    @Nonnull @NotEmpty public static final String EXTENDED_FLOW_PARAM = "extended";
+
     /**
      * Computes the appropriate location to pass control to to invoke an external authentication mechanism.
      * 

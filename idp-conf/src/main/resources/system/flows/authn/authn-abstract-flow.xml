@@ -7,7 +7,7 @@
     <input name="calledAsSubflow" type="boolean" required="true" />
 
     <!-- Indicates another login flow has called one as a subflow. -->
-    <input name="calledAsExtendedFlow" type="boolean" value="flowScope.calledAsExtendedFlow" />
+    <input name="calledAsExtendedFlow" type="boolean" />
 
     <!-- Defines the possible end-state events, and a global transition rule. -->
 

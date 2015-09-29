@@ -56,6 +56,9 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
     
     /** State of request to pull from. */
     @Nonnull private final ProfileRequestContext profileRequestContext;
+    
+    /** Track whether we were invoked from within another login flow. */
+    private final boolean extendedFlow;
 
     /**
      * Constructor.
@@ -64,9 +67,22 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
      */
     public ExternalAuthenticationImpl(@Nonnull final ProfileRequestContext input) {
         profileRequestContext = Constraint.isNotNull(input, "ProfileRequestContext cannot be null");
+        extendedFlow = false;
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
     }
-    
+
+    /**
+     * Constructor.
+     * 
+     * @param input profile request context to expose
+     * @param extended called as extended flow from another login flow
+     */
+    public ExternalAuthenticationImpl(@Nonnull final ProfileRequestContext input, final boolean extended) {
+        profileRequestContext = Constraint.isNotNull(input, "ProfileRequestContext cannot be null");
+        extendedFlow = extended;
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+    }
+
     /**
      * Set lookup strategy for relying party context.
      * 
@@ -90,10 +106,11 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         }
         
         request.setAttribute(ProfileRequestContext.BINDING_KEY, profileRequestContext);
+        request.setAttribute(EXTENDED_FLOW_PARAM, extendedFlow);
         
         request.setAttribute(PASSIVE_AUTHN_PARAM, authnContext.isPassive());
         request.setAttribute(FORCE_AUTHN_PARAM, authnContext.isForceAuthn());
-        
+                
         final Collection<Principal> principals = authnContext.getAttemptedFlow().getSupportedPrincipals();
         if (!principals.isEmpty()) {
             request.setAttribute(AUTHN_METHOD_PARAM, principals.iterator().next().getName());
