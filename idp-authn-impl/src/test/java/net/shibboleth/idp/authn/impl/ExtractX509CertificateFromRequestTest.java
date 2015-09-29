@@ -91,6 +91,9 @@ public class ExtractX509CertificateFromRequestTest extends PopulateAuthenticatio
     }
     
     @Test public void testNoServlet() throws Exception {
+        action = new ExtractX509CertificateFromRequest();
+        action.initialize();
+        
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);

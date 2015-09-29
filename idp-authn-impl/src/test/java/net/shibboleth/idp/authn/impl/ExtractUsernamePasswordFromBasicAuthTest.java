@@ -45,6 +45,8 @@ public class ExtractUsernamePasswordFromBasicAuthTest extends PopulateAuthentica
     }
     
     @Test public void testNoServlet() throws Exception {
+        action = new ExtractUsernamePasswordFromBasicAuth();
+        action.initialize();
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);

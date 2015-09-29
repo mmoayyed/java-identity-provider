@@ -45,6 +45,10 @@ public class ExtractUsernamePasswordFromFormRequestTest extends PopulateAuthenti
     }
     
     @Test public void testNoServlet() throws Exception {
+        action = new ExtractUsernamePasswordFromFormRequest();
+        action.setUsernameFieldName("j_username");
+        action.setPasswordFieldName("j_password");
+        action.initialize();
         final Event event = action.execute(src);
         
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);

@@ -56,6 +56,7 @@ public class ExtractRemoteUserTest extends PopulateAuthenticationContextTest {
     }
     
     @Test public void testNoServlet() throws Exception {
+        action.setHttpServletRequest(null);
         action.initialize();
         final Event event = action.execute(src);
         
