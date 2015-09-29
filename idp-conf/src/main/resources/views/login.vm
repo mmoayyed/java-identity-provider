@@ -19,6 +19,10 @@
 ##
 #set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
 #set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())
+#set ($passwordEnabled = false)
+#if ($passwordPrincipals.isEmpty() or $authenticationContext.isAcceptable($passwordPrincipals))
+  #set ($passwordEnabled = true)
+#end
 ##
 <!DOCTYPE html>
 <html>
@@ -36,20 +40,18 @@
 
         <div class="content">
           <div class="column one">
-            #set ($passwordEnabled = false)
-            #if ($passwordPrincipals.isEmpty() or $authenticationContext.isAcceptable($passwordPrincipals))
-              #set ($passwordEnabled = true)
-              <form action="$flowExecutionUrl" method="post">
-            
-              #parse("login-error.vm")
+            #parse("login-error.vm")
 
-              #set ($serviceName = $rpUIContext.serviceName)
-              #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
-                <legend>
-                  #springMessageText("idp.login.loginTo", "Login to") $encoder.encodeForHTML($serviceName)
-                </legend>
-              #end
+            <form action="$flowExecutionUrl" method="post">
 
+            #set ($serviceName = $rpUIContext.serviceName)
+            #if ($serviceName && !$rpContext.getRelyingPartyId().contains($serviceName))
+              <legend>
+                #springMessageText("idp.login.loginTo", "Login to") $encoder.encodeForHTML($serviceName)
+              </legend>
+            #end
+                        
+            #if ($passwordEnabled)
               <div class="form-element-wrapper">
                 <label for="username">#springMessageText("idp.login.username", "Username")</label>
                 <input class="form-element form-field" id="username" name="j_username" type="text"
@@ -64,17 +66,29 @@
               <div class="form-element-wrapper">
                 <input type="checkbox" name="donotcache" value="1"> #springMessageText("idp.login.donotcache", "Don't Remember Login")
               </div>
+            #end
 
               <div class="form-element-wrapper">
                 <input id="_shib_idp_revokeConsent" type="checkbox" name="_shib_idp_revokeConsent" value="true">
                 #springMessageText("idp.attribute-release.revoke", "Clear prior granting of permission for release of your information to this service.")
               </div>
 
+            #if ($passwordEnabled)
               <div class="form-element-wrapper">
                 <button class="form-element form-button" type="submit" name="_eventId_proceed">#springMessageText("idp.login.login", "Login")</button>
               </div>
-              </form>
             #end
+
+            #foreach ($extFlow in $extendedAuthenticationFlows)
+              #if ($authenticationContext.isAcceptable($extFlow))
+                <div class="form-element-wrapper">
+                  <button class="form-element form-button" type="submit" name="_eventId_$extFlow.getId()">
+                    #springMessageText("idp.login.$extFlow.getId().replace('authn/','')", $extFlow.getId().replace('authn/',''))
+                  </button>
+                </div>
+              #end
+            #end
+            </form>
 
 			#*
               //
@@ -105,18 +119,6 @@
               #end
               <li class="list-help-item"><a href="#springMessageText("idp.url.helpdesk", "#")"><span class="item-marker">&rsaquo;</span> #springMessageText("idp.login.needHelp", "Need Help?")</a></li>
             </ul>
-
-            <form action="$flowExecutionUrl" method="post">
-              #foreach ($extFlow in $extendedAuthenticationFlows)
-                #if ($authenticationContext.isAcceptable($extFlow))
-                  <div class="form-element-wrapper">
-                    <button class="form-element form-button" type="submit" name="_eventId_$extFlow.getId()">
-                      #springMessageText("idp.login.$extFlow.getId().replace('authn/','')", $extFlow.getId().replace('authn/',''))
-                    </button>
-                  </div>
-                #end
-              #end
-            </form>
           </div>
         </div>
       </div>

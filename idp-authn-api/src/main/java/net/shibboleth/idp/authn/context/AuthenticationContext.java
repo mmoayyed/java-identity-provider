@@ -18,7 +18,8 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -83,6 +84,9 @@ public final class AuthenticationContext extends BaseContext {
     /** Signals authentication flow to run next, to influence selection logic. */
     @Nullable private String signaledFlowId;
 
+    /** Storage map for interflow communication. */
+    @Nonnull private final Map<String,Object> stateMap;
+    
     /** A successful "initial" authentication result from the current request's initial-authn phase. */
     @Nullable private AuthenticationResult initialAuthenticationResult;
 
@@ -102,6 +106,8 @@ public final class AuthenticationContext extends BaseContext {
         potentialFlows = new LinkedHashMap<>();
         activeResults = new HashMap<>();
         intermediateFlows = new HashMap<>();
+        
+        stateMap = new HashMap<>();
         
         evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
         resultCacheable = true;
@@ -292,6 +298,15 @@ public final class AuthenticationContext extends BaseContext {
     }    
 
     /**
+     * Get the map of intermediate state that flows can use to pass information amongst themselves.
+     * 
+     * @return the state map
+     */
+    @Nonnull @Live public Map<String,Object> getAuthenticationStateMap() {
+        return stateMap;
+    }
+    
+    /**
      * Get the "initial" authentication result produced during this request's initial-authn phase.
      * 
      * <p>This is used to make a previous result available for SSO even if the "forced authentication"
@@ -380,13 +395,12 @@ public final class AuthenticationContext extends BaseContext {
      * {@link RequestedPrincipalContext} child of this context, if present, to determine
      * if the input is compatible with it.
      * 
-     * @param <T> type of principal
      * @param component component to evaluate
      * 
      * @return true iff the input is compatible with the requested authentication requirements or if
      *  no such requirements have been imposed
      */
-    public <T extends Principal> boolean isAcceptable(@Nonnull final PrincipalSupportingComponent component) {
+    public boolean isAcceptable(@Nonnull final PrincipalSupportingComponent component) {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
             for (final Principal requestedPrincipal : rpCtx.getRequestedPrincipals()) {
@@ -407,24 +421,56 @@ public final class AuthenticationContext extends BaseContext {
             return true;
         }
     }
-    
-    
+        
     /**
      * Helper method that evaluates {@link Principal} objects against a {@link RequestedPrincipalContext} child
      * of this context, if present, to determine if the input is compatible with them.
      * 
-     * @param <T> type of principal
      * @param principals principal(s) to evaluate
      * 
      * @return true iff the input is compatible with the requested authentication requirements or if
      *  no such requirements have been imposed
      */
-    public <T extends Principal> boolean isAcceptable(@Nonnull final T... principals) {
+    public boolean isAcceptable(@Nonnull @NonnullElements final Collection<Principal> principals) {
+        final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
+        if (rpCtx != null) {
+            return isAcceptable(new PrincipalSupportingComponent() {
+                public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
+                    final HashSet set = new HashSet<>();
+                    for (final Principal p : principals) {
+                        if (c.isAssignableFrom(p.getClass())) {
+                            set.add(p);
+                        }
+                    }
+                    return set;
+                }
+            });
+        } else {
+            // No requirements so anything is acceptable.
+            return true;
+        }
+    }
+
+    /**
+     * Helper method that evaluates a {@link Principal} object against a {@link RequestedPrincipalContext} child
+     * of this context, if present, to determine if the input is compatible with it.
+     * 
+     * @param <T> type of principal
+     * @param principal principal to evaluate
+     * 
+     * @return true iff the input is compatible with the requested authentication requirements or if
+     *  no such requirements have been imposed
+     */
+    public <T extends Principal> boolean isAcceptable(@Nonnull final T principal) {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
             return isAcceptable(new PrincipalSupportingComponent() {
                 public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
-                    return new HashSet(Arrays.<TT>asList((TT[]) principals));
+                    if (c.isAssignableFrom(principal.getClass())) {
+                        return Collections.singleton((TT) principal);
+                    } else {
+                        return Collections.emptySet();
+                    }
                 }
             });
         } else {
@@ -445,6 +491,7 @@ public final class AuthenticationContext extends BaseContext {
                 .add("activeResults", activeResults.keySet())
                 .add("attemptedFlow", attemptedFlow)
                 .add("signaledFlowId", signaledFlowId)
+                .add("authenticationStateMap", stateMap)
                 .add("resultCacheable", resultCacheable)
                 .add("initialAuthenticationResult", initialAuthenticationResult)
                 .add("authenticationResult", authenticationResult)
