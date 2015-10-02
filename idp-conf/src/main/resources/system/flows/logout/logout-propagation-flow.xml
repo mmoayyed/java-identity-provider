@@ -6,7 +6,7 @@
 
     <action-state id="PropagateLogout">
         <evaluate expression="InitializeProfileRequestContext" />
-        <evaluate expression="PopulateLogoutContextForPropagation" />
+        <evaluate expression="PopulateLogoutPropagationContext" />
         <evaluate expression="SelectPropagationFlow" />
         
         <!-- Call a subflow with the same ID as the event. -->

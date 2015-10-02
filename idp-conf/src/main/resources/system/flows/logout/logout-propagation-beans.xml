@@ -27,8 +27,8 @@
         p:loggingId="%{idp.service.logging.logout-propagation:LogoutPropagation}"
         p:browserProfile="true" />
 
-    <bean id="PopulateLogoutContextForPropagation"
-        class="net.shibboleth.idp.session.impl.PopulateLogoutContextForPropagation" scope="prototype"
+    <bean id="PopulateLogoutPropagationContext"
+        class="net.shibboleth.idp.session.impl.PopulateLogoutPropagationContext" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry"
         p:dataSealer-ref="shibboleth.DataSealer" />

@@ -1,5 +1,5 @@
 ##
-## Velocity Template for logout flow's starting view-state
+## Velocity Template for logout flow's concluding view-state (no propagation)
 ##
 ## Velocity context will contain the following properties
 ## flowExecutionUrl - the form action location
@@ -34,41 +34,7 @@
 
         <div class="content">
           <div class="column one">
-            <p>This logout page is an example and should be customized. It is not internationalized because the
-            presentation will be a highly localized decision, and we don't have a good suggestion for a default.</p>
-
-            <p>This page is displayed when a logout operation at the Identity Provider completes.</p>
-    
-            <p><strong>It does NOT result in the user being logged out of any of the applications he/she
-            has accessed during a session, with the possible exception of a Service Provider that may have
-            initiated the logout operation.</strong></p>
-
-            #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
-                <p>Would you like to log out of all services accessed during your session?</p>
-                <br>
-
-                <form id="propagate_form" method="POST" action="$flowExecutionUrl">
-                    <button id="propagate_yes" type="submit" name="_eventId" value="propagate">Yes</button>
-                    <button id="propagate_no" type="submit" name="_eventId" value="end">No</button>
-                </form>
-
-                <br>
-                <p>If you proceed you will be logged out of the following services:</p>
-                <ol>
-                #foreach ($sp in $logoutContext.getSessionMap().keySet())
-                    #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
-                    #if ($rpCtx)
-                      #set ($rpUIContext = $rpCtx.getSubcontext("net.shibboleth.idp.ui.context.RelyingPartyUIContext"))
-                    #end
-                    #if ($rpUIContext and $rpUIContext.getServiceName())
-                      <li>$encoder.encodeForHTML($rpUIContext.getServiceName())</li>
-                    #else
-                      <li>$encoder.encodeForHTML($sp)</li>
-                    #end
-                #end
-                </ol>
-            #end
-
+            <p>You elected not to log out of all the applications accessed during your session.</p>
           </div>
           <div class="column two">
             <ul class="list list-help">

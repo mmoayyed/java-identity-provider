@@ -20,6 +20,7 @@ package net.shibboleth.idp.session;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -39,7 +40,7 @@ import com.google.common.base.Predicates;
  * A flow models a sequence of profile actions that performs logout propagation of an {@link SPSession}.
  * Flows may not interact with the client, and must include an activation predicate to indicate their
  * suitability based on the content of the {@link ProfileRequestContext}, particularly the required
- * {@link LogoutContext} child context.
+ * {@link LogoutPropagationContext} child context.
  * </p>
  */
 public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitializableComponent
@@ -99,15 +100,15 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
     /** Default condition that operates based on the underlying {@link SPSession} type. */
     public static class ActivationCondition implements Predicate<ProfileRequestContext> {
         
-        /** Lookup strategy for {@link LogoutContext}. */
-        @Nonnull private Function<ProfileRequestContext,LogoutContext> logoutContextLookupStrategy;
+        /** Lookup strategy for {@link LogoutPropagationContext}. */
+        @Nonnull private Function<ProfileRequestContext, LogoutPropagationContext> contextLookupStrategy;
         
         /** Type of session to look for. */
         @Nonnull private Class<? extends SPSession> sessionType;
 
         /** Constructor. */
         public ActivationCondition() {
-            logoutContextLookupStrategy = new ChildContextLookup<>(LogoutContext.class);
+            contextLookupStrategy = new ChildContextLookup<>(LogoutPropagationContext.class);
             sessionType = BasicSPSession.class;
         }
         
@@ -117,9 +118,9 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
          * @param strategy lookup strategy
          */
         public void setLogoutContextLookupStrategy(
-                @Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
-            logoutContextLookupStrategy = Constraint.isNotNull(strategy,
-                    "LogoutContext lookup strategy cannot be null");
+                @Nonnull final Function<ProfileRequestContext, LogoutPropagationContext> strategy) {
+            contextLookupStrategy = Constraint.isNotNull(strategy,
+                    "SingleLogoutContext lookup strategy cannot be null");
         }
         
         /**
@@ -133,11 +134,11 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
         
         /** {@inheritDoc} */
         @Override
-        public boolean apply(ProfileRequestContext input) {
+        public boolean apply(@Nonnull final ProfileRequestContext input) {
             
-            final LogoutContext logoutCtx = logoutContextLookupStrategy.apply(input);
-            if (logoutCtx != null || logoutCtx.getSessionMap().size() == 1) {
-                return sessionType.isInstance(logoutCtx.getSessionMap().values().iterator().next());
+            final LogoutPropagationContext logoutPropCtx = contextLookupStrategy.apply(input);
+            if (logoutPropCtx != null && logoutPropCtx.getSession() != null) {
+                return sessionType.isInstance(logoutPropCtx.getSession());
             }
             
             return false;

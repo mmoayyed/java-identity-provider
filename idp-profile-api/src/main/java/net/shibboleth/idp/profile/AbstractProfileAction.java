@@ -21,6 +21,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
@@ -224,5 +225,19 @@ public abstract class AbstractProfileAction<InboundMessageType, OutboundMessageT
         }
         throw new NoSuchMessageException("MessageSource was not set");
     }
-    
+
+    /**
+     * Gets the Spring {@link RequestContext} from a {@link SpringRequestContext} stored in the context tree.
+     *
+     * @param profileRequestContext Profile request context.
+     *
+     * @return Spring request context.
+     */
+    @Nullable protected RequestContext getRequestContext(final ProfileRequestContext profileRequestContext) {
+        final SpringRequestContext springRequestCtx = profileRequestContext.getSubcontext(SpringRequestContext.class);
+        if (springRequestCtx == null) {
+            return null;
+        }
+        return springRequestCtx.getRequestContext();
+    }
 }

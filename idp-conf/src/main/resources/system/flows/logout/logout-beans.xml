@@ -117,4 +117,7 @@
         p:defaultView-ref="shibboleth.DefaultErrorView"
         p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
 
+    <bean id="SaveLogoutContext"
+          class="net.shibboleth.idp.session.impl.SaveLogoutContext" />
+
 </beans>
