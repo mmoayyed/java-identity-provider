@@ -56,7 +56,13 @@
                       function onLoad(src, target, noContentIsSuccess) {
                           try {
                               var content = src.contents().find('body').text();
-                              if (content || noContentIsSuccess) {
+                              var success = false;
+                              if (content) {
+                                  success = jQuery.parseJSON(content).result == 'Success';
+                              } else if (noContentIsSuccess) {
+                                  success = true;
+                              }
+                              if (success) {
                                   target.addClass('success');
                               } else {
                                   target.addClass('failure');

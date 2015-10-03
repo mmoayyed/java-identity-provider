@@ -35,6 +35,9 @@
         <!-- Logout propagation master flow. -->
         <webflow:flow-location id="PropagateLogout" path="../system/flows/logout/logout-propagation-flow.xml" />
 
+        <!-- Logout propagation delegate flows. -->
+        <webflow:flow-location id="logoutprop/saml2" path="../system/flows/logout/propagation/saml2-flow.xml" />
+
         <!-- Abstract flows underpinning SAML profiles. -->
         <webflow:flow-location id="saml.abstract" path="../system/flows/saml/saml-abstract-flow.xml" />
         <webflow:flow-location id="saml1.sso.abstract" path="../system/flows/saml/saml1/sso-abstract-flow.xml" />

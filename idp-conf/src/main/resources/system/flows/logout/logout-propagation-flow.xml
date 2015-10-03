@@ -20,20 +20,21 @@
     -->
     <subflow-state id="CallPropagationFlow" subflow="#{currentEvent.id}">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="LogoutSucceeded" />
+        <transition on="proceed" to="RenderResult" />
     </subflow-state>
     
-    <end-state id="LogoutSucceeded">
+    <end-state id="RenderResult" view="logout/propagate-response">
         <on-entry>
             <evaluate expression="WriteAuditLog" />
-            <evaluate expression="RecordResponseComplete" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse().setContentType('application/json')" />
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" result="requestScope.logoutPropCtx" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
         </on-entry>
     </end-state>
 
     <end-state id="LogoutFailed">
         <on-entry>
             <evaluate expression="WriteAuditLog" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse().setStatus(500)" />
             <evaluate expression="RecordResponseComplete" />
         </on-entry>
         <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>

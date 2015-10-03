@@ -30,8 +30,24 @@ import javax.annotation.Nullable;
  * @author Marvin S. Addison
  */
 public class LogoutPropagationContext extends BaseContext {
+
+    /** Logout propagation result. */
+    public enum Result {
+        /** Successful logout propagation result. */
+        Success,
+
+        /** Failed logout propagation result. */
+        Failure
+    }
+
     /** SP session to be destroyed. */
-    @Nonnull private SPSession session;
+    @Nullable private SPSession session;
+
+    /** Result of logout propagation flow. */
+    @Nonnull private Result result = Result.Failure;
+
+    /** Details of result, typically only populated for failures. */
+    @Nullable private String detail;
 
 
     /** @return The SP session to be destroyed. */
@@ -46,5 +62,42 @@ public class LogoutPropagationContext extends BaseContext {
      */
     public void setSession(@Nonnull final SPSession session) {
         this.session = Constraint.isNotNull(session, "SPSession cannnot be null");
+    }
+
+    /** @return Logout propagation result. */
+    @Nonnull public Result getResult() {
+        return result;
+    }
+
+    /**
+     * Sets the logout propagation result.
+     *
+     * @param result Non-null result.
+     */
+    public void setResult(@Nonnull final Result result) {
+        this.result = Constraint.isNotNull(result, "Result cannot be null");
+    }
+
+    /**
+     * Sets the logout propagation result from a string representation of {@link Result}.
+     *
+     * @param resultString Non-null string representation of {@link Result}.
+     */
+    public void setResultString(@Nonnull final String resultString) {
+        this.result = Enum.valueOf(Result.class, Constraint.isNotNull(resultString, "Result cannot be null"));
+    }
+
+    /** @return Logout propagation result detail message. */
+    @Nullable public String getDetail() {
+        return detail;
+    }
+
+    /**
+     * Sets the logout propagation result detail message.
+     *
+     * @param detail Result detail message.
+     */
+    public void setDetail(@Nullable String detail) {
+        this.detail = detail;
     }
 }
