@@ -102,6 +102,7 @@
             <evaluate expression="T(org.cryptacular.util.CodecUtil)" result="requestScope.codecUtil" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
             <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LogoutPropagationFlowSelector')" result="requestScope.flowSelector" />
             <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext')" result="requestScope.custom" />
         </on-entry>
     </end-state>

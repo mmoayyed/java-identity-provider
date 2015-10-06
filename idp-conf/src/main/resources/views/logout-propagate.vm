@@ -37,7 +37,7 @@
         <div class="content">
           <div class="column one">
               <p>Attempting to log out of the following services:</p>
-              #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
+              #if ($logoutContext and !$logoutContext.getSessionMap().isEmpty())
                   <ol>
                       #foreach ($sp in $logoutContext.getSessionMap().keySet())
                           #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
@@ -78,9 +78,12 @@
                   </script>
                   #foreach ($sp in $logoutContext.getSessionMap().keySet())
                       #foreach ($session in $logoutContext.getSessions($sp))
-                          <iframe id="sender_$session.getSPSessionKey()"
-                                  src="$request.contextPath/profile/PropagateLogout?SessionKey=$urlEncoder.encode($session.getSPSessionKey())"
-                                  style="display:none" onload="onLoad($(this), $('#result_$codecUtil.hex($sp.getBytes())'), false)"></iframe>
+                          #set ($descriptor = $flowSelector.apply($session))
+                          #if ($descriptor)
+                              <iframe id="sender_$codecUtil.hex($session.getSPSessionKey().getBytes())"
+                                      src="$request.contextPath/profile/PropagateLogout?SessionKey=$urlEncoder.encode($session.getSPSessionKey())"
+                                      style="display:none" onload="onLoad($(this), $('#result_$codecUtil.hex($sp.getBytes())'), $descriptor.expectNoResponse)"></iframe>
+                          #end
                       #end
                   #end
               #end

@@ -76,12 +76,14 @@
 
     <!-- Built-in logout propagation flows. -->
     
-    <bean id="logoutprop/saml2" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor">
-        <property name="activationCondition">
-            <bean class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor.ActivationCondition"
-                p:sessionType="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }" />
-        </property>
-    </bean>
+    <bean id="logoutprop/saml2" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor"
+          c:sessionType="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }" />
+
+    <!-- Selector function used in logout-propagation UI and logout-propagation master flow -->
+
+    <bean id="shibboleth.LogoutPropagationFlowSelector"
+          class="net.shibboleth.idp.session.logic.LogoutPropagationFlowDescriptorSelector"
+          c:flows-ref="shibboleth.LogoutPropagationFlows" />
 
     <!-- The import is at the bottom to avoid a depends-on in a user-editable file. -->
     <import resource="../../conf/session-manager.xml" />

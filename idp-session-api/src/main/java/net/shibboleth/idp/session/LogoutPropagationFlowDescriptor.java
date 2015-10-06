@@ -19,64 +19,61 @@ package net.shibboleth.idp.session;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.session.context.LogoutContext;
-import net.shibboleth.idp.session.context.LogoutPropagationContext;
-import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
 /**
  * A descriptor for a logout propagation flow.
  * 
  * <p>
  * A flow models a sequence of profile actions that performs logout propagation of an {@link SPSession}.
- * Flows may not interact with the client, and must include an activation predicate to indicate their
- * suitability based on the content of the {@link ProfileRequestContext}, particularly the required
- * {@link LogoutPropagationContext} child context.
+ * The suitability of a particular flow given an instance of {@link SPSession} is determined by
+ * {@link #getSessionType()}.
  * </p>
  */
-public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitializableComponent
-        implements Predicate<ProfileRequestContext> {
+public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitializableComponent {
 
-    /** Predicate that must be true for this flow to be usable for a given request. */
-    @Nonnull private Predicate<ProfileRequestContext> activationCondition;
+    /** Type of session handled by this flow. */
+    @Nonnull private final Class<? extends SPSession> sessionType;
+
+    /** True to indicate that the flow terminates with a message to a remote endpoint, false otherwise. */
+    private boolean expectNoResponse;
 
     /** Constructor. */
-    public LogoutPropagationFlowDescriptor() {
-        activationCondition = Predicates.alwaysTrue();
+    public LogoutPropagationFlowDescriptor(final Class<? extends SPSession> sessionType) {
+        this.sessionType = Constraint.isNotNull(sessionType, "SessionType cannot be null");
+    }
+
+    /** @return The type of session supported by this flow descriptor. */
+    @Nonnull public Class<? extends SPSession> getSessionType() {
+        return sessionType;
+    }
+
+    /** @return True if control never returns to the calling flow, i.e. the flow terminates by sending a message to
+     * a remote endpoint without expecting a response; false otherwise.
+     */
+    public boolean isExpectNoResponse() {
+        return expectNoResponse;
     }
 
     /**
-     * Set the activation condition in the form of a {@link Predicate} such that iff the condition evaluates to true
-     * should the corresponding flow be allowed/possible.
-     * 
-     * @param condition predicate that controls activation of the flow
+     * Sets a flag that determines whether control ever returns to the calling flow.
+     *
+     * @param expectNoResponse True if control never returns to the calling flow, i.e. the flow terminates by sending
+     *                         a message to a remote endpoint without expecting a response.
      */
-    public void setActivationCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        activationCondition = Constraint.isNotNull(condition, "Activation condition predicate cannot be null");
+    public void setExpectNoResponse(final boolean expectNoResponse) {
+        this.expectNoResponse = expectNoResponse;
     }
 
-    /** {@inheritDoc} */
-    @Override public boolean apply(ProfileRequestContext input) {
-        return activationCondition.apply(input);
-    }
-
-    /** {@inheritDoc} */
-    @Override public int hashCode() {
+    @Override
+    public int hashCode() {
         return getId().hashCode();
     }
 
-    /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
@@ -92,58 +89,8 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
         return false;
     }
 
-    /** {@inheritDoc} */
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return MoreObjects.toStringHelper(this).add("flowId", getId()).toString();
     }
-
-    /** Default condition that operates based on the underlying {@link SPSession} type. */
-    public static class ActivationCondition implements Predicate<ProfileRequestContext> {
-        
-        /** Lookup strategy for {@link LogoutPropagationContext}. */
-        @Nonnull private Function<ProfileRequestContext, LogoutPropagationContext> contextLookupStrategy;
-        
-        /** Type of session to look for. */
-        @Nonnull private Class<? extends SPSession> sessionType;
-
-        /** Constructor. */
-        public ActivationCondition() {
-            contextLookupStrategy = new ChildContextLookup<>(LogoutPropagationContext.class);
-            sessionType = BasicSPSession.class;
-        }
-        
-        /**
-         * Set the lookup strategy for the {@link LogoutContext}.
-         * 
-         * @param strategy lookup strategy
-         */
-        public void setLogoutContextLookupStrategy(
-                @Nonnull final Function<ProfileRequestContext, LogoutPropagationContext> strategy) {
-            contextLookupStrategy = Constraint.isNotNull(strategy,
-                    "SingleLogoutContext lookup strategy cannot be null");
-        }
-        
-        /**
-         * Set the type of {@link SPSession} to look for.
-         * 
-         * @param type  type of session to look for
-         */
-        public void setSessionType(@Nonnull final Class<? extends SPSession> type) {
-            sessionType = Constraint.isNotNull(type, "SPSession type cannot be null");
-        }
-        
-        /** {@inheritDoc} */
-        @Override
-        public boolean apply(@Nonnull final ProfileRequestContext input) {
-            
-            final LogoutPropagationContext logoutPropCtx = contextLookupStrategy.apply(input);
-            if (logoutPropCtx != null && logoutPropCtx.getSession() != null) {
-                return sessionType.isInstance(logoutPropCtx.getSession());
-            }
-            
-            return false;
-        }
-        
-    }
-    
 }

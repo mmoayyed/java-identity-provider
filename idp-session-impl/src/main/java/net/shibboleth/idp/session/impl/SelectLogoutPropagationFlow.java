@@ -17,27 +17,22 @@
 
 package net.shibboleth.idp.session.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import com.google.common.base.Function;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.LogoutPropagationFlowDescriptor;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.idp.session.context.LogoutPropagationContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * A profile action that selects a logout propagation flow to invoke.
@@ -57,32 +52,40 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SelectLogoutPropagationFlow.class);
-    
-    /** The available flows for use. */
-    @Nonnull @NonnullElements private List<LogoutPropagationFlowDescriptor> availableFlows;
+
+    /** Selection function to determine suitable LogoutPropagationFlowDescriptor for given SPSession. */
+    @Nonnull private final Function<SPSession, LogoutPropagationFlowDescriptor> flowSelectorFunction;
+
+    /** Function to retrieve LogoutPropagationContext from context tree. */
+    @Nonnull private Function<ProfileRequestContext, LogoutPropagationContext> logoutPropagationContextFunction;
 
     /** Constructor. */
-    public SelectLogoutPropagationFlow() {
-        availableFlows = Collections.emptyList();
+    public SelectLogoutPropagationFlow(final Function<SPSession, LogoutPropagationFlowDescriptor> selector) {
+        flowSelectorFunction = Constraint.isNotNull(selector, "Selector cannot be null");
+        logoutPropagationContextFunction = new ChildContextLookup<>(LogoutPropagationContext.class);
     }
-    
+
     /**
-     * Set the available flows to choose from.
-     * 
-     * @param flows available flows
+     * Sets the function used to retrieve the {@link LogoutPropagationContext} from the context tree.
+     *
+     * @param function Lookup function.
      */
-    public void setAvailableFlows(@Nonnull @NonnullElements final List<LogoutPropagationFlowDescriptor> flows) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(flows, "Available flow list cannot be null");
-        
-        availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
+    public void setLogoutPropagationContextFunction(
+            @Nonnull Function<ProfileRequestContext, LogoutPropagationContext> function) {
+        this.logoutPropagationContextFunction = Constraint.isNotNull(function, "Function cannot be null");
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        
-        final LogoutPropagationFlowDescriptor flow = selectUnattemptedFlow(profileRequestContext);
+        final LogoutPropagationContext logoutPropCtx = logoutPropagationContextFunction.apply(profileRequestContext);
+        if (logoutPropCtx == null || logoutPropCtx.getSession() == null) {
+            log.error("{} LogoutPropagationContext not found or found with null SPSession", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return;
+        }
+
+        final LogoutPropagationFlowDescriptor flow = flowSelectorFunction.apply(logoutPropCtx.getSession());
         if (flow == null) {
             log.error("{} No potential flows to choose from, logout propagation will fail", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_POTENTIAL_FLOW);
@@ -92,25 +95,4 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
         log.debug("{} Selecting logout propagation flow {}", getLogPrefix(), flow.getId());
         ActionSupport.buildEvent(profileRequestContext, flow.getId());
     }
-
-    /**
-     * Select the first potential flow that is applicable to the context.
-     * 
-     * @param profileRequestContext the current IdP profile request context
-     * @return an eligible flow, or null
-     */
-    @Nullable private LogoutPropagationFlowDescriptor selectUnattemptedFlow(
-            @Nonnull final ProfileRequestContext profileRequestContext) {
-        for (final LogoutPropagationFlowDescriptor flow : availableFlows) {
-            log.debug("{} Checking logout propagation flow {} for applicability...", getLogPrefix(), flow.getId());
-            if (flow.apply(profileRequestContext)) {
-                return flow;
-            }
-            log.debug("{} Logout propagation flow {} was not applicable to this request", getLogPrefix(),
-                    flow.getId());
-        }
-        
-        return null;
-    }
-        
 }

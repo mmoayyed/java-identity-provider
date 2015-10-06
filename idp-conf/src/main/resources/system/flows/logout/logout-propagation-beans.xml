@@ -35,8 +35,8 @@
         
     <bean id="SelectPropagationFlow"
         class="net.shibboleth.idp.session.impl.SelectLogoutPropagationFlow" scope="prototype"
-        p:availableFlows-ref="shibboleth.LogoutPropagationFlows" />
-        
+        c:selector-ref="shibboleth.LogoutPropagationFlowSelector" />
+
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
