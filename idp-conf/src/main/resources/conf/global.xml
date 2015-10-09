@@ -49,17 +49,5 @@
     </util:map>
     -->
     
-    <!--
-    Similarly, if you need to define and inject custom Java object(s) into the various scripting
-    subsystems (AttributeDefinition, DataConnector, AttributePolicy & Matcher, Action,
-    ContextLookup, Predicate and so on), you can uncomment the definition of the shibboleth.CustomScriptObject
-    bean defined below.  
-    -->
-    
-    <!-- 
-    <util:map id="shibboleth.CustomScriptObject">
-        <entry key="foo" value="bar"/>
-    </util:map>
-    -->    
     
 </beans>
