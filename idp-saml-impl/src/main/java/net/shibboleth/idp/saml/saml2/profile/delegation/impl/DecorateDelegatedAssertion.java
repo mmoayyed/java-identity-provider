@@ -838,8 +838,13 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
                         log.debug("Outbound Response contained no Assertions, nothing to decorate");
                         return Collections.emptyList();
                     } else { 
-                        //TODO What should be approach when have 2+ Assertions?  See other actions' options for details.
-                        log.debug("Found Assertion to decorate in outbound Response");
+                        for (Assertion assertion : response.getAssertions()) {
+                            if (!assertion.getAuthnStatements().isEmpty()) {
+                                log.debug("Found Assertion with AuthnStatement to decorate in outbound Response");
+                                return Collections.singletonList(assertion);
+                            }
+                        }
+                        log.debug("Found no Assertion with AuthnStatement in outbound Response, returning first");
                         return Collections.singletonList(response.getAssertions().get(0));
                     }
                 } else {
