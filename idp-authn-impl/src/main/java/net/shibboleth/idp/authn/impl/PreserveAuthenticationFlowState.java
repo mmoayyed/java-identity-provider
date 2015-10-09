@@ -24,12 +24,12 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -65,11 +65,14 @@ public class PreserveAuthenticationFlowState extends AbstractAuthenticationActio
      * 
      * @param names parameter names
      */
-    public void setParameterNames(@Nonnull @NonnullElements final Collection<String> names) {
+    public void setParameterNames(@Nullable @NonnullElements final Collection<String> names) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(names, "Parameter name collection cannot be null");
         
-        parameterNames = new ArrayList<>(StringSupport.normalizeStringCollection(names));
+        if (names == null) {
+            parameterNames = Collections.emptyList();
+        } else {
+            parameterNames = new ArrayList<>(StringSupport.normalizeStringCollection(names));
+        }
     }
     
 
