@@ -9,7 +9,7 @@
 
     <!-- Action beans -->
     <bean id="BuildProxyChain"
-          class="net.shibboleth.idp.cas.flow.BuildProxyChainAction"
+          class="net.shibboleth.idp.cas.flow.impl.BuildProxyChainAction"
           c:ticketService-ref="cas.TicketService" />
 
 </beans>

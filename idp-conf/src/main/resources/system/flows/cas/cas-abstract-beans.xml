@@ -22,18 +22,18 @@
     <!-- These are beans that are common to all CAS protocol flows. -->
 
     <bean id="BuildRelyingPartyContext"
-          class="net.shibboleth.idp.cas.flow.BuildRelyingPartyContextAction"
+          class="net.shibboleth.idp.cas.flow.impl.BuildRelyingPartyContextAction"
           c:registry-ref="shibboleth.CASServiceRegistry"/>
 
     <bean id="BuildSAMLMetadataContext"
-          class="net.shibboleth.idp.cas.flow.BuildSAMLMetadataContextAction" />
+          class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction" />
 
     <bean id="PublishProtocolRequest"
-          class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
+          class="net.shibboleth.idp.cas.flow.impl.PublishProtocolMessageAction"
           c:isRequest="true" />
 
     <bean id="PublishProtocolResponse"
-          class="net.shibboleth.idp.cas.flow.PublishProtocolMessageAction"
+          class="net.shibboleth.idp.cas.flow.impl.PublishProtocolMessageAction"
           c:isRequest="false" />
 
     <bean id="SelectProfileConfiguration"
@@ -46,7 +46,7 @@
           p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
     <bean id="ValidateIdPSession"
-          class="net.shibboleth.idp.cas.flow.ValidateIdpSessionAction"
+          class="net.shibboleth.idp.cas.flow.impl.ValidateIdpSessionAction"
           c:resolver-ref="shibboleth.SessionManager" />
 
     <bean id="SessionPrincipalLookupFunction"
@@ -104,5 +104,5 @@
           p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="PopulateProtocolError"
-          class="net.shibboleth.idp.cas.flow.PopulateProtocolErrorAction" />
+          class="net.shibboleth.idp.cas.flow.impl.PopulateProtocolErrorAction" />
 </beans>

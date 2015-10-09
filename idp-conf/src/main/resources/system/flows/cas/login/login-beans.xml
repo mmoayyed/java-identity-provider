@@ -11,7 +11,7 @@
     <!-- Action beans -->
     <bean id="InitializeProfileRequestContext"
           class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
-          p:profileId="#{T(net.shibboleth.idp.cas.config.LoginConfiguration).PROFILE_ID}"
+          p:profileId="#{T(net.shibboleth.idp.cas.config.impl.LoginConfiguration).PROFILE_ID}"
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="true" />
 
@@ -28,16 +28,16 @@
             ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
 
     <bean id="InitializeLogin"
-          class="net.shibboleth.idp.cas.flow.InitializeLoginAction" />
+          class="net.shibboleth.idp.cas.flow.impl.InitializeLoginAction" />
 
     <bean id="CheckAuthenticationRequired"
-          class="net.shibboleth.idp.cas.flow.CheckAuthenticationRequiredAction" />
+          class="net.shibboleth.idp.cas.flow.impl.CheckAuthenticationRequiredAction" />
 
     <bean id="BuildAuthenticationContext"
-          class="net.shibboleth.idp.cas.flow.BuildAuthenticationContextAction" />
+          class="net.shibboleth.idp.cas.flow.impl.BuildAuthenticationContextAction" />
 
     <bean id="GrantServiceTicket"
-          class="net.shibboleth.idp.cas.flow.GrantServiceTicketAction"
+          class="net.shibboleth.idp.cas.flow.impl.GrantServiceTicketAction"
           c:ticketService-ref="cas.TicketService" />
 
     <bean id="PopulateSessionContext"
@@ -48,15 +48,15 @@
           p:sessionResolver-ref="shibboleth.SessionManager" />
 
     <bean id="LoginConfigLookup"
-          class="net.shibboleth.idp.cas.config.ConfigLookupFunction"
-          c:clazz="net.shibboleth.idp.cas.config.LoginConfiguration" />
+          class="net.shibboleth.idp.cas.config.impl.ConfigLookupFunction"
+          c:clazz="net.shibboleth.idp.cas.config.impl.LoginConfiguration" />
 
     <bean id="SubjectContextLookup"
           class="org.opensaml.messaging.context.navigate.ChildContextLookup"
           c:type="net.shibboleth.idp.authn.context.SubjectContext" />
 
     <bean id="ExtractAttributes"
-          class="net.shibboleth.idp.cas.flow.ExtractAttributesAction" />
+          class="net.shibboleth.idp.cas.flow.impl.ExtractAttributesAction" />
 
     <bean id="PopulatePostAuthnInterceptContext"
           class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
@@ -75,6 +75,6 @@
           p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
-        <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
+        <constructor-arg value="#{ '%{idp.authn.flow.impls.initial:}'.trim().length() gt 0 }" type="boolean" />
     </bean>
 </beans>

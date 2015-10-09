@@ -435,19 +435,19 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_URL"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.ServiceLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.ServiceLookupFunction" />
                 </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.GATEWAY"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.GatewayLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.GatewayLookupFunction" />
                 </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.RENEW"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.RenewLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.RenewLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -466,7 +466,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_TICKET"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.TicketLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.TicketLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -488,7 +488,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_URL"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.ServiceLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.ServiceLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -507,7 +507,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_TICKET"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.TicketLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.TicketLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -521,13 +521,13 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.STATUS_CODE"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.StatusCodeLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.StatusCodeLookupFunction" />
                 </entry>
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.STATUS_DETAIL"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.StatusDetailLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.StatusDetailLookupFunction" />
                 </entry>
                 <entry>
                     <key>
@@ -548,7 +548,7 @@
                     <key>
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.GRANTING_TICKET"/>
                     </key>
-                    <bean class="net.shibboleth.idp.cas.audit.ProxyGrantingTicketLookupFunction" />
+                    <bean class="net.shibboleth.idp.cas.audit.impl.ProxyGrantingTicketLookupFunction" />
                 </entry>
             </map>
         </property>

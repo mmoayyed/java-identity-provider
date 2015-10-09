@@ -24,7 +24,7 @@ import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketIdentifierGenerationStrategy;
+import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;

@@ -22,7 +22,7 @@ import javax.servlet.http.Cookie;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
-import net.shibboleth.idp.cas.config.LoginConfiguration;
+import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.consent.context.impl.ConsentContext;

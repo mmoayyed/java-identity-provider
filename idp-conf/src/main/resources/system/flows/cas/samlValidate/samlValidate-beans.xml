@@ -19,15 +19,15 @@
           p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="ProcessSamlMessage"
-          class="net.shibboleth.idp.cas.flow.ProcessSamlMessageAction" />
+          class="net.shibboleth.idp.cas.flow.impl.ProcessSamlMessageAction" />
 
     <bean id="BuildSamlValidationSuccessMessage"
-          class="net.shibboleth.idp.cas.flow.BuildSamlValidationSuccessMessageAction"
+          class="net.shibboleth.idp.cas.flow.impl.BuildSamlValidationSuccessMessageAction"
           c:strategy-ref="shibboleth.DefaultIdentifierGenerationStrategy"
           c:id="%{idp.entityID}" />
 
     <bean id="BuildSamlValidationFailureMessage"
-          class="net.shibboleth.idp.cas.flow.BuildSamlValidationFailureMessageAction" />
+          class="net.shibboleth.idp.cas.flow.impl.BuildSamlValidationFailureMessageAction" />
 
     <bean id="MessageEncoderFactory"
           class="net.shibboleth.idp.saml.profile.impl.SpringAwareMessageEncoderFactory"
