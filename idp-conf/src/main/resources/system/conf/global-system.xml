@@ -38,9 +38,6 @@
             p:basenames-ref="#{'%{idp.message.resources:shibboleth.MessageSourceResources}'.trim()}"
             p:defaultEncoding="UTF-8" />
 
-    <!-- Dummy bean to make injection of this bean ID into views work for default configs. -->
-    <util:constant id="shibboleth.CustomViewContext" static-field="java.lang.Boolean.FALSE" />
-
     <import resource="../../conf/global.xml" />
     <import resource="../../conf/errors.xml" />
     <import resource="general-authn-system.xml" />
