@@ -22,7 +22,7 @@
 #set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
 #set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())
 #set ($passwordEnabled = false)
-#if ($passwordPrincipals.isEmpty() or $authenticationContext.isAcceptable($passwordPrincipals))
+#if (!$passwordPrincipals or $passwordPrincipals.isEmpty() or $authenticationContext.isAcceptable($passwordPrincipals))
   #set ($passwordEnabled = true)
 #end
 ##
