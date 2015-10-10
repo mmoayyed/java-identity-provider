@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.saml.nameid;
+package net.shibboleth.idp.saml.nameid.impl;
 
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.joda.time.DateTime;

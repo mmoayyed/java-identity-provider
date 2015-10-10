@@ -52,11 +52,16 @@ import org.slf4j.LoggerFactory;
 /**
  * JDBC-based storage management for SAML persistent IDs.
  * 
+ * <p>This is a deprecated version that relies on the older, racy interface for
+ * storage. It has been superseded by the {@link JDBCPersistentIdStoreEx} class.</p>
+ * 
  * The DDL for the database is
  * 
  * <tt>CREATE TABLE shibpid {localEntity VARCHAR NOT NULL, peerEntity VARCHAR NOT NULL, principalName \\
  *     VARCHAR NOT NULL, localId VARCHAR NOT NULL, persistentId VARCHAR NOT NULL, peerProvidedId \\
  *     VARCHAR, creationDate TIMESTAMP NOT NULL, deactivationDate TIMESTAMP}</tt> .
+ *     
+ * @deprecated
  */
 public class JDBCPersistentIdStore extends AbstractInitializableComponent implements PersistentIdStore {
 
@@ -116,6 +121,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     }
     
     /**
+     * Get the table name.
+     * 
+     * @return table name
+     */
+    @Nonnull @NotEmpty public String getTableName() {
+        return tableName;
+    }
+
+    /**
      * Set the table name.
      * 
      * @param name table name
@@ -124,6 +138,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         tableName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Table name cannot be null or empty");
+    }
+    
+    /**
+     * Get the name of the issuer entityID column.
+     * 
+     * @return name of issuer column
+     */
+    @Nonnull @NotEmpty public String getLocalEntityColumn() {
+        return issuerColumn;
     }
 
     /**
@@ -136,6 +159,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         
         issuerColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
     }
+    
+    /**
+     * Get the name of the recipient entityID column.
+     * 
+     * @return name of recipient column
+     */
+    @Nonnull @NotEmpty public String getPeerEntityColumn() {
+        return recipientColumn;
+    }
 
     /**
      * Set the name of the recipient entityID column.
@@ -146,6 +178,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         recipientColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
+    }
+
+    /**
+     * Get the name of the principal name column.
+     * 
+     * @return name of principal name column
+     */
+    @Nonnull @NotEmpty public String getPrincipalNameColumn() {
+        return principalNameColumn;
     }
 
     /**
@@ -161,6 +202,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     }
 
     /**
+     * Get the name of the source ID column.
+     * 
+     * @return name of source ID column
+     */
+    @Nonnull @NotEmpty public String getSourceIdColumn() {
+        return sourceIdColumn;
+    }
+
+    /**
      * Set the name of the source ID column.
      * 
      * @param name name of source ID column
@@ -169,6 +219,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         sourceIdColumn = Constraint.isNotNull(StringSupport.trimOrNull(name), "Column name cannot be null or empty");
+    }
+
+    /**
+     * Get the name of the persistent ID column.
+     * 
+     * @return name of persistent ID column
+     */
+    @Nonnull @NotEmpty public String getPersistentIdColumn() {
+        return persistentIdColumn;
     }
 
     /**
@@ -184,6 +243,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     }
 
     /**
+     * Get the name of the peer-provided ID column.
+     * 
+     * @return name of peer-provided ID column
+     */
+    @Nonnull @NotEmpty public String getPeerProvidedIdColumn() {
+        return peerProvidedIdColumn;
+    }
+
+    /**
      * Set the name of the peer-provided ID column.
      * 
      * @param name name of peer-provided ID column
@@ -196,6 +264,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     }
 
     /**
+     * Get the name of the creation time column.
+     * 
+     * @return name of creation time column
+     */
+    @Nonnull @NotEmpty public String getCreateTimeColumn() {
+        return creationTimeColumn;
+    }
+
+    /**
      * Set the name of the creation time column.
      * 
      * @param name name of creation time column
@@ -205,6 +282,15 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         
         creationTimeColumn = Constraint.isNotNull(StringSupport.trimOrNull(name),
                 "Column name cannot be null or empty");
+    }
+
+    /**
+     * Get the name of the deactivation time column.
+     * 
+     * @return name of deactivation time column
+     */
+    @Nonnull @NotEmpty public String getDeactivationTimeColumn() {
+        return deactivationTimeColumn;
     }
 
     /**
@@ -229,9 +315,9 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     }
 
     /**
-     * Get the source datasource used to communicate with the database.
+     * Set the source datasource used to communicate with the database.
      * 
-     * @param source the data source;
+     * @param source the data source
      */
     public void setDataSource(@Nonnull final DataSource source) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
