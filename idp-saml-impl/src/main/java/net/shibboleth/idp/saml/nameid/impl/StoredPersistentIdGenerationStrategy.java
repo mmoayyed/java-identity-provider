@@ -64,6 +64,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
      * Set a deprecated {@link PersistentIdStore} used to store the IDs.
      * 
      * @param store the ID store to use
+     * @deprecated
      */
     public void setIDStore(@Nonnull final PersistentIdStore store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

@@ -20,6 +20,8 @@ package net.shibboleth.idp.saml.nameid.impl;
 import java.io.IOException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.sql.DataSource;
 
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
@@ -41,40 +43,94 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
  * An abstract action which contains the logic to decode SAML persistent IDs that are managed with a store.
  * This reverses the work done by {@link StoredPersistentIdGenerationStrategy}.
  */
+@SuppressWarnings("deprecation")
 public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializableComponent implements NameIDDecoder {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredPersistentIdDecoder.class);
-    
-    /** Data store for IDs. */
-    @NonnullAfterInit private PersistentIdStore idStore;
+
+    /** Updated version of persistent identifier data store layer. */
+    @NonnullAfterInit private PersistentIdStoreEx idStore;
+
+    /** A DataSource to auto-provision a {@link JDBCPersistentIdStoreEx} instance. */
+    @Nullable private DataSource dataSource;
+
+    /** Deprecated version of persistent identifier data store. */
+    @Nullable private PersistentIdStore deprecatedStore;
     
     /**
      * Get the data store.
      * 
      * @return the data store
+     * @deprecated
      */
     @NonnullAfterInit public PersistentIdStore getPersistentIdStore() {
-        return idStore;
+        return deprecatedStore;
     }
 
     /**
-     * Set the data store.
+     * Set a deprecated data store to use.
      * 
      * @param store the data store
+     * @deprecated
      */
     public void setPersistentIdStore(@Nonnull final PersistentIdStore store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        idStore = Constraint.isNotNull(store, "PersistentIdStore cannot be null");
+        deprecatedStore = Constraint.isNotNull(store, "PersistentIdStore cannot be null");
     }
 
+    /**
+     * Set a {@link PersistentIdStoreEx} used to retrieve the IDs.
+     * 
+     * @param store the data store
+     */
+    public void setPersistentIdStoreEx(@Nonnull final PersistentIdStoreEx store) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        idStore = Constraint.isNotNull(store, "PersistentIdStore cannot be null");
+    }
+    
+    
+    
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
     
         if (null == idStore) {
-            throw new ComponentInitializationException("PersistentIdStore cannot be null");
+            if (deprecatedStore != null) {
+                if (deprecatedStore instanceof JDBCPersistentIdStore) {
+                    log.warn("Transferring settings from deprecated JDBCPersistentStore, please update configuration");
+                    final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
+                    newStore.setDataSource(((JDBCPersistentIdStore) deprecatedStore).getDataSource());
+                    newStore.setQueryTimeout(((JDBCPersistentIdStore) deprecatedStore).getQueryTimeout());
+                    newStore.setLocalEntityColumn(((JDBCPersistentIdStore) deprecatedStore).getLocalEntityColumn());
+                    newStore.setPeerEntityColumn(((JDBCPersistentIdStore) deprecatedStore).getPeerEntityColumn());
+                    newStore.setPersistentIdColumn(((JDBCPersistentIdStore) deprecatedStore).getPersistentIdColumn());
+                    newStore.setPrincipalNameColumn(((JDBCPersistentIdStore) deprecatedStore).getPrincipalNameColumn());
+                    newStore.setSourceIdColumn(((JDBCPersistentIdStore) deprecatedStore).getSourceIdColumn());
+                    newStore.setPeerProvidedIdColumn(
+                            ((JDBCPersistentIdStore) deprecatedStore).getPeerProvidedIdColumn());
+                    newStore.setCreateTimeColumn(((JDBCPersistentIdStore) deprecatedStore).getCreateTimeColumn());
+                    newStore.setDeactivationTimeColumn(
+                            ((JDBCPersistentIdStore) deprecatedStore).getDeactivationTimeColumn());
+                    newStore.initialize();
+                    idStore = newStore;
+                } else {
+                    throw new ComponentInitializationException(
+                            "Non-JDBC version of deprecated PersistentIdStore interface is not usable in this version");
+                }
+            } else if (dataSource != null) {
+                log.debug("Creating JDBCPersistentStoreEx instance around supplied DataSource");
+                final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
+                newStore.setDataSource(dataSource);
+                newStore.initialize();
+                idStore = newStore;
+            }
+            
+            if (null == idStore) {
+                throw new ComponentInitializationException("PersistentIdStore cannot be null");
+            }
         }
     }
 
@@ -104,29 +160,17 @@ public class StoredPersistentIdDecoder extends AbstractIdentifiableInitializable
             }
         }
         
-        final PersistentIdEntry entry;
         try {
-            entry = idStore.getActiveEntry(nameID.getValue());
-            if (entry == null) {
+            final PersistentIdEntry entry = idStore.getByIssuedValue(issuerID, recipientID, nameID.getValue());
+            if (entry == null || entry.getPrincipalName() == null) {
                 log.info("No entry found for persistent ID {}", nameID.getValue());
                 return null;
             }
+            return entry.getPrincipalName();
         } catch (final IOException e) {
             log.error("I/O error looking up persistent ID", e);
             return null;
-        }
-        
-        if (!recipientID.equals(entry.getRecipientEntityId())) {
-            log.warn("{} Persistent identifier issued to {} but requested by {}",
-                    entry.getRecipientEntityId(), recipientID);
-            throw new NameDecoderException("Misuse of identifier by an improper relying party");
-        } else if (!issuerID.equals(entry.getIssuerEntityId())) {
-            log.warn("{} Persistent identifier issued by {} but requested from {}",
-                    entry.getIssuerEntityId(), issuerID);
-            throw new NameDecoderException("Misuse of identifier issued by somebody else");
-        }
-        
-        return entry.getPrincipalName();
+        }        
     }
 
 }

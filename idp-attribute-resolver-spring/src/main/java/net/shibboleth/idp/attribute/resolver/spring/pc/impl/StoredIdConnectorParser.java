@@ -73,7 +73,7 @@ public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
          * @param connector the data connector of interest
          */
         public EmbeddedStoredPersistentIdDecoder(StoredIDDataConnector connector) {
-            setPersistentIdStore(connector.getStoredIDStore());
+            setPersistentIdStoreEx(connector.getStoredIDStore());
         }
     }
 

@@ -109,7 +109,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         decoder.decode(scc, subject.getNameID());
     }
     
-    @Test(expectedExceptions={NameDecoderException.class})
+    @Test
     public void testBadQualifier() throws Exception {
         generator.initialize();
         
@@ -132,7 +132,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         scc.setRequesterId("Bad");
         scc.setResponderId(TestSources.IDP_ENTITY_ID);
         
-        decoder.decode(scc, id);
+        Assert.assertNull(decoder.decode(scc, id));
     }
     
     @Test
