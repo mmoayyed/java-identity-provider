@@ -17,8 +17,6 @@
 
 package net.shibboleth.idp.saml.nameid.impl;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Collections;
 
 import javax.sql.DataSource;
@@ -41,8 +39,7 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -66,22 +63,20 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
     
     private PersistentSAML2NameIDGenerator generator;
     
-    @BeforeClass public void setupSource() throws SQLException, IOException {
-        testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "StoredIDDataConnectorStore");
-    }
-    
-    @AfterClass public void teardown() {
-        DatabaseTestingSupport.InitializeDataSource(DELETE_FILE, testSource);
-    }
-    
     @BeforeMethod
     public void setUp() throws ComponentInitializationException {
+        testSource = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "StoredIDDataConnectorStore");
         prc = new RequestContextBuilder()
                 .setInboundMessageIssuer(TestSources.SP_ENTITY_ID)
                 .setOutboundMessageIssuer(TestSources.IDP_ENTITY_ID).buildProfileRequestContext();
         generator = new PersistentSAML2NameIDGenerator();
         generator.setId("test");
         generator.setOmitQualifiers(false);
+    }
+    
+    @AfterMethod
+    public void tearDown() {
+        DatabaseTestingSupport.InitializeDataSource(DELETE_FILE, testSource);
     }
     
     @Test(expectedExceptions = ComponentInitializationException.class)
@@ -165,6 +160,18 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
     @Test
     public void testStoredId() throws Exception {
+        final StoredPersistentIdGenerationStrategy strategy = new StoredPersistentIdGenerationStrategy();
+        strategy.setDataSource(testSource);
+        strategy.initialize();
+
+        generator.setPersistentIdGenerator(strategy);
+        
+        testStoredIdLogic();
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void testStoredIdDeprecated() throws Exception {
         final JDBCPersistentIdStore store = new JDBCPersistentIdStore();
         store.setDataSource(testSource);
         store.initialize();
@@ -174,6 +181,67 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         strategy.initialize();
 
         generator.setPersistentIdGenerator(strategy);
+        
+        testStoredIdLogic();
+    }
+
+    @Test
+    public void testComputedAndStoredId() throws Exception {
+        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
+        strategy.setSalt(salt);
+        strategy.initialize();
+
+        final JDBCPersistentIdStoreEx store = new JDBCPersistentIdStoreEx();
+        store.setDataSource(testSource);
+        store.setComputedIdStrategy(strategy);
+        store.initialize();
+        
+        final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();
+        strategy2.setIDStore(store);
+        strategy2.setComputedIdStrategy(strategy);
+        strategy2.initialize();
+        
+        generator.setPersistentIdGenerator(strategy2);
+        
+        testComputedAndStoredIdLogic();
+
+        store.deactivate(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID, RESULT, null);
+        
+        final NameID id = generator.generate(prc, NameID.PERSISTENT);
+        Assert.assertNotEquals(id.getValue(), RESULT);
+        Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
+        Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void testComputedAndStoredIdDeprecated() throws Exception {
+        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
+        strategy.setSalt(salt);
+        strategy.initialize();
+
+        final JDBCPersistentIdStore store = new JDBCPersistentIdStore();
+        store.setDataSource(testSource);
+        store.initialize();
+        
+        final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();
+        strategy2.setIDStore(store);
+        strategy2.setComputedIdStrategy(strategy);
+        strategy2.initialize();
+        
+        generator.setPersistentIdGenerator(strategy2);
+        
+        testComputedAndStoredIdLogic();
+
+        store.deactivate(RESULT, null);
+        
+        final NameID id = generator.generate(prc, NameID.PERSISTENT);
+        Assert.assertNotEquals(id.getValue(), RESULT);
+        Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
+        Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
+    }
+
+    private void testStoredIdLogic() throws Exception {
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -220,23 +288,8 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), "https://affiliation.org");
     }
-
-    @Test
-    public void testComputedAndStoredId() throws Exception {
-        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
-        strategy.setSalt(salt);
-        strategy.initialize();
-
-        final JDBCPersistentIdStore store = new JDBCPersistentIdStore();
-        store.setDataSource(testSource);
-        store.initialize();
-        
-        final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();
-        strategy2.setIDStore(store);
-        strategy2.setComputedIdStrategy(strategy);
-        strategy2.initialize();
-        
-        generator.setPersistentIdGenerator(strategy2);
+    
+    private void testComputedAndStoredIdLogic() throws Exception {
         generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
         generator.initialize();
         
@@ -257,13 +310,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotNull(id);
         Assert.assertEquals(id.getValue(), RESULT);
-        Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
-        Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
-        
-        store.deactivate(RESULT, null);
-        
-        id = generator.generate(prc, NameID.PERSISTENT);
-        Assert.assertNotEquals(id.getValue(), RESULT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
     }
