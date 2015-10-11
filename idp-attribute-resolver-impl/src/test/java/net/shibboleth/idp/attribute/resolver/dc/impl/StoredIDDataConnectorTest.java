@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.dc.impl;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -101,7 +102,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setSalt(ComputedIDDataConnectorTest.salt);
 
         Assert.assertEquals(connector.getDataSource(), testSource);
-        Assert.assertEquals(connector.getQueryTimeout(), 0);
+        Assert.assertEquals(connector.getQueryTimeout(), 5000);
         connector.setQueryTimeout(1);
 
         try {
@@ -211,11 +212,12 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver = constructResolver(1);
 
         
-        StoredIDDataConnector connector =
+        final StoredIDDataConnector connector =
                 (StoredIDDataConnector) ComputedIDDataConnectorTest.connectorFromResolver(resolver);
         ComponentSupport.initialize(resolver);
         connector.initialize();
-        connector.getStoredIDStore().deactivate(ComputedIDDataConnectorTest.RESULT, null);
+        connector.getStoredIDStore().deactivate(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID,
+                ComputedIDDataConnectorTest.RESULT, null);
 
         context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
@@ -242,7 +244,8 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         ComponentSupport.initialize(resolver);
         ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
 
-        connector.getStoredIDStore().deactivate(ComputedIDDataConnectorTest.RESULT, null);
+        connector.getStoredIDStore().deactivate(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID,
+                ComputedIDDataConnectorTest.RESULT, null);
 
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(" ", TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
@@ -260,7 +263,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @throws SQLException if badness happens
      * @throws ResolutionException if badness happens
      */
-    @Test() void previousEntry() throws ComponentInitializationException, IOException, ResolutionException {
+    void previousEntry() throws ComponentInitializationException, IOException, ResolutionException, SQLException {
         AttributeResolver resolver = constructResolver(1);
         StoredIDDataConnector connector =
                 (StoredIDDataConnector) ComputedIDDataConnectorTest.connectorFromResolver(resolver);
@@ -278,8 +281,10 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         idEntry.setRecipientEntityId(TestSources.SP_ENTITY_ID + "2");
         idEntry.setPrincipalName("princ");
         idEntry.setPersistentId(ComputedIDDataConnectorTest.RESULT);
+        idEntry.setCreationTime(new Timestamp(System.currentTimeMillis()));
 
-        connector.getStoredIDStore().store(idEntry);
+        // TODO: need to decide if this should be public
+        // connector.getStoredIDStore().store(idEntry, source.getConnection());
 
         AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,

@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStore;
+import net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStoreEx;
 import net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
@@ -51,14 +51,14 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnector.class);
 
     /** The {@link JDBCPersistentIdStore} used to manage IDs. */
-    @Nonnull private final JDBCPersistentIdStore idStore;
+    @Nonnull private final JDBCPersistentIdStoreEx idStore;
 
     /** Persistent ID data store. */
     @Nonnull private final StoredPersistentIdGenerationStrategy storedIdStrategy;
     
     /** Constructor. */
     public StoredIDDataConnector() {
-        idStore = new JDBCPersistentIdStore();
+        idStore = new JDBCPersistentIdStoreEx();
         storedIdStrategy = new StoredPersistentIdGenerationStrategy();
         storedIdStrategy.setIDStore(idStore);
     }
@@ -88,7 +88,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
      * 
      * @return data store used to manage stored IDs
      */
-    @Nonnull public JDBCPersistentIdStore getStoredIDStore() {
+    @Nonnull public JDBCPersistentIdStoreEx getStoredIDStore() {
         return idStore;
     }
 
@@ -116,6 +116,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
+        idStore.setComputedIdStrategy(getComputedIdStrategy());
         idStore.initialize();
 
         storedIdStrategy.setComputedIdStrategy(getComputedIdStrategy());

@@ -175,6 +175,15 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     }
 
     /**
+     * Get the SQL query timeout.
+     * 
+     * @return the timeout in milliseconds
+     */
+    @NonNegative public long getQueryTimeout() {
+        return queryTimeout;
+    }
+    
+    /**
      * Set the SQL query timeout. Defaults to 5000.
      * 
      * @param timeout the timeout to set in milliseconds
