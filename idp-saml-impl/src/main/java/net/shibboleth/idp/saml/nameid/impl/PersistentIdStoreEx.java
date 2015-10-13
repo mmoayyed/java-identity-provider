@@ -46,7 +46,8 @@ public interface PersistentIdStoreEx {
     @Nullable PersistentIdEntry getByIssuedValue(@Nonnull @NotEmpty final String nameQualifier,
             @Nonnull @NotEmpty final String spNameQualifier, @Nonnull @NotEmpty final String persistentId)
                     throws IOException;
-    
+
+// Checkstyle: ParameterNumber OFF
     /**
      * Get the {@link PersistentIdEntry} for a given subject and audience, creating one if allowable
      * and necessary.
@@ -56,14 +57,17 @@ public interface PersistentIdStoreEx {
      * @param sourceId source attribute underlying the persistent ID
      * @param principal principal name of subject (may or may not be the same as the sourceId)
      * @param allowCreate whether it's permissible to establish/issue a new identifier
+     * @param computedIdStrategy optional source of initial computed IDs for compatibilty with that mechanism
      * 
      * @return {@link PersistentIdEntry} for the given inputs, or null if none exists and allowCreate is false
      * @throws IOException if an error occurs accessing the store
      */
     @Nullable PersistentIdEntry getBySourceValue(@Nonnull @NotEmpty final String nameQualifier,
             @Nonnull @NotEmpty final String spNameQualifier, @Nonnull @NotEmpty final String sourceId,
-            @Nonnull @NotEmpty final String principal, final boolean allowCreate) throws IOException;
-
+            @Nonnull @NotEmpty final String principal, final boolean allowCreate,
+            @Nullable final ComputedPersistentIdGenerationStrategy computedIdStrategy) throws IOException;
+// Checkstyle: ParameterNumber ON
+    
     /**
      * Deactivate/revoke a persistent ID.
      * 

@@ -68,9 +68,6 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(JDBCPersistentIdStoreEx.class);
-
-    /** Optional generator of initial ID values. */
-    @Nullable private ComputedPersistentIdGenerationStrategy computedIdStrategy;
     
     /** JDBC data source for retrieving connections. */
     @NonnullAfterInit private DataSource dataSource;
@@ -141,17 +138,6 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         peerProvidedIdColumn = "peerProvidedId";
         creationTimeColumn = "creationDate";
         deactivationTimeColumn = "deactivationDate";
-    }
-    
-    /**
-     * Set a strategy to use to compute IDs for the first time.
-     * 
-     * @param strategy  computed ID strategy
-     */
-    public void setComputedIdStrategy(@Nullable final ComputedPersistentIdGenerationStrategy strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        computedIdStrategy = strategy;
     }
     
     /**
@@ -469,12 +455,13 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         }
     }
 
-// Checkstyle: MethodLength|CyclomaticComplexity OFF
+// Checkstyle: MethodLength|CyclomaticComplexity|ParameterNumber OFF
     /** {@inheritDoc} */
     @Override
     @Nullable public PersistentIdEntry getBySourceValue(@Nonnull @NotEmpty final String nameQualifier,
             @Nonnull @NotEmpty final String spNameQualifier, @Nonnull @NotEmpty final String sourceId,
-            @Nonnull @NotEmpty final String principal, final boolean allowCreate) throws IOException {
+            @Nonnull @NotEmpty final String principal, final boolean allowCreate,
+            @Nullable final ComputedPersistentIdGenerationStrategy computedIdStrategy) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         log.debug("{} Obtaining persistent ID for source ID: {}", getLogPrefix(), sourceId);
@@ -557,7 +544,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
             }
         }
     }
-// Checkstyle: MethodLength|CyclomaticComplexity ON
+// Checkstyle: MethodLength|CyclomaticComplexity|ParameterNumber ON
     
     /**
      * Store a record containing the values from the input object.

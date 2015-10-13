@@ -60,7 +60,6 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     public StoredIDDataConnector() {
         idStore = new JDBCPersistentIdStoreEx();
         storedIdStrategy = new StoredPersistentIdGenerationStrategy();
-        storedIdStrategy.setIDStore(idStore);
     }
     
     /**
@@ -116,9 +115,9 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        idStore.setComputedIdStrategy(getComputedIdStrategy());
         idStore.initialize();
 
+        storedIdStrategy.setIDStore(idStore);
         storedIdStrategy.setComputedIdStrategy(getComputedIdStrategy());
         storedIdStrategy.initialize();
     }

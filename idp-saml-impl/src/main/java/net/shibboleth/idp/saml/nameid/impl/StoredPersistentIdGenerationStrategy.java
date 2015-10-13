@@ -116,7 +116,6 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
                     log.warn("Transferring settings from deprecated JDBCPersistentStore, please update configuration");
                     final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
                     newStore.setDataSource(((JDBCPersistentIdStore) deprecatedStore).getDataSource());
-                    newStore.setComputedIdStrategy(computedIdStrategy);
                     newStore.setQueryTimeout(((JDBCPersistentIdStore) deprecatedStore).getQueryTimeout());
                     newStore.setLocalEntityColumn(((JDBCPersistentIdStore) deprecatedStore).getLocalEntityColumn());
                     newStore.setPeerEntityColumn(((JDBCPersistentIdStore) deprecatedStore).getPeerEntityColumn());
@@ -138,7 +137,6 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
                 log.debug("Creating JDBCPersistentStoreEx instance around supplied DataSource");
                 final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
                 newStore.setDataSource(dataSource);
-                newStore.setComputedIdStrategy(computedIdStrategy);
                 newStore.initialize();
                 pidStore = newStore;
             }
@@ -157,8 +155,8 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         try {
-            final PersistentIdEntry idEntry =
-                    pidStore.getBySourceValue(assertingPartyId, relyingPartyId, sourceId, principalName, true);
+            final PersistentIdEntry idEntry = pidStore.getBySourceValue(assertingPartyId, relyingPartyId, sourceId,
+                    principalName, true, computedIdStrategy);
             if (idEntry == null) {
                 log.debug("No persistent ID returned from storage for '{}'", principalName);
                 throw new SAMLException("No persistent ID returned from storage");

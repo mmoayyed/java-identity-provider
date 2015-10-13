@@ -193,7 +193,6 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
         final JDBCPersistentIdStoreEx store = new JDBCPersistentIdStoreEx();
         store.setDataSource(testSource);
-        store.setComputedIdStrategy(strategy);
         store.initialize();
         
         final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();

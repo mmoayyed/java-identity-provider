@@ -41,9 +41,8 @@ import org.testng.annotations.Test;
 
 import com.google.common.io.CharStreams;
 
-/**
- * Tests for {@link JDBCPersistentIdStore}
- */
+/** Tests for {@link JDBCPersistentIdStore}. */
+@SuppressWarnings("deprecation")
 public class DatabaseBackedIDStoreTest {
     
     private final Logger log = LoggerFactory.getLogger(DatabaseBackedIDStoreTest.class);
