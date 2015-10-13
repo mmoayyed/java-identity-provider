@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.consent.logic.impl;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -51,6 +53,9 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
 
     /** Strategy used to find the {@link AttributeContext} from the {@link ProfileRequestContext}. */
     @Nonnull private Function<ProfileRequestContext, AttributeContext> attributeContextLookupStrategy;
+    
+    /** Whether to use filtered or unfiltered attributes. */
+    private boolean useUnfilteredAttributes;
 
     /**
      * Constructor.
@@ -65,6 +70,8 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
         attributeContextLookupStrategy =
                 Functions.compose(new ChildContextLookup<>(AttributeContext.class),
                         new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
+        
+        useUnfilteredAttributes = true;
     }
 
     /**
@@ -77,6 +84,17 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "Attribute context lookup strategy cannot be null");
     }
+    
+    /**
+     * Set whether to use filtered or unfiltered attributes.
+     * 
+     * <p>Defaults to true.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setUseUnfilteredAttributes(final boolean flag) {
+        useUnfilteredAttributes = flag;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -88,7 +106,11 @@ public class AttributeValueLookupFunction implements ContextDataLookupFunction<P
             return null;
         }
 
-        final IdPAttribute attribute = attributeContext.getIdPAttributes().get(attributeId);
+        final Map<String,IdPAttribute> attributes = useUnfilteredAttributes
+                ? attributeContext.getUnfilteredIdPAttributes()
+                : attributeContext.getIdPAttributes();
+
+        final IdPAttribute attribute = attributes.get(attributeId);
         if (attribute == null || attribute.getValues().isEmpty()) {
             log.debug("Attribute '{}' does not exist or has no values", attributeId);
             return null;

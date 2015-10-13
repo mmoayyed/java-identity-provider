@@ -18,9 +18,11 @@
 package net.shibboleth.idp.consent.logic.impl;
 
 import java.util.Collections;
+import java.util.Map;
 
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
@@ -48,9 +50,17 @@ public class AttributeValueLookupFunctionTest {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
 
         final AttributeContext attributeCtx = new AttributeContext();
-        attributeCtx.setIdPAttributes(ConsentTestingSupport.newAttributeMap().values());
+        
+        final Map<String, IdPAttribute> attributes = ConsentTestingSupport.newAttributeMap();
+        attributeCtx.setIdPAttributes(attributes.values());
+        
+        final Map<String, IdPAttribute> unfilteredAttributes = ConsentTestingSupport.newAttributeMap();
+        final IdPAttribute attribute4 = new IdPAttribute("attribute4");
+        attribute4.setValues(Collections.singleton(new StringAttributeValue("value4")));
+        unfilteredAttributes.put(attribute4.getId(), attribute4);
+        attributeCtx.setUnfilteredIdPAttributes(unfilteredAttributes.values());
+        
         prc.getSubcontext(RelyingPartyContext.class, true).addSubcontext(attributeCtx);
-
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testEmptyConstructor() {
@@ -99,5 +109,16 @@ public class AttributeValueLookupFunctionTest {
 
         function = new AttributeValueLookupFunction("ByteAttribute");
         Assert.assertNull(function.apply(prc));
+    }
+
+    @Test public void testUseFilteredAttributes() {
+        function = new AttributeValueLookupFunction("attribute4");
+        function.setUseUnfilteredAttributes(false);
+        Assert.assertNull(function.apply(prc));
+    }
+
+    @Test public void testUseUnfilteredAttributes() {
+        function = new AttributeValueLookupFunction("attribute4");
+        Assert.assertEquals(function.apply(prc), "value4");
     }
 }
