@@ -73,7 +73,7 @@ public class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setIdPAttributes(@Nullable @NullableElements Collection<IdPAttribute> newAttributes) {
+    public void setIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> newAttributes) {
         if (newAttributes == null) {
             attributes = Collections.emptyMap();
             return;
@@ -108,7 +108,7 @@ public class AttributeContext extends BaseContext {
      * 
      * @param newAttributes the attributes
      */
-    public void setUnfilteredIdPAttributes(@Nullable @NullableElements Collection<IdPAttribute> newAttributes) {
+    public void setUnfilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> newAttributes) {
         if (null != unfilteredAttributes) {
             log.error("Unfiltered attributes have already been set in this flow.");
         }
