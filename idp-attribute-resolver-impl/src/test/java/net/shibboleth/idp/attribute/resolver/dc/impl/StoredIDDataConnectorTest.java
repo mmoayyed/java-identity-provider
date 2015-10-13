@@ -20,7 +20,6 @@ package net.shibboleth.idp.attribute.resolver.dc.impl;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -32,7 +31,6 @@ import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -256,48 +254,4 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNull(context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME));
     }
 
-    /**
-     * Test a marginal case where the persistentID already exists. We need to generate another one.
-     * 
-     * @throws ComponentInitializationException if badness happens
-     * @throws SQLException if badness happens
-     * @throws ResolutionException if badness happens
-     */
-    void previousEntry() throws ComponentInitializationException, IOException, ResolutionException, SQLException {
-        AttributeResolver resolver = constructResolver(1);
-        StoredIDDataConnector connector =
-                (StoredIDDataConnector) ComputedIDDataConnectorTest.connectorFromResolver(resolver);
-        DataSource source = DatabaseTestingSupport.GetMockDataSource(INIT_FILE, "StoredIDDataConnectorStorePrevious");
-        connector.setDataSource(source);
-        //
-        // Precharge the store with a duplicate persisent ID
-        //
-
-        connector.initialize();
-        ComponentSupport.initialize(resolver);
-        PersistentIdEntry idEntry = new PersistentIdEntry();
-        idEntry.setIssuerEntityId(TestSources.IDP_ENTITY_ID);
-        idEntry.setSourceId("wibble");
-        idEntry.setRecipientEntityId(TestSources.SP_ENTITY_ID + "2");
-        idEntry.setPrincipalName("princ");
-        idEntry.setPersistentId(ComputedIDDataConnectorTest.RESULT);
-        idEntry.setCreationTime(new Timestamp(System.currentTimeMillis()));
-
-        // TODO: need to decide if this should be public
-        // connector.getStoredIDStore().store(idEntry, source.getConnection());
-
-        AttributeResolutionContext context =
-                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
-                        TestSources.SP_ENTITY_ID);
-        resolver.resolveAttributes(context);
-
-        // Now test that we got exactly what we expected
-        List<IdPAttributeValue<?>> resultValues =
-                context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
-        Assert.assertEquals(resultValues.size(), 1);
-        String val = ((StringAttributeValue) resultValues.iterator().next()).getValue();
-        Assert.assertNotEquals(val, ComputedIDDataConnectorTest.RESULT);
-        assertIsUUID(val);
-
-    }
 }
