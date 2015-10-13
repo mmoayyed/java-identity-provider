@@ -751,8 +751,10 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
             store(newEntry, conn);
             keyMissing = true;
         } catch (final SQLException e) {
-            log.info("{} Duplicate insert failed as required with SQL State '{}' (should be 23505)", getLogPrefix(),
-                    e.getSQLState());
+            if (!retryableErrors.contains(e.getSQLState())) {
+                log.warn("{} Duplicate insert failed as required with SQL State '{}', ensure this value is "
+                        + "configured as a retryable error", getLogPrefix(), e.getSQLState());
+            }
         } finally {
             
         }
