@@ -81,6 +81,9 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     /** Error messages that signal a transaction should be retried. */
     @Nonnull @NonnullElements private Collection<String> retryableErrors;
 
+    /** Whether to fail if the database cannot be verified.  */
+    private boolean verifyDatabase;
+    
     /** Name of the database table. */
     @Nonnull @NotEmpty private String tableName;
 
@@ -122,11 +125,14 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
 
     /** Parameterized update statement used to attach an alias to an ID. */
     @NonnullAfterInit private String attachSQL;
+    
+    /** Parameterized delete statement used to clear dummy rows after verification. */
+    @NonnullAfterInit private String deleteSQL;
 
     /** Constructor. */
     public JDBCPersistentIdStoreEx() {
         transactionRetry = 3;
-        retryableErrors = Collections.emptyList();
+        retryableErrors = Collections.singletonList("23505");
         queryTimeout = 5000;
         
         tableName = "shibpid";
@@ -202,6 +208,20 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         retryableErrors = new ArrayList(StringSupport.normalizeStringCollection(errors));
+    }
+    
+    /**
+     * Set whether to allow startup if the database cannot be verified.
+     * 
+     * <p>Verification consists not only of a liveness check, but the successful insertion of
+     * a dummy row, a failure to insert a duplicate, and then deletion of the row.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setVerifyDatabase(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        verifyDatabase = flag;
     }
 
     /**
@@ -368,6 +388,17 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         
         attachSQL = Constraint.isNotNull(StringSupport.trimOrNull(sql), "SQL statement cannot be null or empty");
     }
+
+    /**
+     * Set the DELETE statement used to clear dummy row(s) created during verification.
+     * 
+     * @param sql statement text, which must contain one parameter (NameQualifier)
+     */
+    public void setDeleteSQL(@Nonnull @NotEmpty final String sql) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        deleteSQL = Constraint.isNotNull(StringSupport.trimOrNull(sql), "SQL statement cannot be null or empty");
+    }
     
     /** {@inheritDoc} */
     @Override
@@ -414,6 +445,24 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         if (attachSQL == null) {
             attachSQL = "UPDATE " + tableName + " SET " + peerProvidedIdColumn + "= ? WHERE "
                     + issuerColumn + "= ? AND " + recipientColumn + "= ? AND " + persistentIdColumn + "= ?";
+        }
+        
+        if (deleteSQL == null) {
+            deleteSQL = "DELETE FROM " + tableName + " WHERE " + issuerColumn + "= ?";
+        }
+        
+        try {
+            verifyDatabase();
+            log.info("{} Data source successfully verified", getLogPrefix());
+        } catch (final SQLException e) {
+            if (verifyDatabase) {
+                log.error("{} Exception verifying database", getLogPrefix(), e);
+                throw new ComponentInitializationException(
+                        "The database was not reachable or was not defined with an appropriate table + primary key");
+            } else {
+                log.warn("{} The database was not reachable or was not defined with an appropriate table + primary key",
+                        getLogPrefix(), e);
+            }
         }
     }
 
@@ -546,45 +595,6 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     }
 // Checkstyle: MethodLength|CyclomaticComplexity|ParameterNumber ON
     
-    /**
-     * Store a record containing the values from the input object.
-     * 
-     * @param entry new object to store
-     * @param dbConn connection to obtain a statement from.
-     * 
-     * @throws SQLException if an error occurs
-     */
-    private void store(@Nonnull final PersistentIdEntry entry, @Nonnull final Connection dbConn) throws SQLException {
-        
-        log.debug("{} Storing new persistent ID entry", getLogPrefix());
-        
-        log.trace("{} Prepared statement: {}", getLogPrefix(), insertSQL);
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, entry.getIssuerEntityId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, entry.getRecipientEntityId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, entry.getPersistentId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 4, entry.getPrincipalName());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 5, entry.getSourceId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 6, entry.getPeerProvidedId());
-        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 7, entry.getCreationTime());
-        
-        final PreparedStatement statement = dbConn.prepareStatement(insertSQL);
-        statement.setQueryTimeout((int) (queryTimeout / 1000));
-
-        statement.setString(1, entry.getIssuerEntityId());
-        statement.setString(2, entry.getRecipientEntityId());
-        statement.setString(3, entry.getPersistentId());
-        statement.setString(4, entry.getPrincipalName());
-        statement.setString(5, entry.getSourceId());
-        if (entry.getPeerProvidedId() != null) {
-            statement.setString(6, entry.getPeerProvidedId());
-        } else {
-            statement.setNull(6, Types.VARCHAR);
-        }
-        statement.setTimestamp(7, entry.getCreationTime());
-
-        statement.executeUpdate();
-    }
-
     /** {@inheritDoc} */
     @Override
     public void deactivate(@Nonnull @NotEmpty final String nameQualifier,
@@ -655,6 +665,47 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         }
     }
     
+// Checkstyle: MethodLength|CyclomaticComplexity|ParameterNumber ON
+    
+    /**
+     * Store a record containing the values from the input object.
+     * 
+     * @param entry new object to store
+     * @param dbConn connection to obtain a statement from.
+     * 
+     * @throws SQLException if an error occurs
+     */
+    void store(@Nonnull final PersistentIdEntry entry, @Nonnull final Connection dbConn) throws SQLException {
+        
+        log.debug("{} Storing new persistent ID entry", getLogPrefix());
+        
+        log.trace("{} Prepared statement: {}", getLogPrefix(), insertSQL);
+        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, entry.getIssuerEntityId());
+        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 2, entry.getRecipientEntityId());
+        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 3, entry.getPersistentId());
+        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 4, entry.getPrincipalName());
+        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 5, entry.getSourceId());
+        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 6, entry.getPeerProvidedId());
+        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 7, entry.getCreationTime());
+        
+        final PreparedStatement statement = dbConn.prepareStatement(insertSQL);
+        statement.setQueryTimeout((int) (queryTimeout / 1000));
+    
+        statement.setString(1, entry.getIssuerEntityId());
+        statement.setString(2, entry.getRecipientEntityId());
+        statement.setString(3, entry.getPersistentId());
+        statement.setString(4, entry.getPrincipalName());
+        statement.setString(5, entry.getSourceId());
+        if (entry.getPeerProvidedId() != null) {
+            statement.setString(6, entry.getPeerProvidedId());
+        } else {
+            statement.setNull(6, Types.VARCHAR);
+        }
+        statement.setTimestamp(7, entry.getCreationTime());
+    
+        statement.executeUpdate();
+    }
+
     /**
      * Obtain a connection from the data source.
      * 
@@ -670,6 +721,54 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         conn.setAutoCommit(autoCommit);
         conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
         return conn;
+    }
+    
+    /**
+     * Check the database and the presence of a uniqueness constraint.
+     * 
+     * @throws SQLException if the database cannot be verified 
+     */
+    private void verifyDatabase() throws SQLException {
+        
+        final String uuid = UUID.randomUUID().toString();
+        
+        final PersistentIdEntry newEntry = new PersistentIdEntry();
+        newEntry.setIssuerEntityId("http://dummy.com/idp/" + uuid);
+        newEntry.setRecipientEntityId("http://dummy.com/sp/" + uuid);
+        newEntry.setSourceId("dummy");
+        newEntry.setPrincipalName("dummy");
+        newEntry.setCreationTime(new Timestamp(System.currentTimeMillis()));
+        newEntry.setPersistentId(uuid);
+        
+        try (final Connection conn = getConnection(true)) {
+            store(newEntry, conn);
+        } finally {
+            
+        }
+
+        boolean keyMissing = false;
+        try (final Connection conn = getConnection(true)) {
+            store(newEntry, conn);
+            keyMissing = true;
+        } catch (final SQLException e) {
+            log.info("{} Duplicate insert failed as required with SQL State '{}' (should be 23505)", getLogPrefix(),
+                    e.getSQLState());
+        } finally {
+            
+        }
+
+        try (final Connection conn = getConnection(true)) {
+            final PreparedStatement statement = conn.prepareStatement(deleteSQL);
+            statement.setQueryTimeout((int) (queryTimeout / 1000));
+            statement.setString(1, "http://dummy.com/idp/" + uuid);
+            statement.executeUpdate();
+        } finally {
+            
+        }
+        
+        if (keyMissing) {
+            throw new SQLException("Duplicate insertion succeeded, primary key missing from table");
+        }
     }
     
     /**
