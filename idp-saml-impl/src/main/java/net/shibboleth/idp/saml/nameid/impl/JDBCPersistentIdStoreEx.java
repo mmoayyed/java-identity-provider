@@ -64,9 +64,9 @@ import org.slf4j.LoggerFactory;
  *      persistentId VARCHAR(50) NOT NULL,
  *      principalName VARCHAR(50) NOT NULL,
  *      localId VARCHAR(50) NOT NULL,
- *      peerProvidedId VARCHAR(50),
+ *      peerProvidedId VARCHAR(50) NULL,
  *      creationDate TIMESTAMP NOT NULL,
- *      deactivationDate TIMESTAMP,
+ *      deactivationDate TIMESTAMP NULL,
  *      PRIMARY KEY (localEntity, peerEntity, persistentId)
  *     );</pre>.
  *    
@@ -365,8 +365,8 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     /**
      * Set the INSERT statement used to insert new records.
      * 
-     * @param sql statement text, which must contain seven parameters
-     *  (NameQualifier, SPNameQualifier, value, principal, source ID, SPProvidedID, creation TS)
+     * @param sql statement text, which must contain 8 parameters
+     *  (NameQualifier, SPNameQualifier, value, principal, source ID, SPProvidedID, creation time, deactivation time)
      */
     public void setInsertSQL(@Nonnull @NotEmpty final String sql) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -442,8 +442,9 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
                     + principalNameColumn + ", "
                     + sourceIdColumn + ", "
                     + peerProvidedIdColumn + ", "
-                    + creationTimeColumn
-                    + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    + creationTimeColumn + ", "
+                    + deactivationTimeColumn
+                    + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         }
                 
         if (deactivateSQL == null) {
@@ -696,6 +697,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 5, entry.getSourceId());
         log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 6, entry.getPeerProvidedId());
         log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 7, entry.getCreationTime());
+        log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 8, entry.getDeactivationTime());
         
         final PreparedStatement statement = dbConn.prepareStatement(insertSQL);
         statement.setQueryTimeout((int) (queryTimeout / 1000));
@@ -711,6 +713,11 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
             statement.setNull(6, Types.VARCHAR);
         }
         statement.setTimestamp(7, entry.getCreationTime());
+        if (entry.getDeactivationTime() != null) {
+            statement.setTimestamp(8, entry.getDeactivationTime());
+        } else {
+            statement.setNull(8, Types.TIMESTAMP);
+        }
     
         statement.executeUpdate();
     }

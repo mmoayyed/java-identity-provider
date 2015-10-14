@@ -193,7 +193,7 @@ public class PersistentIdEntry implements Serializable {
      * @param time the time the identifier was deactivated
      */
     public void setDeactivationTime(@Nullable final Timestamp time) {
-        this.deactivationTime = time;
+        deactivationTime = time;
     }
 
     /** {@inheritDoc} */

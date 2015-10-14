@@ -357,8 +357,6 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         idEntrySelectSQL = "SELECT * FROM " + tableName + " WHERE ";
         deactivateSQL = "UPDATE " + tableName + " SET " + deactivationTimeColumn + "= ? WHERE "
                 + persistentIdColumn + "= ?";
-        
-        log.error("{} This is a deprecated class and should have been swapped out at runtime", getLogPrefix());
     }
 
     /** {@inheritDoc} */
