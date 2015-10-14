@@ -142,8 +142,15 @@
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
             p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
         <property name="activationCondition">
-            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate"
-                p:honorMetadata="%{idp.signing.honorWantAssertionsSigned:true}" />
+            <bean parent="shibboleth.Conditions.OR">
+                <constructor-arg>
+                    <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate"
+                        p:honorMetadata="%{idp.signing.honorWantAssertionsSigned:true}" />
+                </constructor-arg>
+                <constructor-arg>
+                    <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.IssuingDelegatedAssertionPredicate" />
+                </constructor-arg>
+            </bean>
         </property>
         <property name="securityParametersContextLookupStrategy">
             <bean class="com.google.common.base.Functions" factory-method="compose"
