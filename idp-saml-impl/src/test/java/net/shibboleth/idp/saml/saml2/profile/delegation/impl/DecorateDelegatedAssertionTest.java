@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.profile.ActionTestingSupport;
@@ -33,11 +34,14 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationContext;
+import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationRequest;
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.DecorateDelegatedAssertion.LibertySSOSEndpointURLStrategy;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+import net.shibboleth.utilities.java.support.xml.XMLAssertTestNG;
 
 import org.openliberty.xmltooling.disco.MetadataAbstract;
 import org.openliberty.xmltooling.disco.ProviderID;
@@ -51,30 +55,20 @@ import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
-import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.Audience;
-import org.opensaml.saml.saml2.core.AudienceRestriction;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.KeyInfoConfirmationDataType;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
-import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.KeyDescriptor;
-import org.opensaml.saml.saml2.metadata.RequestedAttribute;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml.security.impl.MetadataCredentialResolver;
-import org.opensaml.security.credential.UsageType;
-import org.opensaml.security.credential.impl.CollectionCredentialResolver;
+import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.CredentialSupport;
 import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.soap.wsaddressing.EndpointReference;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
-import org.opensaml.xmlsec.keyinfo.KeyInfoSupport;
 import org.opensaml.xmlsec.signature.KeyInfo;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
@@ -85,6 +79,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Element;
+
+import com.google.common.base.Function;
 
 /**
  *
@@ -101,6 +97,8 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     
     private Assertion assertion;
     
+    private Element origAssertionDOM;
+    
     private BrowserSSOProfileConfiguration browserSSOProfileConfig;
     
     private List<ProfileConfiguration> profileConfigs;
@@ -109,7 +107,7 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     
     private int numKeys = 3;
     
-    private SAMLMetadataContext samlMetadataContext;
+    private List<Credential> credentials;
     
     private DecorateDelegatedAssertion action;
     
@@ -121,15 +119,21 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     
     private ProfileRequestContext prc;
     
+    private DelegationContext delegationContext;
+    
     public DecorateDelegatedAssertionTest() throws NoSuchAlgorithmException, NoSuchProviderException {
         publicKeys = new ArrayList<>();
         for (int i=0; i<numKeys; i++) {
             publicKeys.add(KeySupport.generateKeyPair("RSA", 2048, null).getPublic()); 
         }
+        credentials = new ArrayList<>();
+        for (PublicKey publicKey : publicKeys) {
+            credentials.add(CredentialSupport.getSimpleCredential(publicKey, null));
+        }
     }
     
     @BeforeMethod
-    protected void setUp() throws ComponentInitializationException {
+    protected void setUp() throws ComponentInitializationException, MarshallingException {
         servletContext = new MockServletContext();
         servletContext.setContextPath("/idp");
         servletRequest = new MockHttpServletRequest(servletContext);
@@ -172,18 +176,20 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         peerContext.setEntityId(ActionTestingSupport.INBOUND_MSG_ISSUER);
         peerContext.setRole(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
         rpcContext.setRelyingPartyIdContextTree(peerContext);
-        samlMetadataContext = peerContext.getSubcontext(SAMLMetadataContext.class, true);
-        samlMetadataContext.setRoleDescriptor(buildSPSSODescriptor());
-        
-        MetadataCredentialResolver mcr = new MetadataCredentialResolver();
-        mcr.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
-        mcr.initialize();
         
         action = new DecorateDelegatedAssertion();
         action.setHttpServletRequest(servletRequest);
         action.setLibertySSOSEndpointURL(ssosURL);
-        action.setCredentialResolver(mcr);
         action.setKeyInfoGeneratorManager(DefaultSecurityConfigurationBootstrap.buildBasicKeyInfoGeneratorManager());
+        
+        delegationContext = prc.getSubcontext(DelegationContext.class, true);
+        delegationContext.setIssuingDelegatedAssertion(true);
+        delegationContext.setDelegationRequested(DelegationRequest.REQUESTED_REQUIRED);
+        delegationContext.setSubjectConfirmationCredentials(credentials);
+        
+        origAssertionDOM = XMLObjectSupport.marshall(assertion);
+        assertion.releaseDOM();
+        assertion.releaseChildrenDOM(true);
     }
     
     @BeforeMethod(dependsOnMethods="setUp")
@@ -211,15 +217,6 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         action = new DecorateDelegatedAssertion();
         action.setLibertySSOSEndpointURL(null);
         action.setLibertySSOSEndpointURLLookupStrategy(null);
-        action.setCredentialResolver(new CollectionCredentialResolver());
-        action.setKeyInfoGeneratorManager(DefaultSecurityConfigurationBootstrap.buildBasicKeyInfoGeneratorManager());
-        action.initialize();
-    }
-    
-    @Test(expectedExceptions=ComponentInitializationException.class)
-    public void testNoCredentialResolver() throws Exception {
-        action = new DecorateDelegatedAssertion();
-        action.setLibertySSOSEndpointURL(ssosURL);
         action.setKeyInfoGeneratorManager(DefaultSecurityConfigurationBootstrap.buildBasicKeyInfoGeneratorManager());
         action.initialize();
     }
@@ -228,7 +225,6 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     public void testNoKeyInfoManager() throws Exception {
         action = new DecorateDelegatedAssertion();
         action.setLibertySSOSEndpointURL(ssosURL);
-        action.setCredentialResolver(new CollectionCredentialResolver());
         action.initialize();
     }
     
@@ -239,68 +235,46 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CTX);
-    }
-    
-    @Test
-    public void testDelegationNotRequested() throws Exception {
-        action.initialize();
-        final Event result = action.execute(rc);
-        ActionTestingSupport.assertProceedEvent(result);
+        
+        testUndecoratedAssertion();
     }
     
     @Test
     public void testNoAssertions() throws Exception {
-        samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
-                buildDelegationRequestAttributeConsumingService(false));
-        
         response.getAssertions().clear();
         
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
+        
+        testUndecoratedAssertion();
     }
     
     @Test
-    public void testRequestedViaMetadataNotRequiredNotAllowed() throws Exception {
-        samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
-                buildDelegationRequestAttributeConsumingService(false));
-        
-        action.initialize();
-        final Event result = action.execute(rc);
-        ActionTestingSupport.assertProceedEvent(result);
-    }
-    
-    @Test
-    public void testRequestedViaMetadataRequiredNotAllowed() throws Exception {
-        samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
-                buildDelegationRequestAttributeConsumingService(true));
-        
-        action.initialize();
-        final Event result = action.execute(rc);
-        ActionTestingSupport.assertEvent(result, EventIds.ACCESS_DENIED);
-    }
-    
-    @Test
-    public void testRequestedViaMetadataNotRequiredAllowed() throws Exception {
-        samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
-                buildDelegationRequestAttributeConsumingService(false));
-        
-        browserSSOProfileConfig.setAllowingDelegation(true);
+    public void testNoDelegationContext() throws Exception {
+        prc.removeSubcontext(DelegationContext.class);
         
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
         
-        testDecoratedAssertion();
+        testUndecoratedAssertion();
+    }
+    
+    
+    @Test
+    public void testDelegationNotActive() throws Exception {
+        delegationContext.setIssuingDelegatedAssertion(false);
+        
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
+        
+        testUndecoratedAssertion();
     }
     
     @Test
-    public void testRequestedViaMetadataRequiredAllowed() throws Exception {
-        samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
-                buildDelegationRequestAttributeConsumingService(true));
-        
-        browserSSOProfileConfig.setAllowingDelegation(true);
-        
+    public void testDelegationActive() throws Exception {
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
@@ -309,53 +283,42 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test
-    public void testRequestedViaConditionsNotAllowed() throws Exception {
-        authnRequest.setConditions(buildDelegationRequestConditions());
+    public void testDelegationActiveNoCredentials() throws Exception {
+        delegationContext.setSubjectConfirmationCredentials(null);
         
         action.initialize();
         final Event result = action.execute(rc);
-        ActionTestingSupport.assertEvent(result, EventIds.ACCESS_DENIED);
-    }
-    
-    @Test
-    public void testRequestedViaConditionsAllowed() throws Exception {
-        authnRequest.setConditions(buildDelegationRequestConditions());
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CTX);
         
-        browserSSOProfileConfig.setAllowingDelegation(true);
-        
-        action.initialize();
-        final Event result = action.execute(rc);
-        ActionTestingSupport.assertProceedEvent(result);
-        
-        testDecoratedAssertion();
-    }
-    
-    @Test
-    public void testNoKeyDescriptors() throws Exception {
-        samlMetadataContext.getRoleDescriptor().getKeyDescriptors().clear();
-        
-        authnRequest.setConditions(buildDelegationRequestConditions());
-        
-        browserSSOProfileConfig.setAllowingDelegation(true);
-        
-        action.initialize();
-        final Event result = action.execute(rc);
-        ActionTestingSupport.assertEvent(result, EventIds.MESSAGE_PROC_ERROR);
+        testUndecoratedAssertion();
     }
     
     @Test
     public void testEndpointViaDefaultStrategy() throws Exception {
         action.setLibertySSOSEndpointURL(null);
         
-        authnRequest.setConditions(buildDelegationRequestConditions());
-        
-        browserSSOProfileConfig.setAllowingDelegation(true);
-        
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
         
         testDecoratedAssertion();
+    }
+    
+    @Test
+    public void testEndpointStrategyProducesNull() throws Exception {
+        action.setLibertySSOSEndpointURL(null);
+        action.setLibertySSOSEndpointURLLookupStrategy(
+                new Function<Pair<ProfileRequestContext,HttpServletRequest>, String>() {
+                    public String apply(@Nullable Pair<ProfileRequestContext, HttpServletRequest> input) {
+                        return null;
+                    }
+                });
+        
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CTX);
+        
+        testUndecoratedAssertion();
     }
     
     @Test
@@ -374,46 +337,6 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     
     // Helper methods
     
-    private Conditions buildDelegationRequestConditions() {
-        Audience audience = (Audience) XMLObjectSupport.buildXMLObject(Audience.DEFAULT_ELEMENT_NAME);
-        audience.setAudienceURI(prc.getSubcontext(RelyingPartyContext.class).getConfiguration().getResponderId());
-        AudienceRestriction ar = (AudienceRestriction) XMLObjectSupport.buildXMLObject(AudienceRestriction.DEFAULT_ELEMENT_NAME);
-        ar.getAudiences().add(audience);
-        Conditions conditions = (Conditions) XMLObjectSupport.buildXMLObject(Conditions.DEFAULT_ELEMENT_NAME);
-        conditions.getAudienceRestrictions().add(ar);
-        return conditions;
-    }
-    
-    private AttributeConsumingService buildDelegationRequestAttributeConsumingService(boolean required) {
-        RequestedAttribute ra = (RequestedAttribute) XMLObjectSupport.buildXMLObject(RequestedAttribute.DEFAULT_ELEMENT_NAME);
-        ra.setName(LibertyConstants.SERVICE_TYPE_SSOS);
-        ra.setIsRequired(required);
-        AttributeConsumingService acs = (AttributeConsumingService) XMLObjectSupport.buildXMLObject(AttributeConsumingService.DEFAULT_ELEMENT_NAME);
-        acs.getRequestAttributes().add(ra);
-        return acs;
-    }
-    
-    private SPSSODescriptor buildSPSSODescriptor() {
-        SPSSODescriptor spSSODescriptor = (SPSSODescriptor) XMLObjectSupport.buildXMLObject(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-        
-        for (PublicKey publicKey : publicKeys) {
-            KeyInfo keyInfo = (KeyInfo) XMLObjectSupport.buildXMLObject(KeyInfo.DEFAULT_ELEMENT_NAME);
-            KeyInfoSupport.addPublicKey(keyInfo, publicKey);
-            
-            KeyDescriptor keyDescriptor = (KeyDescriptor) XMLObjectSupport.buildXMLObject(KeyDescriptor.DEFAULT_ELEMENT_NAME);
-            keyDescriptor.setUse(UsageType.SIGNING);
-            keyDescriptor.setKeyInfo(keyInfo);
-            
-            spSSODescriptor.getKeyDescriptors().add(keyDescriptor);
-        }
-        
-        EntityDescriptor ed = (EntityDescriptor) XMLObjectSupport.buildXMLObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
-        ed.setEntityID(ActionTestingSupport.INBOUND_MSG_ISSUER);
-        ed.getRoleDescriptors().add(spSSODescriptor);
-        
-        return spSSODescriptor;
-    }
-    
     private String prettyPrint(XMLObject xmlObject) {
         try {
             Element element = XMLObjectSupport.marshall(xmlObject);
@@ -423,7 +346,21 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         }
     }
     
-    private void testDecoratedAssertion() {
+    private void testUndecoratedAssertion() throws MarshallingException {
+        Element currentAssertionDOM = XMLObjectSupport.marshall(assertion);
+        assertion.releaseDOM();
+        assertion.releaseChildrenDOM(true);
+        Assert.assertNotSame(origAssertionDOM.getOwnerDocument(), currentAssertionDOM.getOwnerDocument());
+        XMLAssertTestNG.assertXMLEqual(origAssertionDOM.getOwnerDocument(), currentAssertionDOM.getOwnerDocument());
+    }
+    
+    private void testDecoratedAssertion() throws MarshallingException {
+        Element currentAssertionDOM = XMLObjectSupport.marshall(assertion);
+        assertion.releaseDOM();
+        assertion.releaseChildrenDOM(true);
+        Assert.assertNotSame(origAssertionDOM.getOwnerDocument(), currentAssertionDOM.getOwnerDocument());
+        XMLAssertTestNG.assertXMLNotEqual(origAssertionDOM.getOwnerDocument(), currentAssertionDOM.getOwnerDocument());
+        
         // SubjectConfirmation
         Assert.assertNotNull(assertion.getSubject().getSubjectConfirmations());
         Assert.assertEquals(assertion.getSubject().getSubjectConfirmations().size(), 1);

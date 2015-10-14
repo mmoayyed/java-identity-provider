@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,16 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLookupFunction;
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationContext;
 import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
 
 import org.openliberty.xmltooling.disco.MetadataAbstract;
 import org.openliberty.xmltooling.disco.ProviderID;
@@ -46,7 +42,6 @@ import org.openliberty.xmltooling.disco.SecurityMechID;
 import org.openliberty.xmltooling.disco.ServiceType;
 import org.openliberty.xmltooling.security.Token;
 import org.openliberty.xmltooling.soapbinding.Framework;
-import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.schema.XSAny;
@@ -55,32 +50,21 @@ import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.common.messaging.context.AttributeConsumingServiceContext;
-import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AudienceRestriction;
-import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.KeyInfoConfirmationDataType;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
-import org.opensaml.saml.saml2.metadata.AttributeConsumingService;
-import org.opensaml.saml.saml2.metadata.RequestedAttribute;
-import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.profile.SAML2ActionSupport;
 import org.opensaml.security.SecurityException;
 import org.opensaml.security.credential.Credential;
-import org.opensaml.security.credential.CredentialResolver;
-import org.opensaml.security.credential.UsageType;
-import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.soap.wsaddressing.Address;
 import org.opensaml.soap.wsaddressing.EndpointReference;
 import org.opensaml.soap.wsaddressing.Metadata;
@@ -102,27 +86,10 @@ import com.google.common.base.Function;
 @Prototype
 public class DecorateDelegatedAssertion extends AbstractProfileAction {
     
-    /** Internal error message constant. */
-    public static final String INTERNAL_ERR_MSG = "Internal IdP processing error";
-    
-    /** Enum which represents the state of the request presenter's indication of whether
-     * a delegation token is requested. */
-    private static enum DelegationRequest {
-        /** Delegation was not requested. */
-        NOT_REQUESTED,
-        /** Delegation was requested, as optional. */
-        REQUESTED_OPTIONAL,
-        /** Delegation was requested, as required. */
-        REQUESTED_REQUIRED,
-    };
-    
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(DecorateDelegatedAssertion.class);
     
     // Configured data
-    
-    /** Default delegation request value. */
-    private DelegationRequest defaultDelegationRequested = DelegationRequest.REQUESTED_OPTIONAL;
     
     /** The URL at which the IdP will accept Liberty ID-WSF SSOS requests. */
     private String libertySSOSEndpointURL;
@@ -134,8 +101,8 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     /** Strategy used to lookup the RelyingPartyContext. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
-    /** Strategy used to lookup the SAMLMetadataContext. */
-    @Nonnull private Function<ProfileRequestContext, SAMLMetadataContext> samlMetadataContextLookupStrategy;
+    /** Strategy used to lookup the {@link DelegationContext. */
+    @Nonnull private Function<ProfileRequestContext, DelegationContext> delegationContextLookupStrategy;
     
     /** Strategy used to locate the {@link Assertion}s on which to operate. */
     @Nonnull private Function<ProfileRequestContext,List<Assertion>> assertionLookupStrategy;
@@ -143,23 +110,17 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     /** The manager used to generate KeyInfo instances from Credentials. */
     @Nonnull private NamedKeyInfoGeneratorManager keyInfoGeneratorManager;
     
-    /** The credential resolver used to resolve HoK Credentials for the peer. */
-    @Nonnull private CredentialResolver credentialResolver;
-    
     
     // Runtime data
+    
+    /** The delegation context instance to be populated. */
+    private DelegationContext delegationContext;
     
     /** The list of assertions on which to operate. */
     private List<Assertion> assertions;
     
-    /** The delegation requested state for the current request. */
-    private DelegationRequest delegationRequested;
-    
     /** The current RelyingPartyContext. */
     private RelyingPartyContext relyingPartyContext;
-    
-    /** Whether delegation is allowed for the current relying party. */
-    private boolean delegationAllowed;
     
     /** The entityID of the local responder entity. */
     private String responderId;
@@ -167,19 +128,13 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     /** The entityID of the SAML relying party. */
     private String relyingPartyId;
     
-    /** The RoleDescriptor for the SAML peer entity. */
-    private RoleDescriptor roleDescriptor;
-    
-    /** The AttributeConsumingService for the SAML peer entity. */
-    private AttributeConsumingService attributeConsumingService;
-    
     /** Constructor. */
     public DecorateDelegatedAssertion() {
         super();
         
         libertySSOSEndpointURLLookupStrategy = new LibertySSOSEndpointURLStrategy();
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
-        samlMetadataContextLookupStrategy = new SAMLMetadataContextLookupFunction();
+        delegationContextLookupStrategy = new ChildContextLookup<>(DelegationContext.class);
         assertionLookupStrategy = new AssertionStrategy();
         
     }
@@ -218,15 +173,15 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     }
     
     /**
-     * Set the strategy used to locate the current {@link SAMLMetadataContext}.
+     * Set the strategy used to locate the current {@link DelegationContext}.
      * 
-     * @param strategy strategy used to locate the current {@link SAMLMetadataContext}
+     * @param strategy strategy used to locate the current {@link DelegationContext}
      */
-    public void setSAMLMetadataContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext, SAMLMetadataContext> strategy) {
+    public void setDelegationContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, DelegationContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        samlMetadataContextLookupStrategy = Constraint.isNotNull(strategy, 
-                "SAMLMetadataContext lookup strategy may not be null");
+        delegationContextLookupStrategy = Constraint.isNotNull(strategy, 
+                "DelegationContext lookup strategy may not be null");
     }
     
     /**
@@ -250,61 +205,11 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         keyInfoGeneratorManager = Constraint.isNotNull(manager, "NamedKeyInfoGeneratorManager may not be null");
     }
     
-    /**
-     * Set the {@link CredentialResolver} instance to use to resolve HoK {@link Credential}.
-     * 
-     * <p>
-     * Typically this should be a metadata-based resolver which accepts input as the 
-     * peer's {@link RoleDescriptor}.
-     * </p>
-     * 
-     * @param resolver the resolver instance to use
-     */
-    public void setCredentialResolver(@Nonnull final CredentialResolver resolver) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        credentialResolver = Constraint.isNotNull(resolver, "CredentialResolver may not be null");
-    }
-    
-    /**
-     * Get the effective default value for whether request processing should proceed 
-     * with issuance of a delegation token.
-     * 
-     * @return the default value
-     */
-    @Nonnull public DelegationRequest getDefaultDelegationRequested() {
-        return defaultDelegationRequested;
-    }
-    
-    /**
-     * Set the effective default value for whether request processing should proceed 
-     * with issuance of a delegation token.
-     * 
-     * @param delegationRequest the default delegation requested value
-     */
-    public void setDefaultDelegationRequested(@Nonnull final DelegationRequest delegationRequest) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        defaultDelegationRequested = 
-                Constraint.isNotNull(delegationRequest, "Default DelegationRequest may not be null");
-    }
-    
     /** {@inheritDoc} */
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        if (relyingPartyContextLookupStrategy == null) {
-            throw new ComponentInitializationException("RelyingPartyContext lookup strategy may not be null");
-        }
-        if (samlMetadataContextLookupStrategy == null) {
-            throw new ComponentInitializationException("SAMLMetadataContext lookup strategy may not be null");
-        }
-        if (assertionLookupStrategy == null) {
-            throw new ComponentInitializationException("Assertion lookup strategy may not be null");
-        }
         if (keyInfoGeneratorManager == null) {
             throw new ComponentInitializationException("KeyInfoGeneratorManager may not be null");
-        }
-        if (credentialResolver == null) {
-            throw new ComponentInitializationException("CredentialResolver may not be null");
         }
         if (libertySSOSEndpointURL == null && libertySSOSEndpointURLLookupStrategy == null) {
             throw new ComponentInitializationException("Either Liberty SSOS endpoint URL " 
@@ -316,6 +221,43 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
+        assertions = assertionLookupStrategy.apply(profileRequestContext);
+        if (assertions == null || assertions.isEmpty()) {
+            log.debug("No Assertions found to decorate, skipping further processing");
+            return false;
+        }
+        
+        if (!doPreExecuteDelegationInfo(profileRequestContext)) {
+            return false;
+        }
+        
+        if (!doPreExecuteRelyingParty(profileRequestContext)) {
+            return false;
+        }
+        
+        return super.doPreExecute(profileRequestContext);
+    }
+    
+    /**
+     * Pre-execute actions on the delegation-specific info.
+     * 
+     * @param profileRequestContext the current profile request context
+     * @return true iff {@link #doExecute(ProfileRequestContext)} should proceed
+     */
+    protected boolean doPreExecuteDelegationInfo(@Nonnull ProfileRequestContext profileRequestContext) {
+        delegationContext = delegationContextLookupStrategy.apply(profileRequestContext);
+        if (delegationContext == null || !delegationContext.isIssuingDelegatedAssertion()) {
+            log.debug("Issuance of delegated was not indicated, skipping assertion decoration");
+            return false;
+        }
+        
+        if (delegationContext.getSubjectConfirmationCredentials() == null 
+                || delegationContext.getSubjectConfirmationCredentials().isEmpty()) {
+            log.warn("No subject confirmation credentials available in delegation context");
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false; 
+        }
+        
         resolveLibertySSOSEndpointURL(profileRequestContext);
         if (libertySSOSEndpointURL == null) {
             log.warn("No Liberty SSOS endpoint URL was available");
@@ -323,6 +265,16 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             return false; 
         }
         
+        return true;
+    }
+    
+    /**
+     * Pre-execute actions on the relying party context info.
+     * 
+     * @param profileRequestContext the current profile request context
+     * @return true iff {@link #doExecute(ProfileRequestContext)} should proceed
+     */
+    protected boolean doPreExecuteRelyingParty(@Nonnull ProfileRequestContext profileRequestContext) {
         relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyContext == null) {
             log.warn("No RelyingPartyContext was available");
@@ -337,56 +289,29 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             return false; 
         }
         
-        if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
-            delegationAllowed = ((BrowserSSOProfileConfiguration)relyingPartyContext.getProfileConfig())
-                    .isAllowingDelegation();
-        } else {
-            log.warn("ProfileConfiguration is an invalid type: {}", 
-                    relyingPartyContext.getProfileConfig().getClass().getName());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false; 
-        }
-        
         // This is @Nonnull
         responderId = relyingPartyContext.getConfiguration().getResponderId();
         
-        SAMLMetadataContext samlMetadataContext = samlMetadataContextLookupStrategy.apply(profileRequestContext);
-        if (samlMetadataContext == null) {
-            log.warn("No SAMLMetadataContext was available");
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        roleDescriptor = samlMetadataContext.getRoleDescriptor();
-        if (roleDescriptor == null) {
-            log.warn("No RoleDescriptor was available");
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
-        
-        AttributeConsumingServiceContext acsContext = 
-                samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class);
-        attributeConsumingService = acsContext != null ? acsContext.getAttributeConsumingService() : null;
-        if (attributeConsumingService == null) {
-            log.debug("No AttributeConsumingService was resolved, won't be able to determine " 
-                    + "delegation requested status via metadata");
-        }
-        
-        delegationRequested = getDelegationRequested(profileRequestContext);
-        if (DelegationRequest.NOT_REQUESTED.equals(delegationRequested)) {
-            log.debug("Issuance of a delegated Assertion is not in effect, skipping further processing");
-            return false;
-        }
-        
-        assertions = assertionLookupStrategy.apply(profileRequestContext);
-        if (assertions == null || assertions.isEmpty()) {
-            log.debug("No Assertions found to decorate, skipping further processing");
-            return false;
-        }
-        
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
 
+    /** {@inheritDoc} */
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
+        try {
+            log.debug("Decorating assertion for use as delegated token");
+            decorateDelegatedAssertion(profileRequestContext);
+        } catch (EventException e) {
+            if (Objects.equals(EventIds.PROCEED_EVENT_ID, e.getEvent())) {
+                log.debug("Decoration of Assertion for delegation terminated with explicit proceed signal");
+            } else {
+                log.warn("Decoration of Assertion for delegation terminated with explicit non-proceed signal", e);
+                ActionSupport.buildEvent(profileRequestContext, e.getEvent());
+            }
+        }
+    }
+    
     /**
      * Resolve and store the effective Liberty SSOS endpoint URL to use.
      * 
@@ -410,48 +335,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
         log.debug("No effective Liberty SSOS endpoint URL could be determined");
     }
-
-    /** {@inheritDoc} */
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
-        try {
-            switch (delegationRequested) {
-                case NOT_REQUESTED:
-                    log.debug("Delegation was not requested, skipping delegation decoration");
-                    break;
-                case REQUESTED_OPTIONAL:
-                    if (delegationAllowed) {
-                        log.debug("Delegation token issuance was requested (optional) and allowed");
-                        decorateDelegatedAssertion(profileRequestContext);
-                    } else {
-                        log.debug("Delegation token issuance was requested (optional), but not allowed, " 
-                                + "skipping delegation decoration");
-                        return;
-                    }
-                    break;
-                case REQUESTED_REQUIRED:
-                    if (delegationAllowed) {
-                        log.debug("Delegation token issuance was requested (required) and allowed");
-                        decorateDelegatedAssertion(profileRequestContext);
-                    } else {
-                        log.warn("Delegation token issuance was requested (required), but disallowed by policy");
-                        //TODO what is right event type here - need to define new one?
-                        ActionSupport.buildEvent(profileRequestContext, EventIds.ACCESS_DENIED);
-                    }
-                    break;
-                default:
-                    log.error("Unknown value '{}' for delegation request state", delegationRequested);
-            }
-        } catch (EventException e) {
-            if (Objects.equals(EventIds.PROCEED_EVENT_ID, e.getEvent())) {
-                log.debug("Decoration of Assertion for delegation terminated with explicit proceed signal");
-            } else {
-                log.warn("Decoration of Assertion for delegation terminated with explicit non-proceed signal", e);
-                ActionSupport.buildEvent(profileRequestContext, e.getEvent());
-            }
-        }
-    }
     
     /**
      * Decorate the Assertion to allow use as a delegated security token by the SAML requester.
@@ -459,12 +342,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * @param requestContext the current request context
      */
     private void decorateDelegatedAssertion(@Nonnull final ProfileRequestContext requestContext) {
-        
-        if (assertions == null) {
-            log.debug("No assertions found to decorate, nothing to do.");
-            return;
-        }
-        
         for (Assertion assertion : assertions) {
             addSAMLPeerSubjectConfirmation(requestContext, assertion);
             addIdPAudienceRestriction(requestContext, assertion);
@@ -601,43 +478,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     private void addSAMLPeerSubjectConfirmation(@Nonnull final ProfileRequestContext requestContext,
             @Nonnull final Assertion assertion) {
         
-        // Add holder-of-key confirmation for all signing keys present for SP, typically from metadata
-        CriteriaSet criteriaSet = new CriteriaSet();
-        criteriaSet.add(new RoleDescriptorCriterion(roleDescriptor));
-        criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
-        // Add an entityID criterion just in case don't have a MetadataCredentialResolver,
-        // and want to resolve via entityID + usage only, e.g. from a CollectionCredentialResolver
-        // or other more general resolver type.
-        criteriaSet.add(new EntityIdCriterion(relyingPartyId));
-        
-        try {
-            addHoKSubjectConfirmation(assertion, credentialResolver.resolve(criteriaSet).iterator());
-        } catch (ResolverException e) {
-            log.warn("Error resolving holder-of-key credentials for SP '{}': {})", relyingPartyId, e.getMessage());
-            throw new EventException(EventIds.MESSAGE_PROC_ERROR, "Error resolving holder-of-key credentials", e);
-        }
-        
-    }
-
-    /**
-     * Add a holder-of-key SubjectConfirmation for the SAML peer entity ID. The KeyInfoConfirmationDataType
-     * SubjectConfirmationData will contain a KeyInfo for each resolved credential;
-     * 
-     * @param assertion the assertion to be updated
-     * @param credIterator the iterator of resolved credentials
-     */
-    private void addHoKSubjectConfirmation(@Nonnull final Assertion assertion, 
-            @Nonnull final Iterator<Credential> credIterator) {
-        
-        if (!credIterator.hasNext()) {
-            log.warn("No credentials were available from SP '{}' for HoK assertion", relyingPartyId);
-            //TODO this is perhaps the wrong event ID
-            //TODO perhaps this shouldn't be fatal. Since we haven't mutated the assertion yet, could
-            //     maybe just return 'proceed'.
-            throw new EventException(EventIds.MESSAGE_PROC_ERROR,
-                    "No credentials were available for creating HoK subject confirmation");
-        }
-        
         KeyInfoConfirmationDataType scData = 
                 (KeyInfoConfirmationDataType) XMLObjectSupport.getBuilder(KeyInfoConfirmationDataType.TYPE_NAME)
                 .buildObject(SubjectConfirmationData.DEFAULT_ELEMENT_NAME, KeyInfoConfirmationDataType.TYPE_NAME);
@@ -645,8 +485,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         //TODO could support some strategy for using different named managers, rather than always the default manager.
         KeyInfoGeneratorManager kigm = keyInfoGeneratorManager.getDefaultManager();
         
-        while (credIterator.hasNext()) {
-            Credential cred = credIterator.next();
+        for (Credential cred : delegationContext.getSubjectConfirmationCredentials()) {
             KeyInfoGeneratorFactory kigf = kigm.getFactory(cred);
             KeyInfoGenerator kig = kigf.newInstance();
             try {
@@ -675,141 +514,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
         subject.getSubjectConfirmations().add(sc);
     }
-
-    /**
-     * Check whether issuance of a delegated token has been requested.
-     * 
-     * @param requestContext the current request context
-     * @return true if delegation is requested, false otherwise
-     */
-    private DelegationRequest getDelegationRequested(@Nonnull final ProfileRequestContext requestContext) {
-        if (isDelegationRequestedByAudience(requestContext)) {
-            log.debug("Delegation was requested via AuthnRequest Audience, treating as: {}", 
-                    DelegationRequest.REQUESTED_REQUIRED);
-            return DelegationRequest.REQUESTED_REQUIRED;
-        }
-        
-        DelegationRequest requestedByMetadata = getDelegationRequestedByMetadata(requestContext);
-        if (requestedByMetadata != DelegationRequest.NOT_REQUESTED) {
-            log.debug("Delegation was requested via metadata: {}", requestedByMetadata);
-            return requestedByMetadata;
-        }
-        
-        log.debug("Delegation request was not explicitly indicated, using default value: {}", 
-                getDefaultDelegationRequested());
-        return getDefaultDelegationRequested();
-    }
-    
-
-    /**
-     * Determine whether a delegation token was requested via the SP's SPSSODescriptor AttributeConsumingService.
-     * 
-     * @param requestContext the current request context
-     * @return DelegationRequest enum value as appropriate
-     */
-    @Nonnull private DelegationRequest getDelegationRequestedByMetadata(
-            @Nonnull final ProfileRequestContext requestContext) {
-        
-        if (attributeConsumingService == null) {
-            log.debug("No AttributeConsumingService was available");
-            return DelegationRequest.NOT_REQUESTED;
-        }
-        
-        for (RequestedAttribute requestedAttribute : attributeConsumingService.getRequestAttributes()) {
-            if (Objects.equals(LibertyConstants.SERVICE_TYPE_SSOS, 
-                    StringSupport.trimOrNull(requestedAttribute.getName()))) {
-                log.debug("Saw requested attribute '{}' in metadata AttributeConsumingService for SP: {}",
-                        LibertyConstants.SERVICE_TYPE_SSOS, relyingPartyId);
-                if (requestedAttribute.isRequired()) {
-                    log.debug("Metadata delegation request attribute indicated it was required");
-                    return DelegationRequest.REQUESTED_REQUIRED;
-                } else {
-                    log.debug("Metadata delegation request attribute indicated it was NOT required");
-                    return DelegationRequest.REQUESTED_OPTIONAL;
-                }
-            }
-        }
-        
-        return DelegationRequest.NOT_REQUESTED;
-    }
-
-    /**
-     * Determine whether a delegation token was requested via the inbound AuthnRequest's
-     * Conditions' AudienceRestriction.
-     * 
-     * @param requestContext the current request context
-     * @return true if the AudienceRestrictions condition contained the local entity Id, false otherwise
-     */
-    private boolean isDelegationRequestedByAudience(@Nonnull final ProfileRequestContext requestContext) {
-        if (!(requestContext.getInboundMessageContext().getMessage() instanceof AuthnRequest)) {
-            log.debug("Inbound SAML message was not an AuthnRequest: {}", 
-                    requestContext.getInboundMessageContext().getMessage().getClass().getName());
-            return false;
-        }
-        
-        AuthnRequest authnRequest = (AuthnRequest) requestContext.getInboundMessageContext().getMessage();
-        if (authnRequest.getConditions() != null) {
-            Conditions conditions = authnRequest.getConditions();
-            for (AudienceRestriction ar : conditions.getAudienceRestrictions()) {
-                for (Audience audience : ar.getAudiences()) {
-                    String audienceValue = StringSupport.trimOrNull(audience.getAudienceURI());
-                    if (Objects.equals(audienceValue, responderId)) {
-                        log.debug("Saw an AuthnRequest/Conditions/AudienceRestriction/Audience with value of '{}'",
-                                responderId);
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    
-    //TODO look at how this action, and/or either delegation issuance generally, influences encryption and signing
-    //  -- some of this action's eval may need to happen earlier, so can resolve -Parameters in the context
-    
-    /**
-    protected boolean isEncryptNameID(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
-        if (isDelegationIssuanceActive(requestContext)) {
-            if (isRequestRequiresEncryptNameID(requestContext)) {
-                log.warn("Issuance of a delegation token is active, and request indicated an encrypted NameID, ",
-                        "which is currently unsupported");
-                throw new ProfileException("Unable to issue delegation token with encrypted NameID");
-            } else {
-                log.debug("Issuance of a delegation token is active, " 
-                        + "overriding eval as to encrypting NameID to: false");
-                return false;
-            }
-        } else {
-            log.debug("Issuance of a delegation token is not active, " 
-                    + "proceeding with normal eval as to encrypting NameID");
-            return super.isEncryptNameID(requestContext);
-        }
-    }
-
-    protected boolean isSignAssertion(BaseSAML2ProfileRequestContext<?, ?, ?> requestContext) throws ProfileException {
-        if (isDelegationIssuanceActive(requestContext)) {
-            log.debug("Issuance of a delegation token is active, " 
-                    + "overriding eval as to signing assertion to: true");
-            return true;
-        } else {
-            log.debug("Issuance of a delegation token is not active, " 
-                    + "proceeding with normal eval as to signing assertion");
-            return super.isSignAssertion(requestContext);
-        }
-    }
-    */
-    
-    /**
-     * Determine whether issuance of a delegation token is effectively active.
-     * @param requestContext the current request context
-     * @return true if issuance of a delegation token is in effect for the current request, false otherwise
-     */
-    /**
-    protected boolean isDelegationIssuanceActive(ProfileRequestContext requestContext) {
-        return delegationRequested != DelegationRequest.NOT_REQUESTED 
-                && isDelegationAllowed(requestContext);
-    }
-    */
     
     /**
      * Default strategy for obtaining assertion to modify.

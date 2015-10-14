@@ -122,6 +122,11 @@
         p:endpointType="#{getObject('shibboleth.EndpointType')}"
         p:bindings-ref="shibboleth.OutgoingBindings"
         p:artifactImpliesSecureChannel="%{idp.artifact.secureChannel:true}" />
+        
+    <bean id="PopulateDelegationContext"
+            class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.PopulateDelegationContext" scope="prototype">
+        <property name="credentialResolver" ref="shibboleth.MetadataCredentialResolver" />
+    </bean>
 
     <bean id="PopulateResponseSignatureSigningParameters"
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"

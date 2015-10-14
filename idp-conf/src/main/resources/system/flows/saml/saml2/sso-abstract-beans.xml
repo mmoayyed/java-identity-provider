@@ -104,7 +104,6 @@
         <property name="keyInfoGeneratorManager">
             <bean factory-method="buildBasicKeyInfoGeneratorManager" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap" />
         </property>
-        <property name="credentialResolver" ref="shibboleth.MetadataCredentialResolver" />
     </bean>
 
     <bean id="AddChannelBindingsToAssertions"
