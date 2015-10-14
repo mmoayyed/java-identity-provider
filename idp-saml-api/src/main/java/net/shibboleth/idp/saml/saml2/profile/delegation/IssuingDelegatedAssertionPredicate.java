@@ -17,10 +17,15 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 /**
@@ -28,13 +33,32 @@ import com.google.common.base.Predicate;
  * SAML 2 {@link org.opensaml.saml.saml2.core.Assertion} is active.
  */
 public class IssuingDelegatedAssertionPredicate implements Predicate<ProfileRequestContext> {
-
+    
+    /** Strategy used to lookup the {@link DelegationContext. */
+    @Nonnull private Function<ProfileRequestContext, DelegationContext> delegationContextLookupStrategy;
+    
+    /** Constructor. */
+    public IssuingDelegatedAssertionPredicate() {
+        delegationContextLookupStrategy = new ChildContextLookup<>(DelegationContext.class);
+    }
+    
+    /**
+     * Set the strategy used to locate the current {@link DelegationContext}.
+     * 
+     * @param strategy strategy used to locate the current {@link DelegationContext}
+     */
+    public void setDelegationContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, DelegationContext> strategy) {
+        delegationContextLookupStrategy = Constraint.isNotNull(strategy, 
+                "DelegationContext lookup strategy may not be null");
+    }
+    
     /** {@inheritDoc} */
     public boolean apply(@Nullable ProfileRequestContext input) {
         if (input == null) {
             return false;
         }
-        DelegationContext delegationContext = input.getSubcontext(DelegationContext.class);
+        DelegationContext delegationContext = delegationContextLookupStrategy.apply(input);
         if (delegationContext == null) {
             return false;
         }
