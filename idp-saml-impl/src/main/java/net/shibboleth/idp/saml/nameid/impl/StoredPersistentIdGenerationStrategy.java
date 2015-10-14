@@ -66,7 +66,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
      * @param store the ID store to use
      * @deprecated
      */
-    public void setIDStore(@Nonnull final PersistentIdStore store) {
+    public void setDeprecatedPersistentIdStore(@Nonnull final PersistentIdStore store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         deprecatedStore = Constraint.isNotNull(store, "Deprecated PersistentIdStore cannot be null");
@@ -77,7 +77,7 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
      * 
      * @param store the ID store to use
      */
-    public void setIDStore(@Nonnull final PersistentIdStoreEx store) {
+    public void setPersistentIdStore(@Nonnull final PersistentIdStoreEx store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         pidStore = Constraint.isNotNull(store, "PersistentIdStoreEx cannot be null");

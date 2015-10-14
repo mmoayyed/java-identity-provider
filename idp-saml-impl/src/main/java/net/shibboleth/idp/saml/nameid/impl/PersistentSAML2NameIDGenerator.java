@@ -212,7 +212,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
             final List<IdPAttributeValue<?>> values = attribute.getValues();
             for (final IdPAttributeValue value : values) {
                 if (value instanceof ScopedStringAttributeValue) {
-                    log.debug("Generating NameID from Scoped String-valued attribute {}", sourceId);
+                    log.debug("Generating persistent NameID from Scoped String-valued attribute {}", sourceId);
                     return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
                             ((ScopedStringAttributeValue) value).getValue() + '@'
                                     + ((ScopedStringAttributeValue) value).getScope());
@@ -222,7 +222,7 @@ public class PersistentSAML2NameIDGenerator extends AbstractSAML2NameIDGenerator
                         log.debug("Skipping all-whitespace string value");
                         continue;
                     }
-                    log.debug("Generating NameID from String-valued attribute {}", sourceId);
+                    log.debug("Generating persistent NameID from String-valued attribute {}", sourceId);
                     return persistentIdStrategy.generate(responderId, relyingPartyId, subjectCtx.getPrincipalName(),
                             (String) value.getValue());
                 } else {

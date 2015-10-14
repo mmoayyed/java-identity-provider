@@ -55,11 +55,20 @@ import org.slf4j.LoggerFactory;
 /**
  * JDBC-based storage management for SAML persistent IDs.
  * 
- * <p>The DDL for the database is
+ * <p>The general DDL for the database is:
  * 
- * <tt>CREATE TABLE shibpid {localEntity VARCHAR NOT NULL, peerEntity VARCHAR NOT NULL,
- *     persistentId VARCHAR NOT NULL, principalName VARCHAR NOT NULL, localId VARCHAR NOT NULL,
- *     peerProvidedId VARCHAR, creationDate TIMESTAMP NOT NULL, deactivationDate TIMESTAMP}</tt>.
+ * <pre>
+ * CREATE TABLE shibpid (
+ *      localEntity VARCHAR(255) NOT NULL,
+ *      peerEntity VARCHAR(255) NOT NULL,
+ *      persistentId VARCHAR(50) NOT NULL,
+ *      principalName VARCHAR(50) NOT NULL,
+ *      localId VARCHAR(50) NOT NULL,
+ *      peerProvidedId VARCHAR(50),
+ *      creationDate TIMESTAMP NOT NULL,
+ *      deactivationDate TIMESTAMP,
+ *      PRIMARY KEY (localEntity, peerEntity, persistentId)
+ *     );</pre>.
  *    
  * The first three columns should be defined as the primary key of the table, and the other columns
  * should be indexed.</p>
