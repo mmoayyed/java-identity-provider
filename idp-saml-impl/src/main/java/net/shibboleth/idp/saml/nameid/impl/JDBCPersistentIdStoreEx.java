@@ -143,6 +143,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         transactionRetry = 3;
         retryableErrors = Collections.singletonList("23505");
         queryTimeout = 5000;
+        verifyDatabase = true;
         
         tableName = "shibpid";
         issuerColumn = "localEntity";
@@ -688,6 +689,15 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     void store(@Nonnull final PersistentIdEntry entry, @Nonnull final Connection dbConn) throws SQLException {
         
         log.debug("{} Storing new persistent ID entry", getLogPrefix());
+        
+        if (StringSupport.trimOrNull(entry.getIssuerEntityId()) == null
+                || StringSupport.trimOrNull(entry.getRecipientEntityId()) == null
+                || StringSupport.trimOrNull(entry.getPersistentId()) == null
+                || StringSupport.trimOrNull(entry.getPrincipalName()) == null
+                || StringSupport.trimOrNull(entry.getSourceId()) == null
+                || entry.getCreationTime() == null) {
+            throw new SQLException("Required field was empty/null, store operation not possible");
+        }
         
         log.trace("{} Prepared statement: {}", getLogPrefix(), insertSQL);
         log.trace("{} Setting prepared statement parameter {}: {}", getLogPrefix(), 1, entry.getIssuerEntityId());

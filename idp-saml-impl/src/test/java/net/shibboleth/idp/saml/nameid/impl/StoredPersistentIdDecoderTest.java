@@ -72,7 +72,7 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
         store.initialize();
         
         final StoredPersistentIdGenerationStrategy strategy = new StoredPersistentIdGenerationStrategy();
-        strategy.setDeprecatedPersistentIdStore(store);
+        strategy.setIDStore(store);
         strategy.initialize();
         
         generator = new PersistentSAML2NameIDGenerator();

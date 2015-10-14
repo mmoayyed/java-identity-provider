@@ -117,7 +117,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
 
         idStore.initialize();
 
-        storedIdStrategy.setPersistentIdStore(idStore);
+        storedIdStrategy.setIDStore(idStore);
         storedIdStrategy.setComputedIdStrategy(getComputedIdStrategy());
         storedIdStrategy.initialize();
     }

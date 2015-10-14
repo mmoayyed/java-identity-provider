@@ -32,11 +32,11 @@ import org.joda.time.DateTime;
  * <p>This interface is deprecated and is no longer used within the IdP. It is "racy" in that
  * the operations are too granular to ensure transactional behavior for multiple requests
  * from the same user for the same service, which is supported now, and was much less common
- * in V2.</p>  
+ * in V2.</p>
  * 
  * @deprecated
  */
-public interface PersistentIdStore {
+public interface PersistentIdStore extends IPersistentIdStore {
 
     /**
      * Get whether a persistent ID is not in use, active or otherwise.

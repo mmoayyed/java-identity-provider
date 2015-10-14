@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 
+import net.shibboleth.idp.saml.nameid.IPersistentIdStore;
 import net.shibboleth.idp.saml.nameid.PersistentIdEntry;
 import net.shibboleth.idp.saml.nameid.PersistentIdStore;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
@@ -30,7 +31,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.common.SAMLException;
@@ -59,40 +59,40 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
     
     /** Optional generator of computed ID values. */
     @Nullable private ComputedPersistentIdGenerationStrategy computedIdStrategy;
-    
-    /**
-     * Set a deprecated {@link PersistentIdStore} used to store the IDs.
-     * 
-     * @param store the ID store to use
-     * @deprecated
-     */
-    public void setDeprecatedPersistentIdStore(@Nonnull final PersistentIdStore store) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        deprecatedStore = Constraint.isNotNull(store, "Deprecated PersistentIdStore cannot be null");
-    }
 
     /**
-     * Set a {@link PersistentIdStoreEx} used to store the IDs.
+     * Set an {@link IPersistentIdStore} used to store the IDs.
+     * 
+     * <p>The marker interface is used, allowing injection of either the broken or the updated
+     * version of the interface.</p>
      * 
      * @param store the ID store to use
      */
-    public void setPersistentIdStore(@Nonnull final PersistentIdStoreEx store) {
+    public void setIDStore(@Nullable final IPersistentIdStore store) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        pidStore = Constraint.isNotNull(store, "PersistentIdStoreEx cannot be null");
+        if (store instanceof PersistentIdStoreEx) {
+            pidStore = (PersistentIdStoreEx) store;
+            deprecatedStore = null;
+        } else if (store instanceof PersistentIdStore) {
+            deprecatedStore = (PersistentIdStore) store;
+            pidStore = null;
+        } else {
+            pidStore = null;
+            deprecatedStore = null;
+        }
     }
     
     /**
-     * Set the data source to inject into an auto-provisioned instance of {@link JDBCPersistentIdStoreEx}
+     * Set a data source to inject into an auto-provisioned instance of {@link JDBCPersistentIdStoreEx}
      * to use as the storage strategy.
      * 
      * @param source the data source
      */
-    public void setDataSource(@Nonnull final DataSource source) {
+    public void setDataSource(@Nullable final DataSource source) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        dataSource = Constraint.isNotNull(source, "DataSource cannot be null");
+        dataSource = source;
     }
     
     /**
@@ -111,10 +111,18 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
         super.doInitialize();
 
         if (null == pidStore) {
-            if (deprecatedStore != null) {
+            if (dataSource != null) {
+                log.debug("Creating JDBCPersistentStoreEx instance around supplied DataSource");
+                final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
+                newStore.setDataSource(dataSource);
+                newStore.initialize();
+                pidStore = newStore;
+            } else if (deprecatedStore != null) {
                 if (deprecatedStore instanceof JDBCPersistentIdStore) {
                     log.warn("Transferring settings from deprecated JDBCPersistentStore, please update configuration");
                     final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
+                    // Don't validate the database because legacy configs won't have primary key defined.
+                    newStore.setVerifyDatabase(false);
                     newStore.setDataSource(((JDBCPersistentIdStore) deprecatedStore).getDataSource());
                     newStore.setQueryTimeout(((JDBCPersistentIdStore) deprecatedStore).getQueryTimeout());
                     newStore.setLocalEntityColumn(((JDBCPersistentIdStore) deprecatedStore).getLocalEntityColumn());
@@ -133,12 +141,6 @@ public class StoredPersistentIdGenerationStrategy extends AbstractInitializableC
                     throw new ComponentInitializationException(
                             "Non-JDBC version of deprecated PersistentIdStore interface is not usable in this version");
                 }
-            } else if (dataSource != null) {
-                log.debug("Creating JDBCPersistentStoreEx instance around supplied DataSource");
-                final JDBCPersistentIdStoreEx newStore = new JDBCPersistentIdStoreEx();
-                newStore.setDataSource(dataSource);
-                newStore.initialize();
-                pidStore = newStore;
             }
             
             if (null == pidStore) {

@@ -177,7 +177,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         store.initialize();
         
         final StoredPersistentIdGenerationStrategy strategy = new StoredPersistentIdGenerationStrategy();
-        strategy.setDeprecatedPersistentIdStore(store);
+        strategy.setIDStore(store);
         strategy.initialize();
 
         generator.setPersistentIdGenerator(strategy);
@@ -196,7 +196,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         store.initialize();
         
         final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();
-        strategy2.setPersistentIdStore(store);
+        strategy2.setIDStore(store);
         strategy2.setComputedIdStrategy(strategy);
         strategy2.initialize();
         
@@ -224,7 +224,7 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         store.initialize();
         
         final StoredPersistentIdGenerationStrategy strategy2 = new StoredPersistentIdGenerationStrategy();
-        strategy2.setDeprecatedPersistentIdStore(store);
+        strategy2.setIDStore(store);
         strategy2.setComputedIdStrategy(strategy);
         strategy2.initialize();
         

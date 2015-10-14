@@ -64,7 +64,12 @@
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
         p:computedIdStrategy="#{getObject('%{idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}'.trim())}"
-        p:deprecatedPersistentIdStore="#{getObject('%{idp.persistentId.store:}')}" />
+        p:IDStore="#{getObject('%{idp.persistentId.store:undefined}')}"
+        p:dataSource="#{getObject('%{idp.persistentId.dataSource:undefined}')}" />
+    
+    <!-- Parent bean for users to configure a custom ID store rather than a data source only. -->
+    <bean id="shibboleth.JDBCPersistentIdStore" abstract="true"
+        class="net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStoreEx" />
     
     <!-- These two beans handle legacy support for NameID generation in the Attribute Resolver. -->
     <bean id="shibboleth.LegacySAML1NameIdentifierGenerator"
