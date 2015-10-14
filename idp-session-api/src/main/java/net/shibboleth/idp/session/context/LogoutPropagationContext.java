@@ -17,7 +17,11 @@
 
 package net.shibboleth.idp.session.context;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import net.shibboleth.idp.session.SPSession;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.BaseContext;
 
@@ -48,6 +52,12 @@ public class LogoutPropagationContext extends BaseContext {
 
     /** Details of result, typically only populated for failures. */
     @Nullable private String detail;
+
+    /** End state view name to render. */
+    @Nullable private String resultView;
+
+    /** View model map. */
+    @Nonnull @Live private final Map<String, Object> viewMap = new HashMap<>();
 
 
     /** @return The SP session to be destroyed. */
@@ -99,5 +109,24 @@ public class LogoutPropagationContext extends BaseContext {
      */
     public void setDetail(@Nullable String detail) {
         this.detail = detail;
+    }
+
+    /** @return Name of the view to be rendered at the end of the logout propagation flow. */
+    @Nullable  public String getResultView() {
+        return resultView;
+    }
+
+    /**
+     * Sets the name of the view to render at the end of the logout propagation flow.
+     *
+     * @param resultView Logical view name.
+     */
+    public void setResultView(@Nonnull String resultView) {
+        this.resultView = Constraint.isNotNull(resultView, "View name cannot be null");
+    }
+
+    /** @return View model map. */
+    @Nonnull public Map<String, Object> getViewMap() {
+        return viewMap;
     }
 }

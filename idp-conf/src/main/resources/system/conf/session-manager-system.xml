@@ -75,7 +75,10 @@
             p:SPSessionSerializerRegistry-ref="shibboleth.SPSessionSerializerRegistry" />
 
     <!-- Built-in logout propagation flows. -->
-    
+
+    <bean id="logoutprop/cas" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor"
+          c:sessionType="#{ T(net.shibboleth.idp.cas.session.impl.CASSPSession) }" />
+
     <bean id="logoutprop/saml2" class="net.shibboleth.idp.session.LogoutPropagationFlowDescriptor"
           c:sessionType="#{ T(net.shibboleth.idp.saml.session.SAML2SPSession) }" />
 

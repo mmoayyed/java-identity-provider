@@ -42,5 +42,4 @@
 
     <bean id="RecordResponseComplete"
         class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
-    
 </beans>

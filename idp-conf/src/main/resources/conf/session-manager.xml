@@ -12,6 +12,7 @@
 
     <!-- Flows that propagate logout to additional services using supported protocols. -->
     <util:list id="shibboleth.LogoutPropagationFlows">
+        <ref bean="logoutprop/cas" />
         <ref bean="logoutprop/saml2" />
     </util:list>
 

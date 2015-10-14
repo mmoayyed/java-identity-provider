@@ -5,6 +5,4 @@
 ## logoutPropCtx - LogoutPropagationContext
 ## encoder - HTMLEncoder class
 ##
-{
-	result: '$logoutPropCtx.result'#if($logoutPropCtx.detail), detail: '$encoder.encodeForHTML($logoutPropCtx.detail)'#end
-}
+{ "result": "$logoutPropCtx.result"#if($logoutPropCtx.detail), "detail": "$encoder.encodeForHTML($logoutPropCtx.detail)"#end }

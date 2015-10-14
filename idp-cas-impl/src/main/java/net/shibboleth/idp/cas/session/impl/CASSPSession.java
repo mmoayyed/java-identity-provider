@@ -61,6 +61,11 @@ public class CASSPSession extends BasicSPSession {
     }
 
     @Override
+    public String getSPSessionKey() {
+        return ticketId;
+    }
+
+    @Override
     public String toString() {
         return "CASSPSession: " + getId() + " via " + ticketId;
     }

@@ -2,15 +2,13 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
-    <action-state id="PopulateLogoutPropagationContextWithResult">
-        <evaluate expression="opensamlProfileRequestContext.getSubcontext(
-            T(net.shibboleth.idp.session.context.LogoutPropagationContext)).setResultString('Failure')"
-                  result="requestScope.logoutPropCtx" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="proceed" />
-    </action-state>
-
-    <end-state id="proceed"/>
+    <end-state id="proceed">
+        <on-entry>
+            <set name="requestScope.logoutPropCtx"
+                 value="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutPropagationContext))" />
+            <evaluate expression="logoutPropCtx.setResultString('Failure')" />
+        </on-entry>
+    </end-state>
 
     <bean-import resource="saml2-beans.xml" />
 

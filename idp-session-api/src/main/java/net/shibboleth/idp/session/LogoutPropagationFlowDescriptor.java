@@ -37,9 +37,6 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
     /** Type of session handled by this flow. */
     @Nonnull private final Class<? extends SPSession> sessionType;
 
-    /** True to indicate that the flow terminates with a message to a remote endpoint, false otherwise. */
-    private boolean expectNoResponse;
-
     /** Constructor. */
     public LogoutPropagationFlowDescriptor(final Class<? extends SPSession> sessionType) {
         this.sessionType = Constraint.isNotNull(sessionType, "SessionType cannot be null");
@@ -48,23 +45,6 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
     /** @return The type of session supported by this flow descriptor. */
     @Nonnull public Class<? extends SPSession> getSessionType() {
         return sessionType;
-    }
-
-    /** @return True if control never returns to the calling flow, i.e. the flow terminates by sending a message to
-     * a remote endpoint without expecting a response; false otherwise.
-     */
-    public boolean isExpectNoResponse() {
-        return expectNoResponse;
-    }
-
-    /**
-     * Sets a flag that determines whether control ever returns to the calling flow.
-     *
-     * @param expectNoResponse True if control never returns to the calling flow, i.e. the flow terminates by sending
-     *                         a message to a remote endpoint without expecting a response.
-     */
-    public void setExpectNoResponse(final boolean expectNoResponse) {
-        this.expectNoResponse = expectNoResponse;
     }
 
     @Override

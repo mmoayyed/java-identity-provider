@@ -36,6 +36,7 @@
         <webflow:flow-location id="PropagateLogout" path="../system/flows/logout/logout-propagation-flow.xml" />
 
         <!-- Logout propagation delegate flows. -->
+        <webflow:flow-location id="logoutprop/cas" path="../system/flows/logout/propagation/cas-flow.xml" />
         <webflow:flow-location id="logoutprop/saml2" path="../system/flows/logout/propagation/saml2-flow.xml" />
 
         <!-- Abstract flows underpinning SAML profiles. -->
@@ -130,6 +131,7 @@
         <webflow:flow-location id="cas/serviceValidate" path="../system/flows/cas/serviceValidate/serviceValidate-flow.xml" />
         <webflow:flow-location id="cas/proxyValidate" path="../system/flows/cas/proxyValidate/proxyValidate-flow.xml" />
         <webflow:flow-location id="cas/samlValidate" path="../system/flows/cas/samlValidate/samlValidate-flow.xml" />
+        <webflow:flow-location id="cas/logout" path="../system/flows/logout/logout-flow.xml" />
 
         <!-- Local storage flows. -->
         <webflow:flow-location id="local-storage/read" path="../system/flows/local-storage/local-storage-read-flow.xml" />

@@ -37,6 +37,7 @@
         <div class="content">
           <div class="column one">
               <p>Attempting to log out of the following services:</p>
+
               #if ($logoutContext and !$logoutContext.getSessionMap().isEmpty())
                   <ol>
                       #foreach ($sp in $logoutContext.getSessionMap().keySet())
@@ -53,36 +54,34 @@
                   </ol>
                   <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
                   <script>
-                      function onLoad(src, target, noContentIsSuccess) {
+                      function onLoad(src, target, sessionKey) {
                           try {
-                              var content = src.contents().find('body').text();
-                              var success = false;
-                              if (content) {
-                                  success = jQuery.parseJSON(content).result == 'Success';
-                              } else if (noContentIsSuccess) {
-                                  success = true;
-                              }
-                              if (success) {
-                                  target.addClass('success');
+                              var content = src.contents().text();
+                              target.removeClass("success failure");
+                              if (content && jQuery.parseJSON(content).result == "Success") {
+                                  target.addClass("success");
                               } else {
-                                  target.addClass('failure');
+                                  target.addClass("failure");
                               }
                           } catch (e) {
-                              if (e.name == 'SecurityError' && noContentIsSuccess) {
-                                  target.addClass('success');
-                              } else {
-                                  target.addClass('failure');
+                              target.addClass("failure");
+                          }
+                          if (typeof(Storage) !== "undefined" ) {
+                              var url = sessionStorage.getItem(sessionKey);
+                              if (url != null) {
+                                  sessionStorage.removeItem(sessionKey);
+                                  setTimeout(function() { src.prop("src", url) }, 1500);
                               }
                           }
                       }
                   </script>
                   #foreach ($sp in $logoutContext.getSessionMap().keySet())
                       #foreach ($session in $logoutContext.getSessions($sp))
-                          #set ($descriptor = $flowSelector.apply($session))
-                          #if ($descriptor)
-                              <iframe id="sender_$codecUtil.hex($session.getSPSessionKey().getBytes())"
-                                      src="$request.contextPath/profile/PropagateLogout?SessionKey=$urlEncoder.encode($session.getSPSessionKey())"
-                                      style="display:none" onload="onLoad($(this), $('#result_$codecUtil.hex($sp.getBytes())'), $descriptor.expectNoResponse)"></iframe>
+                          #set ($skey = $session.getSPSessionKey())
+                          #if ($flowSelector.apply($session))
+                              <iframe id="sender_$codecUtil.hex($skey.getBytes())"
+                                      src="$request.contextPath/profile/PropagateLogout?SessionKey=$urlEncoder.encode($skey)"
+                                      style="display:none" onload="onLoad($(this), $('#result_$codecUtil.hex($sp.getBytes())'), '$skey')"></iframe>
                           #end
                       #end
                   #end

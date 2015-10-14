@@ -123,7 +123,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         contextCreationStrategy = Constraint.isNotNull(strategy,
-                "SingleLogoutContext creation strategy cannot be null");
+                "LogoutPropagationContext creation strategy cannot be null");
     }
     
     /** {@inheritDoc} */
