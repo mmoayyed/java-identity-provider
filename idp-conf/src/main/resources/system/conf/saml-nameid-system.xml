@@ -64,8 +64,8 @@
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"
         p:computedIdStrategy="#{getObject('%{idp.persistentId.computed:shibboleth.ComputedPersistentIdGenerator}'.trim())}"
-        p:IDStore="#{getObject('%{idp.persistentId.store:undefined}')}"
-        p:dataSource="#{getObject('%{idp.persistentId.dataSource:undefined}')}" />
+        p:IDStore="#{getObject('%{idp.persistentId.store:undefined}'.trim())}"
+        p:dataSource="#{getObject('%{idp.persistentId.dataSource:undefined}'.trim())}" />
     
     <!-- Parent bean for users to configure a custom ID store rather than a data source only. -->
     <bean id="shibboleth.JDBCPersistentIdStore" abstract="true"
