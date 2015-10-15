@@ -34,7 +34,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for Direct Principal Connector<br/>
+ * Parser for StoredId Principal Connector<br/>
  * &lt;PrincipalConnector xsi:type="pc:StoredId"&gt;.
  */
 public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
@@ -73,7 +73,7 @@ public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
          * @param connector the data connector of interest
          */
         public EmbeddedStoredPersistentIdDecoder(StoredIDDataConnector connector) {
-            setPersistentIdStoreEx(connector.getStoredIDStore());
+            setPersistentIdStore(connector.getStoredIDStore());
         }
     }
 

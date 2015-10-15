@@ -115,6 +115,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
+        idStore.setVerifyDatabase(false);
         idStore.initialize();
 
         storedIdStrategy.setIDStore(idStore);
