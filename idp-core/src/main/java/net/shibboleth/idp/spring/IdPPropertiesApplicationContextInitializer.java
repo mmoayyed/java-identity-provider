@@ -68,7 +68,6 @@ public class IdPPropertiesApplicationContextInitializer implements
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
 
-// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
@@ -79,9 +78,9 @@ public class IdPPropertiesApplicationContextInitializer implements
             log.debug("Prepending idp.home property value '{}' to well-known search locations", homeProperty);
             searchLocations.add(homeProperty);
         }
-        
+
         searchLocations.addAll(Arrays.asList(getSearchLocations()));
-        
+
         log.debug("Attempting to find '{}' at search locations '{}'", getSearchTarget(), searchLocations);
         for (final String searchLocation : searchLocations) {
 
@@ -108,36 +107,12 @@ public class IdPPropertiesApplicationContextInitializer implements
                         setIdPHomeProperty(searchLocationAbsolutePath, properties);
                     }
                 }
-                
-                // Load any additional property sources.
-                final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
-                if (additionalSources != null) {
-                    final String[] sources = additionalSources.split(",");
-                    for (final String source : sources) {
-                        final String trimmedSource = StringSupport.trimOrNull(source);
-                        if (trimmedSource == null) {
-                            continue;
-                        }
-                        log.debug("Attempting to load properties from resource '{}'", trimmedSource);
-                        final String pathifiedSource = searchLocation + trimmedSource;
-                        final Resource additionalResource = applicationContext.getResource(pathifiedSource);
-                        if (additionalResource.exists()) {
-                            log.debug("Found resource '{}' at search path '{}'", additionalResource, pathifiedSource);
-                            if (loadProperties(properties, additionalResource) == null) {
-                                log.warn("Unable to load properties from resource '{}'", additionalResource);
-                                continue;
-                            }
-                        } else {
-                            log.warn("Unable to find resource '{}'", additionalResource);
-                        }
-                    }
-                }
+
+                loadAdditionalPropertySources(applicationContext, searchLocation, properties);
 
                 logProperties(properties);
-                final PropertiesPropertySource propertySource =
-                        new PropertiesPropertySource(resource.toString(), properties);
 
-                applicationContext.getEnvironment().getPropertySources().addLast(propertySource);
+                addPropertySourceToApplicationContext(applicationContext, resource.toString(), properties);
 
                 return;
             }
@@ -145,7 +120,6 @@ public class IdPPropertiesApplicationContextInitializer implements
 
         log.warn("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
     }
-// Checkstyle: CyclomaticComplexity|MethodLength ON
 
     /**
      * Get the target resource to be searched for {@link #IDP_PROPERTIES}.
@@ -188,6 +162,42 @@ public class IdPPropertiesApplicationContextInitializer implements
             return null;
         }
     }
+
+    /**
+     * Load additional property sources.
+     * 
+     * File names of additional property sources are defined by {@link #IDP_ADDITIONAL_PROPERTY}, and are resolved
+     * relative to the given search location.
+     * 
+     * @param applicationContext the application context
+     * @param searchLocation the location from which additional property sources are resolved
+     * @param properties the properties to be filled with additional property sources
+     */
+    public void loadAdditionalPropertySources(@Nonnull final ConfigurableApplicationContext applicationContext,
+            @Nonnull final String searchLocation, @Nonnull final Properties properties) {
+        final String additionalSources = properties.getProperty(IDP_ADDITIONAL_PROPERTY);
+        if (additionalSources != null) {
+            final String[] sources = additionalSources.split(",");
+            for (final String source : sources) {
+                final String trimmedSource = StringSupport.trimOrNull(source);
+                if (trimmedSource == null) {
+                    continue;
+                }
+                log.debug("Attempting to load properties from resource '{}'", trimmedSource);
+                final String pathifiedSource = searchLocation + trimmedSource;
+                final Resource additionalResource = applicationContext.getResource(pathifiedSource);
+                if (additionalResource.exists()) {
+                    log.debug("Found resource '{}' at search path '{}'", additionalResource, pathifiedSource);
+                    if (loadProperties(properties, additionalResource) == null) {
+                        log.warn("Unable to load properties from resource '{}'", additionalResource);
+                        continue;
+                    }
+                } else {
+                    log.warn("Unable to find resource '{}'", additionalResource);
+                }
+            }
+        }
+    }
     
     /**
      * Log property names and values at debug level, suppressing properties whose name matches 'password'.
@@ -202,6 +212,19 @@ public class IdPPropertiesApplicationContextInitializer implements
                 log.debug("Loaded property '{}'='{}'", name, value);
             }
         }
+    }
+
+    /**
+     * Add property source to the application context environment with lowest precedence.
+     * 
+     * @param applicationContext the application context
+     * @param name the name of the property source to be added to the application context
+     * @param properties the properties added to the application context
+     */
+    public void addPropertySourceToApplicationContext(@Nonnull final ConfigurableApplicationContext applicationContext,
+            @Nonnull final String name, @Nonnull final Properties properties) {
+        applicationContext.getEnvironment().getPropertySources()
+                .addLast(new PropertiesPropertySource(name, properties));
     }
 
     /**
