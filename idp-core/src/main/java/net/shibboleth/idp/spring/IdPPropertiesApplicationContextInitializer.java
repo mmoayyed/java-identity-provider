@@ -166,8 +166,7 @@ public class IdPPropertiesApplicationContextInitializer implements
     }
 
     /**
-     * Load properties from the resource and log property names and values at debug level, suppressing properties whose
-     * name matches 'password'.
+     * Load properties from the resource.
      * 
      * @param sink if non-null use this instance as the target
      * @param resource the resource
