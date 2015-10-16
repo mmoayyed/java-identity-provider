@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.ldaptive.Credential;
 import org.ldaptive.LdapException;
+import org.ldaptive.ResultCode;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -161,10 +162,14 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
                     handleError(profileRequestContext, authenticationContext, String.format("%s:%s:%s",
                             state.getError(), response.getResultCode(), response.getMessage()),
                             AuthnEventIds.ACCOUNT_ERROR);
-                } else {
+                } else if (response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
                     handleError(profileRequestContext, authenticationContext,
                             String.format("%s:%s", response.getResultCode(), response.getMessage()),
                             AuthnEventIds.INVALID_CREDENTIALS);
+                } else {
+                    handleError(profileRequestContext, authenticationContext,
+                            String.format("%s:%s", response.getResultCode(), response.getMessage()),
+                            AuthnEventIds.AUTHN_ERROR);
                 }
             }
         } catch (final LdapException e) {

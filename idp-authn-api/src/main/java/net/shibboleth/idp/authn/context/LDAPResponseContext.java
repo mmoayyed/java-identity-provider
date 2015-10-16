@@ -23,6 +23,8 @@ import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.opensaml.messaging.context.BaseContext;
 
+import com.google.common.base.MoreObjects;
+
 /**
  * A context, usually attached to {@link AuthenticationContext}, containing data about an LDAP authentication operation.
  */
@@ -71,4 +73,13 @@ public class LDAPResponseContext extends BaseContext {
         final AccountState state = authenticationResponse.getAccountState();
         return state != null ? state.getError() != null : false;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("authenticationResponse", authenticationResponse)
+                .toString();
+    }
+
 }

@@ -45,7 +45,6 @@ import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.ext.PasswordPolicyAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.jaas.LdapPrincipal;
-import org.ldaptive.provider.ConnectionException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -172,6 +171,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         Assert.assertNull(ac.getAuthenticationResult());
         LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
         Assert.assertNotNull(aec);
@@ -194,13 +194,13 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         final Event event = action.execute(src);
         
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(LDAPResponseContext.class, false));
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
-        Assert.assertNotNull(aec);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.AUTHN_EXCEPTION);
-        Assert.assertTrue(aec.getExceptions().get(0) instanceof ConnectionException);
-        Assert.assertEquals(aec.getClassifiedErrors().size(), 0);
+        // no mapping defined for AUTHN_ERROR
+        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.AUTHN_ERROR);
     }
 
     @Test public void testBadUsername() throws Exception {
