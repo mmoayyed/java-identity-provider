@@ -101,7 +101,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
     /**
      * Gets the {@link VelocityEngine} to be used.
      * 
-     * @return the template
+     * @return the velocity engine
      */
     @Nullable @NonnullAfterInit public VelocityEngine getVelocityEngine() {
         return engine;
@@ -112,7 +112,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
      * 
      * @param velocityEngine engine to be used
      */
-    public void setVelocityEngine(VelocityEngine velocityEngine) {
+    public void setVelocityEngine(final VelocityEngine velocityEngine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         engine = velocityEngine;
