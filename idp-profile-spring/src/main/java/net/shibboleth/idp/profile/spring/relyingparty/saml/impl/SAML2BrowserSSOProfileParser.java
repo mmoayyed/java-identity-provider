@@ -26,6 +26,7 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,9 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Parser to generate {@link BrowserSSOProfileConfiguration} from a <code>saml:SAML2SSOProfile</code>.
@@ -140,10 +144,31 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
             builder.addPropertyValue("skipEndpointValidationWhenSigned",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "skipEndpointValidationWhenSigned")));
         }
-
+        
         if (element.hasAttributeNS(null, "allowDelegation")) {
-            builder.addPropertyValue("allowingDelegation",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "allowDelegation")));
+            if (element.hasAttributeNS(null, "allowDelegationPredicateRef")) {
+                log.warn("Attribute 'allowDelegation' is being ignored in favor of 'allowDelegationPredicateRef'");
+            } else {
+                Boolean value = AttributeSupport.getAttributeValueAsBoolean(
+                        element.getAttributeNodeNS(null, "allowDelegation"));
+                if (value != null) {
+                    if (value) {
+                        builder.addPropertyValue("allowDelegation", Predicates.alwaysTrue());
+                    } else {
+                        builder.addPropertyValue("allowDelegation", Predicates.alwaysFalse());
+                    }
+                } else {
+                    log.error("Attribute 'allowDelegation' is being ignored because it's not a legal xs:boolean value");
+                    throw new BeanDefinitionParsingException(new Problem(
+                            "Attribute 'allowDelegation' is being ignored because it's not a legal xs:boolean value",
+                            new Location(parserContext.getReaderContext().getResource())));
+                }
+            }
+        }
+        
+        if (element.hasAttributeNS(null, "allowDelegationPredicateRef")) {
+            builder.addPropertyReference("allowDelegation", 
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "allowDelegationPredicateRef")));
         }
 
         setPropertiesFromRelyingParty(element, builder);

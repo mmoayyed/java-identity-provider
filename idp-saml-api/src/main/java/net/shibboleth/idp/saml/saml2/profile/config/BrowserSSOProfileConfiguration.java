@@ -43,6 +43,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -77,8 +78,16 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      */
     @Duration @NonNegative private long maximumSPSessionLifetime;
 
-    /** Whether produced assertions may be delegated. Default value: false */
-    private boolean allowingDelegation;
+    /** 
+     * The predicate used to determine if produced assertions may be delegated.
+     */
+    @Nonnull private Predicate<ProfileRequestContext> allowDelegationPredicate;
+    
+    /** 
+     * Whether produced assertions may be delegated. Default value: null.
+     * @deprecated use {@link #allowDelegationPredicate} instead
+     */
+    private Boolean allowingDelegation;
 
     /** Selects, and limits, the authentication contexts to use for requests. */
     @Nonnull @NonnullElements private List<AuthnContextClassRefPrincipal> defaultAuthenticationContexts;
@@ -110,7 +119,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         includeAttributeStatement = true;
         skipEndpointValidationWhenSigned = false;
         maximumSPSessionLifetime = 0;
-        allowingDelegation = false;
+        allowingDelegation = null;
+        allowDelegationPredicate = Predicates.<ProfileRequestContext>alwaysFalse();
         defaultAuthenticationContexts = Collections.emptyList();
         authenticationFlows = Collections.emptySet();
         postAuthenticationFlows = Collections.emptyList();
@@ -206,22 +216,64 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
                 Constraint.isGreaterThanOrEqual(0, lifetime,
                         "Maximum SP session lifetime must be greater than or equal to 0");
     }
+    
+    /**
+     * Get the predicate used to determine if produced assertions may be delegated.
+     * 
+     * @return predicate used to determine if produced assertions may be delegated
+     */
+
+    @Nonnull public Predicate<ProfileRequestContext> getAllowDelegation() {
+        return allowDelegationPredicate;
+    }
+
+    /**
+     * Set the predicate used to determine if produced assertions may be delegated.
+     * 
+     * @param  predicate used to determine if produced assertions may be delegated
+     */
+
+    public void setAllowDelegation(@Nonnull final Predicate<ProfileRequestContext> predicate) {
+        allowDelegationPredicate = Constraint.isNotNull(predicate, "Allow delegation predicate may not be null");
+    }
 
     /**
      * Get whether produced assertions may be delegated.
      * 
-     * @return whether produced assertions may be delegated
+     * @return whether produced assertions may be delegated, as a {@link Boolean}.  May be null.
+     * 
+     * @deprecated use instead {@link #getAllowDelegation()} predicate
      */
-    public boolean isAllowingDelegation() {
+    @Deprecated
+    public Boolean getAllowingDelegation() {
         return allowingDelegation;
+    }
+    
+    /**
+     * Get whether produced assertions may be delegated.
+     * 
+     * @return whether produced assertions may be delegated
+     * 
+     * @deprecated use instead {@link #getAllowDelegation()} predicate
+     */
+    @Deprecated
+    public boolean isAllowingDelegation() {
+        if (allowingDelegation != null) {
+            return allowingDelegation;
+        } else {
+            return false;
+        }
     }
 
     /**
      * Set whether produced assertions may be delegated.
      * 
      * @param isAllowed whether produced assertions may be delegated
+     * 
+     * @deprecated use instead {@link #setAllowingDelegation(Boolean)} predicate
      */
-    public void setAllowingDelegation(final boolean isAllowed) {
+    @Deprecated
+    public void setAllowingDelegation(final Boolean isAllowed) {
         allowingDelegation = isAllowed;
     }
 

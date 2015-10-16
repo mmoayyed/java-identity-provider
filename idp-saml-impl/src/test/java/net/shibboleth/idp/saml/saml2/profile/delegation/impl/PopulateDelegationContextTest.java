@@ -68,6 +68,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicates;
+
 /**
  *
  */
@@ -267,7 +269,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
                 buildDelegationRequestAttributeConsumingService(false));
         
-        browserSSOProfileConfig.setAllowingDelegation(true);
+        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
         
         action.initialize();
         final Event result = action.execute(rc);
@@ -286,7 +288,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
                 buildDelegationRequestAttributeConsumingService(true));
         
-        browserSSOProfileConfig.setAllowingDelegation(true);
+        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
         
         action.initialize();
         final Event result = action.execute(rc);
@@ -316,6 +318,25 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
     public void testRequestedViaConditionsAllowed() throws Exception {
         authnRequest.setConditions(buildDelegationRequestConditions());
         
+        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
+        
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
+        
+        
+        DelegationContext delegationContext = prc.getSubcontext(DelegationContext.class);
+        Assert.assertNotNull(delegationContext);
+        Assert.assertEquals(delegationContext.isIssuingDelegatedAssertion(), true);
+        Assert.assertEquals(delegationContext.getDelegationRequested(), DelegationRequest.REQUESTED_REQUIRED);
+        Assert.assertNotNull(delegationContext.getSubjectConfirmationCredentials());
+        Assert.assertFalse(delegationContext.getSubjectConfirmationCredentials().isEmpty());
+    }
+    
+    @Test
+    public void testRequestedViaConditionsAllowedViaLegacyBoolean() throws Exception {
+        authnRequest.setConditions(buildDelegationRequestConditions());
+        
         browserSSOProfileConfig.setAllowingDelegation(true);
         
         action.initialize();
@@ -337,7 +358,8 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         
         authnRequest.setConditions(buildDelegationRequestConditions());
         
-        browserSSOProfileConfig.setAllowingDelegation(true);
+        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
+
         
         action.initialize();
         final Event result = action.execute(rc);
@@ -354,7 +376,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class, true).setAttributeConsumingService(
                 buildDelegationRequestAttributeConsumingService(false));
         
-        browserSSOProfileConfig.setAllowingDelegation(true);
+        browserSSOProfileConfig.setAllowDelegation(Predicates.<ProfileRequestContext>alwaysTrue());
         
         action.initialize();
         final Event result = action.execute(rc);

@@ -15,7 +15,8 @@
 		<rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile"
 			includeAttributeStatement="false" securityPolicyRef="ignore"
 			maximumSPSessionLifetime="1" encryptionOptional="true"
-			encryptAttributes="always" allowDelegation="true" encryptAssertions="conditional"
+			encryptAttributes="always" encryptAssertions="conditional"
+            allowDelegation="true"
 			signRequests="conditional" signAssertions="always" signResponses="never"
 			skipEndpointValidationWhenSigned="true" artifactType="7654">
 		</rp:ProfileConfiguration>

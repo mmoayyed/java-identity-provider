@@ -73,6 +73,8 @@
 
     <!--  for SSOS -->
     <bean id="jimmy" factory-method="alwaysTrue" class="com.google.common.base.Predicates"/>
+    
+    <bean id="dummyPredicate" class="net.shibboleth.idp.profile.spring.logic.DummyPredicate"/>
 
     <!-- Trust Engines -->
     

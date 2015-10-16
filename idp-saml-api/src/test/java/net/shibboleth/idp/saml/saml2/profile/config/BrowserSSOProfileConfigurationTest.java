@@ -18,9 +18,14 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /** Unit test for {@link BrowserSSOProfileConfiguration}. */
 public class BrowserSSOProfileConfigurationTest {
@@ -62,10 +67,39 @@ public class BrowserSSOProfileConfigurationTest {
 
     @Test
     public void testAllowingDelegation() {
+        // Note: testing the deprecated boolean value variant
         BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
         Assert.assertFalse(config.isAllowingDelegation());
+        Assert.assertNull(config.getAllowingDelegation());
+        
+        config.setAllowingDelegation(false);
+        Assert.assertFalse(config.isAllowingDelegation());
+        Assert.assertNotNull(config.getAllowingDelegation());
+        Assert.assertEquals(config.getAllowingDelegation(), Boolean.FALSE);
 
         config.setAllowingDelegation(true);
         Assert.assertTrue(config.isAllowingDelegation());
+        Assert.assertNotNull(config.getAllowingDelegation());
+        Assert.assertEquals(config.getAllowingDelegation(), Boolean.TRUE);
     }
+    
+    @Test
+    public void testAllowDelegation() {
+        // Note: testing the newer predicate variant
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertNotNull(config.getAllowDelegation());
+        
+        Predicate<ProfileRequestContext> predicate = Predicates.alwaysTrue();
+        config.setAllowDelegation(predicate);
+        Assert.assertSame(config.getAllowDelegation(), predicate);
+        
+        try {
+            config.setAllowDelegation(null);
+            Assert.fail("Null predicate should not have been allowed");
+        } catch (ConstraintViolationException e) {
+            // expected, do nothing 
+        }
+        
+    }
+    
 }

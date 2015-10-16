@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml;
 import java.math.BigInteger;
 import java.util.List;
 
+import net.shibboleth.idp.profile.spring.logic.DummyPredicate;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
@@ -53,7 +54,8 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertFalse(profile.isAllowingDelegation());
+        Assert.assertNull(profile.getAllowingDelegation());
+        assertFalsePredicate(profile.getAllowDelegation());
         Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
         Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml2-sso");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
@@ -75,7 +77,8 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         assertConditionalPredicate(profile.getEncryptAssertions());
         assertFalsePredicate(profile.getEncryptNameIDs());
         Assert.assertTrue(profile.isEncryptionOptional());
-        Assert.assertTrue(profile.isAllowingDelegation());
+        Assert.assertNull(profile.getAllowingDelegation());
+        assertTruePredicate(profile.getAllowDelegation());
 
         Assert.assertEquals(profile.getProxyCount(), 0);
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());
@@ -110,6 +113,15 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         
         Assert.assertNotNull(profile.getSecurityConfiguration());
         Assert.assertNotNull(profile.getSecurityConfiguration().getSignatureSigningConfiguration());
+    }
+    
+    @Test public void allowDelegationPredicateRef() {
+        BrowserSSOProfileConfiguration profile =
+                getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/saml2SSOAllowDelegationPredicate.xml");
+
+        Assert.assertNull(profile.getAllowingDelegation());
+        Assert.assertNotNull(profile.getAllowDelegation());
+        Assert.assertTrue(profile.getAllowDelegation() instanceof DummyPredicate);
     }
     
 }

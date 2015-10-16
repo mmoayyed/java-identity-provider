@@ -78,6 +78,17 @@
                     <annotation>
                         <documentation>
                             Whether produced assertions may be delegated.
+                            
+                            Mutually exclusive with allowDelegationPredicateRef.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="allowDelegationPredicateRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a predicate use to determine whether produced assertions may be delegated.
+                            
+                            Mutually exclusive with allowDelegation.
                         </documentation>
                     </annotation>
                 </attribute>
