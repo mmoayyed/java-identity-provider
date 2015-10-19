@@ -65,6 +65,7 @@
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>3.2.0-SNAPSHOT</opensaml.version>
         <spring-extensions.version>5.2.0-SNAPSHOT</spring-extensions.version>
+        <checkstyle.configLocation>${project.parent.basedir}/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
     </properties>
 
     <repositories>
