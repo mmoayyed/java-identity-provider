@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl.spnego;
+package net.shibboleth.idp.authn.spnego.impl;
 
 import javax.annotation.Nonnull;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -32,17 +33,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Component managing the auto-login state via cookie.
  */
-
 public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
-    /**
-     * Name of the SPNEGO auto-login cookie.
-     */
-    public static final String AUTOLOGIN_COOKIE_NAME = "_idp_krb_autologin";
+    
+    /** Name of the SPNEGO auto-login cookie. */
+    @Nonnull @NotEmpty public static final String AUTOLOGIN_COOKIE_NAME = "_idp_spnego_autologin";
 
-    /**
-     * SPNEGO auto-login cookie value representing true.
-     */
-    public static final String AUTOLOGIN_COOKIE_VALUE_TRUE = "true";
+    /** SPNEGO auto-login cookie value representing true. */
+    @Nonnull @NotEmpty public static final String AUTOLOGIN_COOKIE_VALUE_TRUE = "1";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SPNEGOAutoLoginManager.class);
@@ -55,7 +52,6 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * 
      * @param manager the CookieManager to use.
      */
-
     public void setCookieManager(@Nonnull final CookieManager manager) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
@@ -67,16 +63,26 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * 
      * @return the CookieManager.
      */
-    @Nonnull
-    public CookieManager getCookieManager() {
+    @NonnullAfterInit public CookieManager getCookieManager() {
         return cookieManager;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+    
+        if (cookieManager == null) {
+            throw new ComponentInitializationException("CookieManager cannot be null");
+        }
+    }
+    
 
     /**
      * Enable auto-login, i.e. set cookie to 'true'.
      */
     public void enable() {
-        getCookieManager().addCookie(AUTOLOGIN_COOKIE_NAME, AUTOLOGIN_COOKIE_VALUE_TRUE);
+        cookieManager.addCookie(AUTOLOGIN_COOKIE_NAME, AUTOLOGIN_COOKIE_VALUE_TRUE);
         log.debug("Auto-login has been enabled.");
     }
 
@@ -84,7 +90,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * Disable auto-login. i.e. unset cookie.
      */
     public void disable() {
-        getCookieManager().unsetCookie(AUTOLOGIN_COOKIE_NAME);
+        cookieManager.unsetCookie(AUTOLOGIN_COOKIE_NAME);
         log.debug("Auto-login has been disabled.");
     }
 
@@ -94,7 +100,7 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
      * @return true if auto-login is enabled.
      */
     public boolean isEnabled() {
-        return getCookieManager().cookieHasValue(AUTOLOGIN_COOKIE_NAME, AUTOLOGIN_COOKIE_VALUE_TRUE);
+        return cookieManager.cookieHasValue(AUTOLOGIN_COOKIE_NAME, AUTOLOGIN_COOKIE_VALUE_TRUE);
     }
 
     /**
@@ -108,17 +114,6 @@ public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
          */
         final String value = getCookieManager().getCookieValue(AUTOLOGIN_COOKIE_NAME, null);
         return value == null || !value.equals(AUTOLOGIN_COOKIE_VALUE_TRUE);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-
-        if (cookieManager == null) {
-            throw new ComponentInitializationException(
-                    "Initialization of SPNEGO AutoLogin action requires non-null CookieManager");
-        }
     }
 
 }

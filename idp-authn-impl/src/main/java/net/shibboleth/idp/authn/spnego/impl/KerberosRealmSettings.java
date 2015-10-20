@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl.spnego;
+package net.shibboleth.idp.authn.spnego.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,6 +32,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * Kerberos realm settings for the SPNEGO authentication flow.
  */
 public class KerberosRealmSettings extends AbstractInitializableComponent {
+    
     /** The realm name. */
     @NonnullAfterInit private String realmName;
 
@@ -55,19 +56,18 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
     }
 
     /**
-     * Get the realm's name.
+     * Get the realm name.
      * 
-     * @return realm's name
+     * @return realm name
      */
-    @Nonnull
-    public String getRealmName() {
+    @NonnullAfterInit @NotEmpty public String getRealmName() {
         return realmName;
     }
 
     /**
-     * Set the service's principal. Required.
+     * Set the service principal name. Required.
      * 
-     * @param principal service's principal
+     * @param principal service principal
      */
     public void setServicePrincipal(@Nonnull @NotEmpty final String principal) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -75,12 +75,11 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
     }
 
     /**
-     * Get the service principal.
+     * Get the service principal name.
      * 
      * @return service principal
      */
-    @Nonnull
-    public String getServicePrincipal() {
+    @NonnullAfterInit @NotEmpty public String getServicePrincipal() {
         return servicePrincipal;
     }
 
@@ -89,7 +88,7 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * 
      * @param newKeytab keytab to use
      */
-    public void setKeytab(@Nonnull @NotEmpty final String newKeytab) {
+    public void setKeytab(@Nullable final String newKeytab) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         keytab = StringSupport.trim(newKeytab);
     }
@@ -99,8 +98,7 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * 
      * @return keytab
      */
-    @Nullable
-    public String getKeytab() {
+    @Nullable public String getKeytab() {
         return keytab;
     }
 
@@ -109,9 +107,9 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * 
      * @param newPassword password to use
      */
-    public void setPassword(@Nonnull @NotEmpty final String newPassword) {
+    public void setPassword(@Nullable final String newPassword) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        password = StringSupport.trim(newPassword);
+        password = newPassword;
     }
 
     /**
@@ -119,12 +117,12 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
      * 
      * @return password
      */
-    @Nullable
-    public String getPassword() {
+    @Nullable public String getPassword() {
         return password;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
@@ -140,4 +138,5 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
             throw new ComponentInitializationException("'keytab' and 'password' are mutually exclusive.");
         }
     }
+    
 }

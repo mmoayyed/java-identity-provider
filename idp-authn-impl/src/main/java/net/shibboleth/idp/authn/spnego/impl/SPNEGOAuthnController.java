@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl.spnego;
+package net.shibboleth.idp.authn.spnego.impl;
 
 import java.io.IOException;
 import java.util.Arrays;

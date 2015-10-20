@@ -16,4 +16,4 @@
  */
 
 /** Implementation of SPNEGO authentication flow. */
-package net.shibboleth.idp.authn.impl.spnego;
+package net.shibboleth.idp.authn.spnego.impl;

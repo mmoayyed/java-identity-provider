@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl.spnego;
+package net.shibboleth.idp.authn.spnego.impl;
 
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -214,7 +214,7 @@ public class GSSContextAcceptor {
         
         // Establish server login credentials.
         Subject krbSubject = null;
-        krbLoginModule = new GSSAcceptorLoginModule(realm, kerberosSettings.getReRefreshKrb5Config(),
+        krbLoginModule = new GSSAcceptorLoginModule(realm, kerberosSettings.getRefreshKrb5Config(),
                 kerberosSettings.getLoginModuleClassName());
         try {
             krbSubject = krbLoginModule.login();

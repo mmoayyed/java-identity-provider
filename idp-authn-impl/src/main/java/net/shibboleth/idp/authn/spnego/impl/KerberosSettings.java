@@ -15,14 +15,22 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl.spnego;
+package net.shibboleth.idp.authn.spnego.impl;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -35,17 +43,18 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 public class KerberosSettings extends AbstractInitializableComponent {
 
     /** Class name of JAAS LoginModule to acquire Kerberos credentials. */
-    @NonnullAfterInit @NotEmpty private String loginModuleClassName;
+    @Nonnull @NotEmpty private String loginModuleClassName;
 
     /** Refresh the Kerberos config before running? */
     private boolean refreshKrb5Config;
 
     /** List of realms (KerberosRealmSettings objects). */
-    @NonnullAfterInit private List<KerberosRealmSettings> realms;
+    @NonnullAfterInit @NonnullElements private Collection<KerberosRealmSettings> realmSettings;
 
     /** Constructor. */
     public KerberosSettings() {
         loginModuleClassName = "com.sun.security.auth.module.Krb5LoginModule";
+        realmSettings = Collections.emptyList();
     }
 
     /**
@@ -53,7 +62,7 @@ public class KerberosSettings extends AbstractInitializableComponent {
      * 
      * @param name name of login module class
      */
-    public void setLoginModuleClassName(@Nonnull final String name) {
+    public void setLoginModuleClassName(@Nonnull @NotEmpty final String name) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         loginModuleClassName =
@@ -65,9 +74,7 @@ public class KerberosSettings extends AbstractInitializableComponent {
      * 
      * @return name of login module class
      */
-    @Nonnull
-    @NotEmpty
-    public String getLoginModuleClassName() {
+    @Nonnull @NotEmpty public String getLoginModuleClassName() {
         return loginModuleClassName;
     }
 
@@ -87,19 +94,20 @@ public class KerberosSettings extends AbstractInitializableComponent {
      * 
      * @return true if Kerberos configuration is to be refreshed
      */
-    public boolean getReRefreshKrb5Config() {
+    public boolean getRefreshKrb5Config() {
         return refreshKrb5Config;
     }
 
     /**
-     * List of realms (KerberosRealmSettings objects).
+     * Collection of realms (KerberosRealmSettings objects).
      * 
-     * @param list list of realms to set.
+     * @param realms realms to set.
      */
-    public void setRealms(@Nonnull @NotEmpty final List<KerberosRealmSettings> list) {
+    public void setRealms(@Nonnull @NonnullElements final Collection<KerberosRealmSettings> realms) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        realms = Constraint.isNotNull(list, "The list of realms cannot be null");
-        Constraint.isFalse(realms.isEmpty(), "The list of realms cannot be empty");
+        Constraint.isNotNull(realms, "The realms collection cannot be null");
+        
+        realmSettings = new ArrayList<>(Collections2.filter(realms, Predicates.notNull()));
     }
 
     /**
@@ -107,22 +115,19 @@ public class KerberosSettings extends AbstractInitializableComponent {
      * 
      * @return list of realms
      */
-    @Nonnull
-    @NotEmpty
-    public List<KerberosRealmSettings> getRealms() {
-        return realms;
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Collection<KerberosRealmSettings> getRealms() {
+        return realmSettings;
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (realms == null) {
-            throw new ComponentInitializationException("realms must be set");
+        if (realmSettings.isEmpty()) {
+            throw new ComponentInitializationException("Realm collection cannot be empty");
         }
-
-        if (realms.isEmpty()) {
-            throw new ComponentInitializationException("At least one realm must be configured");
-        }
+        
     }
+    
 }
