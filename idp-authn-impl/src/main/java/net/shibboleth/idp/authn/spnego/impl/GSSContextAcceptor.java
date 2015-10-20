@@ -34,22 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * GSS-API mechanism for Kerberos. Establish a security context
- * 
- * Authenticate for Version 5. It defines the format of context establishment, per-message and context deletion tokens,
- * and uses algorithm identifiers for each cryptosystem in per-message and context deletion tokens.
- * 
- * GSS authorization mechanism.
- * 
- * This is a partial sketch for a simple server program that acts as a GSS context acceptor.
- * 
- * The acceptor is similar to the server in the TCP/IP paradigm, in that it is accepting or rejecting the communication
- * from the initiator.
+ * Helper class that manages context establishment for the SPNEGO GSS-API mechanism.
  * 
  * @see <a href="http://www.ietf.org/rfc/rfc2853.txt">RFC 2853 - Generic Security Service API Version 2 : Java
  *      Bindings</a>
  * @see http://www.ietf.org/rfc/rfc4178.txt
- * 
  */
 public class GSSContextAcceptor {
     

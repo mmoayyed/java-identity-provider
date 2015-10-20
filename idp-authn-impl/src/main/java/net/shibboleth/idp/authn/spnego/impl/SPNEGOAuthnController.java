@@ -51,10 +51,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * Controller for running SPNEGO.
+ * MVC controller for managing the SPNEGO exchanges implemented as an {@link ExternalAuthentication} mechanism.
  * 
  * The handler methods either return contents back to the browser by returning an appropriate ResponseEntity<String>
- * object, or they return back to the flow by calling ExternalAuthentication.finishExternalAuthentication() and
+ * object, or they return back to the flow by calling
+ * {@link ExternalAuthentication#finishExternalAuthentication(String, HttpServletRequest, HttpServletResponse)} and
  * returning null. On unrecoverable errors, an exception is thrown.
  */
 @Controller
