@@ -73,4 +73,7 @@
         <property name="contentType" value="text/html;charset=utf-8" />
     </bean>
 
+    <!-- Import any user defined beans or overrides for the MVC config. -->
+    <import resource="../../conf/mvc-beans.xml" />
+
 </beans>
