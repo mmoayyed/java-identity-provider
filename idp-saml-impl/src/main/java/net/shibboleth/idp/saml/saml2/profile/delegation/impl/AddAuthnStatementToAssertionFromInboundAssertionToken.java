@@ -260,6 +260,7 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
     @Nullable protected AuthnStatement getNewAuthnStatement() {
         try {
             AuthnStatement statement = XMLObjectSupport.cloneXMLObject(sourceStatement);
+            statement.releaseDOM();
             statement.releaseChildrenDOM(true);
             return statement;
         } catch (MarshallingException | UnmarshallingException e) {
