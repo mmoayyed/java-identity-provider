@@ -55,6 +55,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
         Assert.assertNull(profile.getAllowingDelegation());
+        Assert.assertNotNull(profile.getAllowDelegation());
         assertFalsePredicate(profile.getAllowDelegation());
         Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
         Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml2-sso");
@@ -78,6 +79,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         assertFalsePredicate(profile.getEncryptNameIDs());
         Assert.assertTrue(profile.isEncryptionOptional());
         Assert.assertNull(profile.getAllowingDelegation());
+        Assert.assertNotNull(profile.getAllowDelegation());
         assertTruePredicate(profile.getAllowDelegation());
 
         Assert.assertEquals(profile.getProxyCount(), 0);
@@ -122,6 +124,15 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertNull(profile.getAllowingDelegation());
         Assert.assertNotNull(profile.getAllowDelegation());
         Assert.assertTrue(profile.getAllowDelegation() instanceof DummyPredicate);
+    }
+    
+    @Test public void allowDelegationPropertyReplacement() {
+        BrowserSSOProfileConfiguration profile =
+                getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/saml2SSOAllowDelegationPropertyReplacement.xml");
+
+        Assert.assertNull(profile.getAllowingDelegation());
+        Assert.assertNotNull(profile.getAllowDelegation());
+        assertTruePredicate(profile.getAllowDelegation());
     }
     
 }

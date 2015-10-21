@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.PredicateFilterDirectionFactoryBean;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -145,31 +146,17 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
                     StringSupport.trimOrNull(element.getAttributeNS(null, "skipEndpointValidationWhenSigned")));
         }
         
+        final BeanDefinitionBuilder allowDelegationPredicateBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(AllowDelegationPredicateFactoryBean.class);
         if (element.hasAttributeNS(null, "allowDelegation")) {
-            if (element.hasAttributeNS(null, "allowDelegationPredicateRef")) {
-                log.warn("Attribute 'allowDelegation' is being ignored in favor of 'allowDelegationPredicateRef'");
-            } else {
-                Boolean value = AttributeSupport.getAttributeValueAsBoolean(
-                        element.getAttributeNodeNS(null, "allowDelegation"));
-                if (value != null) {
-                    if (value) {
-                        builder.addPropertyValue("allowDelegation", Predicates.alwaysTrue());
-                    } else {
-                        builder.addPropertyValue("allowDelegation", Predicates.alwaysFalse());
-                    }
-                } else {
-                    log.error("Attribute 'allowDelegation' is being ignored because it's not a legal xs:boolean value");
-                    throw new BeanDefinitionParsingException(new Problem(
-                            "Attribute 'allowDelegation' is being ignored because it's not a legal xs:boolean value",
-                            new Location(parserContext.getReaderContext().getResource())));
-                }
-            }
+            allowDelegationPredicateBuilder.addPropertyValue("allowDelegation", 
+                    element.getAttributeNS(null, "allowDelegation"));
         }
-        
         if (element.hasAttributeNS(null, "allowDelegationPredicateRef")) {
-            builder.addPropertyReference("allowDelegation", 
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "allowDelegationPredicateRef")));
+            allowDelegationPredicateBuilder.addPropertyReference("allowDelegationPredicate", 
+                    element.getAttributeNS(null, "allowDelegationPredicateRef"));
         }
+        builder.addPropertyValue("allowDelegation", allowDelegationPredicateBuilder.getBeanDefinition());
 
         setPropertiesFromRelyingParty(element, builder);
     }

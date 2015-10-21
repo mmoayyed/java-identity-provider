@@ -12,14 +12,11 @@
 		nameIDFormatPrecedence="one two" defaultSigningCredentialRef="signer"
 		defaultAuthenticationMethod="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport">
 
-        <!-- Note: deliberately setting both allowDelegation and allowDelegationPredicateRef to conflicting values
-             to test that the ref overrides the explicit value as expected. -->
 		<rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile"
 			includeAttributeStatement="false" securityPolicyRef="ignore"
 			maximumSPSessionLifetime="1" encryptionOptional="true"
 			encryptAttributes="always" encryptAssertions="conditional"
-            allowDelegation="false"
-            allowDelegationPredicateRef="dummyPredicate"
+            allowDelegation="${allowDelegation}"
 			signRequests="conditional" signAssertions="always" signResponses="never"
 			skipEndpointValidationWhenSigned="true" artifactType="7654">
 		</rp:ProfileConfiguration>
