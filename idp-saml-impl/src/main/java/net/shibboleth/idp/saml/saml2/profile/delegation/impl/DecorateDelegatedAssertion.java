@@ -221,6 +221,12 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
+        // Eval the activation condition first.  Don't bother with the rest if false, esp since
+        // could terminate with a fatal error unnecessarily.
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         assertions = assertionLookupStrategy.apply(profileRequestContext);
         if (assertions == null || assertions.isEmpty()) {
             log.debug("No Assertions found to decorate, skipping further processing");
@@ -235,7 +241,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
     
     /**

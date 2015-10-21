@@ -218,6 +218,12 @@ public class PopulateDelegationContext extends AbstractProfileAction {
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
+        // Eval the activation condition first.  Don't bother with the rest if false, esp since
+        // could terminate with a fatal error unnecessarily.
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         if (!doPreExecuteInbound(profileRequestContext)) {
             return false;
         }
@@ -238,7 +244,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
         
         confirmationCredentials = resolveConfirmationCredentials(profileRequestContext);
         
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
     // Checkstyle: ReturnCount ON
     

@@ -231,6 +231,24 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test
+    public void testActivationCondition() throws Exception {
+        // Ensure that activation condition is evaled first.
+        action.setActivationCondition(Predicates.alwaysFalse());
+
+        // An empty PRC would otherwise generate lots of preExecute errors, but shouldn't even get there.
+        prc.clearSubcontexts();
+        prc.setInboundMessageContext(null);
+        prc.setOutboundMessageContext(null);
+        
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
+        
+        DelegationContext delegationContext = prc.getSubcontext(DelegationContext.class);
+        Assert.assertNull(delegationContext);
+    }
+    
+    @Test
     public void testNoMetadataContext() throws Exception {
         samlPeerContext.removeSubcontext(SAMLMetadataContext.class);
 

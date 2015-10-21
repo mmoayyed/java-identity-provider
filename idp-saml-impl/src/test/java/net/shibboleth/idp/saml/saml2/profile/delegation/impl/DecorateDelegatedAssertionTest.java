@@ -81,6 +81,7 @@ import org.testng.annotations.Test;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 
 /**
  *
@@ -242,6 +243,21 @@ public class DecorateDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     @Test
     public void testNoAssertions() throws Exception {
         response.getAssertions().clear();
+        
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
+        
+        testUndecoratedAssertion();
+    }
+    
+    @Test
+    public void testActivationCondition() throws Exception {
+        // Ensure that activation condition is evaled first.
+        action.setActivationCondition(Predicates.alwaysFalse());
+
+        // This would otherwise generate preExecute error, but shouldn't even get there.
+        delegationContext.setSubjectConfirmationCredentials(null);
         
         action.initialize();
         final Event result = action.execute(rc);
