@@ -89,6 +89,8 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
     
     private int numKeys = 3;
     
+    private SAMLPeerEntityContext samlPeerContext;
+    
     private SAMLMetadataContext samlMetadataContext;
     
     private PopulateDelegationContext action;
@@ -148,11 +150,11 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(rc);
 
         RelyingPartyContext rpcContext = prc.getSubcontext(RelyingPartyContext.class);
-        SAMLPeerEntityContext peerContext = rpcContext.getSubcontext(SAMLPeerEntityContext.class, true);
-        peerContext.setEntityId(ActionTestingSupport.INBOUND_MSG_ISSUER);
-        peerContext.setRole(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-        rpcContext.setRelyingPartyIdContextTree(peerContext);
-        samlMetadataContext = peerContext.getSubcontext(SAMLMetadataContext.class, true);
+        samlPeerContext = rpcContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        samlPeerContext.setEntityId(ActionTestingSupport.INBOUND_MSG_ISSUER);
+        samlPeerContext.setRole(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        rpcContext.setRelyingPartyIdContextTree(samlPeerContext);
+        samlMetadataContext = samlPeerContext.getSubcontext(SAMLMetadataContext.class, true);
         samlMetadataContext.setRoleDescriptor(buildSPSSODescriptor());
         
         MetadataCredentialResolver mcr = new MetadataCredentialResolver();
@@ -223,6 +225,30 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertEvent(result, EventIds.INVALID_PROFILE_CTX);
+        
+        DelegationContext delegationContext = prc.getSubcontext(DelegationContext.class);
+        Assert.assertNull(delegationContext);
+    }
+    
+    @Test
+    public void testNoMetadataContext() throws Exception {
+        samlPeerContext.removeSubcontext(SAMLMetadataContext.class);
+
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
+        
+        DelegationContext delegationContext = prc.getSubcontext(DelegationContext.class);
+        Assert.assertNull(delegationContext);
+    }
+    
+    @Test
+    public void testNoRoleDescriptor() throws Exception {
+       samlMetadataContext.setRoleDescriptor(null);
+
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
         
         DelegationContext delegationContext = prc.getSubcontext(DelegationContext.class);
         Assert.assertNull(delegationContext);

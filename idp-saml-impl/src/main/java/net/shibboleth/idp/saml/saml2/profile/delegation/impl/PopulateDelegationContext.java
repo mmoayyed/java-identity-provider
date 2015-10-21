@@ -313,15 +313,13 @@ public class PopulateDelegationContext extends AbstractProfileAction {
     protected boolean doPreExecuteMetadata(@Nonnull final ProfileRequestContext profileRequestContext) {
         SAMLMetadataContext samlMetadataContext = samlMetadataContextLookupStrategy.apply(profileRequestContext);
         if (samlMetadataContext == null) {
-            log.warn("No SAMLMetadataContext was available");
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            log.debug("No SAMLMetadataContext was available, skipping further delegation processing");
             return false;
         }
         
         roleDescriptor = samlMetadataContext.getRoleDescriptor();
         if (roleDescriptor == null) {
-            log.warn("No RoleDescriptor was available");
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            log.debug("No RoleDescriptor was available, skipping further delegation processing");
             return false;
         }
         
