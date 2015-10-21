@@ -27,6 +27,7 @@ import javax.security.auth.kerberos.KerberosPrincipal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthentication;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
@@ -42,7 +43,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -61,10 +61,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/Authn/SPNEGO")
 public class SPNEGOAuthnController {
-    /**
-     * Error message indicating that SPNEGO is not supported by the client or is not available for other reasons.
-     */
-    public static final String ERROR_SPNEGO_NOT_AVAILABLE = "SPNEGONotAvailable";
+    
+    /** Event ID indicating that SPNEGO is not supported by the client or is not available for other reasons. */
+    @Nonnull @NotEmpty public static final String SPNEGO_NOT_AVAILABLE = "SPNEGONotAvailable";
+
+    /** Event ID indicating that NTLM was attempted by the client. */
+    @Nonnull @NotEmpty public static final String NTLM_UNSUPPORTED = "NTLMUnsupported";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SPNEGOAuthnController.class);
@@ -75,269 +77,278 @@ public class SPNEGOAuthnController {
      * @param conversationKey the SWF conversation key
      * @param httpRequest the HTTP request
      * @param httpResponse the HTTP response
-     * @return the view name
-     * @throws ExternalAuthenticationException
-     * @throws IOException
+     * 
+     * @return the response view
+     * @throws IOException 
+     * @throws ExternalAuthenticationException 
      */
     @RequestMapping(value = "/{conversationKey}", method = RequestMethod.GET)
-    public ModelAndView startSPNEGO(@PathVariable String conversationKey, @Nonnull HttpServletRequest httpRequest,
-            @Nonnull HttpServletResponse httpResponse) throws ExternalAuthenticationException, IOException {
-        ProfileRequestContext prc = null;
-        try {
-            String key = ExternalAuthentication.startExternalAuthentication(httpRequest);
-            Constraint.isTrue(key.equals(conversationKey), "Conversation key mismatch");
-            prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
-        } catch (final ExternalAuthenticationException e) {
-            log.error("Exception while getting ProfileRequestContext", e);
-            finishWithException(conversationKey, httpRequest, httpResponse, e);
+    @Nullable public ModelAndView startSPNEGO(@PathVariable @Nonnull @NotEmpty final String conversationKey,
+            @Nonnull final HttpServletRequest httpRequest, @Nonnull final HttpServletResponse httpResponse)
+                    throws ExternalAuthenticationException, IOException {
+        
+        final String key = ExternalAuthentication.startExternalAuthentication(httpRequest);
+        Constraint.isTrue(key.equals(conversationKey), "Conversation key mismatch");
+        final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
+
+        final SPNEGOContext spnegoCtx = getSPNEGOContext(prc);
+        if (spnegoCtx == null || spnegoCtx.getKerberosSettings() == null) {
+            log.error("Kerberos settings not found in profile request context");
+            finishWithError(conversationKey, httpRequest, httpResponse, AuthnEventIds.INVALID_AUTHN_CTX);
             return null;
         }
-        if (getKerberosSettingsFromContext(prc) == null) {
-            log.error("Kerberos settings not found in profile");
-            finishWithError(conversationKey, httpRequest, httpResponse, ERROR_SPNEGO_NOT_AVAILABLE);
-            return null;
-        }
-        // start the SPNEGO exchange
-        log.trace("SPNEGO negotiation started. Answering request with 401 (WWW-Authenticate: Negotiate)");
-        return replyUnauthorizedNegotiate(httpRequest, httpResponse);
+        
+        // Start the SPNEGO exchange.
+        log.trace("SPNEGO negotiation started, answering request with 401 (WWW-Authenticate: Negotiate)");
+        return replyUnauthorizedNegotiate(prc, httpRequest, httpResponse);
     }
 
+// Checkstyle: CyclomaticComplexity OFF
+    /**
+     * Process an input GSS token from the client and attempt to complete the context establishment process.
+     * 
+     * @param conversationKey the conversation key
+     * @param authorizationHeader the token from the client
+     * @param httpRequest the HTTP request
+     * @param httpResponse the HTTP response
+     * 
+     * @return the response view
+     * @throws ExternalAuthenticationException 
+     * @throws IOException 
+     */
     @RequestMapping(value = "/{conversationKey}", method = RequestMethod.GET, headers = "Authorization")
-    public ModelAndView continueSPNEGO(@PathVariable String conversationKey,
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-            @Nonnull HttpServletRequest httpRequest, @Nonnull HttpServletResponse httpResponse)
-            throws ExternalAuthenticationException, IOException {
-        /**
-         * Kerberos configuration: general settings (see conf/authn/spnego-authn-config.xml)
-         * 
-         * kerberosSettings: getKerberosCfg(): kerberos configuration file (e.g.: /etc/krb5.conf) (required)
-         * getCustomUnauthorized(): filesystem path to custom unauthorized html file (optional)
-         */
-        /**
-         * Kerberos configuration: realms (see conf/authn/spnego-authn-config.xml)
-         * 
-         * kerberosRealms: List of KerberosRealmSettings KerberosRealmSettings: getDomain(): kerberos domain (required)
-         * getPrincipal(): kerberos service principal (required) getKeytab(): path to the keytab file containing the
-         * kerberos service principal's credentials (optional; either "p:keytab" or "p:password" is required)
-         * getPassword(): kerberos service principal's password (optional; either "p:keytab" or "p:password" is
-         * required)
-         */
-        GSSContextAcceptor krbGSSContextAcceptor = null;
-        try {
-            // get SPNEGOContext from AuthenticationContext
-            ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(conversationKey, httpRequest);
-            KerberosSettings kerberosSettings = getKerberosSettingsFromContext(prc);
-            if (kerberosSettings != null) {
-                krbGSSContextAcceptor = createKrbGSSContextAcceptor(kerberosSettings);
-            } else {
-                log.error("Kerberos settings not found in profile");
-                finishWithError(conversationKey, httpRequest, httpResponse, ERROR_SPNEGO_NOT_AVAILABLE);
-                return null;
-            }
-        } catch (final ExternalAuthenticationException e) {
-            if (conversationKey == null) {
-                throw e;
-            } else {
+    @Nullable public ModelAndView continueSPNEGO(@PathVariable @Nonnull @NotEmpty final String conversationKey,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) @Nonnull @NotEmpty final String authorizationHeader,
+            @Nonnull final HttpServletRequest httpRequest, @Nonnull final HttpServletResponse httpResponse)
+                    throws ExternalAuthenticationException, IOException {
+        
+        final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(conversationKey, httpRequest);
+        final SPNEGOContext spnegoCtx = getSPNEGOContext(prc);
+        if (spnegoCtx == null || spnegoCtx.getKerberosSettings() == null) {
+            log.error("Kerberos settings not found in profile request context");
+            finishWithError(conversationKey, httpRequest, httpResponse, AuthnEventIds.INVALID_AUTHN_CTX);
+            return null;
+        }
+        
+        GSSContextAcceptor acceptor = spnegoCtx.getContextAcceptor();
+        if (acceptor == null) {
+            try {
+                acceptor = new GSSContextAcceptor(spnegoCtx.getKerberosSettings());
+                spnegoCtx.setContextAcceptor(acceptor);
+            } catch (final GSSException e) {
+                log.error("Unable to create GSSContextAcceptor", e);
                 finishWithException(conversationKey, httpRequest, httpResponse, e);
                 return null;
             }
-        } catch (GSSException e) {
-            log.error("Couldn't create KrbContextAcceptor");
-            finishWithException(conversationKey, httpRequest, httpResponse, e);
-            return null;
         }
 
         if (!authorizationHeader.startsWith("Negotiate ")) {
-            return replyUnauthorizedNegotiate(httpRequest, httpResponse);
+            return replyUnauthorizedNegotiate(prc, httpRequest, httpResponse);
         }
 
-        byte[] gssapiData = Base64.decodeBase64(authorizationHeader.substring(10).getBytes());
-        log.trace("SPNEGO negotiation. Authorization header received. gssapi-data: {}", gssapiData);
+        final byte[] gssapiData = Base64.decodeBase64(authorizationHeader.substring(10).getBytes());
+        log.trace("SPNEGO negotiation, Authorization header received, gssapi-data: {}", gssapiData);
 
-        // NTLM Authentication is not supported
+        // NTLM Authentication is not supported.
         if (isNTLMMechanism(gssapiData)) {
-            log.error("Security context fail. Unsupported NTLM mechanism");
-            finishWithError(conversationKey, httpRequest, httpResponse, ERROR_SPNEGO_NOT_AVAILABLE);
+            log.error("NTLM is unsupported, failing context negotiation");
+            finishWithError(conversationKey, httpRequest, httpResponse, NTLM_UNSUPPORTED);
             return null;
         }
 
         byte[] tokenBytes;
         try {
-            tokenBytes = krbGSSContextAcceptor.acceptSecContext(gssapiData, 0, gssapiData.length);
-            log.trace("Security context accepted");
-        } catch (Exception e) {
-            log.error("Error validation the security context", e);
+            tokenBytes = acceptor.acceptSecContext(gssapiData, 0, gssapiData.length);
+            log.trace("GSS token accepted");
+        } catch (final Exception e) {
+            log.error("Exception processing GSS token", e);
             finishWithException(conversationKey, httpRequest, httpResponse, e);
             return null;
         }
 
-        /**
-         * If the context is established, we can attempt to retrieve the name of the "context initiator." In the case of
-         * the Kerberos mechanism, the context initiator is the Kerberos principal of the client. Additionally, the
-         * client may be delegating credentials.
-         */
-        if (krbGSSContextAcceptor.getContext() != null && krbGSSContextAcceptor.getContext().isEstablished()) {
-            log.debug("GSS security context is complete.");
-
-            GSSName clientGSSName;
+        // If the context is established, we can attempt to retrieve the name of the "context initiator."
+        // In the case of the Kerberos mechanism, the context initiator is the Kerberos principal of the client.
+        if (acceptor.getContext() != null && acceptor.getContext().isEstablished()) {
+            log.debug("GSS security context is complete");
             try {
-                clientGSSName = krbGSSContextAcceptor.getContext().getSrcName();
+                final GSSName clientGSSName = acceptor.getContext().getSrcName();
                 final KerberosPrincipal kerberosPrincipal = new KerberosPrincipal(clientGSSName.toString());
 
-                // TODO: Is there an use-case where the 'GSSName' is not the same as 'principal name'?
-                log.info("SPNEGO/Kerberos authentication succeeded. Principal: " + clientGSSName.toString());
+                log.info("SPNEGO/Kerberos authentication succeeded for principal: {}", clientGSSName.toString());
 
-                // finish the external authentication task and return to the flow
                 finishWithSuccess(conversationKey, httpRequest, httpResponse, kerberosPrincipal);
-                return null;
-            } catch (GSSException e) {
-                log.error("Error getting the principal name from security context.", e);
+            } catch (final GSSException e) {
+                log.error("Error extracting principal name from security context", e);
                 finishWithException(conversationKey, httpRequest, httpResponse, e);
-                return null;
             }
         } else {
             // The context is not complete yet.
             // return "WWW-Authenticate: Negotiate <data>" to the browser
-            log.trace("SPNEGO negotiation in process. Answering request with 401 (WWW-Authenticate: Negotiate [gssapi-data])");
-            return replyUnauthorizedNegotiate(httpRequest, httpResponse, Base64.encodeBase64String(tokenBytes));
+            log.trace("SPNEGO negotiation in process, output token: {}", tokenBytes);
+            return replyUnauthorizedNegotiate(prc, httpRequest, httpResponse, Base64.encodeBase64String(tokenBytes));
         }
+        
+        return null;
     }
-
-    // handle errors detected in the browser
+// Checkstyle: CyclomaticComplexity ON
+    
+    /**
+     * Respond to a user signaling that an error occurred.
+     * 
+     * @param conversationKey the conversation key
+     * @param httpRequest the HTTP request
+     * @param httpResponse the HTTP response
+     * 
+     * @throws IOException 
+     * @throws ExternalAuthenticationException 
+     */
     @RequestMapping(value = "/{conversationKey}/error", method = RequestMethod.GET)
-    public void handleError(@PathVariable String conversationKey, @Nonnull HttpServletRequest httpRequest,
-            @Nonnull HttpServletResponse httpResponse) throws ExternalAuthenticationException, IOException {
+    public void handleError(@PathVariable final String conversationKey, @Nonnull final HttpServletRequest httpRequest,
+            @Nonnull final HttpServletResponse httpResponse) throws ExternalAuthenticationException, IOException {
 
-        // finished; signal error
-        log.warn("SPNEGO authentication problem");
-
-        try {
-            finishWithError(conversationKey, httpRequest, httpResponse, ERROR_SPNEGO_NOT_AVAILABLE);
-        } catch (final ExternalAuthenticationException e) {
-            // handle ExternalAuthenticationException and other exceptions
-            if (conversationKey != null) {
-                finishWithException(conversationKey, httpRequest, httpResponse, e);
-            }
-        }
-    }
-
-    protected GSSContextAcceptor createKrbGSSContextAcceptor(KerberosSettings kerberosSettings) throws GSSException {
-        return new GSSContextAcceptor(kerberosSettings);
+        log.warn("SPNEGO authentication problem signaled by client");
+        finishWithError(conversationKey, httpRequest, httpResponse, SPNEGO_NOT_AVAILABLE);
     }
 
     /**
-     * Finish on success. Sets the attribute ExternalAuthentication.SUBJECT_KEY.
+     * Finish the authentication process successfully.
+     * 
+     * <p>Sets the attribute {@link ExternalAuthentication#SUBJECT_KEY}.</p>
      * 
      * @param key the conversation key
      * @param httpRequest the HTTP request
      * @param httpResponse the HTTP response
-     * @param subject the Kerberos principal to return
-     * @throws ExternalAuthenticationException
-     * @throws IOException
+     * @param kerberosPrincipal the Kerberos principal to return
+     * 
+     * @throws IOException 
+     * @throws ExternalAuthenticationException 
      */
-    private void finishWithSuccess(@Nonnull @NotEmpty String key, @Nonnull HttpServletRequest httpRequest,
-            @Nonnull HttpServletResponse httpResponse, @Nonnull KerberosPrincipal kerberosPrincipal)
-            throws ExternalAuthenticationException, IOException {
+    private void finishWithSuccess(@Nonnull @NotEmpty final String key, @Nonnull final HttpServletRequest httpRequest,
+            @Nonnull final HttpServletResponse httpResponse, @Nonnull final KerberosPrincipal kerberosPrincipal)
+                    throws ExternalAuthenticationException, IOException {
 
-        Constraint.isNotNull(httpRequest, "httpRequest must not be null");
-        Constraint.isNotNull(kerberosPrincipal, "kerberosPrincipal must not be null");
-
-        // store the user as a username and as a real KerberosPrincipal object
+        // Store the user as a username and as a real KerberosPrincipal object.
         final Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal(kerberosPrincipal.getName()));
         subject.getPrincipals().add(kerberosPrincipal);
 
-        // finish the external authentication task and return to the flow
+        // Finish the external authentication task and return to the flow.
         httpRequest.setAttribute(ExternalAuthentication.SUBJECT_KEY, subject);
         ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
     }
 
     /**
-     * Finish on error. Sets the attribute ExternalAuthentication.AUTHENTICATION_ERROR_KEY.
+     * Finish the authentication process with an error.
+     * 
+     * <p>Sets the attribute {@link ExternalAuthentication#AUTHENTICATION_ERROR_KEY}.</p>
      * 
      * @param key the conversation key
      * @param httpRequest the HTTP request
      * @param httpResponse the HTTP response
-     * @param error the error string to return (e.g. AuthnEventIds.NO_CREDENTIALS)
-     * @throws ExternalAuthenticationException
-     * @throws IOException
+     * @param error the error string/event to return
+     * 
+     * @throws IOException 
+     * @throws ExternalAuthenticationException 
      */
-    private void finishWithError(@Nonnull @NotEmpty String key, @Nonnull HttpServletRequest httpRequest,
-            @Nonnull HttpServletResponse httpResponse, @Nonnull @NotEmpty String error)
-            throws ExternalAuthenticationException, IOException {
+    private void finishWithError(@Nonnull @NotEmpty final String key, @Nonnull final HttpServletRequest httpRequest,
+            @Nonnull final HttpServletResponse httpResponse, @Nonnull @NotEmpty final String error)
+                    throws ExternalAuthenticationException, IOException {
 
-        Constraint.isNotNull(httpRequest, "httpRequest must not be null");
-
-        // finish the external authentication task and return to the flow
+        // Finish the external authentication task and return to the flow.
         httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_ERROR_KEY, error);
         ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
     }
 
     /**
-     * Finish on error. Sets the attribute ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY.
+     * Finish the authentication process with an exception.
+     * 
+     * <p>Sets the attribute {@link ExternalAuthentication#AUTHENTICATION_EXCEPTION_KEY}.</p>
      * 
      * @param key the conversation key
      * @param httpRequest the HTTP request
      * @param httpResponse the HTTP response
      * @param ex the exception that has been thrown
-     * @throws ExternalAuthenticationException
-     * @throws IOException
+     * 
+     * @throws IOException 
+     * @throws ExternalAuthenticationException 
      */
-    private void finishWithException(@Nonnull @NotEmpty String key, @Nonnull HttpServletRequest httpRequest,
-            @Nonnull HttpServletResponse httpResponse, @Nonnull Exception ex) throws ExternalAuthenticationException,
-            IOException {
+    private void finishWithException(@Nonnull @NotEmpty final String key, @Nonnull final HttpServletRequest httpRequest,
+            @Nonnull final HttpServletResponse httpResponse, @Nonnull final Exception ex)
+                    throws ExternalAuthenticationException, IOException {
 
-        Constraint.isNotNull(httpRequest, "httpRequest must not be null");
-
-        // finish the external authentication task and return to the flow
+        // Finish the external authentication task and return to the flow.
         httpRequest.setAttribute(ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY, ex);
         ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
     }
 
-    @Nullable
-    private KerberosSettings getKerberosSettingsFromContext(@Nonnull ProfileRequestContext prc) {
-        AuthenticationContext authnContext = prc.getSubcontext(AuthenticationContext.class);
-        if (authnContext != null) {
-            SPNEGOContext spnegoContext = authnContext.getSubcontext(SPNEGOContext.class);
-            if (spnegoContext != null) {
-                return spnegoContext.getKerberosSettings();
-            }
-        }
-        return null;
+    /**
+     * Navigate to the {@link SPNEGOContext} in the context tree.
+     * 
+     * @param prc profile request context
+     * 
+     * @return the child context, or null
+     */
+    @Nullable private SPNEGOContext getSPNEGOContext(@Nonnull final ProfileRequestContext prc) {
+        final AuthenticationContext authnContext = prc.getSubcontext(AuthenticationContext.class);
+        return authnContext != null ? authnContext.getSubcontext(SPNEGOContext.class) : null;
+    }
+    
+    /**
+     * Send back an empty Negotiate challenge.
+     * 
+     * @param profileRequestContext profile request context
+     * @param httpRequest servlet request
+     * @param httpResponse servlet response
+     * 
+     * @return a {@link ModelAndView} wrapping the response
+     */
+    @Nonnull private ModelAndView replyUnauthorizedNegotiate(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final HttpServletRequest httpRequest, @Nonnull final HttpServletResponse httpResponse) {
+        return replyUnauthorizedNegotiate(profileRequestContext, httpRequest, httpResponse, "");
     }
 
-    @Nonnull
-    private ModelAndView replyUnauthorizedNegotiate(@Nonnull HttpServletRequest httpRequest,
-            @Nonnull HttpServletResponse httpResponse) {
-        return replyUnauthorizedNegotiate(httpRequest, httpResponse, "");
-    }
-
-    @Nonnull
-    private ModelAndView replyUnauthorizedNegotiate(@Nonnull HttpServletRequest httpRequest,
-            @Nonnull HttpServletResponse httpResponse, @Nonnull String base64Token) {
-        StringBuilder authenticateHeader = new StringBuilder("Negotiate");
+    /**
+     * Send back a Negotiate challenge token.
+     * 
+     * @param profileRequestContext profile request context
+     * @param httpRequest servlet request
+     * @param httpResponse servlet response
+     * @param base64Token challenge token to send back
+     * 
+     * @return a {@link ModelAndView} wrapping the response
+     */
+    @Nonnull private ModelAndView replyUnauthorizedNegotiate(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final HttpServletRequest httpRequest, @Nonnull final HttpServletResponse httpResponse,
+            @Nonnull final String base64Token) {
+        
+        final StringBuilder authenticateHeader = new StringBuilder("Negotiate");
         if (!base64Token.isEmpty()) {
             authenticateHeader.append(" " + base64Token);
         }
         httpResponse.addHeader(HttpHeaders.WWW_AUTHENTICATE, authenticateHeader.toString());
-        httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-        return createModelAndView(httpRequest);
+        httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        return createModelAndView(profileRequestContext, httpRequest, httpResponse);
     }
 
     /**
-     * Create a ModelAndView object to return.
+     * Create a {@link ModelAndView} object to return.
      * 
+     * @param profileRequestContext profile request context
      * @param httpRequest the HTTP request
-     * @return the ModelAndView object to return
+     * @param httpResponse the HTTP response
+     * 
+     * @return the ModelAndView object
      */
-    @Nonnull
-    private ModelAndView createModelAndView(@Nonnull HttpServletRequest httpRequest) {
-        ModelAndView modelAndView = new ModelAndView("spnego-unauthorized");
+    @Nonnull private ModelAndView createModelAndView(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final HttpServletRequest httpRequest, @Nonnull final HttpServletResponse httpResponse) {
+        final ModelAndView modelAndView = new ModelAndView("spnego-unauthorized");
+        modelAndView.addObject("profileRequestContext", profileRequestContext);
         modelAndView.addObject("request", httpRequest);
+        modelAndView.addObject("response", httpResponse);
         modelAndView.addObject("encoder", HTMLEncoder.class);
-        StringBuffer errorUrl = httpRequest.getRequestURL();
+        final StringBuffer errorUrl = httpRequest.getRequestURL();
         errorUrl.append("/error");
-        String queryString = httpRequest.getQueryString();
+        final String queryString = httpRequest.getQueryString();
         if (queryString != null) {
             errorUrl.append("?").append(queryString);
         }
@@ -346,13 +357,15 @@ public class SPNEGOAuthnController {
     }
 
     /**
-     * Check if the GSSApi data represents a NTLM mechanism request.
+     * Check if the GSS-API data represents an NTLM mechanism request.
      * 
-     * @param gssapiData Byte array retrieved from the Authorization header.
-     * @return true if it represents a NTLM mechanism.
+     * @param token token retrieved from the Authorization header.
+     * 
+     * @return true iff it represents a NTLM mechanism
      */
-    private boolean isNTLMMechanism(byte[] gssapiData) {
-        byte NTLMSSP[] = {(byte) 0x4E, (byte) 0x54, (byte) 0x4C, (byte) 0x4D, (byte) 0x53, (byte) 0x53, (byte) 0x50};
-        return Arrays.equals(NTLMSSP, Arrays.copyOfRange(gssapiData, 0, 7));
+    private boolean isNTLMMechanism(@Nonnull final byte[] token) {
+        byte[] headerNTLM = {(byte) 0x4E, (byte) 0x54, (byte) 0x4C, (byte) 0x4D, (byte) 0x53, (byte) 0x53, (byte) 0x50};
+        return Arrays.equals(headerNTLM, Arrays.copyOfRange(token, 0, 7));
     }
+    
 }
