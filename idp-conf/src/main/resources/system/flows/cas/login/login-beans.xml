@@ -55,9 +55,6 @@
           class="org.opensaml.messaging.context.navigate.ChildContextLookup"
           c:type="net.shibboleth.idp.authn.context.SubjectContext" />
 
-    <bean id="ExtractAttributes"
-          class="net.shibboleth.idp.cas.flow.impl.ExtractAttributesAction" />
-
     <bean id="PopulatePostAuthnInterceptContext"
           class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"
           p:availableFlows-ref="shibboleth.AvailableInterceptFlows">

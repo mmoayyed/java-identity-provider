@@ -92,6 +92,8 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         assertEquals(outcome.getId(), "ValidateSuccess");
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"saml1p:Success\"/>"));
         assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
+        assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
+        assertTrue(responseBody.contains("<saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue>"));
         assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 
@@ -129,6 +131,36 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         final String responseBody = response.getContentAsString();
         assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
         assertTrue(responseBody.contains("<saml1p:StatusMessage>E_SESSION_EXPIRED</saml1p:StatusMessage>"));
+    }
+
+    @Test
+    public void testSuccessWhenResolveAttributesFalse() throws Exception {
+        final String principal = "john";
+        final IdPSession session = sessionManager.createSession(principal);
+        session.addAuthenticationResult(
+                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
+        final ServiceTicket ticket = ticketService.createServiceTicket(
+                "ST-2718281828-ompog68ygxKyX9BPwPuw0hESQBjuA",
+                DateTime.now().plusSeconds(5).toInstant(),
+                session.getId(),
+                "https://no-attrs.example.org/",
+                false);
+        final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
+        request.setMethod("POST");
+        request.setContent(requestBody.getBytes("UTF-8"));
+        externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
+        overrideEndStateOutput("cas/samlValidate", "ValidateSuccess");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "ValidateSuccess");
+        assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"saml1p:Success\"/>"));
+        assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
+        assertTrue(responseBody.contains("<saml1:NameIdentifier>john</saml1:NameIdentifier>"));
+        assertTrue(responseBody.contains("<saml1:AttributeValue xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"xsd:string\">john@example.org</saml1:AttributeValue>"));
+        assertPopulatedAttributeContext((ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME));
     }
 
     private void assertPopulatedAttributeContext(final ProfileRequestContext prc) {

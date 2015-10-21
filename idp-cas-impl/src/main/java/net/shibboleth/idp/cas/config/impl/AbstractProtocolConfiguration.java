@@ -50,6 +50,9 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
     @Positive
     private long ticketValidityPeriod;
 
+    /** Flag to indicate whether attributes should be resolved for this profile. */
+    private boolean resolveAttributes = true;
+
     /**
      * Creates a new configuration instance.
      *
@@ -91,6 +94,20 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
      */
     public void setTicketValidityPeriod(@Duration @Positive final long millis) {
         this.ticketValidityPeriod = Constraint.isGreaterThan(0, millis, "Ticket validity period must be positive.");
+    }
+
+    /** @return True if attribute resolution enabled for this profile, false otherwise. */
+    public boolean isResolveAttributes() {
+        return resolveAttributes;
+    }
+
+    /**
+     * Enables or disables attribute resolution.
+     *
+     * @param resolveAttributes True to enable attribute resolution (default), false otherwise.
+     */
+    public void setResolveAttributes(final boolean resolveAttributes) {
+        this.resolveAttributes = resolveAttributes;
     }
 
     @Nonnull

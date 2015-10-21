@@ -40,8 +40,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Extracts {@link IdPAttribute}s from a populated {@link AttributeContext} and places them in the
- * {@link TicketValidationResponse}. Possible outcomes:
+ * Prepares {@link TicketValidationResponse} for use in CAS protocol response views. Possible outcomes:
  * <ul>
  *     <li><code>null</code> on success</li>
  *     <li>{@link ProtocolError#IllegalState IllegalState}</li>
@@ -49,16 +48,16 @@ import org.springframework.webflow.execution.RequestContext;
  *
  * @author Marvin S. Addison
  */
-public class ExtractAttributesAction extends
+public class PrepareTicketValidationResponseAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ExtractAttributesAction.class);
+    private final Logger log = LoggerFactory.getLogger(PrepareTicketValidationResponseAction.class);
 
     /** Function used to retrieve AttributeContext. */
     private Function<ProfileRequestContext,AttributeContext> attributeContextFunction =
             Functions.compose(
-                    new ChildContextLookup<>(AttributeContext.class),
+                    new ChildContextLookup<>(AttributeContext.class, true),
                     new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
 
     /** Function used to retrieve subject principal. */
@@ -95,7 +94,7 @@ public class ExtractAttributesAction extends
             if (attribute != null && !attribute.getValues().isEmpty()) {
                 principal = attribute.getValues().get(0).getValue().toString();
             } else {
-                log.debug("Filtered attribute " + validateConfiguration.getUserAttribute() + " has no value");
+                log.debug("Filtered attribute {} has no value", validateConfiguration.getUserAttribute());
                 principal = null;
             }
         } else {

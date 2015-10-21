@@ -14,6 +14,16 @@
         <transition on="proceed" to="InitializeRelyingParty" />
     </action-state>
 
+    <!--
+       | Override attribute resolution check in parent flow.
+       | Always resolve attributes for /samlValidate protocol endpoint.
+       -->
+    <decision-state id="CheckResolveAttributes">
+        <if test="ValidateConfigLookup.apply(opensamlProfileRequestContext).isResolveAttributes()"
+            then="ResolveAttributes"
+            else="ResolveAttributes" />
+    </decision-state>
+
     <!-- End states that render the SAML message in the outgoing message context -->
     <end-state id="ValidateSuccess">
         <on-entry>

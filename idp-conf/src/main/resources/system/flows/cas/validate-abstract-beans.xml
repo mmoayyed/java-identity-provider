@@ -33,8 +33,8 @@
           c:proxyAuthenticator-ref="cas.ProxyAuthenticator"
           c:ticketService-ref="cas.TicketService" />
 
-    <bean id="ExtractAttributes"
-          class="net.shibboleth.idp.cas.flow.impl.ExtractAttributesAction" />
+    <bean id="PrepareTicketValidationResponse"
+          class="net.shibboleth.idp.cas.flow.impl.PrepareTicketValidationResponseAction" />
 
     <bean id="UpdateIdPSessionWithSPSession"
           class="net.shibboleth.idp.cas.flow.impl.UpdateIdPSessionWithSPSessionAction"
@@ -47,4 +47,8 @@
                 ? 'shibboleth.CASValidationAuditExtractors'
                 : 'shibboleth.DefaultCASValidationAuditExtractors'}"
           p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+
+    <bean id="ValidateConfigLookup"
+          class="net.shibboleth.idp.cas.config.impl.ConfigLookupFunction"
+          c:clazz="net.shibboleth.idp.cas.config.impl.ValidateConfiguration" />
 </beans>

@@ -12,6 +12,7 @@
         <afp:PolicyRequirementRule xsi:type="basic:OR">
             <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://test.example.org/" />
             <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://alt-username.example.org/" />
+            <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://no-attrs.example.org/" />
         </afp:PolicyRequirementRule>
 
         <afp:AttributeRule attributeID="eduPersonPrincipalName">
