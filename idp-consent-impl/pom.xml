@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: Consent</name>
+    <name>Shibboleth IdP :: Consent Implementation</name>
     <artifactId>idp-consent-impl</artifactId>
     <packaging>jar</packaging>
 
