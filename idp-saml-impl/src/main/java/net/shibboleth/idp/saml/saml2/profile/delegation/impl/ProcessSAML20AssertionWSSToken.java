@@ -18,7 +18,6 @@
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import javax.annotation.Nonnull;
-
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
@@ -30,12 +29,12 @@ import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.wssecurity.SAML20AssertionToken;
@@ -66,6 +65,9 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
     /** Function used to obtain the responder ID. */
     @Nullable private Function<ProfileRequestContext,String> responderLookupStrategy;
     
+    /** Function used to resolve the assertion token to process. */
+    @Nonnull private Function<ProfileRequestContext, SAML20AssertionToken> assertionTokenStrategy;
+    
     /** The SAML 2 Assertion token being processed. */
     private SAML20AssertionToken assertionToken;
     
@@ -78,6 +80,18 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
     public ProcessSAML20AssertionWSSToken() {
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
+    }
+    
+    /**
+     * Set the strategy used to locate the requester ID for canonicalization.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setAssertionTokenStrategy(
+            @Nonnull final Function<ProfileRequestContext,SAML20AssertionToken> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        assertionTokenStrategy = Constraint.isNotNull(strategy, "Assertion token strategy may not be null");
     }
     
     /**
@@ -108,21 +122,11 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
-        WSSecurityContext wssContext = 
-                profileRequestContext.getInboundMessageContext().getSubcontext(WSSecurityContext.class);
-        if (wssContext == null) {
-            log.info("{} No WSSecurityContext available within inbound message context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
+        if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
         
-        // Just look for the first SAML20AssertionToken which is valid
-        // TODO factor out to function/predicate usage
-        for (Token token : wssContext.getTokens()) {
-            if (token.getValidationStatus().equals(ValidationStatus.VALID) && token instanceof SAML20AssertionToken) {
-                assertionToken = (SAML20AssertionToken) token;
-            }
-        }
+        assertionToken = assertionTokenStrategy.apply(profileRequestContext);
         
         if (assertionToken == null) {
             log.info("{} No valid SAML20AssertionToken available within inbound WSSecurityContext", getLogPrefix());
@@ -131,8 +135,6 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
             return false;
         }
         
-        // TODO need to be able to handle EncryptedIDs. Earlier flow code will probably do the decryption
-        // Will it replace the EncryptedID in-place, or store in a context, etc?
         org.opensaml.saml.saml2.core.Subject samlSubject = assertionToken.getWrappedToken().getSubject();
         if (samlSubject == null || samlSubject.getNameID() == null) {
             log.info("{} SAML20AssertionToken does not contain either a Subject or a NameID", getLogPrefix());
@@ -177,6 +179,38 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
             c14n.setResponderId(responderLookupStrategy.apply(profileRequestContext));
         }
         profileRequestContext.addSubcontext(c14n, true);
+    }
+    
+    /**
+     * Default strategy for resolving the assertion token to process.
+     * 
+     * <p>This impl just returns the first valid {@link SAML20AssertionToken} found
+     * in the inbound {@link WSSecurityContext}.</p>
+     */
+    public class TokenStrategy implements Function<ProfileRequestContext, SAML20AssertionToken> {
+
+        /** {@inheritDoc} */
+        @Nullable
+        public SAML20AssertionToken apply(@Nullable ProfileRequestContext input) {
+            if (input == null) {
+                return null;
+            }
+            WSSecurityContext wssContext = 
+                    input.getInboundMessageContext().getSubcontext(WSSecurityContext.class);
+            if (wssContext == null) {
+                log.info("{} No WSSecurityContext available within inbound message context", getLogPrefix());
+                return null;
+            }
+            
+            for (Token token : wssContext.getTokens()) {
+                if (token.getValidationStatus().equals(ValidationStatus.VALID) 
+                        && token instanceof SAML20AssertionToken) {
+                    return (SAML20AssertionToken) token;
+                }
+            }
+            return null;
+        }
+        
     }
     
 }
