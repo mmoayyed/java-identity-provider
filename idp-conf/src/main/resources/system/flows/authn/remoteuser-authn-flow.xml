@@ -3,7 +3,7 @@
       xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
       parent="authn.abstract">
 
-    <!-- This is a login flow for external authentication handled outside the webflow engine. -->
+    <!-- This is a login flow for container-based pseudo-authentication implemented via external authentication. -->
     
     <action-state id="SetRPUIInformation">
         <evaluate expression="SetRPUIInformation" />
