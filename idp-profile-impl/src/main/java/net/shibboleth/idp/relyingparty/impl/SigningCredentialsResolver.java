@@ -32,14 +32,15 @@ import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.security.credential.Credential;
-import org.opensaml.security.credential.CredentialResolver;
+import org.opensaml.security.credential.impl.AbstractCriteriaFilteringCredentialResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Credential resolver whose purpose is to resolve all the configured signing credentials.
+ * Credential resolver whose purpose is to resolve configured IdP signing credentials.
  */
-public class SigningCredentialsResolver implements CredentialResolver, IdentifiableComponent {
+public class SigningCredentialsResolver extends AbstractCriteriaFilteringCredentialResolver 
+        implements IdentifiableComponent {
     
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(SigningCredentialsResolver.class);
@@ -81,7 +82,8 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
     }
     
     /** {@inheritDoc} */
-    @Nonnull public Iterable<Credential> resolve(@Nullable final CriteriaSet criteria) throws ResolverException {
+    @Nonnull public Iterable<Credential> resolveFromSource(@Nullable final CriteriaSet criteria) 
+            throws ResolverException {
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;
         try {
             component = service.getServiceableComponent();
