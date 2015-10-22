@@ -75,9 +75,6 @@ public final class AuthnEventIds {
     /** ID of event returned if authentication throws an exception unrelated to credential validation. */
     @Nonnull @NotEmpty public static final String AUTHN_EXCEPTION = "AuthenticationException";
 
-    /** ID of event returned if authentication produces an error unrelated to credential validation. */
-    @Nonnull @NotEmpty public static final String AUTHN_ERROR = "AuthenticationError";
-
     /** Constructor. */
     private AuthnEventIds() {
     }
