@@ -328,7 +328,7 @@
 	        jdbcPassword="" />
         <dc:QueryTemplate>
             <![CDATA[ 
-                SELECT * FROM student WHERE userid = '$requestContext.principalName'
+                SELECT * FROM student WHERE userid = '$resolutionContext.principal'
             ]]>
         </dc:QueryTemplate>
     </resolver:DataConnector>
@@ -342,7 +342,7 @@
         principalCredential="password">
         <dc:FilterTemplate>
             <![CDATA[
-                (uid=$requestContext.principalName)
+                (uid=$resolutionContext.principal)
             ]]>
         </dc:FilterTemplate>
     </resolver:DataConnector>
