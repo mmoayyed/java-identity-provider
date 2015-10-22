@@ -20,6 +20,16 @@
 
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" p:order="2" />
 
+    <!-- Add this one to mount any additional MVC controllers we create. -->
+
+    <bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" p:order="3">
+        <property name="mappings">
+            <props>
+                <prop key="%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}/**">shibboleth.SPNEGOAuthnController</prop>
+            </props>
+        </property>
+    </bean>
+
     <!-- HandlerAdapters: These aren't ordered. Add the WebFlow one, then the standard Spring MVC default ones. 
          Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
     
@@ -33,7 +43,7 @@
     
     <!-- Additional MVC controllers -->
     
-    <bean class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAuthnController" />
+    <bean id="shibboleth.SPNEGOAuthnController" class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAuthnController" />
 
     <!-- Exception handling -->
     

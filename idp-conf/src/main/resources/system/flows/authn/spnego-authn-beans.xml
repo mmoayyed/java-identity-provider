@@ -23,13 +23,20 @@
 
     <import resource="../../../conf/authn/spnego-authn-config.xml" />
 
-    <!-- Make configurable value available in flow. -->
+    <!-- Make configurable values available in flow. -->
+    
     <alias name="shibboleth.authn.SPNEGO.EnforceRun" alias="enforceRun"/>
 
-    <!-- Kerberos settings and realms -->
+    <bean id="shibboleth.authn.SPNEGO.externalAuthnPath" class="java.lang.String"
+        c:_0="servletRelative:%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}" />
+
+    <!-- Kerberos settings and realms. -->
+    
     <bean id="shibboleth.authn.SPNEGO.Krb5.Settings" class="net.shibboleth.idp.authn.spnego.impl.KerberosSettings"
         p:refreshKrb5Config-ref="shibboleth.authn.SPNEGO.Krb5.RefreshConfig"
         p:realms-ref="shibboleth.authn.SPNEGO.Krb5.Realms" />
+
+    <!-- Action beans. -->
 
     <bean id="ValidateExternalAuthentication"
             class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
