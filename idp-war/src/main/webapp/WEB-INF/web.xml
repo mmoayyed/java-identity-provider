@@ -67,6 +67,7 @@
         <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
         <url-pattern>/profile/cas/login</url-pattern>
+        <url-pattern>/profile/Authn/SPNEGO</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
