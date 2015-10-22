@@ -128,11 +128,11 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         try {
-            log.debug("{} Attempting to authenticate user {}", getLogPrefix(),
-                    getUsernamePasswordContext().getUsername());
+            log.debug("{} Attempting to authenticate user {}", getLogPrefix(), getUsernamePasswordContext()
+                    .getUsername());
             final AuthenticationRequest request =
-                    new AuthenticationRequest(getUsernamePasswordContext().getUsername(),
-                            new Credential(getUsernamePasswordContext().getPassword()), returnAttributes);
+                    new AuthenticationRequest(getUsernamePasswordContext().getUsername(), new Credential(
+                            getUsernamePasswordContext().getPassword()), returnAttributes);
             response = authenticator.authenticate(request);
             log.trace("{} Authentication response {}", getLogPrefix(), response);
             if (response.getResult()) {
@@ -167,22 +167,20 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
                             String.format("%s:%s", response.getResultCode(), response.getMessage()),
                             AuthnEventIds.INVALID_CREDENTIALS);
                 } else {
-                    handleError(profileRequestContext, authenticationContext,
-                            String.format("%s:%s", response.getResultCode(), response.getMessage()),
-                            AuthnEventIds.AUTHN_ERROR);
+                    throw new LdapException(response.getMessage(), response.getResultCode(), response.getMatchedDn(),
+                            response.getControls(), response.getReferralURLs(), response.getMessageId());
                 }
             }
         } catch (final LdapException e) {
-            log.warn("{} Login by {} produced exception", getLogPrefix(),
-                    getUsernamePasswordContext().getUsername(), e);
+            log.warn("{} Login by {} produced exception", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
-        subject.getPrincipals().add(new LdapPrincipal(getUsernamePasswordContext().getUsername(),
-                response.getLdapEntry()));
+        subject.getPrincipals().add(
+                new LdapPrincipal(getUsernamePasswordContext().getUsername(), response.getLdapEntry()));
         return super.populateSubject(subject);
     }
 

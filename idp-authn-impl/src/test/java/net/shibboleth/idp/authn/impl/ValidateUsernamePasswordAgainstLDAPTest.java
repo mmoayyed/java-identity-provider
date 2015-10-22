@@ -198,9 +198,12 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
 
-        // no mapping defined for AUTHN_ERROR
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.AUTHN_ERROR);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        Assert.assertNotNull(aec);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.AUTHN_EXCEPTION);
+        System.err.println("EXCEPTIONS:: " + aec.getExceptions());
+        Assert.assertEquals(aec.getExceptions().size(), 1);   
+        Assert.assertEquals(aec.getClassifiedErrors().size(), 0);
     }
 
     @Test public void testBadUsername() throws Exception {
