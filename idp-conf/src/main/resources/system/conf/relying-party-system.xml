@@ -21,7 +21,8 @@
         p:defaultConfiguration-ref="shibboleth.DefaultRelyingParty"
         p:relyingPartyConfigurations-ref="shibboleth.RelyingPartyOverrides"
         p:defaultSecurityConfiguration-ref="%{idp.security.config:shibboleth.DefaultSecurityConfiguration}" 
-        p:signingCredentials="#{getObject('shibboleth.SigningCredentials')}" />
+        p:signingCredentials="#{getObject('shibboleth.SigningCredentials')}"
+        p:encryptionCredentials="#{getObject('shibboleth.EncryptionCredentials')}" />
 
     <!-- Parent bean for generic RelyingParty overrides that establishes defaults. -->
     <bean id="RelyingParty" abstract="true" class="net.shibboleth.idp.relyingparty.RelyingPartyConfiguration"

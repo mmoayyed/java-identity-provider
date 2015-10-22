@@ -89,6 +89,9 @@ public class DefaultRelyingPartyConfigurationResolver
     
     /** The global list of all configured signing credentials. */
     @Nullable private List<Credential> signingCredentials;
+    
+    /** The global list of all configured encryption credentials. */
+    @Nullable private List<Credential> encryptionCredentials;
 
     /** Constructor. */
     public DefaultRelyingPartyConfigurationResolver() {
@@ -96,6 +99,7 @@ public class DefaultRelyingPartyConfigurationResolver
         verificationPredicate = new VerifiedProfilePredicate();
         securityConfigurationMap = Collections.emptyMap();
         signingCredentials = Collections.emptyList();
+        encryptionCredentials = Collections.emptyList();
     }
 
     /**
@@ -339,6 +343,28 @@ public class DefaultRelyingPartyConfigurationResolver
             return;
         }
         signingCredentials = new ArrayList<>(Collections2.filter(credentials, Predicates.notNull()));
+    }
+
+    /**
+     * Get the list of all configured encryption credentials.
+     * 
+     * @return the list of encryption credentials
+     */
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Credential> getEncryptionCredentials() {
+        return ImmutableList.copyOf(encryptionCredentials);
+    }
+    
+    /**
+     * Set the list of all configured encryption credentials.
+     * 
+     * @param credentials the list of encryption credentials, may be null
+     */
+    public void setEncryptionCredentials(@Nullable final List<Credential> credentials) {
+        if (credentials == null) {
+            encryptionCredentials = Collections.emptyList();
+            return;
+        }
+        encryptionCredentials = new ArrayList<>(Collections2.filter(credentials, Predicates.notNull()));
     }
 
     /** {@inheritDoc} */
