@@ -31,6 +31,12 @@
     
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
     
+    <!-- Additional MVC controllers -->
+    
+    <bean class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAuthnController" />
+
+    <!-- Exception handling -->
+    
     <bean class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver">
         <!-- We can map specific exceptions to views here if needed. -->
         <!--
@@ -45,7 +51,7 @@
     
     <bean id="RethrowingFlowExecutionExceptionHandler"
         class="net.shibboleth.idp.profile.impl.RethrowingFlowExecutionExceptionHandler" />
-    
+            
     <!-- ViewResolvers -->
     
     <bean id="shibboleth.VelocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">

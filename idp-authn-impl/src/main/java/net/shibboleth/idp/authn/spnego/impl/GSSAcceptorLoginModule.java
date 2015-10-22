@@ -74,7 +74,7 @@ public class GSSAcceptorLoginModule {
         options.put("useKeyTab", "true");
         options.put("keyTab", realmSettings.getKeytab());
         options.put("principal", realmSettings.getServicePrincipal());
-        options.put("isInitiator", "false");
+        options.put("isInitiator", realmSettings.getPassword() != null ? "true" : "false");
         options.put("storeKey", "true");
 
         try {
@@ -147,11 +147,11 @@ public class GSSAcceptorLoginModule {
         public void handle(@Nullable final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
             if (callbacks != null && callbacks.length > 0) {
                 if (name == null || name.length() == 0) {
-                    throw new IllegalArgumentException("Invalid name");
+                    throw new IllegalArgumentException("No username provided");
                 }
 
                 if (password == null || password.length() == 0) {
-                    throw new IllegalArgumentException("Invalid password");
+                    throw new IllegalArgumentException("No password provided");
                 }
 
                 for (final Callback c : callbacks) {

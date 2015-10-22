@@ -34,7 +34,6 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.HTMLEncoder;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ietf.jgss.GSSException;
@@ -88,7 +87,9 @@ public class SPNEGOAuthnController {
                     throws ExternalAuthenticationException, IOException {
         
         final String key = ExternalAuthentication.startExternalAuthentication(httpRequest);
-        Constraint.isTrue(key.equals(conversationKey), "Conversation key mismatch");
+        if (!key.equals(conversationKey)) {
+            throw new ExternalAuthenticationException("Conversation key on query string doesn't match URL path");
+        }
         final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(key, httpRequest);
 
         final SPNEGOContext spnegoCtx = getSPNEGOContext(prc);
@@ -103,7 +104,7 @@ public class SPNEGOAuthnController {
         return replyUnauthorizedNegotiate(prc, httpRequest, httpResponse);
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /**
      * Process an input GSS token from the client and attempt to complete the context establishment process.
      * 
@@ -121,15 +122,20 @@ public class SPNEGOAuthnController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) @Nonnull @NotEmpty final String authorizationHeader,
             @Nonnull final HttpServletRequest httpRequest, @Nonnull final HttpServletResponse httpResponse)
                     throws ExternalAuthenticationException, IOException {
-        
+
         final ProfileRequestContext prc = ExternalAuthentication.getProfileRequestContext(conversationKey, httpRequest);
+
+        if (!authorizationHeader.startsWith("Negotiate ")) {
+            return replyUnauthorizedNegotiate(prc, httpRequest, httpResponse);
+        }
+
         final SPNEGOContext spnegoCtx = getSPNEGOContext(prc);
         if (spnegoCtx == null || spnegoCtx.getKerberosSettings() == null) {
             log.error("Kerberos settings not found in profile request context");
             finishWithError(conversationKey, httpRequest, httpResponse, AuthnEventIds.INVALID_AUTHN_CTX);
             return null;
         }
-        
+
         GSSContextAcceptor acceptor = spnegoCtx.getContextAcceptor();
         if (acceptor == null) {
             try {
@@ -137,13 +143,10 @@ public class SPNEGOAuthnController {
                 spnegoCtx.setContextAcceptor(acceptor);
             } catch (final GSSException e) {
                 log.error("Unable to create GSSContextAcceptor", e);
-                finishWithException(conversationKey, httpRequest, httpResponse, e);
+                finishWithException(conversationKey, httpRequest, httpResponse,
+                        new ExternalAuthenticationException(SPNEGO_NOT_AVAILABLE, e));
                 return null;
             }
-        }
-
-        if (!authorizationHeader.startsWith("Negotiate ")) {
-            return replyUnauthorizedNegotiate(prc, httpRequest, httpResponse);
         }
 
         final byte[] gssapiData = Base64.decodeBase64(authorizationHeader.substring(10).getBytes());
@@ -151,7 +154,8 @@ public class SPNEGOAuthnController {
 
         // NTLM Authentication is not supported.
         if (isNTLMMechanism(gssapiData)) {
-            log.error("NTLM is unsupported, failing context negotiation");
+            log.warn("NTLM is unsupported, failing context negotiation");
+            acceptor.logout();
             finishWithError(conversationKey, httpRequest, httpResponse, NTLM_UNSUPPORTED);
             return null;
         }
@@ -161,8 +165,10 @@ public class SPNEGOAuthnController {
             tokenBytes = acceptor.acceptSecContext(gssapiData, 0, gssapiData.length);
             log.trace("GSS token accepted");
         } catch (final Exception e) {
-            log.error("Exception processing GSS token", e);
-            finishWithException(conversationKey, httpRequest, httpResponse, e);
+            log.debug("Exception processing GSS token", e);
+            acceptor.logout();
+            finishWithException(conversationKey, httpRequest, httpResponse,
+                    new ExternalAuthenticationException(SPNEGO_NOT_AVAILABLE, e));
             return null;
         }
 
@@ -176,10 +182,13 @@ public class SPNEGOAuthnController {
 
                 log.info("SPNEGO/Kerberos authentication succeeded for principal: {}", clientGSSName.toString());
 
+                acceptor.logout();
                 finishWithSuccess(conversationKey, httpRequest, httpResponse, kerberosPrincipal);
             } catch (final GSSException e) {
                 log.error("Error extracting principal name from security context", e);
-                finishWithException(conversationKey, httpRequest, httpResponse, e);
+                acceptor.logout();
+                finishWithException(conversationKey, httpRequest, httpResponse,
+                        new ExternalAuthenticationException(SPNEGO_NOT_AVAILABLE, e));
             }
         } else {
             // The context is not complete yet.
@@ -190,7 +199,7 @@ public class SPNEGOAuthnController {
         
         return null;
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
     
     /**
      * Respond to a user signaling that an error occurred.
@@ -341,7 +350,7 @@ public class SPNEGOAuthnController {
      */
     @Nonnull private ModelAndView createModelAndView(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final HttpServletRequest httpRequest, @Nonnull final HttpServletResponse httpResponse) {
-        final ModelAndView modelAndView = new ModelAndView("spnego-unauthorized");
+        final ModelAndView modelAndView = new ModelAndView("spnego-unavailable");
         modelAndView.addObject("profileRequestContext", profileRequestContext);
         modelAndView.addObject("request", httpRequest);
         modelAndView.addObject("response", httpResponse);

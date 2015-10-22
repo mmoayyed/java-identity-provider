@@ -24,7 +24,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class KerberosRealmSettingsTest {
-    protected static String REALM_NAME = "DOMAIN_A.COM";
 
     protected static String SERVICE_PRINCIPAL = "HTTP/aai-logon.domain_a.com@DOMAIN_A.COM";
 
@@ -41,25 +40,21 @@ public class KerberosRealmSettingsTest {
         KerberosRealmSettings realm;
 
         realm = new KerberosRealmSettings();
-        realm.setRealmName(REALM_NAME);
         realm.setServicePrincipal(SERVICE_PRINCIPAL);
         realm.setKeytab(KEYTAB);
 
         realm.initialize();
 
-        Assert.assertEquals(realm.getRealmName(), REALM_NAME, "Value for realm name is invalid.");
         Assert.assertEquals(realm.getServicePrincipal(), SERVICE_PRINCIPAL, "Value for service principal is invalid.");
         Assert.assertEquals(realm.getKeytab(), KEYTAB, "Value for keytab is invalid.");
         Assert.assertNull(realm.getPassword(), "Value for password is not null.");
 
         realm = new KerberosRealmSettings();
-        realm.setRealmName(REALM_NAME);
         realm.setServicePrincipal(SERVICE_PRINCIPAL);
         realm.setPassword(PASSWORD);
 
         realm.initialize();
 
-        Assert.assertEquals(realm.getRealmName(), REALM_NAME, "Value for domain is invalid.");
         Assert.assertEquals(realm.getServicePrincipal(), SERVICE_PRINCIPAL, "Value for principal is invalid.");
         Assert.assertNull(realm.getKeytab(), "Value for keytab is not null.");
         Assert.assertEquals(realm.getPassword(), PASSWORD, "Value for password is invalid.");
@@ -71,7 +66,6 @@ public class KerberosRealmSettingsTest {
 
         try {
             realm = new KerberosRealmSettings();
-            realm.setRealmName(REALM_NAME);
             realm.setServicePrincipal(SERVICE_PRINCIPAL);
             realm.setKeytab(KEYTAB);
             realm.setPassword(PASSWORD);
@@ -91,7 +85,6 @@ public class KerberosRealmSettingsTest {
         // unset values
         try {
             realm = new KerberosRealmSettings();
-            realm.setRealmName(REALM_NAME);
             realm.setServicePrincipal(SERVICE_PRINCIPAL);
 
             realm.initialize();
@@ -104,7 +97,6 @@ public class KerberosRealmSettingsTest {
         // set to null values
         try {
             realm = new KerberosRealmSettings();
-            realm.setRealmName(REALM_NAME);
             realm.setServicePrincipal(SERVICE_PRINCIPAL);
             realm.setKeytab(null);
             realm.setPassword(null);
@@ -119,7 +111,6 @@ public class KerberosRealmSettingsTest {
         // unset values
         try {
             realm = new KerberosRealmSettings();
-            realm.setRealmName(REALM_NAME);
             realm.setServicePrincipal(SERVICE_PRINCIPAL);
             realm.setKeytab("   ");
             realm.setPassword("   ");
@@ -140,7 +131,6 @@ public class KerberosRealmSettingsTest {
         // unset values
         try {
             realm = new KerberosRealmSettings();
-            realm.setRealmName(REALM_NAME);
             realm.setServicePrincipal(SERVICE_PRINCIPAL);
             realm.setKeytab(KEYTAB);
             realm.setPassword(PASSWORD);
@@ -167,24 +157,10 @@ public class KerberosRealmSettingsTest {
         } catch (Exception ex) {
             // OK
         }
-
-        // realmName == null
-        try {
-            realm = new KerberosRealmSettings();
-            realm.setRealmName(null);
-            realm.setKeytab(KEYTAB);
-
-            realm.initialize();
-
-            Assert.fail("realm name must not be set to null.");
-        } catch (Exception ex) {
-            // OK
-        }
-
+        
         // domain is empty string
         try {
             realm = new KerberosRealmSettings();
-            realm.setRealmName("   ");
             realm.setKeytab(KEYTAB);
 
             realm.initialize();

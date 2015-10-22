@@ -32,9 +32,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * Kerberos realm settings for the SPNEGO authentication flow.
  */
 public class KerberosRealmSettings extends AbstractInitializableComponent {
-    
-    /** The realm name. */
-    @NonnullAfterInit private String realmName;
 
     /** The service's principal. */
     @NonnullAfterInit private String servicePrincipal;
@@ -44,25 +41,6 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
 
     /** The password to use (keytab and password are mutually exclusive). */
     @Nullable private String password;
-
-    /**
-     * Set the realm name. Required.
-     * 
-     * @param name the name of the realm
-     */
-    public void setRealmName(@Nonnull @NotEmpty final String name) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        realmName = Constraint.isNotEmpty(StringSupport.trim(name), "Realm name cannot be null or empty");
-    }
-
-    /**
-     * Get the realm name.
-     * 
-     * @return realm name
-     */
-    @NonnullAfterInit @NotEmpty public String getRealmName() {
-        return realmName;
-    }
 
     /**
      * Set the service principal name. Required.
@@ -126,8 +104,8 @@ public class KerberosRealmSettings extends AbstractInitializableComponent {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        if (realmName == null || servicePrincipal == null) {
-            throw new ComponentInitializationException("'realmName' and 'servicePrincipal' must be set.");
+        if (servicePrincipal == null) {
+            throw new ComponentInitializationException("'servicePrincipal' must be set.");
         }
 
         if (keytab == null && password == null) {

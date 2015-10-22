@@ -161,15 +161,19 @@ public class GSSContextAcceptor {
      * @param len the length of the token
      * 
      * @return a byte[] containing the token to be sent to the peer, or null if no output token is needed
-     * @throws LoginException if an error occurs
+     * @throws Exception if an error occurs
      */
     @Nullable private byte[] acceptFirstToken(@Nonnull final byte[] inToken, final int offset, final int len)
-            throws LoginException {
+            throws Exception {
 
         // We loop over each realm to determine which one might work.
+        
+        Exception preserved = null;
+        
         for (final KerberosRealmSettings realm : kerberosSettings.getRealms()) {
             
-            log.debug("Validating the first GSS input token against realm: {}", realm.getRealmName());
+            log.debug("Validating the first GSS input token against service principal: {}",
+                    realm.getServicePrincipal());
             try {
                 createGSSContext(realm);
                 final byte[] tokenOut = context.acceptSecContext(inToken, offset, len);
@@ -181,12 +185,13 @@ public class GSSContextAcceptor {
                 }
                 return tokenOut;
             } catch (final Exception e) {
-                log.warn("Error establishing security context", e);
+                log.debug("Error establishing security context", e);
                 logout();
+                preserved = e;
             }
         }
         
-        throw new LoginException("None of the configured realms were usable");
+        throw preserved;
     }
     
     /**
@@ -208,10 +213,10 @@ public class GSSContextAcceptor {
         try {
             krbSubject = krbLoginModule.login();
         } catch (final LoginException e) {
-            log.error("Server login error using realm: {}", realm.getRealmName());
+            log.error("Server login error using principal: {}", realm.getServicePrincipal());
             throw e;
         }
-        log.trace("Server login successful using realm: {}", realm.getRealmName());
+        log.trace("Server login successful using principal: {}", realm.getServicePrincipal());
 
         /*
          * Create the server credentials and an acceptor context.

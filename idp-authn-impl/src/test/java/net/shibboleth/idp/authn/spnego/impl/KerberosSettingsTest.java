@@ -29,7 +29,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class KerberosSettingsTest {
-    protected static String REALM_NAME = "DOMAIN_A.COM";
 
     protected static String SERVICE_PRINCIPAL = "HTTP/aai-logon.domain_a.com@DOMAIN_A.COM";
 
@@ -43,7 +42,6 @@ public class KerberosSettingsTest {
     public void setUp() throws ComponentInitializationException {
         settings = new KerberosSettings();
         KerberosRealmSettings realm1 = new KerberosRealmSettings();
-        realm1.setRealmName(REALM_NAME);
         realm1.setServicePrincipal(SERVICE_PRINCIPAL);
         realm1.setKeytab(KEYTAB);
         realm1.initialize();

@@ -129,7 +129,7 @@ public class ExternalAuthentication {
         
         final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + conv);
         if (obj == null || !(obj instanceof ExternalAuthentication)) {
-            throw new ExternalAuthenticationException("No conversation state found in session");
+            throw new ExternalAuthenticationException("No conversation state found in session for key (" + conv + ")");
         }
         
         ((ExternalAuthentication) obj).doStart(request);
@@ -154,7 +154,7 @@ public class ExternalAuthentication {
         
         final Object obj = request.getSession().getAttribute(CONVERSATION_KEY + key);
         if (obj == null || !(obj instanceof ExternalAuthentication)) {
-            throw new ExternalAuthenticationException("No conversation state found in session");
+            throw new ExternalAuthenticationException("No conversation state found in session for key (" + key + ")");
         }
         
         request.getSession().removeAttribute(CONVERSATION_KEY + key);
