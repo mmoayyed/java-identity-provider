@@ -44,6 +44,6 @@
             
     <bean id="SPNEGOAutoLoginManager"
           class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAutoLoginManager"
-          p:cookieManager-ref="shibboleth.PersistentCookieManager" />
+          p:cookieManager-ref="shibboleth.UserPrefsCookieManager" />
 
 </beans>

@@ -5,7 +5,7 @@
 
     <!-- This is a login flow for SPNEGO authentication implemented via external authentication. -->
 
-    <!-- Store current autologin state. -->
+    <!-- Store current autologin state to a flow variable. -->
     <on-start>
         <evaluate expression="SPNEGOAutoLoginManager.isEnabled()"
             result="flowScope.enableAutoLoginOnSuccess" />
@@ -32,9 +32,9 @@
             else="ReselectFlow" />
     </decision-state>
 
-    <!-- If called as extended flow, check if interflow state contains autologin enabling. -->
+    <!-- If called as extended flow, check if interflow state contains autologin-enabling parameter. -->
     <decision-state id="CheckEnableAutoLoginRequested">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getAuthenticationStateMap().get('_shib_idp_SPNEGO_enable_autologin')"
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).getAuthenticationStateMap().get(T(net.shibboleth.idp.authn.spnego.impl.SPNEGOAutoLoginManager).AUTOLOGIN_PARAMETER_NAME)"
             then="MarkEnableAutoLoginOnSuccess"
             else="DisableAutoLoginBeforeRunSPNEGO" />
     </decision-state>
