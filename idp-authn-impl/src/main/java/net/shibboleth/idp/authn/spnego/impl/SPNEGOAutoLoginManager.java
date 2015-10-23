@@ -34,7 +34,10 @@ import org.slf4j.LoggerFactory;
  * Component managing the auto-login state via cookie.
  */
 public class SPNEGOAutoLoginManager extends AbstractInitializableComponent {
-    
+
+    /** Name of the SPNEGO auto-login signaling parameter. */
+    @Nonnull @NotEmpty public static final String AUTOLOGIN_PARAMETER_NAME = "_shib_idp_SPNEGO_enable_autologin";
+
     /** Name of the SPNEGO auto-login cookie. */
     @Nonnull @NotEmpty public static final String AUTOLOGIN_COOKIE_NAME = "_idp_spnego_autologin";
 
