@@ -147,9 +147,7 @@
                     <bean class="net.shibboleth.idp.saml.profile.config.logic.SignAssertionsPredicate"
                         p:honorMetadata="%{idp.signing.honorWantAssertionsSigned:true}" />
                 </constructor-arg>
-                <constructor-arg>
-                    <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.IssuingDelegatedAssertionPredicate" />
-                </constructor-arg>
+                <constructor-arg ref="shibboleth.Conditions.IssuingDelegatedAssertion" />
             </bean>
         </property>
         <property name="securityParametersContextLookupStrategy">
