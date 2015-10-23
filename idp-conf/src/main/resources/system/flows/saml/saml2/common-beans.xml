@@ -116,7 +116,9 @@
             <bean class="net.shibboleth.idp.relyingparty.impl.EncryptionCredentialsResolver" 
                 c:_0-ref="shibboleth.RelyingPartyResolverService" />
         </constructor-arg>
-        <constructor-arg ref="shibboleth.EncryptionParametersResolver" />
+        <constructor-arg>
+            <bean class="org.opensaml.xmlsec.impl.BasicEncryptionParametersResolver" />
+        </constructor-arg>
     </bean>
 
     <bean id="EncryptNameIDs"
