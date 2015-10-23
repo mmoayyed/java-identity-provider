@@ -119,6 +119,7 @@
         <constructor-arg>
             <bean class="org.opensaml.xmlsec.impl.BasicEncryptionParametersResolver" />
         </constructor-arg>
+        <constructor-arg ref="shibboleth.SelfEncryptionConfigurationLookup" />
     </bean>
 
     <bean id="EncryptNameIDs"
