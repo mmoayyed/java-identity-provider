@@ -19,24 +19,15 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
-import org.opensaml.core.xml.io.MarshallingException;
-import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.wssecurity.SAML20AssertionToken;
 import org.opensaml.soap.wssecurity.messaging.Token;
 import org.opensaml.soap.wssecurity.messaging.Token.ValidationStatus;
@@ -50,20 +41,13 @@ import com.google.common.base.Function;
 //TODO need a lot more Javadoc detail here, and event ID's supported.
 
 /**
- * Process the pre-validated SAML 2 Assertion WS-Security token, and set up the resulting
- * NameID for subject canonicalization as the effective subject of the request.
+ * Locate the pre-validated SAML 2 Assertion WS-Security token, and  populate
+ * the {@link LibertySSOSContext}.
  */
-public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
+public class PopulateLibertyContext extends AbstractProfileAction {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(ProcessSAML20AssertionWSSToken.class);
-    
-
-    /** Function used to obtain the requester ID. */
-    @Nullable private Function<ProfileRequestContext,String> requesterLookupStrategy;
-
-    /** Function used to obtain the responder ID. */
-    @Nullable private Function<ProfileRequestContext,String> responderLookupStrategy;
+    private Logger log = LoggerFactory.getLogger(PopulateLibertyContext.class);
     
     /** Function used to resolve the assertion token to process. */
     @Nonnull private Function<ProfileRequestContext, SAML20AssertionToken> assertionTokenStrategy;
@@ -71,15 +55,10 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
     /** The SAML 2 Assertion token being processed. */
     private SAML20AssertionToken assertionToken;
     
-    /** The SAML 2 NameID representing the authenticated user. */
-    private NameID nameID;
-    
     /**
      * Constructor.
      */
-    public ProcessSAML20AssertionWSSToken() {
-        requesterLookupStrategy = new RelyingPartyIdLookupFunction();
-        responderLookupStrategy = new ResponderIdLookupFunction();
+    public PopulateLibertyContext() {
         assertionTokenStrategy = new TokenStrategy();
     }
     
@@ -93,30 +72,6 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         assertionTokenStrategy = Constraint.isNotNull(strategy, "Assertion token strategy may not be null");
-    }
-    
-    /**
-     * Set the strategy used to locate the requester ID for canonicalization.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRequesterLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        requesterLookupStrategy = strategy;
-    }
-
-    /**
-     * Set the strategy used to locate the responder ID for canonicalization.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setResponderLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        responderLookupStrategy = strategy;
     }
     
     /** {@inheritDoc} */
@@ -135,49 +90,16 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
             return false;
         }
         
-        org.opensaml.saml.saml2.core.Subject samlSubject = assertionToken.getWrappedToken().getSubject();
-        if (samlSubject == null || samlSubject.getNameID() == null) {
-            log.info("{} SAML20AssertionToken does not contain either a Subject or a NameID", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
-            return false;
-        }
-        
-        nameID = samlSubject.getNameID();
-        
         return true;
     }
     
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        
-        if (log.isDebugEnabled()) {
-            try {
-                log.debug("{} Authenticated user based on inbound WS-Security SAML 2 Assertion token with NameID: {}", 
-                        getLogPrefix(), SerializeSupport.nodeToString(XMLObjectSupport.marshall(nameID)));
-            } catch (MarshallingException e) {
-                log.debug("{} Could not marshall SAML 2 NameID for logging purposes", getLogPrefix(), e);
-            }
-        }
-        
         // Populate Liberty context for use later.
         LibertySSOSContext ssosContext = profileRequestContext.getSubcontext(LibertySSOSContext.class, true);
         ssosContext.setAttestedToken(assertionToken.getWrappedToken());
         ssosContext.setAttestedSubjectConfirmationMethod(assertionToken.getSubjectConfirmation().getMethod());
-        
-        // Set up Subject c14n context for call to c14n subflow.
-        Subject subject = new Subject();
-        subject.getPrincipals().add(new NameIDPrincipal(nameID));
-        
-        final SubjectCanonicalizationContext c14n = new SubjectCanonicalizationContext();
-        c14n.setSubject(subject);
-        if (requesterLookupStrategy != null) {
-            c14n.setRequesterId(requesterLookupStrategy.apply(profileRequestContext));
-        }
-        if (responderLookupStrategy != null) {
-            c14n.setResponderId(responderLookupStrategy.apply(profileRequestContext));
-        }
-        profileRequestContext.addSubcontext(c14n, true);
     }
     
     /**

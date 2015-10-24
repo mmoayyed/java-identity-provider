@@ -57,7 +57,9 @@
     </action-state>
     
     <action-state id="ProcessSAMLToken">
-        <evaluate expression="ProcessSAML20AssertionWSSToken" />
+        <evaluate expression="PopulateLibertyContext" />
+        <evaluate expression="DecryptDelegatedAssertionNameID" />
+        <evaluate expression="ProcessDelegatedAssertion" />
         
         <evaluate expression="'proceed'" />
         

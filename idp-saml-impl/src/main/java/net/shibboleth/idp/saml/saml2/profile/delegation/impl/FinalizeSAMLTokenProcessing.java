@@ -41,17 +41,8 @@ public class FinalizeSAMLTokenProcessing extends AbstractProfileAction {
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
         profileRequestContext.removeSubcontext(SubjectCanonicalizationContext.class);
         
-        //TODO seems that without populating SubjectContext authenticationResults, there's nothing
-        // much useful to be done with the Subject here. Confirm.
-        
-        /**
-        Subject subject = c14nContext.getSubject();
-        
-        log.debug("Transferring principal name canonicalized from SAML NameID to a UsernamePrincipal context: {}", 
+        log.debug("Subject c14n from inbound delegated Assertion token produced principal name: {}",
                 c14nContext.getPrincipalName());
-        
-        subject.getPrincipals().add(new UsernamePrincipal(c14nContext.getPrincipalName()));
-        */
         
         SubjectContext subjectContext = profileRequestContext.getSubcontext(SubjectContext.class, true);
         subjectContext.setPrincipalName(c14nContext.getPrincipalName());
