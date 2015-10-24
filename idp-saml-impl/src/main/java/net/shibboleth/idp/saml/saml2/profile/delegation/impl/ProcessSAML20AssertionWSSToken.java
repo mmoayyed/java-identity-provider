@@ -80,6 +80,7 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
     public ProcessSAML20AssertionWSSToken() {
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
+        assertionTokenStrategy = new TokenStrategy();
     }
     
     /**
@@ -130,7 +131,6 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
         
         if (assertionToken == null) {
             log.info("{} No valid SAML20AssertionToken available within inbound WSSecurityContext", getLogPrefix());
-            //TODO can use this event ID here?
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
             return false;
         }
@@ -138,8 +138,7 @@ public class ProcessSAML20AssertionWSSToken extends AbstractProfileAction {
         org.opensaml.saml.saml2.core.Subject samlSubject = assertionToken.getWrappedToken().getSubject();
         if (samlSubject == null || samlSubject.getNameID() == null) {
             log.info("{} SAML20AssertionToken does not contain either a Subject or a NameID", getLogPrefix());
-            //TODO can use this event ID here?
-            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
             return false;
         }
         
