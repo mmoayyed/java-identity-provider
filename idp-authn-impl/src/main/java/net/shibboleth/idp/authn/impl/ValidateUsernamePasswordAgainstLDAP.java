@@ -172,7 +172,8 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
                 }
             }
         } catch (final LdapException e) {
-            log.warn("{} Login by {} produced exception", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
+            log.warn("{} Login by {} produced exception", getLogPrefix(), getUsernamePasswordContext().getUsername(),
+                    e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }
