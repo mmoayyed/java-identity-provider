@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.saml.saml2.profile.config;
 
-import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -99,7 +98,15 @@ public class BrowserSSOProfileConfigurationTest {
         } catch (ConstraintViolationException e) {
             // expected, do nothing 
         }
+    }
+    
+    @Test
+    public void testMaximumTokenDelegationChainLength(){
+        BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
+        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 1);
         
+        config.setMaximumTokenDelegationChainLength(10);
+        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 10);
     }
     
 }

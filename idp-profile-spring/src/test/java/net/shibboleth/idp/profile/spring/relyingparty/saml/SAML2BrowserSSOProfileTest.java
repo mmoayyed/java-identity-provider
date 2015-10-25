@@ -57,6 +57,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertNull(profile.getAllowingDelegation());
         Assert.assertNotNull(profile.getAllowDelegation());
         assertFalsePredicate(profile.getAllowDelegation());
+        Assert.assertEquals(profile.getMaximumTokenDelegationChainLength(), 1);
         Assert.assertEquals(profile.getInboundInterceptorFlows().size(), 1);
         Assert.assertEquals(profile.getInboundInterceptorFlows().get(0), "security-policy/saml2-sso");
         Assert.assertTrue(profile.getOutboundInterceptorFlows().isEmpty());
@@ -81,6 +82,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertNull(profile.getAllowingDelegation());
         Assert.assertNotNull(profile.getAllowDelegation());
         assertTruePredicate(profile.getAllowDelegation());
+        Assert.assertEquals(profile.getMaximumTokenDelegationChainLength(), 3);
 
         Assert.assertEquals(profile.getProxyCount(), 0);
         Assert.assertTrue(profile.getProxyAudiences().isEmpty());

@@ -49,17 +49,12 @@
         </annotation>
         <complexContent>
             <extension base="samlrp:SAML2SSOProfile">
-                <attribute name="maximumTokenDelegationChainLength" type="string">
-                    <annotation>
-                        <documentation>
-                            Maximum number of times a given token is allowed to have been delegated.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="delegationPredicateRef" type="string">
                     <annotation>
                         <documentation>
-                            Reference to a predicate used to determine if a token may be delegated to a relying party.
+                            Reference to a predicate used to determine whether a delegated token presented
+                            to the IdP by another non-user entity may be used to complete SAML 2 SSO
+                            to this relying party.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -89,6 +84,23 @@
                             Reference to a predicate use to determine whether produced assertions may be delegated.
                             
                             Mutually exclusive with allowDelegation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maximumTokenDelegationChainLength" type="string">
+                    <annotation>
+                        <documentation>
+                            Limits the total number of delegates that may be derived from the initial SAML token.
+                            The identity provider will not accept, and therefore will also not issue, Assertion tokens
+                            with a delegation chain length greater than this value.
+                            
+                            The length of a delegation chain is evaluated as the number of Delegate children within an
+                            Assertion's DelegationRestrictionType Condition element.
+                            
+                            The value used when applying the policy is determined by the value in effect for the
+                            relying party to which the initial SSO Assertion was issued.
+                            
+                            Defaults to 1. 
                         </documentation>
                     </annotation>
                 </attribute>

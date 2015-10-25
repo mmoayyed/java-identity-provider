@@ -52,10 +52,6 @@ public class SAML2SSOSProfileParser extends SAML2BrowserSSOProfileParser {
     /** {@inheritDoc} */
     @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-        if (element.hasAttributeNS(null, "maximumTokenDelegationChainLength")) {
-            builder.addPropertyValue("maximumTokenDelegationChainLength",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "maximumTokenDelegationChainLength")));
-        }
         if (element.hasAttributeNS(null, "delegationPredicateRef")) {
             builder.addPropertyReference("delegationPredicate",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "delegationPredicateRef")));

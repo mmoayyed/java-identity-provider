@@ -19,8 +19,11 @@ package net.shibboleth.idp.saml.idwsf.profile.config;
 
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
 
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 /** Unit test for {@link SSOSProfileConfiguration}. */
 public class SSOSProfileConfigurationTest {
@@ -34,12 +37,17 @@ public class SSOSProfileConfigurationTest {
     }
     
     @Test
-    public void testMaximumTokenDelegationChainLength(){
-        SSOSProfileConfiguration config = new SSOSProfileConfiguration();
-        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 0);
+    public void testDelegationPredicate() {
+        ProfileRequestContext prc = new ProfileRequestContext<>();
         
-        config.setMaximumTokenDelegationChainLength(10);
-        Assert.assertEquals(config.getMaximumTokenDelegationChainLength(), 10);
+        SSOSProfileConfiguration config = new SSOSProfileConfiguration();
+        Assert.assertNotNull(config.getDelegationPredicate());
+        Assert.assertFalse(config.getDelegationPredicate().apply(prc));
+        
+        config.setDelegationPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
+        Assert.assertNotNull(config.getDelegationPredicate());
+        Assert.assertTrue(config.getDelegationPredicate().apply(prc));
+        
     }
     
 }

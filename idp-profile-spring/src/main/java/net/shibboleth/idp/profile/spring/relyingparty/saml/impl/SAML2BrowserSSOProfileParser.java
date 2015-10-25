@@ -157,6 +157,11 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
                     element.getAttributeNS(null, "allowDelegationPredicateRef"));
         }
         builder.addPropertyValue("allowDelegation", allowDelegationPredicateBuilder.getBeanDefinition());
+        
+        if (element.hasAttributeNS(null, "maximumTokenDelegationChainLength")) {
+            builder.addPropertyValue("maximumTokenDelegationChainLength",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maximumTokenDelegationChainLength")));
+        }
 
         setPropertiesFromRelyingParty(element, builder);
     }

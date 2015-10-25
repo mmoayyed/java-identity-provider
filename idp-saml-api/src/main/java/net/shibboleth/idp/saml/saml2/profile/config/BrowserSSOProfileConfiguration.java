@@ -28,8 +28,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
@@ -42,6 +40,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.opensaml.profile.context.ProfileRequestContext;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -88,6 +88,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * @deprecated use {@link #allowDelegationPredicate} instead
      */
     private Boolean allowingDelegation;
+    
+    /** Limits the total number of delegates that may be derived from the initial SAML token. Default value: 1. */
+    @NonNegative private long maximumTokenDelegationChainLength;
 
     /** Selects, and limits, the authentication contexts to use for requests. */
     @Nonnull @NonnullElements private List<AuthnContextClassRefPrincipal> defaultAuthenticationContexts;
@@ -120,6 +123,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         skipEndpointValidationWhenSigned = false;
         maximumSPSessionLifetime = 0;
         allowingDelegation = null;
+        maximumTokenDelegationChainLength = 1;
         allowDelegationPredicate = Predicates.<ProfileRequestContext>alwaysFalse();
         defaultAuthenticationContexts = Collections.emptyList();
         authenticationFlows = Collections.emptySet();
@@ -281,6 +285,25 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     @Override @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> 
         getDefaultAuthenticationMethods() {
         return ImmutableList.<Principal> copyOf(defaultAuthenticationContexts);
+    }
+    
+    /**
+     * Get the limits on the total number of delegates that may be derived from the initial SAML token.
+     * 
+     * @return the limit on the total number of delegates that may be derived from the initial SAML token
+     */
+    public long getMaximumTokenDelegationChainLength() {
+        return maximumTokenDelegationChainLength;
+    }
+
+    /**
+     * Set the limits on the total number of delegates that may be derived from the initial SAML token.
+     * 
+     * @param length the limit on the total number of delegates that may be derived from the initial SAML token
+     */
+    public void setMaximumTokenDelegationChainLength(final long length) {
+        maximumTokenDelegationChainLength = Constraint.isGreaterThanOrEqual(0, length,
+                "Delegation chain length must be greater than or equal to 0");
     }
 
     /**

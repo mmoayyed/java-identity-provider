@@ -16,7 +16,7 @@
 			includeAttributeStatement="false" securityPolicyRef="ignore"
 			maximumSPSessionLifetime="1" encryptionOptional="true"
 			encryptAttributes="always" encryptAssertions="conditional"
-            allowDelegation="true"
+            allowDelegation="true" maximumTokenDelegationChainLength="3"
 			signRequests="conditional" signAssertions="always" signResponses="never"
 			skipEndpointValidationWhenSigned="true" artifactType="7654">
 		</rp:ProfileConfiguration>
