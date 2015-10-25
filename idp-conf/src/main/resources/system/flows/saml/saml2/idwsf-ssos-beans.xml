@@ -161,6 +161,8 @@
     
     <bean id="PopulateLibertyContext" class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.PopulateLibertyContext" scope="prototype" />
     
+    <bean id="EvaluateDelegationPolicy" class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.EvaluateDelegationPolicy" scope="prototype" />
+    
     <bean id="DecryptDelegatedAssertionNameID" class="org.opensaml.saml.saml2.profile.impl.DecryptNameIDs" scope="prototype">
         <property name="messageLookupStrategy">
             <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.DelegatedAssertionLookupStrategy" />

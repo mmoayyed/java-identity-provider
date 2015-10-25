@@ -58,6 +58,7 @@
     
     <action-state id="ProcessSAMLToken">
         <evaluate expression="PopulateLibertyContext" />
+        <evaluate expression="EvaluateDelegationPolicy" />
         <evaluate expression="DecryptDelegatedAssertionNameID" />
         <evaluate expression="ProcessDelegatedAssertion" />
         

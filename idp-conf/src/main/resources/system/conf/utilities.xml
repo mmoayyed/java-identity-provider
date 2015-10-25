@@ -50,6 +50,8 @@
     
     <bean id="shibboleth.Conditions.IssuingDelegatedAssertion"
         class="net.shibboleth.idp.saml.saml2.profile.delegation.IssuingDelegatedAssertionPredicate" />
+    <bean id="shibboleth.Conditions.AllowedSAMLPresenters" abstract="true"
+        class="net.shibboleth.idp.saml.profile.config.logic.AllowedSAMLPresentersPredicate" />
 
     <bean id="shibboleth.MessageContextLookup.Inbound"
         class="org.opensaml.profile.context.navigate.InboundMessageContextLookup" />
