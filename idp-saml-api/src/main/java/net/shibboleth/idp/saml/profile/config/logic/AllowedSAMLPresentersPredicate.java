@@ -25,14 +25,14 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 
 /**
  * Predicate which evaluates the inbound {@link SAMLPresenterEntityContext#getEntityId()}
@@ -60,7 +60,7 @@ public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestC
         if (presenters == null) {
             allowedPresenters = Collections.emptySet();
         } else {
-            allowedPresenters = new HashSet<>(Collections2.filter(presenters, Predicates.notNull()));
+            allowedPresenters = new HashSet<>(StringSupport.normalizeStringCollection(presenters));
         }
     }
 
