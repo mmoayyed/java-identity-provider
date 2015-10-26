@@ -31,6 +31,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.webflow.execution.RequestContext;
 
+//Checkstyle: JavadocStyle OFF -- ignore extra HTML tag error
 /**
  * Spring Web Flow utility action for logging on DEBUG details about the current hierarchy of
  * Spring {@link ApplicationContext} and the beans contained within each.
@@ -50,6 +51,7 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * </p>
  */
+//Checkstyle: JavadocStyle ON
 public class LogSpringContextInfo extends AbstractProfileAction implements ApplicationContextAware {
     
     /** Name of Spring web flow attribute holding the description of the tree to log. */

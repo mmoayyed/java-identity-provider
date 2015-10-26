@@ -27,14 +27,13 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.security.credential.Credential;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
 /**
- * Context which holds data relevant to the issuance of a delegated {@link Assertion}.
+ * Context which holds data relevant to the issuance of a delegated {@link org.opensaml.saml.saml2.core.Assertion}.
  */
 public class DelegationContext extends BaseContext {
     

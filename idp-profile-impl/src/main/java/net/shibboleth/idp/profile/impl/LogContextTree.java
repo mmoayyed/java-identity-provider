@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
+//Checkstyle: JavadocStyle OFF -- ignore extra HTML tag error
 /**
  * Spring Web Flow utility action for logging on DEBUG a representation of the current
  * {@link ProfileRequestContext}.
@@ -49,6 +50,7 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * </p>
  */
+//Checkstyle: JavadocStyle ON
 public class LogContextTree extends AbstractProfileAction {
     
     /** Name of Spring web flow attribute holding the description of the tree to log. */
