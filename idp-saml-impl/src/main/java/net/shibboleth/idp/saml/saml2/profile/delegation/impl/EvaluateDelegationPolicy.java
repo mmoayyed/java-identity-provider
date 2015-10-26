@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -24,14 +26,17 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
+import net.shibboleth.idp.saml.xmlobject.DelegationPolicy;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.ext.saml2delrestrict.DelegationRestrictionType;
+import org.opensaml.saml.saml2.core.Advice;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Condition;
 import org.opensaml.saml.saml2.core.Conditions;
@@ -312,13 +317,26 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
     
     /**
      * Default strategy used to resolve the policy maximum token delegation chain length.
+     * 
+     * <p>
+     * This strategy evaluates the extension element value
+     * {@link DelegationPolicy#getMaximumTokenDelegationChainLength()} present in the {@link Advice}
+     * of the presented {@link Assertion} token.
+     * </p>
      */
     public class PolicyMaxChainLengthStrategy implements Function<ProfileRequestContext, Long> {
 
         /** {@inheritDoc} */
         @Nullable
         public Long apply(@Nullable ProfileRequestContext input) {
-            // TODO Auto-generated method stub
+            if (assertionToken == null || assertionToken.getAdvice() == null) {
+                return null;
+            }
+            Advice inboundAdvice = assertionToken.getAdvice();
+            List<XMLObject> inboundPolicies = inboundAdvice.getChildren(DelegationPolicy.DEFAULT_ELEMENT_NAME);
+            if (inboundPolicies != null && !inboundPolicies.isEmpty()) {
+                return ((DelegationPolicy)inboundPolicies.get(0)).getMaximumTokenDelegationChainLength();
+            }
             return null;
         }
         

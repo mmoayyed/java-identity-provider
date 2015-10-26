@@ -193,5 +193,11 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="AddDelegationPolicyToAssertion"
+        class="net.shibboleth.idp.saml.saml2.profile.delegation.impl.AddDelegationPolicyToAssertion"
+        scope="prototype"
+        p:activationCondition-ref="shibboleth.Conditions.IssuingDelegatedAssertion">
+    </bean>
         
 </beans>

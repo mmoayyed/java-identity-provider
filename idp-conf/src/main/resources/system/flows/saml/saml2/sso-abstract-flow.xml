@@ -106,6 +106,7 @@
         <evaluate expression="AddChannelBindingsToAssertions" />
         <evaluate expression="AddGeneratedKeyToAssertions" />
         <evaluate expression="DecorateDelegatedAssertion" />
+        <evaluate expression="AddDelegationPolicyToAssertion" />
 
         <!-- Need access to unencrypted NameID and Assertion. -->
         <evaluate expression="PostAssertionPopulateAuditContext" />
