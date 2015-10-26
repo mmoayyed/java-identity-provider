@@ -301,7 +301,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * 
      * @param length the limit on the total number of delegates that may be derived from the initial SAML token
      */
-    public void setMaximumTokenDelegationChainLength(final long length) {
+    public void setMaximumTokenDelegationChainLength(@NonNegative final long length) {
         maximumTokenDelegationChainLength = Constraint.isGreaterThanOrEqual(0, length,
                 "Delegation chain length must be greater than or equal to 0");
     }
