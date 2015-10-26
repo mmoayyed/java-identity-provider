@@ -226,7 +226,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      * Build the POJO with the username and password.
      * 
      * @param element the HTTPMetadataProvider parser.
-     * @return the bean definition with the the username and password.
+     * @return the bean definition with the username and password.
      */
     private BeanDefinition buildBasicCredentials(Element element) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);

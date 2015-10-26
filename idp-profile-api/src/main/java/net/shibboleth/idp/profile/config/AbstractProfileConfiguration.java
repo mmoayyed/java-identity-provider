@@ -51,7 +51,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     /**
      * Constructor.
      * 
-     * @param id ID of the the communication profile, never null or empty
+     * @param id ID of the communication profile, never null or empty
      */
     public AbstractProfileConfiguration(@Nonnull @NotEmpty final String id) {
         profileId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Profile identifier cannot be null or empty");

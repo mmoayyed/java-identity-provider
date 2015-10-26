@@ -53,7 +53,7 @@ public interface PersistenceManager<ItemType> extends IdentifiedComponent {
      * 
      * @param id ID of the item, may be null or empty
      * 
-     * @return the item associated with the ID or null if the the given ID was null or empty or no item is associated
+     * @return the item associated with the ID or null if the given ID was null or empty or no item is associated
      *         with that id
      */
     public ItemType get(String id);

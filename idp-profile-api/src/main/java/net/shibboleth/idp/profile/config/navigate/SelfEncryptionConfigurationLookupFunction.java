@@ -35,7 +35,7 @@ import com.google.common.base.Function;
  * A function that returns a {@link EncryptionConfiguration} list intended for self-encryption cases.
  * 
  * <p>A self-specific {@link EncryptionConfiguration} may be supplied. This, if present will be composed
- * with the the global config {@link SecurityConfigurationSupport#getGlobalEncryptionConfiguration()}</p>
+ * with the global config {@link SecurityConfigurationSupport#getGlobalEncryptionConfiguration()}</p>
  */
 public class SelfEncryptionConfigurationLookupFunction 
         implements Function<ProfileRequestContext,List<EncryptionConfiguration>> {

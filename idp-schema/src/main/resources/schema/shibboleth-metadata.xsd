@@ -94,7 +94,7 @@
         <annotation>
             <documentation>
                 A metadata provider that periodically pulls metadata from a given URL. If the metadata is valid it is
-                stored to disk. If the the provided URL can not be reached or the metadata retrieved is invalid this
+                stored to disk. If the provided URL can not be reached or the metadata retrieved is invalid this
                 provider will fall back to its on-disk copy.
             </documentation>
         </annotation>

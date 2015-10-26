@@ -127,7 +127,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
 
     /**
-     * Set the the time, in milliseconds since the epoch, that the authentication completed.
+     * Set the time, in milliseconds since the epoch, that the authentication completed.
      * 
      * @param instant time, in milliseconds since the epoch, that the authentication completed, never non-positive
      */

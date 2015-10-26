@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * <p>When building the NameID the textual content of the NameID is the value of the source attribute. If a
  * {@link #nameIdQualifier} is provided that value is used as the NameID's NameQualifier otherwise the attribute
  * issuer's entity ID is used. If a {@link #nameIdSPQualifier} is provided then that valid is used as the NameID's
- * SPNameQualifier, otherwise the the attribute recipient's entityID is used.</p>
+ * SPNameQualifier, otherwise the attribute recipient's entityID is used.</p>
  */
 
 public class SAML2NameIDAttributeDefinition extends AbstractAttributeDefinition {

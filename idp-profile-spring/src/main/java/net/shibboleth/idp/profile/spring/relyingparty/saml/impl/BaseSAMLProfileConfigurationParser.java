@@ -64,7 +64,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
     }
 
     /**
-     * Construct the builder for the the artifact configuration.
+     * Construct the builder for the artifact configuration.
      * 
      * @param element The element under consideration
      * @return the builder.

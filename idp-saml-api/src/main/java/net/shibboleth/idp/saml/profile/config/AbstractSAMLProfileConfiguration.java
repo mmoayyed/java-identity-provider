@@ -64,7 +64,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
     /**
      * Constructor.
      * 
-     * @param profileId ID of the the communication profile
+     * @param profileId ID of the communication profile
      */
     public AbstractSAMLProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
