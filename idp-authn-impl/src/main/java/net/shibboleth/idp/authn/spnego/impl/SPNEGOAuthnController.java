@@ -136,7 +136,7 @@ public class SPNEGOAuthnController {
         GSSContextAcceptor acceptor = spnegoCtx.getContextAcceptor();
         if (acceptor == null) {
             try {
-                acceptor = new GSSContextAcceptor(spnegoCtx.getKerberosSettings());
+                acceptor = createGSSContextAcceptor(spnegoCtx);
                 spnegoCtx.setContextAcceptor(acceptor);
             } catch (final GSSException e) {
                 log.error("Unable to create GSSContextAcceptor", e);
@@ -298,7 +298,20 @@ public class SPNEGOAuthnController {
         final AuthenticationContext authnContext = prc.getSubcontext(AuthenticationContext.class);
         return authnContext != null ? authnContext.getSubcontext(SPNEGOContext.class) : null;
     }
-    
+
+    /**
+     * Create a new {@link GSSContextAcceptor} object.
+     * (Created in a separate method to support unit testing.)
+     * 
+     * @param spnegoCtx the {@link SPNEGOContext} conteining the {@link KerberosSettings}
+     * @return a new {@link GSSContextAcceptor}
+     * @throws GSSException if an error occurs while creating the {@link GSSContextAcceptor}.
+     */
+    @Nonnull
+    protected GSSContextAcceptor createGSSContextAcceptor(@Nonnull final SPNEGOContext spnegoCtx) throws GSSException {
+        return new GSSContextAcceptor(spnegoCtx.getKerberosSettings());
+    }
+
     /**
      * Send back an empty Negotiate challenge.
      * 
