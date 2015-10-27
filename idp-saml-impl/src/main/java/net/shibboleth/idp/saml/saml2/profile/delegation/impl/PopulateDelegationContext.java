@@ -275,6 +275,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
      * @param profileRequestContext the current profile request context
      * @return true iff {@link #doExecute(ProfileRequestContext)} should proceed
      */
+    @SuppressWarnings("deprecation")
     protected boolean doPreExecuteRelyingParty(@Nonnull final ProfileRequestContext profileRequestContext) {
         relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyContext == null) {

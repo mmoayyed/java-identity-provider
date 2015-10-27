@@ -64,6 +64,7 @@ public class BrowserSSOProfileConfigurationTest {
         Assert.assertEquals(config.getMaximumSPSessionLifetime(), 1000);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testAllowingDelegation() {
         // Note: testing the deprecated boolean value variant

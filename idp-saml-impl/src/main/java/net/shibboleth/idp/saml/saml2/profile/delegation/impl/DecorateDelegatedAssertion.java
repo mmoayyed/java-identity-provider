@@ -623,17 +623,6 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
 
         /**
-         * Constructor.
-         *
-         * @param event the event ID
-         * @param message the exception details message
-         */
-        public EventException(@Nonnull final String event, @Nullable final String message) {
-            super(message);
-            eventID = Constraint.isNotNull(StringSupport.trimOrNull(event), "Event ID may not be null");
-        }
-        
-        /**
          * Get the event represented by this exception.
          * 
          * @return the event ID

@@ -28,6 +28,7 @@ import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfigurati
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+@SuppressWarnings("deprecation")
 public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
 
     @Test public void defaults() {

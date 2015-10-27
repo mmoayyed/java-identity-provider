@@ -377,6 +377,7 @@ public class PopulateDelegationContextTest extends OpenSAMLInitBaseTestCase {
         Assert.assertFalse(delegationContext.getSubjectConfirmationCredentials().isEmpty());
     }
     
+    @SuppressWarnings("deprecation")
     @Test
     public void testRequestedViaConditionsAllowedViaLegacyBoolean() throws Exception {
         authnRequest.setConditions(buildDelegationRequestConditions());
