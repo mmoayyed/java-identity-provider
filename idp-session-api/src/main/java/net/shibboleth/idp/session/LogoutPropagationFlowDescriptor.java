@@ -37,21 +37,31 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
     /** Type of session handled by this flow. */
     @Nonnull private final Class<? extends SPSession> sessionType;
 
-    /** Constructor. */
-    public LogoutPropagationFlowDescriptor(final Class<? extends SPSession> sessionType) {
-        this.sessionType = Constraint.isNotNull(sessionType, "SessionType cannot be null");
+    /**
+     * Constructor.
+     *
+     * @param type type of {@link SPSession} associated with this flow
+     */
+    public LogoutPropagationFlowDescriptor(final Class<? extends SPSession> type) {
+        sessionType = Constraint.isNotNull(type, "SPSession type cannot be null");
     }
 
-    /** @return The type of session supported by this flow descriptor. */
+    /**
+     * Get the type of {@link SPSession} supported by this flow descriptor.
+     * 
+     * @return type of session supported by this flow descriptor
+     */
     @Nonnull public Class<? extends SPSession> getSessionType() {
         return sessionType;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return getId().hashCode();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -69,8 +79,10 @@ public class LogoutPropagationFlowDescriptor extends AbstractIdentifiableInitial
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("flowId", getId()).toString();
     }
+    
 }

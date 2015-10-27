@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development,
- * Inc. (UCAID) under one or more contributor license agreements.  See the
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache
- * License, Version 2.0 (the "License"); you may not use this file except in
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
  * compliance with the License.  You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -60,73 +60,94 @@ public class LogoutPropagationContext extends BaseContext {
     @Nonnull @Live private final Map<String, Object> viewMap = new HashMap<>();
 
 
-    /** @return The SP session to be destroyed. */
+    /**
+     * Get the {@link SPSession} being destroyed by the logout propagation.
+     *  
+     * @return the SP session to be destroyed
+     */
     @Nullable public SPSession getSession() {
         return session;
     }
 
     /**
-     * Sets the SP session to be destroyed.
+     * Set the {@link SPSession} to be destroyed.
      *
-     * @param session Non-null SP session.
+     * @param theSession non-null SP session.
      */
-    public void setSession(@Nonnull final SPSession session) {
-        this.session = Constraint.isNotNull(session, "SPSession cannnot be null");
+    public void setSession(@Nonnull final SPSession theSession) {
+        session = Constraint.isNotNull(theSession, "SPSession cannnot be null");
     }
 
-    /** @return Logout propagation result. */
+    /**
+     * Get the result of the logout propagation.
+     * 
+     * @return logout propagation result
+     */
     @Nonnull public Result getResult() {
         return result;
     }
 
     /**
-     * Sets the logout propagation result.
+     * Set the logout propagation result.
      *
-     * @param result Non-null result.
+     * @param theResult non-null result
      */
-    public void setResult(@Nonnull final Result result) {
-        this.result = Constraint.isNotNull(result, "Result cannot be null");
+    public void setResult(@Nonnull final Result theResult) {
+        result = Constraint.isNotNull(theResult, "Result cannot be null");
     }
 
     /**
-     * Sets the logout propagation result from a string representation of {@link Result}.
+     * Set the logout propagation result from a string representation of {@link Result}.
      *
      * @param resultString Non-null string representation of {@link Result}.
      */
     public void setResultString(@Nonnull final String resultString) {
-        this.result = Enum.valueOf(Result.class, Constraint.isNotNull(resultString, "Result cannot be null"));
+        result = Enum.valueOf(Result.class, Constraint.isNotNull(resultString, "Result cannot be null"));
     }
 
-    /** @return Logout propagation result detail message. */
+    /**
+     * Get detailed message regarding result of logout propagation.
+     * 
+     * @return logout propagation result detail message
+     */
     @Nullable public String getDetail() {
         return detail;
     }
 
     /**
-     * Sets the logout propagation result detail message.
+     * Set the logout propagation result detail message.
      *
-     * @param detail Result detail message.
+     * @param msg result detail message.
      */
-    public void setDetail(@Nullable String detail) {
-        this.detail = detail;
+    public void setDetail(@Nullable String msg) {
+        detail = msg;
     }
 
-    /** @return Name of the view to be rendered at the end of the logout propagation flow. */
+    /**
+     * Get the name of the view to be rendered at the end of the logout propagation flow.
+     * 
+     * @return name of the view to be rendered
+     */
     @Nullable  public String getResultView() {
         return resultView;
     }
 
     /**
-     * Sets the name of the view to render at the end of the logout propagation flow.
+     * Set the name of the view to render at the end of the logout propagation flow.
      *
-     * @param resultView Logical view name.
+     * @param viewName logical view name.
      */
-    public void setResultView(@Nonnull String resultView) {
-        this.resultView = Constraint.isNotNull(resultView, "View name cannot be null");
+    public void setResultView(@Nonnull String viewName) {
+        resultView = Constraint.isNotNull(viewName, "View name cannot be null");
     }
 
-    /** @return View model map. */
+    /**
+     * Get the model for the view to render.
+     * 
+     * @return view model map
+     */
     @Nonnull public Map<String, Object> getViewMap() {
         return viewMap;
     }
+    
 }
