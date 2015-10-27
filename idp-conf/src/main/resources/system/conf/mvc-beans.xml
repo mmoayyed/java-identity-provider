@@ -47,17 +47,10 @@
 
     <!-- Exception handling -->
     
-    <bean class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver">
-        <!-- We can map specific exceptions to views here if needed. -->
-        <!--
-        <property name="exceptionMappings">
-            <props>
-                <prop key="FlowExecutionRestorationFailureException">error</prop>
-            </props>
-        </property>
-        -->
-        <property name="defaultErrorView" value="%{idp.errors.defaultView:error}"/>
-    </bean>
+    <bean id="shibboleth.ExceptionResolver" class="net.shibboleth.ext.spring.error.ExtendedMappingExceptionResolver"
+        p:defaultErrorView="%{idp.errors.defaultView:error}"
+        p:excludedExceptions="#{getObject('%{idp.errors.excludedExceptions:undefined}')}"
+        p:exceptionMappings="#{getObject('%{idp.errors.exceptionMappings:undefined}')}" />
     
     <bean id="RethrowingFlowExecutionExceptionHandler"
         class="net.shibboleth.idp.profile.impl.RethrowingFlowExecutionExceptionHandler" />
