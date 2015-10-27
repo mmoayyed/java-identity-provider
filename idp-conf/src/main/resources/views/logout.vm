@@ -20,9 +20,6 @@
         <meta charset="utf-8">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-        <style type="text/css">
-        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
-        </style>
   	</head>
 
   	<body>
@@ -44,7 +41,7 @@
             initiated the logout operation.</strong></p>
 
             #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
-                <p>Would you like to log out of all services accessed during your session?</p>
+                <p>Would you like to attempt to log out of all services accessed during your session?</p>
                 <br>
 
                 <form id="propagate_form" method="POST" action="$flowExecutionUrl">
@@ -53,7 +50,7 @@
                 </form>
 
                 <br>
-                <p>If you proceed you will be logged out of the following services:</p>
+                <p>If you proceed the following services may be affected:</p>
                 <ol>
                 #foreach ($sp in $logoutContext.getSessionMap().keySet())
                     #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))

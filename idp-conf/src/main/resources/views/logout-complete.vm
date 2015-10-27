@@ -21,7 +21,6 @@
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
         <style type="text/css">
-        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
         </style>
   	</head>
 
