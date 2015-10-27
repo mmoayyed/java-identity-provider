@@ -81,7 +81,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
     @Nonnull private Function<ProfileRequestContext, DelegationContext> delegationContextLookupStrategy;
     
     /** Default delegation request value. */
-    private DelegationRequest defaultDelegationRequested = DelegationRequest.REQUESTED_OPTIONAL;
+    private DelegationRequest defaultDelegationRequested = DelegationRequest.NOT_REQUESTED;
     
     /** The credential resolver used to resolve HoK Credentials for the peer. */
     @Nonnull private CredentialResolver credentialResolver;
