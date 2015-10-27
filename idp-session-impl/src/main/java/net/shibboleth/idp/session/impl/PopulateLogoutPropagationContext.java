@@ -190,6 +190,15 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
         logoutPropCtx.setSession(session);
     }
 
+    /**
+     * Get an {@link SPSession} by reference.
+     * 
+     * @param requestContext Spring request context
+     * @param sessionKey key identifying the SP session
+     * 
+     * @return the SP session
+     * @throws MessageException if an error occurs
+     */
     @Nonnull private SPSession getSessionByReference(
             @Nonnull final RequestContext requestContext, @Nonnull final String sessionKey) throws MessageException {
         final LogoutContext logoutCtx = requestContext.getExternalContext().getSessionMap().get(
@@ -205,6 +214,14 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
         throw new MessageException("Session not found for key: " + sessionKey);
     }
 
+    /**
+     * Get an {@link SPSession} by value.
+     * 
+     * @param sessionVal serialized SP session
+     * 
+     * @return the SP session
+     * @throws MessageDecodingException if an error occurs
+     */
     @Nonnull private SPSession getSessionByValue(@Nonnull final String sessionVal) throws MessageDecodingException {
         try {
             final String decrypted = dataSealer.unwrap(sessionVal);

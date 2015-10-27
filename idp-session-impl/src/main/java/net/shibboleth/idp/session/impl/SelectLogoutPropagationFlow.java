@@ -59,8 +59,12 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
     /** Function to retrieve LogoutPropagationContext from context tree. */
     @Nonnull private Function<ProfileRequestContext, LogoutPropagationContext> logoutPropagationContextFunction;
 
-    /** Constructor. */
-    public SelectLogoutPropagationFlow(final Function<SPSession, LogoutPropagationFlowDescriptor> selector) {
+    /**
+     * Constructor.
+     * 
+     * @param selector mapping function from session to flow descriptor
+     */
+    public SelectLogoutPropagationFlow(@Nonnull final Function<SPSession, LogoutPropagationFlowDescriptor> selector) {
         flowSelectorFunction = Constraint.isNotNull(selector, "Selector cannot be null");
         logoutPropagationContextFunction = new ChildContextLookup<>(LogoutPropagationContext.class);
     }
@@ -72,7 +76,7 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
      */
     public void setLogoutPropagationContextFunction(
             @Nonnull Function<ProfileRequestContext, LogoutPropagationContext> function) {
-        this.logoutPropagationContextFunction = Constraint.isNotNull(function, "Function cannot be null");
+        logoutPropagationContextFunction = Constraint.isNotNull(function, "Function cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -95,4 +99,5 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
         log.debug("{} Selecting logout propagation flow {}", getLogPrefix(), flow.getId());
         ActionSupport.buildEvent(profileRequestContext, flow.getId());
     }
+    
 }

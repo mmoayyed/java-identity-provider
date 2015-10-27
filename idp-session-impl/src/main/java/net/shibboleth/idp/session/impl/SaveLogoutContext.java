@@ -1,9 +1,9 @@
 /*
- * Licensed to the University Corporation for Advanced Internet Development,
- * Inc. (UCAID) under one or more contributor license agreements.  See the
+ * Licensed to the University Corporation for Advanced Internet Development, 
+ * Inc. (UCAID) under one or more contributor license agreements.  See the 
  * NOTICE file distributed with this work for additional information regarding
- * copyright ownership. The UCAID licenses this file to You under the Apache
- * License, Version 2.0 (the "License"); you may not use this file except in
+ * copyright ownership. The UCAID licenses this file to You under the Apache 
+ * License, Version 2.0 (the "License"); you may not use this file except in 
  * compliance with the License.  You may obtain a copy of the License at
  *
  *    http://www.apache.org/licenses/LICENSE-2.0
@@ -21,6 +21,9 @@ import com.google.common.base.Function;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.ActionSupport;
 import net.shibboleth.idp.session.context.LogoutContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -39,19 +42,31 @@ import javax.annotation.Nonnull;
 public class SaveLogoutContext extends AbstractProfileAction {
 
     /** Key name under which LogoutContext is stored in Session. */
-    public static final String LOGOUT_CONTEXT_KEY = "LogoutContext";
+    @Nonnull @NotEmpty public static final String LOGOUT_CONTEXT_KEY = "net.shibboleth.idp.session.impl.LogoutContext";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SaveLogoutContext.class);
 
     /** Looks up a LogoutContext from PRC. */
-    private final Function<ProfileRequestContext, LogoutContext> logoutContextLookup =
-            new ChildContextLookup<>(LogoutContext.class);
-
-    @Nonnull
+    @Nonnull private Function<ProfileRequestContext, LogoutContext> logoutContextLookup;
+            
+    /** Constructor. */
+    public SaveLogoutContext() {
+        logoutContextLookup = new ChildContextLookup<>(LogoutContext.class);
+    }
+    
+    /**
+     * Set the lookup strategy for the {@link LogoutContext}.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setLogoutContextLookupStrategy(@Nonnull final Function<ProfileRequestContext,LogoutContext> strategy) {
+        logoutContextLookup = Constraint.isNotNull(strategy, "Lookup strategy cannot be null");
+    }
+    
+    /** {@inheritDoc} */
     @Override
-    protected Event doExecute(
-            @Nonnull final RequestContext springRequestContext,
+    @Nonnull protected Event doExecute(@Nonnull final RequestContext springRequestContext,
             @Nonnull final ProfileRequestContext profileRequestContext) {
 
         final LogoutContext logoutContext = logoutContextLookup.apply(profileRequestContext);
@@ -63,4 +78,5 @@ public class SaveLogoutContext extends AbstractProfileAction {
         springRequestContext.getExternalContext().getSessionMap().put(LOGOUT_CONTEXT_KEY, logoutContext);
         return ActionSupport.buildProceedEvent(profileRequestContext);
     }
+    
 }
