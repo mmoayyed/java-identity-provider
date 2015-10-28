@@ -20,8 +20,6 @@
         <meta charset="utf-8">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-        <style type="text/css">
-        </style>
   	</head>
 
   	<body>
@@ -33,7 +31,7 @@
 
         <div class="content">
           <div class="column one">
-            <p>You elected not to log out of all the applications accessed during your session.</p>
+            <p>#springMessageText("idp.logout.local", "You elected not to log out of all the applications accessed during your session.")</p>
           </div>
           <div class="column two">
             <ul class="list list-help">
@@ -43,6 +41,11 @@
           </div>
         </div>
       </div>
+
+      <!-- If SAML logout, complete the flow by adding a hidden iframe. -->
+      #if ( $profileRequestContext.getProfileId().contains("saml2/logout") )
+          <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
+      #end
 
       <footer>
         <div class="container container-footer">

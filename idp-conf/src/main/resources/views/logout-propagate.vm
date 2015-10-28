@@ -22,9 +22,6 @@
         <meta charset="utf-8">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-        <style type="text/css">
-        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
-        </style>
   	</head>
 
   	<body>
@@ -36,7 +33,7 @@
 
         <div class="content">
           <div class="column one">
-              <p>Attempting to log out of the following services:</p>
+              <p>#springMessageText("idp.logout.attempt", "Attempting to log out of the following services:")</p>
 
               #if ($logoutContext and !$logoutContext.getSessionMap().isEmpty())
                   <ol>
@@ -95,6 +92,11 @@
           </div>
         </div>
       </div>
+
+      <!-- If SAML logout, complete the flow by adding a hidden iframe. -->
+      #if ( $profileRequestContext.getProfileId().contains("saml2/logout") )
+          <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
+      #end
 
       <footer>
         <div class="container container-footer">

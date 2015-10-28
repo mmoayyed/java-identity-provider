@@ -20,9 +20,6 @@
         <meta charset="utf-8">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
-        <style type="text/css">
-        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
-        </style>
   	</head>
 
   	<body>
@@ -34,13 +31,14 @@
 
         <div class="content">
           <div class="column one">
-            <p>This logout page is an example and should be customized. It is not internationalized because the
-            presentation will be a highly localized decision, and we don't have a good suggestion for a default.</p>
+            <p>This page is displayed when a logout operation at the Identity Provider completes. This page is an example
+            and should be customized. It is not fully internationalized because the presentation will be a highly localized
+            decision, and we don't have a good suggestion for a default.</p>
 
-            <p>This page is displayed when a logout operation at the Identity Provider completes.</p>
+            <p></p>
     
             #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
-                <p>Would you like to attempt to log out of all services accessed during your session?</p>
+                <p>#springMessageText("idp.logout.ask", "Would you like to attempt to log out of all services accessed during your session?")</p>
                 <br>
 
                 <form id="propagate_form" method="POST" action="$flowExecutionUrl">
@@ -49,7 +47,7 @@
                 </form>
 
                 <br>
-                <p>If you proceed the following services may be affected:</p>
+                <p>#springMessageText("idp.logout.contactServices", "If you proceed, the system will attempt to contact the following services:")</p>
                 <ol>
                 #foreach ($sp in $logoutContext.getSessionMap().keySet())
                     #set ($rpCtx = $multiRPContext.getRelyingPartyContextById($sp))
@@ -64,8 +62,7 @@
                 #end
                 </ol>
             #else
-                <p><strong>The logout operation is complete, and no other services appear to have been accessed
-                during this session.</strong></p>
+                <p><strong>#springMessageText("idp.logout.complete", "The logout operation is complete, and no other services appear to have been accessed during this session.")</strong></p>
             #end
 
           </div>
@@ -80,7 +77,7 @@
 
       <!-- If SAML logout with no extra work to do, complete the flow by adding a hidden iframe. -->
       #if ( $profileRequestContext.getProfileId().contains("saml2/logout") and (!$logoutContext or $logoutContext.getSessionMap().isEmpty()) )
-          <iframe id="buffer" src="$flowExecutionUrl&_eventId=proceed">
+          <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
       #end
 
       <footer>
