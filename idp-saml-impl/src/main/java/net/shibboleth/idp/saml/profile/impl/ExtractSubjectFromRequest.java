@@ -141,7 +141,7 @@ public class ExtractSubjectFromRequest extends AbstractProfileAction {
 
         nameIdentifier = msgCtx.getSubcontext(SAMLSubjectNameIdentifierContext.class, true).getSubjectNameIdentifier();
         if (nameIdentifier == null) {
-            log.debug("{} No Subject NameID or NameIdentifier in message", getLogPrefix());
+            log.debug("{} No Subject NameID/NameIdentifier in message needs inbound processing", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, NO_SUBJECT);
             return false;
         }

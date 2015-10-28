@@ -48,6 +48,7 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.profile.SAMLEventIds;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.SessionIndex;
@@ -112,7 +113,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
         final Event event = action.execute(src);
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, SAMLEventIds.SESSION_NOT_FOUND);
         Assert.assertNull(prc.getSubcontext(SessionContext.class));
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));
@@ -128,7 +129,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         ((MockHttpServletRequest) HttpServletRequestResponseContext.getRequest()).setCookies(cookie);
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, SAMLEventIds.SESSION_NOT_FOUND);
         Assert.assertNull(prc.getSubcontext(SessionContext.class));
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));
@@ -154,7 +155,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
                 nameIdForSession, "index"));
                 
         final Event event = action.execute(src);
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, SAMLEventIds.SESSION_NOT_FOUND);
         Assert.assertNull(prc.getSubcontext(SessionContext.class));
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));
@@ -257,7 +258,7 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
                 nameId2, "index2"));
         
         final Event event = action.execute(src);
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, SAMLEventIds.SESSION_NOT_FOUND);
         Assert.assertNull(prc.getSubcontext(SessionContext.class));
         Assert.assertNull(prc.getSubcontext(SubjectContext.class));
         Assert.assertNull(prc.getSubcontext(LogoutContext.class));

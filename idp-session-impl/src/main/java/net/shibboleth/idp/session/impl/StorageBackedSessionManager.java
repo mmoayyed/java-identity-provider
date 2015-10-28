@@ -599,7 +599,8 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             final SPSessionCriterion serviceCriterion = criteria.get(SPSessionCriterion.class);
             if (serviceCriterion != null) {
                 if (!secondaryServiceIndex) {
-                    throw new ResolverException("Secondary service index is disabled");
+                    throw new ResolverException(
+                            "Secondary service index is disabled (must be enabled for SAML logout)");
                 }
 
                 return lookupBySPSession(serviceCriterion);

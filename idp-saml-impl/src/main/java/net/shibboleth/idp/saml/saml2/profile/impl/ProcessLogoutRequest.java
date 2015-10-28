@@ -46,6 +46,7 @@ import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
+import org.opensaml.saml.common.profile.SAMLEventIds;
 import org.opensaml.saml.ext.saml2aslo.Asynchronous;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.SessionIndex;
@@ -65,9 +66,10 @@ import com.google.common.base.Predicates;
  * <p>A {@link SubjectContext} is also populated. If and only if a single {@link IdPSession} is resolved,
  * a {@link SessionContext} is also populated.</p>
  * 
- * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
- * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}
- * @event {@link org.opensaml.profile.action.EventIds#IO_ERROR}
+ * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link EventIds#IO_ERROR}
+ * @event {@link SAMLEventIds#SESSION_NOT_FOUND}
  * @post The matching session(s) are destroyed.
  * @post If a {@link IdPSession} was found, then a {@link SubjectContext} and {@link LogoutContext} will be populated.
  * @post If a single {@link IdPSession} was found, then a {@link SessionContext} will be populated.
@@ -251,11 +253,6 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             final Iterable<IdPSession> sessions =
                     sessionResolver.resolve(sessionResolverCriteriaStrategy.apply(profileRequestContext));
             final Iterator<IdPSession> sessionIterator = sessions.iterator();
-            
-            if (!sessionIterator.hasNext()) {
-                log.info("{} No active session(s) found matching LogoutRequest", getLogPrefix());
-                return;
-            }
 
             IdPSession single = null;
             LogoutContext logoutCtx = null;
@@ -264,7 +261,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                 final IdPSession session = sessionIterator.next();
                 
                 if (!sessionMatches(session)) {
-                    log.debug("{} IdP session {} does not containing a matching SP session", getLogPrefix(),
+                    log.debug("{} IdP session {} does not contain a matching SP session", getLogPrefix(),
                             session.getId());
                     continue;
                 }
@@ -308,16 +305,18 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                 if (sessionCtx != null) {
                     sessionCtx.setIdPSession(single);
                 }
+            } else if (logoutCtx == null) {
+                log.info("{} No active session(s) found matching LogoutRequest", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.SESSION_NOT_FOUND);
             }
             
         } catch (final ResolverException e) {
             log.error("{} Error resolving matching session(s)", getLogPrefix(), e);
-            ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
+            ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.SESSION_NOT_FOUND);
         }
     }
 // Checkstyle: CyclomaticComplexity ON
 
-        
     /**
      * Check if the session contains a {@link SAML2SPSession} with the appropriate service ID and SessionIndex.
      * 
@@ -335,6 +334,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         
         return false;
     }
+    
     /**
      * Check if the {@link SPSession} has the appropriate service ID and SessionIndex.
      * 
