@@ -20,6 +20,9 @@
         <meta charset="utf-8">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
+        <style type="text/css">
+        iframe#buffer { position:absolute; visibility:hidden; left:0; top:0; }
+        </style>
   	</head>
 
   	<body>
@@ -36,10 +39,6 @@
 
             <p>This page is displayed when a logout operation at the Identity Provider completes.</p>
     
-            <p><strong>It does NOT result in the user being logged out of any of the applications he/she
-            has accessed during a session, with the possible exception of a Service Provider that may have
-            initiated the logout operation.</strong></p>
-
             #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
                 <p>Would you like to attempt to log out of all services accessed during your session?</p>
                 <br>
@@ -64,6 +63,9 @@
                     #end
                 #end
                 </ol>
+            #else
+                <p><strong>The logout operation is complete, and no other services appear to have been accessed
+                during this session.</strong></p>
             #end
 
           </div>
@@ -75,6 +77,11 @@
           </div>
         </div>
       </div>
+
+      <!-- If SAML logout with no extra work to do, complete the flow by adding a hidden iframe. -->
+      #if ( $profileRequestContext.getProfileId().contains("saml2/logout") and (!$logoutContext or $logoutContext.getSessionMap().isEmpty()) )
+          <iframe id="buffer" src="$flowExecutionUrl&_eventId=proceed">
+      #end
 
       <footer>
         <div class="container container-footer">
