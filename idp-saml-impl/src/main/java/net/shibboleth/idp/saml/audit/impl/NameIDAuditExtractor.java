@@ -27,6 +27,7 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.AuthorizationDecisionStatement;
 import org.opensaml.saml.saml1.core.SubjectStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 
 import com.google.common.base.Function;
@@ -74,6 +75,12 @@ public class NameIDAuditExtractor implements Function<ProfileRequestContext,Stri
                 
                 if (((LogoutRequest) msg).getNameID() != null) {
                     return ((LogoutRequest) msg).getNameID().getValue();
+                }
+                
+            } else if (msg instanceof AuthnRequest) {
+                if (((AuthnRequest) msg).getSubject() != null &&
+                        ((AuthnRequest) msg).getSubject().getNameID() != null) {
+                    return ((AuthnRequest) msg).getSubject().getNameID().getValue();
                 }
                 
             } else if (msg instanceof org.opensaml.saml.saml1.core.Response) {

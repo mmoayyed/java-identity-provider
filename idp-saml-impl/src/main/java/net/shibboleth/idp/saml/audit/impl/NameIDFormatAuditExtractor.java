@@ -27,6 +27,8 @@ import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.AuthorizationDecisionStatement;
 import org.opensaml.saml.saml1.core.SubjectStatement;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.LogoutRequest;
 
 import com.google.common.base.Function;
 
@@ -67,6 +69,18 @@ public class NameIDFormatAuditExtractor implements Function<ProfileRequestContex
                     if (format != null) {
                         return format;
                     }
+                }
+                
+            } else if (msg instanceof LogoutRequest) {
+                
+                if (((LogoutRequest) msg).getNameID() != null) {
+                    return ((LogoutRequest) msg).getNameID().getFormat();
+                }
+
+            } else if (msg instanceof AuthnRequest) {
+                if (((AuthnRequest) msg).getSubject() != null &&
+                        ((AuthnRequest) msg).getSubject().getNameID() != null) {
+                    return ((AuthnRequest) msg).getSubject().getNameID().getFormat();
                 }
                 
             } else if (msg instanceof org.opensaml.saml.saml1.core.Response) {
