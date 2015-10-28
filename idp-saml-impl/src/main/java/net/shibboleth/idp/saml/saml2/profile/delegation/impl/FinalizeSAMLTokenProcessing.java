@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,18 +36,44 @@ public class FinalizeSAMLTokenProcessing extends AbstractProfileAction {
     
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(FinalizeSAMLTokenProcessing.class);
+    
+    /** The canonicalized principal name. */
+    private String principalName;
 
     /** {@inheritDoc} */
-    protected void doExecute(ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         SubjectCanonicalizationContext c14nContext = 
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
+        
+        if (c14nContext == null) {
+            log.warn("{} SubjectCanonicalizationContext was missing", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+            return false;
+        }
+        
+        principalName = c14nContext.getPrincipalName();
+        if (principalName == null) {
+            log.warn("{} SubjectCanonicalizationContext principal name was null", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT_C14N_CTX);
+            return false;
+        }
+        
+        log.debug("{} Subject c14n from inbound delegated Assertion token produced principal name: {}",
+                principalName, getLogPrefix());
+        
+        return true;
+    }
+    
+    /** {@inheritDoc} */
+    protected void doExecute(ProfileRequestContext profileRequestContext) {
         profileRequestContext.removeSubcontext(SubjectCanonicalizationContext.class);
         
-        log.debug("Subject c14n from inbound delegated Assertion token produced principal name: {}",
-                c14nContext.getPrincipalName());
-        
         SubjectContext subjectContext = profileRequestContext.getSubcontext(SubjectContext.class, true);
-        subjectContext.setPrincipalName(c14nContext.getPrincipalName());
+        subjectContext.setPrincipalName(principalName);
     }
 
 }

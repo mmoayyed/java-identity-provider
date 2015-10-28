@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -77,8 +79,8 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
     /** Strategy used to locate the SAMLPresenterEntityContext. */
     @Nonnull private Function<ProfileRequestContext,SAMLPresenterEntityContext> presenterContextLookupStrategy;
     
-    /** Response to modify. */
-    @Nullable private Response response;
+    /** List of assertions to modify. */
+    @Nullable private List<Assertion> assertions;
     
     /** The delegated Assertion that was attested. */
     @Nullable private Assertion attestedAssertion;
@@ -134,15 +136,21 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
             return false;
         }
         
-        log.debug("{} Attempting to add an DelegationRestriction Condition to every Assertion in Response",
-                getLogPrefix());
-
-        response = responseLookupStrategy.apply(profileRequestContext);
+        Response response = responseLookupStrategy.apply(profileRequestContext);
         if (response == null) {
             log.debug("{} No SAML Response located in current profile request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return false;
         }
+        
+        assertions = response.getAssertions();
+        if (assertions.isEmpty()) {
+            log.debug("{} No assertions to modify", getLogPrefix());
+            return false;
+        }
+        
+        log.debug("{} Attempting to add a DelegationRestrictionType Condition to {} Assertion(s) in Response",
+                getLogPrefix(), assertions.size());
         
         SAMLPresenterEntityContext presenterContext = presenterContextLookupStrategy.apply(profileRequestContext);
         if (presenterContext == null || presenterContext.getEntityId() == null) {
@@ -182,10 +190,11 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        for (final Assertion assertion : response.getAssertions()) {
+        for (final Assertion assertion : assertions) {
             addDelegationRestriction(profileRequestContext,
                     SAML2ActionSupport.addConditionsToAssertion(this, assertion));
-            log.debug("{} Added AudienceRestrictionCondition to Assertion {}", getLogPrefix(), assertion.getID());
+            log.debug("{} Added DelegationRestrictionType Condition to Assertion {}", 
+                    getLogPrefix(), assertion.getID());
         }
     }
 
@@ -232,7 +241,8 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
                 return null;
             }
         } else {
-            drt = (DelegationRestrictionType) XMLObjectSupport.buildXMLObject(DelegationRestrictionType.TYPE_NAME);
+            drt = (DelegationRestrictionType) XMLObjectSupport.getBuilder(DelegationRestrictionType.TYPE_NAME)
+                    .buildObject(Condition.DEFAULT_ELEMENT_NAME, DelegationRestrictionType.TYPE_NAME);
         }
         
         drt.getDelegates().add(newDelegate);

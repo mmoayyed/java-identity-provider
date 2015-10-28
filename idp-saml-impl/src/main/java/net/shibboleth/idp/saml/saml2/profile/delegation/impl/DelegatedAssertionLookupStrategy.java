@@ -42,10 +42,7 @@ public class DelegatedAssertionLookupStrategy implements Function<ProfileRequest
         if (input == null) {
             return null;
         }
-        if (input.getInboundMessageContext() == null) {
-            log.debug("Inbound message context was null");
-            return null;
-        }
+        
         LibertySSOSContext libertyContext = input.getSubcontext(LibertySSOSContext.class);
         if (libertyContext == null || libertyContext.getAttestedToken() == null) {
             log.debug("No attested token available from Liberty context");

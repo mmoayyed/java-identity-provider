@@ -153,12 +153,13 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
                             .getMaximumTokenDelegationChainLength();
                 } else {
                     log.debug("Profile config was not BrowserSSOProfileConfiguration, can't evaluate: {}", 
-                            relyingPartyContext.getProfileConfig().getClass().getName());
+                            relyingPartyContext.getProfileConfig() != null ? 
+                                    relyingPartyContext.getProfileConfig().getClass().getName() : "null");
                 }
             }
         }
-        log.debug("Unable to resolve max delegation chain length, returning default: {}", 
-                DEFAULT_POLICY_MAX_CHAIN_LENGTH);
+        log.debug("Unable to resolve max delegation chain length from inbound token or profile config, " 
+                + "returning default: {}", DEFAULT_POLICY_MAX_CHAIN_LENGTH);
         return DEFAULT_POLICY_MAX_CHAIN_LENGTH;
     }
 
