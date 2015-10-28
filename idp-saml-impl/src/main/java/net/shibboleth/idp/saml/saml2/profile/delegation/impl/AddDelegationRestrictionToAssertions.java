@@ -79,6 +79,9 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
     /** Strategy used to locate the SAMLPresenterEntityContext. */
     @Nonnull private Function<ProfileRequestContext,SAMLPresenterEntityContext> presenterContextLookupStrategy;
     
+    /** Function used to resolve the Liberty context to populate. */
+    @Nonnull private Function<ProfileRequestContext, LibertySSOSContext> libertyContextLookupStrategy;
+    
     /** List of assertions to modify. */
     @Nullable private List<Assertion> assertions;
     
@@ -103,6 +106,20 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
         presenterContextLookupStrategy =
                 Functions.compose(new ChildContextLookup<>(SAMLPresenterEntityContext.class), 
                         new InboundMessageContextLookup());
+        
+        libertyContextLookupStrategy = new ChildContextLookup<>(LibertySSOSContext.class);
+    }
+    
+    /**
+     * Set the strategy used to locate the {@link LibertySSOSContext} to populate.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setLibertyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,LibertySSOSContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        libertyContextLookupStrategy = Constraint.isNotNull(strategy, "Assertion token strategy may not be null");
     }
     
     /**
@@ -160,7 +177,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
         }
         presenterEntityID = presenterContext.getEntityId();
         
-        LibertySSOSContext libertyContext = profileRequestContext.getSubcontext(LibertySSOSContext.class);
+        LibertySSOSContext libertyContext = libertyContextLookupStrategy.apply(profileRequestContext);
         if (libertyContext == null) {
             log.debug("{} No LibertySSOSContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);

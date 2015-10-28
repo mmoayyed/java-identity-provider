@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
-import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.idp.saml.xmlobject.DelegationPolicy;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -56,11 +55,17 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
     /** Strategy used to locate the {@link Assertion} to operate on. */
     @Nonnull private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;
     
+    /** Function used to resolve the inbound assertion token to process. */
+    @Nonnull private Function<ProfileRequestContext, Assertion> assertionTokenStrategy;
+    
     /** Strategy used to lookup the RelyingPartyContext. */
     @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
     
     /** The assertion to modify. */
     @Nullable private Assertion assertion;
+    
+    /** The inbound delegated Assertion that was attested. */
+    @Nullable private Assertion attestedAssertion;
     
     /** The max token delegation chain length value to add. */
     @Nullable private Long maxChainLength;
@@ -69,6 +74,19 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
     public AddDelegationPolicyToAssertion() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         assertionLookupStrategy = new AssertionStrategy();
+        assertionTokenStrategy = new DelegatedAssertionLookupStrategy();
+    }
+    
+    /**
+     * Set the strategy used to locate the inbound assertion token to process.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setAssertionTokenStrategy(
+            @Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        assertionTokenStrategy = Constraint.isNotNull(strategy, "Assertion token strategy may not be null");
     }
     
     /**
@@ -106,6 +124,8 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
             return false;
         }
         
+        attestedAssertion = assertionTokenStrategy.apply(profileRequestContext);
+        
         maxChainLength = resolveMaxChainLength(profileRequestContext);
         log.debug("Resolved token max delegation chain length: {}", maxChainLength);
         
@@ -132,20 +152,20 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
      * @return the max chain length value
      */
     @Nonnull protected Long resolveMaxChainLength(@Nonnull final ProfileRequestContext profileRequestContext) {
-        LibertySSOSContext libertyContext = profileRequestContext.getSubcontext(LibertySSOSContext.class);
-        if (libertyContext != null) {
-            log.debug("Saw LibertyContext, extracting max delegation chain length from token DelegationPolicy");
-            // If have a Liberty context, then this is N-tier, so we copy the value from the inbound token.
-            if (libertyContext.getAttestedToken() != null && libertyContext.getAttestedToken().getAdvice() != null) {
-                Advice inboundAdvice = libertyContext.getAttestedToken().getAdvice();
-                List<XMLObject> inboundPolicies = inboundAdvice.getChildren(DelegationPolicy.DEFAULT_ELEMENT_NAME);
+        if (attestedAssertion != null) {
+            // If have an inbound assertion token, then this is N-tier, so we copy the value from the inbound token.
+            log.debug("Saw inbound assertion token, attempting to extract max delegation chain length " 
+                    + "from token's DelegationPolicy");
+            if (attestedAssertion.getAdvice() != null) {
+                List<XMLObject> inboundPolicies = 
+                        attestedAssertion.getAdvice().getChildren(DelegationPolicy.DEFAULT_ELEMENT_NAME);
                 if (inboundPolicies != null && !inboundPolicies.isEmpty()) {
                     return ((DelegationPolicy)inboundPolicies.get(0)).getMaximumTokenDelegationChainLength();
                 }
             }
         } else {
+            // If no inbound assertion token, this must be initial SSO, so pull from RP's IdP config.
             log.debug("Attempting to resolve max delegation chain length from RP profile config");
-            // If no Liberty context, this must be initial SSO, so pull from RP's IdP config.
             RelyingPartyContext relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
             if (relyingPartyContext != null) {
                 if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {

@@ -26,6 +26,7 @@ import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.wssecurity.SAML20AssertionToken;
@@ -52,14 +53,33 @@ public class PopulateLibertyContext extends AbstractProfileAction {
     /** Function used to resolve the assertion token to process. */
     @Nonnull private Function<ProfileRequestContext, SAML20AssertionToken> assertionTokenStrategy;
     
+    /** Function used to resolve the Liberty context to populate. */
+    @Nonnull private Function<ProfileRequestContext, LibertySSOSContext> libertyContextLookupStrategy;
+    
     /** The SAML 2 Assertion token being processed. */
     private SAML20AssertionToken assertionToken;
+    
+    /** Liberty context to populate. */
+    private LibertySSOSContext ssosContext;
     
     /**
      * Constructor.
      */
     public PopulateLibertyContext() {
         assertionTokenStrategy = new TokenStrategy();
+        libertyContextLookupStrategy = new ChildContextLookup<>(LibertySSOSContext.class, true);
+    }
+    
+    /**
+     * Set the strategy used to locate the {@link LibertySSOSContext} to populate.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setLibertyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,LibertySSOSContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        libertyContextLookupStrategy = Constraint.isNotNull(strategy, "Assertion token strategy may not be null");
     }
     
     /**
@@ -90,6 +110,8 @@ public class PopulateLibertyContext extends AbstractProfileAction {
             return false;
         }
         
+        ssosContext = libertyContextLookupStrategy.apply(profileRequestContext);
+        
         return true;
     }
     
@@ -97,7 +119,7 @@ public class PopulateLibertyContext extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         // Populate Liberty context for use later.
-        LibertySSOSContext ssosContext = profileRequestContext.getSubcontext(LibertySSOSContext.class, true);
+        ssosContext = profileRequestContext.getSubcontext(LibertySSOSContext.class, true);
         ssosContext.setAttestedToken(assertionToken.getWrappedToken());
         ssosContext.setAttestedSubjectConfirmationMethod(assertionToken.getSubjectConfirmation().getMethod());
     }

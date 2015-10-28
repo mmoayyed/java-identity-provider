@@ -144,13 +144,13 @@ public class AddDelegationPolicyToAssertionTest extends OpenSAMLInitBaseTestCase
     
     @Test
     public void testNoDelegatedAssertion() throws ComponentInitializationException {
-        prc.getSubcontext(LibertySSOSContext.class).setAttestedToken(null);
+        prc.removeSubcontext(LibertySSOSContext.class);
         
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
         
-        Assert.assertEquals(getOutboundChainLength(), AddDelegationPolicyToAssertion.DEFAULT_POLICY_MAX_CHAIN_LENGTH);
+        Assert.assertEquals(getOutboundChainLength(), expectedProfileChainLength);
     }
     
     @Test

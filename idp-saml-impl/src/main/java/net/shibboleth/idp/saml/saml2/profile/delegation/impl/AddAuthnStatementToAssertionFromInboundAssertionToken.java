@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -49,9 +48,9 @@ import com.google.common.base.Function;
  * Action that builds an {@link AuthnStatement} and adds it to an {@link Assertion} returned by a lookup
  * strategy, by default in the {@link ProfileRequestContext#getOutboundMessageContext()}.
  * 
- * <p>This action is designed specifically to be used with SAML 2 delegation as part of the Liberty SSOS profile.
+ * <p>This action is designed specifically to be used with SAML 2 delegation.
  * The {@link AuthnStatement} will be cloned directly from the inbound {@link Assertion} token obtained
- * from the {@link LibertySSOSContext}.
+ * from via the {@link #setAssertionTokenStrategy(Function)}.
  * </p>
  * 
  * <p>If no {@link Response} exists, then an {@link Assertion} directly in the outbound message context will
@@ -87,6 +86,9 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
     /** Strategy used to locate the {@link Assertion} to operate on. */
     @NonnullAfterInit private Function<ProfileRequestContext,Assertion> assertionLookupStrategy;
     
+    /** Function used to resolve the inbound assertion token to process. */
+    @Nonnull private Function<ProfileRequestContext, Assertion> assertionTokenStrategy;
+    
     /** The authentication statement which is to be cloned into the new Assertion. */
     @Nullable private AuthnStatement sourceStatement;
     
@@ -96,6 +98,7 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
 
         idGeneratorLookupStrategy = new IdentifierGenerationStrategyLookupFunction();
         issuerLookupStrategy = new ResponderIdLookupFunction();
+        assertionTokenStrategy = new DelegatedAssertionLookupStrategy();
     }
     
     /**
@@ -118,6 +121,18 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         statementInOwnAssertion = inOwnAssertion;
+    }
+    
+    /**
+     * Set the strategy used to locate the inbound assertion token to process.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setAssertionTokenStrategy(
+            @Nonnull final Function<ProfileRequestContext,Assertion> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        assertionTokenStrategy = Constraint.isNotNull(strategy, "Assertion token strategy may not be null");
     }
 
     /**
@@ -210,15 +225,15 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
             return false;
         }
         
-        LibertySSOSContext libertyContext = profileRequestContext.getSubcontext(LibertySSOSContext.class);
-        if (libertyContext == null || libertyContext.getAttestedToken() == null) {
+        Assertion attestedToken = assertionTokenStrategy.apply(profileRequestContext);
+        if (attestedToken == null) {
             log.debug("{} No inbound assertion token", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
         
-        if (!libertyContext.getAttestedToken().getAuthnStatements().isEmpty()) {
-            sourceStatement = libertyContext.getAttestedToken().getAuthnStatements().get(0);
+        if (!attestedToken.getAuthnStatements().isEmpty()) {
+            sourceStatement = attestedToken.getAuthnStatements().get(0);
         }
         if (sourceStatement == null) {
             log.debug("{} Inbound assertion token contains no AuthnStatement", getLogPrefix());

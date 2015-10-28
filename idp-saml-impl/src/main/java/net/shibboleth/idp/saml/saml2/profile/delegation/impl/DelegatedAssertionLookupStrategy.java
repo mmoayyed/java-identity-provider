@@ -17,10 +17,13 @@
 
 package net.shibboleth.idp.saml.saml2.profile.delegation.impl;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.saml.saml2.profile.delegation.LibertySSOSContext;
+import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.slf4j.Logger;
@@ -35,6 +38,24 @@ public class DelegatedAssertionLookupStrategy implements Function<ProfileRequest
     
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(DelegatedAssertionLookupStrategy.class);
+    
+    /** Function used to resolve the Liberty context to populate. */
+    @Nonnull private Function<ProfileRequestContext, LibertySSOSContext> libertyContextLookupStrategy;
+    
+    /** Constructor. */
+    public DelegatedAssertionLookupStrategy() {
+        libertyContextLookupStrategy = new ChildContextLookup<>(LibertySSOSContext.class);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param strategy the lookup strategy for {@link LibertySSOSContext}.
+     */
+    public DelegatedAssertionLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, LibertySSOSContext> strategy) {
+        libertyContextLookupStrategy = Constraint.isNotNull(strategy, "Liberty context lookup strategy cannot be null");
+    }
 
     /** {@inheritDoc} */
     @Nullable
@@ -43,7 +64,7 @@ public class DelegatedAssertionLookupStrategy implements Function<ProfileRequest
             return null;
         }
         
-        LibertySSOSContext libertyContext = input.getSubcontext(LibertySSOSContext.class);
+        LibertySSOSContext libertyContext = libertyContextLookupStrategy.apply(input);
         if (libertyContext == null || libertyContext.getAttestedToken() == null) {
             log.debug("No attested token available from Liberty context");
             return null;
