@@ -357,6 +357,38 @@
         </property>
     </bean>
     
+    <bean id="shibboleth.DefaultLogoutRequestAuditExtractors"
+            class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID_FORMAT"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.NameIDFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
     <bean id="shibboleth.DefaultLogoutAuditExtractors"
             class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
         <property name="sourceMap">

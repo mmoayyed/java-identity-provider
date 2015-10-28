@@ -41,7 +41,7 @@
     
     <bean id="LogoutPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
+        p:fieldExtractors="#{getObject('shibboleth.LogoutRequestAuditExtractors') ?: getObject('shibboleth.DefaultLogoutRequestAuditExtractors')}"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
         
     <bean id="PopulateMultiRPContextFromLogoutContext"

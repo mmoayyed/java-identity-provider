@@ -57,6 +57,13 @@
             </map>
         </property>
     </bean>
+
+    <bean id="shibboleth.LogoutRequestAuditExtractors" parent="shibboleth.DefaultLogoutRequestAuditExtractors" lazy-init="true">
+        <property name="sourceMap">
+            <map merge="true">
+            </map>
+        </property>
+    </bean>
     
     <bean id="shibboleth.LogoutAuditExtractors" parent="shibboleth.DefaultLogoutAuditExtractors" lazy-init="true">
         <property name="sourceMap">
