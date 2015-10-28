@@ -24,4 +24,8 @@
             </map>
         </property>
     </bean> 
+    <bean id="validator" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator">
+        <constructor-arg index="0" ref="dataSource" />
+        <constructor-arg index="1" value="false" />
+    </bean> 
 </beans>

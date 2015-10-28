@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.impl;
+package net.shibboleth.idp.attribute.resolver.dc;
 
 /** Used to determine whether a Data Connector initialized properly and continues to be fit for use. */
 public interface Validator {

@@ -34,7 +34,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchFilter;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -108,7 +107,7 @@ public class Regressions {
         connector.setSearchExecutor(searchExecutor);
         connector.setExecutableSearchBuilder(builder == null ? new ParameterizedExecutableSearchFilterBuilder(
                 "(uid={principalName})") : builder);
-        connector.setValidator(connector.new SearchValidator(new SearchFilter("(ou=people)")));
+        connector.setValidator(new ConnectionFactoryValidator(connectionFactory));
         connector.setMappingStrategy(strategy == null ? new StringAttributeValueMappingStrategy() : strategy);
         return connector;
     }

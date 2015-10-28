@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder;
@@ -77,23 +78,22 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
     @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
 
     /** Local name of attribute. */
-    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
+    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
+            "Attribute");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LDAPDataConnectorParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<LDAPDataConnector> getNativeBeanClass() {
-            return LDAPDataConnector.class;
+        return LDAPDataConnector.class;
     }
 
     /**
      * Parses a version 2 configuration. <br/>
      * The following automatically created & injected beans acquire hard wired defaults:
      * <ul>
-     * <li> {@link SearchExecutor#setTimeLimit(long)} defaults to 3000, overridden by the "searchTimeLimit" 
-     * attribute.</li>
+     * <li> {@link SearchExecutor#setTimeLimit(long)} defaults to 3000, overridden by the "searchTimeLimit" attribute.</li>
      * <li> {@link SearchExecutor#setSizeLimit(long)} defaults to 1, overridden by the "maxResultSize" attribute.</li>
      * <li> {@link SearchRequest#setBaseDn(String)} default to "", overridden by the "validateDN" attribute.</li>
      * <li> {@link SearchFilter#SearchFilter(String)} defaults to "(objectClass=*)", overridden by the "validateFilter"
@@ -111,6 +111,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
      * @param builder to initialize
      */
     // CheckStyle: MethodLength OFF
+    // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         log.debug("{} Parsing v2 configuration {}", getLogPrefix(), config);
@@ -164,9 +165,9 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplatedExecutableSearchFilterBuilder());
 
         final BeanDefinition connectionPool = v2Parser.createConnectionPool(connectionFactory.getBeanDefinition());
+        BeanDefinitionBuilder pooledConnectionFactory = null;
         if (connectionPool != null) {
-            final BeanDefinitionBuilder pooledConnectionFactory =
-                    BeanDefinitionBuilder.genericBeanDefinition(PooledConnectionFactory.class);
+            pooledConnectionFactory = BeanDefinitionBuilder.genericBeanDefinition(PooledConnectionFactory.class);
             pooledConnectionFactory.addConstructorArgValue(connectionPool);
             builder.addPropertyValue("connectionFactory", pooledConnectionFactory.getBeanDefinition());
         } else {
@@ -186,6 +187,18 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
         }
 
+        final String validatorID = AttributeSupport.getAttributeValue(config, new QName("validatorRef"));
+        if (validatorID != null) {
+            builder.addPropertyReference("validator", validatorID);
+        } else {
+            if (pooledConnectionFactory != null) {
+                builder.addPropertyValue("validator",
+                        v2Parser.createValidator(pooledConnectionFactory.getBeanDefinition()));
+            } else {
+                builder.addPropertyValue("validator", v2Parser.createValidator(connectionFactory.getBeanDefinition()));
+            }
+        }
+
         final Element resultCacheBean =
                 ElementSupport.getFirstChildElement(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
                         "ResultCacheBean"));
@@ -199,6 +212,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         builder.setDestroyMethodName("destroy");
     }
 
+    // Checkstyle: CyclomaticComplexity ON
     // CheckStyle: MethodLength ON
 
     /**
@@ -492,6 +506,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             pool.setInitMethodName("initialize");
             return pool.getBeanDefinition();
         }
+
         // CheckStyle: MethodLength ON
 
         /**
@@ -596,6 +611,23 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         /**
+         * Create the validator. See {@link net.shibboleth.idp.attribute.resolver.dc.Validator}.
+         * 
+         * @param connectionFactory to provide to the validator
+         * 
+         * @return validator
+         */
+        @Nullable public BeanDefinition createValidator(final BeanDefinition connectionFactory) {
+
+            final BeanDefinitionBuilder validator =
+                    BeanDefinitionBuilder.genericBeanDefinition(ConnectionFactoryValidator.class);
+
+            validator.addConstructorArgValue(connectionFactory);
+            validator.addConstructorArgValue(false);
+            return validator.getBeanDefinition();
+        }
+
+        /**
          * Create a results cache bean definition. See {@link CacheConfigParser}.
          * 
          * @return results cache bean definition
@@ -620,9 +652,9 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
         /**
          * Converts the supplied value to a list of strings delimited by {@link XMLConstants#LIST_DELIMITERS} and comma.
-         *
+         * 
          * @param value to convert to a list
-         *
+         * 
          * @return list of strings
          */
         @Nonnull public static List<String> buildStringList(final String value) {
@@ -662,5 +694,5 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             return handlers;
         }
     }
-    
+
 }

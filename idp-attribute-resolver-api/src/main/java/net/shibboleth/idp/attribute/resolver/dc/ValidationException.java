@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.dc.impl;
+package net.shibboleth.idp.attribute.resolver.dc;
 
 import javax.annotation.Nullable;
 

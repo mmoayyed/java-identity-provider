@@ -299,6 +299,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="validatorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Validator implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
@@ -671,6 +678,13 @@
                     <annotation>
                         <documentation>
                             Reference to a Spring bean providing the MappingStrategy implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="validatorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Validator implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>

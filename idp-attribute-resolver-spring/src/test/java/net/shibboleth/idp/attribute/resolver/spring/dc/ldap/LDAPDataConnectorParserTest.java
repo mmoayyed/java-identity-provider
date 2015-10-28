@@ -28,7 +28,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl.LDAPDataConnectorParser;
@@ -332,8 +332,10 @@ public class LDAPDataConnectorParserTest {
         AssertJUnit.assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
         AssertJUnit.assertNotNull(searchExecutor.getSearchFilter().getFilter());
 
-        Validator validator = dataConnector.getValidator();
+        ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         AssertJUnit.assertNotNull(validator);
+        AssertJUnit.assertFalse(validator.isThrowValidateError());
+        AssertJUnit.assertNotNull(validator.getConnectionFactory());
 
         ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
         AssertJUnit.assertNotNull(searchBuilder);

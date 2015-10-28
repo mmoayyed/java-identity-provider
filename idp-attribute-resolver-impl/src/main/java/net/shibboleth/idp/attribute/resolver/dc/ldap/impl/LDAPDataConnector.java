@@ -24,18 +24,17 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
+import net.shibboleth.idp.attribute.resolver.dc.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.impl.AbstractSearchDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.impl.ValidationException;
-import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +54,16 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
     /** For executing LDAP searches. */
     private SearchExecutor searchExecutor;
 
+    /** Whether the default validator is being used. */
+    private boolean defaultValidator = true;
+
+    /** Whether the default mapping strategy is being used. */
+    private boolean defaultMappingStrategy = true;
+
     /**
      * Constructor.
      */
     public LDAPDataConnector() {
-        setValidator(new DefaultValidator());
-        setMappingStrategy(new StringAttributeValueMappingStrategy());
-
     }
 
     /**
@@ -107,15 +109,33 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
     }
 
     /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
+    @Override public void setValidator(@Nonnull final Validator validator) {
+        super.setValidator(validator);
+        defaultValidator = false;
+    }
 
+    /** {@inheritDoc} */
+    @Override public void setMappingStrategy(@Nonnull final MappingStrategy strategy) {
+        super.setMappingStrategy(strategy);
+        defaultMappingStrategy = false;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
         if (connectionFactory == null) {
             throw new ComponentInitializationException(getLogPrefix() + " No connection factory was configured");
         }
         if (searchExecutor == null) {
             throw new ComponentInitializationException(getLogPrefix() + " No search executor was configured");
         }
+
+        if (defaultValidator) {
+            super.setValidator(new ConnectionFactoryValidator(connectionFactory));
+        }
+        if (defaultMappingStrategy) {
+            super.setMappingStrategy(new StringAttributeValueMappingStrategy());
+        }
+        super.doInitialize();
 
         try {
             getValidator().validate();
@@ -147,54 +167,6 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         } catch (final LdapException e) {
             throw new ResolutionException(getLogPrefix() + " Unable to execute LDAP search", e);
         }
-    }
-
-    /** Validator that opens a connection. */
-    public class DefaultValidator implements Validator {
-
-        /** {@inheritDoc} */
-        @Override public void validate() throws ValidationException {
-            Connection connection = null;
-            try {
-                connection = connectionFactory.getConnection();
-                if (connection == null) {
-                    throw new LdapException(getLogPrefix() + " Unable to retrieve connection from connection factory");
-                }
-                connection.open();
-            } catch (final LdapException e) {
-                throw new ValidationException(e);
-            } finally {
-                if (connection != null) {
-                    connection.close();
-                }
-            }
-        }
-    }
-
-    /** Validator that executes a search filter. */
-    public class SearchValidator implements Validator {
-
-        /** Search filter for validating this connector. */
-        private final SearchFilter validateFilter;
-
-        /**
-         * Constructor.
-         * 
-         * @param filter to execute for validation
-         */
-        public SearchValidator(final SearchFilter filter) {
-            validateFilter = filter;
-        }
-
-        /** {@inheritDoc} */
-        @Override public void validate() throws ValidationException {
-            try {
-                searchExecutor.search(connectionFactory, validateFilter);
-            } catch (final LdapException e) {
-                throw new ValidationException(e);
-            }
-        }
-
     }
 
 }

@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.TemplatedExecutableStatementBuilder;
@@ -72,9 +73,11 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         final V2Parser v2Parser = new V2Parser(config);
 
         final String dataSourceID = v2Parser.getBeanDataSourceID();
+        BeanDefinition dataSource = null;
         if (dataSourceID != null) {
             builder.addPropertyReference("DataSource", dataSourceID);
         } else {
+            dataSource = v2Parser.createManagedDataSource();
             builder.addPropertyValue("DataSource", v2Parser.createManagedDataSource());
         }
 
@@ -92,6 +95,17 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             final BeanDefinition def = v2Parser.createMappingStrategy();
             if (def != null) {
                 builder.addPropertyValue("mappingStrategy", def);
+            }
+        }
+        
+        final String validatorID = v2Parser.getBeanValidatorID();
+        if (validatorID != null) {
+            builder.addPropertyReference("validator", validatorID);
+        } else {
+            if (dataSourceID != null) {
+                builder.addPropertyValue("validator", v2Parser.createValidator(dataSourceID));
+            } else {
+                builder.addPropertyValue("validator", v2Parser.createValidator(dataSource));
             }
         }
         
@@ -253,6 +267,34 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                 mapper.addPropertyValue("multipleResultsAnError", multipleResultsIsError);
             }
             return mapper.getBeanDefinition();
+        }
+        
+        /**
+         * Get the bean ID of an externally defined validator.
+         * 
+         * @return validator bean ID
+         */
+        @Nullable public String getBeanValidatorID() {
+            return AttributeSupport.getAttributeValue(configElement, null, "validatorRef");
+        }
+        
+        /**
+         * Create the validator. See {@link net.shibboleth.idp.attribute.resolver.dc.Validator}.
+         * 
+         * @param dataSource to provide to the validator
+         *
+         * @return validator
+         */
+        @Nullable public BeanDefinition createValidator(final Object dataSource) {            
+            final BeanDefinitionBuilder validator =
+                    BeanDefinitionBuilder.genericBeanDefinition(DataSourceValidator.class);
+            if (dataSource instanceof String) {
+                validator.addConstructorArgReference((String) dataSource); 
+            } else {
+                validator.addConstructorArgValue(dataSource);
+            }
+            validator.addConstructorArgValue(false);
+            return validator.getBeanDefinition();
         }
         
         /**

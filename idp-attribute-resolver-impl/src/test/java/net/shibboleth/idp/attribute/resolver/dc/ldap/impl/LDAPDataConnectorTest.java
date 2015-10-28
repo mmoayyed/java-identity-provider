@@ -43,7 +43,6 @@ import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchFilter;
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
@@ -116,7 +115,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setSearchExecutor(searchExecutor);
         connector.setExecutableSearchBuilder(builder == null ? new ParameterizedExecutableSearchFilterBuilder(
                 "(uid={principalName})") : builder);
-        connector.setValidator(connector.new SearchValidator(new SearchFilter("(ou=people)")));
+        connector.setValidator(new ConnectionFactoryValidator(connectionFactory));
         connector.setMappingStrategy(strategy == null ? new StringAttributeValueMappingStrategy() : strategy);
         return connector;
     }
@@ -186,6 +185,26 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(connector.getSearchExecutor(), searchExecutor);
         Assert.assertEquals(connector.getExecutableSearchBuilder(), requestBuilder);
         Assert.assertEquals(connector.getMappingStrategy(), mappingStrategy);
+    }
+
+    @Test public void failFastInitialize() throws ComponentInitializationException {
+        LDAPDataConnector connector = new LDAPDataConnector();
+        connector.setId(TEST_CONNECTOR_NAME);
+
+        ConnectionFactory connectionFactory = new DefaultConnectionFactory("ldap://localhost:55555");
+        connector.setConnectionFactory(connectionFactory);
+        connector.setSearchExecutor(new SearchExecutor());
+        connector.setExecutableSearchBuilder(new ParameterizedExecutableSearchFilterBuilder("(uid={principalName})"));
+
+        try {
+            connector.initialize();
+            Assert.fail("No failfast");
+        } catch (ComponentInitializationException e) {
+            // OK
+        }
+
+        connector.setValidator(new ConnectionFactoryValidator(connectionFactory, false));
+        connector.initialize();
     }
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {

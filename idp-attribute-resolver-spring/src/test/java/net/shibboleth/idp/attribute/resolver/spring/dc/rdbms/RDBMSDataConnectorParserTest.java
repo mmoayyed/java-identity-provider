@@ -27,7 +27,7 @@ import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
@@ -136,6 +136,7 @@ public class RDBMSDataConnectorParserTest {
     protected RDBMSDataConnector getRdbmsDataConnector(final String... beanDefinitions) throws IOException {
         return getRdbmsDataConnector(null, beanDefinitions);
     }
+
     protected RDBMSDataConnector getRdbmsDataConnector(Resource properties, final String... beanDefinitions) throws IOException {
         GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
@@ -182,8 +183,10 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals(360, dataSource.getIdleConnectionTestPeriod());
 
         Assert.assertFalse(dataConnector.isConnectionReadOnly());
-        final Validator validator = dataConnector.getValidator();
+        final DataSourceValidator validator = (DataSourceValidator) dataConnector.getValidator();
         Assert.assertNotNull(validator);
+        Assert.assertFalse(validator.isThrowValidateError());
+        Assert.assertNotNull(validator.getDataSource());
 
         final ExecutableSearchBuilder<ExecutableStatement> searchBuilder = dataConnector.getExecutableSearchBuilder();
         Assert.assertNotNull(searchBuilder);

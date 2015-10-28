@@ -166,6 +166,24 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(connector.getMappingStrategy(), mappingStrategy);
     }
 
+    @Test public void failFastInitialize() throws ComponentInitializationException {
+        RDBMSDataConnector connector = new RDBMSDataConnector();
+        connector.setId(TEST_CONNECTOR_NAME);
+        ExecutableSearchBuilder statementBuilder = new FormatExecutableStatementBuilder(USER_QUERY);
+        connector.setExecutableSearchBuilder(statementBuilder);
+        connector.setDataSource(new JDBCDataSource());
+
+        try {
+            connector.initialize();
+            Assert.fail("No failfast");
+        } catch (ComponentInitializationException e) {
+            // OK
+        }
+
+        connector.setValidator(new DataSourceValidator(datasource, false));
+        connector.initialize();
+    }
+
     @Test public void resolveTemplateWithDepends() throws ComponentInitializationException, ResolutionException {
         TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
         builder.setTemplateText("SELECT userid FROM people WHERE userid='${resolutionContext.principal}' AND affiliation='${affiliation[0]}'");

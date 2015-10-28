@@ -4,7 +4,7 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
                         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
-    <bean class="org.ldaptive.pool.PooledConnectionFactory">
+    <bean id="connectionFactory" class="org.ldaptive.pool.PooledConnectionFactory">
         <property name="connectionPool">
             <bean class="org.ldaptive.pool.BlockingConnectionPool" init-method="initialize"
                 p:blockWaitTime="%{connectionPool.blockWaitTime}" p:failFastInitialize="%{connectionPool.failFastInitialize}">
@@ -86,5 +86,9 @@
                 <entry key="homephone" value="phonenumber" />
             </map>
         </property>
+    </bean>
+    <bean id="validator" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator">
+        <constructor-arg index="0" ref="connectionFactory" />
+        <constructor-arg index="1" value="false" />
     </bean>
 </beans>

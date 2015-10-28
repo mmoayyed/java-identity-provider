@@ -28,9 +28,10 @@ import javax.sql.DataSource;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
+import net.shibboleth.idp.attribute.resolver.dc.Validator;
 import net.shibboleth.idp.attribute.resolver.dc.impl.AbstractSearchDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.impl.ValidationException;
-import net.shibboleth.idp.attribute.resolver.dc.impl.Validator;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -53,12 +54,16 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
     /** Whether the JDBC connection is read-only. */
     private boolean readOnlyConnection = true;
 
+    /** Whether the default validator is being used. */
+    private boolean defaultValidator = true;
+
+    /** Whether the default mapping strategy is being used. */
+    private boolean defaultMappingStrategy = true;
+
     /**
      * Constructor.
      */
     public RDBMSDataConnector() {
-        setValidator(new DefaultValidator());
-        setMappingStrategy(new StringResultMappingStrategy());
     }
 
     /**
@@ -101,12 +106,30 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
     }
 
     /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
+    @Override public void setValidator(@Nonnull final Validator validator) {
+        super.setValidator(validator);
+        defaultValidator = false;
+    }
 
+    /** {@inheritDoc} */
+    @Override public void setMappingStrategy(@Nonnull final MappingStrategy strategy) {
+        super.setMappingStrategy(strategy);
+        defaultMappingStrategy = false;
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
         if (dataSource == null) {
             throw new ComponentInitializationException(getLogPrefix() + " no data source was configured");
         }
+
+        if (defaultValidator) {
+            super.setValidator(new DataSourceValidator(dataSource));
+        }
+        if (defaultMappingStrategy) {
+            super.setMappingStrategy(new StringResultMappingStrategy());
+        }
+        super.doInitialize();
 
         try {
             getValidator().validate();
@@ -160,38 +183,4 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
             }
         }
     }
-
-    /** Validator that opens a connection. */
-    public class DefaultValidator implements Validator {
-
-        /** {@inheritDoc} */
-        @Override public void validate() throws ValidationException {
-            Connection connection = null;
-            try {
-                connection = dataSource.getConnection();
-                if (connection == null) {
-                    throw new ValidationException(getLogPrefix()
-                            + " Unable to retrieve connections from configured data source");
-                }
-            } catch (final SQLException e) {
-                if (e.getSQLState() != null) {
-                    log.error("{} Invalid connector configuration; SQL state: {}, SQL Code: {}",
-                            new Object[] {getLogPrefix(), e.getSQLState(), e.getErrorCode(), e});
-                } else {
-                    log.error("{} Invalid connector configuration", getLogPrefix(), e);
-                }
-                throw new ValidationException(getLogPrefix() + " Invalid connector configuration", e);
-            } finally {
-                try {
-                    if (connection != null && !connection.isClosed()) {
-                        connection.close();
-                    }
-                } catch (final SQLException e) {
-                    log.error("{} Error closing database connection; SQL State: {}, SQL Code: {}",
-                            new Object[] {getLogPrefix(), e.getSQLState(), e.getErrorCode(), e});
-                }
-            }
-        }
-    }
-    
 }
