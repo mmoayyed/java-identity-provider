@@ -11,16 +11,17 @@
         
         <transition on="proceed" to="DecodeMessage" />
     </action-state>
+
+    <!--
+    This flow pulls double duty handling LogoutRequest and LogoutResponse.
+    Response handling is just translating the status of the LogoutResponse into a JSON
+    result compatible with the logout propagation flow contract.
+    -->
     
     <decision-state id="DoProfileWork">
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutResponse)"
-            then="DoLogoutResponse" else="PopulateClientStorageLoadContext"/>
+            then="LogoutResponseView" else="PopulateClientStorageLoadContext"/>
     </decision-state>
-
-    <action-state id="DoLogoutResponse">
-        <evaluate expression="'LogoutResponse'" />
-        <transition to="HandleSuccessWithView" />
-    </action-state>
 
     <!-- Load client storage if needed. -->
     
@@ -137,28 +138,8 @@
     
     <decision-state id="CheckAsync">
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() == null or opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
-            then="BuildResponse" else="DoAsync" />
+            then="BuildResponse" else="AsyncLogoutView" />
     </decision-state>
-    
-    <action-state id="DoAsync">
-        <evaluate expression="'AsyncLogout'" />
-        <transition to="HandleSuccessWithView" />
-    </action-state>
-    
-    <!-- Same machinery as error view, but writes audit log unconditionally. -->
-    
-    <end-state id="HandleSuccessWithView" view="#{MapEventToView.apply(currentEvent)}">
-        <on-entry>
-            <evaluate expression="ErrorViewPopulateAuditContext" />
-            <evaluate expression="WriteAuditLog" />
-            <evaluate expression="environment" result="requestScope.environment" />
-            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
-            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
-            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
-            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />
-        </on-entry>
-    </end-state>
     
     <action-state id="BuildResponse">
         <evaluate expression="AddLogoutResponse" />
@@ -215,6 +196,34 @@
         
         <exception-handler bean="RethrowingFlowExecutionExceptionHandler"/>
     </action-state>
+
+    <!-- Special view machinery, and writes audit log unconditionally. -->
+    
+    <end-state id="AsyncLogoutView" view="logout/saml-async">
+        <on-entry>
+            <evaluate expression="ErrorViewPopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="LogoutResponseView" view="logout/saml-result">
+        <on-entry>
+            <evaluate expression="ErrorViewPopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="T(net.shibboleth.utilities.java.support.codec.HTMLEncoder)" result="requestScope.encoder" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeResponse()" result="requestScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />
+        </on-entry>
+    </end-state>
 
     <bean-import resource="slo-front-abstract-beans.xml" />
 
