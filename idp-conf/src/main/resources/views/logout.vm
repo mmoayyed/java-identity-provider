@@ -18,6 +18,7 @@
 <html>
   	<head>
         <meta charset="utf-8">
+        <meta http-equiv="refresh" content="10;url=$flowExecutionUrl&_eventId=propagate">
         <title>#springMessageText("idp.title", "Web Login Service")</title>
         <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/main.css">
   	</head>
@@ -34,11 +35,10 @@
             <p>This page is displayed when a logout operation at the Identity Provider completes. This page is an example
             and should be customized. It is not fully internationalized because the presentation will be a highly localized
             decision, and we don't have a good suggestion for a default.</p>
-
-            <p></p>
+            <br>
     
             #if ( $logoutContext and !$logoutContext.getSessionMap().isEmpty() )
-                <p>#springMessageText("idp.logout.ask", "Would you like to attempt to log out of all services accessed during your session?")</p>
+                <p>#springMessageText("idp.logout.ask", "Would you like to attempt to log out of all services accessed during your session? Please select <strong>Yes</strong> or <strong>No</strong> to ensure the logout operation completes, or wait a few seconds for Yes.")</p>
                 <br>
 
                 <form id="propagate_form" method="POST" action="$flowExecutionUrl">
@@ -63,6 +63,10 @@
                 </ol>
             #else
                 <p><strong>#springMessageText("idp.logout.complete", "The logout operation is complete, and no other services appear to have been accessed during this session.")</strong></p>
+                <!-- If SAML logout with no extra work to do, complete the flow by adding a hidden iframe. -->
+                #if ( $profileRequestContext.getProfileId().contains("saml2/logout") )
+                    <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
+                #end
             #end
 
           </div>
@@ -74,11 +78,6 @@
           </div>
         </div>
       </div>
-
-      <!-- If SAML logout with no extra work to do, complete the flow by adding a hidden iframe. -->
-      #if ( $profileRequestContext.getProfileId().contains("saml2/logout") and (!$logoutContext or $logoutContext.getSessionMap().isEmpty()) )
-          <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
-      #end
 
       <footer>
         <div class="container container-footer">
