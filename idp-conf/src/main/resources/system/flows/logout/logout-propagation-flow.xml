@@ -21,6 +21,7 @@
     <subflow-state id="CallPropagationFlow" subflow="#{currentEvent.id}">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="RenderResult" />
+        <transition on="LogoutPending" to="LogoutPending" />
     </subflow-state>
 
     <end-state id="RenderResult" view="logout/result">
@@ -30,6 +31,12 @@
             <evaluate expression="WriteAuditLog" />
         </on-entry>
     </end-state>
+
+    <!-- End in limbo, assumes the propagation subflow will send the client somewhere else. -->
+
+    <end-state id="LogoutPending" />
+
+    <!-- End with a failure. -->
 
     <end-state id="LogoutFailed">
         <on-entry>
