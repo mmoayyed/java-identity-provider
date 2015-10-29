@@ -26,12 +26,6 @@ import org.springframework.webflow.execution.Event;
  */
 public enum Events {
 
-    /** No valid IdP session exists. */
-    SessionInvalid,
-
-    /** Valid IdP session found. */
-    SessionValid,
-
     /** CAS protocol renew flag specified to force authentication. */
     RenewRequested,
 
