@@ -1,5 +1,5 @@
 ##
-## Velocity Template for error end-state
+## Velocity Template for generating the result of a SAML2 LogoutResponse received by the IdP
 ##
 ## Velocity context will contain the following properties
 ## profileRequestContext - root of context tree
