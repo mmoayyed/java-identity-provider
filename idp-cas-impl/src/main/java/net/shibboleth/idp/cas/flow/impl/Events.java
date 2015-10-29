@@ -26,12 +26,6 @@ import org.springframework.webflow.execution.Event;
  */
 public enum Events {
 
-    /** CAS protocol renew flag specified to force authentication. */
-    RenewRequested,
-
-    /** CAS protocol gateway flag specified to skip authentication. */
-    GatewayRequested,
-
     /** Successful service ticket validation. */
     ServiceTicketValidated,
 
