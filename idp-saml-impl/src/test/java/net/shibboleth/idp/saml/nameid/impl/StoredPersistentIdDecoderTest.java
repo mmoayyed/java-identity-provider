@@ -64,7 +64,8 @@ public class StoredPersistentIdDecoderTest extends OpenSAMLInitBaseTestCase {
     @AfterClass public void teardown() {
         DatabaseTestingSupport.InitializeDataSource(PersistentSAML2NameIDGeneratorTest.DELETE_FILE, testSource);
     }
-    
+
+    @SuppressWarnings("deprecation")
     @BeforeMethod public void setUp() throws SQLException, IOException, ComponentInitializationException {
         
         final JDBCPersistentIdStore store = new JDBCPersistentIdStore();

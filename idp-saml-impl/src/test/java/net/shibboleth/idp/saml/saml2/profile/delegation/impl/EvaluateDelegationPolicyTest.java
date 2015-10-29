@@ -128,7 +128,7 @@ public class EvaluateDelegationPolicyTest extends OpenSAMLInitBaseTestCase {
     public void testDefaultChainLengthStrategy() throws ComponentInitializationException {
         action.initialize();
         //The non-static strategy reads instance vars populated during execute();
-        final Event result = action.execute(rc);
+        action.execute(rc);
         
         PolicyMaxChainLengthStrategy strategy = action.new PolicyMaxChainLengthStrategy();
         Assert.assertEquals(strategy.apply(prc), policyMaxChainLength);
@@ -140,7 +140,7 @@ public class EvaluateDelegationPolicyTest extends OpenSAMLInitBaseTestCase {
         
         action.initialize();
         //The non-static strategy reads instance vars populated during execute();
-        final Event result = action.execute(rc);
+        action.execute(rc);
         
         PolicyMaxChainLengthStrategy strategy = action.new PolicyMaxChainLengthStrategy();
         Assert.assertNull(strategy.apply(prc));
@@ -152,7 +152,7 @@ public class EvaluateDelegationPolicyTest extends OpenSAMLInitBaseTestCase {
         
         action.initialize();
         //The non-static strategy reads instance vars populated during execute();
-        final Event result = action.execute(rc);
+        action.execute(rc);
         
         PolicyMaxChainLengthStrategy strategy = action.new PolicyMaxChainLengthStrategy();
         Assert.assertNull(strategy.apply(prc));

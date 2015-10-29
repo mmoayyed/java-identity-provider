@@ -93,16 +93,17 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
      * Parses a version 2 configuration. <br/>
      * The following automatically created & injected beans acquire hard wired defaults:
      * <ul>
-     * <li> {@link SearchExecutor#setTimeLimit(long)} defaults to 3000, overridden by the "searchTimeLimit" attribute.</li>
-     * <li> {@link SearchExecutor#setSizeLimit(long)} defaults to 1, overridden by the "maxResultSize" attribute.</li>
-     * <li> {@link SearchRequest#setBaseDn(String)} default to "", overridden by the "validateDN" attribute.</li>
-     * <li> {@link SearchFilter#SearchFilter(String)} defaults to "(objectClass=*)", overridden by the "validateFilter"
+     * <li>{@link SearchExecutor#setTimeLimit(long)} defaults to 3000, overridden by the "searchTimeLimit" attribute.
+     * </li>
+     * <li>{@link SearchExecutor#setSizeLimit(long)} defaults to 1, overridden by the "maxResultSize" attribute.</li>
+     * <li>{@link SearchRequest#setBaseDn(String)} default to "", overridden by the "validateDN" attribute.</li>
+     * <li>{@link SearchFilter#SearchFilter(String)} defaults to "(objectClass=*)", overridden by the "validateFilter"
      * attribute.</li>
-     * <li> {@link PoolConfig#setMinPoolSize(int)} defaults to 0 if neither the attribute "poolInitialSize" nor the
+     * <li>{@link PoolConfig#setMinPoolSize(int)} defaults to 0 if neither the attribute "poolInitialSize" nor the
      * attribute "minPoolSize" are set.</li>
-     * <li> {@link PoolConfig#setMaxPoolSize(int)} defaults to 3 if neither the attribute "poolMaxIdleSize" nor the
+     * <li>{@link PoolConfig#setMaxPoolSize(int)} defaults to 3 if neither the attribute "poolMaxIdleSize" nor the
      * attribute "maxPoolSize" are set.</li>
-     * <li> {@link PoolConfig#setValidatePeriod(long)} defaults to 1800, overridden by the attribute
+     * <li>{@link PoolConfig#setValidatePeriod(long)} defaults to 1800, overridden by the attribute
      * "validateTimerPeriod"</li>
      * </ul>
      * 
