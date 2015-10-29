@@ -21,7 +21,9 @@ import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketService;
@@ -146,6 +148,7 @@ public class LoginFlowTest extends AbstractFlowTest {
     public void testLoginExistingSession() throws Exception {
         final String service = "https://existing.example.org/";
         final IdPSession existing = sessionManager.createSession("aurora");
+        existing.addAuthenticationResult(new AuthenticationResult("authn/Password", new UsernamePrincipal("aurora")));
         externalContext.getMockRequestParameterMap().put("service", service);
         overrideEndStateOutput("cas/login", "RedirectToService");
         request.setCookies(new Cookie("shib_idp_session", existing.getId()));
@@ -163,6 +166,34 @@ public class LoginFlowTest extends AbstractFlowTest {
                 new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
         assertNotNull(session);
         assertEquals(session.getId(), existing.getId());
+
+        final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
+        assertNotNull(prc.getSubcontext(SubjectContext.class));
+        assertPopulatedAttributeContext(prc);
+    }
+
+    @Test
+    public void testLoginExistingSessionDoNotCache() throws Exception {
+        final String service = "https://existing.example.org/";
+        final IdPSession existing = sessionManager.createSession("maleficent");
+        externalContext.getMockRequestParameterMap().put("service", service);
+        overrideEndStateOutput("cas/login", "RedirectToService");
+        request.setCookies(new Cookie("shib_idp_session", existing.getId()));
+        initializeThreadLocals();
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "RedirectToService");
+        final String url = externalContext.getExternalRedirectUrl();
+        assertTrue(url.contains("ticket=ST-"));
+        final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        final Ticket st = ticketService.removeServiceTicket(ticketId);
+        assertNotNull(st);
+        final IdPSession session = sessionManager.resolveSingle(
+                new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
+        assertNotNull(session);
+        // Expect a new session to be created since authentication was required
+        assertNotEquals(session.getId(), existing.getId());
 
         final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
         assertNotNull(prc.getSubcontext(SubjectContext.class));

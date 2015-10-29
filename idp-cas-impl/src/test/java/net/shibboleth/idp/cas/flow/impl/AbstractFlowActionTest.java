@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
@@ -72,7 +76,8 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
         return (ProfileRequestContext) context.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
     }
 
-    protected static IdPSession mockSession(final String sessionId, final boolean expiredFlag) {
+    protected static IdPSession mockSession(
+            final String sessionId, final boolean expiredFlag, final AuthenticationResult ... results) {
         final IdPSession mockSession = mock(IdPSession.class);
         when(mockSession.getId()).thenReturn(sessionId);
         when(mockSession.getPrincipalName()).thenReturn(TEST_PRINCIPAL_NAME);
@@ -81,6 +86,7 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
         } catch (SessionException e) {
             throw new RuntimeException("Session exception", e);
         }
+        when(mockSession.getAuthenticationResults()).thenReturn(new HashSet<>(Arrays.asList(results)));
         return mockSession;
     }
 

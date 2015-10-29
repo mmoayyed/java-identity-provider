@@ -30,8 +30,8 @@
 
     <action-state id="CheckAuthenticationRequired">
         <evaluate expression="CheckAuthenticationRequired"/>
-        <transition on="SessionNotFound" to="CheckInitialAuthenticationRequired" />
-        <transition on="SessionFound" to="CheckResolveAttributes" />
+        <transition on="SessionInvalid" to="CheckInitialAuthenticationRequired" />
+        <transition on="SessionValid" to="CheckResolveAttributes" />
         <transition on="RenewRequested" to="CheckInitialAuthenticationRequired" />
         <transition on="GatewayRequested" to="RedirectToService">
             <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />

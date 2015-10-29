@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +52,7 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("b"), null)
                 .build();
-        assertEquals(action.execute(context).getId(), Events.SessionNotFound.name());
+        assertEquals(action.execute(context).getId(), Events.SessionInvalid.name());
     }
 
     @Test
@@ -59,16 +61,26 @@ public class CheckAuthenticationRequiredActionTest extends AbstractFlowActionTes
                 .addProtocolContext(new ServiceTicketRequest("c"), null)
                 .addSessionContext(mockSession("ABCDE", false))
                 .build();
-        assertEquals(action.execute(context).getId(), Events.SessionNotFound.name());
+        assertEquals(action.execute(context).getId(), Events.SessionInvalid.name());
     }
 
     @Test
-    public void testSessionFound() throws Exception {
+    public void testSessionFoundWithoutAuthenticationResults() throws Exception {
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(new ServiceTicketRequest("d"), null)
                 .addSessionContext(mockSession("12345", true))
                 .build();
-        assertEquals(action.execute(context).getId(), Events.SessionFound.name());
+        assertEquals(action.execute(context).getId(), Events.SessionInvalid.name());
+    }
+
+    @Test
+    public void testSessionFoundWithAuthenticationResults() throws Exception {
+        final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
+                .addProtocolContext(new ServiceTicketRequest("d"), null)
+                .addSessionContext(mockSession("12345", true,
+                        new AuthenticationResult("authn/Password", new UsernamePrincipal("bob"))))
+                .build();
+        assertEquals(action.execute(context).getId(), Events.SessionValid.name());
     }
 
     @Test

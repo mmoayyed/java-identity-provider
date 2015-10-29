@@ -36,7 +36,7 @@ import org.springframework.webflow.execution.RequestContext;
  * <ul>
  *     <li>{@link Events#GatewayRequested GatewayRequested} - Authentication not required since no ticket is requested.</li>
  *     <li>{@link Events#RenewRequested RenewRequested} - Authentication required regardless of existing session.</li>
- *     <li>{@link Events#SessionFound SessionFound} - Authentication not required since session already exists.</li>
+ *     <li>{@link Events#SessionValid SessionValid} - Authentication not required since session already exists.</li>
  *     <li>{@link Events#SessionNotFound SessionNotFound} - Authentication required since no active session exists.</li>
  * </ul>
  *
@@ -72,8 +72,8 @@ public class CheckAuthenticationRequiredAction extends
             log.debug("Found session ID {}", session.getId());
             try {
                 // Timeout check updates session lastActivityInstant field
-                if (session.checkTimeout()) {
-                    return Events.SessionFound.event(this);
+                if (session.checkTimeout() && session.getAuthenticationResults().size() > 0) {
+                    return Events.SessionValid.event(this);
                 }
             } catch (SessionException e) {
                 log.debug("Error performing session timeout check. Assuming session has expired.", e);
@@ -81,6 +81,6 @@ public class CheckAuthenticationRequiredAction extends
         } catch (IllegalStateException e) {
             log.debug("IdP session not found");
         }
-        return Events.SessionNotFound.event(this);
+        return Events.SessionInvalid.event(this);
     }
 }

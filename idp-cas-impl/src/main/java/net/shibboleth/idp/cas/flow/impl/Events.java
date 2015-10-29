@@ -26,11 +26,11 @@ import org.springframework.webflow.execution.Event;
  */
 public enum Events {
 
-    /** Active IdP session not found. */
-    SessionNotFound,
+    /** No valid IdP session exists. */
+    SessionInvalid,
 
-    /** Active IdP session found. */
-    SessionFound,
+    /** Valid IdP session found. */
+    SessionValid,
 
     /** CAS protocol renew flag specified to force authentication. */
     RenewRequested,
