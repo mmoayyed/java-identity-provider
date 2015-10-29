@@ -30,9 +30,6 @@
     <bean id="InitializeLogin"
           class="net.shibboleth.idp.cas.flow.impl.InitializeLoginAction" />
 
-    <bean id="CheckAuthenticationRequired"
-          class="net.shibboleth.idp.cas.flow.impl.CheckAuthenticationRequiredAction" />
-
     <bean id="BuildAuthenticationContext"
           class="net.shibboleth.idp.cas.flow.impl.BuildAuthenticationContextAction" />
 

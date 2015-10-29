@@ -94,9 +94,6 @@
     <bean id="buildSAMLMetadataContextAction"
           class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction" />
 
-    <bean id="checkAuthenticationRequiredAction"
-          class="net.shibboleth.idp.cas.flow.impl.CheckAuthenticationRequiredAction" />
-
     <bean id="checkProxyAuthorizationAction"
           class="net.shibboleth.idp.cas.flow.impl.CheckProxyAuthorizationAction" />
 

@@ -28,14 +28,15 @@
         <transition on="proceed" to="CheckAuthenticationRequired"/>
     </subflow-state>
 
-    <action-state id="CheckAuthenticationRequired">
-        <evaluate expression="CheckAuthenticationRequired"/>
-        <transition on="SessionInvalid" to="CheckInitialAuthenticationRequired" />
-        <transition on="SessionValid" to="CheckResolveAttributes" />
-        <transition on="RenewRequested" to="CheckInitialAuthenticationRequired" />
-        <transition on="GatewayRequested" to="RedirectToService">
-            <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />
-        </transition>
+    <decision-state id="CheckAuthenticationRequired">
+        <if test="flowScope.serviceTicketRequest.gateway"
+            then="PrepareForRedirectToService"
+            else="CheckInitialAuthenticationRequired" />
+    </decision-state>
+
+    <action-state id="PrepareForRedirectToService">
+        <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />
+        <transition to="RedirectToService" />
     </action-state>
 
     <decision-state id="CheckInitialAuthenticationRequired">
