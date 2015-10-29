@@ -137,6 +137,15 @@
         </property>
     </bean>
 
+    <bean id="PopulateRequestSignatureSigningParameters"
+            class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
+            p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"
+            p:signatureSigningParametersResolver-ref="shibboleth.SignatureSigningParametersResolver">
+        <property name="activationCondition">
+            <bean class="net.shibboleth.idp.saml.profile.config.logic.SignRequestsPredicate" />
+        </property>
+    </bean>
+
     <bean id="PopulateAssertionSignatureSigningParameters"
             class="org.opensaml.saml.common.profile.impl.PopulateSignatureSigningParameters" scope="prototype"
             p:configurationLookupStrategy-ref="shibboleth.SignatureSigningConfigurationLookup"

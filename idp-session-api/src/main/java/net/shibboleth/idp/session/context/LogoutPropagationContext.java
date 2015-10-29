@@ -61,10 +61,10 @@ public class LogoutPropagationContext extends BaseContext {
     /**
      * Set the {@link SPSession} to be destroyed.
      *
-     * @param theSession non-null SP session.
+     * @param theSession the SP session
      */
-    public void setSession(@Nonnull final SPSession theSession) {
-        session = Constraint.isNotNull(theSession, "SPSession cannnot be null");
+    public void setSession(@Nullable final SPSession theSession) {
+        session = theSession;
     }
 
     /**
@@ -108,7 +108,7 @@ public class LogoutPropagationContext extends BaseContext {
      *
      * @param msg result detail message.
      */
-    public void setDetail(@Nullable String msg) {
+    public void setDetail(@Nullable final String msg) {
         detail = msg;
     }
     
