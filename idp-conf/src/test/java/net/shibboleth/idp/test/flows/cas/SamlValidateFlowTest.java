@@ -83,7 +83,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         request.setMethod("POST");
         request.setContent(requestBody.getBytes("UTF-8"));
         externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
-        overrideEndStateOutput("cas/samlValidate", "ValidateSuccess");
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
@@ -151,7 +151,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         request.setMethod("POST");
         request.setContent(requestBody.getBytes("UTF-8"));
         externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
-        overrideEndStateOutput("cas/samlValidate", "ValidateSuccess");
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 

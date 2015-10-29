@@ -29,6 +29,7 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
 
@@ -55,6 +56,34 @@ public class ProxyFlowTest extends AbstractFlowTest {
 
     @Autowired
     private SessionManager sessionManager;
+
+    @Test
+    public void testInvalidRequestNoTicket() throws Exception {
+        externalContext.getMockRequestParameterMap().put("targetService", "https://test.example.org/");
+        overrideEndStateOutput(FLOW_ID, "ProtocolErrorView");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "ProtocolErrorView");
+        assertTrue(responseBody.contains("<cas:proxyFailure code=\"INVALID_REQUEST\">"));
+        assertTrue(responseBody.contains("E_TICKET_NOT_SPECIFIED"));
+    }
+
+    @Test
+    public void testInvalidRequestNoService() throws Exception {
+        externalContext.getMockRequestParameterMap().put("pgt", "PGT-123-ABC");
+        overrideEndStateOutput(FLOW_ID, "ProtocolErrorView");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "ProtocolErrorView");
+        assertTrue(responseBody.contains("<cas:proxyFailure code=\"INVALID_REQUEST\">"));
+        assertTrue(responseBody.contains("E_SERVICE_NOT_SPECIFIED"));
+    }
 
     @Test
     public void testSuccess() throws Exception {

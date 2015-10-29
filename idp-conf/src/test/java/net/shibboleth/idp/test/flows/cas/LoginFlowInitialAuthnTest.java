@@ -74,7 +74,7 @@ public class LoginFlowInitialAuthnTest extends AbstractFlowTest {
     public void testLoginStartSession() throws Exception {
         final String service = "https://start.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
-        overrideEndStateOutput("cas/login", "RedirectToService");
+        overrideEndStateOutput(FLOW_ID, "RedirectToService");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final FlowExecutionOutcome outcome = result.getOutcome();

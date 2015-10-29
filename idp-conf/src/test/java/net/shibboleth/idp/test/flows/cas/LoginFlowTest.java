@@ -98,7 +98,7 @@ public class LoginFlowTest extends AbstractFlowTest {
     public void testLoginStartSession() throws Exception {
         final String service = "https://start.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
-        overrideEndStateOutput("cas/login", "RedirectToService");
+        overrideEndStateOutput(FLOW_ID, "RedirectToService");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final FlowExecutionOutcome outcome = result.getOutcome();
@@ -122,7 +122,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final String service = "https://start.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
         setPostAuthenticationFlows(Collections.singletonList("attribute-release"));
-        overrideEndStateOutput("cas/login", "RedirectToService");
+        overrideEndStateOutput(FLOW_ID, "RedirectToService");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
@@ -150,7 +150,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final IdPSession existing = sessionManager.createSession("aurora");
         existing.addAuthenticationResult(new AuthenticationResult("authn/Password", new UsernamePrincipal("aurora")));
         externalContext.getMockRequestParameterMap().put("service", service);
-        overrideEndStateOutput("cas/login", "RedirectToService");
+        overrideEndStateOutput(FLOW_ID, "RedirectToService");
         request.setCookies(new Cookie("shib_idp_session", existing.getId()));
         initializeThreadLocals();
 
@@ -177,7 +177,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final String service = "https://existing.example.org/";
         final IdPSession existing = sessionManager.createSession("maleficent");
         externalContext.getMockRequestParameterMap().put("service", service);
-        overrideEndStateOutput("cas/login", "RedirectToService");
+        overrideEndStateOutput(FLOW_ID, "RedirectToService");
         request.setCookies(new Cookie("shib_idp_session", existing.getId()));
         initializeThreadLocals();
 

@@ -77,6 +77,34 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     private TestProxyAuthenticator testProxyAuthenticator;
 
     @Test
+    public void testInvalidRequestNoTicket() throws Exception {
+        externalContext.getMockRequestParameterMap().put("service", "https://test.example.org/");
+        overrideEndStateOutput(FLOW_ID, "ProtocolErrorView");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "ProtocolErrorView");
+        assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_REQUEST\">"));
+        assertTrue(responseBody.contains("E_TICKET_NOT_SPECIFIED"));
+    }
+
+    @Test
+    public void testInvalidRequestNoService() throws Exception {
+        externalContext.getMockRequestParameterMap().put("ticket", "ST-123-ABC");
+        overrideEndStateOutput(FLOW_ID, "ProtocolErrorView");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "ProtocolErrorView");
+        assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_REQUEST\">"));
+        assertTrue(responseBody.contains("E_SERVICE_NOT_SPECIFIED"));
+    }
+
+    @Test
     public void testSuccess() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
@@ -92,7 +120,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
@@ -131,7 +159,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
@@ -232,7 +260,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
         externalContext.getMockRequestParameterMap().put("pgtUrl", "https://proxy.example.com/");
-        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
 
         testProxyAuthenticator.setFailureFlag(true);
 
@@ -260,7 +288,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 
@@ -295,7 +323,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-        overrideEndStateOutput("cas/serviceValidate", "ValidateSuccess");
+        overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
 
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
 

@@ -48,13 +48,16 @@ public class InitializeValidateAction extends
             final @Nonnull ProfileRequestContext profileRequestContext) {
 
         final ParameterMap params = springRequestContext.getRequestParameters();
-        final String service = params.get(ProtocolParam.Service.id());
+        String service = params.get(ProtocolParam.Service.id());
+        Event result = null;
         if (service == null) {
-            return ProtocolError.ServiceNotSpecified.event(this);
+            service = ProtocolError.ServiceNotSpecified.getDetailCode();
+            result = ProtocolError.ServiceNotSpecified.event(this);
         }
-        final String ticket = params.get(ProtocolParam.Ticket.id());
+        String ticket = params.get(ProtocolParam.Ticket.id());
         if (ticket == null) {
-            return ProtocolError.TicketNotSpecified.event(this);
+            ticket = ProtocolError.TicketNotSpecified.getDetailCode();
+            result = ProtocolError.TicketNotSpecified.event(this);
         }
         final TicketValidationRequest ticketValidationRequest = new TicketValidationRequest(service, ticket);
 
@@ -66,6 +69,6 @@ public class InitializeValidateAction extends
 
         setCASRequest(profileRequestContext, ticketValidationRequest);
 
-        return null;
+        return result;
     }
 }
