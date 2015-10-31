@@ -250,7 +250,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
             builder.addPropertyValue("signResponses",
                     predicateForSigning(StringSupport.trimOrNull(element.getAttributeNS(null, "signResponses"))));
         }
-        builder.addPropertyValue("additionalAudienceForAssertion", getAudiences(element));
+        builder.addPropertyValue("additionalAudiencesForAssertion", getAudiences(element));
     }
 
     // Checkstyle: CyclomaticComplexity ON

@@ -161,21 +161,31 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * which an assertion may be shared.
      * 
      * @param audiences the additional audiences
+     * 
+     * @deprecated
      */
     public void setAdditionalAudienceForAssertion(@Nonnull @NonnullElements final Collection<String> audiences) {
+        setAdditionalAudiencesForAssertion(audiences);
+    }
+
+    /**
+     * Set the set of audiences, in addition to the relying party(ies) to which the IdP is issuing the assertion, with
+     * which an assertion may be shared.
+     * 
+     * @param audiences the additional audiences
+     */
+    public void setAdditionalAudiencesForAssertion(@Nonnull @NonnullElements final Collection<String> audiences) {
         if (audiences == null || audiences.isEmpty()) {
             assertionAudiences = Collections.emptySet();
             return;
         }
 
         assertionAudiences = new HashSet<>();
-        String trimmedAudience;
-        for (String audience : audiences) {
-            trimmedAudience = StringSupport.trimOrNull(audience);
+        for (final String audience : audiences) {
+            final String trimmedAudience = StringSupport.trimOrNull(audience);
             if (trimmedAudience != null) {
                 assertionAudiences.add(trimmedAudience);
             }
         }
     }
-
 }

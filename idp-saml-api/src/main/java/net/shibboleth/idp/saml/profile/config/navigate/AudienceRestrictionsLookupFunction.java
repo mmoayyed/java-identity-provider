@@ -56,11 +56,11 @@ public class AudienceRestrictionsLookupFunction extends AbstractRelyingPartyLook
             final ProfileConfiguration pc = rpc.getProfileConfig();
             if (pc != null && pc instanceof SAMLProfileConfiguration
                     && !((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion().isEmpty()) {
-                final Builder builder = ImmutableList.builder();
+                final Builder<String> builder = ImmutableList.builder();
                 if (id != null) {
                     builder.add(rpc.getRelyingPartyId());
                 }
-                builder.add(((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion());
+                builder.addAll(((SAMLProfileConfiguration) pc).getAdditionalAudiencesForAssertion());
                 return builder.build();
             } else if (id != null) {
                 return ImmutableList.<String>of(rpc.getRelyingPartyId());
