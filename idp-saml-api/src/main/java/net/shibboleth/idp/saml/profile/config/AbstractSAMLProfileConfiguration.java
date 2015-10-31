@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -165,6 +166,9 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * @deprecated
      */
     public void setAdditionalAudienceForAssertion(@Nonnull @NonnullElements final Collection<String> audiences) {
+        LoggerFactory.getLogger(AbstractSAMLProfileConfiguration.class).warn(
+                "Use of deprecated property name 'additionalAudienceForAssertion', please correct to "
+                    + "'additionalAudiencesForAssertion'");
         setAdditionalAudiencesForAssertion(audiences);
     }
 
