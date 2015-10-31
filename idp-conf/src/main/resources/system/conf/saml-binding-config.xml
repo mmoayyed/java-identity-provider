@@ -38,18 +38,18 @@
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
             p:encoderBeanId="shibboleth.Encoders.SAML2PostEncoder" />
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
-            p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" />
+            p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" p:signatureCapable="true" />
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
             p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
     </util:list>
 
     <util:list id="shibboleth.OutgoingSAML2SLOBindings">
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-            p:encoderBeanId="shibboleth.Encoders.SAML2RedirectEncoder" />
+            p:encoderBeanId="shibboleth.Encoders.SAML2RedirectEncoder" p:signatureCapable="true" />
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
             p:encoderBeanId="shibboleth.Encoders.SAML2PostEncoder" />
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
-            p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" />
+            p:encoderBeanId="shibboleth.Encoders.SAML2PostSimpleSignEncoder" p:signatureCapable="true" />
         <bean parent="shibboleth.BindingDescriptor" p:id="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact"
             p:encoderBeanId="shibboleth.Encoders.SAML2ArtifactEncoder" p:artifact="true" />
     </util:list>
