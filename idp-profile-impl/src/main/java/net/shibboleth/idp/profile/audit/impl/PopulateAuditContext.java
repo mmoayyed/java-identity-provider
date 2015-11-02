@@ -195,7 +195,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
         for (final Map.Entry<String,Function<ProfileRequestContext,Object>> entry : fieldExtractors.entrySet()) {
             
             if (!fieldsToExtract.isEmpty() && !fieldsToExtract.contains(entry.getKey())) {
-                log.debug("{} Skipping field '{}' not included in audit format", getLogPrefix(), entry.getKey());
+                log.trace("{} Skipping field '{}' not included in audit format", getLogPrefix(), entry.getKey());
                 continue;
             }
             
@@ -203,7 +203,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
             if (values != null) {
                 if (values instanceof Collection) {
                     if (!((Collection) values).isEmpty()) {
-                        log.debug("{} Adding {} value(s) for field '{}'", getLogPrefix(), ((Collection) values).size(),
+                        log.trace("{} Adding {} value(s) for field '{}'", getLogPrefix(), ((Collection) values).size(),
                                 entry.getKey());
                         for (final Object value : (Collection) values) {
                             if (value != null) {
@@ -217,7 +217,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
                         }
                     }
                 } else {
-                    log.debug("{} Adding 1 value for field '{}'", getLogPrefix(), entry.getKey());
+                    log.trace("{} Adding 1 value for field '{}'", getLogPrefix(), entry.getKey());
                     if (values instanceof DateTime) {
                         auditCtx.getFieldValues(entry.getKey()).add(((DateTime) values).toString(dateTimeFormat));
                     } else {
