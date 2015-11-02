@@ -18,14 +18,24 @@
     result compatible with the logout propagation flow contract.
     -->
     
-    <decision-state id="DoProfileWork">
+    <!--
+    We splice into the parent flow by checking for a LogoutResponse after the inbound
+    message subflow runs, to bypass the rest of the parent flow. Anything else passes
+    control back to the next parent state. 
+    -->
+    <subflow-state id="DoInboundInterceptSubflow">
+        <transition on="proceed" to="CheckLogoutResponse" />
+    </subflow-state>
+    
+    <decision-state id="CheckLogoutResponse">
+        <!-- If parent DoInboundInterceptSubflow transition changes on 'proceed', the else clause needs to also change. -->
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutResponse)"
-            then="LogoutResponseView" else="PopulateClientStorageLoadContext"/>
+            then="LogoutResponseView" else="OutboundContextsAndSecurityParameters"/>
     </decision-state>
 
-    <!-- Load client storage if needed. -->
-    
-    <action-state id="PopulateClientStorageLoadContext">
+    <!-- LogoutRequest handling starts by loading client storage if needed. -->
+        
+    <action-state id="DoProfileWork">
         <evaluate expression="PopulateClientStorageLoadContext" />
         <evaluate expression="'proceed'" />
 
