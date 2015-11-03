@@ -21,15 +21,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import javax.security.auth.Subject;
 
+import net.shibboleth.idp.attribute.ByteAttributeValue;
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
 import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -221,6 +229,39 @@ public class DefaultAuthenticationResultSerializerTest {
         Assert.assertEquals(
                 ((LdapPrincipal) result.getSubject().getPrincipals().iterator().next()).getLdapEntry(),
                 ((LdapPrincipal) result2.getSubject().getPrincipals().iterator().next()).getLdapEntry());
+    }
+
+    @Test public void testIdPAttribute() throws Exception {
+        final IdPAttributePrincipalSerializer attrSerializer = new IdPAttributePrincipalSerializer();
+        serializer.setPrincipalSerializers(Collections.<PrincipalSerializer<String>>singletonList(attrSerializer));
+        serializer.initialize();
+        
+        final AuthenticationResult result = createResult("test", new Subject());
+        final IdPAttributePrincipal prin = new IdPAttributePrincipal(new IdPAttribute("foo"));
+        prin.getAttribute().setValues(Arrays.asList(new StringAttributeValue("bar"),
+                new ScopedStringAttributeValue("bar2", "scope"), EmptyAttributeValue.ZERO_LENGTH,
+                new ByteAttributeValue("foo".getBytes())));
+        
+        result.getSubject().getPrincipals().add(prin);
+
+        final String s = serializer.serialize(result);
+        final String s2 = fileToString(DATAPATH + "IdPAttributeAuthenticationResult.json");
+        Assert.assertEquals(s, s2);
+
+        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+
+        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        
+        final IdPAttribute attribute =
+                ((IdPAttributePrincipal) result2.getSubject().getPrincipals().iterator().next()).getAttribute();
+        Assert.assertEquals(attribute.getValues().size(), 3);
+        Assert.assertEquals(attribute.getValues().get(0).getValue(), "bar");
+        Assert.assertEquals(attribute.getValues().get(1).getValue(), "bar2");
+        Assert.assertEquals(((ScopedStringAttributeValue) attribute.getValues().get(1)).getScope(), "scope");
+        Assert.assertEquals(attribute.getValues().get(2), EmptyAttributeValue.ZERO_LENGTH);
     }
 
     private AuthenticationResult createResult(String flowId, Subject subject) {
