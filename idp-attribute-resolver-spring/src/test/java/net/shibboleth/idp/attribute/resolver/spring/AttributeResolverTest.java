@@ -277,6 +277,32 @@ public class AttributeResolverTest extends OpenSAMLInitBaseTestCase {
         }
 
     }
+    
+    @Test public void mappedTemplate() throws Exception {
+        final ReloadableService<AttributeResolver> attributeResolverService = getResolver("net/shibboleth/idp/attribute/resolver/spring/mappedTemplateService.xml");
+
+        attributeResolverService.initialize();
+
+        ServiceableComponent<AttributeResolver> serviceableComponent = null;
+        final AttributeResolutionContext resolutionContext =
+                TestSources.createResolutionContext("PETER_THE_PRINCIPAL", "issuer", "recipient");
+
+        try {
+            serviceableComponent = attributeResolverService.getServiceableComponent();
+
+            final AttributeResolver resolver = serviceableComponent.getComponent();
+            Assert.assertEquals(resolver.getId(), "Shibboleth.Resolver");
+            resolver.resolveAttributes(resolutionContext);
+        } finally {
+            if (null != serviceableComponent) {
+                serviceableComponent.unpinComponent();
+            }
+        }
+
+        Map<String, IdPAttribute> resolvedAttributes = resolutionContext.getResolvedIdPAttributes();
+        log.debug("output {}", resolvedAttributes);
+        Assert.assertEquals(resolvedAttributes.get("testing").getValues().size(), 2);
+    }
 
     @Test public void id() throws ComponentInitializationException, ServiceException, ResolutionException {
 
