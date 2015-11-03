@@ -25,7 +25,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.EventContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.SAMLMessageInfoContext;
-import org.opensaml.soap.wsaddressing.messaging.context.WSAddressingContext;
+import org.opensaml.soap.wsaddressing.messaging.WSAddressingContext;
 import org.opensaml.soap.wssecurity.messaging.WSSecurityContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
