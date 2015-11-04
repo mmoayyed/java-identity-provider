@@ -227,10 +227,12 @@ public class IdPPropertiesApplicationContextInitializer
     /**
      * Normalize the path by calling {@link StringUtils#cleanPath(String)}.
      * 
+     * @deprecated
+     * 
      * @param path the input path
      * @return the normalized path.
      */
-    @Nonnull public String normalizePath(@Nonnull final String path) {
+    @Deprecated @Nonnull public String normalizePath(@Nonnull final String path) {
         Constraint.isNotNull(path, "Path cannot be null");
         final String normalized = StringUtils.cleanPath(path);
         log.debug("Normalized path '{}' to '{}'", path, normalized);
@@ -238,10 +240,7 @@ public class IdPPropertiesApplicationContextInitializer
     }
 
     /**
-     * 
      * Set the {@link #IDP_HOME_PROPERTY} property to the given path if not already set.
-     * 
-     * The property value will be normalized by calling {@link #normalizePath(String)}.
      * 
      * @param path the property value
      * @param properties the properties
@@ -255,11 +254,9 @@ public class IdPPropertiesApplicationContextInitializer
             return;
         }
 
-        final String normalizedPath = normalizePath(path);
+        log.debug("Setting '{}' property to '{}'", IDP_HOME_PROPERTY, path);
 
-        log.debug("Setting '{}' property to '{}'", IDP_HOME_PROPERTY, normalizedPath);
-
-        properties.setProperty(IDP_HOME_PROPERTY, normalizedPath);
+        properties.setProperty(IDP_HOME_PROPERTY, path);
     }
 
 }
