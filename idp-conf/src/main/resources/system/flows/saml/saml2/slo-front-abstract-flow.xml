@@ -224,7 +224,6 @@
 
     <end-state id="LogoutResponseView" view="logout/saml-result">
         <on-entry>
-            <evaluate expression="ErrorViewPopulateAuditContext" />
             <evaluate expression="WriteAuditLog" />
             <evaluate expression="environment" result="requestScope.environment" />
             <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />

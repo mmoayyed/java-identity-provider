@@ -87,6 +87,54 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IN_RESPONSE_TO"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.InResponseToAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.STATUS_CODE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.StatusCodeAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SUBSTATUS_CODE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SubStatusCodeAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.STATUS_MESSAGE"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.StatusMessageAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.IS_PASSIVE"/>
                     </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.IsPassiveAuditExtractor">
@@ -378,6 +426,18 @@
                         <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.NAMEID_FORMAT"/>
                     </key>
                     <bean class="net.shibboleth.idp.saml.audit.impl.NameIDFormatAuditExtractor">
+                        <constructor-arg>
+                            <bean class="com.google.common.base.Functions" factory-method="compose"
+                                c:g-ref="shibboleth.MessageLookup.SAMLObject"
+                                c:f-ref="shibboleth.MessageContextLookup.Inbound" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.saml.profile.SAMLAuditFields.SESSION_INDEX"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.saml.audit.impl.SessionIndexAuditExtractor">
                         <constructor-arg>
                             <bean class="com.google.common.base.Functions" factory-method="compose"
                                 c:g-ref="shibboleth.MessageLookup.SAMLObject"
