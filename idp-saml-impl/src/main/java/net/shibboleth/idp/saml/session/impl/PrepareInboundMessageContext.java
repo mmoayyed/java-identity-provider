@@ -100,11 +100,6 @@ public class PrepareInboundMessageContext extends AbstractProfileAction {
         }
         
         saml2Session = (SAML2SPSession) logoutPropCtx.getSession();
-        if (saml2Session.getId() == null) {
-            log.debug("{} SAML2SPSession in logout propagation context did not contain a service ID", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
-            return false;
-        }
 
         return true;
     }
