@@ -97,7 +97,7 @@ public class IdPPropertiesApplicationContextInitializer
 
                 logProperties(properties);
 
-                addPropertySourceToApplicationContext(applicationContext, resource.toString(), properties);
+                appendPropertySource(applicationContext, resource.toString(), properties);
 
                 return;
             }
@@ -107,18 +107,18 @@ public class IdPPropertiesApplicationContextInitializer
     }
 
     /**
-     * Get the target resource to be searched for {@link #IDP_PROPERTIES}.
+     * Get the target resource to be searched for. Defaults to {@link #IDP_PROPERTIES}.
      * 
-     * @return the target resource to be searched for {@link #IDP_PROPERTIES}
+     * @return the target resource to be searched for
      */
     @Nonnull public String getSearchTarget() {
         return IDP_PROPERTIES;
     }
 
     /**
-     * Get the well known search locations {@link #SEARCH_LOCATIONS}.
+     * Get the well known search locations. Defaults to {@link #SEARCH_LOCATIONS}.
      * 
-     * @return the well known search locations {@link #SEARCH_LOCATIONS}
+     * @return the well known search locations
      */
     @Nonnull public String[] getSearchLocations() {
         return SEARCH_LOCATIONS;
@@ -226,7 +226,7 @@ public class IdPPropertiesApplicationContextInitializer
      * @param name the name of the property source to be added to the application context
      * @param properties the properties added to the application context
      */
-    public void addPropertySourceToApplicationContext(@Nonnull final ConfigurableApplicationContext applicationContext,
+    public void appendPropertySource(@Nonnull final ConfigurableApplicationContext applicationContext,
             @Nonnull final String name, @Nonnull final Properties properties) {
         applicationContext.getEnvironment().getPropertySources()
                 .addLast(new PropertiesPropertySource(name, properties));
