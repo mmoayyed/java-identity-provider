@@ -19,8 +19,6 @@ package net.shibboleth.idp.spring;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -69,16 +67,9 @@ public class IdPPropertiesApplicationContextInitializer
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
 
-        final ArrayList<String> searchLocations = new ArrayList<>();
-        final String homeProperty = applicationContext.getEnvironment().getProperty(IDP_HOME_PROPERTY);
-        if (homeProperty != null) {
-            log.debug("Prepending idp.home property value '{}' to well-known search locations", homeProperty);
-            searchLocations.add(homeProperty);
-        }
-
-        searchLocations.addAll(Arrays.asList(getSearchLocations()));
-
+        final String[] searchLocations = selectSearchLocations(applicationContext);
         log.debug("Attempting to find '{}' at search locations '{}'", getSearchTarget(), searchLocations);
+
         for (final String searchLocation : searchLocations) {
 
             final String searchPath = searchLocation + getSearchTarget();
@@ -95,14 +86,11 @@ public class IdPPropertiesApplicationContextInitializer
                     return;
                 }
 
-                // See if we need to set idp.home as a property ourselves...
-                if (homeProperty == null) {
-                    if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
-                        setIdPHomeProperty(searchLocation, properties);
-                    } else {
-                        final String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
-                        setIdPHomeProperty(searchLocationAbsolutePath, properties);
-                    }
+                if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
+                    setIdPHomeProperty(searchLocation, properties);
+                } else {
+                    final String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
+                    setIdPHomeProperty(searchLocationAbsolutePath, properties);
                 }
 
                 loadAdditionalPropertySources(applicationContext, searchLocation, properties);
@@ -134,6 +122,26 @@ public class IdPPropertiesApplicationContextInitializer
      */
     @Nonnull public String[] getSearchLocations() {
         return SEARCH_LOCATIONS;
+    }
+
+    /**
+     * Select the locations used to search for the target. Prefers the user-defined search location defined by
+     * {@link IDP_HOME_PROPERTY} in the application context. Defaults to the well-known search locations returned from
+     * {@link #getSearchLocations()}.
+     * 
+     * @param applicationContext the application context
+     * @return the search locations used to search for the target
+     * @throws net.shibboleth.utilities.java.support.logic.ConstraintViolationException if the user-defined search
+     *             location is empty or ends with '/'
+     */
+    @Nonnull public String[] selectSearchLocations(@Nonnull final ConfigurableApplicationContext applicationContext) {
+        Constraint.isNotNull(applicationContext, "Application context cannot be null");
+        final String homeProperty = applicationContext.getEnvironment().getProperty(IDP_HOME_PROPERTY);
+        if (homeProperty != null) {
+            Constraint.isNotEmpty(homeProperty, "idp.home cannot be empty");
+            Constraint.isFalse(homeProperty.endsWith("/"), "idp.home cannot end with '/'");
+        }
+        return (homeProperty != null) ? new String[] {homeProperty} : getSearchLocations();
     }
 
     /**
