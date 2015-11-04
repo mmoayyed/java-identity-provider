@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.conn.ssl.StrictHostnameVerifier;
-import org.opensaml.security.httpclient.impl.TrustEngineTLSSocketFactory;
+import org.opensaml.security.httpclient.impl.SecurityEnhancedTLSSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -183,7 +183,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
         if (haveTLSTrustEngine) {
             clientBuilder.addPropertyValue("tLSSocketFactory",
-                    new TrustEngineTLSSocketFactory(HttpClientSupport.buildNoTrustTLSSocketFactory(),
+                    new SecurityEnhancedTLSSocketFactory(HttpClientSupport.buildNoTrustTLSSocketFactory(),
                             new StrictHostnameVerifier()));
         }
 
