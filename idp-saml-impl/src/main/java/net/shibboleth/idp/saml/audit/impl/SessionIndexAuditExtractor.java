@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.saml.audit.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -25,17 +29,19 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.SessionIndex;
 
 import com.google.common.base.Function;
 
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
-/** {@link Function} that returns the first SessionIndex from an assertions in a response. */
-public class SessionIndexAuditExtractor implements Function<ProfileRequestContext,String> {
+/** {@link Function} that returns SessionIndex values from assertions in a response or a logout request. */
+public class SessionIndexAuditExtractor implements Function<ProfileRequestContext,Collection<String>> {
 
     /** Lookup strategy for message to read from. */
-    @Nonnull private final Function<ProfileRequestContext,SAMLObject> responseLookupStrategy;
+    @Nonnull private final Function<ProfileRequestContext,SAMLObject> messageLookupStrategy;
     
     /**
      * Constructor.
@@ -43,32 +49,45 @@ public class SessionIndexAuditExtractor implements Function<ProfileRequestContex
      * @param strategy lookup strategy for message
      */
     public SessionIndexAuditExtractor(@Nonnull final Function<ProfileRequestContext,SAMLObject> strategy) {
-        responseLookupStrategy = Constraint.isNotNull(strategy, "Response lookup strategy cannot be null");
+        messageLookupStrategy = Constraint.isNotNull(strategy, "Message lookup strategy cannot be null");
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
-    @Nullable public String apply(@Nullable final ProfileRequestContext input) {
-        SAMLObject response = responseLookupStrategy.apply(input);
-        if (response != null) {
+    @Nullable public Collection<String> apply(@Nullable final ProfileRequestContext input) {
+        
+        SAMLObject message = messageLookupStrategy.apply(input);
+        if (message != null) {
+            
+            final Collection<String> indexes = new ArrayList<>(1);
             
             // Step down into ArtifactResponses.
-            if (response instanceof ArtifactResponse) {
-                response = ((ArtifactResponse) response).getMessage();
+            if (message instanceof ArtifactResponse) {
+                message = ((ArtifactResponse) message).getMessage();
             }
             
-            if (response instanceof Response) {
-                for (final Assertion assertion : ((Response) response).getAssertions()) {
+            if (message instanceof Response) {
+                for (final Assertion assertion : ((Response) message).getAssertions()) {
                     for (final AuthnStatement statement : assertion.getAuthnStatements()) {
                         if (statement.getSessionIndex() != null) {
-                            return statement.getSessionIndex();
+                            indexes.add(statement.getSessionIndex());
                         }
                     }
                 }
+            } else if (message instanceof LogoutRequest) {
+                for (final SessionIndex index : ((LogoutRequest) message).getSessionIndexes()) {
+                    if (index != null && index.getSessionIndex() != null) {
+                        indexes.add(index.getSessionIndex());
+                    }
+                }
             }
+            
+            return indexes;
         }
         
-        return null;
+        return Collections.emptyList();
     }
+// Checkstyle: CyclomaticComplexity ON
     
 }
