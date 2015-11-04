@@ -304,7 +304,7 @@
         class="org.opensaml.security.httpclient.impl.TrustEngineTLSSocketFactory">
         <constructor-arg>
             <bean class="net.shibboleth.utilities.java.support.httpclient.HttpClientSupport"
-                factory-method="buildNoTrustSSLConnectionSocketFactory" />
+                factory-method="buildNoTrustTLSSocketFactory" />
         </constructor-arg>
         <constructor-arg>
             <bean class="org.apache.http.conn.ssl.StrictHostnameVerifier" />

@@ -192,7 +192,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
 
         if (haveTLSTrustEngine) {
             clientBuilder.addPropertyValue("tLSSocketFactory",
-                    new TrustEngineTLSSocketFactory(HttpClientSupport.buildNoTrustSSLConnectionSocketFactory(),
+                    new TrustEngineTLSSocketFactory(HttpClientSupport.buildNoTrustTLSSocketFactory(),
                             new StrictHostnameVerifier()));
         }
 

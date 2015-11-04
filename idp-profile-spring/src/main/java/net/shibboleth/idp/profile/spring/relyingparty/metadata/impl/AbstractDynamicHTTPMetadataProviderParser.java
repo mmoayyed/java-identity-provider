@@ -183,7 +183,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
         if (haveTLSTrustEngine) {
             clientBuilder.addPropertyValue("tLSSocketFactory",
-                    new TrustEngineTLSSocketFactory(HttpClientSupport.buildNoTrustSSLConnectionSocketFactory(),
+                    new TrustEngineTLSSocketFactory(HttpClientSupport.buildNoTrustTLSSocketFactory(),
                             new StrictHostnameVerifier()));
         }
 
