@@ -47,12 +47,12 @@ import org.springframework.util.StringUtils;
  * context environment. The 'conf/idp.properties' file is searched for in well known locations. The 'idp.home' property
  * will be set to the normalized search location if the properties file is found and the property is not already set.
  */
-public class IdPPropertiesApplicationContextInitializer implements
-        ApplicationContextInitializer<ConfigurableApplicationContext> {
+public class IdPPropertiesApplicationContextInitializer
+        implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     /** IdP home property. */
     @Nonnull @NotEmpty public static final String IDP_HOME_PROPERTY = "idp.home";
-    
+
     /** Property that points to more property sources. */
     @Nonnull @NotEmpty public static final String IDP_ADDITIONAL_PROPERTY = "idp.additionalProperties";
 
@@ -60,10 +60,7 @@ public class IdPPropertiesApplicationContextInitializer implements
     @Nonnull public static final String IDP_PROPERTIES = "/conf/idp.properties";
 
     /** Well known search locations. */
-    @Nonnull public static final String[] SEARCH_LOCATIONS =
-        {
-            "/opt/shibboleth-idp",
-        };
+    @Nonnull public static final String[] SEARCH_LOCATIONS = {"/opt/shibboleth-idp",};
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
@@ -198,7 +195,7 @@ public class IdPPropertiesApplicationContextInitializer implements
             }
         }
     }
-    
+
     /**
      * Log property names and values at debug level, suppressing properties whose name matches 'password'.
      * 
