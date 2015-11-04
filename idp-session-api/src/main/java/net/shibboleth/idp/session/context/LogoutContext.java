@@ -18,6 +18,8 @@
 package net.shibboleth.idp.session.context;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 
@@ -41,11 +43,15 @@ import com.google.common.collect.Multimap;
 public final class LogoutContext extends BaseContext {
 
     /** SP sessions needing logout. */
-    private Multimap<String,SPSession> sessionMap;
+    @Nonnull @NonnullElements private final Multimap<String,SPSession> sessionMap;
 
+    /** An index of the session objects by an externally assigned key. */
+    @Nonnull @NonnullElements private final Map<String,SPSession> keyedSessionMap;
+    
     /** Constructor. */
     public LogoutContext() {
         sessionMap = ArrayListMultimap.create(10, 1);
+        keyedSessionMap = new HashMap<>();
     }
 
     /**
@@ -56,7 +62,18 @@ public final class LogoutContext extends BaseContext {
     @Nonnull @NonnullElements @Live public Multimap<String,SPSession> getSessionMap() {
         return sessionMap;
     }
-    
+
+    /**
+     * Get a live view of the map of sessions keyed by an external value.
+     * 
+     * <p>This map can be used to index the sessions in the context according to a particular use case.</p>
+     * 
+     * @return keyed session mappings
+     */
+    @Nonnull @NonnullElements @Live public Map<String,SPSession> getKeyedSessionMap() {
+        return keyedSessionMap;
+    }
+
     /**
      * Get a live collection of sessions associated with a service.
      * 

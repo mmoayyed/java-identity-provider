@@ -53,6 +53,9 @@ import com.google.common.base.Predicates;
  * 
  * <p>A {@link SubjectContext} and {@link SessionContext} are also populated.</p>
  * 
+ * <p>Each {@link SPSession} is also assigned a unique number and inserted into the map
+ * returned by {@link LogoutContext#getKeyedSessionMap()}.</p> 
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link org.opensaml.profile.action.EventIds#INVALID_PROFILE_CTX}
  * @event {@link org.opensaml.profile.action.EventIds#IO_ERROR}
@@ -226,8 +229,10 @@ public class ProcessLogout extends AbstractProfileAction {
                 return;
             }
             
+            int count = 1;
             for (final SPSession spSession : session.getSPSessions()) {
                 logoutCtx.getSessionMap().put(spSession.getId(), spSession);
+                logoutCtx.getKeyedSessionMap().put(Integer.toString(count++), spSession);
             }
                 
             try {

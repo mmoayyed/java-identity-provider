@@ -7,6 +7,7 @@
 ## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
 ## profileRequestContext - root of context tree
 ## logoutContext - context with SPSession details for logout operation
+## flowSelector - bean that maps an SPSession to a logout propagation flow
 ## multiRPContext - context with RelyingPartyContexts and possibly SP UI information from the metadata
 ## htmlEncoder - HTMLEncoder class
 ## urlEncoder - urlEncoder class
@@ -16,7 +17,12 @@
 ## environment - Spring Environment object for property resolution
 ## custom - arbitrary object injected by deployer
 ##
-
+## The <li> items are an enumeration of the relying parties among the sessions
+## and are identified by an encoding of the name of the relying party.
+##
+## The iframes are bound to a single session and are associated back to the <li>
+## element for the relying party of their session.
+##
 #if ($logoutContext and !$logoutContext.getSessionMap().isEmpty())
     <ol>
         #foreach ($sp in $logoutContext.getSessionMap().keySet())
@@ -33,18 +39,41 @@
     </ol>
     <script src="$request.getContextPath()/js/jquery-2.1.4.min.js"></script>
     <script>
-        function onLoad(src, target, sessionKey) {
+    <!--
+        function check_status() {
+            // Check every property of the object.
+            for (flag in this) {
+                if (!flag) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Associative array keyed by SP name. Entries are an array keyed by session key.
+        var sessionTracker = new Object();
+        #foreach ($sp in $logoutContext.getSessionMap().keySet())
+            spTracker = new Object();
+            spTracker.status = check_status;
+            sessionTracker['result_$codecUtil.hex($sp.getBytes())'] = spTracker;
+        #end
+    
+        function onLoad(src, target, trackerId, sessionKey) {
             try {
                 var content = src.contents().text();
                 target.removeClass("success failure");
                 if (content && jQuery.parseJSON(content).result == "Success") {
-                    target.addClass("success");
-                    target.prop("title", "Successful logout")
+                    sessionTracker[trackerId]['_' + sessionKey] = true;
                 } else {
-                    target.addClass("failure");
-                    target.prop("title", "Failed logout")
+                    sessionTracker[trackerId]['_' + sessionKey] = true;
                 }
             } catch (e) {
+                sessionTracker[trackerId]['_' + sessionKey] = true;
+            }
+            if (sessionTracker[trackerId].status()) {
+                target.addClass("success");
+                target.prop("title", "Successful logout");
+            } else {
                 target.addClass("failure");
                 target.prop("title", "Failed logout")
             }
@@ -56,15 +85,14 @@
                 }
             }
         }
+    // -->
     </script>
-    #foreach ($sp in $logoutContext.getSessionMap().keySet())
-        #foreach ($session in $logoutContext.getSessions($sp))
-            #set ($skey = $session.getSPSessionKey())
-            #if ($flowSelector.apply($session))
-                <iframe id="sender_$codecUtil.hex($skey.getBytes())"
-                    src="$request.contextPath/profile/PropagateLogout?SessionKey=$urlEncoder.encode($skey)"
-                    style="display:none" onload="onLoad($(this), $('#result_$codecUtil.hex($sp.getBytes())'), '$skey')"></iframe>
-            #end
+    #foreach ($entry in $logoutContext.getKeyedSessionMap().entrySet())
+        #if ($flowSelector.apply($entry.getValue()))
+            #set ($trackerId = "result_$codecUtil.hex($entry.getValue().getId().getBytes())")
+            <iframe id="sender_$codecUtil.hex($entry.getKey().getBytes())"
+                src="$request.contextPath/profile/PropagateLogout?SessionKey=$urlEncoder.encode($entry.getKey())"
+                style="display:none" onload="onLoad($(this), $('#$trackerId'), '$trackerId', '$entry.getKey()')"></iframe>
         #end
     #end
 #end

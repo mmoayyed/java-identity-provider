@@ -66,6 +66,9 @@ import com.google.common.base.Predicates;
  * <p>A {@link SubjectContext} is also populated. If and only if a single {@link IdPSession} is resolved,
  * a {@link SessionContext} is also populated.</p>
  * 
+ * <p>Each {@link SPSession} is also assigned a unique number and inserted into the map
+ * returned by {@link LogoutContext#getKeyedSessionMap()}.</p> 
+ * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link EventIds#IO_ERROR}
@@ -257,6 +260,8 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             IdPSession single = null;
             LogoutContext logoutCtx = null;
             
+            int count = 1;
+            
             while (sessionIterator.hasNext()) {
                 final IdPSession session = sessionIterator.next();
                 
@@ -288,9 +293,10 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
                 for (final SPSession spSession : session.getSPSessions()) {
                     if (!sessionMatches(spSession)) {
                         logoutCtx.getSessionMap().put(spSession.getId(), spSession);
+                        logoutCtx.getKeyedSessionMap().put(Integer.toString(count++), spSession);
                     }
                 }
-                    
+
                 try {
                     sessionManager.destroySession(session.getId(), true);
                 } catch (final SessionException e) {

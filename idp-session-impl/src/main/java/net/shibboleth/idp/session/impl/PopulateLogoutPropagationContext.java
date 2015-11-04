@@ -18,7 +18,6 @@
 package net.shibboleth.idp.session.impl;
 
 import java.io.IOException;
-import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -206,12 +205,13 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
         if (logoutCtx == null) {
             throw new MessageException("LogoutContext not found in HTTP session.");
         }
-        for (Map.Entry<String, SPSession> entry : logoutCtx.getSessionMap().entries()) {
-            if (entry.getValue().getSPSessionKey().equals(sessionKey)) {
-                return entry.getValue();
-            }
+        
+        final SPSession s = logoutCtx.getKeyedSessionMap().get(sessionKey);
+        if (s == null) {
+            throw new MessageException("Session not found for key: " + sessionKey);
         }
-        throw new MessageException("Session not found for key: " + sessionKey);
+        
+        return s;
     }
 
     /**
