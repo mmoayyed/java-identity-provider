@@ -28,6 +28,7 @@ import org.opensaml.core.xml.XMLRuntimeException;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.core.xml.util.XMLObjectSupport.CloneOutputOption;
 import org.opensaml.saml.saml2.core.NameID;
 
 /**
@@ -95,7 +96,7 @@ public class NameIDPrincipal implements CloneablePrincipal {
     public NameIDPrincipal clone() throws CloneNotSupportedException {
         NameIDPrincipal copy = (NameIDPrincipal) super.clone();
         try {
-            copy.nameID = XMLObjectSupport.cloneXMLObject(nameID, true);
+            copy.nameID = XMLObjectSupport.cloneXMLObject(nameID, CloneOutputOption.RootDOMInNewDocument);
             copy.name = SerializeSupport.nodeToString(
                     Constraint.isNotNull(XMLObjectSupport.getMarshaller(copy.nameID),
                             "No marshaller for nameID").marshall(copy.nameID));

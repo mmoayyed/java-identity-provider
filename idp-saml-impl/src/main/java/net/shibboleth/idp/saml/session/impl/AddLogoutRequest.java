@@ -237,9 +237,6 @@ public class AddLogoutRequest extends AbstractProfileAction {
 
         try {
             final NameID nameId = XMLObjectSupport.cloneXMLObject(saml2Session.getNameID());
-            // Drop the cloned DOM so that encryption won't fail later.
-            nameId.releaseDOM();
-            nameId.releaseChildrenDOM(true);
             object.setNameID(nameId);
         } catch (final MarshallingException|UnmarshallingException e) {
             log.error("{} Error cloning NameID for use in LogoutRequest for {}", getLogPrefix(),

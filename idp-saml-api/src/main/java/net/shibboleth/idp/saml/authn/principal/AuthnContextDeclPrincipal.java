@@ -23,6 +23,7 @@ import org.opensaml.core.xml.XMLRuntimeException;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.core.xml.util.XMLObjectSupport.CloneOutputOption;
 import org.opensaml.saml.saml2.core.AuthnContextDecl;
 
 import net.shibboleth.idp.authn.principal.CloneablePrincipal;
@@ -102,7 +103,8 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
     public AuthnContextDeclPrincipal clone() throws CloneNotSupportedException {
         AuthnContextDeclPrincipal copy = (AuthnContextDeclPrincipal) super.clone();
         try {
-            copy.authnContextDecl = XMLObjectSupport.cloneXMLObject(authnContextDecl, true);
+            copy.authnContextDecl = XMLObjectSupport.cloneXMLObject(authnContextDecl, 
+                    CloneOutputOption.RootDOMInNewDocument);
             copy.name = SerializeSupport.nodeToString(
                     Constraint.isNotNull(XMLObjectSupport.getMarshaller(copy.authnContextDecl),
                             "No marshaller for AuthnContextDecl").marshall(copy.authnContextDecl));
