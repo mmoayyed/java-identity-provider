@@ -65,10 +65,10 @@
                 if (content && jQuery.parseJSON(content).result == "Success") {
                     sessionTracker[trackerId]['_' + sessionKey] = true;
                 } else {
-                    sessionTracker[trackerId]['_' + sessionKey] = true;
+                    sessionTracker[trackerId]['_' + sessionKey] = false;
                 }
             } catch (e) {
-                sessionTracker[trackerId]['_' + sessionKey] = true;
+                sessionTracker[trackerId]['_' + sessionKey] = false;
             }
             if (sessionTracker[trackerId].status()) {
                 target.addClass("success");
