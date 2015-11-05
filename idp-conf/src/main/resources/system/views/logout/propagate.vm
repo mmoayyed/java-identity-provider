@@ -43,7 +43,7 @@
         function check_status() {
             // Check every property of the object.
             for (flag in this) {
-                if (!flag) {
+                if (!this[flag]) {
                     return false;
                 }
             }
