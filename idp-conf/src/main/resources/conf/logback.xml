@@ -100,8 +100,37 @@
         </encoder>
     </appender>
 
+    <!-- F-TICKS audit log. -->
+    <appender name="IDP_FTICKS_AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${idp.home}/logs/idp-fticks.log</File>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${idp.home}/logs/idp-fticks-%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+            <maxHistory>180</maxHistory>
+        </rollingPolicy>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <Pattern>%msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- F-TICKS syslog destination. -->
+    <!--
+    <appender name="IDP_FTICKS_AUDIT_SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
+        <syslogHost>localhost</syslogHost>
+        <facility>AUTH</facility>
+        <suffixPattern>[%thread] %logger %msg</suffixPattern>
+    </appender>
+    -->
+
     <logger name="Shibboleth-Audit" level="ALL">
         <appender-ref ref="IDP_AUDIT"/>
+    </logger>
+
+    <logger name="Shibboleth-Audit-FTICKS" level="ALL">
+        <appender-ref ref="IDP_FTICKS_AUDIT"/>
+        <!-- <appender-ref ref="IDP_FTICKS_AUDIT_SYSLOG"/> -->
     </logger>
 
     <logger name="Shibboleth-Consent-Audit" level="ALL">
