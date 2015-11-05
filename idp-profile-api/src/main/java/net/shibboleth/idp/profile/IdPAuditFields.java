@@ -52,7 +52,10 @@ public final class IdPAuditFields {
 
     /** Username field. */
     @Nonnull @NotEmpty public static final String USERNAME = "u";
-    
+
+    /** Hashed username field. */
+    @Nonnull @NotEmpty public static final String HASHED_USERNAME = "HASHEDu";
+
     /** Attributes field. */
     @Nonnull @NotEmpty public static final String ATTRIBUTES = "attr";
     

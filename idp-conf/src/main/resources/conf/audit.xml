@@ -16,6 +16,10 @@
     -->
     <util:map id="shibboleth.AuditFormattingMap">
         <entry key="Shibboleth-Audit" value="%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i|" />
+        <!--        
+        <entry key="Shibboleth-Audit-FTICKS"
+            value="F-TICKS/%{idp.fticks.federation:Undefined}/1.0#TS=%T#RP=%SP#AP=%IDP#PN=%HASHEDu#AM=%ac#" />
+        -->
     </util:map>
 
     <!-- Allows auditing to be disabled selectively for particular profiles/flows. -->
