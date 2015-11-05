@@ -236,7 +236,7 @@ public class AddLogoutRequest extends AbstractProfileAction {
         object.setVersion(SAMLVersion.VERSION_20);
 
         try {
-            final NameID nameId = XMLObjectSupport.cloneXMLObject(saml2Session.getNameID());
+            final NameID nameId = XMLObjectSupport.cloneXMLObject(saml2Session.getNameID(), true);
             object.setNameID(nameId);
         } catch (final MarshallingException|UnmarshallingException e) {
             log.error("{} Error cloning NameID for use in LogoutRequest for {}", getLogPrefix(),
