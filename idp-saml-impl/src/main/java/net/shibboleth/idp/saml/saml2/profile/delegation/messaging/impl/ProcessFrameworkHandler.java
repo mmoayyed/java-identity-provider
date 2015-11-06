@@ -22,16 +22,19 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
 
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.openliberty.xmltooling.Konstantz;
 import org.openliberty.xmltooling.soapbinding.Framework;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
+import org.opensaml.soap.wsaddressing.WSAddressingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +87,9 @@ public class ProcessFrameworkHandler extends AbstractMessageHandler {
         } else {
             log.warn("Inbound Liberty ID-WSF Framework version '{}' did not match the expected value '{}'", 
                     headerVersion, getExpectedVersion());
+            SOAPMessagingSupport.registerSOAP11Fault(messageContext, 
+                    new QName(Konstantz.SBF_NS, Konstantz.Status.FRAMEWORK_VERSION_MISMATCH.getCode()),
+                    "Framework version not supported: " + headerVersion, null, null, null);
             throw new MessageHandlerException("Inbound Liberty ID-WSF Framework version " 
                     + "did not match the expected value");
         }
