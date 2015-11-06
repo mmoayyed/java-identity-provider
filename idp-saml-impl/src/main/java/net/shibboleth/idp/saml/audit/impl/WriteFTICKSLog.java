@@ -36,10 +36,6 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -59,9 +55,6 @@ public class WriteFTICKSLog extends AbstractProfileAction {
 
     /** Logging category to use. */
     @Nonnull @NotEmpty public static final String FTICKS_LOG_CATEGORY = "Shibboleth-FTICKS";
-    
-    /** Formatter used to convert timestamps to strings. */
-    private static DateTimeFormatter v2Formatter = ISODateTimeFormat.basicDateTimeNoMillis();
     
     /** Strategy used to locate the {@link AuditContext} associated with a given {@link ProfileRequestContext}. */
     @Nonnull private Function<ProfileRequestContext,AuditContext> auditContextLookupStrategy;
@@ -210,22 +203,6 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         }
         
     }
-
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        if (!super.doPreExecute(profileRequestContext)) {
-            return false;
-        }
-        
-        final String status = statusCodeLookupStrategy.apply(profileRequestContext);
-        if (status != null && (org.opensaml.saml.saml1.core.StatusCode.SUCCESS.getLocalPart().equals(status)
-                || org.opensaml.saml.saml2.core.StatusCode.SUCCESS.equals(status))) {
-            return true;
-        }
-        
-        return false;
-    }
     
     /** {@inheritDoc} */
     @Override
@@ -234,35 +211,37 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         //"F-TICKS/%{idp.fticks.federation:Undefined}/1.0#TS=%T#RP=%SP#AP=%IDP #PN=%HASHEDu#AM=%ac#"
         
         final StringBuilder record = new StringBuilder("F-TICKS/");
-        record.append(federationId);
-        record.append("/1.0#TS=");
-        record.append(new DateTime().toString(v2Formatter.withZone(DateTimeZone.UTC)));
+        record.append(federationId).append("/1.0#TS=").append(System.currentTimeMillis() / 1000);
         
-        record.append("#RP=");
         String field = relyingPartyLookupStrategy.apply(profileRequestContext);
         if (!field.isEmpty()) {
-            record.append(field);
+            record.append("#RP=").append(field);
         }
 
-        record.append("#AP=");
         field = responderLookupStrategy.apply(profileRequestContext);
         if (!field.isEmpty()) {
-            record.append(field);
+            record.append("#AP=").append(field);
         }
         
-        record.append("#PN=");
         field = usernameLookupStrategy.apply(profileRequestContext);
         if (!field.isEmpty()) {
             field = digester.apply(field);
             if (!field.isEmpty()) {
-                record.append(field);
+                record.append("#PN=").append(field);
             }
         }
         
-        record.append("#AM=");
         field = authenticationMethodLookupStrategy.apply(profileRequestContext);
         if (!field.isEmpty()) {
-            record.append(field);
+            record.append("#AM=").append(field);
+        }
+        
+        field = statusCodeLookupStrategy.apply(profileRequestContext);
+        if (field != null && (org.opensaml.saml.saml1.core.StatusCode.SUCCESS.getLocalPart().equals(field)
+                || org.opensaml.saml.saml2.core.StatusCode.SUCCESS.equals(field))) {
+            record.append("#RESULT=OK");
+        } else {
+            record.append("#RESULT=FAIL");
         }
 
         record.append("#");
