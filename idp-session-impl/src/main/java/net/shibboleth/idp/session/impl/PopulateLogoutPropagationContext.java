@@ -84,7 +84,11 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
     
     /** {@link SPSession} to operate on. */
     @Nullable private SPSession session;
-    
+
+    /** The value used to look up a session by reference. */
+    @Nullable private String sessionKey;
+
+
     /** Constructor. */
     public PopulateLogoutPropagationContext() {
         contextCreationStrategy = new ChildContextLookup<>(LogoutPropagationContext.class, true);
@@ -156,7 +160,8 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
         final String sessionVal = requestContext.getRequestParameters().get(SESSION_PARAM_BYVAL);
         try {
             if (sessionRef != null) {
-                session = getSessionByReference(requestContext, sessionRef);
+                sessionKey = sessionRef;
+                session = getSessionByReference(requestContext, sessionKey);
             } else if (sessionVal != null) {
                 session = getSessionByValue(sessionVal);
             } else {
@@ -164,6 +169,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
                 ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);
                 return false;
             }
+            log.debug("{} Got session to propagate logout: {}", getLogPrefix(), session);
         } catch (MessageDecodingException e) {
             log.warn("{} Message decoding exception: {}", e.getMessage());
             ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);
@@ -187,6 +193,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
             return;
         }
         logoutPropCtx.setSession(session);
+        logoutPropCtx.setSessionKey(sessionKey);
     }
 
     /**

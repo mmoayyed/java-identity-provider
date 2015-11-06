@@ -43,6 +43,9 @@ public class LogoutPropagationContext extends BaseContext {
     /** SP session to be destroyed. */
     @Nullable private SPSession session;
 
+    /** Session key. */
+    @Nullable private String sessionKey;
+
     /** Result of logout propagation flow. */
     @Nonnull private Result result = Result.Failure;
 
@@ -65,6 +68,24 @@ public class LogoutPropagationContext extends BaseContext {
      */
     public void setSession(@Nullable final SPSession theSession) {
         session = theSession;
+    }
+
+    /**
+     * Gets the key under which the {@link SPSession} was stored in {@link LogoutContext#getKeyedSessionMap()}.
+     *
+     * @return Session key.
+     */
+    @Nullable public String getSessionKey() {
+        return sessionKey;
+    }
+
+    /**
+     * Sets the key under which the {@link SPSession} was stored in {@link LogoutContext#getKeyedSessionMap()}.
+     *
+     * @param key Session key.
+     */
+    public void setSessionKey(final @Nullable String key) {
+        this.sessionKey = key;
     }
 
     /**
