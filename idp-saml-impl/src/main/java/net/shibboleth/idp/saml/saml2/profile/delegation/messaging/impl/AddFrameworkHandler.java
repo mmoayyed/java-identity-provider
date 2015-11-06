@@ -26,16 +26,16 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.openliberty.xmltooling.soapbinding.Framework;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
+import org.opensaml.soap.messaging.impl.AbstractHeaderGeneratingMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Handler implementation that adds a Liberty sbf:Framework header to the outbound SOAP envelope.
  */
-public class AddFrameworkHandler extends AbstractMessageHandler {
+public class AddFrameworkHandler extends AbstractHeaderGeneratingMessageHandler {
     
     /** Default Framework version. */
     public static final String DEFAULT_VERSION = "2.0";
@@ -71,6 +71,7 @@ public class AddFrameworkHandler extends AbstractMessageHandler {
         log.debug("Issuing Liberty ID-WSF Framework header with version value: {}", getVersion());
         Framework framework = (Framework) XMLObjectSupport.buildXMLObject(Framework.DEFAULT_ELEMENT_NAME);
         framework.setVersion(getVersion());
+        decorateGeneratedHeader(messageContext, framework);
         SOAPMessagingSupport.addHeaderBlock(messageContext, framework);
     }
 

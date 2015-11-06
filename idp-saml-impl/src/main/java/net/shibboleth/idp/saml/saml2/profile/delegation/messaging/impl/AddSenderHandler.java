@@ -27,10 +27,10 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.openliberty.xmltooling.soapbinding.Sender;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
+import org.opensaml.soap.messaging.impl.AbstractHeaderGeneratingMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import com.google.common.base.Function;
 /**
  * Handler implementation that adds a Liberty sb:Sender header to the outbound SOAP envelope.
  */
-public class AddSenderHandler extends AbstractMessageHandler {
+public class AddSenderHandler extends AbstractHeaderGeneratingMessageHandler {
     
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(AddSenderHandler.class);
@@ -86,6 +86,7 @@ public class AddSenderHandler extends AbstractMessageHandler {
         log.debug("Issuing Liberty ID-WSF Sender with providerId value: {}", providerId);
         Sender sender = (Sender) XMLObjectSupport.buildXMLObject(LibertyConstants.SOAP_BINDING_SENDER_ELEMENT_NAME);
         sender.setProviderID(providerId);
+        decorateGeneratedHeader(messageContext, sender);
         SOAPMessagingSupport.addHeaderBlock(messageContext, sender);
     }
     
