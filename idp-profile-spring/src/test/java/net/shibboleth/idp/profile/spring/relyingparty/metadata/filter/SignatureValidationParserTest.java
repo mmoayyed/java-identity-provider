@@ -115,7 +115,7 @@ public class SignatureValidationParserTest extends AbstractMetadataParserTest {
         Assert.assertSame(filter.getDynamicTrustedNamesStrategy(), context.getBean("test.DynamicTrustedNamesStrategy"));
         
         // Test the other args just for the hell of it
-        Assert.assertFalse(filter.getRequireSignature());
+        Assert.assertFalse(filter.getRequireSignedRoot());
         Assert.assertSame(filter.getSignatureTrustEngine(), context.getBean("bean.pem"));
     }
 
