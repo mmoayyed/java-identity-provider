@@ -48,6 +48,7 @@ import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventException;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -309,11 +310,11 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             log.debug("Decorating assertion for use as delegated token");
             decorateDelegatedAssertion(profileRequestContext);
         } catch (EventException e) {
-            if (Objects.equals(EventIds.PROCEED_EVENT_ID, e.getEvent())) {
+            if (Objects.equals(EventIds.PROCEED_EVENT_ID, e.getEventID())) {
                 log.debug("Decoration of Assertion for delegation terminated with explicit proceed signal");
             } else {
                 log.warn("Decoration of Assertion for delegation terminated with explicit non-proceed signal", e);
-                ActionSupport.buildEvent(profileRequestContext, e.getEvent());
+                ActionSupport.buildEvent(profileRequestContext, e.getEventID());
             }
         }
     }
@@ -594,42 +595,5 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
                 return null;
             }
         }
-    }
-    
-    /**
-     * Internal runtime exception class used to terminate processing and communicate 
-     * a failure event up the call stack to a common location for production of the action event to 
-     * be returned.
-     */
-    private static class EventException extends RuntimeException {
-        
-        /** Serial version UID. */
-        private static final long serialVersionUID = -9159689696046606020L;
-        
-        /** The event ID. */
-        private final String eventID;
-
-        /**
-         * Constructor.
-         *
-         * @param event the event ID
-         * @param message the exception details message
-         * @param cause the exception cause
-         */
-        public EventException(@Nonnull final String event, @Nullable final String message, 
-                @Nullable final Throwable cause) {
-            super(message, cause);
-            eventID = Constraint.isNotNull(StringSupport.trimOrNull(event), "Event ID may not be null");
-        }
-
-        /**
-         * Get the event represented by this exception.
-         * 
-         * @return the event ID
-         */
-        @Nonnull public String getEvent() {
-            return eventID;
-        }
-        
     }
 }
