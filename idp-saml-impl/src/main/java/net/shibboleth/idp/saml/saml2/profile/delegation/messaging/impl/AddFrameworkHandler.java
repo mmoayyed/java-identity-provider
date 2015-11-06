@@ -27,8 +27,8 @@ import org.openliberty.xmltooling.soapbinding.Framework;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.MessageHandlerException;
+import org.opensaml.soap.messaging.AbstractHeaderGeneratingMessageHandler;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
-import org.opensaml.soap.messaging.impl.AbstractHeaderGeneratingMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
