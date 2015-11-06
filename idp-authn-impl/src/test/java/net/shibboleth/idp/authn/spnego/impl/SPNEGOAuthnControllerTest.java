@@ -395,6 +395,23 @@ public class SPNEGOAuthnControllerTest {
         Assert.assertTrue(s.getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("testname@realm")));
     }
 
+    @Test
+    public void givenGSSContextEstablishedButNoGSSNameIsNull_continueSPNEGO_shouldSetAuthenticationSubjectAttribute()
+            throws LoginException, GSSException, PrivilegedActionException, ExternalAuthenticationException,
+            IOException, Exception {
+        GSSContext mockGSSContext = mock(GSSContext.class);
+        when(mockGSSContextAcceptor.acceptSecContext(Matchers.<byte[]> any(), anyInt(), anyInt())).thenReturn(
+                "tokenBytes".getBytes());
+        when(mockGSSContextAcceptor.getContext()).thenReturn(mockGSSContext);
+        when(mockGSSContext.isEstablished()).thenReturn(true);
+        when(mockGSSContext.getSrcName()).thenReturn(null);
+        MockHttpServletRequest req = buildSPNEGOHttpServletRequest(NEGOTIATE_HEADER_DATA);
+        ModelAndView mv = mockedGSSController.continueSPNEGO(TEST_CONVERSATION_KEY, "Negotiate " + NEGOTIATE_HEADER_DATA, req, null);
+        Assert.assertNull(mv);
+        Assert.assertEquals(((ExternalAuthenticationException) req
+                .getAttribute(ExternalAuthentication.AUTHENTICATION_EXCEPTION_KEY)).getClass(),ExternalAuthenticationException.class);
+    }
+
     private MockHttpServletRequest buildSPNEGOHttpServletRequest(String negotiateHeaderData) {
         MockHttpServletRequest req = buildKerberosContextHttpServletRequest();
         req.addHeader(HttpHeaders.AUTHORIZATION, "Negotiate " + negotiateHeaderData);

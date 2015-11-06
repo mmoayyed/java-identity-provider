@@ -175,6 +175,14 @@ public class SPNEGOAuthnController {
             log.debug("GSS security context is complete");
             try {
                 final GSSName clientGSSName = acceptor.getContext().getSrcName();
+                if (clientGSSName == null) {
+                    // This case should never happen, but we observed it. Handle it as authentication failure.
+                    log.error("Error extracting principal name from security context");
+                    acceptor.logout();
+                    finishWithException(conversationKey, httpRequest, httpResponse,
+                            new ExternalAuthenticationException(SPNEGO_NOT_AVAILABLE));
+                    return null;
+                }
                 final KerberosPrincipal kerberosPrincipal = new KerberosPrincipal(clientGSSName.toString());
 
                 log.info("SPNEGO/Kerberos authentication succeeded for principal: {}", clientGSSName.toString());
