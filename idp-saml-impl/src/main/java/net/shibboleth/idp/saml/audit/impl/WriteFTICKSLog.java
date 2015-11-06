@@ -198,6 +198,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         try {
             digester = new StringDigester(digestAlgorithm, StringDigester.OutputFormat.HEX_LOWER);
             digester.setSalt(salt);
+            digester.setRequireSalt(true);
         } catch (final NoSuchAlgorithmException e) {
             throw new ComponentInitializationException(e);
         }
