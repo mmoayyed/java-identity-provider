@@ -72,7 +72,7 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
      * @param password password for the private key, may be null if the key is not encrypted
      */
     public void setPrivateKeyPassword(@Nullable final String password) {
-        keyPass = StringSupport.trimOrNull(password);
+        keyPass = password;
     }
     
     /**
@@ -103,7 +103,7 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
 
             X509Certificate certificate;
             try (final InputStream is = certResource.getInputStream()) {
-                certificate = (X509Certificate) CertUtil.readCertificate(is);
+                certificate = CertUtil.readCertificate(is);
             }
             
             if (keyResource == null) {

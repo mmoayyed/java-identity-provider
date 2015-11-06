@@ -184,7 +184,7 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
         final String proxyHost = getAttribute(element, PROXY_HOST_ATTRIB_NAME, parserContext);
         final String proxyPort = getAttribute(element, PROXY_PORT_ATTRIB_NAME, parserContext);
         final String proxyUser = getAttribute(element, PROXY_USERNAME_ATTRIB_NAME, parserContext);
-        final String proxyPassword = getAttribute(element, PROXY_PASSWORD_ATTRIB_NAME, parserContext);
+        final String proxyPassword = getAttribute(element, PROXY_PASSWORD_ATTRIB_NAME, parserContext, false);
 
         BeanDefinitionBuilder authnManager =
                 BeanDefinitionBuilder.genericBeanDefinition(SVNBasicAuthenticationManager.class);
@@ -243,20 +243,38 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
      * @param element resource configuration element
      * @param parserContext the parser context. Used to provide the failing location.
      * @param attributeName the attribute to look up.
+     * @param trim whether to trim leading and trailing spaces.
+     * @return value of the attribute
+     * 
+     */
+    @Nullable protected String getAttribute(final Element element, final String attributeName,
+            final ParserContext parserContext, final boolean trim) {
+        if (element.hasAttributeNS(null, attributeName)) {
+            String value = element.getAttributeNS(null, attributeName);
+            if (trim) {
+                value = StringSupport.trimOrNull(value);
+            }
+            if (value == null) {
+                error("SVN resource definition attribute '" + attributeName + "' may not be an empty string",
+                        parserContext);
+            }
+            return value;
+        }
+        return null;
+    }
+
+    /**
+     * Gets the value of the supplied attribute.
+     * 
+     * @param element resource configuration element
+     * @param parserContext the parser context. Used to provide the failing location.
+     * @param attributeName the attribute to look up.
      * @return value of the attribute
      * 
      */
     @Nullable protected String getAttribute(final Element element, final String attributeName,
             final ParserContext parserContext) {
-        if (element.hasAttributeNS(null, attributeName)) {
-            String username = StringSupport.trimOrNull(element.getAttributeNS(null, attributeName));
-            if (username == null) {
-                error("SVN resource definition attribute '" + attributeName + "' may not be an empty string",
-                        parserContext);
-            }
-            return username;
-        }
-        return null;
+        return getAttribute(element, attributeName, parserContext, true);
     }
 
     /**

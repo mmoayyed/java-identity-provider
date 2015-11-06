@@ -221,8 +221,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
         }
 
         if (element.hasAttributeNS(null, "proxyPassword")) {
-            clientBuilder.addPropertyValue("connectionProxyPassword",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "proxyPassword")));
+            clientBuilder.addPropertyValue("connectionProxyPassword", element.getAttributeNS(null, "proxyPassword"));
         }
 
         return clientBuilder.getBeanDefinition();
