@@ -205,6 +205,7 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -215,25 +216,25 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         record.append(federationId).append("/1.0#TS=").append(System.currentTimeMillis() / 1000);
         
         String field = relyingPartyLookupStrategy.apply(profileRequestContext);
-        if (!field.isEmpty()) {
+        if (field != null && !field.isEmpty()) {
             record.append("#RP=").append(field);
         }
 
         field = responderLookupStrategy.apply(profileRequestContext);
-        if (!field.isEmpty()) {
+        if (field != null && !field.isEmpty()) {
             record.append("#AP=").append(field);
         }
         
         field = usernameLookupStrategy.apply(profileRequestContext);
-        if (!field.isEmpty()) {
+        if (field != null && !field.isEmpty()) {
             field = digester.apply(field);
-            if (!field.isEmpty()) {
+            if (field != null && !field.isEmpty()) {
                 record.append("#PN=").append(field);
             }
         }
         
         field = authenticationMethodLookupStrategy.apply(profileRequestContext);
-        if (!field.isEmpty()) {
+        if (field != null && !field.isEmpty()) {
             record.append("#AM=").append(field);
         }
         
@@ -248,5 +249,6 @@ public class WriteFTICKSLog extends AbstractProfileAction {
         record.append("#");
         LoggerFactory.getLogger(FTICKS_LOG_CATEGORY).info(record.toString());
     }
+// Checkstyle: CyclomaticComplexity ON
     
 }
