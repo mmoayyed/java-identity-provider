@@ -11,7 +11,7 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>Shibboleth IdP :: War</name>
+    <name>Shibboleth IdP :: WAR</name>
     <artifactId>idp-war</artifactId>
     <packaging>war</packaging>
 
