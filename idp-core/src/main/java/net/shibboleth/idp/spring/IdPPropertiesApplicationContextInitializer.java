@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -44,6 +45,8 @@ import org.springframework.util.StringUtils;
  * An {@link ApplicationContextInitializer} which attempts to add a properties file property source to the application
  * context environment. The 'conf/idp.properties' file is searched for in well known locations. The 'idp.home' property
  * will be set to the normalized search location if the properties file is found and the property is not already set.
+ * 
+ * TODO Doc fail fast.
  */
 public class IdPPropertiesApplicationContextInitializer
         implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -59,6 +62,9 @@ public class IdPPropertiesApplicationContextInitializer
 
     /** Well known search locations. */
     @Nonnull public static final String[] SEARCH_LOCATIONS = {"/opt/shibboleth-idp",};
+    
+    /** Property controlling whether to fail fast. */
+    @Nonnull public static final String FAILFAST_PROPERTY = "idp.initializer.failFast";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
@@ -82,8 +88,13 @@ public class IdPPropertiesApplicationContextInitializer
 
                 final Properties properties = loadProperties(null, resource);
                 if (properties == null) {
-                    log.warn("Unable to load properties from resource '{}'", resource);
-                    return;
+                    if (isFailFast(applicationContext)) {
+                        log.error("Unable to load properties from resource '{}'", resource);
+                        throw new ConstraintViolationException("Unable to load properties from resource");
+                    } else {
+                        log.warn("Unable to load properties from resource '{}'", resource);
+                        return;
+                    }
                 }
 
                 if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
@@ -99,11 +110,18 @@ public class IdPPropertiesApplicationContextInitializer
 
                 appendPropertySource(applicationContext, resource.toString(), properties);
 
+                // Search target was found and initialization was successful, we're done.
                 return;
             }
         }
 
-        log.warn("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
+        if (isFailFast(applicationContext)) {
+            log.error("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
+            throw new ConstraintViolationException(
+                    "Unable to find '" + getSearchTarget() + "' at well known locations");
+        } else {
+            log.warn("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
+        }
     }
 
     /**
@@ -129,15 +147,16 @@ public class IdPPropertiesApplicationContextInitializer
      * {@link IDP_HOME_PROPERTY} in the application context. Defaults to the well-known search locations returned from
      * {@link #getSearchLocations()}.
      * 
+     * TODO Doc fail fast.
+     * 
      * @param applicationContext the application context
      * @return the search locations used to search for the target
-     * @throws net.shibboleth.utilities.java.support.logic.ConstraintViolationException if the user-defined search
-     *             location is empty or ends with '/'
+     * @throws ConstraintViolationException if the user-defined search location is empty or ends with '/'
      */
     @Nonnull public String[] selectSearchLocations(@Nonnull final ConfigurableApplicationContext applicationContext) {
         Constraint.isNotNull(applicationContext, "Application context cannot be null");
         final String homeProperty = applicationContext.getEnvironment().getProperty(IDP_HOME_PROPERTY);
-        if (homeProperty != null) {
+        if (homeProperty != null && isFailFast(applicationContext)) {
             Constraint.isNotEmpty(homeProperty, "idp.home cannot be empty");
             Constraint.isFalse(homeProperty.endsWith("/"), "idp.home cannot end with '/'");
         }
@@ -174,6 +193,8 @@ public class IdPPropertiesApplicationContextInitializer
      * File names of additional property sources are defined by {@link #IDP_ADDITIONAL_PROPERTY}, and are resolved
      * relative to the given search location.
      * 
+     * TODO Doc fail fast.
+     * 
      * @param applicationContext the application context
      * @param searchLocation the location from which additional property sources are resolved
      * @param properties the properties to be filled with additional property sources
@@ -194,8 +215,13 @@ public class IdPPropertiesApplicationContextInitializer
                 if (additionalResource.exists()) {
                     log.debug("Found resource '{}' at search path '{}'", additionalResource, pathifiedSource);
                     if (loadProperties(properties, additionalResource) == null) {
-                        log.warn("Unable to load properties from resource '{}'", additionalResource);
-                        continue;
+                        if (isFailFast(applicationContext)) {
+                            log.error("Unable to load properties from resource '{}'", additionalResource);
+                            throw new ConstraintViolationException("Unable to load properties from resource");
+                        } else {
+                            log.warn("Unable to load properties from resource '{}'", additionalResource);
+                            continue;
+                        }
                     }
                 } else {
                     log.warn("Unable to find resource '{}'", additionalResource);
@@ -265,6 +291,19 @@ public class IdPPropertiesApplicationContextInitializer
         log.debug("Setting '{}' property to '{}'", IDP_HOME_PROPERTY, path);
 
         properties.setProperty(IDP_HOME_PROPERTY, path);
+    }
+
+    /**
+     * Whether we fail immediately if the config is bogus. Defaults to true. Controlled by the value of the
+     * {@link #FAILFAST_PROPERTY}.
+     * 
+     * @param applicationContext the application context
+     * @return whether we fail immediately if the config is bogus
+     */
+    public boolean isFailFast(@Nonnull final ConfigurableApplicationContext applicationContext) {
+        Constraint.isNotNull(applicationContext, "Application context cannot be null");
+        final String failFast = applicationContext.getEnvironment().getProperty(FAILFAST_PROPERTY);
+        return (failFast == null) ? true : Boolean.parseBoolean(failFast);
     }
 
 }
