@@ -23,6 +23,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.DataProvider;
@@ -39,6 +40,7 @@ import static org.testng.Assert.*;
         locations = "/spring/proxy-authn-test.xml",
         initializers = IdPPropertiesApplicationContextInitializer.class)
 @WebAppConfiguration
+@TestPropertySource(properties = {"idp.initializer.failFast = false"})
 public class HttpClientProxyAuthenticatorTest extends AbstractTestNGSpringContextTests {
 
     private HttpClientProxyAuthenticator authenticator = new HttpClientProxyAuthenticator();

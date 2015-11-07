@@ -34,6 +34,7 @@ import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.webflow.execution.RequestContext;
@@ -52,6 +53,7 @@ import static org.mockito.Mockito.when;
         },
         initializers = IdPPropertiesApplicationContextInitializer.class)
 @WebAppConfiguration
+@TestPropertySource(properties = {"idp.initializer.failFast = false"})
 public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContextTests {
 
     protected static final String TEST_SESSION_ID = "+TkSGIRofZyue/p8F4M7TA==";
