@@ -9,7 +9,7 @@
     xsi:type="metadata:SignatureValidation" 
     
     trustEngineRef="bean.pem"
-    requireSignedMetadata="false"
+    requireSignedRoot="false"
     
     defaultCriteriaRef="test.CriteriaSet"
     signaturePrevalidatorRef="test.SignaturePrevalidator"

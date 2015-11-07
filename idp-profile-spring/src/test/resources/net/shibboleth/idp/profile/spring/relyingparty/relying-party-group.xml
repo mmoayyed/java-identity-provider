@@ -84,7 +84,7 @@
 			xsi:type="metadata:FilesystemMetadataProvider" metadataFile="${DIR}/test-metadata-out.xml">
 			<metadata:MetadataFilter xsi:type="metadata:ChainingFilter">
 				<metadata:MetadataFilter xsi:type="metadata:SignatureValidation"
-					requireSignedMetadata="true">
+					requireSignedRoot="true">
 					<metadata:PublicKey>
 						MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
 						uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/

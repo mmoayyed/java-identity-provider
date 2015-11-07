@@ -7,7 +7,7 @@
     failFastInitialization="false"
 	id="signingNoCheck" xsi:type="metadata:InlineMetadataProvider">
 	
-	<metadata:MetadataFilter xsi:type="metadata:SignatureValidation" trustEngineRef="bean.pem" requireSignedMetadata="false"/>
+	<metadata:MetadataFilter xsi:type="metadata:SignatureValidation" trustEngineRef="bean.pem" requireSignedRoot="false"/>
 	
 	<EntityDescriptor ID="uk001502"
 		entityID="https://sp.example.org/sp/shibboleth">

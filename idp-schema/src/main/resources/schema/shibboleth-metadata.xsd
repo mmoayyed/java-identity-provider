@@ -809,10 +809,18 @@
                         <documentation>The ID of the trust engine used to validate the signature.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="requireSignedRoot" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a signature is required on the incoming metadata's root element.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="requireSignedMetadata" type="string">
                     <annotation>
                         <documentation>
-                            A boolean flag indicating whether a signature is required on incoming metadata.
+                            A boolean flag indicating whether a signature is required on the incoming metadata's root element.
+                            Deprecated: Use 'requireSignedRoot' instead.
                         </documentation>
                     </annotation>
                 </attribute>

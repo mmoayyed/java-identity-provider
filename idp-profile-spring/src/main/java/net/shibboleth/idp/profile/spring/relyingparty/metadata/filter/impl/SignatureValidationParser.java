@@ -122,8 +122,13 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
             buildTrustEngine(builder, buildPublicKeyCredential(parserContext, publicKeys));
         }
 
-        if (element.hasAttributeNS(null, "requireSignedMetadata")) {
-            builder.addPropertyValue("requireSignature", element.getAttributeNS(null, "requireSignedMetadata"));
+        if (element.hasAttributeNS(null, "requireSignedRoot")) {
+            builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedRoot"));
+        } else if (element.hasAttributeNS(null, "requireSignedMetadata")) {
+            log.warn("{} Use of the attribute 'requireSignedMetadata' is deprecated, " 
+                    + "use 'requireSignedRoot' instead", 
+                    parserContext.getReaderContext().getResource().getDescription());
+            builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedMetadata"));
         }
 
         if (element.hasAttributeNS(null, "defaultCriteriaRef")) {

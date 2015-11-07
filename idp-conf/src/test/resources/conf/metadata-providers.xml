@@ -20,7 +20,7 @@
 	<!-- Example metadata provider. -->
 
     <MetadataProvider id="URLMD" xsi:type="ResourceBackedMetadataProvider" maxRefreshDelay="PT5M">
-        <MetadataFilter xsi:type="SignatureValidation" requireSignedMetadata="false"> <!-- TODO -->
+        <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="false"> <!-- TODO -->
             <PublicKey>
                 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxg0TyQAP/tIvOH89EtaX
                 uRRn8SYzTj7W1TbNY4VvBmobjkRmSkki4hH9x4sQpi635wn6WtXTN/FNNmkTK3N/
