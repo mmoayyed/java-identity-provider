@@ -29,6 +29,7 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.idp.test.InMemoryDirectory;
 import net.shibboleth.idp.test.PreferFileSystemApplicationContextInitializer;
 import net.shibboleth.idp.test.PreferFileSystemContextLoader;
+import net.shibboleth.idp.test.TestEnvironmentApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.net.HttpServletRequestResponseContext;
@@ -87,9 +88,17 @@ import com.unboundid.ldap.sdk.LDAPException;
 /**
  * Abstract flow test.
  */
-@ContextConfiguration(locations = {"/system/conf/global-system.xml", "/system/conf/mvc-beans.xml",
-        "/system/conf/webflow-config.xml", "/test/test-beans.xml", "/test/override-beans.xml",}, initializers = {
-        PreferFileSystemApplicationContextInitializer.class, IdPPropertiesApplicationContextInitializer.class},
+@ContextConfiguration(
+        locations = {
+                "/system/conf/global-system.xml",
+                "/system/conf/mvc-beans.xml",
+                "/system/conf/webflow-config.xml",
+                "/test/test-beans.xml",
+                "/test/override-beans.xml",},
+        initializers = {
+                TestEnvironmentApplicationContextInitializer.class,
+                PreferFileSystemApplicationContextInitializer.class,
+                IdPPropertiesApplicationContextInitializer.class},
         loader = PreferFileSystemContextLoader.class)
 @WebAppConfiguration
 public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests {
@@ -176,26 +185,6 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
     /** SP certificate wired via test/test-beans.xml. */
     @Autowired @Qualifier("test.sp.X509Certificate") protected X509CertificateFactoryBean certFactoryBean;
 
-    static {
-        setIdPHomeProperty();
-        setAuthnFlowsProperty();
-    }
-
-    /**
-     * Set the 'idp.home' property to "classpath:".
-     */
-    public static void setIdPHomeProperty() {
-        System.setProperty("idp.home", "classpath:");
-        System.setProperty("idp.webflows", "classpath*:/flows");
-    }
-
-    /**
-     * Sets the 'idp.authn.flows' property to "Password".
-     */
-    public static void setAuthnFlowsProperty() {
-        System.setProperty("idp.authn.flows", "Password");
-    }
-    
     /**
      * {@link HttpServletRequestResponseContext#clearCurrent()}
      */

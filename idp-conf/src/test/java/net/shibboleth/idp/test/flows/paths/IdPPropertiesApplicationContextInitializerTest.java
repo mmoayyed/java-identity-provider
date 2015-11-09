@@ -44,7 +44,6 @@ public class IdPPropertiesApplicationContextInitializerTest {
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
     }
 
-    /*
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNotFound() {
         final MockServletContext sc = new MockServletContext("");
         sc.addInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, "classpath:/system/conf/global-system.xml");
@@ -54,7 +53,6 @@ public class IdPPropertiesApplicationContextInitializerTest {
         listener.contextInitialized(new ServletContextEvent(sc));
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
     }
-    */
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testUserDefinedNotFound() {
         final MockServletContext sc = new MockServletContext("");
