@@ -26,6 +26,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.xmlobject.DelegationPolicy;
+import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -43,7 +44,26 @@ import com.google.common.base.Function;
 
 /**
  * Action which adds a {@link DelegationPolicy} element to the {@link Advice} of an {@link Assertion}.
+ * 
+ * <p>
+ * The assertion to modify is determined by the strategy set by {@link #setAssertionLookupStrategy(Function)}.
+ *</p>
+ * 
+ * <p>
+ * The maximum chain delegation length value for the added policy element is as follows:
+ * <ol>
+ * <li>If an inbound assertion token is present as determined by the strategy set by
+ * {@link #setAssertionTokenStrategy(Function)}, the value is obtained from the policy contained
+ * within the first {@link DelegationPolicy} element of that assertion's {@link Advice} element.</li>
+ * <li>Otherwise the request is assumed to be the initial SSO request, so the value is determined by
+ * the requesting SP's profile configuration value
+ * {@link BrowserSSOProfileConfiguration#getMaximumTokenDelegationChainLength()}.</li>
+ * <li>If neither of these approaches produces a value, a default value is used 
+ * {@link #DEFAULT_POLICY_MAX_CHAIN_LENGTH}</li>
+ * </ol>
+ * </p>
  */
+@Prototype
 public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
     
     /** Default policy max chain length, when can't otherwise be derived. */

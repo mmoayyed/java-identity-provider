@@ -27,6 +27,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration;
 import net.shibboleth.idp.saml.xmlobject.DelegationPolicy;
+import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -47,9 +48,35 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 /**
- * Action which allows policy controls to decided whether the SSO request based
- * on the delegated token is allowed to proceed.
+ * Action which implements policy controls to decide whether an SSO request based
+ * on a delegated {@link Assertion} token is allowed to proceed.
+ * 
+ * <p>
+ * Two policy checks are performed:
+ * <ol>
+ * <li>
+ * The active {@link SSOSProfileConfiguration} is resolved and the predicate 
+ * {@link SSOSProfileConfiguration#getDelegationPredicate()} is applied.  If the predicate evaluates to false,
+ * the request is not allowed.  An example predicate commonly used here is 
+ * {@link net.shibboleth.idp.saml.profile.config.logic.AllowedSAMLPresentersPredicate}.
+ * </li>
+ * <li>
+ * The length of the delegation chain as indicated in the inbound assertion token's {@link DelegationRestrictionType}
+ * condition is evaluated against a policy maximum resolved via the strategy set by 
+ * {@link #setPolicyMaxChainLengthStrategy(Function)}, or from {@link #DEFAULT_POLICY_MAX_CHAIN_LENGTH} if no value 
+ * can otherwise be resolved. If the chain of {@link org.opensaml.saml.ext.saml2delrestrict.Delegate} 
+ * child elements is greater than or equal to the resolved policy max chain length, the request is not allowed.
+ * The default policy resolution strategy is to look at the first {@link DelegationPolicy} contained within the 
+ * inbound assertion token's {@link Advice}.
+ * </li>
+ * </ol>
+ * </p>
+ * 
+ * @event {@link AuthnEventIds#NO_CREDENTIALS}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link EventIds#INVALID_SEC_CFG}
  */
+@Prototype
 public class EvaluateDelegationPolicy extends AbstractProfileAction {
     
     /** Default policy max chain length, when can't otherwise be derived. */

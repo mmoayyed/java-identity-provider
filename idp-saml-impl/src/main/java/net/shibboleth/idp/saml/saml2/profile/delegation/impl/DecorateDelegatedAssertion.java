@@ -79,10 +79,41 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 
-//TODO need a lot more Javadoc detail here, and event ID's supported.
-
 /**
- * A profile action which decorates SAML 2 Assertions appropriately for use as delegation tokens.
+ * A profile action which decorates instances of {@link Assertion} appropriately for use as delegation tokens.
+ * 
+ * <p>
+ * An instance of {@link DelegationContext} is resolved via the strategy set via 
+ * {@link #setDelegationContextLookupStrategy(Function)}.  If no delegation context is found
+ * or if {@link DelegationContext#isIssuingDelegatedAssertion()} is false, then no decoration
+ * occurs.
+ * </p>
+ * 
+ * <p>
+ * The decoration consists of 3 primary parts:
+ * <ol>
+ * <li>
+ * A holder-of-key {@link SubjectConfirmation} is added to the assertion's {@link Subject}. The credentials used
+ * are taken from {@link DelegationContext#getSubjectConfirmationCredentials()}.
+ * </li>
+ * <li>
+ * An additional {@link Audience} is added to the assertion condition {@link AudienceRestriction}, indicating
+ * the IdP's own entityID as an acceptable audience.  The IdP entityID is resolved from the active
+ * {@link RelyingPartyContext}, which is resolved via the strategy set by 
+ * {@link #setRelyingPartyContextLookupStrategy(Function)}.
+ * </li>
+ * <li>
+ * An additional {@link Attribute} is added to the assertion's {@link AttributeStatement} containing an
+ * {@link EndpointReference}, indicating the location and other info necessary for the recipient to present
+ * the delegated assertion at the IdP for delegated SSO.  The attribute name is a URI type with name
+ * {@link LibertyConstants#SERVICE_TYPE_SSOS}. The endpoint URL is either set directly on this action via
+ * {@link #setLibertySSOSEndpointURL(String)}, or is resolved via the strategy 
+ * {@link #setLibertySSOSEndpointURLLookupStrategy(Function)}.
+ * </li>
+ * </ol>
+ * </p>
+ * 
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  */
 @Prototype
 public class DecorateDelegatedAssertion extends AbstractProfileAction {

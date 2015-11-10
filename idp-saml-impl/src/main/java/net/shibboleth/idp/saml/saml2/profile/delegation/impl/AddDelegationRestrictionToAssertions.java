@@ -67,6 +67,10 @@ import com.google.common.base.Functions;
  * using the corresponding lookup function.  The new delegate is augmented with the SAML subject confirmation method
  * obtained from the current {@link LibertySSOSContext}.
  * </p>
+ * 
+ * @event {@link EventIds#INVALID_MSG_CTX}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link EventIds#MESSAGE_PROC_ERROR}
  */
 public class AddDelegationRestrictionToAssertions extends AbstractProfileAction {
     

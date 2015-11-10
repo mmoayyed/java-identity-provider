@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handler implementation that handles sb:Sender header on the inbound SOAP envelope.
+ * Handler implementation that handles the sb:Sender header on the inbound SOAP envelope.
  * 
  * <p>
  * If the header is present, the providerId value is stored in the message context via

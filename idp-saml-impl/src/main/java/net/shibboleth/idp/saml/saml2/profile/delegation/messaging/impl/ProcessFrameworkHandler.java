@@ -34,7 +34,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.handler.AbstractMessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.soap.messaging.SOAPMessagingSupport;
-import org.opensaml.soap.wsaddressing.WSAddressingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

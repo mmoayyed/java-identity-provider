@@ -21,7 +21,8 @@ import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.saml2.core.Assertion;
 
 /**
- * Context for storing information related to Liberty SSOS delegation.
+ * Context for storing information related to the Liberty SSOS profile and use of an inbound delegated
+ * {@link Assertion} token.
  */
 public class LibertySSOSContext extends BaseContext {
 

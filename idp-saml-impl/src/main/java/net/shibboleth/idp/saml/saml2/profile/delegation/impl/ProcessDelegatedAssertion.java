@@ -27,6 +27,7 @@ import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -43,12 +44,21 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 
-//TODO need a lot more Javadoc detail here, and event ID's supported.
-
 /**
- * Process the pre-validated SAML 2 Assertion WS-Security token, and set up the resulting
- * NameID for subject canonicalization as the effective subject of the request.
+ * Process the pre-validated inbound {@link Assertion} WS-Security token, and set up the resulting
+ * {@link NameID} for subject canonicalization as the effective subject of the request.
+ * 
+ * <p>
+ * A {@link SubjectCanonicalizationContext} is added containing a {@link NameIDPrincipal} with the
+ * token's {@link NameID}.
+ * </p>
+ * 
+ * @event {@link AuthnEventIds#NO_CREDENTIALS}
+ * @event {@link AuthnEventIds#INVALID_SUBJECT}
+ * @pre <pre>assertionTokenStrategy.apply(profileRequestContext).getSubject().getNameID() != null</pre>
+ * @post <pre>profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class) != null</pre>
  */
+@Prototype
 public class ProcessDelegatedAssertion extends AbstractProfileAction {
     
     /** Logger. */

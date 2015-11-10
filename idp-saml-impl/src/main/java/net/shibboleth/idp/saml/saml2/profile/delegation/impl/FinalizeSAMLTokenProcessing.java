@@ -21,17 +21,22 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.utilities.java.support.annotation.Prototype;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO need a lot more Javadoc detail here, and event ID's supported.
-
 /**
- * Post-process the results of token and subject canonicalization.
+ * Post-process the results of {@link org.opensaml.saml.saml2.core.Assertion} token subject canonicalization.
+ * 
+ * @event {@link AuthnEventIds#INVALID_SUBJECT_C14N_CTX}
+ * @pre <pre>profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class).getPrincipalName() != null</pre>
+ * @post <pre>profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class) == null</pre>
+ * @post <pre>profileRequestContext.getSubcontext(SubjectContext.class).getPrincipalName() != null</pre>
  */
+@Prototype
 public class FinalizeSAMLTokenProcessing extends AbstractProfileAction {
     
     /** Logger. */

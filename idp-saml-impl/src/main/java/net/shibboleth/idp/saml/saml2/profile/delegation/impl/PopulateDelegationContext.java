@@ -29,6 +29,7 @@ import net.shibboleth.idp.saml.profile.context.navigate.SAMLMetadataContextLooku
 import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationContext;
 import net.shibboleth.idp.saml.saml2.profile.delegation.DelegationRequest;
+import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -61,9 +62,61 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- * A profile action which determines whether issuance of a delegated {@link Assertion} token
+ * A profile action which determines whether issuance of a delegated 
+ * {@link org.opensaml.saml.saml2.core.Assertion} token
  * is active, and populates a {@link DelegationContext} appropriately.
+ * 
+ * <p>
+ * The output of 3 different evaluations is combined to produce the final result:
+ * <ol>
+ * 
+ * <li>
+ * Determination is made whether delegation is requested by the relying party, as a value of type 
+ * {@link DelegationRequest}. Delegation may be requested via:
+ * <ul>
+ * <li>The inclusion of the IdP entityID as an {@link Audience} in the {@link AudienceRestriction} condition
+ * of the inbound {@link AuthnRequest}.</li>
+ * <li>The presence of a {@link RequestedAttribute} with name {@link LibertyConstants#SERVICE_TYPE_SSOS} in 
+ * the relying party's metadata via {@link AttributeConsumingService}.
+ * </ul>
+ * </li>
+ * 
+ * <li>
+ * Determination is made whether issuance of a delegated token is allowed for the relying party,
+ * based on the (legacy) static value {@link BrowserSSOProfileConfiguration#isAllowingDelegation()}
+ * or the predicate {@link BrowserSSOProfileConfiguration#getAllowDelegation()}.
+ * </li>
+ * 
+ * <li>
+ * Holder-of-key subject confirmation {@link Credential} instances are resolved for the relying party from 
+ * its resolved metadata {@link RoleDescriptor}.
+ * </li>
+ * 
+ * </ol>
+ * </p>
+ * 
+ * <p>
+ * If 1) delegation is allowed, 2) subject confirmation credentials were resolved, and 3) request status was either 
+ * {@link DelegationRequest#REQUESTED_OPTIONAL} or {@link DelegationRequest#REQUESTED_REQUIRED}, 
+ * a {@link DelegationContext} is populated indicating issuance of delegated token to be active, and containing the
+ * resolved subject confirmation credentials.
+ * </p>
+ * 
+ * <p>
+ * If request status was {@link DelegationRequest#REQUESTED_REQUIRED} but delegation was not allowed and/or no
+ * subject confirmation credentials could be resolved, a fatal event is produced.
+ * </p>
+ * 
+ * <p>
+ * Otherwise, issuance of a delegated token is not active and so no {@link DelegationContext} is populated.
+ * </p>
+ * 
+ * @event {@link EventIds#INVALID_MSG_CTX}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link EventIds#MESSAGE_PROC_ERROR}
+ * @event {@link EventIds#INVALID_SEC_CFG}
  */
+@Prototype
 public class PopulateDelegationContext extends AbstractProfileAction {
 
     /** Class logger. */

@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.config.navigate.IdentifierGenerationStrategyLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.utilities.java.support.annotation.Prototype;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -58,7 +59,12 @@ import com.google.common.base.Function;
  * 
  * <p>A constructed {@link Assertion} will have its ID, IssueInstant, Issuer, and Version properties set.
  * The issuer is based on {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getResponderId()}.</p>
+ * 
+ * @event {@link EventIds#INVALID_MSG_CTX}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link EventIds#MESSAGE_PROC_ERROR}
  */
+@Prototype
 public class AddAuthnStatementToAssertionFromInboundAssertionToken extends AbstractProfileAction {
     
     /** Class logger. */

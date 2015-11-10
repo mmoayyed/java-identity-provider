@@ -44,11 +44,11 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>
  * This decoder takes a mandatory {@link MessageHandler} instance which is used to determine
- * populate the message that is returned as the {@link MessageContext#getMessage()}.
+ * and populate the message that is returned as the {@link MessageContext#getMessage()}.
  * </p>
  * 
  *  <p>
- *  A SOAP message oriented message exchange style might just populate the Envelope as the message.
+ *  A SOAP message-oriented message exchange style might just populate the Envelope as the message.
  *  An application-specific payload-oriented message exchange would handle a specific type
  * of payload structure.  
  * </p>
