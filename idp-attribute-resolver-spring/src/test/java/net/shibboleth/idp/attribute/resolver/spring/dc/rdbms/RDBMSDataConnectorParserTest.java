@@ -185,7 +185,7 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertFalse(dataConnector.isConnectionReadOnly());
         final DataSourceValidator validator = (DataSourceValidator) dataConnector.getValidator();
         Assert.assertNotNull(validator);
-        Assert.assertFalse(validator.isThrowValidateError());
+        Assert.assertTrue(validator.isThrowValidateError());
         Assert.assertNotNull(validator.getDataSource());
 
         final ExecutableSearchBuilder<ExecutableStatement> searchBuilder = dataConnector.getExecutableSearchBuilder();

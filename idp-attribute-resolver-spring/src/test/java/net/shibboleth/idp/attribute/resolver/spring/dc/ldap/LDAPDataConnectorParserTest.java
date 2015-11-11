@@ -334,7 +334,7 @@ public class LDAPDataConnectorParserTest {
 
         ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         AssertJUnit.assertNotNull(validator);
-        AssertJUnit.assertFalse(validator.isThrowValidateError());
+        AssertJUnit.assertTrue(validator.isThrowValidateError());
         AssertJUnit.assertNotNull(validator.getConnectionFactory());
 
         ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();

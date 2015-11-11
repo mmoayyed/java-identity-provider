@@ -293,7 +293,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             } else {
                 validator.addConstructorArgValue(dataSource);
             }
-            validator.addConstructorArgValue(false);
+            validator.addConstructorArgValue(true);
             return validator.getBeanDefinition();
         }
         
