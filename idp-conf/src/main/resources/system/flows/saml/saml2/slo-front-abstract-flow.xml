@@ -154,33 +154,13 @@
     <action-state id="BuildResponse">
         <evaluate expression="AddLogoutResponse" />
         <evaluate expression="AddInResponseToToResponse" />
-        
-        <evaluate expression="'proceed'" />
-        
-        <transition on="proceed" to="CheckForPartialLogout" />
-    </action-state>
-    
-    <!-- TODO: this partial logout machinery will change once propagation exists -->
-    
-    <decision-state id="CheckForPartialLogout">
-        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.session.context.LogoutContext), true).getSessionMap().isEmpty()"
-            then="CompleteResponse" else="PartialLogout" />
-    </decision-state>
-    
-    <action-state id="PartialLogout">
-        <evaluate expression="AddPartialLogoutStatusToResponse" />
-        
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="CompleteResponse" />
-    </action-state>
-
-    <action-state id="CompleteResponse">
         <evaluate expression="PostResponsePopulateAuditContext" />
         
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="ReturnToParentFlow" />
     </action-state>
-
+    
     <!-- Error Response Generation -->
 
     <decision-state id="HandleError">
