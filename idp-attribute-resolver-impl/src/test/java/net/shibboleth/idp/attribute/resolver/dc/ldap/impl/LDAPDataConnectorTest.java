@@ -271,6 +271,15 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         builder.initialize();
         resolve(builder);
     }
+    
+    @Test(enabled=false) public void resolveTemplateExcept() throws ComponentInitializationException, ResolutionException {
+        TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
+        builder.setTemplateText("(uid=${resolutionContext.AttributeRecipientID.toString().substring(99, 106)})");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        resolve(builder);
+    }
+
 
     @Test public void resolveTemplateWithDepends() throws ComponentInitializationException, ResolutionException {
         TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
