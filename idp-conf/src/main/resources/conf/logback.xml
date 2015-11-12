@@ -14,10 +14,10 @@
     
     <!-- Logging level shortcuts. -->
     <variable name="idp.loglevel.idp" value="INFO" />
-    <variable name="idp.loglevel.opensaml" value="INFO" />
     <variable name="idp.loglevel.ldap" value="WARN" />
     <variable name="idp.loglevel.messages" value="INFO" />
     <variable name="idp.loglevel.encryption" value="INFO" />
+    <variable name="idp.loglevel.opensaml" value="INFO" />
     <variable name="idp.loglevel.props" value="INFO" />
     
     <!-- Don't turn these up unless you want a *lot* of noise. -->
