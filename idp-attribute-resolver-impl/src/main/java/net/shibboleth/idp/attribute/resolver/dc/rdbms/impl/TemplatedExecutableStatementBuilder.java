@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -38,6 +39,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
+import org.apache.velocity.exception.VelocityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +174,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
      * Apply the context to the template. {@inheritDoc}
      */
     @Override protected String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) {
+            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
         final VelocityContext context = new VelocityContext();
         log.trace("Creating search filter using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
@@ -201,7 +203,12 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
             cartridge.attachToContext(context);
         }
 
-        return merge(context);
+        try {
+            return merge(context);
+        } catch (VelocityException ex) {
+            log.error("Error running template", ex);
+            throw new ResolutionException("Error running template", ex);
+        }
     }
 
     /** {@inheritDoc} */

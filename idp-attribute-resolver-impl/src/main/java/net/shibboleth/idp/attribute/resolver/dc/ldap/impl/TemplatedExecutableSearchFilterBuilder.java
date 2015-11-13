@@ -38,6 +38,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
+import org.apache.velocity.exception.VelocityException;
 import org.ldaptive.SearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,8 +188,13 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
             cartridge.attachToContext(context);
         }
 
-        final SearchFilter searchFilter = new SearchFilter(merge(context));
-        return super.build(searchFilter);
+        try {
+            final SearchFilter searchFilter = new SearchFilter(merge(context));
+            return super.build(searchFilter);
+        } catch (VelocityException e) {
+            log.error("Error running template", e);
+            throw new ResolutionException("Error running template", e);
+        }
     }
 
     /**

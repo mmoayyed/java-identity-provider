@@ -66,11 +66,12 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
      * 
      * @param resolutionContext the context of the resolution
      * @param dependencyAttributes made available to the executable search
+     * @throws ResolutionException if we get an error building the exception.
      * 
      * @return the SQL string
      */
     protected abstract String getSQLQuery(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes);
+            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException;
 
     /** {@inheritDoc} */
     @Override public ExecutableStatement build(@Nonnull final AttributeResolutionContext resolutionContext,
