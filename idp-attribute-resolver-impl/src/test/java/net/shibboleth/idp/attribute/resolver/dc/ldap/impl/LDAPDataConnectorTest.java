@@ -40,7 +40,6 @@ import net.shibboleth.utilities.java.support.component.UninitializedComponentExc
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
-import org.apache.velocity.exception.VelocityException;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
@@ -273,7 +272,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolve(builder);
     }
     
-    @Test(expectedExceptions={VelocityException.class}) public void resolveTemplateExcept() throws ComponentInitializationException, ResolutionException {
+    @Test(expectedExceptions={ResolutionException.class}) public void resolveTemplateExcept() throws ComponentInitializationException, ResolutionException {
         TemplatedExecutableSearchFilterBuilder builder = new TemplatedExecutableSearchFilterBuilder();
         builder.setTemplateText("(uid=${resolutionContext.AttributeRecipientID.toString().substring(99, 106)})");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
