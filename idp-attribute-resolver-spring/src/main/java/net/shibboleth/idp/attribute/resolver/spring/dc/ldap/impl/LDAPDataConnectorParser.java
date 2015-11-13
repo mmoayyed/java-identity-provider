@@ -49,6 +49,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
+import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -680,13 +681,15 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         /**
-         * Factory method for handling spring property replacement.
+         * Factory method for handling spring property replacement. Adds a {@link DnAttributeEntryHandler} by default.
+         * Adds a {@link CaseChangeEntryHandler} if lowercaseAttributeNames is true. 
          * 
          * @param lowercaseAttributeNames boolean string value
-         * @return possibly empty list of search entry handlers
+         * @return list of search entry handlers
          */
         public static List<SearchEntryHandler> buildSearchEntryHandlers(final String lowercaseAttributeNames) {
             final List<SearchEntryHandler> handlers = new ArrayList<>();
+            handlers.add(new DnAttributeEntryHandler());
             if (Boolean.valueOf(lowercaseAttributeNames)) {
                 final CaseChangeEntryHandler entryHandler = new CaseChangeEntryHandler();
                 entryHandler.setAttributeNameCaseChange(CaseChange.LOWER);

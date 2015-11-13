@@ -137,6 +137,7 @@ public class LDAPDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
+        Assert.assertNotNull(attrs.get("entryDN"));
     }
 
     @Test public void v2PropsConfig() throws Exception {
@@ -153,10 +154,11 @@ public class LDAPDataConnectorParserTest {
                         TestSources.SP_ENTITY_ID);
         Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
-        Assert.assertEquals(attrs.size(), 3);
+        Assert.assertEquals(attrs.size(), 4);
         Assert.assertNotNull(attrs.get("uid"));
         Assert.assertNotNull(attrs.get("homephone"));
         Assert.assertNotNull(attrs.get("mail"));
+        Assert.assertNotNull(attrs.get("entryDN"));
     }
 
     @Test public void springConfig() throws Exception {
@@ -244,6 +246,7 @@ public class LDAPDataConnectorParserTest {
         Assert.assertNotNull(attrs);
         Assert.assertNull(attrs.get("homephone"));
         Assert.assertNotNull(attrs.get("phonenumber"));
+        Assert.assertNotNull(attrs.get("entryDN"));
     }
 
     protected LDAPDataConnector getLdapDataConnector(Resource properties, final String[] beanDefinitions) throws IOException {
