@@ -90,6 +90,8 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         log.debug("Building SAML response for {} in IdP session {}", request.getService(), session.getId());
 
         final Response response = newSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
+        response.setID(request.getTicket());
+        response.setIssueInstant(DateTime.now());
         final Status status = newSAMLObject(Status.class, Status.DEFAULT_ELEMENT_NAME);
         final StatusCode code = newSAMLObject(StatusCode.class, StatusCode.DEFAULT_ELEMENT_NAME);
         code.setValue(StatusCode.SUCCESS);

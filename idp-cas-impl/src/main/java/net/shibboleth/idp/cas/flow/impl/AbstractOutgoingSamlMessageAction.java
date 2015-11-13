@@ -25,6 +25,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.profile.ActionSupport;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -32,6 +33,10 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.soap.messaging.context.SOAP11Context;
+import org.opensaml.soap.soap11.Body;
+import org.opensaml.soap.soap11.Envelope;
+import org.opensaml.soap.util.SOAPConstants;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -42,6 +47,12 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public abstract class AbstractOutgoingSamlMessageAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
+
+    /** SOAP envelope needed for old/broken CAS clients. */
+    private QName ENVELOPE_NAME = new QName(SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
+
+    /** SOAP body needed for old/broken CAS clients. */
+    private QName BODY_NAME = new QName(SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
 
     /** CAS namespace. */
     protected static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
@@ -66,6 +77,14 @@ public abstract class AbstractOutgoingSamlMessageAction extends
         final SAMLBindingContext bindingContext = new SAMLBindingContext();
         bindingContext.setBindingUri(SAMLConstants.SAML1_SOAP11_BINDING_URI);
         msgContext.addSubcontext(bindingContext);
+
+        // Ensure message uses SOAP-ENV ns prefix required by old/broken CAS clients
+        final Envelope envelope = (Envelope) XMLObjectSupport.buildXMLObject(ENVELOPE_NAME);
+        envelope.setBody((Body) XMLObjectSupport.buildXMLObject(BODY_NAME));
+        final SOAP11Context soapCtx = new SOAP11Context();
+        soapCtx.setEnvelope(envelope);
+        msgContext.addSubcontext(soapCtx);
+
         profileRequestContext.setOutboundMessageContext(msgContext);
 
         return ActionSupport.buildProceedEvent(this);
