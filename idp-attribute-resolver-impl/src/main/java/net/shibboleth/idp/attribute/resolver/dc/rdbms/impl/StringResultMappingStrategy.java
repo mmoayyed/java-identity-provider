@@ -32,6 +32,8 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.MultipleResultAnErrorResolutionException;
+import net.shibboleth.idp.attribute.resolver.NoResultAnErrorResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.dc.AbstractMappingStrategy;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -58,7 +60,7 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
             if (!results.next()) {
                 log.debug("Result set did not contain any rows, nothing to map");
                 if (isNoResultAnError()) {
-                    throw new ResolutionException("No rows returned from query");
+                    throw new NoResultAnErrorResolutionException("No rows returned from query");
                 }
                 return null;
             }
@@ -73,7 +75,7 @@ public class StringResultMappingStrategy extends AbstractMappingStrategy<ResultS
             do {
                 rowCount++;
                 if (rowCount > 1 && isMultipleResultsAnError()) {
-                    throw new ResolutionException("Multiple rows returned from query");
+                    throw new MultipleResultAnErrorResolutionException("Multiple rows returned from query");
                 }
                 for (int i = 1; i <= resultMetadata.getColumnCount(); i++) {
 
