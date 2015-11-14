@@ -17,13 +17,41 @@
 
 package net.shibboleth.idp.attribute.resolver.dc;
 
+import javax.annotation.Nullable;
+
+import org.slf4j.LoggerFactory;
+
 /** Used to determine whether a Data Connector initialized properly and continues to be fit for use. */
-public interface Validator {
+public class NonFailFastValidator implements Validator {
+
+    /** Embedded validator to run. */
+    @Nullable private final Validator embeddedValidator;
+
+    /** Constructor. */
+    public NonFailFastValidator() {
+        this(null);
+    }
 
     /**
-     * Determines whether a data connector is valid and ready for use.
+     * Constructor.
      * 
-     * @throws ValidationException thrown if validation fails
+     * @param validator validator to run but trap exceptions from
      */
-    void validate() throws ValidationException;
+    public NonFailFastValidator(@Nullable final Validator validator) {
+        embeddedValidator = validator;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public void validate() throws ValidationException {
+        if (embeddedValidator != null) {
+            try {
+                embeddedValidator.validate();
+            } catch (final ValidationException e) {
+                LoggerFactory.getLogger(NonFailFastValidator.class).warn(
+                        "Non-fail-fast validator trapped an error from its embedded validator", e);
+            }
+        }
+    }
+    
 }
