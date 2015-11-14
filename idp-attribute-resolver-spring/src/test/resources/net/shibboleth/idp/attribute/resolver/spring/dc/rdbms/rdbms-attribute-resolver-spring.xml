@@ -8,6 +8,7 @@
     <resolver:DataConnector
       id="myDatabase"
       xsi:type="dc:RelationalDatabase"
+      noRetryDelay="PT5M"
       springResources="classpath:net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml"/>
 
 </resolver:AttributeResolver>

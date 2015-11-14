@@ -8,6 +8,7 @@
     <resolver:DataConnector
       id="myDatabase"
       xsi:type="dc:RelationalDatabase"
+      noRetryDelay="%{noRetryDelay}"
       springResourcesRef="rdbmsResource"/>
     
 </resolver:AttributeResolver>

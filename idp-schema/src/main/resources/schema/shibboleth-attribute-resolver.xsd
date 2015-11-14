@@ -152,6 +152,11 @@
 				<sequence>
 					<element ref="resolver:FailoverDataConnector" minOccurs="0" />
 				</sequence>
+                <attribute name="noRetryDelay" type="string">
+                    <annotation>
+                        <documentation>Time to bypass connector after a failure before trying it again.</documentation>
+                    </annotation>
+                </attribute>
 				<attribute name="springResources" type="string">
 					<annotation>
 						<documentation>Locations of Spring resource configurations.</documentation>

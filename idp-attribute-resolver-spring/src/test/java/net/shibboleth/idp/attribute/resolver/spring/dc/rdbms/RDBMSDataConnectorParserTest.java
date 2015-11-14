@@ -168,6 +168,7 @@ public class RDBMSDataConnectorParserTest {
 
         String id = dataConnector.getId();
         Assert.assertEquals("myDatabase", id);
+        Assert.assertEquals(300000, dataConnector.getNoRetryDelay());
 
         ComboPooledDataSource dataSource = (ComboPooledDataSource) dataConnector.getDataSource();
         Assert.assertNotNull(dataSource);

@@ -27,6 +27,7 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -48,6 +49,9 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     @Nonnull public static final QName ELEMENT_NAME = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "DataConnector");
 
+    /** Delay in retrying failed connector. */
+    @Nonnull @NotEmpty public static final String ATTR_NORETRYDELAY = "noRetryDelay";
+    
     /** semi colon separated resources to indicate external config. */
     @Nonnull @NotEmpty public static final String ATTR_SPRING_RESOURCE = "springResources";
 
@@ -105,6 +109,16 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             log.debug("{} Setting the following failover data connector dependencies: {}", getLogPrefix(), connectorId);
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
+
+        if (config.hasAttributeNS(null, ATTR_NORETRYDELAY)) {
+            final String noRetryDelay = StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_NORETRYDELAY));
+            final BeanDefinitionBuilder duration =
+                    BeanDefinitionBuilder.rootBeanDefinition(AbstractDataConnectorParser.class, "buildDuration");
+            duration.addConstructorArgValue(noRetryDelay);
+            duration.addConstructorArgValue(1);
+            builder.addPropertyValue("noRetryDelay", duration.getBeanDefinition());
+        }
+
         if (isNative(config)) {
             // parse the configuration into a beanfactory and inject the resources as well
             builder.addConstructorArgValue(getNativeBeanClass());
@@ -122,7 +136,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
                 log.debug("{} Native configuration from bean {}", getLogPrefix(), resourceRef);
                 builder.addPropertyReference("resources", resourceRef);
             }
-            if (config.hasAttribute(ATTR_FACTORY_POSTPROCESSORS_REF)) {
+            if (config.hasAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF)) {
                 final String factoryPostProcessorsRef =
                         StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_FACTORY_POSTPROCESSORS_REF));
                 log.debug("{} Factory Bean Post Processors {}", getLogPrefix(), factoryPostProcessorsRef);
@@ -133,7 +147,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
                 builder.addPropertyReference("beanFactoryPostProcessors",
                         "shibboleth.PropertySourcesPlaceholderConfigurer");
             }
-            if (config.hasAttribute(ATTR_POSTPROCESSORS_REF)) {
+            if (config.hasAttributeNS(null, ATTR_POSTPROCESSORS_REF)) {
                 final String postProcessorsRef =
                         StringSupport.trimOrNull(config.getAttributeNS(null, ATTR_POSTPROCESSORS_REF));
                 log.debug("{} Bean Post Processors {}", getLogPrefix(), postProcessorsRef);
@@ -154,6 +168,19 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      * @see #doParse(Element, BeanDefinitionBuilder)
      */
     protected abstract void doV2Parse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder);
+
+    /**
+     * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
+     * while resolving property replacement.
+     * 
+     * @param duration string format
+     * @param divisor to modify the duration with
+     * 
+     * @return result of the division
+     */
+    public static long buildDuration(final String duration, final long divisor) {
+        return DOMTypeSupport.durationToLong(duration) / divisor;
+    }
 
     /**
      * return a string which is to be prepended to all log messages.

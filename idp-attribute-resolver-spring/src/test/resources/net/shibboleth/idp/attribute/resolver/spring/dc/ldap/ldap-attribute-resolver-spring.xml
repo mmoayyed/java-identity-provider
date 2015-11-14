@@ -8,6 +8,7 @@
     <resolver:DataConnector
       id="myLDAP"
       xsi:type="dc:LDAPDirectory"
+      noRetryDelay="PT5M"
       springResources="classpath:net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-context.xml"/>
 
 </resolver:AttributeResolver>

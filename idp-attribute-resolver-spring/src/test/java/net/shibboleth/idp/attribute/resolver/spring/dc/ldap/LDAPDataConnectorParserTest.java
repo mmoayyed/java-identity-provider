@@ -285,6 +285,7 @@ public class LDAPDataConnectorParserTest {
 
         String id = dataConnector.getId();
         AssertJUnit.assertEquals("myLDAP", id);
+        AssertJUnit.assertEquals(300000, dataConnector.getNoRetryDelay());
 
         PooledConnectionFactory connFactory = (PooledConnectionFactory) dataConnector.getConnectionFactory();
         AssertJUnit.assertNotNull(connFactory);

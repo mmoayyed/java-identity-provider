@@ -14,7 +14,8 @@
         principalCredential="password"
         useStartTLS="true"
         noResultIsError="true"
-        multipleResultsIsError="true">
+        multipleResultsIsError="true"
+        noRetryDelay="PT5M">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${resolutionContext.principal})

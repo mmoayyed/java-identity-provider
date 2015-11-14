@@ -14,7 +14,8 @@
         principalCredential="%{connectionConfig.bindCredential}"
         useStartTLS="%{connectionConfig.useStartTLS}"
         noResultIsError="%{noResultIsError}"
-        multipleResultsIsError="%{multipleResultsIsError}">
+        multipleResultsIsError="%{multipleResultsIsError}"
+        noRetryDelay="%{noRetryDelay}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${resolutionContext.principal})
