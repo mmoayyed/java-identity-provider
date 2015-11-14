@@ -35,6 +35,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.AttributeResolver;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
+import net.shibboleth.idp.attribute.resolver.DataConnectorEx;
 import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
@@ -112,7 +113,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 if (definition != null) {
                     if (checkedDefinitions.containsKey(definition.getId())) {
                         throw new IllegalArgumentException(logPrefix + " Duplicate Attribute Definition with id '"
-                                + definition.getId()+"'");
+                                + definition.getId() + "'");
                     }
                     checkedDefinitions.put(definition.getId(), definition);
                 }
@@ -129,7 +130,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 if (connector != null) {
                     if (checkedConnectors.containsKey(connector.getId())) {
                         throw new IllegalArgumentException(logPrefix + " Duplicate Data Connector Definition with id '"
-                                + connector.getId()+"'");
+                                + connector.getId() + "'");
                     }
                     checkedConnectors.put(connector.getId(), connector);
                 }
@@ -148,7 +149,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @return attribute definitions loaded in to this resolver
      */
     @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> 
-           getAttributeDefinitions() {
+        getAttributeDefinitions() {
         return attributeDefinitions;
     }
 
@@ -164,8 +165,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     /**
      * Resolves the attribute for the give request. Note, if attributes are requested,
      * {@link AttributeResolutionContext#getRequestedIdPAttributeNames()}, the resolver will <strong>not</strong> fail
-     * if they can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize
-     * the resolution of attributes.
+     * if they can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize the
+     * resolution of attributes.
      * 
      * @param resolutionContext the attribute resolution context that identifies the request subject and accumulates the
      *            resolved attributes
@@ -208,8 +209,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
     /**
      * Gets the list of attributes, identified by IDs, that should be resolved. If the
-     * {@link AttributeResolutionContext#getRequestedIdPAttributeNames()} is not empty then those attributes
-     * are the ones to be resolved, otherwise all registered attribute definitions are to be resolved.
+     * {@link AttributeResolutionContext#getRequestedIdPAttributeNames()} is not empty then those attributes are the
+     * ones to be resolved, otherwise all registered attribute definitions are to be resolved.
      * 
      * @param resolutionContext current resolution context
      * 
@@ -291,7 +292,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
-        final long resolveTime = System.currentTimeMillis(); 
+        final long resolveTime = System.currentTimeMillis();
 
         if (workContext.getResolvedDataConnectors().containsKey(connectorId)) {
             log.trace("{} Data connector '{}' was already resolved, nothing to do", logPrefix, connectorId);
@@ -304,17 +305,21 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             return;
         }
 
-        if (resolveTime < connector.getLastFail() + connector.getNoRetryDelay()) {
-            log.debug("{} Data connector '{}' failed to resolve previously.  Still waiting", logPrefix, connectorId);
-            final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
-            if (null != failoverDataConnectorId) {
-                log.debug("{} Data connector '{}' invoking failover data connector '{}'", logPrefix, connectorId,
-                        failoverDataConnectorId);
-                resolveDataConnector(failoverDataConnectorId, resolutionContext);
-                workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
-                return;
-            } else {
-                throw new ResolutionException("Previous resolve failed");
+        if (connector instanceof DataConnectorEx) {
+            DataConnectorEx connectorEx = (DataConnectorEx) connector;
+            if (resolveTime < connectorEx.getLastFail() + connectorEx.getNoRetryDelay()) {
+                log.debug("{} Data connector '{}' failed to resolve previously.  Still waiting", logPrefix, 
+                        connectorId);
+                final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
+                if (null != failoverDataConnectorId) {
+                    log.debug("{} Data connector '{}' invoking failover data connector '{}'", logPrefix, connectorId,
+                            failoverDataConnectorId);
+                    resolveDataConnector(failoverDataConnectorId, resolutionContext);
+                    workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
+                    return;
+                } else {
+                    throw new ResolutionException("Previous resolve failed");
+                }
             }
         }
 
@@ -327,8 +332,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (null != failoverDataConnectorId) {
                 log.debug("{} Data connector '{}' failed to resolve, invoking failover data"
-                        + " connector '{}'.  Reason for failure:", logPrefix, connectorId,
-                        failoverDataConnectorId, e);
+                        + " connector '{}'.  Reason for failure:", logPrefix, connectorId, failoverDataConnectorId, e);
                 resolveDataConnector(failoverDataConnectorId, resolutionContext);
                 workContext.recordFailoverResolution(connector, dataConnectors.get(failoverDataConnectorId));
                 return;
@@ -340,8 +344,8 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
 
         if (null != resolvedAttributes) {
-            log.debug("{} Data connector '{}' resolved the following attributes: {}", logPrefix,
-                    connectorId, resolvedAttributes.keySet());
+            log.debug("{} Data connector '{}' resolved the following attributes: {}", logPrefix, connectorId,
+                    resolvedAttributes.keySet());
         } else {
             log.debug("{} Data connector '{}' produced no attributes", logPrefix, connectorId);
         }
@@ -389,8 +393,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * each {@link AttributeDefinition} resolution is inspected. If the result is not null, a dependency-only attribute,
      * or an attribute that contains no values then it becomes part of the final set of resolved attributes.
      * 
-     * <p>Values are also de-duplicated here, so that all the intermediate operations maintain the coherency of
-     * multi-valued result sets produced by data connectors.</p>
+     * <p>
+     * Values are also de-duplicated here, so that all the intermediate operations maintain the coherency of
+     * multi-valued result sets produced by data connectors.
+     * </p>
      * 
      * @param resolutionContext current resolution context
      */
@@ -423,7 +429,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                         definition.getId());
                 continue;
             }
-            
+
             // Remove duplicate attribute values.
             log.debug("{} De-duping attribute definition {} result", logPrefix, definition.getId());
             final Iterator<IdPAttributeValue<?>> valueIter = resolvedAttribute.getValues().iterator();
@@ -439,7 +445,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             resolvedAttribute.setValues(monitor);
             log.debug("{} Attribute '{}' has {} values after post-processing", logPrefix, resolvedAttribute.getId(),
                     monitor.size());
-            
+
             resolvedAttributes.add(resolvedAttribute);
         }
 

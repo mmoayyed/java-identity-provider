@@ -17,28 +17,25 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
-import java.util.Map;
-
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
-
-/**
- * Base class for data connector resolver plugins.
- * 
- * This interface should be considered as deprecated, and {@link DataConnectorEx} should be used instead.
- */
+/** Base class for data connector resolver plugins. */
 @ThreadSafe
-public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>> {
+public interface DataConnectorEx extends DataConnector {
 
     /**
-     * Gets the ID of the {@link DataConnector} whose values will be used in the event that this data connector
-     * experiences an error.
-     * 
-     * @return ID of the {@link DataConnector} whose values will be used in the event that this data connector
-     *         experiences an error
+     * Get how long to wait until we declare the connector (potentially) alive again.
+     *
+     * @return how long to wait.
      */
-    @Nullable String getFailoverDataConnectorId();
+     long getNoRetryDelay();
+
+     /**
+      * Get the time when this connector last failed. This will be set for any exception regardless of the setting of
+      * {@link #isPropagateResolutionExceptions()}
+      *
+      * @return when it last failed
+      */
+     long getLastFail();
 
 }
