@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.test.flows.paths;
+package net.shibboleth.idp.test.spring;
 
 import javax.servlet.ServletContextEvent;
 
