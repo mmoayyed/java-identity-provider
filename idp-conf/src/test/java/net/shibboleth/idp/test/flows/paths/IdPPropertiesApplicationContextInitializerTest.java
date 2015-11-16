@@ -26,53 +26,63 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
-/**
- * TODO
- */
+/** {@link IdPPropertiesApplicationContextInitializer} unit test. */
 public class IdPPropertiesApplicationContextInitializerTest {
 
-    @Test(expectedExceptions = BeanDefinitionStoreException.class) public void testNoInitializer() {
-        final MockServletContext sc = new MockServletContext("");
+    private MockServletContext sc;
+
+    private ContextLoaderListener listener;
+
+    @BeforeMethod public void setUp() {
+        sc = new MockServletContext("");
         sc.addInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, "classpath:/system/conf/global-system.xml");
-        final ContextLoaderListener listener = new ContextLoaderListener();
+        sc.addInitParameter(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM,
+                IdPPropertiesApplicationContextInitializer.class.getName());
+        listener = new ContextLoaderListener();
+    }
+
+    @Test(expectedExceptions = BeanDefinitionStoreException.class) public void testNoInitializer() {
+        sc = new MockServletContext("");
+        sc.addInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, "classpath:/system/conf/global-system.xml");
+        listener = new ContextLoaderListener();
         listener.contextInitialized(new ServletContextEvent(sc));
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testNotFound() {
-        final MockServletContext sc = new MockServletContext("");
-        sc.addInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, "classpath:/system/conf/global-system.xml");
-        sc.addInitParameter(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM,
-                IdPPropertiesApplicationContextInitializer.class.getName());
-        final ContextLoaderListener listener = new ContextLoaderListener();
+        listener.contextInitialized(new ServletContextEvent(sc));
+        WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
+    }
+
+    @Test(expectedExceptions = {BeanDefinitionStoreException.class}) public void testNotFoundFalseFailFast() {
+        sc.addInitParameter("idp.initializer.failFast", "false");
         listener.contextInitialized(new ServletContextEvent(sc));
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testUserDefinedNotFound() {
-        final MockServletContext sc = new MockServletContext("");
-        sc.addInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, "classpath:/system/conf/global-system.xml");
-        sc.addInitParameter(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM,
-                IdPPropertiesApplicationContextInitializer.class.getName());
         sc.addInitParameter("idp.home", "foo");
-        final ContextLoaderListener listener = new ContextLoaderListener();
+        listener.contextInitialized(new ServletContextEvent(sc));
+        final WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
+        Assert.assertTrue(wac.getEnvironment().containsProperty("idp.home"));
+    }
+
+    @Test(expectedExceptions = BeanDefinitionStoreException.class) public void testUserDefinedNotFoundFalseFailFast() {
+        sc.addInitParameter("idp.home", "foo");
+        sc.addInitParameter("idp.initializer.failFast", "false");
         listener.contextInitialized(new ServletContextEvent(sc));
         final WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
         Assert.assertTrue(wac.getEnvironment().containsProperty("idp.home"));
     }
 
     @Test public void testUserDefinedFound() {
-        final MockServletContext sc = new MockServletContext("");
-        sc.addInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, "classpath:/system/conf/global-system.xml");
-        sc.addInitParameter(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM,
-                IdPPropertiesApplicationContextInitializer.class.getName());
         sc.addInitParameter("idp.home", "classpath:");
-        final ContextLoaderListener listener = new ContextLoaderListener();
         listener.contextInitialized(new ServletContextEvent(sc));
         final WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
         Assert.assertTrue(wac.getEnvironment().containsProperty("idp.home"));
@@ -80,17 +90,24 @@ public class IdPPropertiesApplicationContextInitializerTest {
     }
 
     @Test(expectedExceptions = ConstraintViolationException.class) public void testUserDefinedEndsWithSlash() {
-        final MockServletContext sc = new MockServletContext("");
-        sc.addInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, "classpath:/system/conf/global-system.xml");
-        sc.addInitParameter(ContextLoader.CONTEXT_INITIALIZER_CLASSES_PARAM,
-                IdPPropertiesApplicationContextInitializer.class.getName());
         sc.addInitParameter("idp.home", "/ends-with-slash/");
-        final ContextLoaderListener listener = new ContextLoaderListener();
         listener.contextInitialized(new ServletContextEvent(sc));
         WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
     }
 
-    // TODO test w/ false fail fast property
-    
-    // TODO
+    @Test(expectedExceptions = BeanDefinitionStoreException.class) public void
+            testUserDefinedEndsWithSlashFalseFailFast() {
+        sc.addInitParameter("idp.home", "/ends-with-slash/");
+        sc.addInitParameter("idp.initializer.failFast", "false");
+        listener.contextInitialized(new ServletContextEvent(sc));
+        WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
+    }
+
+    @Test public void testAdditionalProperties() {
+        sc.addInitParameter("idp.home", "classpath:");
+        listener.contextInitialized(new ServletContextEvent(sc));
+        final WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(sc);
+        Assert.assertEquals(wac.getEnvironment().getProperty("idp.authn.LDAP.ldapURL"), "ldap://localhost:10389");
+    }
+
 }

@@ -42,11 +42,19 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.StringUtils;
 
 /**
- * An {@link ApplicationContextInitializer} which attempts to add a properties file property source to the application
- * context environment. The 'conf/idp.properties' file is searched for in well known locations. The 'idp.home' property
- * will be set to the normalized search location if the properties file is found and the property is not already set.
+ * An {@link ApplicationContextInitializer} which appends properties to the application context's environment.
  * 
- * TODO Doc fail fast.
+ * Properties are loaded from {@link #IDP_PROPERTIES} as well as additional property files specified by
+ * {@link #IDP_ADDITIONAL_PROPERTY}.
+ * 
+ * The {@link #IDP_PROPERTIES} file is searched for in the well known locations returned by
+ * {@link #getSearchLocations()}.
+ * 
+ * The {@link #IDP_HOME_PROPERTY} will be set to the first search location in which the {@link #IDP_PROPERTIES} file is
+ * found if not already set.
+ * 
+ * A {@link ConstraintViolationException} will be thrown if the property files can not be found or loaded and
+ * {@link #isFailFast(ConfigurableApplicationContext)} returns true.
  */
 public class IdPPropertiesApplicationContextInitializer
         implements ApplicationContextInitializer<ConfigurableApplicationContext> {
@@ -144,14 +152,13 @@ public class IdPPropertiesApplicationContextInitializer
 
     /**
      * Select the locations used to search for the target. Prefers the user-defined search location defined by
-     * {@link IDP_HOME_PROPERTY} in the application context. Defaults to the well-known search locations returned from
+     * {@link #IDP_HOME_PROPERTY} in the application context. Defaults to the well-known search locations returned from
      * {@link #getSearchLocations()}.
-     * 
-     * TODO Doc fail fast.
      * 
      * @param applicationContext the application context
      * @return the search locations used to search for the target
-     * @throws ConstraintViolationException if the user-defined search location is empty or ends with '/'
+     * @throws ConstraintViolationException if the user-defined search location is empty or ends with '/' and
+     *             {@link #isFailFast(ConfigurableApplicationContext)} is true
      */
     @Nonnull public String[] selectSearchLocations(@Nonnull final ConfigurableApplicationContext applicationContext) {
         Constraint.isNotNull(applicationContext, "Application context cannot be null");
@@ -193,11 +200,11 @@ public class IdPPropertiesApplicationContextInitializer
      * File names of additional property sources are defined by {@link #IDP_ADDITIONAL_PROPERTY}, and are resolved
      * relative to the given search location.
      * 
-     * TODO Doc fail fast.
-     * 
      * @param applicationContext the application context
      * @param searchLocation the location from which additional property sources are resolved
      * @param properties the properties to be filled with additional property sources
+     * @throws ConstraintViolationException if an error occurs loading the additional property sources and
+     *             {@link #isFailFast(ConfigurableApplicationContext)} is true
      */
     public void loadAdditionalPropertySources(@Nonnull final ConfigurableApplicationContext applicationContext,
             @Nonnull final String searchLocation, @Nonnull final Properties properties) {
