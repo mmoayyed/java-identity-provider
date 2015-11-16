@@ -84,7 +84,7 @@ public class LogoutPropagationContext extends BaseContext {
      *
      * @param key Session key.
      */
-    public void setSessionKey(final @Nullable String key) {
+    public void setSessionKey(@Nullable final String key) {
         this.sessionKey = key;
     }
 

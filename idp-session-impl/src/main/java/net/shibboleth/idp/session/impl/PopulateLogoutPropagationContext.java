@@ -200,22 +200,22 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * Get an {@link SPSession} by reference.
      * 
      * @param requestContext Spring request context
-     * @param sessionKey key identifying the SP session
+     * @param key session key identifying the SP session
      * 
      * @return the SP session
      * @throws MessageException if an error occurs
      */
     @Nonnull private SPSession getSessionByReference(
-            @Nonnull final RequestContext requestContext, @Nonnull final String sessionKey) throws MessageException {
+            @Nonnull final RequestContext requestContext, @Nonnull final String key) throws MessageException {
         final LogoutContext logoutCtx = requestContext.getExternalContext().getSessionMap().get(
                 SaveLogoutContext.LOGOUT_CONTEXT_KEY, LogoutContext.class);
         if (logoutCtx == null) {
             throw new MessageException("LogoutContext not found in HTTP session.");
         }
         
-        final SPSession s = logoutCtx.getKeyedSessionMap().get(sessionKey);
+        final SPSession s = logoutCtx.getKeyedSessionMap().get(key);
         if (s == null) {
-            throw new MessageException("Session not found for key: " + sessionKey);
+            throw new MessageException("Session not found for key: " + key);
         }
         
         return s;

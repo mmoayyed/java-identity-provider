@@ -107,6 +107,7 @@ public class AbstractSAMLProfileConfigurationTest {
         Assert.assertFalse(config.includeConditionsNotBefore());
     }
     
+    @SuppressWarnings("deprecation")
     @Test public void testAdditionalAudiencesForAssertion() {
         MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
