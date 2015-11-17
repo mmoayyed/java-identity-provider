@@ -548,7 +548,8 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         
                 log.debug("{} Getting active and/or last inactive persistent Id entry", getLogPrefix());
                 final List<PersistentIdEntry> entries = buildIdentifierEntries(statement.executeQuery());
-                if (entries != null && entries.size() > 0 && entries.get(0).getDeactivationTime() == null) {
+                if (entries != null && entries.size() > 0 && (entries.get(0).getDeactivationTime() == null
+                        || entries.get(0).getDeactivationTime().getTime() > System.currentTimeMillis())) {
                     log.debug("{} Returning existing active persistent ID: {}", getLogPrefix(),
                             entries.get(0).getPersistentId());
                     dbConn.commit();
