@@ -18,13 +18,10 @@
     <dependencies>
         <!-- Compile Dependencies -->
         
-        <!-- TODO: fix this up when approach for Liberty providers is finalized. 
-             Right now is just a local SNAPSHOT-only artifact built locally and deployed to Maven.
-        -->
         <dependency>
             <groupId>net.shibboleth.liberty</groupId>
             <artifactId>idwsfconsumer</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${idwsfconsumer.version}</version>
         </dependency>
         
         <dependency>
