@@ -25,8 +25,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -141,7 +141,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     /** Constructor. */
     public JDBCPersistentIdStoreEx() {
         transactionRetry = 3;
-        retryableErrors = Collections.singletonList("23505");
+        retryableErrors = Arrays.asList("23000", "23505");
         queryTimeout = 5000;
         verifyDatabase = true;
         
