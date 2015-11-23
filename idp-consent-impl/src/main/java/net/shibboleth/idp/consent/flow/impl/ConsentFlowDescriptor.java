@@ -46,7 +46,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
     /** Expanded maximum number of records stored in the storage service. */
     private int expandedMaxStoredRecords;
     
-    /** Value size at which expanded maxium takes effect. */
+    /** Value size at which expanded maximum takes effect. Default value : 1024 * 1024 */
     private long expandedStorageThreshold;
 
     /** Constructor. */
