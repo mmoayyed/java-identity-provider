@@ -15,7 +15,7 @@
     <!-- Terms of Use configuration -->
     
     <!--
-    Terms of use is driven by a lookup function returning a key into messages/consent-message.properties
+    Terms of use is driven by a lookup function returning a key into messages/consent-messages.properties
     
     The default mapping returns the relying party / SP name as the key. The second example below
     demonstrates use of a custom mapping table from the relying party name to the key to use. 
