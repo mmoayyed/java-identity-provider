@@ -42,6 +42,8 @@ import com.google.common.base.Function;
  * <li>a consent context exists in the profile request context</li>
  * <li>the flow descriptor is a {@link ConsentFlowDescriptor}</li>
  * </ul>
+ * 
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
  */
 public abstract class AbstractConsentAction extends AbstractProfileInterceptorAction {
 
