@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.context.AttributeContext;
 import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
 import net.shibboleth.idp.consent.flow.impl.AbstractConsentAction;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.ProfileInterceptorContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -46,8 +47,12 @@ import com.google.common.base.Functions;
  * <li>the interceptor attempted flow is an {@link AttributeReleaseFlowDescriptor}</li>
  * <li>an {@link AttributeContext} is available from the {@link ProfileRequestContext}</li>
  * </ul>
- * 
+ *
  * @pre See above.
+ * 
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link IdPEventIds#INVALID_ATTRIBUTE_CTX}
  */
 public abstract class AbstractAttributeReleaseAction extends AbstractConsentAction {
 
@@ -147,8 +152,8 @@ public abstract class AbstractAttributeReleaseAction extends AbstractConsentActi
         attributeContext = attributeContextLookupStrategy.apply(profileRequestContext);
         log.debug("{} Found attributeContext '{}'", getLogPrefix(), attributeContext);
         if (attributeContext == null) {
-            log.error("{} Unable to locate attribute context", getLogPrefix());
-            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            log.warn("{} Unable to locate attribute context", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_ATTRIBUTE_CTX);
             return false;
         }
 

@@ -34,6 +34,7 @@ import net.shibboleth.idp.consent.context.impl.AttributeReleaseContext;
 import net.shibboleth.idp.consent.impl.ConsentTestingSupport;
 import net.shibboleth.idp.consent.logic.impl.PreferExplicitOrderComparator;
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -156,6 +157,18 @@ public class PopulateAttributeReleaseContextTest extends AbstractAttributeReleas
         final AttributeReleaseContext arc = prc.getSubcontext(AttributeReleaseContext.class, false);
         Assert.assertNotNull(arc);
         Assert.assertEquals(arc.getConsentableAttributes(), orderedAttributes);
+    }
+
+    @Test public void testMissingAttributeContext() throws Exception {
+        prc.getSubcontext(RelyingPartyContext.class).removeSubcontext(AttributeContext.class);
+
+        action = new PopulateAttributeReleaseContext();
+        ((PopulateAttributeReleaseContext) action).setAttributePredicate(Predicates.<IdPAttribute> alwaysTrue());
+        action.initialize();
+
+        final Event event = action.execute(src);
+
+        ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_ATTRIBUTE_CTX);
     }
 
     /** Mock IdP attribute predicate. */
