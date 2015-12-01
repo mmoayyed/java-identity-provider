@@ -53,10 +53,10 @@
                     <bean parent="Shibboleth.SSO" p:includeAttributeStatement="true">
                         <!--
                         <property name="defaultAuthenticationMethods">
-                            <util:list>
+                            <list>
                                 <bean parent="shibboleth.SAML1AuthenticationMethod"
                                     c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
-                            </util:list>
+                            </list>
                         </property>
                         -->
                     </bean>
@@ -65,10 +65,10 @@
                     <bean parent="SAML2.SSO">
                         <!--
                         <property name="defaultAuthenticationMethods">
-                            <util:list>
+                            <list>
                                 <bean parent="shibboleth.SAML2AuthnContextClassRef"
                                     c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
-                            </util:list>
+                            </list>
                         </property>
                         -->
                     </bean>
