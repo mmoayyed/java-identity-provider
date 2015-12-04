@@ -172,8 +172,7 @@ public class ServiceTagSupport extends BodyTagSupport {
         }
 
         final ProfileRequestContext pc = (ProfileRequestContext) request.getAttribute("profileRequestContext");
-        relyingPartyUIContext = uiContextLookupStrategy.apply(pc);
-        return relyingPartyUIContext;
+        return uiContextLookupStrategy.apply(pc);
     }
 
     /**
