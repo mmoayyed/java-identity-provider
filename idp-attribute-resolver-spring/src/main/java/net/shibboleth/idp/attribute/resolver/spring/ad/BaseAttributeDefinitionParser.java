@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -97,7 +98,8 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
                         getLogPrefix(), sourceAttributeId);
             }
         } else if (needsAttributeSourceID()) {
-            log.warn("{} sourceAttributeID was not specified but is required", getLogPrefix());
+            log.error("{} sourceAttributeID was not specified but is required", getLogPrefix());
+            throw new BeanCreationException(getLogPrefix()+": sourceAttributeID was not specified but is required");
         }
 
         final List<Element> attributeEncoders =
