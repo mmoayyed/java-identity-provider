@@ -197,6 +197,15 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     }
 
     /**
+     * Get the number of retries to attempt for a failed transaction.
+     * 
+     * @return number of retries
+     */
+    public int getTransactionRetries() {
+        return transactionRetry;
+    }
+    
+    /**
      * Set the number of retries to attempt for a failed transaction. Defaults to 3.
      * 
      * @param retries the number of retries
@@ -209,6 +218,16 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
     }
 
     /**
+     * Get the error messages to check for classifying a driver error as retryable, generally indicating
+     * a lock violation or duplicate insert that signifies a broken database.
+     * 
+     * @return retryable messages
+     */
+    @Nonnull @NonnullElements public Collection<String> getRetryableErrors() {
+        return retryableErrors;
+    }
+    
+    /**
      * Set the error messages to check for classifying a driver error as retryable, generally indicating
      * a lock violation or duplicate insert that signifies a broken database.
      * 
@@ -218,6 +237,15 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         retryableErrors = new ArrayList(StringSupport.normalizeStringCollection(errors));
+    }
+    
+    /**
+     * Get whether to allow startup if the database cannot be verified.
+     * 
+     * @return whether to allow startup if the database cannot be verified
+     */
+    public boolean getVerifyDatabase() {
+        return verifyDatabase;
     }
     
     /**

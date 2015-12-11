@@ -23,6 +23,7 @@ import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
@@ -75,6 +76,21 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         if (config.hasAttributeNS(null, "queryTimeout")) {
             builder.addPropertyValue("queryTimeout",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "queryTimeout")));
+        }
+
+        if (config.hasAttributeNS(null, "transactionRetries")) {
+            builder.addPropertyValue("transactionRetries",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "transactionRetries")));
+        }
+
+        if (config.hasAttributeNS(null, "failFast")) {
+            builder.addPropertyValue("failFast",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "failFast")));
+        }
+
+        if (config.hasAttributeNS(null, "retryableErrors")) {
+            builder.addPropertyValue("retryableErrors",
+                    SpringSupport.getAttributeValueAsManagedList(config.getAttributeNodeNS(null, "retryableErrors")));
         }
     }
 

@@ -151,7 +151,7 @@
                                 </documentation>
                             </annotation>
                         </element>
-                </choice>    
+                </choice>
                 <attribute name="queryTimeout" type="string">
                     <annotation>
                         <documentation>
@@ -159,6 +159,31 @@
                             Timeout is given in ISO8601 duration form.
                         </documentation>
                     </annotation>
+                </attribute>
+                <attribute name="transactionRetries" type="string">
+                    <annotation>
+                        <documentation>
+                            Number of retries if insert fails (defaults to 3).
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="failFast" type="string">
+                    <annotation>
+                        <documentation>
+                            Whether to fail if the store cannot be verified at startup (defaults to false).
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="retryableErrors">
+                    <annotation>
+                        <documentation>
+                            A space-delimited list of SQLState codes to treat as retryable (indicating
+                            a duplicate insert error occurred).
+                        </documentation>
+                    </annotation>
+                    <simpleType>
+                        <list itemType="string"/>
+                    </simpleType>
                 </attribute>
                 <attribute name="generatedAttributeID" type="string">
                     <annotation>

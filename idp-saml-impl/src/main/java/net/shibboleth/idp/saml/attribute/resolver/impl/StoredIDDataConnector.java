@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.resolver.impl;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -32,6 +33,7 @@ import net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -50,15 +52,16 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnector.class);
 
-    /** The {@link JDBCPersistentIdStore} used to manage IDs. */
+    /** The {@link JDBCPersistentIdStoreEx} used to manage IDs. */
     @Nonnull private final JDBCPersistentIdStoreEx idStore;
 
-    /** Persistent ID data store. */
+    /** Persistent ID generation mechanism. */
     @Nonnull private final StoredPersistentIdGenerationStrategy storedIdStrategy;
     
     /** Constructor. */
     public StoredIDDataConnector() {
         idStore = new JDBCPersistentIdStoreEx();
+        idStore.setVerifyDatabase(false);
         storedIdStrategy = new StoredPersistentIdGenerationStrategy();
     }
     
@@ -92,6 +95,26 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     }
 
     /**
+     * Get the error messages to check for classifying a driver error as retryable, generally indicating
+     * a lock violation or duplicate insert that signifies a broken database.
+     * 
+     * @return retryable messages
+     */
+    @Nonnull @NonnullElements public Collection<String> getRetryableErrors() {
+        return idStore.getRetryableErrors();
+    }
+
+    /**
+     * Set the error messages to check for classifying a driver error as retryable, generally indicating
+     * a lock violation or duplicate insert that signifies a broken database.
+     * 
+     * @param errors retryable messages
+     */
+    public void setRetryableErrors(@Nullable @NonnullElements final Collection<String> errors) {
+        idStore.setRetryableErrors(errors);
+    }
+    
+    /**
      * Get the SQL query timeout.
      * 
      * @return the timeout in milliseconds
@@ -99,7 +122,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     @NonNegative public long getQueryTimeout() {
         return idStore.getQueryTimeout();
     }
-
+    
     /**
      * Set the SQL query timeout.
      * 
@@ -110,12 +133,54 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
         
         idStore.setQueryTimeout(timeout);
     }
+    
+    /**
+     * Get the number of retries to attempt for a failed transaction.
+     * 
+     * @return number of retries
+     */
+    public int getTransactionRetries() {
+        return idStore.getTransactionRetries();
+    }
+    
+    /**
+     * Set the number of retries to attempt for a failed transaction. Defaults to 3.
+     * 
+     * @param retries the number of retries
+     */
+    public void setTransactionRetries(@NonNegative final int retries) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        idStore.setTransactionRetries(retries);
+    }
 
+    /**
+     * Get whether to allow startup if the database cannot be verified.
+     * 
+     * @return whether to allow startup if the database cannot be verified
+     */
+    public boolean getFailFast() {
+        return idStore.getVerifyDatabase();
+    }
+    
+    /**
+     * Set whether to allow startup if the database cannot be verified.
+     * 
+     * <p>Verification consists not only of a liveness check, but the successful insertion of
+     * a dummy row, a failure to insert a duplicate, and then deletion of the row.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setFailFast(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        idStore.setVerifyDatabase(flag);
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        idStore.setVerifyDatabase(false);
         idStore.initialize();
 
         storedIdStrategy.setIDStore(idStore);
