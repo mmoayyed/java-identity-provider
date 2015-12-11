@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,9 +59,10 @@ public final class PluginDependencySupport {
      * 
      * @param workContext current attribute resolver work context
      * @param dependencies set of dependencies
-     * @deprecated use
-     *  {@link PluginDependencySupport#getMergedAttributeValues(AttributeResolverWorkContext, Collection, String)}
-     * @return the merged value set
+     * @deprecated use  {@link PluginDependencySupport#getMergedAttributeValues(
+     *                      AttributeResolverWorkContext, Collection, String)}
+     * @return the merged value set. Returns an empty set if we were given a DataConnector as a dependency, but not
+     *         attribute name
      */
     @Deprecated @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
@@ -84,8 +86,10 @@ public final class PluginDependencySupport {
             ResolvedDataConnector dataConnector =
                     workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
-                Constraint.isTrue(dependency.getDependencyAttributeId() != null, "Data connector dependencies "
-                        + "must specify a dependant attribute ID");
+                if (dependency.getDependencyAttributeId() == null) {
+                    LOG.error("Data connector dependencies must specify a dependant attribute ID");
+                    return Collections.EMPTY_LIST;
+                }
 
                 if (null != dataConnector.getResolvedAttributes()) {
                     final IdPAttribute resolvedAttribute =
@@ -112,7 +116,8 @@ public final class PluginDependencySupport {
      * @param workContext current attribute resolver work context
      * @param dependencies set of dependencies
      * @param attributeDefinitionId the attributeID that these values will be associated with.
-     * @return the merged value set
+     * @return the merged value set. Returns an empty set if we were given a DataConnector as a dependency, but not
+     *         attribute name
      */
     @Nonnull @NonnullElements public static List<IdPAttributeValue<?>> getMergedAttributeValues(
             @Nonnull final AttributeResolverWorkContext workContext,
@@ -133,8 +138,8 @@ public final class PluginDependencySupport {
             final String dependencyAttributeId = dependency.getDependencyAttributeId();
             if (attributeDefinition != null) {
                 if (null == dependencyAttributeId) {
-                    LOG.warn("Plugin '{}' was defined without a sourceAttributeID,  but attribute '{}', specified " + ""
-                            + "as a <Dependency> will be used.", attributeDefinitionId, pluginId);
+                    LOG.warn("Plugin '{}' was defined without a sourceAttributeID,  but attribute '{}', specified "
+                            + "" + "as a <Dependency> will be used.", attributeDefinitionId, pluginId);
                 } else if (!dependencyAttributeId.equals(pluginId)) {
                     LOG.warn("Plugin '{}' was defined with a sourceAttributeID '{}',"
                             + " but the attribute definition '{}', specified as a <Dependency> will be used as well.",
@@ -149,8 +154,12 @@ public final class PluginDependencySupport {
             ResolvedDataConnector dataConnector =
                     workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
-                Constraint.isTrue(dependency.getDependencyAttributeId() != null, "Data connector dependencies "
-                        + "must specify a dependant attribute ID");
+                if (dependency.getDependencyAttributeId() == null) {
+                    LOG.error("Attribute definition '{}' has a data connector"
+                            + " dependency '{}' but no sourceAttributeID.", attributeDefinitionId,
+                            dataConnector.getId());
+                    return Collections.EMPTY_LIST;
+                }
 
                 if (null != dataConnector.getResolvedAttributes()) {
                     final IdPAttribute resolvedAttribute =

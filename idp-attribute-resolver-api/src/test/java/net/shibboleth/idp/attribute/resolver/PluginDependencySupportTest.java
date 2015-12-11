@@ -91,6 +91,28 @@ public class PluginDependencySupportTest {
         Assert.assertTrue(result.contains(new StringAttributeValue(ResolverTestSupport.EPE1_VALUES[1])));
 
     }
+    
+    @SuppressWarnings("deprecation")
+    @Test public void dataConnectorNoAttrName() {
+        final AttributeResolutionContext resolutionContext =
+                ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1",
+                        ResolverTestSupport.buildAttribute(ResolverTestSupport.EPE_ATTRIB_ID,
+                                ResolverTestSupport.EPE1_VALUES), ResolverTestSupport.buildAttribute(
+                                ResolverTestSupport.EPA_ATTRIB_ID, ResolverTestSupport.EPA1_VALUES)));
+        final AttributeResolverWorkContext workContext =
+                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
+
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        final List<IdPAttributeValue<?>> result =
+                PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList(depend),
+                        ResolverTestSupport.EPE_ATTRIB_ID);
+
+        Assert.assertNotNull(result);
+        Assert.assertTrue(result.isEmpty());
+        
+        Assert.assertTrue(PluginDependencySupport.getMergedAttributeValues(workContext, Collections.singletonList(depend)).isEmpty());
+    }
+
 
     @Test public void getMergedAttributeValueWithMultipleDependencies() {
         final MockStaticDataConnector connector1 =
