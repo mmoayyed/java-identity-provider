@@ -136,6 +136,15 @@
         <servlet-name>shibboleth_jsp</servlet-name>
         <url-pattern>/shibboleth</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>default</servlet-name>
+        <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+        <init-param>
+            <param-name>dirAllowed</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </servlet>
 
     <!--
     Uncomment to use container managed authentication. The new servlet spec (3.1)
