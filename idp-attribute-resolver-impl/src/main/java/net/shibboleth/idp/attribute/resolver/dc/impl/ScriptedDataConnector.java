@@ -57,6 +57,7 @@ import com.google.common.base.Function;
 /**
  * A Data Connector which populates a series of attributes from a provided {@link ProfileRequestContext}.
  */
+@SuppressWarnings("deprecation")
 public class ScriptedDataConnector extends AbstractDataConnector {
 
     /** The id of the object where the results go. */

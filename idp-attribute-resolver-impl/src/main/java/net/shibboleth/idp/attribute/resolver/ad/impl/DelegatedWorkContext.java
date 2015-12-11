@@ -36,8 +36,9 @@ import org.opensaml.messaging.context.BaseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** A delegate for {@link AttributeResolverWorkContext}. */
-public class DelegatedWorkContext extends BaseContext {
+/** A delegate for {@link AttributeResolverWorkContext}. 
+ * @deprecated(Deprecated function)*/
+@Deprecated public class DelegatedWorkContext extends BaseContext {
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(DelegatedWorkContext.class);

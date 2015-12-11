@@ -197,7 +197,8 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
      * @return constructed script context
      * @throws ResolutionException thrown if dependent data connectors or attribute definitions can not be resolved
      */
-    @Nonnull private ScriptContext getScriptContext(@Nonnull final AttributeResolutionContext resolutionContext,
+    @SuppressWarnings("deprecation") @Nonnull private ScriptContext getScriptContext(
+            @Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
