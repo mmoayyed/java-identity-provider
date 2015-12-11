@@ -88,12 +88,14 @@
 				<attribute name="sourceAttributeID" type="string">
 					<annotation>
 						<documentation>
-							The name of the attribute from the data connector which should be
-							used to populate this attribute definition. For example, an attribute
-							definition for "eduPersonPrincipalName" may	have a source attribute of
-							"uid" along with an appropriate scope value. This is an optional
-							attribute, and if left empty the ID of the attribute definition will be
-							used for the source	attribute.
+							The name of the attribute from a data connector dependency which should be
+							used to populate this attribute definition.
+                            
+                            Whether this attribute is required or optional depends on whether the dependency
+                            set contains data connectors or attribute definitions. It may be left out for
+                            attribute dependencies but MUST be set if there are data connector dependencies.
+                            
+                            This was a flawed schema design and may eventually be altered.
 						</documentation>
 					</annotation>
 				</attribute>
