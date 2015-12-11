@@ -69,10 +69,10 @@ public class ServiceTagSupport extends BodyTagSupport {
 
     /**
      * Sets the {@link RelyingPartyUIContext}.
-     *
+     * @deprecated this has to be calculated every time
      * @param value what to set
      */
-    public void setUiContext(@Nullable final RelyingPartyUIContext value) {
+    @Deprecated public void setUiContext(@Nullable final RelyingPartyUIContext value) {
         relyingPartyUIContext = value;
     }
 
