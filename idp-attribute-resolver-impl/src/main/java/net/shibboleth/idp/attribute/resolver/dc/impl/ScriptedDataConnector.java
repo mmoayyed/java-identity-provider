@@ -37,6 +37,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.ad.impl.DelegatedWorkContext;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedIdPAttributeImpl;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
@@ -158,7 +159,8 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
         log.debug("{} adding current attribute resolution contexts to script context", getLogPrefix());
         scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("workContext", workContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("workContext", new DelegatedWorkContext(workContext, getLogPrefix()),
+                ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("profileContext", prcLookupStrategy.apply(resolutionContext),
                 ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);

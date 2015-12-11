@@ -150,7 +150,6 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(results.get(0).getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
 
-
     /**
      * Test resolution of an simple script (statically generated data).
      * 
@@ -180,7 +179,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
-    
+
     @Test public void nullValue() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
 
@@ -199,9 +198,10 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final List<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
-        Assert.assertEquals(results.iterator().next(), new EmptyAttributeValue(EmptyType.NULL_VALUE), "Scripted result contains expected value");
+        Assert.assertEquals(results.iterator().next(), new EmptyAttributeValue(EmptyType.NULL_VALUE),
+                "Scripted result contains expected value");
     }
-    
+
     @Test public void logging() throws Exception {
 
         final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
@@ -218,8 +218,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final List<IdPAttributeValue<?>> results = val.getValues();
 
         Assert.assertEquals(results.size(), 2, "Scripted result value count");
-}
-
+    }
 
     @Test public void simpleWithPredef() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {
@@ -345,8 +344,40 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
         Assert.assertTrue(values.contains(TestSources.ATTRIBUTE_ATTRIBUTE_VALUE_RESULT));
     }
-    
-    
+
+    @Test public void workContext() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
+
+        // Set the dependency on the data connector
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
+        ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
+                TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
+        final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
+        scripted.setId(TEST_ATTRIBUTE_NAME);
+        scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("work.script")));
+        scripted.setDependencies(ds);
+        scripted.initialize();
+
+        // And resolve
+        final Set<AttributeDefinition> attrDefinitions = new LazySet<>();
+        attrDefinitions.add(scripted);
+        attrDefinitions.add(TestSources.populatedStaticAttribute());
+
+        final Set<DataConnector> dataDefinitions = new LazySet<>();
+        dataDefinitions.add(TestSources.populatedStaticConnector());
+
+        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
+        resolver.initialize();
+
+        final AttributeResolutionContext context = generateContext();
+        resolver.resolveAttributes(context);
+        final IdPAttribute attribute = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME);
+        final List<IdPAttributeValue<?>> values = attribute.getValues();
+
+        Assert.assertEquals(values.size(), 3);
+        Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
+    }
+
     /**
      * Test resolution of an script which looks at the provided attributes.
      * 
@@ -355,8 +386,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
      * @throws ScriptException
      * @throws IOException
      */
-    @Test public void attributesWithNull() throws ResolutionException, ComponentInitializationException, ScriptException,
-            IOException {
+    @Test public void attributesWithNull() throws ResolutionException, ComponentInitializationException,
+            ScriptException, IOException {
 
         final List<IdPAttributeValue<?>> values = new ArrayList<>(3);
         values.add(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT);
@@ -377,15 +408,13 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.initialize();
 
         final IdPAttribute result = scripted.resolve(resolutionContext);
-        
-        
+
         final List<IdPAttributeValue<?>> outValues = result.getValues();
 
         Assert.assertEquals(outValues.size(), 2);
         Assert.assertTrue(values.contains(TestSources.COMMON_ATTRIBUTE_VALUE_RESULT));
         Assert.assertTrue(values.contains(new EmptyAttributeValue(EmptyType.NULL_VALUE)));
     }
-    
 
     @Test public void nonString() throws ResolutionException, ComponentInitializationException, ScriptException,
             IOException {

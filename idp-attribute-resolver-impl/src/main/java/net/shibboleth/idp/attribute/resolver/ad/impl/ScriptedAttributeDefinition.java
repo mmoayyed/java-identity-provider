@@ -215,7 +215,8 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
         log.debug("{} adding contexts to script context", getLogPrefix());
         scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("workContext", workContext, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("workContext", new DelegatedWorkContext(workContext, getLogPrefix()),
+                ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
         final ProfileRequestContext prc = prcLookupStrategy.apply(resolutionContext);
         if (null == prc) {
