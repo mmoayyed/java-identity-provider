@@ -299,6 +299,12 @@
             <map>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.AUTHN_FLOW_ID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.AuthenticationFlowAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -528,6 +534,12 @@
             <map>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.AUTHN_FLOW_ID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.AuthenticationFlowAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -563,7 +575,27 @@
             <map>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.AUTHN_FLOW_ID"/>
+                    </key>
+                    <bean class="net.shibboleth.idp.authn.audit.impl.AuthenticationFlowAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                          c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                          c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_USERNAME"/>
+                    </key>
+                    <ref bean="shibboleth.UsernameHasher" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.USER"/>
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose"
                           c:g-ref="shibboleth.PrincipalNameLookup.Subject"
@@ -606,14 +638,6 @@
                     </key>
                     <bean class="net.shibboleth.idp.cas.audit.impl.TicketLookupFunction" />
                 </entry>
-                <entry>
-                    <key>
-                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.USER"/>
-                    </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose"
-                          c:g-ref="shibboleth.PrincipalNameLookup.Subject"
-                          c:f-ref="shibboleth.ChildLookup.SubjectContext" />
-                </entry>
             </map>
         </property>
     </bean>
@@ -625,6 +649,20 @@
                 <entry>
                     <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose"
+                          c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                          c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.HASHED_USERNAME"/>
+                    </key>
+                    <ref bean="shibboleth.UsernameHasher" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.USER"/>
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose"
                           c:g-ref="shibboleth.PrincipalNameLookup.Subject"
@@ -654,14 +692,6 @@
                         <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.SERVICE_TICKET"/>
                     </key>
                     <bean class="net.shibboleth.idp.cas.audit.impl.TicketLookupFunction" />
-                </entry>
-                <entry>
-                    <key>
-                        <util:constant static-field="net.shibboleth.idp.cas.protocol.CASAuditFields.USER"/>
-                    </key>
-                    <bean class="com.google.common.base.Functions" factory-method="compose"
-                          c:g-ref="shibboleth.PrincipalNameLookup.Subject"
-                          c:f-ref="shibboleth.ChildLookup.SubjectContext" />
                 </entry>
                 <entry>
                     <key>
