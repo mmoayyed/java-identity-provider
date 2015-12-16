@@ -163,7 +163,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         eduPersonScopedAffiliationAttribute.setFriendlyName("eduPersonScopedAffiliation");
         final XSAny eduPersonScopedAffiliationAttributeValue =
                 new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
-        eduPersonScopedAffiliationAttributeValue.setTextContent("member");
+        eduPersonScopedAffiliationAttributeValue.setTextContent("member@example.org");
         eduPersonScopedAffiliationAttribute.getAttributeValues().add(eduPersonScopedAffiliationAttributeValue);
 
         expectedAttributes = new ArrayList<>();
