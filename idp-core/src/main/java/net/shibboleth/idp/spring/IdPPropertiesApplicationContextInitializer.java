@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.spring;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -108,7 +109,12 @@ public class IdPPropertiesApplicationContextInitializer
                 if ("classpath:".equals(searchLocation) || (resource instanceof ClassPathResource)) {
                     setIdPHomeProperty(searchLocation, properties);
                 } else {
-                    final String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
+                    String searchLocationAbsolutePath = Paths.get(searchLocation).toAbsolutePath().toString();
+                    // Minimal normalization required on Windows to allow SWF's flow machinery to work.
+                    // Just replace backslashes with forward slashes.
+                    if (File.separatorChar == '\\') {
+                        searchLocationAbsolutePath = searchLocationAbsolutePath.replace('\\', '/');
+                    }
                     setIdPHomeProperty(searchLocationAbsolutePath, properties);
                 }
 
