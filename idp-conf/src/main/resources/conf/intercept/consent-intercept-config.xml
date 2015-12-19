@@ -66,6 +66,17 @@
     -->
 
     <!--
+    Customize the order in which attributes are displayed.
+    Attribute IDs not present in this list will be sorted according to their
+    natural order and displayed subsequent to any attribute IDs specified here.
+    -->
+    <!--
+    <util:list id="shibboleth.consent.attribute-release.AttributeDisplayOrder">
+        <value>mail</value>
+    </util:list>
+    -->
+
+    <!--
     These beans define mappings between audit log categories and formatting strings.
     -->
 
