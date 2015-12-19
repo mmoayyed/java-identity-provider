@@ -50,7 +50,7 @@
     
     <util:list id="shibboleth.consent.attribute-release.WhitelistedAttributeIDs">
         <!--
-        <value>email</value>
+        <value>mail</value>
         -->
     </util:list>
 
