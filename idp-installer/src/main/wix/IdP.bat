@@ -119,6 +119,10 @@ if ERRORLEVEL 1 (
   goto done;
 )
 
+rem The file names gets too big....
+rename %idpex% IdPEx
+set idpex=IdPExe
+
 rem we Want to call embedded/jetty-base jetty-base
 move %idpex%\embedded\jetty-base %idpex%\jetty-base
 if ERRORLEVEL 1 (
