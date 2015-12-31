@@ -23,10 +23,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.script.ScriptException;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.EmptyAttributeValue.EmptyType;
@@ -42,6 +44,9 @@ import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.SAMLAttributeDataConnector;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -123,6 +128,40 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(results.size(), 1, "Scripted result value count");
         Assert.assertEquals(results.iterator().next().getValue(), SIMPLE_VALUE, "Scripted result contains known value");
     }
+    
+    /**
+     * Test resolution of an simple script (statically generated data).
+     * 
+     * @throws ResolutionException
+     * @throws ComponentInitializationException only if the test will fail
+     * @throws ScriptException
+     * @throws IOException
+     */
+    @Test public void subject() throws ResolutionException, ComponentInitializationException, ScriptException,
+            IOException {
+        final IdPAttribute test = new IdPAttribute(TEST_ATTRIBUTE_NAME);
+
+        test.setValues(Collections.singletonList(new StringAttributeValue(SIMPLE_VALUE)));
+
+        final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
+        Assert.assertNull(attr.getScript());
+        attr.setId(TEST_ATTRIBUTE_NAME);
+        attr.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("subjects.script")));
+        attr.initialize();
+        Assert.assertNotNull(attr.getScript());
+
+        final IdPAttribute val = attr.resolve(generateContext());
+        final List<IdPAttributeValue<?>> results = val.getValues();
+
+        Assert.assertTrue(test.equals(val), "Scripted result is the same as bases");
+        Assert.assertEquals(results.size(), 4, "Scripted result value count");
+        Assert.assertTrue(results.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        Assert.assertTrue(results.contains(new StringAttributeValue(SIMPLE_VALUE+"2")));
+        Assert.assertTrue(results.contains(new StringAttributeValue(SIMPLE_VALUE+"3")));
+        Assert.assertTrue(results.contains(new StringAttributeValue(SIMPLE_VALUE+"4")));
+    }
+
+    
 
     /**
      * Test resolution of an script which uses the custom bean
@@ -611,8 +650,21 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
     }
 
     private static AttributeResolutionContext generateContext() {
-        return TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+        AttributeResolutionContext ctx = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                 TestSources.SP_ENTITY_ID);
+        final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
+        
+        final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
+        Subject subject = new Subject();
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE));
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE+"2"));
+        
+        authnResults.put("one", new AuthenticationResult("1", subject));
+        subject = new Subject();
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE+"3"));
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE+"4"));
+        authnResults.put("two", new AuthenticationResult("2", subject));
+        return ctx;
     }
 
     final class Locator implements Function<AttributeResolutionContext, List<Attribute>> {

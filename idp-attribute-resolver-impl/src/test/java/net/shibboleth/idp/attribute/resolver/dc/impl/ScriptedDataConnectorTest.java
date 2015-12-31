@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.script.ScriptException;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -31,6 +32,9 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
@@ -70,10 +74,23 @@ public class ScriptedDataConnectorTest {
         connector.initialize();
 
         final AttributeResolutionContext context = new ProfileRequestContext<>().getSubcontext(AttributeResolutionContext.class,  true);
+        
+        final SubjectContext sc = context.getParent().getSubcontext(SubjectContext.class, true);
+        
+        final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
+        Subject subject = new Subject();
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal("Foo"));
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal("Bar"));
+        authnResults.put("one", new AuthenticationResult("1", subject));
+        subject = new Subject();
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal("Toto"));
+        authnResults.put("two", new AuthenticationResult("2", subject));
+
+        
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         final Map<String, IdPAttribute> result = connector.resolve(context);
 
-        Assert.assertEquals(result.size(), 3);
+        Assert.assertEquals(result.size(), 4);
         
         List<IdPAttributeValue<?>> values = result.get("ScriptedOne").getValues();
         Assert.assertEquals(values.size(), 2);
@@ -89,6 +106,12 @@ public class ScriptedDataConnectorTest {
         values = result.get("ThreeScripted").getValues();
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue(AttributeResolutionContext.class.getSimpleName())));
+        
+        values = result.get("Subjects").getValues();
+        Assert.assertEquals(values.size(), 3);
+        Assert.assertTrue(values.contains(new StringAttributeValue("Foo")));
+        Assert.assertTrue(values.contains(new StringAttributeValue("Bar")));
+        Assert.assertTrue(values.contains(new StringAttributeValue("Toto")));
 
     }
     

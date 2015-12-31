@@ -18,15 +18,20 @@
 package net.shibboleth.idp.attribute.filter.matcher.impl;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.concurrent.ThreadSafe;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -56,7 +61,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     private EvaluableScript addedValuesScript;
 
     /** A script that returns a set containing the prc name. */
-    private EvaluableScript prcScript;
+    private EvaluableScript prcscScript;
 
     private boolean isV8() {
         final String ver = System.getProperty("java.version");
@@ -83,12 +88,13 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
                             .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
                             .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(\"a\"));")
                             .append("x;").toString());
-            prcScript =
+            prcscScript =
                     new EvaluableScript(
                             "JavaScript",
-                            new StringBuilder()
+                            new StringBuilder("importPackage(Packages.net.shibboleth.idp.attribute);")
                                     .append("x = new java.util.HashSet(1);\n")
-                                    .append("x.add(new net.shibboleth.idp.attribute.StringAttributeValue(profileContext.getClass().getName()));\n")
+                                    .append("x.add(new StringAttributeValue(profileContext.getClass().getName()));\n")
+                                    .append("x.add(new StringAttributeValue(subjects[0].getPrincipals().iterator().next().getName()));\n")
                                     .append("x;").toString());
         } else {
 
@@ -107,13 +113,14 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
                             .append("importPackage(Packages.net.shibboleth.idp.attribute);")
                             .append("x = new HashSet();").append("x.add(attribute.getValues().iterator().next());")
                             .append("x.add(new StringAttributeValue(\"a\"));").append("x;").toString());
-            prcScript =
+            prcscScript =
                     new EvaluableScript(
                             "JavaScript",
                             new StringBuilder("HashSet = Java.type(\"java.util.HashSet\");\n")
                                     .append("StringAttributeValue = Java.type(\"net.shibboleth.idp.attribute.StringAttributeValue\");\n")
                                     .append("x = new HashSet(1);\n")
                                     .append("x.add(new StringAttributeValue(profileContext.getClass().getName()));\n")
+                                    .append("x.add(new StringAttributeValue(subjects[0].getPrincipals().iterator().next().getName()));\n")
                                     .append("x;").toString());
 
         }
@@ -137,35 +144,35 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         try {
             matcher.getMatchingValues(null, filterContext);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         matcher = new ScriptedMatcher(returnOneValueScript);
         try {
             matcher.setScript(null);
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             new ScriptedMatcher(null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
     }
@@ -175,7 +182,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
@@ -189,7 +196,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         matcher.initialize();
         matcher.setCustomObject(custom);
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value1) || result.contains(value2) || result.contains(value3));
@@ -233,7 +240,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         boolean thrown = false;
         try {
             matcher.getMatchingValues(attribute, filterContext);
-        } catch (UninitializedComponentException e) {
+        } catch (final UninitializedComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "getMatchingValues before init");
@@ -245,7 +252,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         thrown = false;
         try {
             matcher.setScript(returnOneValueScript);
-        } catch (UnmodifiableComponentException e) {
+        } catch (final UnmodifiableComponentException e) {
             thrown = true;
         }
 
@@ -254,7 +261,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         thrown = false;
         try {
             matcher.initialize();
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "getMatchingValues after destroy");
@@ -262,7 +269,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         thrown = false;
         try {
             matcher.getMatchingValues(attribute, filterContext);
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "getMatchingValues after destroy");
@@ -291,20 +298,32 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testPrc() throws ComponentInitializationException, CloneNotSupportedException {
-        ScriptedMatcher matcher = new ScriptedMatcher(prcScript);
+        final ScriptedMatcher matcher = new ScriptedMatcher(prcscScript);
 
         matcher.setId("prc");
         matcher.initialize();
-        new ProfileRequestContext<>().getSubcontext(RelyingPartyContext.class, true).addSubcontext(filterContext);
+        final  ProfileRequestContext<Object, Object> prc = new ProfileRequestContext<>();
+        prc.getSubcontext(RelyingPartyContext.class, true).addSubcontext(filterContext);
+        final SubjectContext sc = prc.getSubcontext(SubjectContext.class, true);
+        
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal("FOO"));
+        sc.getAuthenticationResults().put("one", new AuthenticationResult("1", subject));        
+        
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertEquals(result.size(), 0);
 
         final IdPAttribute newAttr = attribute.clone();
 
-        newAttr.setValues(Collections.singleton((IdPAttributeValue<?>) new StringAttributeValue(
-                ProfileRequestContext.class.getName())));
+        final Set<IdPAttributeValue<String>> s = new HashSet(2);
+        s.add(new StringAttributeValue(ProfileRequestContext.class.getName()));
+        s.add(new StringAttributeValue("BAR"));
+        s.add(new StringAttributeValue("FOO"));
+        newAttr.setValues(s);
         result = matcher.getMatchingValues(newAttr, filterContext);
-        Assert.assertEquals(result.size(), 1);
+        Assert.assertEquals(result.size(), 2);
+        Assert.assertTrue(result.contains(new StringAttributeValue(ProfileRequestContext.class.getName())));
+        Assert.assertTrue(result.contains(new StringAttributeValue("FOO")));
 
     }
 

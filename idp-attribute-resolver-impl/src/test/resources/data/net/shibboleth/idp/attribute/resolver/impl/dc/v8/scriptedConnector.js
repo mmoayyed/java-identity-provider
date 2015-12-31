@@ -23,6 +23,19 @@ set.add(new StringAttributeValue("3Value"));
 attr.setValues(set);
 connectorResults.add(attr);
 
+attr = new IdPAttribute("Subjects");
+set = new HashSet(4);
+x = subjects[0].getPrincipals().iterator();
+while(x.hasNext()){
+    set.add(new StringAttributeValue(x.next().getName()));
+    }
+x = subjects[1].getPrincipals().iterator();
+while (x.hasNext()){
+    set.add(new StringAttributeValue(x.next().getName()));
+    }
+attr.setValues(set);
+connectorResults.add(attr);
+
 connectorResults.add(new Integer(4));
 
 child = profileContext.getSubcontext("net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext");

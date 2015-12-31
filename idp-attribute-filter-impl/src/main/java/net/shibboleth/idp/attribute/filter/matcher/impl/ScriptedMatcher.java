@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter.matcher.impl;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -27,11 +28,13 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -43,6 +46,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -70,6 +74,9 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
     @Nonnull private Function<AttributeFilterContext, ProfileRequestContext> prcLookupStrategy;
 
+    /** Strategy used to locate the {@link SubjectContext} to use. */
+    @Nonnull private Function<ProfileRequestContext, SubjectContext> scLookupStrategy;
+
     /** Log prefix. */
     private String logPrefix;
 
@@ -87,7 +94,8 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         prcLookupStrategy =
                 Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
                         new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
-    }
+        scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
+        }
 
     /**
      * Return the custom (externally provided) object.
@@ -103,7 +111,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(Object object) {
+    @Nullable public void setCustomObject(final Object object) {
         customObject = object;
     }
 
@@ -142,6 +150,21 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     }
 
     /**
+     * Set the strategy used to locate the {@link SubjectContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public void setSubjectContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
+    }
+
+
+    /**
      * Perform the AttributeValueMatching.
      * <p>
      * When the script is evaluated, the following properties will be available via the {@link ScriptContext}:
@@ -166,11 +189,28 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
         final ProfileRequestContext prc = prcLookupStrategy.apply(filterContext);
-        if (null == prc) {
-            log.error("{} Could not locate ProfileRequestContext", getLogPrefix());
-        }
         scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("attribute", attribute, ScriptContext.ENGINE_SCOPE);
+
+        final SubjectContext sc;
+        if (null == prc) {
+            log.error("{} Could not locate ProfileRequestContext", getLogPrefix());
+            sc = null;
+        }  else {
+            sc = scLookupStrategy.apply(prc);            
+        }
+        
+        if (null == sc) {
+            log.warn("{} Could not locate SubjectContext", getLogPrefix());
+        } else {
+            final List<Subject> subjects = sc.getSubjects();
+            if (null == subjects) {
+                log.warn("{} Could not locate Subjects", getLogPrefix());
+            } else {
+                scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]), 
+                        ScriptContext.ENGINE_SCOPE);
+            }
+        }
 
         try {
             final Object result = currentScript.eval(scriptContext);
@@ -180,14 +220,14 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
             }
 
             if (result instanceof Set) {
-                HashSet<IdPAttributeValue<?>> returnValues = new HashSet<>(attribute.getValues());
+                final HashSet<IdPAttributeValue<?>> returnValues = new HashSet<>(attribute.getValues());
                 returnValues.retainAll((Set) result);
                 return Collections.unmodifiableSet(returnValues);
             } else {
                 log.error("{} Matcher script did not return a Set.", getLogPrefix());
                 return null;
             }
-        } catch (ScriptException e) {
+        } catch (final ScriptException e) {
             log.error("{} Error while executing value matching script", getLogPrefix(), e);
             return null;
         }
@@ -205,7 +245,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -218,7 +258,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
             return false;
         }
 
-        ScriptedMatcher other = (ScriptedMatcher) obj;
+        final ScriptedMatcher other = (ScriptedMatcher) obj;
 
         return script.equals(other.getScript());
     }
@@ -242,7 +282,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
+            final StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;

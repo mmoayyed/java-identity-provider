@@ -17,15 +17,19 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.impl;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -34,6 +38,7 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -65,6 +70,9 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
     @Nonnull private Function<AttributeFilterContext, ProfileRequestContext> prcLookupStrategy;
 
+    /** Strategy used to locate the {@link SubjectContext} to use. */
+    @Nonnull private Function<ProfileRequestContext, SubjectContext> scLookupStrategy;
+
     /** The custom object we inject into all scripts. */
     @Nullable private Object customObject;
 
@@ -79,6 +87,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
         prcLookupStrategy =
                 Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
                         new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
+        scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
     }
 
     /**
@@ -95,7 +104,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(Object object) {
+    @Nullable public void setCustomObject(final Object object) {
         customObject = object;
     }
 
@@ -134,6 +143,20 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     }
 
     /**
+     * Set the strategy used to locate the {@link SubjectContext} associated with a given
+     * {@link ProfileRequestContext}.
+     * 
+     * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
+     *            {@link ProfileRequestContext}
+     */
+    public void
+            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
+    }
+
+    /**
      * Calculate the PolicyRule.
      * <p>
      * When the script is evaluated, the following property will be available via the {@link ScriptContext}:
@@ -155,10 +178,26 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
         scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
         final ProfileRequestContext prc = prcLookupStrategy.apply(filterContext);
+        final SubjectContext sc;
         if (null == prc) {
             log.error("{} Could not locate ProfileRequestContext", getLogPrefix());
+            sc = null;
+        } else {
+            sc = scLookupStrategy.apply(prc);
         }
+
         scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
+        if (null == sc) {
+            log.warn("{} Could not locate SubjectContext", getLogPrefix());
+        } else {
+            final List<Subject> subjects = sc.getSubjects();
+            if (null == subjects) {
+                log.warn("{} Could not locate Subjects", getLogPrefix());
+            } else {
+                scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]),
+                        ScriptContext.ENGINE_SCOPE);
+            }
+        }
 
         try {
             final Object result = currentScript.eval(scriptContext);
@@ -177,7 +216,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
                         .toString());
                 return Tristate.FAIL;
             }
-        } catch (ScriptException e) {
+        } catch (final ScriptException e) {
             log.error("{} Error while executing value matching script", getLogPrefix(), e);
             return Tristate.FAIL;
         }
@@ -196,7 +235,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -209,7 +248,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
             return false;
         }
 
-        ScriptedPolicyRule other = (ScriptedPolicyRule) obj;
+        final ScriptedPolicyRule other = (ScriptedPolicyRule) obj;
 
         return script.equals(other.getScript());
     }
@@ -233,7 +272,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
+            final StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;

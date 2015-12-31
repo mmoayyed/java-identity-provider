@@ -27,6 +27,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
+import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
@@ -35,12 +36,14 @@ import net.shibboleth.idp.attribute.resolver.PluginDependencySupport;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -83,6 +86,9 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
     @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> prcLookupStrategy;
 
+    /** Strategy used to locate the {@link SubjectContext} to use. */
+    @Nonnull private Function<ProfileRequestContext, SubjectContext> scLookupStrategy;
+
     /** The custom object we inject into all scripts. */
     @Nullable private Object customObject;
 
@@ -90,6 +96,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     public ScriptedAttributeDefinition() {
         // Defaults to ProfileRequestContext -> AttributeContext.
         prcLookupStrategy = new ParentContextLookup<>();
+        scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
     }
 
     /**
@@ -143,6 +150,20 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
+    }
+
+    /**
+     * Set the strategy used to locate the {@link SubjectContext} associated with a given
+     * {@link AttributeResolutionContext}.
+     * 
+     * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
+     *            {@link AttributeResolutionContext}
+     */
+    public void
+            setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -224,6 +245,19 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
             log.error("{} ProfileRequestContext could not be located", getLogPrefix());
         }
         scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
+
+        final SubjectContext sc = scLookupStrategy.apply(prc);
+        if (null == sc) {
+            log.warn("{} Could not locate SubjectContext", getLogPrefix());
+        } else {
+            final List<Subject> subjects = sc.getSubjects();
+            if (null == subjects) {
+                log.warn("{} Could not locate Subjects", getLogPrefix());
+            } else {
+                scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]),
+                        ScriptContext.ENGINE_SCOPE);
+            }
+        }
 
         log.debug("{} adding emulated V2 request context to script context", getLogPrefix());
         scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
