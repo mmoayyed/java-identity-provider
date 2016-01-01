@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -98,7 +99,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(Object object) {
+    @Nullable public void setCustomObject(final Object object) {
         customObject = object;
     }
 
@@ -137,8 +138,10 @@ public class ScriptedAction extends AbstractProfileAction {
      */
     static ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource)
             throws ScriptException, IOException {
-        EvaluableScript script = new EvaluableScript(engineName, resource.getFile());
-        return new ScriptedAction(script, resource.getDescription());
+        try (InputStream is = resource.getInputStream()) {
+            final EvaluableScript script = new EvaluableScript(engineName, is);
+            return new ScriptedAction(script, resource.getDescription());
+        }
     }
 
     /**
@@ -163,7 +166,7 @@ public class ScriptedAction extends AbstractProfileAction {
      */
     static ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
         return new ScriptedAction(script, "Inline");
     }
 
@@ -175,7 +178,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @throws ScriptException if the compile fails
      */
     static ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
-        EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
+        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedAction(script, "Inline");
     }
 

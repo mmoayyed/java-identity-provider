@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.cert.CRLException;
@@ -103,7 +104,7 @@ public class X509ResourceCredentialFactoryBean extends AbstractX509CredentialFac
             return null;
         }
         try {
-            final Collection<X509Certificate> certs = X509Support.decodeCertificates(entityResource.getFile());
+            final Collection<X509Certificate> certs = X509Support.decodeCertificates(entityResource.getInputStream());
             if (certs.size() > 1) {
                 log.error("{}: Configuration element indicated an entityCertificate,"
                         + " but multiple certificates were decoded", getConfigDescription());
@@ -121,10 +122,10 @@ public class X509ResourceCredentialFactoryBean extends AbstractX509CredentialFac
 
     /** {@inheritDoc} */
     @Override @Nonnull protected List<X509Certificate> getCertificates() {
-        List<X509Certificate> certificates = new LazyList<>();
-        for (Resource r : certificateResources) {
-            try {
-                certificates.addAll(X509Support.decodeCertificates(r.getFile()));
+        final List<X509Certificate> certificates = new LazyList<>();
+        for (final Resource r : certificateResources) {
+            try(InputStream is = r.getInputStream()) {
+                certificates.addAll(X509Support.decodeCertificates(is));
             } catch (CertificateException | IOException e) {
                 log.error("{}: could not decode CertificateFile at {}: {}", getConfigDescription(),
                         r.getDescription(), e);
@@ -139,8 +140,8 @@ public class X509ResourceCredentialFactoryBean extends AbstractX509CredentialFac
         if (null == privateKeyResource) {
             return null;
         }
-        try {
-            return KeySupport.decodePrivateKey(privateKeyResource.getFile(), getPrivateKeyPassword());
+        try (InputStream is = privateKeyResource.getInputStream()) {
+            return KeySupport.decodePrivateKey(is, getPrivateKeyPassword());
         } catch (KeyException | IOException e) {
             log.error("{}: Could not decode KeyFile at {}: {}", getConfigDescription(),
                     privateKeyResource.getDescription(), e);
@@ -153,10 +154,10 @@ public class X509ResourceCredentialFactoryBean extends AbstractX509CredentialFac
         if (null == crlResources) {
             return null;
         }
-        List<X509CRL> crls = new LazyList<>();
-        for (Resource crl : crlResources) {
-            try {
-                crls.addAll(X509Support.decodeCRLs(crl.getFile()));
+        final List<X509CRL> crls = new LazyList<>();
+        for (final Resource crl : crlResources) {
+            try (InputStream is = crl.getInputStream()) {
+                crls.addAll(X509Support.decodeCRLs(is));
             } catch (CRLException | IOException e) {
                 log.error("{}: Could not decode CRL file: {}", getConfigDescription(), crl.getDescription(), e);
                 throw new FatalBeanException("Could not decode provided CRL file " + crl.getDescription(), e);

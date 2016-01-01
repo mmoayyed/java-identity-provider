@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
@@ -74,10 +75,10 @@ public class PKIXResourceValidationInfoFactoryBean extends AbstractBasicPKIXVali
         if (null == certificateFiles) {
             return null;
         }
-        List<X509Certificate> certificates = new ArrayList<>(certificateFiles.size());
-        for (Resource f : certificateFiles) {
-            try {
-                certificates.addAll(X509Support.decodeCertificates(f.getFile()));
+        final List<X509Certificate> certificates = new ArrayList<>(certificateFiles.size());
+        for (final Resource f : certificateFiles) {
+            try(InputStream is = f.getInputStream()) {
+                certificates.addAll(X509Support.decodeCertificates(is));
             } catch (CertificateException | IOException e) {
                 log.error("{}: Could not decode Certificate at {}", getConfigDescription(), f.getDescription(), e);
                 throw new FatalBeanException("Could not decode provided CertificateFile: " + f.getDescription(), e);
@@ -95,10 +96,10 @@ public class PKIXResourceValidationInfoFactoryBean extends AbstractBasicPKIXVali
         if (null == crlFiles) {
             return null;
         }
-        List<X509CRL> crls = new ArrayList<>(crlFiles.size());
-        for (Resource crlFile : crlFiles) {
-            try {
-                crls.addAll(X509Support.decodeCRLs(crlFile.getFile()));
+        final List<X509CRL> crls = new ArrayList<>(crlFiles.size());
+        for (final Resource crlFile : crlFiles) {
+            try(InputStream is = crlFile.getInputStream())  {
+                crls.addAll(X509Support.decodeCRLs(is));
             } catch (CRLException | IOException e) {
                 log.error("{}: Could not decode CRL file at {}: {}", getConfigDescription(), crlFile.getDescription(),
                         e);

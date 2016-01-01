@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.logic;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,7 +63,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @param theScript the script we will evaluate.
      * @param extraInfo debugging information.
      */
-    public ScriptedPredicate(@Nonnull EvaluableScript theScript, @Nullable String extraInfo) {
+    public ScriptedPredicate(@Nonnull final EvaluableScript theScript, @Nullable final String extraInfo) {
         script = Constraint.isNotNull(theScript, "Supplied script should not be null");
         logPrefix = "Scripted Predicate from " + extraInfo + " :";
     }
@@ -72,7 +73,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * 
      * @param theScript the script we will evaluate.
      */
-    public ScriptedPredicate(@Nonnull EvaluableScript theScript) {
+    public ScriptedPredicate(@Nonnull final EvaluableScript theScript) {
         script = Constraint.isNotNull(theScript, "Supplied script should not be null");
         logPrefix = "Anonymous Scripted Predicate :";
     }
@@ -91,12 +92,12 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * 
      * @param object the custom object
      */
-    public void setCustomObject(Object object) {
+    public void setCustomObject(final Object object) {
         customObject = object;
     }
 
     /** {@inheritDoc} */
-    @Override public boolean apply(@Nullable ProfileRequestContext profileContext) {
+    @Override public boolean apply(@Nullable final ProfileRequestContext profileContext) {
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         scriptContext.setAttribute("profileContext", profileContext, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
@@ -115,7 +116,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
                 log.error("{} returned a {}, not a java.lang.Boolean", logPrefix, result.getClass().toString());
                 return false;
             }
-        } catch (ScriptException e) {
+        } catch (final ScriptException e) {
             log.error("{} Error while executing Predicate script", logPrefix, e);
             return false;
         }
@@ -130,10 +131,13 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedPredicate resourceScript(@Nonnull @NotEmpty String engineName, @Nonnull Resource resource)
-            throws ScriptException, IOException {
-        EvaluableScript script = new EvaluableScript(engineName, resource.getFile());
-        return new ScriptedPredicate(script, resource.getDescription());
+    static ScriptedPredicate
+            resourceScript(@Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource)
+                    throws ScriptException, IOException {
+        try (InputStream is = resource.getInputStream()) {
+            final EvaluableScript script = new EvaluableScript(engineName, is);
+            return new ScriptedPredicate(script, resource.getDescription());
+        }
     }
 
     /**
@@ -144,7 +148,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedPredicate resourceScript(Resource resource) throws ScriptException, IOException {
+    static ScriptedPredicate resourceScript(final Resource resource) throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource);
     }
 
@@ -156,9 +160,9 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @return the predicate
      * @throws ScriptException if the compile fails
      */
-    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty String engineName, @Nonnull @NotEmpty String scriptSource)
-            throws ScriptException {
-        EvaluableScript script = new EvaluableScript(engineName, scriptSource);
+    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String engineName,
+            @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+        final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
         return new ScriptedPredicate(script, "Inline");
     }
 
@@ -169,8 +173,8 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @return the predicate
      * @throws ScriptException if the compile fails
      */
-    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty String scriptSource) throws ScriptException {
-        EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
+    static ScriptedPredicate inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
+        final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedPredicate(script, "Inline");
     }
 
