@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <bean id="Credential"
+        class="net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean"
+        p:privateKeyResource="classpath:net/shibboleth/idp/profile/spring/factory/idp-signing.key"
+        p:certificateResource="net/shibboleth/idp/profile/spring/factory/idp-signing.crt"
+        p:entityId="http://example.org/plain" />
+
+    <bean id="EncCredential"
+        class="net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean"
+        p:privateKeyResource="classpath:net/shibboleth/idp/profile/spring/factory/idp-signing.key.pass"
+        p:certificateResource="net/shibboleth/idp/profile/spring/factory/idp-signing.crt"
+        p:privateKeyPassword="pass"
+        p:entityId="http://example.org/enc" />
+        
+</beans>
