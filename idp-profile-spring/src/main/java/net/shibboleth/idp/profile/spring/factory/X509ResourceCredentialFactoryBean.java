@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
+package net.shibboleth.idp.profile.spring.factory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +26,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -95,6 +96,50 @@ public class X509ResourceCredentialFactoryBean extends AbstractX509CredentialFac
      */
     public void setCRLs(@Nullable @NotEmpty final List<Resource> what) {
         crlResources = what;
+    }
+    
+    //
+    // BasicX509CredentialFactoryBean
+    //
+    /**
+     * Set the resource containing the private key.
+     * 
+     * @param res private key resource, never <code>null</code>
+     */
+    public void setPrivateKeyResource(@Nonnull final Resource res) {
+        setPrivateKey(res);
+    }
+
+    /**
+     * Set the password for the private key.
+     * 
+     * @param password password for the private key, may be null if the key is not encrypted
+     */
+    public void setPrivateKeyPassword(@Nullable final String password) {
+        setPrivateKeyPassword(password.toCharArray());
+    }
+
+    /**
+     * Set the certificate resource.
+     * 
+     * @param res certificate resource
+     */
+    public void setCertificateResource(@Nonnull final Resource res) {
+        setCertificates(Collections.singletonList(res));
+    }
+
+    /**
+     * Set the entityID for the credential.
+     * 
+     * @param id entityID
+     */
+    public void setEntityId(@Nullable final String id) {
+        setEntityID(id);
+    }
+
+    /** {@inheritDoc} */
+    @Override public boolean isSingleton() {
+        return true;
     }
 
     /** {@inheritDoc}. */

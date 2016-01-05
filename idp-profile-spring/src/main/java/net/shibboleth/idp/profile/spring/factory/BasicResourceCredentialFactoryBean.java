@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
+package net.shibboleth.idp.profile.spring.factory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -26,28 +28,37 @@ import javax.crypto.SecretKey;
 
 import org.cryptacular.util.KeyPairUtil;
 import org.opensaml.security.crypto.KeySupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.core.io.Resource;
+
+import com.google.common.io.ByteStreams;
 
 /**
- * Factory bean for BasicInline Credentials. 
+ * Factory bean for BasicFilesystem & BasicResourceBacked Credentials.
  */
-public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFactoryBean {
+public class BasicResourceCredentialFactoryBean extends AbstractBasicCredentialFactoryBean {
+
+    /** log. */
+    private final Logger log = LoggerFactory.getLogger(BasicResourceCredentialFactoryBean.class);
 
     /** Configured public key Info. */
-    @Nullable private byte[] publicKeyInfo;
+    @Nullable private Resource publicKeyInfo;
 
     /** Configured private key Info. */
-    @Nullable private byte[] privateKeyInfo;
+    @Nullable private Resource privateKeyInfo;
 
     /** Configured secret key Info. */
-    @Nullable private byte[] secretKeyInfo;
+    @Nullable private Resource secretKeyInfo;
 
     /**
      * Get the information used to generate the public key.
      * 
      * @return Returns the info.
      */
-    @Nullable public byte[] getPublicKeyInfo() {
+    @Nullable public Resource getPublicKeyInfo() {
         return publicKeyInfo;
     }
 
@@ -56,7 +67,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
      * 
      * @param info The info to set.
      */
-    public void setPublicKeyInfo(@Nullable byte[] info) {
+    public void setPublicKeyInfo(@Nullable final Resource info) {
         publicKeyInfo = info;
     }
 
@@ -65,7 +76,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
      * 
      * @return Returns the info.
      */
-    @Nullable public byte[] getPrivateKeyInfo() {
+    @Nullable public Resource getPrivateKeyInfo() {
         return privateKeyInfo;
     }
 
@@ -74,7 +85,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
      * 
      * @param info The info to set.
      */
-    public void setPrivateKeyInfo(@Nullable byte[] info) {
+    public void setPrivateKeyInfo(@Nullable final Resource info) {
         privateKeyInfo = info;
     }
 
@@ -83,7 +94,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
      * 
      * @return Returns the info.
      */
-    @Nullable public byte[] getSecretKeyInfo() {
+    @Nullable public Resource getSecretKeyInfo() {
         return secretKeyInfo;
     }
 
@@ -92,7 +103,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
      * 
      * @param info The info to set.
      */
-    public void setSecretKeyInfo(@Nullable byte[] info) {
+    public void setSecretKeyInfo(@Nullable final Resource info) {
         secretKeyInfo = info;
     }
 
@@ -101,7 +112,12 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
         if (null == getPublicKeyInfo()) {
             return null;
         }
-        return KeyPairUtil.decodePublicKey(getPublicKeyInfo());
+        try (InputStream is = getPublicKeyInfo().getInputStream()) {
+            return KeyPairUtil.readPublicKey(is);
+        } catch (final IOException e) {
+            log.error("{}: Could not decode public key", getConfigDescription(), e);
+            throw new FatalBeanException("Could not decode public key", e);
+        }
     }
 
     /** {@inheritDoc} */
@@ -109,17 +125,23 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
         if (null == getPrivateKeyInfo()) {
             return null;
         }
-        return KeyPairUtil.decodePrivateKey(getPrivateKeyInfo(), getPrivateKeyPassword());
+        try (InputStream is = getPrivateKeyInfo().getInputStream()) {
+            return KeySupport.decodePrivateKey(is, getPrivateKeyPassword());
+        } catch (KeyException | IOException e) {
+            log.error("{}: Could not decode private key", getConfigDescription(), e);
+            throw new BeanCreationException("Could not decode private key", getConfigDescription(), e);
+        }
     }
 
     /** {@inheritDoc} */
     @Override @Nullable protected SecretKey getSecretKey() {
-        if (null ==  getSecretKeyInfo()) {
+        if (null == getSecretKeyInfo()) {
             return null;
         }
-        try {
-            return KeySupport.decodeSecretKey(decodeSecretKey(getSecretKeyInfo()), getSecretKeyAlgorithm());
-        } catch (KeyException e) {
+        try (InputStream is = getSecretKeyInfo().getInputStream()) {
+            return KeySupport.decodeSecretKey(decodeSecretKey(ByteStreams.toByteArray(is)), getSecretKeyAlgorithm());
+        } catch (KeyException | IOException e) {
+            log.error("{}: Could not decode secret key", getConfigDescription(), e);
             throw new BeanCreationException("Could not decode secret key", e);
         }
     }

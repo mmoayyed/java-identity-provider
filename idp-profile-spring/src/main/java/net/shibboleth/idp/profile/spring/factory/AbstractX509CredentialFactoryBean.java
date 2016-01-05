@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
+package net.shibboleth.idp.profile.spring.factory;
 
 import java.security.PrivateKey;
 import java.security.cert.X509CRL;

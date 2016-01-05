@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
@@ -43,12 +44,12 @@ public class X509ResourceCredentialParser extends AbstractX509CredentialParser {
     /** log. */
     private final Logger log = LoggerFactory.getLogger(X509ResourceCredentialParser.class);
 
-    @Override protected Class<?> getBeanClass(Element element) {
-        return X509ResourceCredentialFactoryBean.class;
+    @Override protected Class<?> getBeanClass(final Element element) {
+        return BasicX509CredentialFactoryBean.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final BeanDefinitionBuilder builder) {
         if (TYPE_NAME_FILESYSTEM.equals(DOMTypeSupport.getXSIType(element))) {
             log.warn("Credential type '{}' has been deprecated; use the compatible Credential type '{}'",
                     TYPE_NAME_FILESYSTEM.getLocalPart(), TYPE_NAME_RESOURCE.getLocalPart());

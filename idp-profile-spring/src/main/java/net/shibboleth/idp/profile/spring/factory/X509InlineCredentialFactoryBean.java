@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
+package net.shibboleth.idp.profile.spring.factory;
 
 import java.security.PrivateKey;
 import java.security.cert.CRLException;
@@ -66,7 +66,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
     }
 
     /**
-     * Sets the files which contain the certificates.
+     * Sets the certificates.
      * 
      * @param certs The value to set.
      */
@@ -75,7 +75,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
     }
 
     /**
-     * Set the file with the entity certificate.
+     * Set the private key.
      * 
      * @param key The file to set.
      */
@@ -100,7 +100,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
         }
         try {
             return X509Support.decodeCertificate(entityCertificate);
-        } catch (CertificateException e) {
+        } catch (final CertificateException e) {
             log.error("{}: Could not decode provided Entity Certificate", getConfigDescription(), e);
             throw new FatalBeanException("Could not decode provided Entity Certificate", e);
         }
@@ -108,11 +108,11 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
 
     /** {@inheritDoc} */
     @Override @Nonnull protected List<X509Certificate> getCertificates() {
-        List<X509Certificate> certs = new LazyList<>();
-        for (String cert : certificates) {
+        final List<X509Certificate> certs = new LazyList<>();
+        for (final String cert : certificates) {
             try {
                 certs.add(X509Support.decodeCertificate(cert.trim()));
-            } catch (CertificateException e) {
+            } catch (final CertificateException e) {
                 log.error("{}: Could not decode provided Certificate", getConfigDescription(), e);
                 throw new FatalBeanException("Could not decode provided Certificate", e);
             }
@@ -133,8 +133,8 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
         if (null == crls) {
             return null;
         }
-        List<X509CRL> result = new LazyList<>();
-        for (String crl : crls) {
+        final List<X509CRL> result = new LazyList<>();
+        for (final String crl : crls) {
             try {
                 result.add(X509Support.decodeCRL(crl));
             } catch (CRLException | CertificateException e) {

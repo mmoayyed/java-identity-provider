@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
+package net.shibboleth.idp.profile.spring.factory;
 
 import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;

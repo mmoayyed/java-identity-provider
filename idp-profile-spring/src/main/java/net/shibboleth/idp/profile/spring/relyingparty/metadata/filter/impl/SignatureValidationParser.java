@@ -23,9 +23,9 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.factory.BasicInlineCredentialFactoryBean;
+import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicInlineCredentialFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.X509ResourceCredentialFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -63,14 +63,15 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
     private final Logger log = LoggerFactory.getLogger(SignatureValidationParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class getBeanClass(Element element) {
+    @Override protected Class getBeanClass(final Element element) {
         return SignatureValidationFilter.class;
     }
 
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
         final boolean hasEngineRef = element.hasAttributeNS(null, "trustEngineRef");
         final boolean hasCertFile = element.hasAttributeNS(null, "certificateFile");
         final List<Element> publicKeys = ElementSupport.getChildElements(element, PUBLIC_KEY);
@@ -115,7 +116,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
                         .getDescription());
                 throw new BeanCreationException("{}: Too many <TrustEngine>s");
             }
-            ManagedList<BeanDefinition> engines = SpringSupport.parseCustomElements(trustEngines, parserContext);
+            final ManagedList<BeanDefinition> engines = SpringSupport.parseCustomElements(trustEngines, parserContext);
 
             builder.addConstructorArgValue(engines.get(0));
         } else {
@@ -159,7 +160,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
      * @param builder the builder for this bean.
      * @param credential the definition of a {@link org.opensaml.security.credential.Credential}
      */
-    private void buildTrustEngine(BeanDefinitionBuilder builder, BeanDefinition credential) {
+    private void buildTrustEngine(final BeanDefinitionBuilder builder, final BeanDefinition credential) {
         final BeanDefinitionBuilder trustEngineBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(ExplicitKeySignatureTrustEngine.class);
 
@@ -170,7 +171,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
 
         trustEngineBuilder.addConstructorArgValue(resolver.getBeanDefinition());
 
-        List<KeyInfoProvider> keyInfoProviders = new ArrayList<>();
+        final List<KeyInfoProvider> keyInfoProviders = new ArrayList<>();
         keyInfoProviders.add(new DSAKeyValueProvider());
         keyInfoProviders.add(new RSAKeyValueProvider());
         keyInfoProviders.add(new InlineX509DataProvider());
@@ -186,7 +187,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
      * @param publicKeys the list of &lt;PublicKey&gt; elements
      * @return the definition.
      */
-    private BeanDefinition buildPublicKeyCredential(ParserContext parserContext, List<Element> publicKeys) {
+    private BeanDefinition buildPublicKeyCredential(final ParserContext parserContext, final List<Element> publicKeys) {
         if (null == publicKeys || publicKeys.isEmpty()) {
             log.error("{}: SignatureValidation filter must have a 'trustEngineRef' attribute"
                     + ", a 'certificateFile' attribute or <PublicKey> elements", parserContext.getReaderContext()
@@ -210,7 +211,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
             throw new BeanCreationException("<PublicKey> must contain the public key");
         }
 
-        List<String> keys = new ManagedList<>(1);
+        final List<String> keys = new ManagedList<>(1);
         keys.add(keyAsString);
         credentialBuilder.addPropertyValue("publicKeyInfo", keyAsString);
         return credentialBuilder.getBeanDefinition();
@@ -222,9 +223,9 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
      * @param attribute the name of the certificate file
      * @return the bean definition.
      */
-    private BeanDefinition buildCertificateCredential(String attribute) {
+    private BeanDefinition buildCertificateCredential(final String attribute) {
         final BeanDefinitionBuilder credentialBuilder =
-                BeanDefinitionBuilder.genericBeanDefinition(X509ResourceCredentialFactoryBean.class);
+                BeanDefinitionBuilder.genericBeanDefinition(BasicX509CredentialFactoryBean.class);
         final List<String> certs = new ManagedList<>(1);
         certs.add(attribute);
         credentialBuilder.addPropertyValue("certificates", certs);

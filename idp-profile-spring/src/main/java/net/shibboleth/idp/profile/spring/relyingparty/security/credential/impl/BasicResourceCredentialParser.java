@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl;
 
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
