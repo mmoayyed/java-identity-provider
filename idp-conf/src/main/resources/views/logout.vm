@@ -65,10 +65,8 @@
                 </ol>
             #else
                 <p><strong>#springMessageText("idp.logout.complete", "The logout operation is complete, and no other services appear to have been accessed during this session.")</strong></p>
-                <!-- If SAML logout with no extra work to do, complete the flow by adding a hidden iframe. -->
-                #if ( $profileRequestContext.getProfileId().contains("saml2/logout") )
-                    <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
-                #end
+                <!-- Complete the flow by adding a hidden iframe. -->
+                <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
             #end
 
           </div>
