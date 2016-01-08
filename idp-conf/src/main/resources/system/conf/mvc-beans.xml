@@ -26,6 +26,7 @@
         <property name="mappings">
             <props>
                 <prop key="%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}/**">shibboleth.SPNEGOAuthnController</prop>
+                <prop key="/RaiseError">shibboleth.RaiseErrorController</prop>
             </props>
         </property>
     </bean>
@@ -44,6 +45,7 @@
     <!-- Additional MVC controllers -->
     
     <bean id="shibboleth.SPNEGOAuthnController" class="net.shibboleth.idp.authn.spnego.impl.SPNEGOAuthnController" />
+    <bean id="shibboleth.RaiseErrorController" class="net.shibboleth.ext.spring.error.ErrorRaisingController" />
 
     <!-- Exception handling -->
     

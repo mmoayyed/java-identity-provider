@@ -137,6 +137,16 @@
         <url-pattern>/shibboleth</url-pattern>
     </servlet-mapping>
     
+    <!-- Send servlet errors through the IdP's MVC error handling. -->
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/profile/RaiseError</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.io.IOException</exception-type>
+        <location>/profile/RaiseError</location>
+    </error-page>
+
     <!--
     Uncomment to use container managed authentication. The new servlet spec (3.1)
     supports "**" as a wildcard syntax to avoid role usage, which is normally desirable.
