@@ -142,10 +142,6 @@
         <exception-type>javax.servlet.ServletException</exception-type>
         <location>/profile/RaiseError</location>
     </error-page>
-    <error-page>
-        <exception-type>java.io.IOException</exception-type>
-        <location>/profile/RaiseError</location>
-    </error-page>
 
     <!--
     Uncomment to use container managed authentication. The new servlet spec (3.1)
