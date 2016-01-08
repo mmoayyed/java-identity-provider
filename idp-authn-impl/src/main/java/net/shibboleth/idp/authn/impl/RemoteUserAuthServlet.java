@@ -300,7 +300,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
             ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
             
         } catch (final ExternalAuthenticationException e) {
-            throw new ServletException("Error processing external authentication request", e);
+            throw new ServletException("Error in RemoteUserAuthServlet processing external authentication request", e);
         }
     }
 // Checkstyle: CyclomaticComplexity|MethodLength ON
