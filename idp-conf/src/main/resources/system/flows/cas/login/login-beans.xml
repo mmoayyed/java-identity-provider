@@ -69,6 +69,6 @@
           p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
-        <constructor-arg value="#{ '%{idp.authn.flow.impls.initial:}'.trim().length() gt 0 }" type="boolean" />
+        <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
     </bean>
 </beans>
