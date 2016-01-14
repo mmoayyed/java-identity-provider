@@ -88,14 +88,20 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
     /** {@inheritDoc} */
     public void setValue(String newScopeValue) {
         scopeValue = prepareForAssignment(scopeValue, newScopeValue);
-        matchPattern = Pattern.compile(scopeValue);
+        matchPattern = null;
     }
 
     /** {@inheritDoc} */
     public Pattern getMatchPattern() {
+        if (getRegexp() != Boolean.TRUE) {
+            throw new IllegalStateException("Scope value is not indicated to be a regex");
+        }
+        if (matchPattern == null) {
+            matchPattern = Pattern.compile(scopeValue);
+        }
         return matchPattern;
     }
-
+    
     /** {@inheritDoc} */
     public List<XMLObject> getOrderedChildren() {
         return null;

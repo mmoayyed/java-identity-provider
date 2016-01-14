@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.saml.xmlobject.impl;
 
+import java.util.regex.Pattern;
+
 import net.shibboleth.idp.saml.xmlobject.Scope;
 
 import org.opensaml.core.xml.XMLObjectProviderBaseTestCase;
@@ -114,4 +116,34 @@ public class ScopeTest extends XMLObjectProviderBaseTestCase {
         Assert.assertEquals(scope.getRegexp(), Boolean.FALSE, "Unexpected default value for boolean attribute found");
         Assert.assertNull(scope.getRegexpXSBoolean(), "XSBooleanValue was not null");
     }
+    
+    /**
+     * Test behavior related to {@link Scope#getMatchPattern()}.
+     */
+    @Test
+    public void testMatchPattern() {
+        Scope scope = (Scope) buildXMLObject(Scope.DEFAULT_ELEMENT_NAME);
+        
+        try {
+            scope.setRegexp(false);
+            scope.setValue("example.org");
+            Pattern pattern = scope.getMatchPattern();
+            Assert.fail("Non-regex should have failed with IllegalStateException");
+        } catch (IllegalStateException e) {
+            //expected
+        }
+        
+        scope.setRegexp(true);
+        scope.setValue(".*\\.example.org$");
+        Pattern pattern1 = scope.getMatchPattern();
+        Assert.assertNotNull(pattern1);
+        
+        scope.setRegexp(true);
+        scope.setValue(".*\\.foobar.edu$");
+        Pattern pattern2 = scope.getMatchPattern();
+        Assert.assertNotNull(pattern2);
+        
+        Assert.assertFalse(pattern1 == pattern2);
+    }
+
 }
