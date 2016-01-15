@@ -26,6 +26,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import org.joda.time.Instant;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
@@ -75,12 +76,14 @@ public class ValidateProxyCallbackActionTest extends AbstractFlowActionTest {
 
     private static RequestContext newRequestContext(final String pgtURL) {
         final String service = "https://test.example.com/";
-        final String ticket = "ST-123-ABCCEF";
-        final TicketValidationRequest request = new TicketValidationRequest(service, ticket);
+        final String ticketId = "ST-123-ABCCEF";
+        final ServiceTicket st = new ServiceTicket(ticketId, service, Instant.now(), false);
+        st.setTicketState(new TicketState("SessionID-123", "bob", Instant.now(), "bob"));
+        final TicketValidationRequest request = new TicketValidationRequest(service, ticketId);
         request.setPgtUrl(pgtURL);
         final RequestContext context = new TestContextBuilder(ValidateConfiguration.PROFILE_ID)
                 .addProtocolContext(request, new TicketValidationResponse())
-                .addTicketContext(new ServiceTicket(ticket, "SessionID-123", service, Instant.now(), false))
+                .addTicketContext(st)
                 .addRelyingPartyContext(service, true, new ValidateConfiguration())
                 .build();
         return context;

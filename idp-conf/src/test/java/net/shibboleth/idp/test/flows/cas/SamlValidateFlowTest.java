@@ -18,15 +18,15 @@
 package net.shibboleth.idp.test.flows.cas;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -62,7 +62,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
             "</samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
     @Autowired
-    private TicketService ticketService;
+    private TicketServiceEx ticketService;
 
     @Autowired
     private SessionManager sessionManager;
@@ -71,13 +71,11 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     public void testSuccess() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
-                session.getId(),
                 "https://test.example.org/",
+                new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");
@@ -119,8 +117,8 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133227-o5ly5eArKccYkb2P+80uRE7Gq9xSAqWtOg",
                 DateTime.now().plusSeconds(5).toInstant(),
-                "No-Such-Session-Id",
                 "https://test.example.org/",
+                new TicketState("No-Such-Session-Id", "bob", Instant.now(), "Password"),
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");
@@ -139,13 +137,11 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWhenResolveAttributesFalse() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-2718281828-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
-                session.getId(),
                 "https://no-attrs.example.org/",
+                new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");

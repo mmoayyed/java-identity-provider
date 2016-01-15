@@ -18,15 +18,27 @@
 package net.shibboleth.idp.cas.ticket.serialization.impl;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.json.Json;
+import javax.json.JsonException;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonReaderFactory;
+import javax.json.stream.JsonGenerator;
+import javax.json.stream.JsonGeneratorFactory;
 
 import net.shibboleth.idp.cas.ticket.Ticket;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import org.joda.time.Instant;
 import org.opensaml.storage.StorageSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for ticket serializers that use a simple field-delimited serialization strategy.
@@ -36,11 +48,38 @@ import org.opensaml.storage.StorageSerializer;
  * @author Marvin S. Addison
  */
 public abstract class AbstractTicketSerializer<T extends Ticket> implements StorageSerializer<T> {
-    /** Field delimiter. */
-    private static final String DELIMITER = "::";
 
-    /** Pattern used to extract fields from delimited form. */
-    private static final Pattern SPLIT_PATTERN = Pattern.compile(DELIMITER);
+    /** Service field name. */
+    private static final String SERVICE_FIELD = "rp";
+
+    /** Expiration instant field name. */
+    private static final String EXPIRATION_FIELD = "exp";
+
+    /** Supplemental ticket state field name. */
+    private static final String STATE_FIELD = "ts";
+
+    /** Session ID field name. */
+    private static final String SESSION_FIELD = "sid";
+
+    /** Authenticated canonical principal name field. */
+    private static final String PRINCIPAL_FIELD = "p";
+
+    /** Authentication instant field name. */
+    private static final String AUTHN_INSTANT_FIELD = "ai";
+
+    /** Authentication method field name. */
+    private static final String AUTHN_METHOD_FIELD = "am";
+
+    /** Logger instance. */
+    private final Logger logger = LoggerFactory.getLogger(AbstractTicketSerializer.class);
+
+    /** JSON generator factory. */
+    @Nonnull
+    private final JsonGeneratorFactory generatorFactory = Json.createGeneratorFactory(null);
+
+    /** JSON reader factory. */
+    @Nonnull
+    private final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
     @Override
     public void initialize() throws ComponentInitializationException {}
@@ -53,15 +92,26 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
     @Override
     @Nonnull
     public String serialize(@Nonnull final T ticket) throws IOException {
-        final String[] fields = extractFields(ticket);
-        if (fields.length == 0) {
-            throw new IllegalStateException("Ticket has no fields to serialize.");
+        final StringWriter buffer = new StringWriter(200);
+        try (final JsonGenerator gen = generatorFactory.createGenerator(buffer)) {
+            gen.writeStartObject()
+                    .write(SERVICE_FIELD, ticket.getService())
+                    .write(EXPIRATION_FIELD, ticket.getExpirationInstant().getMillis());
+            if (ticket.getTicketState() != null) {
+                gen.writeStartObject(STATE_FIELD)
+                        .write(SESSION_FIELD, ticket.getTicketState().getSessionId())
+                        .write(PRINCIPAL_FIELD, ticket.getTicketState().getPrincipalName())
+                        .write(AUTHN_INSTANT_FIELD, ticket.getTicketState().getAuthenticationInstant().getMillis())
+                        .write(AUTHN_METHOD_FIELD, ticket.getTicketState().getAuthenticationMethod())
+                        .writeEnd();
+            }
+            serializeInternal(gen, ticket);
+            gen.writeEnd();
+        } catch (JsonException e) {
+            logger.error("Exception serializing {}", ticket, e);
+            throw new IOException("Exception serializing ticket", e);
         }
-        final StringBuilder sb = new StringBuilder(fields[0]);
-        for (int i = 1; i < fields.length; i++) {
-            sb.append(DELIMITER).append(fields[i]);
-        }
-        return sb.toString();
+        return buffer.toString();
     }
 
     @Override
@@ -72,11 +122,36 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
             @Nonnull @NotEmpty final String key,
             @Nonnull @NotEmpty final String value,
             @Nullable final Long expiration) throws IOException {
-        return createTicket(key, SPLIT_PATTERN.split(value));
+
+        try (final JsonReader reader = readerFactory.createReader(new StringReader(value))) {
+            final JsonObject to = reader.readObject();
+            final String service = to.getString(SERVICE_FIELD);
+            final Instant expiry = new Instant(to.getJsonNumber(EXPIRATION_FIELD).longValueExact());
+            final JsonObject so = to.getJsonObject(STATE_FIELD);
+            final TicketState state;
+            if (so != null) {
+                state = new TicketState(
+                        so.getString(SESSION_FIELD),
+                        so.getString(PRINCIPAL_FIELD),
+                        new Instant(so.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact()),
+                        so.getString(AUTHN_METHOD_FIELD));
+            } else {
+                state = null;
+            }
+            final T ticket = createTicket(to, key, service, expiry);
+            ticket.setTicketState(state);
+            return ticket;
+        } catch (JsonException e) {
+            logger.error("Exception deserializing {}", value, e);
+            throw new IOException("Exception deserializing ticket", e);
+        }
     }
 
-    @NotEmpty
-    protected abstract String[] extractFields(@Nonnull T ticket);
+    protected abstract T createTicket(
+            @Nonnull final JsonObject o,
+            @Nonnull final String id,
+            @Nonnull final String service,
+            @Nonnull final Instant expiry);
 
-    @Nonnull protected abstract T createTicket(@Nonnull String id, @NotEmpty String[] fields);
+    protected abstract void serializeInternal(@Nonnull final JsonGenerator generator, @Nonnull final T ticket);
 }

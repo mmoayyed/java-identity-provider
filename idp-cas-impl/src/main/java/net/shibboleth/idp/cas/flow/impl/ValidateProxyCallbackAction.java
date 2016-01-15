@@ -72,7 +72,7 @@ public class ValidateProxyCallbackAction
 
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketService ticketService;
+    private final TicketServiceEx ticketService;
 
 
     /**
@@ -83,7 +83,7 @@ public class ValidateProxyCallbackAction
      */
     public ValidateProxyCallbackAction(
             @Nonnull ProxyAuthenticator<TrustEngine<? super X509Credential>> proxyAuthenticator,
-            @Nonnull TicketService ticketService) {
+            @Nonnull TicketServiceEx ticketService) {
         this.proxyAuthenticator = Constraint.isNotNull(proxyAuthenticator, "ProxyAuthenticator cannot be null");
         this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }

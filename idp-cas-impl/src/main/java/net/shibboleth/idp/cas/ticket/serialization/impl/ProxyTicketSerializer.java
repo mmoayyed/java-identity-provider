@@ -18,9 +18,10 @@
 package net.shibboleth.idp.cas.ticket.serialization.impl;
 
 import javax.annotation.Nonnull;
+import javax.json.JsonObject;
+import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import org.joda.time.Instant;
 
 /**
@@ -29,28 +30,22 @@ import org.joda.time.Instant;
  * @author Marvin S. Addison
  */
 public class ProxyTicketSerializer extends AbstractTicketSerializer<ProxyTicket> {
+
+    /** PGT ID field name. */
+    private static final String PGTID_FIELD = "pgt";
+
+
     @Override
-    @NotEmpty
-    protected String[] extractFields(@Nonnull final ProxyTicket ticket) {
-        return new String[] {
-                ticket.getSessionId(),
-                ticket.getService(),
-                String.valueOf(ticket.getExpirationInstant().getMillis()),
-                ticket.getPgtId(),
-        };
+    protected void serializeInternal(@Nonnull JsonGenerator generator, @Nonnull ProxyTicket ticket) {
+        generator.write(PGTID_FIELD, ticket.getPgtId());
     }
 
     @Override
-    @Nonnull
-    protected ProxyTicket createTicket(@Nonnull final String id, @NotEmpty final String[] fields) {
-        if (fields.length != 4) {
-            throw new IllegalArgumentException("Expected 4 fields but got " + fields.length);
-        }
-        return new ProxyTicket(
-                id,
-                fields[0],
-                fields[1],
-                new Instant(Long.valueOf(fields[2])),
-                fields[3]);
+    protected ProxyTicket createTicket(
+            @Nonnull final JsonObject o,
+            @Nonnull final String id,
+            @Nonnull final String service,
+            @Nonnull final Instant expiry) {
+        return new ProxyTicket(id, service, expiry, o.getString(PGTID_FIELD));
     }
 }

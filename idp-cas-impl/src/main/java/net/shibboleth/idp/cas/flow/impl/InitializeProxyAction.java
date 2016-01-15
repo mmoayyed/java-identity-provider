@@ -25,7 +25,7 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.TicketContext;
-import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -59,10 +59,10 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
 
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketService ticketService;
+    private final TicketServiceEx ticketService;
 
 
-    public InitializeProxyAction(@Nonnull final TicketService ticketService) {
+    public InitializeProxyAction(@Nonnull final TicketServiceEx ticketService) {
         this.ticketService = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
     }
 

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
@@ -53,6 +55,7 @@ public class GrantServiceTicketActionTest extends AbstractFlowActionTest {
     public void testExecute(final ServiceTicketRequest request) throws Exception {
         final RequestContext context = new TestContextBuilder(LoginConfiguration.PROFILE_ID)
                 .addProtocolContext(request, null)
+                .addAuthenticationContext(new AuthenticationResult("Password", new UsernamePrincipal("bob")))
                 .addSessionContext(mockSession("1234567890", true))
                 .addRelyingPartyContext(request.getService(), true, new LoginConfiguration())
                 .build();

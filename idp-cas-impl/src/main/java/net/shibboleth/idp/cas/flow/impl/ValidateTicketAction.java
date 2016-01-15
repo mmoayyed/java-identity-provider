@@ -28,7 +28,7 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
-import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
 
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketService ticketService;
+    private final TicketServiceEx ticketService;
 
 
     /**
@@ -69,7 +69,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
      *
      * @param ticketService Ticket service component.
      */
-    public ValidateTicketAction(@Nonnull TicketService ticketService) {
+    public ValidateTicketAction(@Nonnull TicketServiceEx ticketService) {
         this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 

@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.ticket;
 import org.joda.time.Instant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * CAS service ticket.
@@ -32,7 +33,8 @@ public class ServiceTicket extends Ticket {
     private final boolean renew;
 
     /**
-     * Creates a new authenticated ticket with an identifier, service, and expiration date.
+     * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
+     * and {@link #setTicketState(TicketState)}.
      *
      * @param id Ticket ID.
      * @param sessionId IdP session ID used to create ticket.
@@ -40,9 +42,10 @@ public class ServiceTicket extends Ticket {
      * @param expiration Expiration instant.
      * @param renew True if ticket was issued from forced authentication, false otherwise.
      */
+    @Deprecated
     public ServiceTicket(
             @Nonnull final String id,
-            @Nonnull final String sessionId,
+            @Nullable final String sessionId,
             @Nonnull final String service,
             @Nonnull final Instant expiration,
             final boolean renew) {
@@ -50,6 +53,22 @@ public class ServiceTicket extends Ticket {
         this.renew = renew;
     }
 
+    /**
+     * Creates a new authenticated ticket with an identifier, service, and expiration date.
+     *
+     * @param id Ticket ID.
+     * @param service Service that requested the ticket.
+     * @param expiration Expiration instant.
+     * @param renew True if ticket was issued from forced authentication, false otherwise.
+     */
+    public ServiceTicket(
+            @Nonnull final String id,
+            @Nonnull final String service,
+            @Nonnull final Instant expiration,
+            final boolean renew) {
+        super(id, service, expiration);
+        this.renew = renew;
+    }
 
     public boolean isRenew() {
         return renew;

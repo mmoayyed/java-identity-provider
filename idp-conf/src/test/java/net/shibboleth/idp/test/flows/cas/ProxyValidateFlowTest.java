@@ -19,18 +19,18 @@ package net.shibboleth.idp.test.flows.cas;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
-import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -53,7 +53,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/proxyValidate";
 
     @Autowired
-    private TicketService ticketService;
+    private TicketServiceEx ticketService;
 
     @Autowired
     private SessionManager sessionManager;
@@ -65,9 +65,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     public void testSuccess() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
-        final ProxyTicket ticket = createProxyTicket(session.getId());
+        final ProxyTicket ticket = createProxyTicket(session.getId(), principal);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
@@ -97,7 +95,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
 
     @Test
     public void testFailureSessionExpired() throws Exception {
-        final ProxyTicket ticket = createProxyTicket("No-Such-SessionId");
+        final ProxyTicket ticket = createProxyTicket("No-Such-SessionId", "nobody");
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
@@ -114,10 +112,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithProxy() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
-        final ProxyTicket ticket = createProxyTicket(session.getId());
+        final ProxyTicket ticket = createProxyTicket(session.getId(), principal);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
@@ -141,10 +136,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     public void testProxyCallbackAuthnFailure() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
-        final ProxyTicket ticket = createProxyTicket(session.getId());
+        final ProxyTicket ticket = createProxyTicket(session.getId(), principal);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
         externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
@@ -164,10 +156,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     public void testFailureBrokenProxyChain() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
-        final ProxyTicket ticket = createProxyTicket(session.getId());
+        final ProxyTicket ticket = createProxyTicket(session.getId(), principal);
 
         ticketService.removeProxyGrantingTicket(ticket.getPgtId());
 
@@ -182,12 +171,12 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("E_BROKEN_PROXY_CHAIN"));
     }
 
-    private ProxyTicket createProxyTicket(final String sessionId) {
+    private ProxyTicket createProxyTicket(final String sessionId, final String principal) {
         final ServiceTicket st = ticketService.createServiceTicket(
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
                 DateTime.now().plusSeconds(5).toInstant(),
-                sessionId,
                 "https://service.example.org/",
+                new TicketState(sessionId, principal, Instant.now(), "Password"),
                 false);
         final ProxyGrantingTicket pgt = ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),

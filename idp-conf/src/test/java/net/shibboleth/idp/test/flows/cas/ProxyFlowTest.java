@@ -17,16 +17,16 @@
 
 package net.shibboleth.idp.test.flows.cas;
 
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
-import net.shibboleth.idp.cas.ticket.TicketService;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
@@ -52,7 +52,7 @@ public class ProxyFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/proxy";
 
     @Autowired
-    private TicketService ticketService;
+    private TicketServiceEx ticketService;
 
     @Autowired
     private SessionManager sessionManager;
@@ -89,9 +89,7 @@ public class ProxyFlowTest extends AbstractFlowTest {
     public void testSuccess() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
-        final ProxyGrantingTicket ticket = createProxyGrantingTicket(session.getId());
+        final ProxyGrantingTicket ticket = createProxyGrantingTicket(session.getId(), principal);
 
         externalContext.getMockRequestParameterMap().put("targetService", ticket.getService());
         externalContext.getMockRequestParameterMap().put("pgt", ticket.getId());
@@ -119,7 +117,7 @@ public class ProxyFlowTest extends AbstractFlowTest {
 
     @Test
     public void testFailureSessionExpired() throws Exception {
-        final ProxyGrantingTicket ticket = createProxyGrantingTicket("No-Such-SessionId");
+        final ProxyGrantingTicket ticket = createProxyGrantingTicket("No-Such-SessionId", "nobody");
 
         externalContext.getMockRequestParameterMap().put("targetService", ticket.getService());
         externalContext.getMockRequestParameterMap().put("pgt", ticket.getId());
@@ -132,12 +130,12 @@ public class ProxyFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("E_SESSION_EXPIRED"));
     }
 
-    private ProxyGrantingTicket createProxyGrantingTicket(final String sessionId) {
+    private ProxyGrantingTicket createProxyGrantingTicket(final String sessionId, final String principal) {
         final ServiceTicket st = ticketService.createServiceTicket(
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
                 DateTime.now().plusSeconds(5).toInstant(),
-                sessionId,
                 "https://service.example.org/",
+                new TicketState(sessionId, principal, Instant.now(), "Password"),
                 false);
         return ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),

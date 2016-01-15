@@ -26,7 +26,7 @@ import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
 import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -56,7 +56,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
 
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketService ticketService;
+    private final TicketServiceEx ticketService;
 
 
     /**
@@ -64,7 +64,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
      *
      * @param ticketService Ticket service component.
      */
-    public GrantProxyTicketAction(final TicketService ticketService) {
+    public GrantProxyTicketAction(final TicketServiceEx ticketService) {
         this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 

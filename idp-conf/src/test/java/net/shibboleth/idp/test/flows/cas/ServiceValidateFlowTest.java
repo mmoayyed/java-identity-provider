@@ -22,11 +22,10 @@ import java.net.URI;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.context.AttributeContext;
-import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.proxy.ProxyAuthenticator;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionManager;
@@ -36,6 +35,7 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
@@ -65,7 +65,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/serviceValidate";
 
     @Autowired
-    private TicketService ticketService;
+    private TicketServiceEx ticketService;
 
     @Autowired
     private SessionManager sessionManager;
@@ -108,14 +108,11 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccess() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
-                session.getId(),
                 "https://test.example.org/",
+                new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -147,14 +144,11 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithSLOParticipant() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
-                session.getId(),
                 "https://slo.example.org/",
+                new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -196,8 +190,8 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133227-o5ly5eArKccYkb2P+80uRE7Gq9xSAqWtOg",
                 DateTime.now().plusSeconds(5).toInstant(),
-                "No-Such-Session-Id",
                 "https://test.example.org/",
+                new TicketState("No-Such-Session-Id", "nobody", Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -215,14 +209,11 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithProxy() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
-                session.getId(),
                 "https://test.example.org/",
+                new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -247,14 +238,11 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testProxyCallbackAuthnFailure() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
-                session.getId(),
                 "https://test.example.org/",
+                new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -276,14 +264,11 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessWithAltUsername() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-1415133132-pnqph79ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
-                session.getId(),
                 "https://alt-username.example.org/",
+                new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());
@@ -311,14 +296,11 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     public void testSuccessNoAttributes() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);
-        session.addAuthenticationResult(
-                new AuthenticationResult("authn/Password", new UsernamePrincipal(principal)));
-
         final ServiceTicket ticket = ticketService.createServiceTicket(
                 "ST-2718281828-ompog68ygxKyX9BPwPuw0hESQBjuA",
                 DateTime.now().plusSeconds(5).toInstant(),
-                session.getId(),
                 "https://no-attrs.example.org/",
+                new TicketState(session.getId(), principal, Instant.now(), "Password"),
                 false);
 
         externalContext.getMockRequestParameterMap().put("service", ticket.getService());

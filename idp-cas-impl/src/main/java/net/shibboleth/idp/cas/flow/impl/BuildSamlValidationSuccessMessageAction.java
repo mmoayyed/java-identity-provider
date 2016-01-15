@@ -19,10 +19,10 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
-import net.shibboleth.idp.session.IdPSession;
+import net.shibboleth.idp.cas.ticket.Ticket;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
@@ -86,8 +86,12 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
 
         final TicketValidationRequest request = getCASRequest(profileRequestContext);
         final TicketValidationResponse ticketResponse = getCASResponse(profileRequestContext);
-        final IdPSession session = getIdPSession(profileRequestContext);
-        log.debug("Building SAML response for {} in IdP session {}", request.getService(), session.getId());
+        final Ticket ticket = getCASTicket(profileRequestContext);
+        final TicketState state = ticket.getTicketState();
+        if (state == null) {
+            throw new IllegalStateException("TicketState cannot be null");
+        }
+        log.debug("Building SAML response for {} in IdP session {}", request.getService(), state.getSessionId());
 
         final Response response = newSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
         response.setID(request.getTicket());
@@ -114,17 +118,12 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         audienceRestriction.getAudiences().add(audience);
         conditions.getAudienceRestrictionConditions().add(audienceRestriction);
         assertion.setConditions(conditions);
-
-        // Create an AuthenticationStatement for every authentication bound to the IdP session
-        // Use flow ID for authentication method
-        for (AuthenticationResult result : session.getAuthenticationResults()) {
-            assertion.getAuthenticationStatements().add(
-                    newAuthenticationStatement(now, result.getAuthenticationFlowId(), session.getPrincipalName()));
-        }
+        assertion.getAuthenticationStatements().add(
+                newAuthenticationStatement(now, state.getAuthenticationMethod(), state.getPrincipalName()));
 
         final AttributeStatement attrStatement = newSAMLObject(
                 AttributeStatement.class, AttributeStatement.DEFAULT_ELEMENT_NAME);
-        attrStatement.setSubject(newSubject(session.getPrincipalName()));
+        attrStatement.setSubject(newSubject(state.getPrincipalName()));
         for (final String attrName : ticketResponse.getAttributes().keySet()) {
             final Attribute attribute = newSAMLObject(Attribute.class, Attribute.DEFAULT_ELEMENT_NAME);
             attribute.setAttributeName(attrName);

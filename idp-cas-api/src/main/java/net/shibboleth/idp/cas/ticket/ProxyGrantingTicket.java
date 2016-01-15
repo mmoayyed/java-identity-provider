@@ -35,7 +35,8 @@ public class ProxyGrantingTicket extends Ticket {
     private String parentId;
 
     /**
-     * Creates a proxy-granting ticket with the given values.
+     * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
+     * and {@link #setTicketState(TicketState)}.
      *
      * @param id Ticket ID.
      * @param sessionId IdP session ID used to create ticket.
@@ -43,13 +44,31 @@ public class ProxyGrantingTicket extends Ticket {
      * @param expiration Expiration instant.
      * @param parentId ID of parent proxy-granting ticket or null if this is first proxy in chain.
      */
+    @Deprecated
     public ProxyGrantingTicket(
             @Nonnull final String id,
-            @Nonnull final String sessionId,
+            @Nullable final String sessionId,
             @Nonnull final String service,
             @Nonnull final Instant expiration,
             @Nullable final String parentId) {
         super(id, sessionId, service, expiration);
+        this.parentId = StringSupport.trimOrNull(parentId);
+    }
+
+    /**
+     * Creates a proxy-granting ticket with the given values.
+     *
+     * @param id Ticket ID.
+     * @param service Service that requested the ticket.
+     * @param expiration Expiration instant.
+     * @param parentId ID of parent proxy-granting ticket or null if this is first proxy in chain.
+     */
+    public ProxyGrantingTicket(
+            @Nonnull final String id,
+            @Nonnull final String service,
+            @Nonnull final Instant expiration,
+            @Nullable final String parentId) {
+        super(id, service, expiration);
         this.parentId = StringSupport.trimOrNull(parentId);
     }
 

@@ -49,7 +49,7 @@ public class BuildProxyChainAction
 
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketService ticketService;
+    private final TicketServiceEx ticketService;
 
 
     /**
@@ -57,7 +57,7 @@ public class BuildProxyChainAction
      *
      * @param ticketService Ticket service component.
      */
-    public BuildProxyChainAction(@Nonnull TicketService ticketService) {
+    public BuildProxyChainAction(@Nonnull TicketServiceEx ticketService) {
         this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 

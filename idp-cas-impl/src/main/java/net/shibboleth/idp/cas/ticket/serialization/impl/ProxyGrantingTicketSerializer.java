@@ -17,12 +17,11 @@
 
 package net.shibboleth.idp.cas.ticket.serialization.impl;
 
-import java.util.ArrayList;
-
 import javax.annotation.Nonnull;
+import javax.json.JsonObject;
+import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import org.joda.time.Instant;
 
 /**
@@ -31,30 +30,24 @@ import org.joda.time.Instant;
  * @author Marvin S. Addison
  */
 public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<ProxyGrantingTicket> {
+
+    /** Parent PGT ID field name. */
+    private static final String PARENT_FIELD = "parent";
+
+
     @Override
-    @NotEmpty
-    protected String[] extractFields(@Nonnull final ProxyGrantingTicket ticket) {
-        final ArrayList<String> fields = new ArrayList<>(4);
-        fields.add(ticket.getSessionId());
-        fields.add(ticket.getService());
-        fields.add(String.valueOf(ticket.getExpirationInstant().getMillis()));
+    protected void serializeInternal(@Nonnull JsonGenerator generator, @Nonnull ProxyGrantingTicket ticket) {
         if (ticket.getParentId() != null) {
-            fields.add(ticket.getParentId());
+            generator.write(PARENT_FIELD, ticket.getParentId());
         }
-        return fields.toArray(new String[fields.size()]);
     }
 
     @Override
-    @Nonnull
-    protected ProxyGrantingTicket createTicket(@Nonnull final String id, @NotEmpty final String[] fields) {
-        if (fields.length < 3) {
-            throw new IllegalArgumentException("Expected at least 3 fields but got " + fields.length);
-        }
-        return new ProxyGrantingTicket(
-                id,
-                fields[0],
-                fields[1],
-                new Instant(Long.valueOf(fields[2])),
-                fields.length > 3 ? fields[3] : null);
+    protected ProxyGrantingTicket createTicket(
+            @Nonnull final JsonObject o,
+            @Nonnull final String id,
+            @Nonnull final String service,
+            @Nonnull final Instant expiry) {
+        return new ProxyGrantingTicket(id, service, expiry, o.getString(PARENT_FIELD, null));
     }
 }

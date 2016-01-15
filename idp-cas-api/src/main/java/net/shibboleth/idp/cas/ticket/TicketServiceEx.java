@@ -15,37 +15,36 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.cas.ticket.serialization.impl;
+package net.shibboleth.idp.cas.ticket;
 
 import javax.annotation.Nonnull;
-import javax.json.JsonObject;
-import javax.json.stream.JsonGenerator;
+import javax.annotation.Nullable;
 
-import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import org.joda.time.Instant;
 
 /**
- * Serializes service tickets in simple field-delimited form.
+ * Extended CAS ticket management service.
  *
  * @author Marvin S. Addison
  */
-public class ServiceTicketSerializer extends AbstractTicketSerializer<ServiceTicket> {
-
-    /** Renew field name. */
-    private static final String RENEW_FIELD = "r";
-
-
-    @Override
-    protected void serializeInternal(@Nonnull JsonGenerator generator, @Nonnull ServiceTicket ticket) {
-        generator.write(RENEW_FIELD, ticket.isRenew());
-    }
-
-    @Override
-    protected ServiceTicket createTicket(
-            @Nonnull final JsonObject o,
-            @Nonnull final String id,
-            @Nonnull final String service,
-            @Nonnull final Instant expiry) {
-        return new ServiceTicket(id, service, expiry, o.getBoolean(RENEW_FIELD));
-    }
+public interface TicketServiceEx extends TicketService {
+    /**
+     * Creates and stores a ticket for the given service.
+     *
+     * @param id ID of ticket to create.
+     * @param expiry Expiration date of service ticket.
+     * @param state Additional state to be stored with the ticket.
+     * @param service Service for which ticket is granted.
+     * @param renew True to indicate the ticket was generated in response to a forced authentication, false otherwise.
+     *
+     * @return Created service ticket.
+     */
+    @Nonnull
+    ServiceTicket createServiceTicket(
+            @Nonnull String id,
+            @Nonnull Instant expiry,
+            @Nonnull String service,
+            @Nonnull TicketState state,
+            boolean renew);
 }

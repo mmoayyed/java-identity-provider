@@ -20,7 +20,8 @@ package net.shibboleth.idp.test.flows.cas;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import org.joda.time.Instant;
 
 import javax.annotation.Nonnull;
@@ -31,10 +32,16 @@ import javax.annotation.Nullable;
  *
  * @author Marvin S. Addison
  */
-public class ThrowingTicketService implements TicketService {
+public class ThrowingTicketService implements TicketServiceEx {
     @Nonnull
     @Override
     public ServiceTicket createServiceTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull String sessionId, @Nonnull String service, boolean renew) {
+        throw new RuntimeException("createServiceTicket failed for ticket " + id);
+    }
+
+    @Nonnull
+    @Override
+    public ServiceTicket createServiceTicket(@Nonnull String id, @Nonnull Instant expiry, @Nonnull String service, @Nonnull TicketState state, boolean renew) {
         throw new RuntimeException("createServiceTicket failed for ticket " + id);
     }
 

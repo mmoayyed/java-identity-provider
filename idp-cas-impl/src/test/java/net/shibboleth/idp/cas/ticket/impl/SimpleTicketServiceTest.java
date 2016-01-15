@@ -7,6 +7,7 @@ package net.shibboleth.idp.cas.ticket.impl;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.opensaml.storage.impl.MemoryStorageService;
@@ -41,7 +42,13 @@ public class SimpleTicketServiceTest {
     public void testCreateRemoveServiceTicket() throws Exception {
         final ServiceTicket st = createServiceTicket();
         assertNotNull(st);
-        assertEquals(ticketService.removeServiceTicket(st.getId()), st);
+        assertNotNull(st.getTicketState().getSessionId());
+        assertNotNull(st.getTicketState().getPrincipalName());
+        final ServiceTicket st2 = ticketService.removeServiceTicket(st.getId());
+        assertEquals(st, st2);
+        assertEquals(st.getExpirationInstant(), st2.getExpirationInstant());
+        assertEquals(st.getService(), st2.getService());
+        assertEquals(st.getTicketState(), st2.getTicketState());
         assertNull(ticketService.removeServiceTicket(st.getId()));
     }
 
@@ -49,7 +56,13 @@ public class SimpleTicketServiceTest {
     public void testCreateFetchRemoveProxyGrantingTicket() throws Exception {
         final ProxyGrantingTicket pgt = createProxyGrantingTicket();
         assertNotNull(pgt);
-        assertEquals(ticketService.fetchProxyGrantingTicket(pgt.getId()), pgt);
+        assertNotNull(pgt.getTicketState().getSessionId());
+        assertNotNull(pgt.getTicketState().getPrincipalName());
+        final ProxyGrantingTicket pgt2 = ticketService.fetchProxyGrantingTicket(pgt.getId());
+        assertEquals(pgt, pgt2);
+        assertEquals(pgt.getExpirationInstant(), pgt2.getExpirationInstant());
+        assertEquals(pgt.getService(), pgt2.getService());
+        assertEquals(pgt.getTicketState(), pgt2.getTicketState());
         assertEquals(ticketService.removeProxyGrantingTicket(pgt.getId()), pgt);
         assertNull(ticketService.removeProxyGrantingTicket(pgt.getId()));
     }
@@ -62,7 +75,13 @@ public class SimpleTicketServiceTest {
                 createProxyGrantingTicket(),
                 TEST_SERVICE);
         assertNotNull(pt);
-        assertEquals(ticketService.removeProxyTicket(pt.getId()), pt);
+        assertNotNull(pt.getTicketState().getSessionId());
+        assertNotNull(pt.getTicketState().getPrincipalName());
+        final ProxyTicket pt2 = ticketService.removeProxyTicket(pt.getId());
+        assertEquals(pt, pt2);
+        assertEquals(pt.getExpirationInstant(), pt2.getExpirationInstant());
+        assertEquals(pt.getService(), pt2.getService());
+        assertEquals(pt.getTicketState(), pt2.getTicketState());
         assertNull(ticketService.removeProxyTicket(pt.getId()));
     }
 
@@ -70,8 +89,8 @@ public class SimpleTicketServiceTest {
         return ticketService.createServiceTicket(
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
                 expiry(),
-                TEST_SESSION_ID,
                 TEST_SERVICE,
+                new TicketState(TEST_SESSION_ID, "bob", Instant.now(), "Password"),
                 false);
     }
 

@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.cas.flow.impl;
 
+import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.cas.protocol.ProtocolContext;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceContext;
@@ -45,6 +47,13 @@ public class TestContextBuilder {
 
     public TestContextBuilder(final String profileId) {
         profileRequestContext.setProfileId(profileId);
+    }
+
+    public TestContextBuilder addAuthenticationContext(final AuthenticationResult result) {
+        final AuthenticationContext authnCtx = new AuthenticationContext();
+        authnCtx.setAuthenticationResult(result);
+        profileRequestContext.addSubcontext(authnCtx);
+        return this;
     }
 
     public TestContextBuilder addSessionContext(final IdPSession session) {

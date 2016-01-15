@@ -21,6 +21,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.Instant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Generic CAS ticket that has a natural identifier and expiration. All CAS tickets are bound to an IdP session ID
@@ -30,37 +31,54 @@ import javax.annotation.Nonnull;
  */
 public class Ticket {
 
-    /** IdP session ID used to create ticket. */
-    @Nonnull
-    private final String sessionId;
-
     /** Ticket identifier. */
     @Nonnull
-    private String id;
+    private final String id;
 
     /** Service/relying party that requested the ticket. */
     @Nonnull
-    private String service;
+    private final String service;
 
     /** Expiration instant. */
     @Nonnull
-    private Instant expirationInstant;
+    private final Instant expirationInstant;
+
+    /** Supplemental ticket state data. */
+    @Nullable
+    private TicketState ticketState;
 
     /**
-     * Creates a new ticket with the given parameters..
+     * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
+     * and {@link #setTicketState(TicketState)}.
      *
      * @param id Ticket ID.
      * @param sessionId IdP session ID used to create ticket.
      * @param service Service that requested the ticket.
      * @param expiration Expiration instant.
      */
+    @Deprecated
     public Ticket(
             @Nonnull final String id,
-            @Nonnull final String sessionId,
+            @Nullable final String sessionId,
             @Nonnull final String service,
             @Nonnull final Instant expiration) {
         this.id = Constraint.isNotNull(id, "Id cannot be null");
-        this.sessionId = Constraint.isNotNull(sessionId, "SessionId cannot be null");
+        this.service = Constraint.isNotNull(service, "Service cannot be null");
+        this.expirationInstant = Constraint.isNotNull(expiration, "Expiration cannot be null");
+    }
+
+    /**
+     * Creates a new ticket with the given parameters.
+     *
+     * @param id Ticket ID.
+     * @param service Service that requested the ticket.
+     * @param expiration Expiration instant.
+     */
+    public Ticket(
+            @Nonnull final String id,
+            @Nonnull final String service,
+            @Nonnull final Instant expiration) {
+        this.id = Constraint.isNotNull(id, "Id cannot be null");
         this.service = Constraint.isNotNull(service, "Service cannot be null");
         this.expirationInstant = Constraint.isNotNull(expiration, "Expiration cannot be null");
     }
@@ -70,9 +88,12 @@ public class Ticket {
         return id;
     }
 
-    @Nonnull
+    @Nullable
     public String getSessionId() {
-        return sessionId;
+        if (ticketState != null) {
+            return ticketState.getSessionId();
+        }
+        return null;
     }
 
     @Nonnull
@@ -83,6 +104,15 @@ public class Ticket {
     @Nonnull
     public Instant getExpirationInstant() {
         return expirationInstant;
+    }
+
+    @Nullable
+    public TicketState getTicketState() {
+        return ticketState;
+    }
+
+    public void setTicketState(@Nullable final TicketState state) {
+        this.ticketState = state;
     }
 
     @Override

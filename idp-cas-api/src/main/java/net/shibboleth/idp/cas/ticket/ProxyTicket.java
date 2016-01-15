@@ -21,6 +21,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.Instant;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * CAS proxy ticket.
@@ -34,7 +35,8 @@ public class ProxyTicket extends Ticket {
     private final String pgtId;
 
     /**
-     * Creates a new authenticated ticket with an identifier, service, and expiration date.
+     * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
+     * and {@link #setTicketState(TicketState)}.
      *
      * @param id Ticket ID.
      * @param sessionId IdP session ID used to create ticket.
@@ -42,13 +44,31 @@ public class ProxyTicket extends Ticket {
      * @param expiration Expiration instant.
      * @param pgtId Proxy-granting ticket ID used to create ticket.
      */
+    @Deprecated
     public ProxyTicket(
             @Nonnull final String id,
-            @Nonnull final String sessionId,
+            @Nullable final String sessionId,
             @Nonnull final String service,
             @Nonnull final Instant expiration,
             @Nonnull final String pgtId) {
         super(id, sessionId, service, expiration);
+        this.pgtId = Constraint.isNotNull(pgtId, "PgtId cannot be null");
+    }
+
+    /**
+     * Creates a new authenticated ticket with an identifier, service, and expiration date.
+     *
+     * @param id Ticket ID.
+     * @param service Service that requested the ticket.
+     * @param expiration Expiration instant.
+     * @param pgtId Proxy-granting ticket ID used to create ticket.
+     */
+    public ProxyTicket(
+            @Nonnull final String id,
+            @Nonnull final String service,
+            @Nonnull final Instant expiration,
+            @Nonnull final String pgtId) {
+        super(id, service, expiration);
         this.pgtId = Constraint.isNotNull(pgtId, "PgtId cannot be null");
     }
 

@@ -21,10 +21,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SessionException;
@@ -61,7 +63,7 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
     protected static final String TEST_PRINCIPAL_NAME = "omega";
 
     @Autowired
-    protected TicketService ticketService;
+    protected TicketServiceEx ticketService;
 
     private TicketIdentifierGenerationStrategy serviceTicketGenerator =
             new TicketIdentifierGenerationStrategy("ST", 25);
@@ -109,7 +111,8 @@ public abstract class AbstractFlowActionTest extends AbstractTestNGSpringContext
     }
 
     protected ServiceTicket createServiceTicket(final String service, final boolean renew) {
-        return ticketService.createServiceTicket(generateServiceTicketId(), expiry(), TEST_SESSION_ID, service, renew);
+        final TicketState state = new TicketState(TEST_SESSION_ID, TEST_PRINCIPAL_NAME, Instant.now(), "Password");
+        return ticketService.createServiceTicket(generateServiceTicketId(), expiry(), service, state, renew);
     }
 
     protected ProxyTicket createProxyTicket(final ProxyGrantingTicket pgt, final String service) {

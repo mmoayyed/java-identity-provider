@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
  *
  * @author Marvin S. Addison
  */
+@Deprecated
 public interface TicketService {
     /**
      * Creates and stores a ticket for the given service.

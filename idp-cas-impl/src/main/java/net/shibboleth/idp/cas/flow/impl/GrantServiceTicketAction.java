@@ -19,16 +19,21 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.base.Function;
+import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
 import net.shibboleth.idp.cas.protocol.ServiceTicketResponse;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
-import net.shibboleth.idp.cas.ticket.TicketService;
+import net.shibboleth.idp.cas.ticket.TicketServiceEx;
+import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.DateTime;
+import org.joda.time.Instant;
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,9 +58,14 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
     private final ConfigLookupFunction<LoginConfiguration> configLookupFunction =
             new ConfigLookupFunction<>(LoginConfiguration.class);
 
+    /** AuthenticationContext lookup function. */
+    @Nonnull
+    private final Function<ProfileRequestContext, AuthenticationContext> authnCtxLookupFunction =
+            new ChildContextLookup<>(AuthenticationContext.class);
+
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketService ticketService;
+    private final TicketServiceEx ticketService;
 
 
     /**
@@ -63,7 +73,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      *
      * @param ticketService Ticket service component.
      */
-    public GrantServiceTicketAction(@Nonnull TicketService ticketService) {
+    public GrantServiceTicketAction(@Nonnull TicketServiceEx ticketService) {
         this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 
@@ -84,14 +94,23 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             throw new IllegalStateException(
                     "Invalid service ticket configuration: SecurityConfiguration#idGenerator undefined");
         }
+        final AuthenticationContext authnCtx = authnCtxLookupFunction.apply(profileRequestContext);
+        if (authnCtx == null) {
+            throw new IllegalStateException("AuthenticationContext not found");
+        }
         final ServiceTicket ticket;
         try {
             log.debug("Granting service ticket for {}", request.getService());
+            final TicketState state = new TicketState(
+                    session.getId(),
+                    session.getPrincipalName(),
+                    new Instant(authnCtx.getAuthenticationResult().getAuthenticationInstant()),
+                    authnCtx.getAuthenticationResult().getAuthenticationFlowId());
             ticket = ticketService.createServiceTicket(
                     config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
                     DateTime.now().plus(config.getTicketValidityPeriod()).toInstant(),
-                    session.getId(),
                     request.getService(),
+                    state,
                     request.isRenew());
         } catch (RuntimeException e) {
             log.error("Failed granting service ticket due to error.", e);
