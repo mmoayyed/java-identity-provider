@@ -31,10 +31,10 @@
         </property>
     </bean>
 
-    <!-- HandlerAdapters: These aren't ordered. Add the WebFlow one, then the standard Spring MVC default ones. 
+    <!-- HandlerAdapters: These aren't ordered. Add our WebFlow one, then the standard Spring MVC default ones. 
          Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
     
-    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter" p:flowExecutor-ref="flowExecutor" />
+    <bean class="net.shibboleth.idp.profile.support.RethrowingFlowHandlerAdapter" p:flowExecutor-ref="flowExecutor" />
     
     <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter" />
     
