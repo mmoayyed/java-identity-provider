@@ -27,6 +27,10 @@
         p:loggingId="%{idp.service.logging.logout:Logout}"
         p:browserProfile="true" />
 
+    <bean id="PopulateUserAgentContext"
+          class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
     <bean id="PopulateClientStorageLoadContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
         p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null

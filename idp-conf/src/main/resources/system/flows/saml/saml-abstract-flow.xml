@@ -28,23 +28,13 @@
         <evaluate expression="PopulateSignatureValidationParameters" />
         <evaluate expression="PopulateClientTLSValidationParameters" />
         
-        <evaluate expression="PopulateInboundInterceptContext" />        
-        <evaluate expression="'proceed'" />
-        
-        <transition on="proceed" to="CheckBrowserProfile" />
-    </action-state>
-
-    <decision-state id="CheckBrowserProfile">
-        <if test="opensamlProfileRequestContext.browserProfile"
-            then="PopulateUserAgentContext" else="CheckInboundInterceptContext" />
-    </decision-state>
-
-    <action-state id="PopulateUserAgentContext">
+        <evaluate expression="PopulateInboundInterceptContext" />
         <evaluate expression="PopulateUserAgentContext" />
         <evaluate expression="'proceed'" />
+        
         <transition on="proceed" to="CheckInboundInterceptContext" />
     </action-state>
-    
+
     <decision-state id="CheckInboundInterceptContext">
         <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
             then="OutboundContextsAndSecurityParameters" else="DoInboundInterceptSubflow" />

@@ -23,13 +23,20 @@ import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.profile.logic.BrowserProfilePredicate;
 
 /**
- * An action that populates a {@link UserAgentContext} as a child of the {@link ProfileRequestContext}.
+ * An action that conditionally populates a {@link UserAgentContext} as a child of the {@link ProfileRequestContext}.
+ * By default, the action is activated by a {@link BrowserProfilePredicate} condition such that only browser profiles
+ * result in the creation of a {@link UserAgentContext}.
  *
  * @event {@link EventIds#PROCEED_EVENT_ID}
  */
 public class PopulateUserAgentContext extends AbstractProfileAction {
+
+    public PopulateUserAgentContext() {
+        setActivationCondition(new BrowserProfilePredicate());
+    }
 
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
