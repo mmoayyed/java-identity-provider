@@ -15,6 +15,10 @@
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="true" />
 
+    <bean id="PopulateUserAgentContext"
+          class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+
     <bean id="PopulateClientStorageLoadContext"
           class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext"
           scope="prototype"

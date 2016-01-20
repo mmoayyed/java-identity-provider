@@ -10,6 +10,7 @@
             <evaluate result="flowScope.hasAuthenticationContext" expression="false" />
         </on-entry>
         <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="PopulateUserAgentContext"/>
         <evaluate expression="PopulateClientStorageLoadContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="ClientStorageLoad" />

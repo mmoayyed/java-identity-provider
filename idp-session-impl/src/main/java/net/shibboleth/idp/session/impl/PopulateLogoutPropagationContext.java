@@ -22,7 +22,6 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
@@ -195,11 +194,6 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
         }
         logoutPropCtx.setSession(session);
         logoutPropCtx.setSessionKey(sessionKey);
-
-        // Attach UserAgentContext to the PRC to support browser-specific behaviors
-        final UserAgentContext uac = new UserAgentContext();
-        uac.setIdentifier(getHttpServletRequest().getHeader("User-Agent"));
-        profileRequestContext.addSubcontext(uac);
     }
 
     /**

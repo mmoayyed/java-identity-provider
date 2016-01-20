@@ -31,6 +31,17 @@
         <evaluate expression="PopulateInboundInterceptContext" />        
         <evaluate expression="'proceed'" />
         
+        <transition on="proceed" to="CheckBrowserProfile" />
+    </action-state>
+
+    <decision-state id="CheckBrowserProfile">
+        <if test="opensamlProfileRequestContext.browserProfile"
+            then="PopulateUserAgentContext" else="CheckInboundInterceptContext" />
+    </decision-state>
+
+    <action-state id="PopulateUserAgentContext">
+        <evaluate expression="PopulateUserAgentContext" />
+        <evaluate expression="'proceed'" />
         <transition on="proceed" to="CheckInboundInterceptContext" />
     </action-state>
     
