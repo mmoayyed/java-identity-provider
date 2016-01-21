@@ -114,7 +114,7 @@ public class WriteAuditLog extends AbstractProfileAction {
      * Set the map of logging category to formatting strings for log entries.
      * 
      * <p>A formatting string consists of tokens prefixed by '%' separated by any non-alphanumeric or whitespace.
-     * Tokens can contain any letter or number or a hypen. Anything other than a token, including whitespace, is
+     * Tokens can contain any letter or number or a hyphen. Anything other than a token, including whitespace, is
      * a literal.</p>
      * 
      * @param map map of categories to formatting strings
