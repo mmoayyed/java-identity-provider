@@ -361,7 +361,7 @@ public class AttributeResolverImplTest {
         resolver.resolveAttributes(context);
         Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 2);
         
-        Thread.sleep(3100);
+        Thread.sleep(6200);
         context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
         Assert.assertEquals(context.getResolvedIdPAttributes().get("output").getValues().size(), 1);
