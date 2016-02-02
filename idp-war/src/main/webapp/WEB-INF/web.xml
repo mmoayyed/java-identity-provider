@@ -81,10 +81,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- HTTP headers to every response in order to prevent response caching -->
-    <!-- <filter> <filter-name>IdPNoCacheFilter</filter-name> <filter-class>edu.internet2.middleware.shibboleth.idp.util.NoCacheFilter</filter-class> 
-        </filter> <filter-mapping> <filter-name>IdPNoCacheFilter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> -->
-
     <!-- Servlets and servlet mappings -->    
     <servlet>
         <servlet-name>idp</servlet-name>
