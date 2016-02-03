@@ -20,6 +20,8 @@ package net.shibboleth.idp.profile.logic;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormatter;
@@ -44,38 +46,44 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
     @Nonnull private final Logger log = LoggerFactory.getLogger(DateAttributePredicate.class);
 
     /** Name of attribute to query for. */
-    @Nonnull private final String attributeName;
+    @Nonnull @NotEmpty private final String attributeName;
 
     /** Formatter used to parse string-based date attribute values. */
     @Nonnull private final DateTimeFormatter dateTimeFormatter;
 
     /** Offset from system time used for date comparisons. */
-    @Nonnull private Duration systemTimeOffset = Duration.ZERO;
+    @Nonnull private Duration systemTimeOffset;
+    
+    /** Result of predicate if attribute is missing or has no values. */
+    private boolean resultIfMissing;
 
     /**
-     * Creates a new instance that performs date comparisons against the given attribute
+     * Create a new instance that performs date comparisons against the given attribute
      * using ISO date/time format parser by default.
      *
      * @param attribute Attribute name that provides candidate date values to test.
      */
-    public DateAttributePredicate(final String attribute) {
+    public DateAttributePredicate(@Nonnull @NotEmpty final String attribute) {
         this(attribute, ISODateTimeFormat.dateOptionalTimeParser());
     }
 
     /**
-     * Creates a new instance that performs date comparisons against the given attribute
+     * Create a new instance that performs date comparisons against the given attribute
      * using the given date parser.
      *
      * @param attribute Attribute name that provides candidate date values to test.
      * @param formatter Date/time parser.
      */
-    public DateAttributePredicate(final String attribute, final DateTimeFormatter formatter) {
-        this.attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
-        this.dateTimeFormatter = Constraint.isNotNull(formatter, "Formatter cannot be null");
+    public DateAttributePredicate(@Nonnull @NotEmpty final String attribute,
+            @Nonnull final DateTimeFormatter formatter) {
+        attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
+        dateTimeFormatter = Constraint.isNotNull(formatter, "Formatter cannot be null");
+        systemTimeOffset = Duration.ZERO;
+        resultIfMissing = false;
     }
 
     /**
-     * Sets the system time offset, which affects the reference date for comparisons.
+     * Set the system time offset, which affects the reference date for comparisons.
      * By default all comparisons are against system time, i.e. zero offset.
      *
      * @param offset System time offset. A negative value decreases the target date (sooner);
@@ -85,13 +93,27 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
         systemTimeOffset = Constraint.isNotNull(offset, "Offset cannot not be null");
     }
 
+    /**
+     * Set the result to return if the attribute to check is missing or has no values.
+     * 
+     * @param flag  flag to set
+     */
+    public void setResultIfMissing(final boolean flag) {
+        resultIfMissing = flag;
+    }
+    
     @Override
-    protected boolean hasMatch(final Map<String, IdPAttribute> attributeMap) {
+    protected boolean hasMatch(@Nonnull @NonnullElements final Map<String, IdPAttribute> attributeMap) {
+        
         final IdPAttribute attribute = attributeMap.get(attributeName);
         if (attribute == null) {
-            log.info("Attribute {} not found in context", attributeName);
-            return false;
+            log.debug("Attribute {} not found in context, returning {}", attributeName, resultIfMissing);
+            return resultIfMissing;
+        } else if (attribute.getValues().isEmpty()) {
+            log.debug("Attribute {} has no values, returning {}", attributeName, resultIfMissing);
+            return resultIfMissing;
         }
+        
         String dateString;
         for (final IdPAttributeValue<?> value : attribute.getValues()) {
             if (value instanceof StringAttributeValue) {
@@ -100,7 +122,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
                     if (dateTimeFormatter.parseDateTime(dateString).plus(systemTimeOffset).isAfterNow()) {
                         return true;
                     }
-                } catch (RuntimeException e) {
+                } catch (final RuntimeException e) {
                     log.info("{} is not a valid date for the configured date parser", dateString);
                 }
             }
