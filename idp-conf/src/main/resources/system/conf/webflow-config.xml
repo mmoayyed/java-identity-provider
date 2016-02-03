@@ -112,6 +112,7 @@
 
         <!-- Built-in intercept flows. -->
         <webflow:flow-location id="intercept/context-check" path="../system/flows/intercept/context-check-flow.xml" />
+        <webflow:flow-location id="intercept/expiring-password" path="../system/flows/intercept/expiring-password-flow.xml" />
         <webflow:flow-location id="intercept/terms-of-use" path="../system/flows/intercept/terms-of-use-flow.xml" />
         <webflow:flow-location id="intercept/attribute-release" path="../system/flows/intercept/attribute-release-flow.xml" />
 
