@@ -59,68 +59,68 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
     
     if (((IdentifiedComponent) service).getId().contains("Metadata")) {
         final ServiceableComponent<MetadataResolver> component = service.getServiceableComponent();
-        try {
-            MetadataResolver rootResolver = component.getComponent();
-            Collection<RefreshableMetadataResolver> resolvers = Collections.emptyList();
-            
-            // Step down into wrapping component.
-            if (rootResolver instanceof RelyingPartyMetadataProvider) {
-                rootResolver = ((RelyingPartyMetadataProvider) rootResolver).getEmbeddedResolver();
-            }
-            
-            if (rootResolver instanceof RefreshableMetadataResolver) {
-                resolvers = Collections.<RefreshableMetadataResolver>singletonList((RefreshableMetadataResolver) rootResolver);
-            } else if (rootResolver instanceof ChainingMetadataResolver) {
-            	resolvers = new ArrayList<RefreshableMetadataResolver>();
-                for (final MetadataResolver childResolver : ((ChainingMetadataResolver) rootResolver).getResolvers()) {
-                    if (childResolver instanceof RefreshableMetadataResolver) {
-                        resolvers.add((RefreshableMetadataResolver) childResolver);
+        if (null != component) {
+            try {
+                MetadataResolver rootResolver = component.getComponent();
+                Collection<RefreshableMetadataResolver> resolvers = Collections.emptyList();
+                
+                // Step down into wrapping component.
+                if (rootResolver instanceof RelyingPartyMetadataProvider) {
+                    rootResolver = ((RelyingPartyMetadataProvider) rootResolver).getEmbeddedResolver();
+                }
+                
+                if (rootResolver instanceof RefreshableMetadataResolver) {
+                    resolvers = Collections.<RefreshableMetadataResolver>singletonList((RefreshableMetadataResolver) rootResolver);
+                } else if (rootResolver instanceof ChainingMetadataResolver) {
+                    resolvers = new ArrayList<RefreshableMetadataResolver>();
+                    for (final MetadataResolver childResolver : ((ChainingMetadataResolver) rootResolver).getResolvers()) {
+                        if (childResolver instanceof RefreshableMetadataResolver) {
+                            resolvers.add((RefreshableMetadataResolver) childResolver);
+                        }
                     }
                 }
-            }
-            
-            for (final RefreshableMetadataResolver resolver : resolvers) {
-                final DateTime lastRefresh = resolver.getLastRefresh();
-                final DateTime lastUpdate = resolver.getLastUpdate();
-
-                out.println("\tmetadata source: " + resolver.getId());
-                if (lastRefresh != null) {
-                    out.println("\tlast refresh attempt: " + lastRefresh.toString(dateTimeFormatter));
-                }
-                if (lastUpdate != null) {
-                    out.println("\tlast update: " + lastUpdate.toString(dateTimeFormatter));
-                }
-                out.println();
-            }
-        } finally {
-            if (null != component) {
-                component.unpinComponent();
-            } 
-        }
-    } else if (((IdentifiedComponent) service).getId().contains("AttributeResolver")) {
-        final ServiceableComponent<AttributeResolver> component = service.getServiceableComponent();
-        try {
-            AttributeResolver resolver = component.getComponent();
-            final Collection<DataConnector> connectors = resolver.getDataConnectors().values();
-            
-            for (final DataConnector connector: connectors) {
-                if (connector instanceof DataConnectorEx) {
-                    DataConnectorEx connectorEx = (DataConnectorEx) connector;
                 
-                    final long lastFail = connectorEx.getLastFail();
-                    if (0 != lastFail) {
-                        DateTime failDateTime = new DateTime(lastFail);
-                        out.println("\tDataConnector " +  connectorEx.getId() + ": last failed at " + failDateTime.toString(dateTimeFormatter));
-                    } else {
-                        out.println("\tDataConnector " +  connectorEx.getId() + ": has never failed");
+                for (final RefreshableMetadataResolver resolver : resolvers) {
+                    final DateTime lastRefresh = resolver.getLastRefresh();
+                    final DateTime lastUpdate = resolver.getLastUpdate();
+    
+                    out.println("\tmetadata source: " + resolver.getId());
+                    if (lastRefresh != null) {
+                        out.println("\tlast refresh attempt: " + lastRefresh.toString(dateTimeFormatter));
+                    }
+                    if (lastUpdate != null) {
+                        out.println("\tlast update: " + lastUpdate.toString(dateTimeFormatter));
                     }
                     out.println();
                 }
-            }
-        } finally {
-            if (null != component) {
+            } finally {
                 component.unpinComponent();
-            } 
+            }
+        }
+    } else if (((IdentifiedComponent) service).getId().contains("AttributeResolver")) {
+        final ServiceableComponent<AttributeResolver> component = service.getServiceableComponent();
+        if (null != component) {
+            try {
+                AttributeResolver resolver = component.getComponent();
+                final Collection<DataConnector> connectors = resolver.getDataConnectors().values();
+                
+                for (final DataConnector connector: connectors) {
+                    if (connector instanceof DataConnectorEx) {
+                        DataConnectorEx connectorEx = (DataConnectorEx) connector;
+                    
+                        final long lastFail = connectorEx.getLastFail();
+                        if (0 != lastFail) {
+                            DateTime failDateTime = new DateTime(lastFail);
+                            out.println("\tDataConnector " +  connectorEx.getId() + ": last failed at " + failDateTime.toString(dateTimeFormatter));
+                        } else {
+                            out.println("\tDataConnector " +  connectorEx.getId() + ": has never failed");
+                        }
+                        out.println();
+                    }
+                }
+            } finally {
+                component.unpinComponent();
+            }
         }
     
     }    
