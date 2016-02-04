@@ -69,15 +69,15 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
                     rootResolver = ((RelyingPartyMetadataProvider) rootResolver).getEmbeddedResolver();
                 }
                 
-                if (rootResolver instanceof RefreshableMetadataResolver) {
-                    resolvers = Collections.<RefreshableMetadataResolver>singletonList((RefreshableMetadataResolver) rootResolver);
-                } else if (rootResolver instanceof ChainingMetadataResolver) {
+                if (rootResolver instanceof ChainingMetadataResolver) {
                     resolvers = new ArrayList<RefreshableMetadataResolver>();
                     for (final MetadataResolver childResolver : ((ChainingMetadataResolver) rootResolver).getResolvers()) {
                         if (childResolver instanceof RefreshableMetadataResolver) {
                             resolvers.add((RefreshableMetadataResolver) childResolver);
                         }
                     }
+                } else if (rootResolver instanceof RefreshableMetadataResolver) {
+                    resolvers = Collections.<RefreshableMetadataResolver>singletonList((RefreshableMetadataResolver) rootResolver);
                 }
                 
                 for (final RefreshableMetadataResolver resolver : resolvers) {
