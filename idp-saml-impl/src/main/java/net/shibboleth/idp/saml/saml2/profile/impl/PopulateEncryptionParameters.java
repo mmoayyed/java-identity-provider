@@ -340,17 +340,18 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
                     encryptCtx.setAttributeEncryptionParameters(params);
                 }
             } else {
-                log.warn("{} Resolver returned no EncryptionParameters", getLogPrefix());
                 if (encryptionOptional) {
-                    log.info("{} Encryption is optional, ignoring inability to encrypt", getLogPrefix());
+                    log.debug("{} Resolver returned no EncryptionParameters", getLogPrefix());
+                    log.debug("{} Encryption is optional, ignoring inability to encrypt", getLogPrefix());
                 } else {
+                    log.warn("{} Resolver returned no EncryptionParameters", getLogPrefix());
                     ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
                 }
             }
         } catch (final ResolverException e) {
             log.error("{} Error resolving EncryptionParameters", getLogPrefix(), e);
             if (encryptionOptional) {
-                log.info("{} Encryption is optional, ignoring inability to encrypt", getLogPrefix());
+                log.debug("{} Encryption is optional, ignoring inability to encrypt", getLogPrefix());
             } else {
                 ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_SEC_CFG);
             }
