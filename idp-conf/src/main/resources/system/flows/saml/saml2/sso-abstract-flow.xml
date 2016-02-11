@@ -112,6 +112,14 @@
         <evaluate expression="PostAssertionPopulateAuditContext" />
         <evaluate expression="UpdateSessionWithSPSession" />
 
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="EncryptAndSign" />
+        <!-- Mask storage failure. -->
+        <transition on="InputOutputError" to="EncryptAndSign" />
+    </action-state>
+
+    <action-state id="EncryptAndSign">
         <evaluate expression="EncryptNameIDs" />
         <evaluate expression="EncryptAttributes" />
         <evaluate expression="SignAssertions" />
@@ -122,8 +130,6 @@
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="PopulateClientStorageSaveContext" />
-        <!-- Mask storage failure. -->
-        <transition on="InputOutputError" to="PopulateClientStorageSaveContext" />
     </action-state>
     
     <!-- We may need to save client storage. -->
