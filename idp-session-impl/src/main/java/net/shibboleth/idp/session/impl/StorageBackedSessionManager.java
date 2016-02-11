@@ -668,14 +668,19 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
             }
 
             try {
-                if (sessionList != null && !sessionList.getValue().contains(idpSession.getId() + ',')) {
-                    // Need to update record.
-                    String updated = sessionList.getValue() + idpSession.getId() + ',';
-                    if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
-                            Math.max(sessionList.getExpiration(), 
-                                     spSession.getExpirationInstant() + sessionSlop)) == null) {
-                        log.debug("Secondary index record disappeared, retrying as insert");
-                        indexBySPSession(idpSession, spSession, attempts - 1);
+                if (sessionList != null) {
+                    if (!sessionList.getValue().contains(idpSession.getId() + ',')) {
+                        // Need to update record.
+                        String updated = sessionList.getValue() + idpSession.getId() + ',';
+                        if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
+                                Math.max(sessionList.getExpiration(), 
+                                         spSession.getExpirationInstant() + sessionSlop)) == null) {
+                            log.debug("Secondary index record disappeared, retrying as insert");
+                            indexBySPSession(idpSession, spSession, attempts - 1);
+                        }
+                    } else {
+                        log.debug("IdP session {} already indexed against service ID {} and key {}", idpSession.getId(),
+                                serviceId, serviceKey);
                     }
                 } else if (!storageService.create(serviceId, serviceKey, idpSession.getId() + ',',
                         spSession.getExpirationInstant() + sessionSlop)) {
