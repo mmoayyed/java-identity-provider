@@ -12,7 +12,7 @@
 ## response - HttpServletResponse
 ## environment - Spring Environment object for property resolution
 #set ($title = $springMacroRequestContext.getMessage("idp.title", "Web Login Service"))
-#set ($titleSuffix = $springMacroRequestContext.getMessage("idp.client-storage-read.suffix", "Loading Session State..."))
+#set ($titleSuffix = $springMacroRequestContext.getMessage("idp.client-storage-read.suffix", "Loading Session Information"))
 ##
 <!DOCTYPE html>
 <html>
@@ -43,6 +43,9 @@
                 <header>
                     <h3>$title - $titleSuffix</h3>
                 </header>
+                <div class="content">
+                $springMacroRequestContext.getMessage("idp.client-storage-read.text", "Loading login session information from the browser...")
+                </div>
                 <noscript>
                     <div class="content">
                     $springMacroRequestContext.getMessage("idp.client-storage.no-js", "Since your browser does not support JavaScript, you must press the Continue button once to proceed.")
