@@ -504,13 +504,13 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @Live public Map<String, Optional<AuthenticationResult>> getAuthenticationResultMap() {
+    @Nonnull @NonnullElements @Live protected Map<String, Optional<AuthenticationResult>> getAuthenticationResultMap() {
         return super.getAuthenticationResultMap();
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements @Live public Map<String, Optional<SPSession>> getSPSessionMap() {
+    @Nonnull @NonnullElements @Live protected Map<String, Optional<SPSession>> getSPSessionMap() {
         return super.getSPSessionMap();
     }
     
