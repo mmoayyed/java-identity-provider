@@ -387,8 +387,12 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                 log.info("Unable to add SP session due to to storage service limitations");
                 return null;
             }
-            
+                        
             try {
+                // Prime things to make sure any previous instance from this SP is loaded so
+                // we know to remove it.
+                getSPSession(spSession.getId());
+
                 // Store the record.
                 if (!saveSPSessionToStorage(spSession) && !sessionManager.isMaskStorageFailure()) {
                     throw new SessionException("Unable to save SPSession to storage");
@@ -410,6 +414,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
                     if (!success) {
                         log.error("Exhausted retry attempts updating record for session {}", getId());
                     }
+                } else {
+                    sessionManager.unindexSPSession(this, prev, 10);
                 }
                 sessionManager.indexBySPSession(this, spSession, 10);
                 return prev;

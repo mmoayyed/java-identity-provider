@@ -691,7 +691,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 log.error("Exception maintaining secondary index for service ID {} and key {}",
                         serviceId, serviceKey, e);
                 if (!maskStorageFailure) {
-                    throw new SessionException("Exception maintaining seconday index", e);
+                    throw new SessionException("Exception maintaining secondary index", e);
                 }
             } catch (final VersionMismatchException e) {
                 log.debug("Secondary index record was updated between read/update, retrying");
@@ -700,6 +700,86 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
         }
     }
 
+    /**
+     * Remove or update a secondary index record from an SPSession to a parent IdPSession.
+     * 
+     * @param idpSession the parent session
+     * @param spSession the SPSession to de-index
+     * @param attempts number of times to retry operation in the event of a synchronization issue
+     * 
+     * @throws SessionException if a fatal error occurs
+     */
+    protected void unindexSPSession(@Nonnull final IdPSession idpSession, @Nonnull final SPSession spSession,
+            final int attempts) throws SessionException {
+        if (attempts <= 0) {
+            log.error("Exceeded retry attempts while removing from secondary index");
+            if (!maskStorageFailure) {
+                throw new SessionException("Exceeded retry attempts while removing from secondary index");
+            }
+        } else if (secondaryServiceIndex && storageServiceMeetsThreshold()) {
+            String serviceId = spSession.getId();
+            String serviceKey = spSession.getSPSessionKey();
+            if (serviceKey == null) {
+                return;
+            }
+            log.debug("Removing secondary index for service ID {} and key {}", serviceId, serviceKey);
+
+            final int contextSize = storageService.getCapabilities().getContextSize();
+            final int keySize = storageService.getCapabilities().getKeySize();
+
+            // Truncate context and key if needed.
+            if (serviceId.length() > contextSize) {
+                serviceId = serviceId.substring(0, contextSize);
+            }
+            if (serviceKey.length() > keySize) {
+                serviceKey = serviceKey.substring(0, keySize);
+            }
+
+            StorageRecord sessionList = null;
+
+            try {
+                sessionList = storageService.read(serviceId, serviceKey);
+            } catch (IOException e) {
+                log.error("Exception while querying based service ID {} and key {}", serviceId, serviceKey, e);
+                if (!maskStorageFailure) {
+                    throw new SessionException("Exception while querying based on SPSession", e);
+                }
+            }
+
+            try {
+                if (sessionList != null) {
+                    final String recordValue = sessionList.getValue();
+                    if (recordValue.contains(idpSession.getId() + ',')) {
+                        // Need to update or delete record.
+                        final String updated = recordValue.replace(idpSession.getId() + ',', "");
+                        if (updated.length() > 0) {
+                            if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey,
+                                    updated, sessionList.getExpiration()) == null) {
+                                log.debug("Secondary index record disappeared, nothing to do");
+                            }
+                        } else {
+                            storageService.deleteWithVersion(sessionList.getVersion(), serviceId, serviceKey);
+                        }
+                    } else {
+                        log.debug("IdP session {} not indexed against service ID {} and key {}", idpSession.getId(),
+                                serviceId, serviceKey);
+                    }
+                } else {
+                    log.debug("Secondary index record not found, nothing to do");
+                }
+            } catch (final IOException e) {
+                log.error("Exception removing secondary index for service ID {} and key {}",
+                        serviceId, serviceKey, e);
+                if (!maskStorageFailure) {
+                    throw new SessionException("Exception maintaining secondary index", e);
+                }
+            } catch (final VersionMismatchException e) {
+                log.debug("Secondary index record was updated between read/update/delete, retrying");
+                unindexSPSession(idpSession, spSession, attempts - 1);
+            }
+        }
+    }
+    
     /**
      * Performs a lookup and deserializes a record based on session ID.
      * 
