@@ -66,7 +66,7 @@
             #else
                 <p><strong>#springMessageText("idp.logout.complete", "The logout operation is complete, and no other services appear to have been accessed during this session.")</strong></p>
                 <!-- Complete the flow by adding a hidden iframe. -->
-                <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed">
+                <iframe style="display:none" src="$flowExecutionUrl&_eventId=proceed"></iframe>
             #end
 
           </div>
