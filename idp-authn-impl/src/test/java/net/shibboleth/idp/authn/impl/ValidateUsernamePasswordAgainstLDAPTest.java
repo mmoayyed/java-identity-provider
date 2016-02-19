@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -135,7 +136,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
     }
 
     @Test public void testMissingUser() throws Exception {
-        prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
+        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
         action.setAuthenticator(authenticator);
         action.initialize();
 
@@ -144,7 +145,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
     }
 
     @Test public void testMissingUser2() throws Exception {
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
         action.setAuthenticator(authenticator);
@@ -152,15 +153,32 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
+        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class));
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
+    @Test public void testUnmatchedUser() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        ac.getSubcontext(UsernamePasswordContext.class, true);
+        action.setAuthenticator(authenticator);
+        action.setMatchExpression(Pattern.compile("foo.+"));
+        action.initialize();
+        
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+    }
+    
     @Test public void testBadConfig() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setAuthenticator(new Authenticator(new SearchDnResolver(), authHandler));
         action.initialize();
@@ -169,11 +187,11 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
-        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, "UnknownUsername");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
@@ -184,7 +202,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setAuthenticator(new Authenticator(dnResolver, new BindAuthenticationHandler(new DefaultConnectionFactory("ldap://unknown:389"))));
         action.initialize();
@@ -194,11 +212,11 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         final Event event = action.execute(src);
         
         Assert.assertNull(ac.getAuthenticationResult());
-        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.AUTHN_EXCEPTION);
         System.err.println("EXCEPTIONS:: " + aec.getExceptions());
@@ -210,7 +228,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setAuthenticator(authenticator);
         action.initialize();
@@ -219,11 +237,11 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
-        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
         
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, "UnknownUsername");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
@@ -234,7 +252,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setAuthenticator(authenticator);
         action.initialize();
@@ -243,7 +261,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
-        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class, false));
+        Assert.assertNull(ac.getSubcontext(AuthenticationErrorContext.class));
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
     }
 
@@ -251,7 +269,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setAuthenticator(authenticator);
         action.initialize();
@@ -260,11 +278,11 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
-        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, "InvalidPassword");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 1);
@@ -275,7 +293,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         Authenticator errorAuthenticator = new Authenticator(dnResolver, authHandler);
@@ -291,11 +309,11 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         Assert.assertNull(ac.getAuthenticationResult());
-        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNotNull(aec);
         ActionTestingSupport.assertEvent(event, "ExpiredPassword");
         Assert.assertEquals(aec.getClassifiedErrors().size(), 2);
@@ -307,7 +325,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         Authenticator errorAuthenticator = new Authenticator(dnResolver, authHandler);
@@ -324,13 +342,13 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         final Event event = action.execute(src);
         AuthenticationResult result = ac.getAuthenticationResult();
         Assert.assertNotNull(result);
-        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
-        AuthenticationWarningContext awc = ac.getSubcontext(AuthenticationWarningContext.class, false);
+        AuthenticationWarningContext awc = ac.getSubcontext(AuthenticationWarningContext.class);
         Assert.assertNotNull(awc);
         ActionTestingSupport.assertEvent(event, "ExpiredPassword");
         Assert.assertEquals(awc.getClassifiedWarnings().size(), 1);
@@ -349,7 +367,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         Authenticator warningAuthenticator = new Authenticator(dnResolver, authHandler);
@@ -365,18 +383,18 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
 
         AuthenticationResult result = ac.getAuthenticationResult();
         Assert.assertNotNull(result);
-        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
 
         ActionTestingSupport.assertEvent(event, "ExpiringPassword");
         
-        AuthenticationWarningContext awc = ac.getSubcontext(AuthenticationWarningContext.class, false);
+        AuthenticationWarningContext awc = ac.getSubcontext(AuthenticationWarningContext.class);
         Assert.assertNotNull(awc);
         Assert.assertEquals(awc.getClassifiedWarnings().size(), 1);
         Assert.assertTrue(awc.isClassifiedWarning("ExpiringPassword"));
@@ -394,7 +412,7 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         action.setAuthenticator(authenticator);
@@ -405,12 +423,46 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
-        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
 
         AuthenticationResult result = ac.getAuthenticationResult();
         Assert.assertNotNull(result);
-        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class, false);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
+        Assert.assertNotNull(lrc.getAuthenticationResponse());
+        Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+
+        UsernamePrincipal up = result.getSubject().getPrincipals(UsernamePrincipal.class).iterator().next();
+        Assert.assertNotNull(up);
+        Assert.assertEquals(up.getName(), "PETER_THE_PRINCIPAL");
+        LdapPrincipal lp = result.getSubject().getPrincipals(LdapPrincipal.class).iterator().next();
+        Assert.assertNotNull(lp);
+        Assert.assertEquals(lp.getName(), "PETER_THE_PRINCIPAL");
+        Assert.assertNotNull(lp.getLdapEntry());
+    }
+
+    @Test public void testMatchAndAuthorized() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        action.setAuthenticator(authenticator);
+        action.setMatchExpression(Pattern.compile(".+_THE_.+"));
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+
+        AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertNull(aec);
+
+        AuthenticationResult result = ac.getAuthenticationResult();
+        Assert.assertNotNull(result);
+        LDAPResponseContext lrc = ac.getSubcontext(LDAPResponseContext.class);
         Assert.assertNotNull(lrc.getAuthenticationResponse());
         Assert.assertEquals(lrc.getAuthenticationResponse().getAuthenticationResultCode(), AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
 

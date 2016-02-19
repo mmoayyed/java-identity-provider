@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.security.auth.login.LoginException;
 
@@ -102,7 +103,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
     }
 
     @Test public void testMissingUser() throws Exception {
-        prc.getSubcontext(AuthenticationContext.class, false).setAttemptedFlow(authenticationFlows.get(0));
+        prc.getSubcontext(AuthenticationContext.class).setAttemptedFlow(authenticationFlows.get(0));
         action.initialize();
 
         final Event event = action.execute(src);
@@ -110,7 +111,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
     }
 
     @Test public void testMissingUser2() throws Exception {
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         ac.getSubcontext(UsernamePasswordContext.class, true);
         action.initialize();
@@ -123,7 +124,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.initialize();
 
@@ -136,11 +137,28 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
     }
 
+    @Test public void testUnmatchedUser() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        ac.getSubcontext(UsernamePasswordContext.class, true);
+        
+        action.setMatchExpression(Pattern.compile("foo.+"));
+        action.initialize();
+        
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+    }
+
     @Test public void testBadUsername() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
@@ -152,7 +170,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "UnknownUsername");
-        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertTrue(errorCtx.isClassifiedError("UnknownUsername"));
         Assert.assertFalse(errorCtx.isClassifiedError("InvalidPassword"));
@@ -162,7 +180,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
         action.setLoginConfigType("JavaLoginConfig");
         System.out.println(getCurrentDir());
@@ -174,7 +192,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, "InvalidPassword");
-        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
         Assert.assertFalse(errorCtx.isClassifiedError("UnknownUsername"));
         Assert.assertTrue(errorCtx.isClassifiedError("InvalidPassword"));
@@ -184,7 +202,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
 
-        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
 
         action.setLoginConfigType("JavaLoginConfig");
@@ -202,6 +220,29 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
+    @Test public void testMatchAndAuthorized() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        action.setLoginConfigType("JavaLoginConfig");
+        System.out.println(getCurrentDir());
+        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+                + '/' + DATA_PATH + "jaas.config")));
+        action.setMatchExpression(Pattern.compile(".+_THE_.+"));
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+                .next().getName(), "PETER_THE_PRINCIPAL");
+    }
+    
     private void doExtract(ProfileRequestContext prc) throws Exception {
         ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());

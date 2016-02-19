@@ -18,6 +18,8 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collections;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,6 +30,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -57,8 +60,22 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateExternalAuthentication.class);
 
+    /** A regular expression to apply for acceptance testing. */
+    @Nullable private Pattern matchExpression;
+    
     /** Context containing the result to validate. */
     @Nullable private ExternalAuthenticationContext extContext;
+    
+    /**
+     * Set a matching expression to apply for username acceptance. 
+     * 
+     * @param expression a matching expression
+     */
+    public void setMatchExpression(@Nullable final Pattern expression) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        matchExpression = expression;
+    }
     
     /** {@inheritDoc} */
     @Override
@@ -125,6 +142,12 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             return;
         }
         
+        if (!checkUsername(extContext.getSubject())) {
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
+                    AuthnEventIds.INVALID_CREDENTIALS);
+            return;
+        }
+        
         if (extContext.doNotCache()) {
             log.debug("{} Disabling caching of authentication result", getLogPrefix());
             authenticationContext.setResultCacheable(false);
@@ -140,4 +163,30 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         return extContext.getSubject();
     }
     
+    /**
+     * Validate the username if necessary.
+     * 
+     * @param subject   subject containing a {@link UsernamePrincipal} to check
+     * 
+     * @return true iff the username is acceptable
+     */
+    private boolean checkUsername(@Nonnull final Subject subject) {
+        
+        if (matchExpression != null) {
+            final Set<UsernamePrincipal> princs = subject.getPrincipals(UsernamePrincipal.class);
+            if (princs != null && !princs.isEmpty()) {
+                if (matchExpression.matcher(princs.iterator().next().getName()).matches()) {
+                    return true;
+                } else {
+                    log.info("{} Username did not match expression", getLogPrefix());
+                    return false;
+                }
+            } else {
+                log.info("{} Match expression set, but not UsernamePrincipal found");
+                return false;
+            }
+        }
+        
+        return true;
+    }
 }

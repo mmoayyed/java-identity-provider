@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
+import java.util.regex.Pattern;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
@@ -53,6 +55,9 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
     /** Whether to save the password in the Java Subject's private credentials. */
     private boolean savePasswordToCredentialSet;
     
+    /** A regular expression to apply for acceptance testing. */
+    @Nullable private Pattern matchExpression;
+    
     /** UsernamePasswordContext containing the credentials to validate. */
     @Nullable private UsernamePasswordContext upContext;
     
@@ -74,6 +79,17 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         savePasswordToCredentialSet = flag;
+    }
+    
+    /**
+     * Set a matching expression to apply to the username for acceptance. 
+     * 
+     * @param expression a matching expression
+     */
+    public void setMatchExpression(@Nullable final Pattern expression) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        matchExpression = expression;
     }
     
     /**
@@ -105,6 +121,13 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
             return false;
         } else if (upContext.getPassword() == null) {
             log.info("{} No password available within UsernamePasswordContext", getLogPrefix());
+            handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
+                    AuthnEventIds.INVALID_CREDENTIALS);
+            return false;
+        }
+        
+        if (matchExpression != null && !matchExpression.matcher(upContext.getUsername()).matches()) {
+            log.debug("{} Username '{}' did not match expression", getLogPrefix(), upContext.getUsername());
             handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
                     AuthnEventIds.INVALID_CREDENTIALS);
             return false;
