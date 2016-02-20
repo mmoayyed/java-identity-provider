@@ -18,12 +18,14 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -37,15 +39,17 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
 
 /**
  * An action that checks for a {@link UsernamePasswordContext} and directly produces an
@@ -74,12 +78,20 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     @Nullable private Configuration.Parameters loginConfigParameters;
     
     /** Application name(s) in JAAS configuration to use. */
-    @Nonnull @NonnullElements private List<String> loginConfigNames;
+    @Nonnull @NonnullElements private Collection< Pair< String,Collection<Principal> > > loginConfigurations;
+    
+    /** Strategy function to dynamically derive the login config name(s) to use. */
+    @Nullable
+    private Function< ProfileRequestContext,Collection< Pair< String,Collection<Principal> > > > loginConfigStrategy;
+    
+    /** Tracks any Principals derived from the login configuration to add to the Subject. */
+    @Nullable @NonnullElements private Collection<Principal> derivedPrincipals;
     
     /** Constructor. */
     public ValidateUsernamePasswordAgainstJAAS() {
         // For compatibility with V2.
-        loginConfigNames = Collections.singletonList("ShibUserPassAuth");
+        loginConfigurations = Collections.singletonList(
+                new Pair<String,Collection<Principal>>("ShibUserPassAuth", Collections.<Principal>emptyList()));
     }
     
     /**
@@ -96,7 +108,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
      * 
      * @param type the type of JAAS configuration to use
      */
-    public void setLoginConfigType(@Nullable String type) {
+    public void setLoginConfigType(@Nullable final String type) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         loginConfigType = StringSupport.trimOrNull(type);
@@ -116,7 +128,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
      * 
      * @param params the JAAS configuration parameters to use
      */
-    public void setLoginConfigParameters(@Nullable Configuration.Parameters params) {
+    public void setLoginConfigParameters(@Nullable final Configuration.Parameters params) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         loginConfigParameters = params;
@@ -127,15 +139,43 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
      * 
      * @param names list of JAAS application names to use
      */
-    public void setLoginConfigNames(@Nonnull @NonnullElements @NotEmpty List<String> names) {
+    public void setLoginConfigurations(
+            @Nonnull @NonnullElements final Collection< Pair< String,Collection<Principal> > > names) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(names, "Configuration list cannot be null");
+
+        loginConfigurations = new ArrayList<>(names);
+    }
+
+    /**
+     * Set the JAAS application name(s) to use.
+     * 
+     * @param names list of JAAS application names to use
+     */
+    public void setLoginConfigNames(@Nonnull @NonnullElements final Collection<String> names) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(names, "Configuration name list cannot be null");
-        
-        loginConfigNames = new ArrayList<>(StringSupport.normalizeStringCollection(names));
-        
-        if (loginConfigNames.isEmpty()) {
-            throw new ConstraintViolationException("Configuration name list cannot be empty");
+
+        loginConfigurations = new ArrayList<>(names.size());
+        for (final String name : names) {
+            final String trimmed = StringSupport.trimOrNull(name);
+            if (trimmed != null) {
+                loginConfigurations.add(
+                        new Pair<String,Collection<Principal>>(trimmed,Collections.<Principal>emptyList()));
+            }
         }
+    }
+    
+    /**
+     * Set the strategy function to use to obtain the JAAS application name(s) to use.
+     * 
+     * @param strategy strategy function
+     */
+    public void setLoginConfigStrategy(@Nullable
+            final Function< ProfileRequestContext,Collection< Pair< String,Collection<Principal> > > > strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        loginConfigStrategy = strategy;
     }
     
     /** {@inheritDoc} */
@@ -143,20 +183,35 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        for (String loginConfigName : loginConfigNames) {
+        final Collection< Pair< String,Collection<Principal> > > configs;
+        if (loginConfigStrategy != null) {
+            configs = loginConfigStrategy.apply(profileRequestContext);
+        } else {
+            configs = loginConfigurations;
+        }
+        
+        if (configs.isEmpty()) {
+            log.warn("{} No JAAS application configurations are available for use", getLogPrefix());
+            handleError(profileRequestContext, authenticationContext, "RequestUnsupported",
+                    AuthnEventIds.REQUEST_UNSUPPORTED);
+            return;
+        }
+        
+        for (final Pair< String,Collection<Principal> > loginConfig : loginConfigurations) {
             try {
-                log.debug("{} Attempting to authenticate user '{}'", getLogPrefix(),
-                        getUsernamePasswordContext().getUsername());
-                authenticate(loginConfigName);
+                log.debug("{} Attempting to authenticate user '{}' via '{}'", getLogPrefix(),
+                        getUsernamePasswordContext().getUsername(), loginConfig.getFirst());
+                authenticate(loginConfig.getFirst());
                 log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
+                derivedPrincipals = loginConfig.getSecond();
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 ActionSupport.buildProceedEvent(profileRequestContext);
                 return;
-            } catch (LoginException e){ 
-                log.info("{} Login by {} failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
+            } catch (final LoginException e){ 
+                log.info("{} Login by '{}' failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
-            } catch (Exception e) {
-                log.warn("{} Login by {} produced exception", getLogPrefix(),
+            } catch (final Exception e) {
+                log.warn("{} Login by '{}' produced exception", getLogPrefix(),
                         getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
             }
@@ -174,12 +229,13 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     private void authenticate(@Nonnull @NotEmpty final String loginConfigName)
             throws LoginException, NoSuchAlgorithmException {
         
-        javax.security.auth.login.LoginContext jaasLoginCtx;
+        final javax.security.auth.login.LoginContext jaasLoginCtx;
         
         if (getLoginConfigType() != null) {
             log.debug("{} Using custom JAAS configuration type {} with parameters of type {}", getLogPrefix(),
                     getLoginConfigType(), getLoginConfigParameters().getClass().getName());
-            Configuration loginConfig = Configuration.getInstance(getLoginConfigType(), getLoginConfigParameters());
+            final Configuration loginConfig =
+                    Configuration.getInstance(getLoginConfigType(), getLoginConfigParameters());
             jaasLoginCtx = new javax.security.auth.login.LoginContext(loginConfigName, getSubject(),
                     new SimpleCallbackHandler(), loginConfig);
         } else {
@@ -190,6 +246,18 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
 
         jaasLoginCtx.login();
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
+        
+        final Subject theSubject = super.populateSubject(subject);
+        if (derivedPrincipals != null && !derivedPrincipals.isEmpty()) {
+            theSubject.getPrincipals().addAll(derivedPrincipals);
+        }
+        return theSubject;
+    }
+    
     
     /**
      * A callback handler that provides static name and password data to a JAAS login process.
