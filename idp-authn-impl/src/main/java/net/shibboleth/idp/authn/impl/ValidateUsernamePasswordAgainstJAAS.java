@@ -41,7 +41,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -140,11 +139,14 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
      * @param names list of JAAS application names to use
      */
     public void setLoginConfigurations(
-            @Nonnull @NonnullElements final Collection< Pair< String,Collection<Principal> > > names) {
+            @Nullable @NonnullElements final Collection< Pair< String,Collection<Principal> > > names) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(names, "Configuration list cannot be null");
 
-        loginConfigurations = new ArrayList<>(names);
+        if (names != null) {
+            loginConfigurations = new ArrayList<>(names);
+        } else {
+            loginConfigurations = Collections.emptyList();
+        }
     }
 
     /**
@@ -152,17 +154,20 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
      * 
      * @param names list of JAAS application names to use
      */
-    public void setLoginConfigNames(@Nonnull @NonnullElements final Collection<String> names) {
+    public void setLoginConfigNames(@Nullable @NonnullElements final Collection<String> names) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(names, "Configuration name list cannot be null");
 
-        loginConfigurations = new ArrayList<>(names.size());
-        for (final String name : names) {
-            final String trimmed = StringSupport.trimOrNull(name);
-            if (trimmed != null) {
-                loginConfigurations.add(
-                        new Pair<String,Collection<Principal>>(trimmed,Collections.<Principal>emptyList()));
+        if (names != null) {
+            loginConfigurations = new ArrayList<>(names.size());
+            for (final String name : names) {
+                final String trimmed = StringSupport.trimOrNull(name);
+                if (trimmed != null) {
+                    loginConfigurations.add(
+                            new Pair<String,Collection<Principal>>(trimmed,Collections.<Principal>emptyList()));
+                }
             }
+        } else {
+            loginConfigurations = Collections.emptyList();
         }
     }
     
@@ -197,7 +202,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
             return;
         }
         
-        for (final Pair< String,Collection<Principal> > loginConfig : loginConfigurations) {
+        for (final Pair< String,Collection<Principal> > loginConfig : configs) {
             try {
                 log.debug("{} Attempting to authenticate user '{}' via '{}'", getLogPrefix(),
                         getUsernamePasswordContext().getUsername(), loginConfig.getFirst());
