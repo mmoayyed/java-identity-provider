@@ -165,8 +165,6 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                     }
                 }
             }
-        } else {
-            loginConfigurations = Collections.emptyList();
         }
     }
 
@@ -186,8 +184,6 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                     loginConfigurations.add(new Pair<String,Subject>(trimmed,null));
                 }
             }
-        } else {
-            loginConfigurations = Collections.emptyList();
         }
     }
     
