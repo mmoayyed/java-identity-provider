@@ -22,6 +22,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,6 +38,10 @@ import javax.security.auth.login.LoginException;
 import net.shibboleth.idp.authn.AbstractUsernamePasswordValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -57,7 +62,9 @@ import com.google.common.base.Function;
  * <p>Various optional properties are supported to control the JAAS configuration process.</p>
  *  
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
+ * @event {@link AuthnEventIds#NO_CREDENTIALS}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
+ * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getAttemptedFlow() != null</pre>
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
@@ -77,20 +84,22 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     @Nullable private Configuration.Parameters loginConfigParameters;
     
     /** Application name(s) in JAAS configuration to use. */
-    @Nonnull @NonnullElements private Collection< Pair< String,Collection<Principal> > > loginConfigurations;
+    @Nonnull private Collection<Pair<String,Subject>> loginConfigurations;
     
-    /** Strategy function to dynamically derive the login config name(s) to use. */
+    /** Strategy function to dynamically derive the login config(s) to use. */
     @Nullable
-    private Function< ProfileRequestContext,Collection< Pair< String,Collection<Principal> > > > loginConfigStrategy;
+    private Function<ProfileRequestContext,Collection<Pair<String,Subject>>> loginConfigStrategy;
     
-    /** Tracks any Principals derived from the login configuration to add to the Subject. */
-    @Nullable @NonnullElements private Collection<Principal> derivedPrincipals;
+    /** Saved off context. */
+    @Nullable private RequestedPrincipalContext requestedPrincipalCtx;
+    
+    /** Tracks any principals derived from the login configuration to add to the Subject. */
+    @Nullable private Subject derivedSubject;
     
     /** Constructor. */
     public ValidateUsernamePasswordAgainstJAAS() {
         // For compatibility with V2.
-        loginConfigurations = Collections.singletonList(
-                new Pair<String,Collection<Principal>>("ShibUserPassAuth", Collections.<Principal>emptyList()));
+        loginConfigurations = Collections.singletonList(new Pair<String,Subject>("ShibUserPassAuth", null));
     }
     
     /**
@@ -134,16 +143,28 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     }
 
     /**
-     * Set the JAAS application name(s) to use.
+     * Set the JAAS application name(s) to use, along with an optional collection of custom principals to
+     * apply to the result.
      * 
-     * @param names list of JAAS application names to use
+     * @param configs list of JAAS application names and custom principals to use
      */
-    public void setLoginConfigurations(
-            @Nullable @NonnullElements final Collection< Pair< String,Collection<Principal> > > names) {
+    public void setLoginConfigurations(@Nullable final Collection<Pair<String,Collection<Principal>>> configs) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        if (names != null) {
-            loginConfigurations = new ArrayList<>(names);
+        if (configs != null) {
+            loginConfigurations = new ArrayList<>(configs.size());
+            for (final Pair<String,Collection<Principal>> config : configs) {
+                final String trimmed = StringSupport.trimOrNull(config.getFirst());
+                if (trimmed != null) {
+                    if (config.getSecond() == null || config.getSecond().isEmpty()) {
+                        loginConfigurations.add(new Pair<String,Subject>(trimmed, null));
+                    } else {
+                        final Subject subject = new Subject();
+                        subject.getPrincipals().addAll(config.getSecond());
+                        loginConfigurations.add(new Pair<String,Subject>(trimmed, subject));
+                    }
+                }
+            }
         } else {
             loginConfigurations = Collections.emptyList();
         }
@@ -162,8 +183,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
             for (final String name : names) {
                 final String trimmed = StringSupport.trimOrNull(name);
                 if (trimmed != null) {
-                    loginConfigurations.add(
-                            new Pair<String,Collection<Principal>>(trimmed,Collections.<Principal>emptyList()));
+                    loginConfigurations.add(new Pair<String,Subject>(trimmed,null));
                 }
             }
         } else {
@@ -172,12 +192,12 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     }
     
     /**
-     * Set the strategy function to use to obtain the JAAS application name(s) to use.
+     * Set the strategy function to use to obtain the JAAS application configuration(s) to use.
      * 
      * @param strategy strategy function
      */
-    public void setLoginConfigStrategy(@Nullable
-            final Function< ProfileRequestContext,Collection< Pair< String,Collection<Principal> > > > strategy) {
+    public void setLoginConfigStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<Pair<String,Subject>>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         loginConfigStrategy = strategy;
@@ -185,42 +205,113 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     
     /** {@inheritDoc} */
     @Override
+    protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
+        
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
+        requestedPrincipalCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
+        return true;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        final Collection< Pair< String,Collection<Principal> > > configs;
+        final Collection<Pair<String,Subject>> configs;
         if (loginConfigStrategy != null) {
             configs = loginConfigStrategy.apply(profileRequestContext);
         } else {
             configs = loginConfigurations;
         }
         
-        if (configs.isEmpty()) {
-            log.warn("{} No JAAS application configurations are available for use", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "RequestUnsupported",
-                    AuthnEventIds.REQUEST_UNSUPPORTED);
-            return;
-        }
+        boolean eventSignaled = false;
         
-        for (final Pair< String,Collection<Principal> > loginConfig : configs) {
+        for (final Pair<String,Subject> loginConfig : configs) {
+            
+            if (!isAcceptable(authenticationContext, loginConfig.getFirst(), loginConfig.getSecond())) {
+                continue;
+            }
+            
             try {
                 log.debug("{} Attempting to authenticate user '{}' via '{}'", getLogPrefix(),
                         getUsernamePasswordContext().getUsername(), loginConfig.getFirst());
                 authenticate(loginConfig.getFirst());
                 log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
-                derivedPrincipals = loginConfig.getSecond();
+                derivedSubject = loginConfig.getSecond();
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 ActionSupport.buildProceedEvent(profileRequestContext);
                 return;
             } catch (final LoginException e){ 
                 log.info("{} Login by '{}' failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
+                eventSignaled = true;
             } catch (final Exception e) {
                 log.warn("{} Login by '{}' produced exception", getLogPrefix(),
                         getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
+                eventSignaled = true;
             }
         }
+    
+        log.warn("{} No JAAS application configurations are available or acceptable for use", getLogPrefix());
+        if (!eventSignaled) {
+            handleError(profileRequestContext, authenticationContext, "RequestUnsupported",
+                    AuthnEventIds.REQUEST_UNSUPPORTED);
+        }
+    }
+    
+    /**
+     * Checks a particular JAAS configuration and principal collection for suitability.
+     * 
+     * @param authenticationContext the authentication context
+     * @param configName name of JAAS config
+     * @param subject collection of custom principals to check, embedded in a subject
+     * 
+     * @return true iff the request does not specify requirements or the principal collection is empty
+     *  or the combination is acceptable
+     */
+    private boolean isAcceptable(@Nonnull final AuthenticationContext authenticationContext,
+            @Nonnull @NotEmpty final String configName, @Nullable final Subject subject) {
+        
+        if (subject != null && requestedPrincipalCtx != null && requestedPrincipalCtx.getOperator() != null) {
+            log.debug("{} Request contains principal requirements, evaluating JAAS config '{}' for compatibility",
+                    getLogPrefix(), configName);
+            for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
+                final PrincipalEvalPredicateFactory factory =
+                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                                p.getClass(), requestedPrincipalCtx.getOperator());
+                if (factory != null) {
+                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                    final PrincipalSupportingComponent wrapper = new PrincipalSupportingComponent() {
+                        public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
+                            return subject.getPrincipals(c);
+                        }
+                    };
+                    if (predicate.apply(wrapper)) {
+                        log.debug("{} JAAS config '{}' compatible with principal type '{}' and operator '{}'",
+                                getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
+                        requestedPrincipalCtx.setMatchingPrincipal(predicate.getMatchingPrincipal());
+                        return true;
+                    } else {
+                        log.debug("{} JAAS config '{}' not compatible with principal type '{}' and operator '{}'",
+                                getLogPrefix(), configName, p.getClass(), requestedPrincipalCtx.getOperator());
+                    }
+                } else {
+                    log.debug("{} No comparison logic registered for principal type '{}' and operator '{}'",
+                            getLogPrefix(), p.getClass(), requestedPrincipalCtx.getOperator());
+                }
+            }
+            
+            log.debug("{} Skipping JAAS config '{}', not compatible with request's principal requirements",
+                    getLogPrefix(), configName);
+            return false;
+        }
+        
+        return true;
     }
     
     /**
@@ -257,8 +348,8 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     @Nonnull protected Subject populateSubject(@Nonnull final Subject subject) {
         
         final Subject theSubject = super.populateSubject(subject);
-        if (derivedPrincipals != null && !derivedPrincipals.isEmpty()) {
-            theSubject.getPrincipals().addAll(derivedPrincipals);
+        if (derivedSubject != null) {
+            theSubject.getPrincipals().addAll(derivedSubject.getPrincipals());
         }
         return theSubject;
     }

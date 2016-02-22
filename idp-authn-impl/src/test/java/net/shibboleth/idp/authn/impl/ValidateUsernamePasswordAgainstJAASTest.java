@@ -19,7 +19,9 @@ package net.shibboleth.idp.authn.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Principal;
 import java.security.URIParameter;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,9 +33,13 @@ import javax.security.auth.login.LoginException;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
+import net.shibboleth.idp.authn.principal.TestPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.idp.authn.principal.impl.ExactPrincipalEvalPredicateFactory;
 import net.shibboleth.idp.profile.ActionTestingSupport;
+import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.net.URISupport;
 
 import org.opensaml.profile.action.EventIds;
@@ -120,7 +126,7 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
         ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_CREDENTIALS);
     }
 
-    @Test public void testBadConfig() throws Exception {
+    @Test public void testNoConfig() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
 
@@ -132,11 +138,60 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
-        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class, false);
+        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertEquals(errorCtx.getExceptions().size(), 1);
         Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
     }
 
+    @Test public void testBadConfig() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        action.setLoginConfigNames(Collections.singletonList("ShibBadAuth"));
+        action.setLoginConfigType("JavaLoginConfig");
+        System.out.println(getCurrentDir());
+        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+                + '/' + DATA_PATH + "jaas.config")));
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+        AuthenticationErrorContext errorCtx = ac.getSubcontext(AuthenticationErrorContext.class);
+        Assert.assertEquals(errorCtx.getExceptions().size(), 1);
+        Assert.assertTrue(errorCtx.getExceptions().get(0) instanceof LoginException);
+    }
+
+    @Test public void testUnsupportedConfig() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
+
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        ac.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
+        
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
+
+        action.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
+                Collections.<Principal>singletonList(new TestPrincipal("test2")))));
+        action.setLoginConfigType("JavaLoginConfig");
+        System.out.println(getCurrentDir());
+        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+                + '/' + DATA_PATH + "jaas.config")));
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
+    }
+    
     @Test public void testUnmatchedUser() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "foo");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "bar");
@@ -220,6 +275,61 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
                 .next().getName(), "PETER_THE_PRINCIPAL");
     }
 
+    @Test public void testSupported() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+        ac.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
+        
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        rpc.setOperator("exact");
+        rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
+
+        action.setLoginConfigurations(Collections.singletonList(new Pair<String,Collection<Principal>>("ShibUserPassAuth",
+                Collections.<Principal>singletonList(new TestPrincipal("test1")))));
+        action.setLoginConfigType("JavaLoginConfig");
+        System.out.println(getCurrentDir());
+        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+                + '/' + DATA_PATH + "jaas.config")));
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+                .next().getName(), "PETER_THE_PRINCIPAL");
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(TestPrincipal.class).iterator()
+                .next().getName(), "test1");
+    }
+    
+    @Test public void testMultiConfigAuthorized() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        action.setLoginConfigNames(Arrays.asList("ShibBadAuth", "ShibUserPassAuth"));
+        action.setLoginConfigType("JavaLoginConfig");
+        System.out.println(getCurrentDir());
+        action.setLoginConfigParameters(new URIParameter(URISupport.fileURIFromAbsolutePath(getCurrentDir()
+                + '/' + DATA_PATH + "jaas.config")));
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(UsernamePrincipal.class).iterator()
+                .next().getName(), "PETER_THE_PRINCIPAL");
+    }
+    
     @Test public void testMatchAndAuthorized() throws Exception {
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
         ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
