@@ -225,10 +225,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         authenticatedSubject.getPrincipals().clear();
         
         if (principals != null && !principals.isEmpty()) {
-            addDefaultPrincipals = false;
             authenticatedSubject.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
-        } else {
-            addDefaultPrincipals = true;
         }
     }
  
