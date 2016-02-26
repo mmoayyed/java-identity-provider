@@ -336,7 +336,15 @@
                     </key>
                     <bean class="net.shibboleth.idp.profile.audit.impl.AttributesAuditExtractor">
                         <property name="activationCondition">
-                            <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
+                            <bean parent="shibboleth.Conditions.OR">
+                                <constructor-arg>
+                                    <list>
+                                        <bean parent="shibboleth.Conditions.Expression"
+                                            c:_0="#profileContext.getProfileId().equals('http://shibboleth.net/ns/profiles/resolvertest')" />
+                                        <bean class="net.shibboleth.idp.saml.profile.config.logic.IncludeAttributeStatementPredicate" />
+                                    </list>
+                                </constructor-arg>
+                            </bean>
                         </property>
                     </bean>
                 </entry>
