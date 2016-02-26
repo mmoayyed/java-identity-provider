@@ -174,7 +174,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
         final T executable = searchBuilder.build(resolutionContext, dependsAttributes);
         Map<String, IdPAttribute> resolvedAttributes = null;
-        if (resultsCache != null) {
+        if (resultsCache != null && resolutionContext.getAllowCachedResults()) {
             final String cacheKey = executable.getResultCacheKey();
             resolvedAttributes = resultsCache.getIfPresent(cacheKey);
             log.trace("{} Cache found, resolved attributes {} using cache {}", new Object[] {getLogPrefix(),

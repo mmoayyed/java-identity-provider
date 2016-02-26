@@ -60,15 +60,41 @@ public class AttributeResolutionContext extends BaseContext {
 
     /** How was the principal Authenticated? */
     @Nullable private String principalAuthenticationMethod;
+    
+    /** Whether the resolver should allow for results to come from cache. */
+    private boolean allowCachedResults;
 
     /** Attributes which were resolved and released by the attribute resolver. */
     @Nonnull @NonnullElements private Map<String, IdPAttribute> resolvedAttributes;
     
     /** Constructor. */
     public AttributeResolutionContext() {
+        allowCachedResults = true;
         requestedAttributeNames = Collections.emptySet();
         resolvedAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
+    }
+    
+    /**
+     * Get whether to allow for results from cache (defaults to true).
+     * 
+     * @return whether to allow for results from cache
+     * 
+     * @since 3.3.0
+     */
+    public boolean getAllowCachedResults() {
+        return allowCachedResults;
+    }
+    
+    /**
+     * Set whether to allow for results from cache.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 3.3.0
+     */
+    public void setAllowCachedResults(final boolean flag) {
+        allowCachedResults = flag;
     }
 
     /**
