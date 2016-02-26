@@ -18,9 +18,19 @@
         <evaluate expression="PostLookupPopulateAuditContext" />
 
         <evaluate expression="PopulateSubjectContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="DoAttributes" />
+    </action-state>
+        
+    <action-state id="DoAttributes">
+        <on-entry>
+            <!-- Turn off result cache. -->
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext), true).setAllowCachedResults(false)" />
+        </on-entry>
+    
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="FilterAttributes" />
-
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="#{ ProtocolStateMap.get(opensamlProfileRequestContext.getInboundMessageContext().getMessage().getProtocol()) }" />
