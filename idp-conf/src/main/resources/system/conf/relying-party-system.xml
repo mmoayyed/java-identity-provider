@@ -222,7 +222,7 @@
 
     <!-- Trust Engine options for X.509 certificate evaluation (e.g., TLS). -->
 
-    <bean id="shibboleth.ExplicitX509TrustEngine"
+    <bean id="shibboleth.ExplicitKeyX509TrustEngine"
         class="org.opensaml.security.trust.impl.ExplicitKeyTrustEngine"
         c:resolver-ref="shibboleth.MetadataCredentialResolver" />
 
@@ -233,7 +233,7 @@
     <bean id="shibboleth.ChainingX509TrustEngine" class="org.opensaml.security.trust.impl.ChainingTrustEngine">
         <constructor-arg>
             <list>
-                <ref bean="shibboleth.ExplicitX509TrustEngine" />
+                <ref bean="shibboleth.ExplicitKeyX509TrustEngine" />
                 <ref bean="shibboleth.PKIXX509TrustEngine" />
             </list>
         </constructor-arg>
