@@ -188,7 +188,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         try {
             final ResolvedType result = doResolve(resolutionContext, workContext);
             if (null == result) {
-                log.info("Resolver plugin '{}' produced no value.", getId());
+                log.debug("Resolver plugin '{}' produced no value.", getId());
             }
             return result;
         } catch (ResolutionException e) {
