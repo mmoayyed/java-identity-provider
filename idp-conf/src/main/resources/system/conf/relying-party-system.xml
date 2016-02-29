@@ -225,6 +225,8 @@
     <bean id="shibboleth.ExplicitKeyX509TrustEngine"
         class="org.opensaml.security.trust.impl.ExplicitKeyTrustEngine"
         c:resolver-ref="shibboleth.MetadataCredentialResolver" />
+    <!-- Backward compatibility, remove in 4.0. -->
+    <alias name="shibboleth.ExplicitKeyX509TrustEngine" alias="shibboleth.ExplicitX509TrustEngine" />
 
     <bean id="shibboleth.PKIXX509TrustEngine"
         class="org.opensaml.security.x509.impl.PKIXX509CredentialTrustEngine"
