@@ -137,6 +137,9 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
     /** Optional inbound message. */
     @Nullable private Object inboundMessage;
     
+    /** Optional RP name for logging. */
+    @Nullable private String relyingPartyId;
+    
     /** Optional metadata for use in endpoint derivation/validation. */
     @Nullable private SAMLMetadataContext mdContext;
 
@@ -327,6 +330,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpContext != null) {
+            relyingPartyId = rpContext.getRelyingPartyId();
             verified = rpContext.isVerified();
             if (rpContext.getProfileConfig() != null
                     && rpContext.getProfileConfig() instanceof SAMLProfileConfiguration) {
@@ -401,7 +405,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         }
         
         if (resolvedEndpoint == null) {
-            log.warn("{} Unable to resolve outbound message endpoint", getLogPrefix());
+            log.warn("{} Unable to resolve outbound message endpoint for relying party '{}': {}",
+                    getLogPrefix(), relyingPartyId, criteria.get(EndpointCriterion.class));
             ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.ENDPOINT_RESOLUTION_FAILED);
             return;
         }
@@ -531,5 +536,5 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             return new EndpointCriterion(endpoint, skipValidationSinceSigned);
         }
     }
-
+    
 }
