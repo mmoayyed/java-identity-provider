@@ -19,9 +19,12 @@ package net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletRequest;
 
 import net.shibboleth.idp.saml.saml2.profile.delegation.impl.LibertyConstants;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.xml.XMLObject;
@@ -31,6 +34,7 @@ import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDe
 import org.opensaml.messaging.handler.MessageHandler;
 import org.opensaml.messaging.handler.MessageHandlerException;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.binding.BindingDescriptor;
 import org.opensaml.saml.common.binding.decoding.SAMLMessageDecoder;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.soap.messaging.context.SOAP11Context;
@@ -58,7 +62,10 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
         implements SAMLMessageDecoder {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(LibertyHTTPSOAP11Decoder.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(LibertyHTTPSOAP11Decoder.class);
+    
+    /** Optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created. */
+    @Nullable private BindingDescriptor bindingDescriptor;
     
     /** Message handler to use in processing the message body. */
     private MessageHandler<SAMLObject> bodyHandler;
@@ -67,15 +74,32 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
      * Constructor.
      */
     public LibertyHTTPSOAP11Decoder() {
-        super();
         setBodyHandler(new SAMLSOAPDecoderBodyHandler());
     }
     
     /** {@inheritDoc} */
-    public String getBindingURI() {
+    @Nonnull @NotEmpty public String getBindingURI() {
         return LibertyConstants.SOAP_BINDING_20_URI;
     }
 
+    /**
+     * Get an optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created.
+     * 
+     * @return binding descriptor
+     */
+    @Nullable public BindingDescriptor getBindingDescriptor() {
+        return bindingDescriptor;
+    }
+    
+    /**
+     * Set an optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created.
+     * 
+     * @param descriptor a binding descriptor
+     */
+    public void setBindingDescriptor(@Nullable final BindingDescriptor descriptor) {
+        bindingDescriptor = descriptor;
+    }
+    
     /**
      * Get the configured body handler MessageHandler.
      * 
@@ -152,6 +176,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
     protected void populateBindingContext(MessageContext<SAMLObject> messageContext) {
         SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setBindingUri(getBindingURI());
+        bindingContext.setBindingDescriptor(bindingDescriptor);
         bindingContext.setHasBindingSignature(false);
         bindingContext.setIntendedDestinationEndpointURIRequired(false);
     }

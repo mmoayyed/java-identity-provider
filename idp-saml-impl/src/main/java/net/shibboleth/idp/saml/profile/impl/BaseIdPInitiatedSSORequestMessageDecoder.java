@@ -29,6 +29,8 @@ import net.shibboleth.utilities.java.support.security.Type4UUIDIdentifierGenerat
 
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
+import org.opensaml.saml.common.binding.BindingDescriptor;
+import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,11 +58,32 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseIdPInitiatedSSORequestMessageDecoder.class);
     
+    /** Optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created. */
+    @Nullable private BindingDescriptor bindingDescriptor;
+    
     /** Used to log protocol messages. */
     @Nonnull private final Logger protocolMessageLog = LoggerFactory.getLogger("PROTOCOL_MESSAGE");
     
     /** ID generator. */
     @Nonnull private final IdentifierGenerationStrategy idGenerator = new Type4UUIDIdentifierGenerationStrategy();
+    
+    /**
+     * Get an optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created.
+     * 
+     * @return binding descriptor
+     */
+    @Nullable public BindingDescriptor getBindingDescriptor() {
+        return bindingDescriptor;
+    }
+    
+    /**
+     * Set an optional {@link BindingDescriptor} to inject into {@link SAMLBindingContext} created.
+     * 
+     * @param descriptor a binding descriptor
+     */
+    public void setBindingDescriptor(@Nullable final BindingDescriptor descriptor) {
+        bindingDescriptor = descriptor;
+    }
     
     /** {@inheritDoc} */
     @Override

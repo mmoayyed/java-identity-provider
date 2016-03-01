@@ -90,6 +90,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends
         SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setRelayState(relayState);
         bindingContext.setBindingUri(getBindingURI());
+        bindingContext.setBindingDescriptor(getBindingDescriptor());
         bindingContext.setHasBindingSignature(false);
         bindingContext.setIntendedDestinationEndpointURIRequired(false);
     }
