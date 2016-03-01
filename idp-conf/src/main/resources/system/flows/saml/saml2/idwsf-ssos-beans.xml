@@ -18,10 +18,10 @@
 
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
-            <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.LibertyHTTPSOAP11Decoder" scope="prototype">
-                <property name="parserPool" ref="shibboleth.ParserPool" />
-                <property name="httpServletRequest" ref="shibboleth.HttpServletRequest" />
-            </bean>
+            <bean class="net.shibboleth.idp.saml.saml2.profile.delegation.messaging.impl.LibertyHTTPSOAP11Decoder" scope="prototype"
+                p:parserPool-ref="shibboleth.ParserPool"
+                p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+                p:bindingDescriptor-ref="shibboleth.Binding.LibertySOAP" />
         </constructor-arg>
     </bean>
     
