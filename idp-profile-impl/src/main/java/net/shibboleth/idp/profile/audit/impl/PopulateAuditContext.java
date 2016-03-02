@@ -163,7 +163,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
      * 
      * @param format formatting string
      */
-    public void setDateTimeFormat(@Nonnull @NotEmpty final String format) {
+    public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         dateTimeFormat = StringSupport.trimOrNull(format);
