@@ -40,15 +40,11 @@
           class="net.shibboleth.idp.cas.flow.impl.UpdateIdPSessionWithSPSessionAction"
           c:lifetime="%{idp.session.defaultSPlifetime:PT2H}" />
 
-    <bean id="PopulateAuditContext"
-          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+    <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
           p:fieldExtractors-ref="#{
             getObject('shibboleth.CASValidationAuditExtractors') != null
                 ? 'shibboleth.CASValidationAuditExtractors'
-                : 'shibboleth.DefaultCASValidationAuditExtractors'}"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap"
-          p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-          p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+                : 'shibboleth.DefaultCASValidationAuditExtractors'}" />
 
     <bean id="ValidateConfigLookup"
           class="net.shibboleth.idp.cas.config.impl.ConfigLookupFunction"

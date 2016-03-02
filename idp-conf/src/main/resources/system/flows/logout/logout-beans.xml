@@ -48,12 +48,8 @@
         p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
             ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
     
-    <bean id="LogoutPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors" />
         
     <bean id="PopulateMultiRPContextFromLogoutContext"
         class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
@@ -113,12 +109,8 @@
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
-    <bean id="ErrorViewPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors" />
     
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"

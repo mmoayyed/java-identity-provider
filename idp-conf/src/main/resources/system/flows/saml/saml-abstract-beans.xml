@@ -23,12 +23,8 @@
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
     <import resource="../../conf/audit-system.xml" />
 
-    <bean id="PostDecodePopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="PostDecodePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors" />
 
     <bean id="CheckMessageVersion"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
@@ -89,12 +85,8 @@
         class="net.shibboleth.idp.profile.impl.SelectRelyingPartyConfiguration" scope="prototype"
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
     
-    <bean id="PostLookupPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="PostLookupPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors" />
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
@@ -290,19 +282,11 @@
         </property>
     </bean>
 
-    <bean id="PostAssertionPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="PostAssertionPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors" />
 
-    <bean id="PostResponsePopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors" />
 
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
@@ -363,12 +347,8 @@
         p:defaultView-ref="shibboleth.DefaultErrorView"
         p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
     
-    <bean id="ErrorViewPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors" />
 
     <bean id="PopulateUserAgentContext"
           class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"

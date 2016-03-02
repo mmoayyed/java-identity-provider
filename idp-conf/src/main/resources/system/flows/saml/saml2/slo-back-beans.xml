@@ -49,12 +49,8 @@
         p:sessionManager-ref="shibboleth.SessionManager"
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
-    <bean id="LogoutPopulateAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors" />
     
     <!--
     TODO: will be used when logout propagation is enabled

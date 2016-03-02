@@ -64,15 +64,11 @@
         </property>
     </bean>
 
-    <bean id="PopulateAuditContext"
-          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+    <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
           p:fieldExtractors-ref="#{
             getObject('shibboleth.CASLoginAuditExtractors') != null
                 ? 'shibboleth.CASLoginAuditExtractors'
-                : 'shibboleth.DefaultCASLoginAuditExtractors' }"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap"
-          p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-          p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+                : 'shibboleth.DefaultCASLoginAuditExtractors' }" />
 
     <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
         <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />

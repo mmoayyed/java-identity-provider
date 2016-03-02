@@ -74,6 +74,9 @@ public class PopulateAuditContext extends AbstractProfileAction {
     /** Fields being audited, to optimize extraction.. */
     @Nonnull @NonnullElements private Set<String> fieldsToExtract;
     
+    /** Map allowing substitutions of values during field extraction. */
+    @Nonnull private Map<String,String> fieldReplacements;
+    
     /** Formatting string for {@link DateTime} fields. */
     @Nullable private String dateTimeFormat;
     
@@ -88,6 +91,7 @@ public class PopulateAuditContext extends AbstractProfileAction {
         auditContextCreationStrategy = new ChildContextLookup<>(AuditContext.class, true);
         fieldExtractors = Collections.emptyMap();
         fieldsToExtract = Collections.emptySet();
+        fieldReplacements = Collections.emptyMap();
     }
 
     /**
@@ -163,6 +167,21 @@ public class PopulateAuditContext extends AbstractProfileAction {
     }
 
     /**
+     * Set the map of field values to replace, and the replacement values.
+     * 
+     * @param map map of replacements
+     */
+    public void setFieldReplacements(@Nullable final Map<String,String> map) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        if (map != null) {
+            fieldReplacements = new HashMap<>(map);
+        } else {
+            fieldReplacements = Collections.emptyMap();
+        }
+    }
+    
+    /**
      * Set the {@link DateTime} formatting string to apply when extracting {@link DateTime}-valued fields.
      * 
      * @param format formatting string
@@ -202,7 +221,6 @@ public class PopulateAuditContext extends AbstractProfileAction {
         return true;
     }
     
-// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -221,30 +239,39 @@ public class PopulateAuditContext extends AbstractProfileAction {
                         log.trace("{} Adding {} value(s) for field '{}'", getLogPrefix(), ((Collection) values).size(),
                                 entry.getKey());
                         for (final Object value : (Collection) values) {
-                            if (value != null) {
-                                if (value instanceof DateTime) {
-                                    final DateTime dt = useDefaultTimeZone
-                                            ? ((DateTime) value).withZone(DateTimeZone.getDefault()) : (DateTime) value;
-                                    auditCtx.getFieldValues(entry.getKey()).add(dt.toString(dateTimeFormat));
-                                } else {
-                                    auditCtx.getFieldValues(entry.getKey()).add(value.toString());
-                                }
-                            }
+                            addField(entry.getKey(), value);
                         }
                     }
                 } else {
                     log.trace("{} Adding 1 value for field '{}'", getLogPrefix(), entry.getKey());
-                    if (values instanceof DateTime) {
-                        final DateTime dt = useDefaultTimeZone
-                                ? ((DateTime) values).withZone(DateTimeZone.getDefault()) : (DateTime) values;
-                        auditCtx.getFieldValues(entry.getKey()).add(dt.toString(dateTimeFormat));
-                    } else {
-                        auditCtx.getFieldValues(entry.getKey()).add(values.toString());
-                    }
+                    addField(entry.getKey(), values);
                 }
             }
         }
     }
-// Checkstyle: CyclomaticComplexity ON
     
+    /**
+     * Add a non-null field to the audit record.
+     * 
+     * @param key field label
+     * @param value value to add
+     */
+    private void addField(@Nonnull @NotEmpty final String key, @Nullable final Object value) {
+        
+        if (value != null) {
+            if (value instanceof DateTime) {
+                final DateTime dt = useDefaultTimeZone
+                        ? ((DateTime) value).withZone(DateTimeZone.getDefault()) : (DateTime) value;
+                auditCtx.getFieldValues(key).add(dt.toString(dateTimeFormat));
+            } else {
+                String s = value.toString();
+                if (fieldReplacements.containsKey(s)) {
+                    s = fieldReplacements.get(s);
+                }
+                if (s != null) {
+                    auditCtx.getFieldValues(key).add(s);
+                }
+            }
+        }
+    }
 }

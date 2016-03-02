@@ -99,13 +99,9 @@
         p:attributePredicate-ref="AttributePredicate"
         p:attributeIdComparator="#{getObject('shibboleth.consent.attribute-release.AttributeIDComparator') ?: getObject('DefaultAttributeIDComparator') }" />
 
-    <bean id="PopulatePreConsentAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+    <bean id="PopulatePreConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:fieldExtractors-ref="shibboleth.consent.PreConsentAuditExtractors"
-        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+        p:fieldExtractors-ref="shibboleth.consent.PreConsentAuditExtractors" />
 
     <bean id="PopulateConsentContext"
         class="net.shibboleth.idp.consent.flow.impl.PopulateConsentContext" scope="prototype"
@@ -137,13 +133,9 @@
         class="net.shibboleth.idp.consent.flow.storage.impl.ReadConsentFromStorage" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserStorageKey" />
 
-    <bean id="PopulateConsentAuditContext"
-        class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
+    <bean id="PopulateConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:fieldExtractors-ref="shibboleth.consent.ConsentAuditExtractors"
-        p:formattingMap-ref="shibboleth.consent.attribute-release.AuditFormattingMap"
-        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+        p:fieldExtractors-ref="shibboleth.consent.ConsentAuditExtractors" />
 
     <bean id="ExtractConsent"
         class="net.shibboleth.idp.consent.flow.impl.ExtractConsent" scope="prototype"

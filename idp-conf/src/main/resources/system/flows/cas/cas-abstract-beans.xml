@@ -98,13 +98,8 @@
           p:formattingMap-ref="shibboleth.AuditFormattingMap"
           p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
-    <bean id="ErrorViewPopulateAuditContext"
-          class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext"
-          scope="prototype"
-          p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap"
-          p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
-          p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
+    <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
+          p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors" />
 
     <bean id="PopulateProtocolError"
           class="net.shibboleth.idp.cas.flow.impl.PopulateProtocolErrorAction" />
