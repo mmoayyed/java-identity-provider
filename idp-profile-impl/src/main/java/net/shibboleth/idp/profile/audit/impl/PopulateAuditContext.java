@@ -36,6 +36,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -75,6 +76,9 @@ public class PopulateAuditContext extends AbstractProfileAction {
     
     /** Formatting string for {@link DateTime} fields. */
     @Nullable private String dateTimeFormat;
+    
+    /** Convert {@link DateTime} fields to default time zone. */
+    private boolean useDefaultTimeZone;
     
     /** {@link AuditContext} to populate. */
     @Nullable private AuditContext auditCtx;
@@ -169,6 +173,17 @@ public class PopulateAuditContext extends AbstractProfileAction {
         dateTimeFormat = StringSupport.trimOrNull(format);
     }
     
+    /**
+     * Convert {@link DateTime}-valued fields to default time zone.
+     * 
+     * @param flag flag to set
+     */
+    public void setUseDefaultTimeZone(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        useDefaultTimeZone = flag;
+    }
+    
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -208,8 +223,9 @@ public class PopulateAuditContext extends AbstractProfileAction {
                         for (final Object value : (Collection) values) {
                             if (value != null) {
                                 if (value instanceof DateTime) {
-                                    auditCtx.getFieldValues(entry.getKey()).add(((DateTime) value).toString(
-                                            dateTimeFormat));
+                                    final DateTime dt = useDefaultTimeZone
+                                            ? ((DateTime) value).withZone(DateTimeZone.getDefault()) : (DateTime) value;
+                                    auditCtx.getFieldValues(entry.getKey()).add(dt.toString(dateTimeFormat));
                                 } else {
                                     auditCtx.getFieldValues(entry.getKey()).add(value.toString());
                                 }
@@ -219,7 +235,9 @@ public class PopulateAuditContext extends AbstractProfileAction {
                 } else {
                     log.trace("{} Adding 1 value for field '{}'", getLogPrefix(), entry.getKey());
                     if (values instanceof DateTime) {
-                        auditCtx.getFieldValues(entry.getKey()).add(((DateTime) values).toString(dateTimeFormat));
+                        final DateTime dt = useDefaultTimeZone
+                                ? ((DateTime) values).withZone(DateTimeZone.getDefault()) : (DateTime) values;
+                        auditCtx.getFieldValues(entry.getKey()).add(dt.toString(dateTimeFormat));
                     } else {
                         auditCtx.getFieldValues(entry.getKey()).add(values.toString());
                     }

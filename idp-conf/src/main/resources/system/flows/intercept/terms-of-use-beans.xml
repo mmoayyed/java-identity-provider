@@ -76,7 +76,9 @@
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:fieldExtractors-ref="shibboleth.consent.PreConsentAuditExtractors"
-        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
 
     <bean id="ReadConsentFromStorage"
         class="net.shibboleth.idp.consent.flow.storage.impl.ReadConsentFromStorage" scope="prototype"
@@ -103,7 +105,9 @@
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
         p:fieldExtractors-ref="shibboleth.consent.ConsentAuditExtractors"
-        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
 
     <bean id="WriteConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"

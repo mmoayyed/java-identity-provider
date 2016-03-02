@@ -43,7 +43,9 @@
     
     <bean id="PostDecodePopulateAuditContext"
             class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
-            p:formattingMap-ref="shibboleth.AuditFormattingMap">
+            p:formattingMap-ref="shibboleth.AuditFormattingMap"
+            p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+            p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}">
         <property name="fieldExtractors">
             <map>
                 <entry>
@@ -101,7 +103,8 @@
     <bean id="PostLookupPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}" />
 
     <bean id="PopulateSubjectContext"
             class="net.shibboleth.idp.profile.impl.PopulateSubjectContext" scope="prototype">
@@ -195,12 +198,16 @@
     <bean id="PostAssertionPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
     
     <bean id="PostResponsePopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
     
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:activationCondition-ref="shibboleth.ProfileAuditingCondition"

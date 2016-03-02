@@ -70,7 +70,9 @@
             getObject('shibboleth.CASLoginAuditExtractors') != null
                 ? 'shibboleth.CASLoginAuditExtractors'
                 : 'shibboleth.DefaultCASLoginAuditExtractors' }"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+          p:formattingMap-ref="shibboleth.AuditFormattingMap"
+          p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+          p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
 
     <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
         <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />

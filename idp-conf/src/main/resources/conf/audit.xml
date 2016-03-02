@@ -18,6 +18,12 @@
         <entry key="Shibboleth-Audit" value="%T|%b|%I|%SP|%P|%IDP|%bb|%III|%u|%ac|%attr|%n|%i|" />
     </util:map>
 
+    <!-- Override the format of date/time fields in the log and/or convert to default time zone. -->
+    <!--
+    <bean id="shibboleth.AuditDateTimeFormat" class="java.lang.String" c:_0="YYYY-MM-dd'T'HH:mm:ss.SSSZZ" />
+    <util:constant id="shibboleth.AuditDefaultTimeZone" static-field="java.lang.Boolean.TRUE" />
+    -->
+
     <!-- Allows auditing to be disabled selectively for particular profiles/flows. -->
     <util:list id="shibboleth.AuditSuppressedProfiles">
         <value>http://shibboleth.net/ns/profiles/status</value>

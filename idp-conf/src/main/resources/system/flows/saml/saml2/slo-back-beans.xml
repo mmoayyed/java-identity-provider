@@ -52,7 +52,9 @@
     <bean id="LogoutPopulateAuditContext"
         class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext" scope="prototype"
         p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap"
+        p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+        p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
     
     <!--
     TODO: will be used when logout propagation is enabled

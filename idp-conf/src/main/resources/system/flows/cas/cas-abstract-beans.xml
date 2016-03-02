@@ -102,7 +102,9 @@
           class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext"
           scope="prototype"
           p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+          p:formattingMap-ref="shibboleth.AuditFormattingMap"
+          p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+          p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
 
     <bean id="PopulateProtocolError"
           class="net.shibboleth.idp.cas.flow.impl.PopulateProtocolErrorAction" />

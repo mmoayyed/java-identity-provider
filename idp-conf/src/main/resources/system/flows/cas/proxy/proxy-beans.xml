@@ -29,6 +29,8 @@
             getObject('shibboleth.CASProxyAuditExtractors') != null
                 ? 'shibboleth.CASProxyAuditExtractors'
                 : 'shibboleth.DefaultCASProxyAuditExtractors'}"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+          p:formattingMap-ref="shibboleth.AuditFormattingMap"
+          p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+          p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
 
 </beans>

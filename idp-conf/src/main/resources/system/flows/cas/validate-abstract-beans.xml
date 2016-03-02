@@ -46,7 +46,9 @@
             getObject('shibboleth.CASValidationAuditExtractors') != null
                 ? 'shibboleth.CASValidationAuditExtractors'
                 : 'shibboleth.DefaultCASValidationAuditExtractors'}"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+          p:formattingMap-ref="shibboleth.AuditFormattingMap"
+          p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
+          p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}" />
 
     <bean id="ValidateConfigLookup"
           class="net.shibboleth.idp.cas.config.impl.ConfigLookupFunction"
