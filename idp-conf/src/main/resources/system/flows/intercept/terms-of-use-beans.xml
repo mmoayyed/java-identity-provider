@@ -14,6 +14,7 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <import resource="../../conf/audit-system.xml" />
     <import resource="../../../conf/intercept/consent-intercept-config.xml" />
 
     <bean id="TermsOfUseConsentFunction"
@@ -74,7 +75,8 @@
         
     <bean id="PopulatePreConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:fieldExtractors-ref="shibboleth.consent.PreConsentAuditExtractors" />
+        p:fieldExtractors-ref="shibboleth.consent.PreConsentAuditExtractors"
+        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
 
     <bean id="ReadConsentFromStorage"
         class="net.shibboleth.idp.consent.flow.storage.impl.ReadConsentFromStorage" scope="prototype"
@@ -99,7 +101,8 @@
 
     <bean id="PopulateConsentAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:auditContextCreationStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
-        p:fieldExtractors-ref="shibboleth.consent.ConsentAuditExtractors" />
+        p:fieldExtractors-ref="shibboleth.consent.ConsentAuditExtractors"
+        p:formattingMap-ref="shibboleth.consent.terms-of-use.AuditFormattingMap" />
 
     <bean id="WriteConsentAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:auditContextLookupStrategy-ref="shibboleth.consent.ChildLookup.ConsentAuditContext"
