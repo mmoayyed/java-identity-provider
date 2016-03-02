@@ -36,8 +36,14 @@
 
     <decision-state id="CheckAuthenticationRequired">
         <if test="flowScope.serviceTicketRequest.gateway"
-            then="PrepareForRedirectToService"
+            then="CheckForExistingSession"
             else="CheckInitialAuthenticationRequired" />
+    </decision-state>
+
+    <decision-state id="CheckForExistingSession">
+        <if test="SessionPrincipalLookupFunction.apply(opensamlProfileRequestContext) == null"
+            then="PrepareForRedirectToService"
+            else="CheckResolveAttributes" />
     </decision-state>
 
     <action-state id="PrepareForRedirectToService">

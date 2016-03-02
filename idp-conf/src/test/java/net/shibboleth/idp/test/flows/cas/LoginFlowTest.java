@@ -83,7 +83,7 @@ public class LoginFlowTest extends AbstractFlowTest {
 
 
     @Test
-    public void testGateway() throws Exception {
+    public void testGatewayNoSession() throws Exception {
         final String service = "https://gateway.example.org/";
         externalContext.getMockRequestParameterMap().put("service", service);
         externalContext.getMockRequestParameterMap().put("gateway", "true");
@@ -92,6 +92,23 @@ public class LoginFlowTest extends AbstractFlowTest {
 
         assertEquals(result.getOutcome().getId(), "RedirectToService");
         assertEquals(externalContext.getExternalRedirectUrl(), service);
+    }
+
+    @Test
+    public void testGatewayWithSession() throws Exception {
+        final String service = "https://gateway.example.org/";
+        final IdPSession existing = sessionManager.createSession("aurora");
+        existing.addAuthenticationResult(new AuthenticationResult("authn/Password", new UsernamePrincipal("aurora")));
+        externalContext.getMockRequestParameterMap().put("service", service);
+        overrideEndStateOutput(FLOW_ID, "RedirectToService");
+        request.setCookies(new Cookie("shib_idp_session", existing.getId()));
+        initializeThreadLocals();
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "RedirectToService");
+        final String url = externalContext.getExternalRedirectUrl();
+        assertTrue(url.contains(service + "?ticket=ST-"));
     }
 
     @Test
