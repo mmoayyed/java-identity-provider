@@ -328,7 +328,8 @@
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
 
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+        p:formattingMap-ref="shibboleth.AuditFormattingMap"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
         
     <bean id="WriteFTICKSLog" class="net.shibboleth.idp.saml.audit.impl.WriteFTICKSLog" scope="prototype"
         p:activationCondition="#{'%{idp.fticks.federation:null}' != 'null'}"

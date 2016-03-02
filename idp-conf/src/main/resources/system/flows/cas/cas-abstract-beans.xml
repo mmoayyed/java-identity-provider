@@ -95,7 +95,8 @@
     <bean id="WriteAuditLog"
           class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog"
           scope="prototype"
-          p:formattingMap-ref="shibboleth.AuditFormattingMap" />
+          p:formattingMap-ref="shibboleth.AuditFormattingMap"
+          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="ErrorViewPopulateAuditContext"
           class="net.shibboleth.idp.profile.audit.impl.PopulateAuditContext"
