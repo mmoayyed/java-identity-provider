@@ -145,6 +145,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
         bindingContext.setRelayState(relayState);
         
         bindingContext.setBindingUri(getBindingURI());
+        bindingContext.setBindingDescriptor(getBindingDescriptor());
         bindingContext.setHasBindingSignature(false);
         bindingContext.setIntendedDestinationEndpointURIRequired(false);
     }
