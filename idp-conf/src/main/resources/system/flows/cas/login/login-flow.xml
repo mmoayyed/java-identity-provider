@@ -42,13 +42,13 @@
 
     <decision-state id="CheckForExistingSession">
         <if test="SessionPrincipalLookupFunction.apply(opensamlProfileRequestContext) == null"
-            then="PrepareForRedirectToService"
+            then="PrepareForReturnToService"
             else="CheckResolveAttributes" />
     </decision-state>
 
-    <action-state id="PrepareForRedirectToService">
+    <action-state id="PrepareForReturnToService">
         <set name="flowScope.redirectUrl" value="flowScope.serviceTicketRequest.service" />
-        <transition to="RedirectToService" />
+        <transition to="ReturnToService" />
     </action-state>
 
     <decision-state id="CheckInitialAuthenticationRequired">
@@ -123,23 +123,39 @@
         <evaluate expression="PopulateClientStorageSaveContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="ClientStorageSave" />
-        <transition on="NoSaveNeeded" to="RedirectToService">
+        <transition on="NoSaveNeeded" to="ReturnToService">
             <set name="flowScope.redirectUrl" value="flowScope.serviceTicketResponse.redirectUrl" />
         </transition>
     </action-state>
 
     <subflow-state id="ClientStorageSave" subflow="client-storage/write">
         <input name="calledAsSubflow" value="true" />
-        <transition on="proceed" to="RedirectToService">
+        <transition on="proceed" to="ReturnToService">
             <set name="flowScope.redirectUrl" value="flowScope.serviceTicketResponse.redirectUrl" />
         </transition>
     </subflow-state>
 
-    <!-- Redirect end states -->
+    <decision-state id="ReturnToService">
+        <if test="flowScope.serviceTicketRequest.method == 'POST'"
+            then="PostBackToService"
+            else="RedirectToService" />
+    </decision-state>
+
+    <!-- End states -->
     <end-state id="RedirectToService" view="externalRedirect:#{flowScope.redirectUrl}">
         <on-entry>
             <evaluate expression="PopulateAuditContext" />
             <evaluate expression="WriteAuditLog" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="PostBackToService" view="cas/postBack">
+        <on-entry>
+            <evaluate expression="PopulateAuditContext" />
+            <evaluate expression="WriteAuditLog" />
+            <set name="requestScope.service" value="flowScope.serviceTicketResponse.service" />
+            <set name="requestScope.ticketParamName" value="flowScope.serviceTicketResponse.ticketParameterName" />
+            <set name="requestScope.ticket" value="flowScope.serviceTicketResponse.ticket" />
         </on-entry>
     </end-state>
 

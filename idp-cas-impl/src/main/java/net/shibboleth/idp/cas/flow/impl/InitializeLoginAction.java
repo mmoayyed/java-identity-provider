@@ -71,6 +71,11 @@ public class InitializeLoginAction extends AbstractCASProtocolAction<ServiceTick
             serviceTicketRequest.setGateway(true);
         }
 
+        final String method = params.get(ProtocolParam.Method.id());
+        if (method != null) {
+            serviceTicketRequest.setMethod(method);
+        }
+
         setCASRequest(profileRequestContext, serviceTicketRequest);
 
         return null;

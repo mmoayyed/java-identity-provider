@@ -26,6 +26,13 @@ import javax.annotation.Nonnull;
  * @author Marvin S. Addison
  */
 public class ServiceTicketRequest {
+
+    /** HTTP GET method. */
+    public static final String METHOD_GET = "GET";
+
+    /** HTTP POST method. */
+    public static final String METHOD_POST = "POST";
+
     /** Service URL */
     @Nonnull private final String service;
 
@@ -37,6 +44,9 @@ public class ServiceTicketRequest {
 
     /** Flag indicating whether ticket request is via SAML 1.1 protocol. */
     private boolean saml;
+
+    /** CAS protocol 3.0 "method" parameter. */
+    private String method = METHOD_GET;
 
 
     public ServiceTicketRequest(@Nonnull final String service) {
@@ -69,5 +79,32 @@ public class ServiceTicketRequest {
 
     public void setSAML(final boolean saml) {
         this.saml = saml;
+    }
+
+    /**
+     * Gets the value of the <code>method</code> parameter. Default is {@value #METHOD_GET}.
+     *
+     * @return {@value #METHOD_GET} or {@value #METHOD_POST}.
+     */
+    @Nonnull public String getMethod() {
+        return method;
+    }
+
+    /**
+     * Sets the value of the <code>method</code> parameter.
+     * See <a href="http://jasig.github.io/cas/development/protocol/CAS-Protocol-Specification.html#head2.1.1">
+     *     http://jasig.github.io/cas/development/protocol/CAS-Protocol-Specification.html#head2.1.1</a> for more
+     * information.
+     *
+     * @param method {@value #METHOD_GET} or {@value #METHOD_POST}.
+     */
+    public void setMethod(final String method) {
+        if (METHOD_GET.equalsIgnoreCase(method)) {
+            this.method = METHOD_GET;
+        } else if (METHOD_POST.equalsIgnoreCase(method)) {
+            this.method = METHOD_POST;
+        } else {
+            throw new IllegalArgumentException("Unsupported method " + method);
+        }
     }
 }

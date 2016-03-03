@@ -67,13 +67,22 @@ public class ServiceTicketResponse {
         this.saml = saml;
     }
 
+    /**
+     * @return The name of the ticket parameter returned to the requesting service.
+     */
+    public String getTicketParameterName() {
+        if (saml) {
+            return SamlParam.SAMLart.name();
+        }
+        return ProtocolParam.Ticket.id();
+    }
+
+    /**
+     * @return URL that may be used to redirect to a service with a granted ticket.
+     */
     public String getRedirectUrl() {
         final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(service);
-        if (saml) {
-            builder.queryParam(SamlParam.SAMLart.name(), ticket);
-        } else {
-            builder.queryParam(ProtocolParam.Ticket.id(), ticket);
-        }
+        builder.queryParam(getTicketParameterName(), ticket);
         return builder.build().toUriString();
     }
 }

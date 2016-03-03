@@ -36,6 +36,13 @@ public enum ProtocolParam {
     /** Gateway authentication flag. */
     Gateway,
 
+    /**
+     * Method parameter.
+     *
+     * @since CAS Protocol 3.0
+     */
+    Method,
+
     /** Proxy-granting ticket. */
     Pgt,
 

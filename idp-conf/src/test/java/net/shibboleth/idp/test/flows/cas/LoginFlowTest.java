@@ -40,6 +40,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -48,6 +49,8 @@ import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.testng.Assert.*;
 
@@ -123,6 +126,35 @@ public class LoginFlowTest extends AbstractFlowTest {
         final String url = externalContext.getExternalRedirectUrl();
         assertTrue(url.contains("ticket=ST-"));
         final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        final Ticket st = ticketService.removeServiceTicket(ticketId);
+        assertNotNull(st);
+        final IdPSession session = sessionManager.resolveSingle(
+                new CriteriaSet(new SessionIdCriterion(st.getSessionId())));
+        assertNotNull(session);
+
+        final ProfileRequestContext prc = (ProfileRequestContext) outcome.getOutput().get(END_STATE_OUTPUT_ATTR_NAME);
+        assertNotNull(prc.getSubcontext(SubjectContext.class));
+        assertPopulatedAttributeContext(prc);
+    }
+
+    @Test
+    public void testLoginStartSessionWithPostMethod() throws Exception {
+        final String service = "https://start.example.org/";
+        externalContext.getMockRequestParameterMap().put("service", service);
+        externalContext.getMockRequestParameterMap().put("method", "post");
+        overrideEndStateOutput(FLOW_ID, "PostBackToService");
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+        final FlowExecutionOutcome outcome = result.getOutcome();
+        assertEquals(outcome.getId(), "PostBackToService");
+        final MockHttpServletResponse mockResponse = (MockHttpServletResponse) externalContext.getNativeResponse();
+        final String body = mockResponse.getContentAsString();
+        assertTrue(body.contains(String.format("<form action=\"%s\" method=\"post\">", service)));
+        assertTrue(body.contains("<input type=\"hidden\" name=\"ticket\" value=\"ST-"));
+        final Matcher matcher = Pattern.compile("value=\"([^\"]+)").matcher(body);
+        assertTrue(matcher.find());
+        assertEquals(1, matcher.groupCount());
+        final String ticketId = matcher.group(1);
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assertNotNull(st);
         final IdPSession session = sessionManager.resolveSingle(
