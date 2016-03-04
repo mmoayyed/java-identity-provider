@@ -61,7 +61,6 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
      */
     public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
-        setInboundInterceptorFlows(Collections.<String>emptyList());
         setSecurityConfiguration(
                 new SecurityConfiguration(
                     TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES),

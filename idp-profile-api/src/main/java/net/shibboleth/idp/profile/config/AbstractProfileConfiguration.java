@@ -55,6 +55,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      */
     public AbstractProfileConfiguration(@Nonnull @NotEmpty final String id) {
         profileId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Profile identifier cannot be null or empty");
+        inboundFlows = Collections.emptyList();
         outboundFlows = Collections.emptyList();
     }
 
