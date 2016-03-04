@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.cas.config.impl;
 
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
@@ -60,6 +61,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
      */
     public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
+        setInboundInterceptorFlows(Collections.<String>emptyList());
         setSecurityConfiguration(
                 new SecurityConfiguration(
                     TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES),
