@@ -56,9 +56,9 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
     /** The connector name. */
     private static final String TEST_CONNECTOR_NAME = "storedAttributeConnector";
 
-    private static final String INIT_FILE = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql";
+    private static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/impl/dc/StoredIdStore.sql";
 
-    private static final String DELETE_FILE = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/DeleteStore.sql";
+    private static final String DELETE_FILE = "/net/shibboleth/idp/attribute/resolver/impl/dc/DeleteStore.sql";
 
     private DataSource testSource;
 

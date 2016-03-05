@@ -55,9 +55,9 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
     /** The connector name. */
     private static final String TEST_CONNECTOR_NAME = "rdbmsAttributeConnector";
 
-    private static final String INIT_FILE = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/rdbms/RdbmsStore.sql";
+    private static final String INIT_FILE = "/net/shibboleth/idp/attribute/resolver/impl/dc/rdbms/RdbmsStore.sql";
 
-    private static final String DATA_FILE = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/rdbms/RdbmsData.sql";
+    private static final String DATA_FILE = "/net/shibboleth/idp/attribute/resolver/impl/dc/rdbms/RdbmsData.sql";
 
     private static final String USER_QUERY = "SELECT userid, name, homephone, mail FROM people WHERE userid='%s'";
 

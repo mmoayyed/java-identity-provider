@@ -57,9 +57,9 @@ public class ScriptedDataConnectorTest {
     private String getScript(String fileName) throws IOException {
         final String name;
         if (isV8()) {
-            name = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/v8/" + fileName;
+            name = "/net/shibboleth/idp/attribute/resolver/impl/dc/v8/" + fileName;
         } else {
-            name = "/data/net/shibboleth/idp/attribute/resolver/impl/dc/" + fileName;
+            name = "/net/shibboleth/idp/attribute/resolver/impl/dc/" + fileName;
         }
         return StringSupport.inputStreamToString(getClass().getResourceAsStream(name), null);
     }

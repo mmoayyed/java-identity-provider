@@ -80,9 +80,9 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     private String fileNameToPath(String fileName, boolean isV8Capable) {
         if (isV8() && !isV8Capable) {
-            return "/data/net/shibboleth/idp/attribute/resolver/impl/ad/jdk8/" + fileName;
+            return "/net/shibboleth/idp/attribute/resolver/impl/ad/jdk8/" + fileName;
         }
-        return "/data/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
+        return "/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
     }
 
     private String getScript(String fileName, boolean isV8Capable) throws IOException {

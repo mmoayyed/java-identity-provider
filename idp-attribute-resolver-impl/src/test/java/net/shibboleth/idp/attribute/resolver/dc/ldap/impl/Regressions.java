@@ -76,7 +76,7 @@ public class Regressions {
         directoryServer = new InMemoryDirectoryServer(config);
         directoryServer
                 .importFromLDIF(true,
-                        "src/test/resources/data/net/shibboleth/idp/attribute/resolver/impl/dc/ldap/ldapDataConnectorTestEmpty.ldif");
+                        "src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/ldap/ldapDataConnectorTestEmpty.ldif");
         directoryServer.startListening();
     }
 
