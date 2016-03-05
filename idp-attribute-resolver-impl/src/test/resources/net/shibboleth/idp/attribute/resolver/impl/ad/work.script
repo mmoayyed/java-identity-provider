@@ -1,0 +1,6 @@
+values = at1.getNativeAttribute().getValues().iterator();
+    val = values.next();
+    Scripted.addValue(val);
+    Scripted.addValue(workContext.getResolvedIdPAttributeDefinitions().toString());
+    Scripted.addValue(workContext.getResolvedDataConnectors().toString());
+    

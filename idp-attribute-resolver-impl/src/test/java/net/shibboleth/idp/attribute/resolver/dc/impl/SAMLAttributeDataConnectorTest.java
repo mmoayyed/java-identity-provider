@@ -44,7 +44,7 @@ import com.google.common.base.Function;
  */
 public class SAMLAttributeDataConnectorTest extends XMLObjectBaseTestCase {
 
-    static final private String PATH =  "/data/net/shibboleth/idp/attribute/resolver/impl/dc/entityAttributes.xml";
+    static final private String PATH = "/net/shibboleth/idp/attribute/resolver/impl/dc/entityAttributes.xml";
 
     @Test public void connector() throws ResolutionException, ComponentInitializationException {
         
