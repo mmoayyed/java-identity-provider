@@ -84,7 +84,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         directoryServer = new InMemoryDirectoryServer(config);
         directoryServer
                 .importFromLDIF(true,
-                        "src/test/resources/data/net/shibboleth/idp/attribute/resolver/impl/dc/ldap/ldapDataConnectorTest.ldif");
+                        "src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/ldap/ldapDataConnectorTest.ldif");
         directoryServer.startListening();
     }
 
