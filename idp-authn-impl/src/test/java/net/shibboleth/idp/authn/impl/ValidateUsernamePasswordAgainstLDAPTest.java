@@ -64,7 +64,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 /** {@link ValidateUsernamePasswordAgainstLDAP} unit test. */
 public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticationContextTest {
 
-    private static final String DATA_PATH = "src/test/resources/data/net/shibboleth/idp/authn/impl/";
+    private static final String DATA_PATH = "src/test/resources/net/shibboleth/idp/authn/impl/";
     
     private ValidateUsernamePasswordAgainstLDAP action;
 

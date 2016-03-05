@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 /** {@link StorageBackedIdPSessionSerializer} unit test. */
 public class StorageBackedIdPSessionSerializerTest {
 
-    private static final String DATAPATH = "/data/net/shibboleth/idp/session/impl/";
+    private static final String DATAPATH = "/net/shibboleth/idp/session/impl/";
     
     private static final long INSTANT = 1378827849463L;
     

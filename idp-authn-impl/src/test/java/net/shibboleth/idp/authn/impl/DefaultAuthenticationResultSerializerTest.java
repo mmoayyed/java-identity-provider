@@ -57,7 +57,7 @@ import org.testng.annotations.Test;
 /** {@link DefaultAuthenticationResultSerializer} unit test. */
 public class DefaultAuthenticationResultSerializerTest {
 
-    private static final String DATAPATH = "/data/net/shibboleth/idp/authn/impl/";
+    private static final String DATAPATH = "/net/shibboleth/idp/authn/impl/";
     
     private static final String CONTEXT = "_context";
     
@@ -136,8 +136,8 @@ public class DefaultAuthenticationResultSerializerTest {
     }
 
     @Test public void testCreds() throws Exception {
-        final ClassPathResource keystoreResource = new ClassPathResource("/data/net/shibboleth/idp/authn/impl/SealerKeyStore.jks");
-        final ClassPathResource versionResource = new ClassPathResource("/data/net/shibboleth/idp/authn/impl/SealerKeyStore.kver");
+        final ClassPathResource keystoreResource = new ClassPathResource("/net/shibboleth/idp/authn/impl/SealerKeyStore.jks");
+        final ClassPathResource versionResource = new ClassPathResource("/net/shibboleth/idp/authn/impl/SealerKeyStore.kver");
 
         final BasicKeystoreKeyStrategy strategy = new BasicKeystoreKeyStrategy();
         strategy.setKeyAlias("secret");

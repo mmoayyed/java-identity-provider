@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  */
 public class KeystoreResourceCredentialConfigTest {
 
-    private static final String DATAPATH = "/data/net/shibboleth/idp/authn/impl/";
+    private static final String DATAPATH = "/net/shibboleth/idp/authn/impl/";
 
     @DataProvider(name = "resources")
     public Object[][] getResources() throws Exception {
