@@ -41,7 +41,7 @@ import com.google.common.base.Function;
  */
 public class BaseComplexAttributeFilterTestCase extends XMLObjectBaseTestCase {
 
-    private static final String PATH = "/data/net/shibboleth/idp/filter/impl/complex/";
+    private static final String PATH = "/net/shibboleth/idp/filter/impl/complex/";
 
     /**
      * Helper function to return attributes pulled from a file (on the classpath). The file is expected to contain a

@@ -45,7 +45,7 @@ public class RegistrationAuthorityTest extends BaseMetadataTests {
     private EntitiesDescriptor metadata;
 
     @BeforeClass(dependsOnMethods = "initXMLObjectSupport") public void initRATest() {
-        metadata = unmarshallElement("/data/net/shibboleth/idp/filter/impl/saml/mdrpi-metadata.xml");
+        metadata = unmarshallElement("/net/shibboleth/idp/filter/impl/saml/mdrpi-metadata.xml");
     }
 
     private EntityDescriptor getEntity(String entityID) {
