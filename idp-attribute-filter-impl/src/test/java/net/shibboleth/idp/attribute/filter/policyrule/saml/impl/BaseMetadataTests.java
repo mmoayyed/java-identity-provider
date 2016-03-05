@@ -59,7 +59,7 @@ public class BaseMetadataTests extends XMLObjectBaseTestCase {
 
     @BeforeClass(dependsOnMethods = "initXMLObjectSupport") public void setUp()
             throws FilterException, ComponentInitializationException {
-        metadata = unmarshallElement("/data/net/shibboleth/idp/filter/impl/saml/shibboleth.net-metadata.xml");
+        metadata = unmarshallElement("/net/shibboleth/idp/filter/impl/saml/shibboleth.net-metadata.xml");
         
         final NodeProcessingMetadataFilter filter = new NodeProcessingMetadataFilter();
         filter.setNodeProcessors(Collections.<MetadataNodeProcessor>singletonList(new EntitiesDescriptorNameProcessor()));
