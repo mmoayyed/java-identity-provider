@@ -50,7 +50,7 @@ Lj4vIUsmIWLtnSJXv+14nGunVzXoYikI9w==
     
     <!-- Note: use of the transformRef here is mostly just to facilitate testing. -->
     <metadata:Template transformRef="digester.SHA1HexLower">
-        https://svn.shibboleth.net/java-opensaml/trunk/opensaml-saml-impl/src/test/resources/data/org/opensaml/saml/metadata/resolver/impl/${entityID}.xml
+        https://svn.shibboleth.net/java-opensaml/trunk/opensaml-saml-impl/src/test/resources/org/opensaml/saml/metadata/resolver/impl/${entityID}.xml
     </metadata:Template>
 
 </metadata:MetadataProvider>
