@@ -384,7 +384,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     @Nullable public SPSession addSPSession(@Nonnull final SPSession spSession) throws SessionException {
         if (sessionManager.isTrackSPSessions()) {
             if (!sessionManager.storageServiceMeetsThreshold()) {
-                log.info("Unable to add SP session due to to storage service limitations");
+                log.debug("Unable to add SP session due to to storage service limitations");
                 return null;
             }
                         

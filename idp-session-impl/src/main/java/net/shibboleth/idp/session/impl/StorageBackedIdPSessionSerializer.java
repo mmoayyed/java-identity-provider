@@ -132,7 +132,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
                         gen.writeEnd();
                     }
                 } else {
-                    log.info("Unable to serialize SP session due to to storage service limitations");
+                    log.debug("Unable to serialize SP session due to to storage service limitations");
                 }
             }
 
