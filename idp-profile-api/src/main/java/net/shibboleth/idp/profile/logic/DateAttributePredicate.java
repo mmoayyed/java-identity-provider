@@ -102,6 +102,13 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
         resultIfMissing = flag;
     }
     
+    /** {@inheritDoc} */
+    @Override
+    protected boolean allowNullAttributeContext() {
+        return resultIfMissing;
+    }
+
+    /** {@inheritDoc} */
     @Override
     protected boolean hasMatch(@Nonnull @NonnullElements final Map<String, IdPAttribute> attributeMap) {
         
