@@ -17,9 +17,21 @@
         <evaluate expression="SelectRelyingPartyConfiguration" />
         <evaluate expression="SelectProfileConfiguration" />
         <evaluate expression="PublishProtocolRequest" />
+        <evaluate expression="PopulateInboundInterceptContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ValidateIdPSession" />
+        <transition on="proceed" to="CheckInboundInterceptContext" />
     </action-state>
+
+    <decision-state id="CheckInboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="ValidateIdPSession"
+            else="DoInboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoInboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="ValidateIdPSession" />
+    </subflow-state>
 
     <action-state id="ValidateIdPSession">
         <evaluate expression="ValidateIdPSession" />
@@ -29,9 +41,22 @@
 
     <action-state id="GrantProxyTicket">
         <evaluate expression="GrantProxyTicket" />
+        <evaluate expression="PopulateOutboundInterceptContext" />
         <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ProxySuccess" />
+        <transition on="proceed" to="CheckOutboundInterceptContext" />
     </action-state>
+
+    <decision-state id="CheckOutboundInterceptContext">
+        <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.profile.context.ProfileInterceptorContext)).getAvailableFlows().isEmpty()"
+            then="ProxySuccess"
+            else="DoOutboundInterceptSubflow" />
+    </decision-state>
+
+    <subflow-state id="DoOutboundInterceptSubflow" subflow="intercept">
+        <input name="calledAsSubflow" value="true" />
+        <transition on="proceed" to="ProxySuccess" />
+        <transition to="HandleError" />
+    </subflow-state>
 
     <!-- View end states -->
     <end-state id="ProxySuccess" view="cas/proxySuccess">

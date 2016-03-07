@@ -28,6 +28,24 @@
     <bean id="BuildSAMLMetadataContext"
           class="net.shibboleth.idp.cas.flow.impl.BuildSAMLMetadataContextAction" />
 
+    <bean id="PopulateInboundInterceptContext"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext"
+          scope="prototype"
+          p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.InboundFlowsLookupFunction" />
+        </property>
+    </bean>
+
+    <bean id="PopulateOutboundInterceptContext"
+          class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext"
+          scope="prototype"
+          p:availableFlows-ref="shibboleth.AvailableInterceptFlows">
+        <property name="activeFlowsLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.config.navigate.OutboundFlowsLookupFunction" />
+        </property>
+    </bean>
+
     <bean id="PublishProtocolRequest"
           class="net.shibboleth.idp.cas.flow.impl.PublishProtocolMessageAction"
           c:isRequest="true" />
