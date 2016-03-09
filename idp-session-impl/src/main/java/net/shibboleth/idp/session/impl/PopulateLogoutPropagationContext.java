@@ -170,12 +170,12 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
                 return false;
             }
             log.debug("{} Got session to propagate logout: {}", getLogPrefix(), session);
-        } catch (MessageDecodingException e) {
-            log.warn("{} Message decoding exception: {}", e.getMessage());
+        } catch (final MessageDecodingException e) {
+            log.warn("{} Message decoding exception", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);
             return false;
-        } catch (MessageException e) {
-            log.warn("{} Required state not found: {}", e.getMessage());
+        } catch (final MessageException e) {
+            log.warn("{} Required state not found", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
             return false;
         }
