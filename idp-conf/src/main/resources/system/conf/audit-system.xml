@@ -49,7 +49,7 @@
     -->
     <import resource="../../conf/audit.xml"/>
 
-    <bean id="shibboleth.DefaultPostDecodeAuditExtractors"
+    <bean id="shibboleth.DefaultPostDecodeAuditExtractors" lazy-init="true"
             class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
