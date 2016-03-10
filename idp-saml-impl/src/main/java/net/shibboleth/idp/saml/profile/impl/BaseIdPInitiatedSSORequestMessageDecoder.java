@@ -30,7 +30,6 @@ import net.shibboleth.utilities.java.support.security.Type4UUIDIdentifierGenerat
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.messaging.decoder.servlet.AbstractHttpServletRequestMessageDecoder;
 import org.opensaml.saml.common.binding.BindingDescriptor;
-import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
