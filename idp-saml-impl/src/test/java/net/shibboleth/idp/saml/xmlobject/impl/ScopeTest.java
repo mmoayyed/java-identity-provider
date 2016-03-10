@@ -120,6 +120,7 @@ public class ScopeTest extends XMLObjectProviderBaseTestCase {
     /**
      * Test behavior related to {@link Scope#getMatchPattern()}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testMatchPattern() {
         Scope scope = (Scope) buildXMLObject(Scope.DEFAULT_ELEMENT_NAME);
@@ -127,7 +128,7 @@ public class ScopeTest extends XMLObjectProviderBaseTestCase {
         try {
             scope.setRegexp(false);
             scope.setValue("example.org");
-            Pattern pattern = scope.getMatchPattern();
+            scope.getMatchPattern();
             Assert.fail("Non-regex should have failed with IllegalStateException");
         } catch (IllegalStateException e) {
             //expected
