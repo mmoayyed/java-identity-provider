@@ -253,8 +253,8 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
             }
         }
     
-        log.warn("{} No JAAS application configurations are available or acceptable for use", getLogPrefix());
         if (!eventSignaled) {
+            log.warn("{} No JAAS application configurations are available or acceptable for use", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, "RequestUnsupported",
                     AuthnEventIds.REQUEST_UNSUPPORTED);
         }
