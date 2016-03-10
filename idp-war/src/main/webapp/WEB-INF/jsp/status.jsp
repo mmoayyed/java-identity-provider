@@ -29,7 +29,7 @@ operating_system_version: <%= System.getProperty("os.version") %>
 operating_system_architecture: <%= System.getProperty("os.arch") %>
 jdk_version: <%= System.getProperty("java.version") %>
 available_cores: <%= Runtime.getRuntime().availableProcessors() %>
-used_memory: <%= Runtime.getRuntime().totalMemory() / 1048576 %> MB
+used_memory: <%= (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576 %> MB
 maximum_memory: <%= Runtime.getRuntime().maxMemory() / 1048576 %> MB
 
 ### Identity Provider Information
