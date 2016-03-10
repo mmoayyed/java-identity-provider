@@ -32,10 +32,11 @@ import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -48,7 +49,7 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
 
     private NameIDCanonicalization action;
 
-    private NameIDBuilder builder;
+    private SAMLObjectBuilder<NameID> builder;
     
     private NameIDCanonicalizationFlowDescriptor flowDescriptor;
     
@@ -61,7 +62,9 @@ public class NameIDCanonicalizationTest extends OpenSAMLInitBaseTestCase {
     private static final List<String> formats = Arrays.asList(NameID.KERBEROS, NameID.ENCRYPTED, null);
 
     @BeforeClass public void initialize() {
-        builder = new NameIDBuilder();
+        builder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME);
     }
 
     @BeforeMethod public void setUp() throws Exception {

@@ -42,10 +42,11 @@ import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.testng.Assert;
@@ -176,7 +177,9 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(values.size(), 1);
         final String code = ((StringAttributeValue) values.get(0)).getValue();
 
-        final NameID nameID = new NameIDBuilder().buildObject();
+        final NameID nameID =
+                ((SAMLObjectBuilder<NameID>) XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME)).buildObject();
         nameID.setFormat("https://example.org/");
         nameID.setNameQualifier(TestSources.IDP_ENTITY_ID);
         nameID.setSPNameQualifier(TestSources.SP_ENTITY_ID);

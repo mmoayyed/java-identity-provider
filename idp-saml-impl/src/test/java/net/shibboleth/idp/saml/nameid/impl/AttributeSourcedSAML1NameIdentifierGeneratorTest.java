@@ -32,12 +32,12 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLException;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -48,9 +48,9 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
     /** The name we give the test attribute. */
     private final static String ATTR_NAME = "foo";
 
-    private static NameIdentifierBuilder saml1Builder;
+    private static SAMLObjectBuilder<NameIdentifier> saml1Builder;
 
-    private static NameIDBuilder saml2Builder;
+    private static SAMLObjectBuilder<NameID> saml2Builder;
 
     /** test values. */
     private final static String NAME_1 = "NameId1";
@@ -86,8 +86,14 @@ public class AttributeSourcedSAML1NameIdentifierGeneratorTest extends OpenSAMLIn
         generator = new AttributeSourcedSAML1NameIdentifierGenerator();
         generator.setId("test");
         generator.setFormat(NameIdentifier.X509_SUBJECT);
-        saml1Builder = new NameIdentifierBuilder();
-        saml2Builder = new NameIDBuilder();
+        saml1Builder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                        NameIdentifier.DEFAULT_ELEMENT_NAME);
+
+        saml2Builder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME);
+
         prc = new RequestContextBuilder().buildProfileRequestContext();
     }
 

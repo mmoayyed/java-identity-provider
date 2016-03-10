@@ -31,10 +31,11 @@ import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -49,7 +50,7 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
 
     private NameIdentifierCanonicalization action;
 
-    private NameIdentifierBuilder builder;
+    private SAMLObjectBuilder<NameIdentifier> builder;
 
     private static final String REQUESTER = "TestRequest";
 
@@ -60,7 +61,9 @@ public class NameIdentifierCanonicalizationTest extends OpenSAMLInitBaseTestCase
     private static final List<String> formats = Arrays.asList(NameIdentifier.X509_SUBJECT, NameIdentifier.EMAIL, null);
 
     @BeforeClass public void initialize() {
-        builder = new NameIdentifierBuilder();
+        builder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                        NameIdentifier.DEFAULT_ELEMENT_NAME);
     }
 
     @BeforeMethod public void setUp() throws Exception {
