@@ -117,7 +117,7 @@
           p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-          p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors" />
+          p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
 
     <bean id="PopulateProtocolError"
           class="net.shibboleth.idp.cas.flow.impl.PopulateProtocolErrorAction" />

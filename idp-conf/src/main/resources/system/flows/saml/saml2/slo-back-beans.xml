@@ -50,7 +50,7 @@
         p:sessionResolver-ref="shibboleth.SessionManager" />
     
     <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.LogoutAuditExtractors') ?: getObject('shibboleth.DefaultLogoutAuditExtractors')}" />
     
     <!--
     TODO: will be used when logout propagation is enabled

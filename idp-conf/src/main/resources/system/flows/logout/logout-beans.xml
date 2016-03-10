@@ -49,7 +49,7 @@
             ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
     
     <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.LogoutAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.LogoutAuditExtractors') ?: getObject('shibboleth.DefaultLogoutAuditExtractors')}" />
         
     <bean id="PopulateMultiRPContextFromLogoutContext"
         class="net.shibboleth.idp.session.impl.PopulateMultiRPContextFromLogoutContext" scope="prototype"
@@ -110,7 +110,7 @@
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
     
     <bean id="MapEventToView"
         class="net.shibboleth.idp.profile.context.navigate.SpringEventToViewLookupFunction"

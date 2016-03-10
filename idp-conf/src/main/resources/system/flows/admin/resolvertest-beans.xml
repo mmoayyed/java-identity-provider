@@ -97,7 +97,7 @@
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
     
     <bean id="PostLookupPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostLookupAuditExtractors') ?: getObject('shibboleth.DefaultPostLookupAuditExtractors')}" />
 
     <bean id="PopulateSubjectContext"
             class="net.shibboleth.idp.profile.impl.PopulateSubjectContext" scope="prototype">
@@ -189,10 +189,10 @@
     </bean>
     
     <bean id="PostAssertionPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostAssertionAuditExtractors') ?: getObject('shibboleth.DefaultPostAssertionAuditExtractors')}" />
     
     <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
     
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
         p:activationCondition-ref="shibboleth.ProfileAuditingCondition"

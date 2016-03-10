@@ -52,7 +52,7 @@
 
     <!-- This is a little iffy, but the post-assertion extractors include the fields we want here. -->
     <bean id="LogoutPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostAssertionAuditExtractors') ?: getObject('shibboleth.DefaultPostAssertionAuditExtractors')}" />
 
     <bean id="EncryptNameIDs"
             class="org.opensaml.saml.saml2.profile.impl.EncryptNameIDs" scope="prototype"
@@ -65,7 +65,7 @@
     </bean>
 
     <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
     
     <bean id="shibboleth.PreEncodeMessageHandler"
             class="org.opensaml.messaging.handler.impl.BasicMessageHandlerChain" scope="prototype">

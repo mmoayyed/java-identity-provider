@@ -50,7 +50,7 @@
     <import resource="../../conf/audit.xml"/>
 
     <bean id="shibboleth.DefaultPostDecodeAuditExtractors"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry>
@@ -182,7 +182,7 @@
     </bean>
         
     <bean id="shibboleth.DefaultPostLookupAuditExtractors"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry>
@@ -202,7 +202,7 @@
     </bean>
     
     <bean id="shibboleth.DefaultPostAssertionAuditExtractors"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry>
@@ -294,7 +294,7 @@
     </bean>
         
     <bean id="shibboleth.DefaultPostResponseAuditExtractors"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry>
@@ -490,7 +490,7 @@
     </bean>
     
     <bean id="shibboleth.DefaultLogoutAuditExtractors"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry>
@@ -537,7 +537,7 @@
     </bean>
         
     <bean id="shibboleth.DefaultErrorViewAuditExtractors"
-            class="org.springframework.beans.factory.config.MapFactoryBean" abstract="true">
+            class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
                 <entry>

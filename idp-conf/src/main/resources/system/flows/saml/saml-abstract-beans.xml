@@ -24,7 +24,7 @@
     <import resource="../../conf/audit-system.xml" />
 
     <bean id="PostDecodePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostDecodeAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostDecodeAuditExtractors') ?: getObject('shibboleth.DefaultPostDecodeAuditExtractors')}" />
 
     <bean id="CheckMessageVersion"
             class="net.shibboleth.idp.profile.impl.WebFlowMessageHandlerAdaptor" scope="prototype"
@@ -86,7 +86,7 @@
         p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
     
     <bean id="PostLookupPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostLookupAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostLookupAuditExtractors') ?: getObject('shibboleth.DefaultPostLookupAuditExtractors')}" />
 
     <bean id="SelectProfileConfiguration"
         class="net.shibboleth.idp.profile.impl.SelectProfileConfiguration" scope="prototype" />
@@ -283,10 +283,10 @@
     </bean>
 
     <bean id="PostAssertionPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostAssertionAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostAssertionAuditExtractors') ?: getObject('shibboleth.DefaultPostAssertionAuditExtractors')}" />
 
     <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.PostResponseAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
 
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
@@ -348,10 +348,10 @@
         p:eventMap="#{getObject('shibboleth.EventViewMap')}" />
     
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-        p:fieldExtractors-ref="shibboleth.ErrorViewAuditExtractors" />
+        p:fieldExtractors="#{getObject('shibboleth.ErrorViewAuditExtractors') ?: getObject('shibboleth.DefaultErrorViewAuditExtractors')}" />
 
     <bean id="PopulateUserAgentContext"
-          class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"
-          p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
+        class="net.shibboleth.idp.profile.impl.PopulateUserAgentContext" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest" />
 
 </beans>

@@ -66,10 +66,7 @@
     </bean>
 
     <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-          p:fieldExtractors-ref="#{
-            getObject('shibboleth.CASLoginAuditExtractors') != null
-                ? 'shibboleth.CASLoginAuditExtractors'
-                : 'shibboleth.DefaultCASLoginAuditExtractors' }" />
+          p:fieldExtractors="#{getObject('shibboleth.CASLoginAuditExtractors') ?: getObject('shibboleth.DefaultCASLoginAuditExtractors')}" />
 
     <bean id="InitialAuthenticationFlag" class="java.lang.Boolean">
         <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />

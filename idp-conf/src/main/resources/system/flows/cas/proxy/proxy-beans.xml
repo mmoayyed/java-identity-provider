@@ -24,9 +24,6 @@
           c:ticketService-ref="cas.TicketService" />
 
     <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
-          p:fieldExtractors-ref="#{
-            getObject('shibboleth.CASProxyAuditExtractors') != null
-                ? 'shibboleth.CASProxyAuditExtractors'
-                : 'shibboleth.DefaultCASProxyAuditExtractors'}" />
+          p:fieldExtractors="#{getObject('shibboleth.CASProxyAuditExtractors') ?: getObject('shibboleth.DefaultCASProxyAuditExtractors')}" />
 
 </beans>
