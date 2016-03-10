@@ -22,14 +22,12 @@
     <bean id="PopulateClientStorageLoadContext"
           class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext"
           scope="prototype"
-          p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+          p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="PopulateClientStorageSaveContext"
           class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext"
           scope="prototype"
-          p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+          p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="InitializeLogin"
           class="net.shibboleth.idp.cas.flow.impl.InitializeLoginAction" />

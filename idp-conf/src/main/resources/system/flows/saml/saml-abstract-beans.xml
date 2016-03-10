@@ -207,8 +207,7 @@
 
     <bean id="PopulateClientStorageLoadContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageLoadContext" scope="prototype"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="InitializeAuthenticationContext"
         class="net.shibboleth.idp.saml.profile.impl.InitializeAuthenticationContext" scope="prototype" />
@@ -290,8 +289,7 @@
 
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="PopulateOutboundInterceptContext"
             class="net.shibboleth.idp.profile.interceptor.impl.PopulateProfileInterceptorContext" scope="prototype"

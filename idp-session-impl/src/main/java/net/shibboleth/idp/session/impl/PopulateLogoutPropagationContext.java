@@ -74,7 +74,7 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateLogoutPropagationContext.class);
     
     /** {@link DataSealer} to use. */
-    @NonnullAfterInit private DataSealer dataSealer;
+    @Nullable private DataSealer dataSealer;
     
     /** Mappings between a SPSession type and a serializer implementation. */
     @NonnullAfterInit private SPSessionSerializerRegistry spSessionSerializerRegistry;
@@ -99,10 +99,10 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
      * 
      * @param sealer the {@link DataSealer} to use
      */
-    public void setDataSealer(@Nonnull final DataSealer sealer) {
+    public void setDataSealer(@Nullable final DataSealer sealer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
+        dataSealer = sealer;
     }
     
     /**
@@ -136,8 +136,6 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
         
         if (spSessionSerializerRegistry == null) {
             throw new ComponentInitializationException("SPSessionSerializerRegistry cannot be null");
-        } else if (dataSealer == null) {
-            throw new ComponentInitializationException("DataSealer cannot be null");
         }
     }
 
@@ -163,7 +161,13 @@ public class PopulateLogoutPropagationContext extends AbstractProfileAction {
                 sessionKey = sessionRef;
                 session = getSessionByReference(requestContext, sessionKey);
             } else if (sessionVal != null) {
-                session = getSessionByValue(sessionVal);
+                if (dataSealer != null) {
+                    session = getSessionByValue(sessionVal);
+                } else {
+                    log.error("{} No DataSealer provided, unable to decrypt session passed by value", getLogPrefix());
+                    ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);
+                    return false;
+                }
             } else {
                 log.warn("{} No session parameter provided, nothing to do", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext, EventIds.UNABLE_TO_DECODE);

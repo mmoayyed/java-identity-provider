@@ -24,8 +24,7 @@
 
     <bean id="SaveCookieBackedClientStorageServices"
         class="org.opensaml.storage.impl.client.SaveCookieBackedClientStorageServices" scope="prototype"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
     <bean id="LogLocalStorageSaveResults"
         class="org.opensaml.storage.impl.client.LogLocalStorageSaveResults" scope="prototype"

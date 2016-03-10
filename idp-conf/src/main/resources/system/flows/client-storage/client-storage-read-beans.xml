@@ -26,7 +26,6 @@
         class="org.opensaml.storage.impl.client.LoadClientStorageServices" scope="prototype"
         p:useLocalStorage="%{idp.storage.htmlLocalStorage:false}"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:storageServices-ref="#{ getObject('shibboleth.ClientStorageServices') != null
-            ? 'shibboleth.ClientStorageServices' : 'shibboleth.DefaultClientStorageServices' }" />
+        p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
 
 </beans>

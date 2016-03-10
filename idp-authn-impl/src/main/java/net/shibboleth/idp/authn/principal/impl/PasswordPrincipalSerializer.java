@@ -43,11 +43,8 @@ import com.google.common.base.Strings;
 
 import net.shibboleth.idp.authn.principal.AbstractPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.DataSealerException;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
@@ -68,7 +65,7 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
     @Nonnull private final Logger log = LoggerFactory.getLogger(PasswordPrincipalSerializer.class);
 
     /** Data sealer. */
-    @NonnullAfterInit private DataSealer sealer;
+    @Nullable private DataSealer sealer;
     
     /** JSON object bulder factory. */
     @Nonnull private final JsonBuilderFactory objectBuilderFactory;
@@ -83,31 +80,34 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
      * 
      * @param theSealer encrypting component to use
      */
-    public void setDataSealer(@Nonnull final DataSealer theSealer) {
+    public void setDataSealer(@Nullable final DataSealer theSealer) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        sealer = Constraint.isNotNull(theSealer, "DataSealer cannot be null");
-    }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        
-        if (sealer == null) {
-            throw new ComponentInitializationException("DataSealer cannot be null");
-        }
+        sealer = theSealer;
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean supports(@Nonnull final Principal principal) {
-        return principal instanceof PasswordPrincipal;
+        if (principal instanceof PasswordPrincipal) {
+            if (sealer == null) {
+                log.error("No DataSealer was provided, unable to support PasswordPrincipal serialization");
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String serialize(@Nonnull final Principal principal) throws IOException {
+        
+        if (sealer == null) {
+            throw new IOException("No DataSealer was provided, unable to support PasswordPrincipal serialization");
+        }
+        
         final StringWriter sink = new StringWriter(32);
         final JsonGenerator gen = getJsonGenerator(sink);
         try {
@@ -125,12 +125,25 @@ public class PasswordPrincipalSerializer extends AbstractPrincipalSerializer<Str
     /** {@inheritDoc} */
     @Override
     public boolean supports(@Nonnull @NotEmpty final String value) {
-        return JSON_PATTERN.matcher(value).matches();
+        if (JSON_PATTERN.matcher(value).matches()) {
+            if (sealer == null) {
+                log.error("No DataSealer was provided, unable to support PasswordPrincipal deserialization");
+                return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     @Nullable public PasswordPrincipal deserialize(@Nonnull @NotEmpty final String value) throws IOException {
+        
+        if (sealer == null) {
+            throw new IOException("No DataSealer was provided, unable to support PasswordPrincipal deserialization");
+        }
+
         final JsonReader reader = getJsonReader(new StringReader(value));
         JsonStructure st = null;
         try {

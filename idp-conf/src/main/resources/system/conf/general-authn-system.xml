@@ -55,7 +55,7 @@
                 <bean class="net.shibboleth.idp.authn.principal.impl.LDAPPrincipalSerializer" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.IdPAttributePrincipalSerializer" />
                 <bean class="net.shibboleth.idp.authn.principal.impl.PasswordPrincipalSerializer"
-                    p:dataSealer-ref="shibboleth.DataSealer" />
+                    p:dataSealer="#{'%{idp.sealer.storeResource:}'.trim().length() > 0 ? getObject('shibboleth.DataSealer') : null}" />
             </list>
         </property>
     </bean>
