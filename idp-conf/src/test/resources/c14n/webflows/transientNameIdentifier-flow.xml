@@ -34,6 +34,11 @@
     
     <end-state id="error" />
     
+    <global-transitions>
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="error" />
+    </global-transitions>
+    
+    
     <bean-import resource="beans.xml" />
     
 </flow>

@@ -21,16 +21,18 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.IdPEventIds;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 public class SetupForResolver extends AbstractProfileAction {
     
     @Override
-    protected void doExecute(
-            @Nonnull final ProfileRequestContext profileRequestContext) {
+    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         SubjectContext sc = profileRequestContext.getSubcontext(SubjectContext.class, true);
         
@@ -41,10 +43,16 @@ public class SetupForResolver extends AbstractProfileAction {
         rpContext.setRelyingPartyId(AbstractFlowTest.SP_ENTITY_ID);
         
         RelyingPartyConfiguration config = new RelyingPartyConfiguration();
+        config.setId("test");
         config.setResponderId(AbstractFlowTest.IDP_ENTITY_ID);
+        try {
+            config.initialize();
+        } catch (final ComponentInitializationException e) {
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_RELYING_PARTY_CONFIG);
+            return;
+        }
         
         rpContext.setConfiguration(config);
-                
     }
     
 }
