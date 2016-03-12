@@ -17,10 +17,16 @@
 
 package net.shibboleth.idp.saml.saml1.profile.config;
 
+import net.shibboleth.idp.saml.profile.config.BasicSAMLArtifactConfiguration;
+import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.idp.saml.saml1.profile.config.AttributeQueryProfileConfiguration;
 
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import javax.annotation.Nullable;
 
 /** Unit test for {@link AttributeQueryProfileConfiguration}. */
 public class AttributeQueryProfileConfigurationTest {
@@ -30,7 +36,30 @@ public class AttributeQueryProfileConfigurationTest {
         Assert.assertEquals(AttributeQueryProfileConfiguration.PROFILE_ID,
                 "http://shibboleth.net/ns/profiles/saml1/query/attribute");
 
-        AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+        final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
         Assert.assertEquals(config.getId(), AttributeQueryProfileConfiguration.PROFILE_ID);
     }
+
+    @Test
+    public void testArtifactConfiguration() {
+        final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+        Assert.assertNull(config.getArtifactConfiguration());
+
+        final SAMLArtifactConfiguration artifactConfiguration = new BasicSAMLArtifactConfiguration();
+        config.setArtifactConfiguration(artifactConfiguration);
+
+        Assert.assertSame(config.getArtifactConfiguration(), artifactConfiguration);
+    }
+
+    @Test
+    public void testIndirectArtifactConfiguration() {
+        final AttributeQueryProfileConfiguration config = new AttributeQueryProfileConfiguration();
+
+        final SAMLArtifactConfiguration artifactConfiguration = new BasicSAMLArtifactConfiguration();
+        config.setArtifactConfigurationLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,SAMLArtifactConfiguration>constant(artifactConfiguration));
+
+        Assert.assertSame(config.getArtifactConfiguration(), artifactConfiguration);
+    }
+
 }

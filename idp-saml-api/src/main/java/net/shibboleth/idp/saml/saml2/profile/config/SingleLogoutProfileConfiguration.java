@@ -20,6 +20,8 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.base.Function;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoConfidentialityMessageChannelPredicate;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
@@ -33,6 +35,9 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ProfileConfig
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/logout";
+
+    /** Lookup function to supply {@link #artifactConfig} property. */
+    @Nullable private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
 
     /** SAML artifact configuration. */
     @Nullable private SAMLArtifactConfiguration artifactConfig;
@@ -56,7 +61,7 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ProfileConfig
     
     /** {@inheritDoc} */
     @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
-        return artifactConfig;
+        return getIndirectProperty(artifactConfigurationLookupStrategy, artifactConfig);
     }
 
     /**
@@ -66,6 +71,16 @@ public class SingleLogoutProfileConfiguration extends AbstractSAML2ProfileConfig
      */
     public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
         artifactConfig = config;
+    }
+
+    /**
+     * Set a lookup strategy for the {@link #artifactConfig} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setArtifactConfigurationLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
+        artifactConfigurationLookupStrategy = strategy;
     }
 
 }
