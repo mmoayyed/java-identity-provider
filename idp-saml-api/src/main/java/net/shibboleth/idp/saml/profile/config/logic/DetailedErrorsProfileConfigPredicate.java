@@ -25,7 +25,8 @@ import net.shibboleth.idp.profile.logic.AbstractRelyingPartyPredicate;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
- * A predicate that returns {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#isDetailedErrors()}
+ * A predicate that evaluates
+ * {@link net.shibboleth.idp.relyingparty.RelyingPartyConfiguration#getDetailedErrorsPredicate()}
  * if available from a {@link RelyingPartyContext} obtained via a lookup function,
  * by default a child of the {@link ProfileRequestContext}.
  * 
@@ -38,7 +39,7 @@ public class DetailedErrorsProfileConfigPredicate extends AbstractRelyingPartyPr
     public boolean apply(@Nullable final ProfileRequestContext input) {
         final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
         if (rpc != null && rpc.getConfiguration() != null) {
-            return rpc.getConfiguration().isDetailedErrors();
+            return rpc.getConfiguration().getDetailedErrorsPredicate().apply(input);
         }
         
         return false;

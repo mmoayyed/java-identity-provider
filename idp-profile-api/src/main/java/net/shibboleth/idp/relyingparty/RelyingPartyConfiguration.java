@@ -64,11 +64,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     /** Self-referential ID to use when responding to messages. */
     @Nullable @NotEmpty private String responderId;
 
-    /** Lookup function to supply {@link #detailedErrors} property. */
-    @Nullable private Function<ProfileRequestContext,Boolean> detailedErrorsLookupStrategy;
-
     /** Controls whether detailed information about errors should be exposed. */
-    private boolean detailedErrors;
+    @Nonnull private Predicate<ProfileRequestContext> detailedErrorsPredicate;
 
     /** Lookup function to supply {@link #profileConfigurations} property. */
     @Nullable
@@ -83,6 +80,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
     /** Constructor. */
     public RelyingPartyConfiguration() {
         activationCondition = Predicates.alwaysTrue();
+        detailedErrorsPredicate = Predicates.alwaysFalse();
         profileConfigurations = Collections.emptyMap();
     }
     
@@ -133,33 +131,47 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
         
     /**
      * Get whether detailed information about errors should be exposed.
-     * 
+     *
      * @return true iff it is acceptable to expose detailed error information
+     *
+     * @deprecated Use {@link #getDetailedErrorsPredicate()} instead.
      */
     public boolean isDetailedErrors() {
-        return getIndirectProperty(detailedErrorsLookupStrategy, detailedErrors);
+        return detailedErrorsPredicate.apply(getProfileRequestContext());
     }
 
     /**
      * Set whether detailed information about errors should be exposed.
      * 
      * @param flag flag to set
+     *
+     * @deprecated Use {@link #setDetailedErrorsPredicate(Predicate)} instead.
      */
     public void setDetailedErrors(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        detailedErrors = flag;
+        detailedErrorsPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
     }
-    
+
     /**
-     * Set a lookup strategy for the {@link #detailedErrors} property.
-     * 
-     * @param strategy  lookup strategy
+     * Get a condition to determine whether detailed information about errors should be exposed.
+     *
+     * @return a condition to evaluate
      */
-    public void setDetailedErrorsLookupStrategy(@Nullable final Function<ProfileRequestContext,Boolean> strategy) {
+    @Nonnull public Predicate<ProfileRequestContext> getDetailedErrorsPredicate() {
+        return detailedErrorsPredicate;
+    }
+
+    /**
+     * Set a condition to determine whether detailed information about errors should be exposed.
+     * 
+     * @param condition  condition to set
+     */
+    public void setDetailedErrorsPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        detailedErrorsLookupStrategy = strategy;
+        detailedErrorsPredicate = Constraint.isNotNull(condition, "Detailed errors predicate cannot be null");
     }
     
     /**
@@ -258,7 +270,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * 
      * @return current profile request context
      */
-    @Nullable private ProfileRequestContext getProfileRequestContext() {
+    @Nullable protected ProfileRequestContext getProfileRequestContext() {
         if (servletRequest != null) {
             final Object object = servletRequest.getAttribute(ProfileRequestContext.BINDING_KEY);
             if (object instanceof ProfileRequestContext) {
@@ -281,7 +293,7 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * 
      * @return a dynamic or static result, if any
      */
-    @Nullable private <T> T getIndirectProperty(@Nullable final Function<ProfileRequestContext,T> lookupStrategy,
+    @Nullable protected <T> T getIndirectProperty(@Nullable final Function<ProfileRequestContext,T> lookupStrategy,
             @Nullable final T staticValue) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         

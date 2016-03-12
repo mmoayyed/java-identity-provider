@@ -34,7 +34,7 @@ public class DetailedErrorsPredicate extends AbstractRelyingPartyPredicate {
         if (input != null) {
             final RelyingPartyContext rpc = getRelyingPartyContextLookupStrategy().apply(input);
             if (rpc != null && rpc.getConfiguration() != null) {
-                return rpc.getConfiguration().isDetailedErrors();
+                return rpc.getConfiguration().getDetailedErrorsPredicate().apply(input);
             }
         }
         

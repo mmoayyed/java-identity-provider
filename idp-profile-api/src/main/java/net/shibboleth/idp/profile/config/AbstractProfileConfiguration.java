@@ -25,26 +25,48 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.servlet.ServletRequest;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** Base class for {@link ProfileConfiguration} implementations. */
 public abstract class AbstractProfileConfiguration implements ProfileConfiguration {
 
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractProfileConfiguration.class);
+
+    /** Access to servlet request. */
+    @Nullable private ServletRequest servletRequest;
+
     /** ID of the profile configured. */
     @Nonnull @NotEmpty private final String profileId;
+
+    /** Lookup function to supply {@link #inboundFlows} property. */
+    @Nullable private Function<ProfileRequestContext,List<String>> inboundFlowsLookupStrategy;
 
     /** Enables inbound interceptor flows. */
     @Nonnull @NonnullElements private List<String> inboundFlows;
 
+    /** Lookup function to supply {@link #outboundFlows} property. */
+    @Nullable private Function<ProfileRequestContext,List<String>> outboundFlowsLookupStrategy;
+
     /** Enables outbound interceptor flows. */
     @Nonnull @NonnullElements private List<String> outboundFlows;
-    
+
+    /** Lookup function to supply {@link #securityConfiguration} property. */
+    @Nullable private Function<ProfileRequestContext,SecurityConfiguration> securityConfigurationLookupStrategy;
+
     /** The security configuration for this profile. */
     @Nullable private SecurityConfiguration securityConfiguration;
 
@@ -59,6 +81,17 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         outboundFlows = Collections.emptyList();
     }
 
+    /**
+     * Set the {@link ServletRequest} from which to obtain a reference to the current {@link ProfileRequestContext}.
+     *
+     * <p>Generally this would be expected to be a proxy to the actual object.</p>
+     *
+     * @param request servlet request
+     */
+    public void setServletRequest(@Nullable final ServletRequest request) {
+        servletRequest = request;
+    }
+
     /** {@inheritDoc} */
     @Override
     @Nonnull @NotEmpty public String getId() {
@@ -68,7 +101,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
     /** {@inheritDoc} */
     @Override
     @Nullable public SecurityConfiguration getSecurityConfiguration() {
-        return securityConfiguration;
+        return getIndirectProperty(securityConfigurationLookupStrategy, securityConfiguration);
     }
 
     /**
@@ -80,10 +113,20 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         securityConfiguration = configuration;
     }
 
+    /**
+     * Set a lookup strategy for the {@link #securityConfiguration} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setSecurityConfigurationLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,SecurityConfiguration> strategy) {
+        securityConfigurationLookupStrategy = strategy;
+    }
+
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows() {
-        return inboundFlows;
+        return ImmutableList.copyOf(getIndirectProperty(inboundFlowsLookupStrategy, inboundFlows));
     }
 
     /**
@@ -91,16 +134,27 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setInboundInterceptorFlows(@Nonnull @NonnullElements final Collection<String> flows) {
-        Constraint.isNotNull(flows, "Collection of flows cannot be null");
-        
-        inboundFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+    public void setInboundInterceptorFlows(@Nullable @NonnullElements final Collection<String> flows) {
+        if (flows != null) {
+            inboundFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+        } else {
+            inboundFlows = Collections.emptyList();
+        }
     }
-    
+
+    /**
+     * Set a lookup strategy for the {@link #inboundFlows} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setInboundFlowsLookupStrategy(@Nullable final Function<ProfileRequestContext,List<String>> strategy) {
+        inboundFlowsLookupStrategy = strategy;
+    }
+
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getOutboundInterceptorFlows() {
-        return outboundFlows;
+        return ImmutableList.copyOf(getIndirectProperty(outboundFlowsLookupStrategy, outboundFlows));
     }
 
     /**
@@ -108,10 +162,21 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setOutboundInterceptorFlows(@Nonnull @NonnullElements final Collection<String> flows) {
-        Constraint.isNotNull(flows, "Collection of flows cannot be null");
-        
-        outboundFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+    public void setOutboundInterceptorFlows(@Nullable @NonnullElements final Collection<String> flows) {
+        if (flows != null) {
+            outboundFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+        } else {
+            outboundFlows = Collections.emptyList();
+        }
+    }
+
+    /**
+     * Set a lookup strategy for the {@link #outboundFlows} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setOutboundFlowsLookupStrategy(@Nullable final Function<ProfileRequestContext,List<String>> strategy) {
+        outboundFlowsLookupStrategy = strategy;
     }
 
     /** {@inheritDoc} */
@@ -138,5 +203,45 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         final AbstractProfileConfiguration other = (AbstractProfileConfiguration) obj;
         return Objects.equals(profileId, other.getId());
     }
-    
+
+    /**
+     * Get the current {@link ProfileRequestContext}.
+     *
+     * @return current profile request context
+     */
+    @Nullable protected ProfileRequestContext getProfileRequestContext() {
+        if (servletRequest != null) {
+            final Object object = servletRequest.getAttribute(ProfileRequestContext.BINDING_KEY);
+            if (object instanceof ProfileRequestContext) {
+                return (ProfileRequestContext) object;
+            }
+            log.warn("ProfileConfiguration {}: No ProfileRequestContext in request", getId());
+        } else {
+            log.warn("ProfileConfiguration {}: ServletRequest was null", getId());
+        }
+        return null;
+    }
+
+    /**
+     * Get a property, possibly through indirection via a lookup function.
+     *
+     * @param <T> type of property
+     *
+     * @param lookupStrategy lookup strategy function for indirect access
+     * @param staticValue static value to return in the absence of a lookup function or if null is returned
+     *
+     * @return a dynamic or static result, if any
+     */
+    @Nullable protected <T> T getIndirectProperty(@Nullable final Function<ProfileRequestContext,T> lookupStrategy,
+            @Nullable final T staticValue) {
+
+        if (lookupStrategy != null) {
+            final T prop = lookupStrategy.apply(getProfileRequestContext());
+            if (prop != null) {
+                return prop;
+            }
+        }
+
+        return staticValue;
+    }
 }

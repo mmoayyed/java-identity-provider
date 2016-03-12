@@ -54,6 +54,12 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>idp-cas-impl</artifactId>
+            <version>${project.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>idp-session-impl</artifactId>
             <version>${project.version}</version>
             <optional>true</optional>

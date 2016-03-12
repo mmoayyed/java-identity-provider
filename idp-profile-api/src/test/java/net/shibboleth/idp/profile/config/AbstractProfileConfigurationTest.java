@@ -20,8 +20,13 @@ package net.shibboleth.idp.profile.config;
 import net.shibboleth.idp.relyingparty.MockProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 /** Unit test for {@link AbstractProfileConfiguration}. */
 public class AbstractProfileConfigurationTest {
@@ -34,25 +39,67 @@ public class AbstractProfileConfigurationTest {
         try {
             config = new MockProfileConfiguration(null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
 
         }
 
         try {
             config = new MockProfileConfiguration("");
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
 
         }
     }
 
     @Test
-    public void testSecurityConfiguration(){
-        MockProfileConfiguration config = new MockProfileConfiguration("mock");
+    public void testSecurityConfiguration() {
+        final MockProfileConfiguration config = new MockProfileConfiguration("mock");
         Assert.assertNotNull(config.getSecurityConfiguration());
         
         SecurityConfiguration securityConfig = new SecurityConfiguration();
         config.setSecurityConfiguration(securityConfig);
         Assert.assertSame(config.getSecurityConfiguration(), securityConfig);
+    }
+
+    @Test
+    public void testIndirectSecurityConfiguration() {
+        final MockProfileConfiguration config = new MockProfileConfiguration("mock");
+        config.setSecurityConfiguration(null);
+        final SecurityConfiguration securityConfig = new SecurityConfiguration();
+        config.setSecurityConfigurationLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,SecurityConfiguration>constant(securityConfig));
+        Assert.assertSame(config.getSecurityConfiguration(), securityConfig);
+    }
+
+    @Test
+    public void testInboundFlows() {
+        final MockProfileConfiguration config = new MockProfileConfiguration("mock");
+        final List<String> flows = Arrays.asList("foo", "bar");
+        config.setInboundInterceptorFlows(flows);
+        Assert.assertEquals(config.getInboundInterceptorFlows(), flows);
+    }
+
+    @Test
+    public void testIndirectInboundFlows() {
+        final MockProfileConfiguration config = new MockProfileConfiguration("mock");
+        final List<String> flows = Arrays.asList("foo", "bar");
+        config.setInboundFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext,List<String>>constant(flows));
+        Assert.assertEquals(config.getInboundInterceptorFlows(), flows);
+    }
+
+    @Test
+    public void testOutboundFlows() {
+        final MockProfileConfiguration config = new MockProfileConfiguration("mock");
+        final List<String> flows = Arrays.asList("foo", "bar");
+        config.setOutboundInterceptorFlows(flows);
+        Assert.assertEquals(config.getOutboundInterceptorFlows(), flows);
+    }
+
+    @Test
+    public void testIndirectOutboundFlows() {
+        final MockProfileConfiguration config = new MockProfileConfiguration("mock");
+        final List<String> flows = Arrays.asList("foo", "bar");
+        config.setOutboundFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext,List<String>>constant(flows));
+        Assert.assertEquals(config.getOutboundInterceptorFlows(), flows);
     }
 }
