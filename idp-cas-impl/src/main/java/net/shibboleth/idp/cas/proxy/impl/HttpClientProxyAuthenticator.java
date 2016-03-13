@@ -108,7 +108,7 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
      * @param timeout Non-zero timeout in milliseconds for both connection and socket timeouts.
      */
     public void setTimeout(@Positive final int timeout) {
-        this.timeout = (int) Constraint.isGreaterThan(timeout, 0, "Timeout must be positive");
+        this.timeout = (int) Constraint.isGreaterThan(0, timeout, "Timeout must be positive");
     }
 
     @Override
