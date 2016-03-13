@@ -105,6 +105,7 @@
     </bean>
     
     <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
     <bean id="ErrorViewPopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
