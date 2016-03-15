@@ -26,9 +26,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionPa
 
 import org.w3c.dom.Element;
 
-/**
- * Spring Bean Definition Parser for static data connector.
- */
+/** Spring Bean Definition Parser for PrincipalName attribute definitions. */
 public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */

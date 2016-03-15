@@ -25,9 +25,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionPa
 
 import org.w3c.dom.Element;
 
-/**
- * Spring Bean Definition Parser for static data connector.
- */
+/** Spring Bean Definition Parser for PrincipalAuthenticationMethod. */
 public class PrincipalAuthenticationMethodAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
@@ -35,7 +33,7 @@ public class PrincipalAuthenticationMethodAttributeDefinitionParser extends Base
             new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalAuthenticationMethod");
 
     /** {@inheritDoc} */
-    @Override protected Class<PrincipalAuthenticationMethodAttributeDefinition> getBeanClass(Element element) {
+    @Override protected Class<PrincipalAuthenticationMethodAttributeDefinition> getBeanClass(final Element element) {
         return PrincipalAuthenticationMethodAttributeDefinition.class;
     }
 

@@ -33,9 +33,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/**
- * Spring Bean Definition Parser for static data connector.
- */
+/** Spring Bean Definition Parser for Regexp split attribute definitions.*/
 public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
@@ -46,7 +44,7 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
     @Nonnull private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<RegexSplitAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<RegexSplitAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return RegexSplitAttributeDefinition.class;
     }
 
@@ -62,7 +60,7 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
             throw new BeanCreationException(getLogPrefix() + " No regexp text provided.");
         }
 
-        BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(PatternFactoryBean.class);
+        final BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(PatternFactoryBean.class);
         
         pattern.addPropertyValue("regexp", regexp);
 

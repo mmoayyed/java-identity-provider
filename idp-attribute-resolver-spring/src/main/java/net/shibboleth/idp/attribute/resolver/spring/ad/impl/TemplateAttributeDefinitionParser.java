@@ -36,7 +36,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring bean definition parser for scripted attribute configuration elements.
+ * Spring bean definition parser for templated attribute definition elements.
  */
 public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
@@ -56,7 +56,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
 
     /** {@inheritDoc} */
     @Override
-    protected Class<TemplateAttributeDefinition> getBeanClass(@Nullable Element element) {
+    protected Class<TemplateAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return TemplateAttributeDefinition.class;
     }
 
@@ -79,7 +79,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
                 ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME);
         if (null != sourceAttributeElements) {
             final List<String> sourceAttributes = new ManagedList<>(sourceAttributeElements.size());
-            for (Element element : sourceAttributeElements) {
+            for (final Element element : sourceAttributeElements) {
                 sourceAttributes.add(StringSupport.trimOrNull(element.getTextContent()));
             }
             log.debug("{} Source attributes are '{}'.", getLogPrefix(), sourceAttributes);

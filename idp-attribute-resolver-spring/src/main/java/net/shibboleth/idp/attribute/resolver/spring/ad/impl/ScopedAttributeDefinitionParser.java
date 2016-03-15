@@ -32,7 +32,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Spring Bean Definition Parser for static data connector.
+ * Spring Bean Definition Parser for scoped attribute definitions.
  */
 public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
@@ -44,7 +44,7 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
 
     /** {@inheritDoc} */
     @Override
-    protected Class<ScopedAttributeDefinition> getBeanClass(@Nullable Element element) {
+    protected Class<ScopedAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return ScopedAttributeDefinition.class;
     }
 
@@ -55,7 +55,7 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
         super.doParse(config, parserContext, builder);
 
 
-        String scope = StringSupport.trimOrNull(config.getAttributeNS(null, "scope"));
+        final String scope = StringSupport.trimOrNull(config.getAttributeNS(null, "scope"));
         log.debug("{} Setting scope to '{}'.", getLogPrefix(), scope);
         builder.addPropertyValue("scope", scope);
     }
