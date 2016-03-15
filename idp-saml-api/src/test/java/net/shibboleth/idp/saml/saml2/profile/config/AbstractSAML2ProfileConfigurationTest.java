@@ -18,10 +18,12 @@
 package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import net.shibboleth.idp.saml.saml2.profile.config.AbstractSAML2ProfileConfiguration;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -31,8 +33,25 @@ import com.google.common.base.Predicates;
 /** Unit test for {@link AbstractSAML2ProfileConfiguration}. */
 public class AbstractSAML2ProfileConfigurationTest {
 
+    @Test
+    public void testEncryptionOptional(){
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+        Assert.assertFalse(config.isEncryptionOptional());
+
+        config.setEncryptionOptional(true);
+        Assert.assertTrue(config.isEncryptionOptional());
+    }
+
+    @Test
+    public void testIndirectEncryptionOptional(){
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+
+        config.setEncryptionOptionalPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
+        Assert.assertTrue(config.isEncryptionOptional());
+    }
+
     @Test public void testEncryptNameIDsPredicate() {
-        MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptNameIDs());
 
         config.setEncryptNameIDs(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -47,7 +66,7 @@ public class AbstractSAML2ProfileConfigurationTest {
     }
 
     @Test public void testEncryptAssertionsPredicate() {
-        MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptAssertions());
 
         config.setEncryptAssertions(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -62,7 +81,7 @@ public class AbstractSAML2ProfileConfigurationTest {
     }
 
     @Test public void testEncryptAttributesPredicate() {
-        MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getEncryptAttributes());
 
         config.setEncryptAttributes(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -77,29 +96,54 @@ public class AbstractSAML2ProfileConfigurationTest {
     }
     
     @Test public void testProxyCount() {
-        MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertEquals(config.getProxyCount(), 0);
 
         config.setProxyCount(1);
         Assert.assertEquals(config.getProxyCount(), 1);
     }
 
+    @Test public void testIndirectProxyCount() {
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+
+        config.setProxyCountLookupStrategy(FunctionSupport.<ProfileRequestContext,Long>constant(1L));
+        Assert.assertEquals(config.getProxyCount(), 1);
+    }
+
     @Test public void testProxyAudiences() {
-        MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
         Assert.assertNotNull(config.getProxyAudiences());
         Assert.assertTrue(config.getProxyAudiences().isEmpty());
 
-        ArrayList<String> audiences = new ArrayList<>();
+        final ArrayList<String> audiences = new ArrayList<>();
         audiences.add("foo");
         audiences.add("foo");
         audiences.add("bar");
 
         config.setProxyAudiences(audiences);
         Assert.assertNotSame(config.getProxyAudiences(), audiences);
-        Assert.assertNotNull(config.getProxyAudiences());
-        Assert.assertEquals(config.getProxyAudiences().size(), 2);
-        Assert.assertTrue(config.getProxyAudiences().contains("foo"));
-        Assert.assertTrue(config.getProxyAudiences().contains("bar"));
+        Assert.assertEquals(config.getProxyAudiences(), audiences);
+
+        try {
+            config.getProxyAudiences().add("baz");
+            Assert.fail();
+        } catch (UnsupportedOperationException e) {
+            // expected this
+        }
+    }
+
+    @Test public void testIndirectProxyAudiences() {
+        final MockSAML2ProfileConfiguration config = new MockSAML2ProfileConfiguration();
+
+        final ArrayList<String> audiences = new ArrayList<>();
+        audiences.add("foo");
+        audiences.add("foo");
+        audiences.add("bar");
+
+        config.setProxyAudiencesLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(audiences));
+        Assert.assertNotSame(config.getProxyAudiences(), audiences);
+        Assert.assertEquals(config.getProxyAudiences(), audiences);
 
         try {
             config.getProxyAudiences().add("baz");

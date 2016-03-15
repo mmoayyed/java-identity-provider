@@ -75,38 +75,38 @@
         p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-sso"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.ECP"
         class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"
         p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml2-ecp"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.Logout"
         class="net.shibboleth.idp.saml.saml2.profile.config.SingleLogoutProfileConfiguration"
         p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-slo"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.AttributeQuery"
         class="net.shibboleth.idp.saml.saml2.profile.config.AttributeQueryProfileConfiguration"
         p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml-soap"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="SAML2.ArtifactResolution"
         class="net.shibboleth.idp.saml.saml2.profile.config.ArtifactResolutionProfileConfiguration"
         p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml-soap"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="Liberty.SSOS"
         class="net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration"
         p:servletRequest-ref="shibboleth.HttpServletRequest"
         p:inboundInterceptorFlows="security-policy/saml2-idwsf-ssos"
-        p:encryptionOptional="%{idp.encryption.optional:false}" />
+        p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
 
     <bean id="CAS.LoginConfiguration"
         class="net.shibboleth.idp.cas.config.impl.LoginConfiguration"

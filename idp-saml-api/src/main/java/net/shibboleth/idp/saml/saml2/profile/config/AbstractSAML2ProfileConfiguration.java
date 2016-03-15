@@ -19,11 +19,11 @@ package net.shibboleth.idp.saml.saml2.profile.config;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import com.google.common.base.Function;
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -42,7 +42,7 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         SAML2ProfileConfiguration {
 
     /** Whether encryption is optional in the face of no key, etc. */
-    private boolean encryptionOptional;
+    @Nonnull private Predicate<ProfileRequestContext> encryptionOptionalPredicate;
     
     /** Predicate used to determine if assertions should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAssertionsPredicate;
@@ -53,11 +53,17 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     /** Predicate used to determine if attributes should be encrypted. */
     @Nonnull private Predicate<ProfileRequestContext> encryptAttributesPredicate;
 
+    /** Lookup function to supply {@link #proxyCount} property. */
+    @Nullable private Function<ProfileRequestContext,Long> proxyCountLookupStrategy;
+
     /** Maximum proxy count for an assertion. Default value: 0 */
     private long proxyCount;
 
+    /** Lookup function to supply {@link #proxyAudiences} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<String>> proxyAudiencesLookupStrategy;
+
     /** Audiences for the proxy. */
-    @Nonnull @NonnullElements private Set<String> proxyAudiences;
+    @Nonnull @NonnullElements private Collection<String> proxyAudiences;
 
     /**
      * Constructor.
@@ -67,17 +73,18 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
     public AbstractSAML2ProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
 
-        encryptionOptional = false;
+        encryptionOptionalPredicate = Predicates.alwaysFalse();
         encryptAssertionsPredicate = Predicates.alwaysFalse();
         encryptNameIDsPredicate = Predicates.alwaysFalse();
         encryptAttributesPredicate = Predicates.alwaysFalse();
         proxyCount = 0;
-        proxyAudiences = Collections.emptySet();
+        proxyAudiences = Collections.emptyList();
     }
 
     /** {@inheritDoc} */
     @Override public long getProxyCount() {
-        return proxyCount;
+        return Constraint.isGreaterThanOrEqual(0, getIndirectProperty(proxyCountLookupStrategy, proxyCount),
+                "Proxy count must be greater than or equal to 0");
     }
 
     /**
@@ -89,9 +96,18 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
         proxyCount = Constraint.isGreaterThanOrEqual(0, count, "Proxy count must be greater than or equal to 0");
     }
 
+    /**
+     * Set a lookup strategy for the {@link #proxyCount} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setProxyCountLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
+        proxyCountLookupStrategy = strategy;
+    }
+
     /** {@inheritDoc} */
     @Override public Collection<String> getProxyAudiences() {
-        return ImmutableList.copyOf(proxyAudiences);
+        return ImmutableList.copyOf(getIndirectProperty(proxyAudiencesLookupStrategy, proxyAudiences));
     }
 
     /**
@@ -99,25 +115,27 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * 
      * @param audiences proxy audiences to be added to responses
      */
-    public void setProxyAudiences(@Nonnull @NonnullElements final Collection<String> audiences) {
-        if (audiences == null || audiences.isEmpty()) {
-            proxyAudiences = Collections.emptySet();
-            return;
-        }
-
-        proxyAudiences = new HashSet<>();
-        String trimmedAudience;
-        for (String audience : audiences) {
-            trimmedAudience = StringSupport.trimOrNull(audience);
-            if (trimmedAudience != null) {
-                proxyAudiences.add(trimmedAudience);
-            }
+    public void setProxyAudiences(@Nullable @NonnullElements final Collection<String> audiences) {
+        if (audiences == null) {
+            proxyAudiences = Collections.emptyList();
+        } else {
+            proxyAudiences = StringSupport.normalizeStringCollection(audiences);
         }
     }
-    
+
+    /**
+     * Set a lookup strategy for the {@link #proxyAudiences} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setProxyAudiencesLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
+        proxyAudiencesLookupStrategy = strategy;
+    }
+
     /** {@inheritDoc} */
     @Override public boolean isEncryptionOptional() {
-        return encryptionOptional;
+        return encryptionOptionalPredicate.apply(getProfileRequestContext());
     }
     
     /**
@@ -126,9 +144,28 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * @param flag  flag to set
      */
     public void setEncryptionOptional(final boolean flag) {
-        encryptionOptional = flag;
+        encryptionOptionalPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
+    }
+    
+    /**
+     * Get condition to determine whether encryption is optional in the face of a missing key, etc.
+     *
+     * @return condition
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getEncryptionOptionalPredicate() {
+        return encryptionOptionalPredicate;
     }
 
+    /**
+     * Set a condition to determine whether encryption is optional in the face of a missing key, etc.
+     *
+     * @param condition condition to set
+     */
+    public void setEncryptionOptionalPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        encryptionOptionalPredicate = Constraint.isNotNull(condition, "Encryption optional predicate cannot be null");
+    }
+    
     /** {@inheritDoc} */
     @Override @Nonnull public Predicate<ProfileRequestContext> getEncryptAssertions() {
         return encryptAssertionsPredicate;

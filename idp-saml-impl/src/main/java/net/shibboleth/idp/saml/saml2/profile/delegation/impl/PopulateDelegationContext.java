@@ -328,7 +328,6 @@ public class PopulateDelegationContext extends AbstractProfileAction {
      * @param profileRequestContext the current profile request context
      * @return true iff {@link #doExecute(ProfileRequestContext)} should proceed
      */
-    @SuppressWarnings("deprecation")
     protected boolean doPreExecuteRelyingParty(@Nonnull final ProfileRequestContext profileRequestContext) {
         relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyContext == null) {
@@ -345,13 +344,9 @@ public class PopulateDelegationContext extends AbstractProfileAction {
         }
         
         if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
-            BrowserSSOProfileConfiguration config = 
+            final BrowserSSOProfileConfiguration config = 
                     (BrowserSSOProfileConfiguration) relyingPartyContext.getProfileConfig();
-            if (config.getAllowingDelegation() != null) {
-                delegationAllowed = config.getAllowingDelegation();
-            } else if (config.getAllowDelegation() != null) {
-                delegationAllowed = config.getAllowDelegation().apply(profileRequestContext);
-            }
+            delegationAllowed = config.getAllowDelegation().apply(profileRequestContext);
         } else {
             log.debug("ProfileConfiguration does not support delegation: {}", 
                     relyingPartyContext.getProfileConfig().getClass().getName());

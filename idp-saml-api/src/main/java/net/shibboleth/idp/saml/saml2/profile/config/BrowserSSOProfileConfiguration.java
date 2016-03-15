@@ -43,6 +43,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -56,22 +57,24 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
 
+    /** Lookup function to supply {@link #artifactConfig} property. */
+    @Nullable private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
+
     /** SAML artifact configuration. */
     @Nullable private SAMLArtifactConfiguration artifactConfig;
     
-    /**
-     * Whether attributes should be resolved in the course of the profile.
-     * 
-     * <p>Default value: true</p>
-     */
-    private boolean resolveAttributes;
-    
-    /** Whether responses to the authentication request should include an attribute statement. Default value: true */
-    private boolean includeAttributeStatement;
+    /** Whether attributes should be resolved in the course of the profile. */
+    @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;
+
+    /** Whether responses to the authentication request should include an attribute statement. */
+    @Nonnull private Predicate<ProfileRequestContext> includeAttributeStatementPredicate;
 
     /** Whether the response endpoint should be validated if the request is signed. */
-    private boolean skipEndpointValidationWhenSigned;
+    @Nonnull private Predicate<ProfileRequestContext> skipEndpointValidationWhenSignedPredicate;
 
+    /** Lookup function to supply {@link #maximumSPSessionLifetime} property. */
+    @Nullable private Function<ProfileRequestContext,Long> maximumSPSessionLifetimeLookupStrategy;
+    
     /**
      * The maximum amount of time, in milliseconds, the service provider should maintain a session for the user. A value
      * of 0 (the default) indicates no cap is put on the SP's session lifetime.
@@ -83,23 +86,33 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      */
     @Nonnull private Predicate<ProfileRequestContext> allowDelegationPredicate;
     
-    /** 
-     * Whether produced assertions may be delegated. Default value: null.
-     * @deprecated use {@link #allowDelegationPredicate} instead
-     */
-    private Boolean allowingDelegation;
+    /** Lookup function to supply {@link #maximumTokenDelegationChainLength} property. */
+    @Nullable private Function<ProfileRequestContext,Long> maximumTokenDelegationChainLengthLookupStrategy;
     
     /** Limits the total number of delegates that may be derived from the initial SAML token. Default value: 1. */
     @NonNegative private long maximumTokenDelegationChainLength;
 
+    /** Lookup function to supply {@link #defaultAuthenticationMethods} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>>
+            defaultAuthenticationContextsLookupStrategy;
+    
     /** Selects, and limits, the authentication contexts to use for requests. */
     @Nonnull @NonnullElements private List<AuthnContextClassRefPrincipal> defaultAuthenticationContexts;
+
+    /** Lookup function to supply {@link #authenticationFlows} property. */
+    @Nullable private Function<ProfileRequestContext,Set<String>> authenticationFlowsLookupStrategy;
 
     /** Filters the usable authentication flows. */
     @Nonnull @NonnullElements private Set<String> authenticationFlows;
     
+    /** Lookup function to supply {@link #postAuthenticationFlows} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<String>> postAuthenticationFlowsLookupStrategy;
+    
     /** Enables post-authentication interceptor flows. */
     @Nonnull @NonnullElements private List<String> postAuthenticationFlows;
+    
+    /** Lookup function to supply {@link #nameIDFormatPrecedence} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<String>> nameIDFormatPrecedenceLookupStrategy;
     
     /** Precedence of name identifier formats to use for requests. */
     @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
@@ -118,11 +131,10 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         super(profileId);
         setSignResponses(Predicates.<ProfileRequestContext>alwaysTrue());
         setEncryptAssertions(Predicates.<ProfileRequestContext>alwaysTrue());
-        resolveAttributes = true;
-        includeAttributeStatement = true;
-        skipEndpointValidationWhenSigned = false;
+        resolveAttributesPredicate = Predicates.alwaysTrue();
+        includeAttributeStatementPredicate = Predicates.alwaysFalse();
+        skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
         maximumSPSessionLifetime = 0;
-        allowingDelegation = null;
         maximumTokenDelegationChainLength = 1;
         allowDelegationPredicate = Predicates.<ProfileRequestContext>alwaysFalse();
         defaultAuthenticationContexts = Collections.emptyList();
@@ -133,7 +145,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
 
     /** {@inheritDoc} */
     @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
-        return artifactConfig;
+        return getIndirectProperty(artifactConfigurationLookupStrategy, artifactConfig);
     }
 
     /**
@@ -144,14 +156,28 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
         artifactConfig = config;
     }
+
+    /**
+     * Set a lookup strategy for the {@link #artifactConfig} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setArtifactConfigurationLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
+        artifactConfigurationLookupStrategy = strategy;
+    }
     
     /**
      * Get whether attributes should be resolved during the profile.
+     *
+     * <p>Default is true</p>
      * 
      * @return true iff attributes should be resolved
+     * 
+     * @deprecated Use {@link #getResolveAttributesPredicate()} instead.
      */
     public boolean resolveAttributes() {
-        return resolveAttributes;
+        return resolveAttributesPredicate.apply(getProfileRequestContext());
     }
     
     /**
@@ -160,34 +186,81 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * @param flag flag to set
      */
     public void setResolveAttributes(final boolean flag) {
-        resolveAttributes = flag;
+        resolveAttributesPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
+    }
+
+    /**
+     * Get a condition to determine whether attributes should be resolved during the profile.
+     * 
+     * @return condition
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getResolveAttributesPredicate() {
+        return resolveAttributesPredicate;
     }
     
     /**
+     * Set a condition to determine whether attributes should be resolved during the profile.
+     *
+     * @param condition  condition to set
+     */
+    public void setResolveAttributesPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        resolveAttributesPredicate = Constraint.isNotNull(condition, "Resolve attributes predicate cannot be null");
+    }
+
+    /**
      * Get whether responses to the authentication request should include an attribute statement.
-     * 
+     *
+     * <p>Default is true</p>
+     *
      * @return whether responses to the authentication request should include an attribute statement
+     * 
+     * @deprecated Use {@link #getIncludeAttributeStatementPredicate()} instead.
      */
     public boolean includeAttributeStatement() {
-        return includeAttributeStatement;
+        return includeAttributeStatementPredicate.apply(getProfileRequestContext());
     }
 
     /**
      * Set whether responses to the authentication request should include an attribute statement.
      * 
-     * @param include whether responses to the authentication request should include an attribute statement
+     * @param include flag to set
      */
     public void setIncludeAttributeStatement(final boolean include) {
-        includeAttributeStatement = include;
+        includeAttributeStatementPredicate = include ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
+    }
+
+    /**
+     * Get a condition to determine whether responses to the authentication request should include an
+     * attribute statement.
+     * 
+     * @return condition
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getIncludeAttributeStatementPredicate() {
+        return includeAttributeStatementPredicate;
+    }
+    
+    /**
+     * Set a condition to determine whether responses to the authentication request should include an
+     * attribute statement.
+     *
+     * @param condition  condition to set
+     */
+    public void setIncludeAttributeStatementPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        includeAttributeStatementPredicate = Constraint.isNotNull(condition,
+                "Include attribute statement predicate cannot be null");
     }
 
     /**
      * Get whether the response endpoint should be validated if the request is signed.
      * 
      * @return whether the response endpoint should be validated if the request is signed
+     * 
+     * @deprecated Use {@link #getSkipEndpointValidationWhenSignedPredicate()} instead.
      */
     public boolean skipEndpointValidationWhenSigned() {
-        return skipEndpointValidationWhenSigned;
+        return skipEndpointValidationWhenSignedPredicate.apply(getProfileRequestContext());
     }
 
     /**
@@ -196,7 +269,28 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * @param skip whether the response endpoint should be validated if the request is signed
      */
     public void setSkipEndpointValidationWhenSigned(final boolean skip) {
-        skipEndpointValidationWhenSigned = skip;
+        skipEndpointValidationWhenSignedPredicate = skip ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
+    }
+    
+    /**
+     * Get condition to determine whether the response endpoint should be validated if the request is signed.
+     * 
+     * @return condition
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getSkipEndpointValidationWhenSignedPredicate() {
+        return skipEndpointValidationWhenSignedPredicate;
+    }
+
+    /**
+     * Set condition to determine whether the response endpoint should be validated if the request is signed.
+     * 
+     * @param condition condition to set
+     */
+    public void setSkipEndpointValidationWhenSignedPredicate(
+            @Nonnull final Predicate<ProfileRequestContext> condition) {
+        skipEndpointValidationWhenSignedPredicate = Constraint.isNotNull(condition,
+                "Skip endpoint validation predicate cannot be null");
     }
 
     /**
@@ -206,7 +300,9 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * @return max lifetime of service provider should maintain a session
      */
     @NonNegative public long getMaximumSPSessionLifetime() {
-        return maximumSPSessionLifetime;
+        return Constraint.isGreaterThanOrEqual(0,
+                getIndirectProperty(maximumSPSessionLifetimeLookupStrategy, maximumSPSessionLifetime),
+                "Maximum SP session lifetime must be greater or equal to 0");
     }
 
     /**
@@ -220,6 +316,53 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
                 Constraint.isGreaterThanOrEqual(0, lifetime,
                         "Maximum SP session lifetime must be greater than or equal to 0");
     }
+    
+    /**
+     * Set a lookup strategy for the {@link #maximumSPSessionLifetime} property.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setMaximumSPSessionLifetimeLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Long> strategy) {
+        maximumSPSessionLifetimeLookupStrategy = strategy;
+    }
+
+    /**
+     * Get whether produced assertions may be delegated.
+     * 
+     * @return whether produced assertions may be delegated, as a {@link Boolean}.  May be null.
+     * 
+     * @deprecated use instead {@link #getAllowDelegation()} predicate
+     */
+    @Deprecated
+    public Boolean getAllowingDelegation() {
+        return allowDelegationPredicate.apply(getProfileRequestContext());
+    }
+
+    /**
+     * Set whether produced assertions may be delegated.
+     * 
+     * @param isAllowed whether produced assertions may be delegated
+     */
+    @Deprecated
+    public void setAllowingDelegation(final Boolean isAllowed) {
+        if (isAllowed != null) {
+            allowDelegationPredicate = isAllowed ? Predicates.<ProfileRequestContext>alwaysTrue()
+                    : Predicates.<ProfileRequestContext>alwaysFalse();
+        } else {
+            allowDelegationPredicate = Predicates.alwaysFalse();
+        }
+    }
+
+    /**
+     * Get whether produced assertions may be delegated.
+     * 
+     * @return whether produced assertions may be delegated
+     */
+    public boolean isAllowingDelegation() {
+        return allowDelegationPredicate.apply(getProfileRequestContext());
+    }
+    
     
     /**
      * Get the predicate used to determine if produced assertions may be delegated.
@@ -238,62 +381,18 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      */
 
     public void setAllowDelegation(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        allowDelegationPredicate = Constraint.isNotNull(predicate, "Allow delegation predicate may not be null");
+        allowDelegationPredicate = Constraint.isNotNull(predicate, "Allow delegation predicate cannot be null");
     }
 
-    /**
-     * Get whether produced assertions may be delegated.
-     * 
-     * @return whether produced assertions may be delegated, as a {@link Boolean}.  May be null.
-     * 
-     * @deprecated use instead {@link #getAllowDelegation()} predicate
-     */
-    @Deprecated
-    public Boolean getAllowingDelegation() {
-        return allowingDelegation;
-    }
-    
-    /**
-     * Get whether produced assertions may be delegated.
-     * 
-     * @return whether produced assertions may be delegated
-     * 
-     * @deprecated use instead {@link #getAllowDelegation()} predicate
-     */
-    @Deprecated
-    public boolean isAllowingDelegation() {
-        if (allowingDelegation != null) {
-            return allowingDelegation;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Set whether produced assertions may be delegated.
-     * 
-     * @param isAllowed whether produced assertions may be delegated
-     * 
-     * @deprecated use instead {@link #setAllowingDelegation(Boolean)} predicate
-     */
-    @Deprecated
-    public void setAllowingDelegation(final Boolean isAllowed) {
-        allowingDelegation = isAllowed;
-    }
-
-    /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> 
-        getDefaultAuthenticationMethods() {
-        return ImmutableList.<Principal> copyOf(defaultAuthenticationContexts);
-    }
-    
     /**
      * Get the limits on the total number of delegates that may be derived from the initial SAML token.
      * 
      * @return the limit on the total number of delegates that may be derived from the initial SAML token
      */
-    public long getMaximumTokenDelegationChainLength() {
-        return maximumTokenDelegationChainLength;
+    @NonNegative public long getMaximumTokenDelegationChainLength() {
+        return Constraint.isGreaterThanOrEqual(0,
+                getIndirectProperty(maximumTokenDelegationChainLengthLookupStrategy, maximumTokenDelegationChainLength),
+                "Delegation chain length must be greater than or equal to 0");
     }
 
     /**
@@ -305,23 +404,52 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         maximumTokenDelegationChainLength = Constraint.isGreaterThanOrEqual(0, length,
                 "Delegation chain length must be greater than or equal to 0");
     }
+    
+    /**
+     * Set a lookup strategy for the {@link #maximumTokenDelegationChainLength} property.
+     * 
+     * @param strategy  lookup strategy
+     */
+    public void setMaximumTokenDelegationChainLengthLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Long> strategy) {
+        maximumTokenDelegationChainLengthLookupStrategy = strategy;
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods() {
+        return ImmutableList.<Principal>copyOf(getIndirectProperty(defaultAuthenticationContextsLookupStrategy,
+                defaultAuthenticationContexts));
+    }
+        
     /**
      * Set the default authentication contexts to use, expressed as custom principals.
      * 
      * @param contexts default authentication contexts to use
      */
     public void setDefaultAuthenticationMethods(
-            @Nonnull @NonnullElements final List<AuthnContextClassRefPrincipal> contexts) {
-        Constraint.isNotNull(contexts, "List of contexts cannot be null");
-
-        defaultAuthenticationContexts = new ArrayList<>(Collections2.filter(contexts, Predicates.notNull()));
+            @Nullable @NonnullElements final Collection<AuthnContextClassRefPrincipal> contexts) {
+        if (contexts != null) {
+            defaultAuthenticationContexts = new ArrayList<>(Collections2.filter(contexts, Predicates.notNull()));
+        } else {
+            defaultAuthenticationContexts = Collections.emptyList();
+        }
+    }
+    
+    /**
+     * Set a lookup strategy for the {@link #defaultAuthenticationMethods} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setDefaultAuthenticationMethodsLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>> strategy) {
+        defaultAuthenticationContextsLookupStrategy = strategy;
     }
 
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows() {
-        return ImmutableSet.copyOf(authenticationFlows);
+        return ImmutableSet.copyOf(getIndirectProperty(authenticationFlowsLookupStrategy, authenticationFlows));
     }
 
     /**
@@ -329,16 +457,30 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * 
      * @param flows   flow identifiers to use
      */
-    public void setAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
-        Constraint.isNotNull(flows, "Collection of flows cannot be null");
-        
-        authenticationFlows = new HashSet<>(StringSupport.normalizeStringCollection(flows));
+    public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+
+        if (flows != null) {
+            authenticationFlows = new HashSet<>(StringSupport.normalizeStringCollection(flows));
+        } else {
+            authenticationFlows = Collections.emptySet();
+        }
     }
-    
+
+    /**
+     * Set a lookup strategy for the {@link #authenticationFlows} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setAuthenticationFlowsLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Set<String>> strategy) {
+        authenticationFlowsLookupStrategy = strategy;
+    }
+
     /** {@inheritDoc} */
     @Override
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows() {
-        return postAuthenticationFlows;
+        return ImmutableList.copyOf(
+                getIndirectProperty(postAuthenticationFlowsLookupStrategy, postAuthenticationFlows));
     }
 
     /**
@@ -346,26 +488,50 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setPostAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
-        Constraint.isNotNull(flows, "Collection of flows cannot be null");
-        
-        postAuthenticationFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+    public void setPostAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+
+        if (flows != null) {
+            postAuthenticationFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+        } else {
+            postAuthenticationFlows = Collections.emptyList();
+        }
     }
-    
+
+    /**
+     * Set a lookup strategy for the {@link #postAuthenticationFlows} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setPostAuthenticationFlowsLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
+        postAuthenticationFlowsLookupStrategy = strategy;
+    }
+
     /** {@inheritDoc} */
-    @Override @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
-        return ImmutableList.copyOf(nameIDFormatPrecedence);
+    @Override
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
+        return ImmutableList.copyOf(getIndirectProperty(nameIDFormatPrecedenceLookupStrategy, nameIDFormatPrecedence));
     }
 
     /**
      * Set the name identifier formats to use.
      * 
-     * @param formats name identifier formats to use
+     * @param formats   name identifier formats to use
      */
-    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
+    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final Collection<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
-
+        
         nameIDFormatPrecedence = new ArrayList<>(StringSupport.normalizeStringCollection(formats));
+    }
+
+    /**
+     * Set a lookup strategy for the {@link #nameIDFormatPrecedence} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setNameIDFormatPrecedenceLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
+        nameIDFormatPrecedenceLookupStrategy = strategy;
     }
 
 }

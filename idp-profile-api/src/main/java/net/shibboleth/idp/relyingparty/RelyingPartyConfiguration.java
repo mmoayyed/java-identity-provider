@@ -144,8 +144,6 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * Set whether detailed information about errors should be exposed.
      * 
      * @param flag flag to set
-     *
-     * @deprecated Use {@link #setDetailedErrorsPredicate(Predicate)} instead.
      */
     public void setDetailedErrors(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);

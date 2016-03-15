@@ -19,10 +19,12 @@ package net.shibboleth.idp.saml.profile.config;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -33,7 +35,7 @@ import com.google.common.base.Predicates;
 public class AbstractSAMLProfileConfigurationTest {
 
     @Test public void testSignAssertionsCriteria() {
-        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignAssertions());
 
         config.setSignAssertions(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -48,7 +50,7 @@ public class AbstractSAMLProfileConfigurationTest {
     }
 
     @Test public void testSignResponsesCriteria() {
-        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignResponses());
 
         config.setSignResponses(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -63,7 +65,7 @@ public class AbstractSAMLProfileConfigurationTest {
     }
 
     @Test public void testSignRequestsCriteria() {
-        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getSignRequests());
 
         config.setSignRequests(Predicates.<ProfileRequestContext> alwaysFalse());
@@ -78,7 +80,7 @@ public class AbstractSAMLProfileConfigurationTest {
     }
 
     @Test public void testAssertionLifetime() {
-        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertTrue(config.getAssertionLifetime() > 0);
 
         config.setAssertionLifetime(100);
@@ -99,23 +101,40 @@ public class AbstractSAMLProfileConfigurationTest {
         }
     }
 
+    @Test public void testIndirectAssertionLifetime() {
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        config.setAssertionLifetimeLookupStrategy(FunctionSupport.<ProfileRequestContext,Long>constant(500L));
+        Assert.assertEquals(config.getAssertionLifetime(), 500L);
+
+        config.setAssertionLifetimeLookupStrategy(FunctionSupport.<ProfileRequestContext,Long>constant(null));
+        Assert.assertEquals(config.getAssertionLifetime(), 5 * 60 * 1000);
+    }
+
+    @SuppressWarnings("deprecation")
     @Test public void testIncludeNotBefore() {
-        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertTrue(config.includeConditionsNotBefore());
 
         config.setIncludeConditionsNotBefore(false);
         Assert.assertFalse(config.includeConditionsNotBefore());
     }
-    
+
+    @Test public void testIndirectIncludeNotBefore() {
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+
+        config.setIncludeConditionsNotBeforePredicate(Predicates.<ProfileRequestContext>alwaysFalse());
+        Assert.assertFalse(config.includeConditionsNotBefore());
+    }
+
     @SuppressWarnings("deprecation")
     @Test public void testAdditionalAudiencesForAssertion() {
-        MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertNotNull(config.getAdditionalAudiencesForAssertion());
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
 
         config.setAdditionalAudienceForAssertion(Arrays.asList("", null, " foo"));
 
-        Set<String> audiences = config.getAdditionalAudiencesForAssertion();
+        final Set<String> audiences = config.getAdditionalAudiencesForAssertion();
         Assert.assertNotNull(audiences);
         Assert.assertEquals(audiences.size(), 1);
         Assert.assertTrue(audiences.contains("foo"));
@@ -132,6 +151,15 @@ public class AbstractSAMLProfileConfigurationTest {
         Assert.assertTrue(config.getAdditionalAudiencesForAssertion().isEmpty());
     }
 
+    @Test public void testIndirectAudiencesForAssertion() {
+        final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
+        final Set<String> audiences = new HashSet<>();
+        audiences.add("foo");
+        audiences.add("bar");
+        config.setAdditionalAudiencesForAssertion(audiences);
+        Assert.assertEquals(config.getAdditionalAudiencesForAssertion(), audiences);
+    }
+
     /** Mock class for test {@link AbstractSAMLProfileConfiguration}. */
     private static class MockSAMLProfileConfiguration extends AbstractSAMLProfileConfiguration {
 
@@ -140,4 +168,5 @@ public class AbstractSAMLProfileConfigurationTest {
             super("mock");
         }
     }
+
 }

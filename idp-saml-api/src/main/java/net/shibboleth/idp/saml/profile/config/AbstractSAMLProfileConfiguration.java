@@ -23,7 +23,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import com.google.common.base.Function;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -53,11 +55,17 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
     /** Predicate used to determine if the generated assertion should be signed. Default returns false. */
     @Nonnull private Predicate<ProfileRequestContext> signAssertionsPredicate;
 
+    /** Controls whether to include a NotBefore attribute in the Conditions of generated assertions. */
+    @Nullable private Predicate<ProfileRequestContext> includeNotBeforePredicate;
+
+    /** Lookup function to supply {@link #assertionLifetime} property. */
+    @Nullable private Function<ProfileRequestContext,Long> assertionLifetimeLookupStrategy;
+
     /** Lifetime of an assertion in milliseconds. Default value: 5 minutes */
     @Positive @Duration private long assertionLifetime;
 
-    /** Whether to include a NotBefore attribute in the Conditions of generated assertions. */
-    private boolean includeConditionsNotBefore;
+    /** Lookup function to supply {@link #assertionAudiences} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<String>> assertionAudiencesLookupStrategy;
 
     /** Additional audiences to which an assertion may be released. Default value: empty */
     @Nonnull @NonnullElements private Set<String> assertionAudiences;
@@ -70,10 +78,10 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
     public AbstractSAMLProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
 
-        includeConditionsNotBefore = true;
         signedRequestsPredicate = Predicates.alwaysFalse();
         signResponsesPredicate = Predicates.alwaysFalse();
         signAssertionsPredicate = Predicates.alwaysFalse();
+        includeNotBeforePredicate = Predicates.alwaysTrue();
         assertionLifetime = 5 * 60 * 1000;
         assertionAudiences = Collections.emptySet();
     }
@@ -126,7 +134,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
 
     /** {@inheritDoc} */
     @Override @Positive public long getAssertionLifetime() {
-        return assertionLifetime;
+        return Constraint.isGreaterThan(0, getIndirectProperty(assertionLifetimeLookupStrategy, assertionLifetime),
+                "Assertion lifetime must be greater than 0");
     }
 
     /**
@@ -138,9 +147,18 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
         assertionLifetime = Constraint.isGreaterThan(0, lifetime, "Assertion lifetime must be greater than 0");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Set a lookup strategy for the {@link #assertionLifetime} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setAssertionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
+        assertionLifetimeLookupStrategy = strategy;
+    }
+
+    /**{@inheritDoc} */
     @Override public boolean includeConditionsNotBefore() {
-        return includeConditionsNotBefore;
+        return includeNotBeforePredicate.apply(getProfileRequestContext());
     }
 
     /**
@@ -149,12 +167,33 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * @param include whether to include a NotBefore attribute in the Conditions of generated assertions
      */
     public void setIncludeConditionsNotBefore(final boolean include) {
-        includeConditionsNotBefore = include;
+        includeNotBeforePredicate = include ? Predicates.<ProfileRequestContext>alwaysTrue()
+                : Predicates.<ProfileRequestContext>alwaysFalse();
+    }
+
+    /**
+     * Get a condition to determine whether to include a NotBefore attribute in the Conditions of
+     * generated assertions.
+     *
+     * @return a condition to evaluate
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getIncludeConditionsNotBeforePredicate() {
+        return includeNotBeforePredicate;
+    }
+
+    /**
+     * Set a condition to determine whether to include a NotBefore attribute in the Conditions of
+     * generated assertions.
+     *
+     * @param condition  lookup strategy
+     */
+    public void setIncludeConditionsNotBeforePredicate(@Nullable final Predicate<ProfileRequestContext> condition) {
+        includeNotBeforePredicate = Constraint.isNotNull(condition, "NotBefore predicate cannot be null");
     }
 
     /** {@inheritDoc} */
     @Override @Nonnull @NonnullElements @NotLive public Set<String> getAdditionalAudiencesForAssertion() {
-        return ImmutableSet.copyOf(assertionAudiences);
+        return ImmutableSet.copyOf(getIndirectProperty(assertionAudiencesLookupStrategy, assertionAudiences));
     }
 
     /**
@@ -178,18 +217,29 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @param audiences the additional audiences
      */
-    public void setAdditionalAudiencesForAssertion(@Nonnull @NonnullElements final Collection<String> audiences) {
+    public void setAdditionalAudiencesForAssertion(@Nullable @NonnullElements final Collection<String> audiences) {
+
         if (audiences == null || audiences.isEmpty()) {
             assertionAudiences = Collections.emptySet();
-            return;
-        }
-
-        assertionAudiences = new HashSet<>();
-        for (final String audience : audiences) {
-            final String trimmedAudience = StringSupport.trimOrNull(audience);
-            if (trimmedAudience != null) {
-                assertionAudiences.add(trimmedAudience);
+        } else {
+            assertionAudiences = new HashSet<>();
+            for (final String audience : audiences) {
+                final String trimmedAudience = StringSupport.trimOrNull(audience);
+                if (trimmedAudience != null) {
+                    assertionAudiences.add(trimmedAudience);
+                }
             }
         }
     }
+
+    /**
+     * Set a lookup strategy for the {@link #assertionAudiences} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setAssertionAudiencesLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
+        assertionAudiencesLookupStrategy = strategy;
+    }
+
 }

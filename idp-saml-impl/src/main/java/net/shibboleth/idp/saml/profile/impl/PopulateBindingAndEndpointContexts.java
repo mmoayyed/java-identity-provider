@@ -342,7 +342,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
                 }
                 if (profileConfiguration instanceof BrowserSSOProfileConfiguration) {
                     skipValidationSinceSigned =
-                            ((BrowserSSOProfileConfiguration) profileConfiguration).skipEndpointValidationWhenSigned()
+                            ((BrowserSSOProfileConfiguration) profileConfiguration)
+                                .getSkipEndpointValidationWhenSignedPredicate().apply(profileRequestContext)
                             && inboundMessage instanceof AuthnRequest
                             && SAMLBindingSupport.isMessageSigned(profileRequestContext.getInboundMessageContext()); 
                 }
