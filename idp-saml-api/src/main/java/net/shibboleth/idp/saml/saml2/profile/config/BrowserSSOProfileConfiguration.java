@@ -132,7 +132,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
         setSignResponses(Predicates.<ProfileRequestContext>alwaysTrue());
         setEncryptAssertions(Predicates.<ProfileRequestContext>alwaysTrue());
         resolveAttributesPredicate = Predicates.alwaysTrue();
-        includeAttributeStatementPredicate = Predicates.alwaysFalse();
+        includeAttributeStatementPredicate = Predicates.alwaysTrue();
         skipEndpointValidationWhenSignedPredicate = Predicates.alwaysFalse();
         maximumSPSessionLifetime = 0;
         maximumTokenDelegationChainLength = 1;
