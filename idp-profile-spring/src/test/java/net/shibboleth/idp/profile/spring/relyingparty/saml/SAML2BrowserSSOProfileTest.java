@@ -55,7 +55,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(profile.getAssertionLifetime(), 5 * 60 * 1000);
         Assert.assertTrue(profile.getAdditionalAudiencesForAssertion().isEmpty());
         Assert.assertTrue(profile.includeConditionsNotBefore());
-        Assert.assertNull(profile.getAllowingDelegation());
+        Assert.assertFalse(profile.getAllowingDelegation());
         Assert.assertNotNull(profile.getAllowDelegation());
         assertFalsePredicate(profile.getAllowDelegation());
         Assert.assertEquals(profile.getMaximumTokenDelegationChainLength(), 1);
@@ -80,7 +80,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         assertConditionalPredicate(profile.getEncryptAssertions());
         assertFalsePredicate(profile.getEncryptNameIDs());
         Assert.assertTrue(profile.isEncryptionOptional());
-        Assert.assertNull(profile.getAllowingDelegation());
+        Assert.assertTrue(profile.getAllowingDelegation());
         Assert.assertNotNull(profile.getAllowDelegation());
         assertTruePredicate(profile.getAllowDelegation());
         Assert.assertEquals(profile.getMaximumTokenDelegationChainLength(), 3);
@@ -124,7 +124,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         BrowserSSOProfileConfiguration profile =
                 getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/saml2SSOAllowDelegationPredicate.xml");
 
-        Assert.assertNull(profile.getAllowingDelegation());
+        Assert.assertFalse(profile.getAllowingDelegation());
         Assert.assertNotNull(profile.getAllowDelegation());
         Assert.assertTrue(profile.getAllowDelegation() instanceof DummyPredicate);
     }
@@ -133,7 +133,7 @@ public class SAML2BrowserSSOProfileTest extends BaseSAMLProfileTest {
         BrowserSSOProfileConfiguration profile =
                 getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/saml2SSOAllowDelegationPropertyReplacement.xml");
 
-        Assert.assertNull(profile.getAllowingDelegation());
+        Assert.assertTrue(profile.getAllowingDelegation());
         Assert.assertNotNull(profile.getAllowDelegation());
         assertTruePredicate(profile.getAllowDelegation());
     }
