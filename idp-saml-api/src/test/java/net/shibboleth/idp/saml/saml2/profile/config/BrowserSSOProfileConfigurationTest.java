@@ -70,10 +70,10 @@ public class BrowserSSOProfileConfigurationTest {
     @Test
     public void testIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
-        Assert.assertFalse(config.includeAttributeStatement());
-
-        config.setIncludeAttributeStatement(true);
         Assert.assertTrue(config.includeAttributeStatement());
+
+        config.setIncludeAttributeStatement(false);
+        Assert.assertFalse(config.includeAttributeStatement());
     }
 
     @SuppressWarnings("deprecation")
@@ -81,8 +81,8 @@ public class BrowserSSOProfileConfigurationTest {
     public void testIndirectIncludeAttributeStatement(){
         final BrowserSSOProfileConfiguration config = new BrowserSSOProfileConfiguration();
 
-        config.setIncludeAttributeStatementPredicate(Predicates.<ProfileRequestContext>alwaysTrue());
-        Assert.assertTrue(config.includeAttributeStatement());
+        config.setIncludeAttributeStatementPredicate(Predicates.<ProfileRequestContext>alwaysFalse());
+        Assert.assertFalse(config.includeAttributeStatement());
     }
 
     @SuppressWarnings("deprecation")
