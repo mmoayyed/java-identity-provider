@@ -78,19 +78,19 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
     private static Logger log = LoggerFactory.getLogger(ScriptedAttributeTest.class);
 
-    private String fileNameToPath(String fileName, boolean isV8Capable) {
+    private String fileNameToPath(final String fileName, final boolean isV8Capable) {
         if (isV8() && !isV8Capable) {
             return "/net/shibboleth/idp/attribute/resolver/impl/ad/jdk8/" + fileName;
         }
         return "/net/shibboleth/idp/attribute/resolver/impl/ad/" + fileName;
     }
 
-    private String getScript(String fileName, boolean isV8Capable) throws IOException {
+    private String getScript(final String fileName, final boolean isV8Capable) throws IOException {
         return StringSupport.inputStreamToString(getClass().getResourceAsStream(fileNameToPath(fileName, isV8Capable)),
                 null);
     }
 
-    private String getScript(String fileName) throws IOException {
+    private String getScript(final String fileName) throws IOException {
         return getScript(fileName, true);
     }
 
@@ -282,7 +282,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertEquals(results.iterator().next(), attributeValue, "Scripted result contains known value");
     }
 
-    private ScriptedAttributeDefinition buildTest(String failingScript, boolean v8Safe) throws ScriptException,
+    private ScriptedAttributeDefinition buildTest(final String failingScript, final boolean v8Safe) throws ScriptException,
             IOException, ComponentInitializationException {
 
         final ScriptedAttributeDefinition attr = new ScriptedAttributeDefinition();
@@ -290,7 +290,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         try {
             attr.initialize();
             Assert.fail("No script defined");
-        } catch (ComponentInitializationException ex) {
+        } catch (final ComponentInitializationException ex) {
             // OK
         }
 
@@ -300,14 +300,14 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         return attr;
     }
 
-    private void failureTest(String failingScript, String failingMessage, boolean v8Safe) throws ScriptException,
+    private void failureTest(final String failingScript, final String failingMessage, final boolean v8Safe) throws ScriptException,
             IOException, ComponentInitializationException {
         try {
             buildTest(failingScript, v8Safe).resolve(generateContext());
             Assert.fail("Script: '" + failingScript + "' should have thrown an exception: " + failingMessage);
-        } catch (ResolutionException ex) {
+        } catch (final ResolutionException ex) {
             log.trace("Successful exception", ex);
-        } catch (RuntimeException ex) {
+        } catch (final RuntimeException ex) {
             if (isV8() && (ex.getCause() instanceof ResolutionException)) {
                 // nashhorn wraps exceptions
                 log.trace("Successful exception", ex);
@@ -435,9 +435,9 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         attr.setValues(values);
 
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
 
         final ScriptedAttributeDefinition scripted = new ScriptedAttributeDefinition();
@@ -471,7 +471,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         // And resolve
         final Set<AttributeDefinition> attrDefinitions = new HashSet<>(3);
         attrDefinitions.add(scripted);
-        AttributeDefinition nonString =
+        final AttributeDefinition nonString =
                 TestSources.nonStringAttributeDefiniton(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         attrDefinitions.add(nonString);
         attrDefinitions.add(TestSources.populatedStaticAttribute());
@@ -485,7 +485,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         final List<IdPAttributeValue<?>> values = attribute.getValues();
 
         Assert.assertEquals(values.size(), 2);
-        for (IdPAttributeValue value : values) {
+        for (final IdPAttributeValue value : values) {
             if (!(value instanceof XMLObjectAttributeValue)) {
                 Assert.fail("Wrong type: " + value.getClass().getName());
             }
@@ -529,7 +529,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         try {
             resolver.resolveAttributes(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 
@@ -541,9 +541,9 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         Assert.assertTrue(values.contains(new StringAttributeValue("ProfileRequestContext")));
     }
 
-    protected IdPAttribute runExample(String exampleScript, String exampleData, String attributeName)
+    protected IdPAttribute runExample(final String exampleScript, final String exampleData, final String attributeName)
             throws ScriptException, IOException, ComponentInitializationException {
-        SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
+        final SAMLAttributeDataConnector connector = new SAMLAttributeDataConnector();
         connector.setAttributesStrategy(new Locator(exampleData));
         connector.setId("Connector");
 
@@ -568,7 +568,7 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         try {
             resolver.resolveAttributes(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 
@@ -627,8 +627,8 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContext.script")));
         scripted.initialize();
 
-        IdPAttribute result = scripted.resolve(generateContext());
-        HashSet<IdPAttributeValue> set = new HashSet(result.getValues());
+        final IdPAttribute result = scripted.resolve(generateContext());
+        final HashSet<IdPAttributeValue> set = new HashSet(result.getValues());
         Assert.assertEquals(set.size(), 3);
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
         Assert.assertTrue(set.contains(new StringAttributeValue(TestSources.IDP_ENTITY_ID)));
@@ -644,13 +644,13 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
         scripted.setScript(new EvaluableScript(SCRIPT_LANGUAGE, getScript("requestContextUnimplemented.script")));
         scripted.initialize();
 
-        IdPAttribute result = scripted.resolve(generateContext());
+        final IdPAttribute result = scripted.resolve(generateContext());
         Assert.assertEquals(result.getValues().iterator().next(), new StringAttributeValue("AllDone"));
 
     }
 
     private static AttributeResolutionContext generateContext() {
-        AttributeResolutionContext ctx = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+        final AttributeResolutionContext ctx = TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                 TestSources.SP_ENTITY_ID);
         final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
         
@@ -671,12 +671,12 @@ public class ScriptedAttributeTest extends XMLObjectBaseTestCase {
 
         final EntityAttributes obj;
 
-        public Locator(String file) {
+        public Locator(final String file) {
             obj = (EntityAttributes) unmarshallElement(fileNameToPath(file, true));
         }
 
         /** {@inheritDoc} */
-        @Override @Nullable public List<Attribute> apply(@Nullable AttributeResolutionContext input) {
+        @Override @Nullable public List<Attribute> apply(@Nullable final AttributeResolutionContext input) {
             return obj.getAttributes();
         }
 
