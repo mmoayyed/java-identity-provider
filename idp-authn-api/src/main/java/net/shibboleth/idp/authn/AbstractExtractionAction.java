@@ -135,22 +135,22 @@ public abstract class AbstractExtractionAction<InboundMessageType, OutboundMessa
         
         if (trim) {
             log.debug("{} Trimming whitespace of input string '{}'", getLogPrefix(), s);
-            s = input.trim();
+            s = s.trim();
         }
         
         if (lowercase) {
             log.debug("{} Converting input string '{}' to lowercase", getLogPrefix(), s);
-            s = input.toLowerCase();
+            s = s.toLowerCase();
         } else if (uppercase) {
             log.debug("{} Converting input string '{}' to uppercase", getLogPrefix(), s);
-            s = input.toUpperCase();
+            s = s.toUpperCase();
         }
         
         if (transforms.isEmpty()) {
             return s;
         }
         
-        for (Pair<Pattern,String> p : transforms) {            
+        for (final Pair<Pattern,String> p : transforms) {            
             final Matcher m = p.getFirst().matcher(s);
             log.debug("{} Applying replacement expression '{}' against input '{}'", getLogPrefix(),
                     p.getFirst().pattern(), s);

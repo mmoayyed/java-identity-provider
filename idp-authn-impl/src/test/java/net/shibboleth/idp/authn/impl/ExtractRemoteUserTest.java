@@ -110,7 +110,8 @@ public class ExtractRemoteUserTest extends PopulateAuthenticationContextTest {
     }
 
     @Test public void testTransforms() throws Exception {
-        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser("Foo@osu.edu");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).setRemoteUser(" Foo@osu.edu ");
+        action.setTrim(true);
         action.setTransforms(Arrays.asList(new Pair<>("^(.+)@osu\\.edu$", "$1")));
         action.setLowercase(true);
         action.initialize();

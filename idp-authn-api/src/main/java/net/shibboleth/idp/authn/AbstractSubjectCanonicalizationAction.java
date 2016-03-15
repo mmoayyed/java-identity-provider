@@ -224,15 +224,15 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
         
         if (trim) {
             log.debug("{} trimming whitespace of input string '{}'", getLogPrefix(), s);
-            s = input.trim();
+            s = s.trim();
         }
         
         if (lowercase) {
             log.debug("{} converting input string '{}' to lowercase", getLogPrefix(), s);
-            s = input.toLowerCase();
+            s = s.toLowerCase();
         } else if (uppercase) {
             log.debug("{} converting input string '{}' to uppercase", getLogPrefix(), s);
-            s = input.toUpperCase();
+            s = s.toUpperCase();
         }
 
         if (transforms.isEmpty()) {
