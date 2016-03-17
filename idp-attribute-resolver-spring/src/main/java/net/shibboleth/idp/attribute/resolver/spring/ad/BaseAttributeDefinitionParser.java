@@ -83,7 +83,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
         }
 
         if (config.hasAttributeNS(null, "dependencyOnly")) {
-            String dependencyOnly = StringSupport.trimOrNull(config.getAttributeNS(null, "dependencyOnly"));
+            final String dependencyOnly = StringSupport.trimOrNull(config.getAttributeNS(null, "dependencyOnly"));
             log.debug("{} Setting dependencyOnly {}", getLogPrefix(), dependencyOnly);
             builder.addPropertyValue("dependencyOnly", dependencyOnly);
         }
@@ -122,8 +122,8 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
      * @return the localized string indexed by locale
      */
     protected Map<Locale, String> processLocalizedElement(@Nonnull final List<Element> elements) {
-        Map<Locale, String> localizedString = new ManagedMap<>(elements.size());
-        for (Element element : elements) {
+        final Map<Locale, String> localizedString = new ManagedMap<>(elements.size());
+        for (final Element element : elements) {
             localizedString.put(AttributeSupport.getXMLLangAsLocale(element), element.getTextContent());
         }
 
@@ -131,12 +131,13 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     }
 
     /**
-     * return a string which is to be prepended to all log messages.
+     * Return a string which is to be prepended to all log messages.
      * 
      * @return "Attribute Definition '<definitionID>' :"
      */
-    @Nonnull @NotEmpty protected String getLogPrefix() {
-        StringBuilder builder = new StringBuilder("Attribute Definition '").append(getDefinitionId()).append("':");
+    @Override @Nonnull @NotEmpty protected String getLogPrefix() {
+        final StringBuilder builder = new StringBuilder("Attribute Definition '").append(getDefinitionId())
+                .append("':");
         return builder.toString();
     }
 

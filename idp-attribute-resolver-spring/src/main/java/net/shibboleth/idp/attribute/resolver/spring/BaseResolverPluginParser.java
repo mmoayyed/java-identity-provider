@@ -28,6 +28,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -55,7 +56,7 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
+        final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         log.info("Parsing configuration for {} plugin with id: {}", config.getLocalName(), id);
         builder.addPropertyValue("id", id);
         if (null != id) {
@@ -76,6 +77,48 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
 
         final List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);
+        if (null != dependencyElements && !dependencyElements.isEmpty()) {
+            if (failOnDependencies()) {
+                log.error("{} Dependencies are not allowed.", getLogPrefix());
+                throw new BeanCreationException(getLogPrefix() + " has meaningless Dependencies statements");
+            }
+            if (warnOnDependencies()) {
+                log.warn("{} Dependencies are not allowed.", getLogPrefix());
+            }
+        }
         builder.addPropertyValue("dependencies", SpringSupport.parseCustomElements(dependencyElements, parserContext));
     }
+    
+    /** Controls parsing of Dependencies. 
+     * 
+     * If it is considered an invalid configuration for this resolver to have Dependency statements, return true. 
+     * The surrounding logic will fail the parse.
+     * @return false - by default.
+     */
+    protected boolean failOnDependencies() {
+        return false;
+    }
+
+    /** Controls parsing of Dependencies. 
+     * 
+     * If it is considered an invalid configuration for this resolver to have Dependency statements, return true. 
+     * The surrounding logic will issue warning.
+     * @return false - by default.
+     */
+    protected boolean warnOnDependencies() {
+        return false;
+    }
+
+    /**
+     * Return a string which is to be prepended to all log messages.
+     * 
+     * This is always overridden by upper parsers, but to leave this abstract would break compatibility
+     * 
+     * @return a basic prefix.
+     */
+    @Nonnull @NotEmpty protected String getLogPrefix() {
+        final StringBuilder builder = new StringBuilder("Unknown Plugin '").append(getDefinitionId()).append("':");
+        return builder.toString();
+    }
+
 }

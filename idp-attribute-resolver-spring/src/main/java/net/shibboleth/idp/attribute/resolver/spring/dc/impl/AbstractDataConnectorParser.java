@@ -51,7 +51,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
 
     /** Delay in retrying failed connector. */
     @Nonnull @NotEmpty public static final String ATTR_NORETRYDELAY = "noRetryDelay";
-    
+
     /** semi colon separated resources to indicate external config. */
     @Nonnull @NotEmpty public static final String ATTR_SPRING_RESOURCE = "springResources";
 
@@ -83,7 +83,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     }
 
     /** {@inheritDoc} */
-    @Override protected final Class<?> getBeanClass(Element element) {
+    @Override protected final Class<?> getBeanClass(final Element element) {
         if (isNative(element)) {
             return DataConnectorFactoryBean.class;
         }
@@ -183,11 +183,11 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     }
 
     /**
-     * return a string which is to be prepended to all log messages.
+     * Return a string which is to be prepended to all log messages.
      * 
-     * @return "Attribute Definition: '<definitionID>' :"
+     * @return "Data Connector: '<definitionID>' :"
      */
-    @Nonnull @NotEmpty protected String getLogPrefix() {
+    @Override @Nonnull @NotEmpty protected String getLogPrefix() {
         final StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
         return builder.toString();
     }
