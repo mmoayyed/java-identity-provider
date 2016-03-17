@@ -27,10 +27,10 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalDerivedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalDerivedAttributeAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeAttributeDefinitionParser;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
@@ -42,9 +42,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link PrincipalDerivedAttributeAttributeDefinitionParser}.
+ * Test for {@link SubjectDerivedAttributeAttributeDefinitionParser}.
  */
-public class PrincipalDerivedAttributeAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
+public class SubjectDerivedAttributeAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
@@ -71,8 +71,8 @@ public class PrincipalDerivedAttributeAttributeDefinitionParserTest extends Base
     }
     
     @Test public void simple() throws ResolutionException {
-        final PrincipalDerivedAttributeDefinition attrDef =
-                getAttributeDefn("principalDerived.xml", PrincipalDerivedAttributeDefinition.class);
+        final SubjectDerivedAttributeDefinition attrDef =
+                getAttributeDefn("subjectDerived.xml", SubjectDerivedAttributeDefinition.class);
 
         
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("Whatever")).getValues();
@@ -84,8 +84,8 @@ public class PrincipalDerivedAttributeAttributeDefinitionParserTest extends Base
     }
 
     @Test public void complex() throws ResolutionException {
-        final PrincipalDerivedAttributeDefinition attrDef =
-                getAttributeDefn("principalDerivedComplex.xml", "principalDerivedBean.xml", PrincipalDerivedAttributeDefinition.class);
+        final SubjectDerivedAttributeDefinition attrDef =
+                getAttributeDefn("subjectDerivedComplex.xml", "subjectDerivedBean.xml", SubjectDerivedAttributeDefinition.class);
 
         
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
@@ -96,8 +96,8 @@ public class PrincipalDerivedAttributeAttributeDefinitionParserTest extends Base
     }
     
     @Test public void warn() throws ResolutionException {
-        final PrincipalDerivedAttributeDefinition attrDef =
-                getAttributeDefn("principalDerivedWarn.xml", PrincipalDerivedAttributeDefinition.class);
+        final SubjectDerivedAttributeDefinition attrDef =
+                getAttributeDefn("subjectDerivedWarn.xml", SubjectDerivedAttributeDefinition.class);
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("Whatever")).getValues();
         
         Assert.assertEquals(2, foo.size());
@@ -106,7 +106,10 @@ public class PrincipalDerivedAttributeAttributeDefinitionParserTest extends Base
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class}) public void fail() throws ResolutionException {
-        getAttributeDefn("principalDerivedFail.xml", PrincipalDerivedAttributeDefinition.class);
+        getAttributeDefn("subjectDerivedFail.xml", SubjectDerivedAttributeDefinition.class);
     }
     
+    @Test(expectedExceptions={BeanDefinitionStoreException.class}) public void dependency() throws ResolutionException {
+        getAttributeDefn("subjectDerivedDependency.xml", SubjectDerivedAttributeDefinition.class);
+    }
 }

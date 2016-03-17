@@ -44,8 +44,8 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
                 new PrincipalAuthenticationMethodAttributeDefinitionParser());
         registerBeanDefinitionParser(PrincipalNameAttributeDefinitionParser.TYPE_NAME,
                 new PrincipalNameAttributeDefinitionParser());
-        registerBeanDefinitionParser(PrincipalDerivedAttributeAttributeDefinitionParser.TYPE_NAME,
-                new PrincipalDerivedAttributeAttributeDefinitionParser());
+        registerBeanDefinitionParser(SubjectDerivedAttributeAttributeDefinitionParser.TYPE_NAME,
+                new SubjectDerivedAttributeAttributeDefinitionParser());
         registerBeanDefinitionParser(RegexSplitAttributeDefinitionParser.TYPE_NAME,
                 new RegexSplitAttributeDefinitionParser());
         registerBeanDefinitionParser(SAML1NameIdentifierAttributeDefinitionParser.TYPE_NAME,

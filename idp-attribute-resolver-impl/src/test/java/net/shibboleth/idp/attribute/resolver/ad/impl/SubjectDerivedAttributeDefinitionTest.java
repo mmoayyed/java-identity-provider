@@ -38,10 +38,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/**
- *
- */
-public class PrincipalDerivedAttributeDefinitionTest {
+/** Test for {@link SubjectDerivedAttributeDefinition}. */
+public class SubjectDerivedAttributeDefinitionTest {
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
@@ -54,7 +52,7 @@ public class PrincipalDerivedAttributeDefinitionTest {
         final IdPAttribute attr = new IdPAttribute("wibble");
         attr.setValues(list);
 
-        final PrincipalDerivedAttributeDefinition defn = new PrincipalDerivedAttributeDefinition();
+        final SubjectDerivedAttributeDefinition defn = new SubjectDerivedAttributeDefinition();
         defn.setAttributeValueEngine(new IdPAttributePrincipalValueEngine("wibble"));
         defn.setId("pDAD");
         defn.initialize();

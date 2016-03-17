@@ -30,7 +30,7 @@
         </complexContent>
     </complexType>
     
-    <complexType name="PrincipalDerivedAttribute">
+    <complexType name="SubjectDerivedAttribute">
         <annotation>
             <documentation>A attribute definition to pull attribute values from the Principals.  A short cut will look at IdPAttributePrincipals</documentation>
         </annotation>

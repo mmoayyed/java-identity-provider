@@ -48,10 +48,10 @@ import com.google.common.base.Function;
  * An attribute definition which returns an attribute attributes derived from the {@link java.security.Principal}s
  * associated with the request.
  */
-public class PrincipalDerivedAttributeDefinition extends AbstractAttributeDefinition {
+public class SubjectDerivedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(PrincipalDerivedAttributeDefinition.class);
+    private final Logger log = LoggerFactory.getLogger(SubjectDerivedAttributeDefinition.class);
     
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
     @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> prcLookupStrategy;
@@ -67,7 +67,7 @@ public class PrincipalDerivedAttributeDefinition extends AbstractAttributeDefini
     @Nonnull private Function<Principal, List<IdPAttributeValue<?>>> attributeValueEngine;
 
     /** Constructor. */
-    public PrincipalDerivedAttributeDefinition() {
+    public SubjectDerivedAttributeDefinition() {
         prcLookupStrategy = new ParentContextLookup<>();
         scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
     }

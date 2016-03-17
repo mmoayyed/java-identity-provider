@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValueEngine;
-import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalDerivedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -33,18 +33,18 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
-public class PrincipalDerivedAttributeAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class SubjectDerivedAttributeAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "PrincipalDerivedAttribute");
+            "SubjectDerivedAttribute");
 
     /** log. */
-    private final Logger log = LoggerFactory.getLogger(PrincipalDerivedAttributeAttributeDefinitionParser.class);
+    private final Logger log = LoggerFactory.getLogger(SubjectDerivedAttributeAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<PrincipalDerivedAttributeDefinition> getBeanClass(final Element element) {
-        return PrincipalDerivedAttributeDefinition.class;
+    @Override protected Class<SubjectDerivedAttributeDefinition> getBeanClass(final Element element) {
+        return SubjectDerivedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
@@ -77,4 +77,9 @@ public class PrincipalDerivedAttributeAttributeDefinitionParser extends BaseAttr
         return false;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected boolean failOnDependencies() {
+        return true;
+    }
 }
