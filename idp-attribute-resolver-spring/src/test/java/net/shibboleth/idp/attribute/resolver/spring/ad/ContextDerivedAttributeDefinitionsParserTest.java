@@ -26,11 +26,12 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeDefinitionParser;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
@@ -42,9 +43,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link SubjectDerivedAttributeAttributeDefinitionParser}.
+ * Test for {@link SubjectDerivedAttributeDefinitionParser} and {@link .
  */
-public class SubjectDerivedAttributeAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
+public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeDefinitionParserTest {
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
@@ -71,8 +72,8 @@ public class SubjectDerivedAttributeAttributeDefinitionParserTest extends BaseAt
     }
     
     @Test public void simple() throws ResolutionException {
-        final SubjectDerivedAttributeDefinition attrDef =
-                getAttributeDefn("subjectDerived.xml", SubjectDerivedAttributeDefinition.class);
+        final AttributeDefinition attrDef =
+                getAttributeDefn("subjectDerived.xml", ContextDerivedAttributeDefinition.class);
 
         
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("Whatever")).getValues();
@@ -84,8 +85,20 @@ public class SubjectDerivedAttributeAttributeDefinitionParserTest extends BaseAt
     }
 
     @Test public void complex() throws ResolutionException {
-        final SubjectDerivedAttributeDefinition attrDef =
-                getAttributeDefn("subjectDerivedComplex.xml", "subjectDerivedBean.xml", SubjectDerivedAttributeDefinition.class);
+        final AttributeDefinition attrDef =
+                getAttributeDefn("subjectDerivedComplex.xml", "contextDerivedBeans.xml", ContextDerivedAttributeDefinition.class);
+
+        
+        final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
+        
+        Assert.assertEquals(2, foo.size());
+        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
+        Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
+    }
+    
+    @Test public void context() throws ResolutionException {
+        final AttributeDefinition attrDef =
+                getAttributeDefn("contextDerivedComplex.xml", "contextDerivedBeans.xml", ContextDerivedAttributeDefinition.class);
 
         
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
@@ -96,8 +109,8 @@ public class SubjectDerivedAttributeAttributeDefinitionParserTest extends BaseAt
     }
     
     @Test public void warn() throws ResolutionException {
-        final SubjectDerivedAttributeDefinition attrDef =
-                getAttributeDefn("subjectDerivedWarn.xml", SubjectDerivedAttributeDefinition.class);
+        final AttributeDefinition attrDef =
+                getAttributeDefn("subjectDerivedWarn.xml", ContextDerivedAttributeDefinition.class);
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("Whatever")).getValues();
         
         Assert.assertEquals(2, foo.size());
@@ -106,10 +119,10 @@ public class SubjectDerivedAttributeAttributeDefinitionParserTest extends BaseAt
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class}) public void fail() throws ResolutionException {
-        getAttributeDefn("subjectDerivedFail.xml", SubjectDerivedAttributeDefinition.class);
+        getAttributeDefn("subjectDerivedFail.xml", ContextDerivedAttributeDefinition.class);
     }
     
     @Test(expectedExceptions={BeanDefinitionStoreException.class}) public void dependency() throws ResolutionException {
-        getAttributeDefn("subjectDerivedDependency.xml", SubjectDerivedAttributeDefinition.class);
+        getAttributeDefn("subjectDerivedDependency.xml", ContextDerivedAttributeDefinition.class);
     }
 }

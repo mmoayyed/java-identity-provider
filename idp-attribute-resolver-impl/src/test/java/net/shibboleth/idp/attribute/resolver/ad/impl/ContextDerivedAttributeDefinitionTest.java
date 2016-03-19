@@ -38,11 +38,12 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/** Test for {@link SubjectDerivedAttributeDefinition}. */
-public class SubjectDerivedAttributeDefinitionTest {
+/** Test for {@link SubjectDerivedAttributeValuesFunction}. */
+public class ContextDerivedAttributeDefinitionTest {
 
     /** Simple result. */
     private static final String SIMPLE_VALUE = "simple";
+    
 
     @Test public void simpleValue() throws ComponentInitializationException, ResolutionException {
         final List<IdPAttributeValue<String>> list = new ArrayList<>(2);
@@ -52,8 +53,12 @@ public class SubjectDerivedAttributeDefinitionTest {
         final IdPAttribute attr = new IdPAttribute("wibble");
         attr.setValues(list);
 
-        final SubjectDerivedAttributeDefinition defn = new SubjectDerivedAttributeDefinition();
-        defn.setAttributeValueEngine(new IdPAttributePrincipalValueEngine("wibble"));
+        final SubjectDerivedAttributeValuesFunction ctxValueFunction = new SubjectDerivedAttributeValuesFunction();
+        ctxValueFunction.setId("pDaD");
+        ctxValueFunction.setAttributeValueFunction(new IdPAttributePrincipalValuesFunction("wibble"));
+        
+        final ContextDerivedAttributeDefinition defn = new ContextDerivedAttributeDefinition();
+        defn.setAttributeValueFunction(ctxValueFunction);
         defn.setId("pDAD");
         defn.initialize();
 

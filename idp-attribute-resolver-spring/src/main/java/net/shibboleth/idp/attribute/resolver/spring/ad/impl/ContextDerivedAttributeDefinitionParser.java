@@ -20,55 +20,37 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValueEngine;
-import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
-public class SubjectDerivedAttributeAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class ContextDerivedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name. */
     @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "SubjectDerivedAttribute");
-
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(SubjectDerivedAttributeAttributeDefinitionParser.class);
+            "ContextDerivedAttribute");
 
     /** {@inheritDoc} */
-    @Override protected Class<SubjectDerivedAttributeDefinition> getBeanClass(final Element element) {
-        return SubjectDerivedAttributeDefinition.class;
+    @Override protected Class<ContextDerivedAttributeDefinition> getBeanClass(final Element element) {
+        return ContextDerivedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-        final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, "principalAttributeName"));
-        final String engineRef = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeValueEngineRef"));
+        final String functionRef = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeValuesFunctionRef"));
 
-        if (null != attributeName) {
-            if (null != engineRef) {
-                log.warn("{} only one of \"principalAttributeName\" or \"attributeValueEngineRef\""
-                        + " should be provided. \"attributeValueEngineRef\" ignored", getLogPrefix());
-            }
-            final BeanDefinitionBuilder engine =
-                    BeanDefinitionBuilder.genericBeanDefinition(IdPAttributePrincipalValueEngine.class);
-            engine.addConstructorArgValue(attributeName);
-            builder.addPropertyValue("attributeValueEngine", engine.getBeanDefinition());
-        } else if (null != engineRef) {
-            builder.addPropertyReference("attributeValueEngine", engineRef);
+        if (null == functionRef) {
+            throw new BeanCreationException(getLogPrefix() + "requires 'attributeValuesFunctionRef'");
         } else {
-            log.error("{} one of \"principalAttributeName\" or \"attributeValueEngineRef\" should be supplied."
-                        + " should be provided.", getLogPrefix());
-            throw new BeanCreationException("Misconfigured PrincipalDerivedAttribute.");
+            builder.addPropertyReference("attributeValueFunction", functionRef);
         }
     }
 

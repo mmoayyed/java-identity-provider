@@ -8,4 +8,4 @@
                         urn:mace:shibboleth:2.0:attribute:encoder http://shibboleth.net/schema/idp/shibboleth-attribute-encoder.xsd
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd"
 
-    xsi:type="ad:SubjectDerivedAttribute" id="PD1" attributeValueEngineRef="attributeEngine"/>
+    xsi:type="ad:SubjectDerivedAttribute" id="PD1" attributeValuesFunctionRef="princialAttributeValuesFunction"/>

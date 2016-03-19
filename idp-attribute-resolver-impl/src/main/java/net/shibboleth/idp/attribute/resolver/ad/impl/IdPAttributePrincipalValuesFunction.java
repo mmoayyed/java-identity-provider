@@ -31,7 +31,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import com.google.common.base.Function;
 
 /** Engine to mine values from {@link IdPAttributePrincipal}s. */
-public class IdPAttributePrincipalValueEngine implements Function<Principal, List<IdPAttributeValue<?>>> {
+public class IdPAttributePrincipalValuesFunction implements Function<Principal, List<IdPAttributeValue<?>>> {
     
     /** The Attribute Name to look for. */
     @Nonnull private final String attributeName;
@@ -39,10 +39,10 @@ public class IdPAttributePrincipalValueEngine implements Function<Principal, Lis
     /**
      * Constructor.
      *
-     * @param name the name to filter on.
+     * @param attrName the name to filter on.
      */
-    public IdPAttributePrincipalValueEngine(final String name) {
-        attributeName = Constraint.isNotNull(name, "Attribute Name should be non-null");
+    public IdPAttributePrincipalValuesFunction(final String attrName) {
+        attributeName = Constraint.isNotNull(attrName, "Attribute Name should be non-null");
     }
 
     /** {@inheritDoc} */

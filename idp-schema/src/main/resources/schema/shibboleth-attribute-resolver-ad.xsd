@@ -32,11 +32,11 @@
     
     <complexType name="SubjectDerivedAttribute">
         <annotation>
-            <documentation>A attribute definition to pull attribute values from the Principals.  A short cut will look at IdPAttributePrincipals</documentation>
+            <documentation>A attribute definition to pull attribute values from the Principals.  A short cut looks at IdPAttributePrincipals</documentation>
         </annotation>
         <complexContent>
             <extension base="resolver:BaseAttributeDefinitionType">
-                <attribute name="attributeValueEngineRef" type="string" >
+                <attribute name="attributeValuesFunctionRef" type="string" >
                     <annotation>
                         <documentation>Provides a plug in point to allow general extraction of values from Principals.  Incompatible with idpAttributeName</documentation>
                     </annotation>
@@ -51,6 +51,20 @@
         </complexContent>
     </complexType>
     
+    <complexType name="ContextDerivedAttribute">
+        <annotation>
+            <documentation>A attribute definition to pull attribute values from anywhere in the PRC tree</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseAttributeDefinitionType">
+                <attribute name="attributeValuesFunctionRef" type="string" use="required">
+                    <annotation>
+                        <documentation>The Function to generate the Attribute Values given a PRC</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
     <complexType name="TransientId">
         <annotation>

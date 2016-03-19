@@ -25,19 +25,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.resolver.AbstractAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
+import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
-import org.opensaml.messaging.context.navigate.ParentContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,45 +41,28 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 /**
- * An attribute definition which returns an attribute attributes derived from the {@link java.security.Principal}s
- * associated with the request.
+ * A Function which returns {@link IdPAttributeValue}s derived from the {@link java.security.Principal}s
+ * associated with the request.  The precise values are determined by an injected {@link Functio 
  */
-public class SubjectDerivedAttributeDefinition extends AbstractAttributeDefinition {
+public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableInitializableComponent implements
+        Function<ProfileRequestContext, List<IdPAttributeValue<?>>> {
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(SubjectDerivedAttributeDefinition.class);
-    
-    /** Strategy used to locate the {@link ProfileRequestContext} to use. */
-    @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> prcLookupStrategy;
+    private final Logger log = LoggerFactory.getLogger(ContextDerivedAttributeDefinition.class);
 
     /** Strategy used to locate the {@link SubjectContext} to use. */
     @Nonnull private Function<ProfileRequestContext, SubjectContext> scLookupStrategy;
 
     /**
-     * Engine used to generate the values associated with the {@link Principal}
+     * {@link Function} used to generate the values associated with a {@link Principal}
      * 
-     * The engine returns null or an empty list if the {@link Principal} isn't relevant.
+     * The {@link Function} returns null or an empty list if the {@link Principal} isn't relevant.
      */
-    @Nonnull private Function<Principal, List<IdPAttributeValue<?>>> attributeValueEngine;
+    @Nonnull private Function<Principal, List<IdPAttributeValue<?>>> attributeValueFunction;
 
     /** Constructor. */
-    public SubjectDerivedAttributeDefinition() {
-        prcLookupStrategy = new ParentContextLookup<>();
+    public SubjectDerivedAttributeValuesFunction() {
         scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
-    }
-    
-    /**
-     * Set the strategy used to locate the {@link ProfileRequestContext} associated with a given
-     * {@link AttributeResolutionContext}.
-     * 
-     * @param strategy strategy used to locate the {@link ProfileRequestContext} associated with a given
-     *            {@link AttributeResolutionContext}
-     */
-    public void setProfileRequestContextLookupStrategy(
-            @Nonnull final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
     }
 
     /**
@@ -101,26 +80,25 @@ public class SubjectDerivedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /**
-     * Sets the attribute value engine.
+     * Sets the attribute value function.
      * 
      * @param engine what to set.
      */
-    public void setAttributeValueEngine(@Nonnull final Function<Principal, List<IdPAttributeValue<?>>> engine) {
+    public void setAttributeValueFunction(@Nonnull final Function<Principal, List<IdPAttributeValue<?>>> engine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        attributeValueEngine = Constraint.isNotNull(engine, "Attribute Engine cannot be null");
+        attributeValueFunction = Constraint.isNotNull(engine, "Attribute Engine cannot be null");
     }
 
-    @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
-
-        final ProfileRequestContext prc = prcLookupStrategy.apply(resolutionContext);
+    /** {@inheritDoc} */
+    @Override
+    @Nullable
+    public List<IdPAttributeValue<?>> apply(@Nullable final ProfileRequestContext prc) {
         final SubjectContext cs = scLookupStrategy.apply(prc);
         final List<IdPAttributeValue<?>> results = new ArrayList<>(1);
 
         for (final Subject subject : cs.getSubjects()) {
             for (final Principal principal : subject.getPrincipals()) {
-                final List<IdPAttributeValue<?>> values = attributeValueEngine.apply(principal);
+                final List<IdPAttributeValue<?>> values = attributeValueFunction.apply(principal);
                 if ((null != values) && !values.isEmpty()) {
                     results.addAll(values);
                 }
@@ -132,18 +110,21 @@ public class SubjectDerivedAttributeDefinition extends AbstractAttributeDefiniti
         }
         log.debug("{} Generated {} values.", getLogPrefix(), results.size());
         log.trace("{} Values:", getLogPrefix(), results);
-        final IdPAttribute attribute = new IdPAttribute(getId());
-        attribute.setValues(results);
-        return attribute;
+        return results;
     }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         Constraint.isNotNull(scLookupStrategy, "SubjectContext lookup strategy cannot be null");
-        Constraint.isNotNull(prcLookupStrategy, "ProfileRequestContext lookup strategy cannot be null");
-        Constraint.isNotNull(attributeValueEngine, "Attribute Engine cannot be null");
+        Constraint.isNotNull(attributeValueFunction, "Attribute Engine cannot be null");
 
         super.doInitialize();
     }
 
+    /** Produce a consistent log prefix.
+     * @return a  consistent log prefix
+     */
+    private String getLogPrefix() {
+        return "SubjectDerivedAttributeDefinition" + getId();
+    }
 }
