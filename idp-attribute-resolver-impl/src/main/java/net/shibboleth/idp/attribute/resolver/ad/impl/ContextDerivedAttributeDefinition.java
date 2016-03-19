@@ -57,7 +57,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
      * 
      * The function returns null or an empty list if the {@link Principal} isn't relevant.
      */
-    @Nonnull private Function<ProfileRequestContext, List<IdPAttributeValue<?>>> attributeValueFunction;
+    @Nonnull private Function<ProfileRequestContext, List<IdPAttributeValue<?>>> attributeValuesFunction;
 
     /** Constructor. */
     public ContextDerivedAttributeDefinition() {
@@ -83,10 +83,10 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
      * 
      * @param function what to set.
      */
-    public void setAttributeValueFunction(
+    public void setAttributeValuesFunction(
             @Nonnull final Function<ProfileRequestContext, List<IdPAttributeValue<?>>> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        attributeValueFunction = Constraint.isNotNull(function, "Attribute Function cannot be null");
+        attributeValuesFunction = Constraint.isNotNull(function, "Attribute Function cannot be null");
     }
 
     @Override @Nullable protected IdPAttribute doAttributeDefinitionResolve(
@@ -94,7 +94,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final ProfileRequestContext prc = prcLookupStrategy.apply(resolutionContext);
-        final List<IdPAttributeValue<?>> results = attributeValueFunction.apply(prc);
+        final List<IdPAttributeValue<?>> results = attributeValuesFunction.apply(prc);
 
         log.debug("{} Generated {} values.", getLogPrefix(), results.size());
         log.trace("{} Values:", getLogPrefix(), results);
@@ -106,7 +106,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         Constraint.isNotNull(prcLookupStrategy, "ProfileRequestContext lookup strategy cannot be null");
-        Constraint.isNotNull(attributeValueFunction, "AttributeValue Function cannot be null");
+        Constraint.isNotNull(attributeValuesFunction, "AttributeValue Function cannot be null");
 
         super.doInitialize();
     }

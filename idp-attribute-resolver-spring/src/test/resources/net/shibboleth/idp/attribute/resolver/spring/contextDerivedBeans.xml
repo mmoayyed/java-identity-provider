@@ -11,9 +11,10 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
        
-    <bean id="princialAttributeValuesFunction" class="net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction" c:name="BeanWhatever"/>    
+    <bean id="princialAttributeValuesFunction" class="net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction" 
+    c:attrName="BeanWhatever"/>    
        
-    <bean id="ctxAttributeValuesFunction" class="net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedValuesFunction" 
-    p:attributeValueFunction-ref="princialAttributeFunction" p:id="ctxAttributeFunction"/>
+    <bean id="ctxAttributeValuesFunction" class="net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction" 
+    p:attributeValuesFunction-ref="princialAttributeValuesFunction" p:id="ctxAttributeFunction"/>
 </beans>
        

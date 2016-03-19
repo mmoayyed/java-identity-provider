@@ -50,7 +50,7 @@ public class ContextDerivedAttributeDefinitionParser extends BaseAttributeDefini
         if (null == functionRef) {
             throw new BeanCreationException(getLogPrefix() + "requires 'attributeValuesFunctionRef'");
         } else {
-            builder.addPropertyReference("attributeValueFunction", functionRef);
+            builder.addPropertyReference("attributeValuesFunction", functionRef);
         }
     }
 

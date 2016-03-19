@@ -55,10 +55,10 @@ public class ContextDerivedAttributeDefinitionTest {
 
         final SubjectDerivedAttributeValuesFunction ctxValueFunction = new SubjectDerivedAttributeValuesFunction();
         ctxValueFunction.setId("pDaD");
-        ctxValueFunction.setAttributeValueFunction(new IdPAttributePrincipalValuesFunction("wibble"));
+        ctxValueFunction.setAttributeValuesFunction(new IdPAttributePrincipalValuesFunction("wibble"));
         
         final ContextDerivedAttributeDefinition defn = new ContextDerivedAttributeDefinition();
-        defn.setAttributeValueFunction(ctxValueFunction);
+        defn.setAttributeValuesFunction(ctxValueFunction);
         defn.setId("pDAD");
         defn.initialize();
 

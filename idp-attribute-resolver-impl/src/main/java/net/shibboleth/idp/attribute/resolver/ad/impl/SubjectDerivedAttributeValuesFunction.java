@@ -58,7 +58,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * 
      * The {@link Function} returns null or an empty list if the {@link Principal} isn't relevant.
      */
-    @Nonnull private Function<Principal, List<IdPAttributeValue<?>>> attributeValueFunction;
+    @Nonnull private Function<Principal, List<IdPAttributeValue<?>>> attributesValueFunction;
 
     /** Constructor. */
     public SubjectDerivedAttributeValuesFunction() {
@@ -84,9 +84,9 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
      * 
      * @param engine what to set.
      */
-    public void setAttributeValueFunction(@Nonnull final Function<Principal, List<IdPAttributeValue<?>>> engine) {
+    public void setAttributeValuesFunction(@Nonnull final Function<Principal, List<IdPAttributeValue<?>>> engine) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        attributeValueFunction = Constraint.isNotNull(engine, "Attribute Engine cannot be null");
+        attributesValueFunction = Constraint.isNotNull(engine, "Attribute Engine cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -98,7 +98,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
 
         for (final Subject subject : cs.getSubjects()) {
             for (final Principal principal : subject.getPrincipals()) {
-                final List<IdPAttributeValue<?>> values = attributeValueFunction.apply(principal);
+                final List<IdPAttributeValue<?>> values = attributesValueFunction.apply(principal);
                 if ((null != values) && !values.isEmpty()) {
                     results.addAll(values);
                 }
@@ -116,7 +116,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         Constraint.isNotNull(scLookupStrategy, "SubjectContext lookup strategy cannot be null");
-        Constraint.isNotNull(attributeValueFunction, "Attribute Engine cannot be null");
+        Constraint.isNotNull(attributesValueFunction, "Attribute Engine cannot be null");
 
         super.doInitialize();
     }

@@ -58,7 +58,7 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, "principalAttributeName"));
-        final String functionRef = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeValueFunctionRef"));
+        final String functionRef = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeValuesFunctionRef"));
 
 
         final BeanDefinitionBuilder contextFunctionBuilder =
@@ -67,22 +67,22 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
 
         if (null != attributeName) {
             if (null != functionRef) {
-                log.warn("{} only one of \"principalAttributeName\" or \"attributeValueFunctionRef\""
-                        + " should be provided. \"attributeValueFunctionRef\" ignored", getLogPrefix());
+                log.warn("{} only one of \"principalAttributeName\" or \"attributeValuesFunctionRef\""
+                        + " should be provided. \"attributeValuesFunctionRef\" ignored", getLogPrefix());
             }
             final BeanDefinitionBuilder principalValuesFunctionBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(IdPAttributePrincipalValuesFunction.class);
             principalValuesFunctionBuilder.addConstructorArgValue(attributeName);
-            contextFunctionBuilder.addPropertyValue("attributeValueFunction",
+            contextFunctionBuilder.addPropertyValue("attributeValuesFunction",
                     principalValuesFunctionBuilder.getBeanDefinition());
         } else if (null != functionRef) {
-            contextFunctionBuilder.addPropertyReference("attributeValueFunction", functionRef);
+            contextFunctionBuilder.addPropertyReference("attributeValuesFunction", functionRef);
         } else {
-            log.error("{} one of \"principalAttributeName\" or \"attributeValueFunctionRef\" should be supplied."
+            log.error("{} one of \"principalAttributeName\" or \"attributeValuesFunctionRef\" should be supplied."
                     + " should be provided.", getLogPrefix());
             throw new BeanCreationException("Misconfigured PrincipalDerivedAttribute.");
         }
-        builder.addPropertyValue("attributeValueFunction", contextFunctionBuilder.getBeanDefinition());
+        builder.addPropertyValue("attributeValuesFunction", contextFunctionBuilder.getBeanDefinition());
     }
 
     /** {@inheritDoc}. No input. */

@@ -98,7 +98,7 @@ public class ContextDerivedAttributeDefinitionsParserTest extends BaseAttributeD
     
     @Test public void context() throws ResolutionException {
         final AttributeDefinition attrDef =
-                getAttributeDefn("contextDerivedComplex.xml", "contextDerivedBeans.xml", ContextDerivedAttributeDefinition.class);
+                getAttributeDefn("contextDerived.xml", "contextDerivedBeans.xml", ContextDerivedAttributeDefinition.class);
 
         
         final List<IdPAttributeValue<?>> foo = attrDef.resolve(getCtx("BeanWhatever")).getValues();
