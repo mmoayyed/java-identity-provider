@@ -77,7 +77,7 @@
     <decision-state id="CheckSubjectCanonicalization">
         <if test="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.SubjectCanonicalizationContext)).getPrincipalName() == null"
             then="CallSubjectCanonicalization"
-            else="FinalizeAuthentication" />
+            else="DetectIdentitySwitch" />
     </decision-state>
 
     <!-- This runs a c14n step on the result of the authentication. -->
