@@ -144,7 +144,7 @@
         <webflow:flow-execution-repository max-execution-snapshots="0" conversation-manager="conversationManager" />
         <webflow:flow-execution-listeners>
             <webflow:listener ref="profileRequestContextFlowExecutionListener"
-                              criteria="%{idp.profile.exposeProfileRequestContextInServletRequest:none}" />
+                              criteria="%{idp.profile.exposeProfileRequestContextInServletRequest:*}" />
         </webflow:flow-execution-listeners>
     </webflow:flow-executor>
 
