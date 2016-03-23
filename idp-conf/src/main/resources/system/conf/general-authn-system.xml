@@ -102,6 +102,7 @@
                 <entry key="urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified" value="124" />
 
                 <!-- SAML 1 authn methods -->
+                <entry key="urn:oasis:names:tc:SAML:1.0:am:password" value="200" />
                 <entry key="urn:ietf:rfc:1510" value="201" />
                 <entry key="urn:oasis:names:tc:SAML:1.0:am:HardwareToken" value="202" />
                 <entry key="urn:oasis:names:tc:SAML:1.0:am:X509-PKI" value="203" />
