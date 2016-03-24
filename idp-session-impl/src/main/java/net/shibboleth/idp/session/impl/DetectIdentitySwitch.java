@@ -165,7 +165,7 @@ public class DetectIdentitySwitch extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
 
         if (sessionCtx.getIdPSession().getPrincipalName().equals(newPrincipalName)) {
-            log.debug("{} Identities from session and new authentication result match, nothing to do");
+            log.debug("{} Identities from session and new authentication result match, nothing to do", getLogPrefix());
             return;
         }
         
