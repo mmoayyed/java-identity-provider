@@ -25,9 +25,12 @@ import org.opensaml.profile.context.ProfileRequestContext;
 /**
  * Lookup function for extracting CAS profile configuration from the profile request context.
  *
+ *@param <T> type of profile configuration
+ *
  * @author Marvin S. Addison
  */
-public class ConfigLookupFunction<T extends AbstractProtocolConfiguration> implements Function<ProfileRequestContext, T> {
+public class ConfigLookupFunction<T extends AbstractProtocolConfiguration>
+    implements Function<ProfileRequestContext, T> {
 
     /** Type of profile configuration class. */
     private final Class<T> configClass;

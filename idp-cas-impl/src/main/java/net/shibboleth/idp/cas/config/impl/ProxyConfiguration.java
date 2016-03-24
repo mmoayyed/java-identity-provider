@@ -19,6 +19,8 @@ package net.shibboleth.idp.cas.config.impl;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
 /**
  * CAS protocol configuration that applies to the <code>/proxy</code> URI.
  *
@@ -43,14 +45,14 @@ public class ProxyConfiguration extends AbstractProtocolConfiguration {
         setTicketValidityPeriod(15000);
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected String getDefaultTicketPrefix() {
+    @Nonnull @NotEmpty protected String getDefaultTicketPrefix() {
         return DEFAULT_TICKET_PREFIX;
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
     protected int getDefaultTicketLength() {
         return DEFAULT_TICKET_LENGTH;
     }

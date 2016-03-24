@@ -22,8 +22,13 @@ import java.util.Comparator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Function;
+
 import net.shibboleth.idp.cas.service.impl.DefaultServiceComparator;
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
@@ -48,75 +53,130 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
     /** Default ticket length (random part). */
     public static final int DEFAULT_TICKET_LENGTH = 50;
 
+    /** Lookup strategy for {@link #pgtIOUGenerator} property. */
+    @Nullable private Function<ProfileRequestContext,IdentifierGenerationStrategy> pgtIOUGeneratorLookupStrategy;
 
     /** PGTIOU ticket ID generator. */
-    @Nonnull
-    private IdentifierGenerationStrategy pgtIOUGenerator = new TicketIdentifierGenerationStrategy("PGTIOU", 50);
+    @Nullable private IdentifierGenerationStrategy pgtIOUGenerator;
 
-    /** Component responsible for enforcing ticket requestor matches ticket validator. */
-    @Nonnull
-    private Comparator<String> serviceComparator = new DefaultServiceComparator();
+    /** Lookup strategy for {@link #serviceComparator} property. */
+    @Nullable private Function<ProfileRequestContext,Comparator<String>> serviceComparatorLookupStrategy;
 
+    /** Component responsible for enforcing ticket requester matches ticket validator. */
+    @Nonnull private Comparator<String> serviceComparator;
+
+    /** Lookup strategy for {@link #userAttribute} property. */
+    @Nullable private Function<ProfileRequestContext,String> userAttributeLookupStrategy;
+    
     /** Name of IdP attribute to use for user returned in CAS ticket validation response. */
-    @Nullable
-    private String userAttribute;
-
+    @Nullable private String userAttribute;
 
     /** Creates a new instance. */
     public ValidateConfiguration() {
         super(PROFILE_ID);
+        
+        pgtIOUGenerator = new TicketIdentifierGenerationStrategy("PGTIOU", 50);
+        serviceComparator = new DefaultServiceComparator();
     }
 
     /**
-     * @return PGTIOU ticket ID generator.
+     * Get the PGTIOU ticket ID generator.
+     * 
+     * @return PGTIOU ticket ID generator
      */
-    @Nonnull
-    public IdentifierGenerationStrategy getPGTIOUGenerator() {
-        return pgtIOUGenerator;
+    @Nonnull public IdentifierGenerationStrategy getPGTIOUGenerator() {
+        return Constraint.isNotNull(getIndirectProperty(pgtIOUGeneratorLookupStrategy, pgtIOUGenerator),
+                "PGTIOU generator cannot be null");
     }
 
     /**
-     * Sets the PGTIOU ticket ID generator.
+     * Set the PGTIOU ticket ID generator.
      *
-     * @param generator ID generator.
+     * @param generator ID generator
      */
-    public void setPGTIOUGenerator(@Nonnull IdentifierGenerationStrategy generator) {
-        this.pgtIOUGenerator = Constraint.isNotNull(generator, "PGTIOU generator cannot be null");
+    public void setPGTIOUGenerator(@Nullable final IdentifierGenerationStrategy generator) {
+        pgtIOUGenerator = generator;
+    }
+    
+    /**
+     * Set the lookup strategy to use for the name of the IdP attribute to use for username returned
+     * in CAS ticket validation response.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setPGTIOUGeneratorLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
+        pgtIOUGeneratorLookupStrategy = strategy;
     }
 
-    @Nonnull
-    public Comparator<String> getServiceComparator() {
-        return serviceComparator;
+    /**
+     * Get component responsible for enforcing ticket requester matches ticket validator.
+     * 
+     * @return ticket requester/validator comparator
+     */
+    @Nonnull public Comparator<String> getServiceComparator() {
+        return Constraint.isNotNull(getIndirectProperty(serviceComparatorLookupStrategy, serviceComparator),
+                "Service comparator cannot be null");
     }
 
-    public void setServiceComparator(@Nonnull Comparator<String> serviceComparator) {
-        this.serviceComparator = serviceComparator;
+    /**
+     * Set component responsible for enforcing ticket requester matches ticket validator.
+     * 
+     * @param comparator ticket requester/validator comparator
+     */
+    public void setServiceComparator(@Nullable final Comparator<String> comparator) {
+        serviceComparator = comparator;
     }
 
+    /**
+     * Set the lookup strategy to use for the component responsible for enforcing that the
+     * ticket requester matches the ticket validator.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setServiceComparatorLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Comparator<String>> strategy) {
+        serviceComparatorLookupStrategy = strategy;
+    }
+
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected String getDefaultTicketPrefix() {
+    @Nonnull @NotEmpty protected String getDefaultTicketPrefix() {
         return DEFAULT_TICKET_PREFIX;
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
     protected int getDefaultTicketLength() {
         return DEFAULT_TICKET_LENGTH;
     }
 
-    /** @return Name of IdP attribute to use for username returned in CAS ticket validation response. */
-    @Nullable
-    public String getUserAttribute() {
-        return userAttribute;
+    /**
+     * Get name of IdP attribute to use for username returned in CAS ticket validation response.
+     * 
+     * @return attribute name
+     */
+    @Nullable public String getUserAttribute() {
+        return getIndirectProperty(userAttributeLookupStrategy, userAttribute);
     }
 
     /**
-     * Sets the name of IdP attribute to use for username returned in CAS ticket validation response.
+     * Set the name of IdP attribute to use for username returned in CAS ticket validation response.
      *
-     * @param attribute Attribute name to use
+     * @param attribute attribute name to use
      */
-    public void setUserAttribute(@Nullable String attribute) {
-        this.userAttribute = attribute;
+    public void setUserAttribute(@Nullable final String attribute) {
+        userAttribute = attribute;
     }
+    
+    /**
+     * Set the lookup strategy to use for the name of the IdP attribute to use for username returned
+     * in CAS ticket validation response.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setUserAttributeLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        userAttributeLookupStrategy = strategy;
+    }
+    
 }

@@ -26,7 +26,11 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -35,6 +39,7 @@ import com.google.common.collect.ImmutableSet;
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -57,81 +62,108 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
     /** Default ticket length (random part). */
     public static final int DEFAULT_TICKET_LENGTH = 25;
 
+    /** Lookup function to supply {@link #authenticationFlows} property. */
+    @Nullable private Function<ProfileRequestContext,Set<String>> authenticationFlowsLookupStrategy;
+    
     /** Filters the usable authentication flows. */
-    @Nonnull
-    @NonnullElements
-    private Set<String> authenticationFlows = Collections.emptySet();
+    @Nonnull @NonnullElements private Set<String> authenticationFlows;
+
+    /** Lookup function to supply {@link #postAuthenticationFlows} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<String>> postAuthenticationFlowsLookupStrategy;
 
     /** Enables post-authentication interceptor flows. */
-    @Nonnull
-    @NonnullElements
-    private List<String> postAuthenticationFlows = Collections.emptyList();
+    @Nonnull @NonnullElements private List<String> postAuthenticationFlows;
+
+    /** Lookup function to supply {@link #defaultAuthenticationContexts} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>>
+            defaultAuthenticationContextsLookupStrategy;
     
     /** Selects, and limits, the authentication contexts to use for requests. */
-    @Nonnull
-    @NonnullElements
-    private List<AuthnContextClassRefPrincipal> defaultAuthenticationContexts = Collections.emptyList();
+    @Nonnull @NonnullElements private List<AuthnContextClassRefPrincipal> defaultAuthenticationContexts;
+
+    /** Lookup function to supply {@link #nameIDFormatPrecedence} property. */
+    @Nullable private Function<ProfileRequestContext,Collection<String>> nameIDFormatPrecedenceLookupStrategy;
 
     /** Precedence of name identifier formats to use for requests. */
-    @Nonnull
-    @NonnullElements
-    private List<String> nameIDFormatPrecedence = Collections.emptyList();
+    @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
 
     /** Creates a new instance. */
     public LoginConfiguration() {
         super(PROFILE_ID);
         // Service tickets valid for 15s by default
         setTicketValidityPeriod(15000);
+        authenticationFlows = Collections.emptySet();
+        postAuthenticationFlows = Collections.emptyList();
+        defaultAuthenticationContexts = Collections.emptyList();
+        nameIDFormatPrecedence = Collections.emptyList();
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements
-    @NotLive
-    @Unmodifiable
-    public List<Principal> getDefaultAuthenticationMethods() {
-        return ImmutableList.<Principal> copyOf(defaultAuthenticationContexts);
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<Principal> getDefaultAuthenticationMethods() {
+        return ImmutableList.<Principal>copyOf(getIndirectProperty(defaultAuthenticationContextsLookupStrategy,
+                defaultAuthenticationContexts));
     }
-
+        
     /**
      * Set the default authentication contexts to use, expressed as custom principals.
-     *
+     * 
      * @param contexts default authentication contexts to use
      */
     public void setDefaultAuthenticationMethods(
-            @Nonnull @NonnullElements final List<AuthnContextClassRefPrincipal> contexts) {
-        Constraint.isNotNull(contexts, "List of contexts cannot be null");
-
-        defaultAuthenticationContexts = new ArrayList<>(Collections2.filter(contexts, Predicates.notNull()));
+            @Nullable @NonnullElements final Collection<AuthnContextClassRefPrincipal> contexts) {
+        if (contexts != null) {
+            defaultAuthenticationContexts = new ArrayList<>(Collections2.filter(contexts, Predicates.notNull()));
+        } else {
+            defaultAuthenticationContexts = Collections.emptyList();
+        }
+    }
+    
+    /**
+     * Set a lookup strategy for the {@link #defaultAuthenticationMethods} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setDefaultAuthenticationMethodsLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>> strategy) {
+        defaultAuthenticationContextsLookupStrategy = strategy;
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements
-    @NotLive
-    @Unmodifiable
-    public Set<String> getAuthenticationFlows() {
-        return ImmutableSet.copyOf(authenticationFlows);
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Set<String> getAuthenticationFlows() {
+        return ImmutableSet.copyOf(getIndirectProperty(authenticationFlowsLookupStrategy, authenticationFlows));
     }
 
     /**
      * Set the authentication flows to use.
-     *
+     * 
      * @param flows   flow identifiers to use
      */
-    public void setAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
-        Constraint.isNotNull(flows, "Collection of flows cannot be null");
+    public void setAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
 
-        authenticationFlows = new HashSet<>(Collections2.filter(flows, Predicates.notNull()));
+        if (flows != null) {
+            authenticationFlows = new HashSet<>(StringSupport.normalizeStringCollection(flows));
+        } else {
+            authenticationFlows = Collections.emptySet();
+        }
+    }
+
+    /**
+     * Set a lookup strategy for the {@link #authenticationFlows} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setAuthenticationFlowsLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Set<String>> strategy) {
+        authenticationFlowsLookupStrategy = strategy;
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements
-    @NotLive
-    @Unmodifiable
-    public List<String> getPostAuthenticationFlows() {
-        return postAuthenticationFlows;
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getPostAuthenticationFlows() {
+        return ImmutableList.copyOf(
+                getIndirectProperty(postAuthenticationFlowsLookupStrategy, postAuthenticationFlows));
     }
 
     /**
@@ -139,42 +171,60 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * 
      * @param flows   flow identifiers to enable
      */
-    public void setPostAuthenticationFlows(@Nonnull @NonnullElements final Collection<String> flows) {
-        Constraint.isNotNull(flows, "Collection of flows cannot be null");
-        
-        postAuthenticationFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+    public void setPostAuthenticationFlows(@Nullable @NonnullElements final Collection<String> flows) {
+
+        if (flows != null) {
+            postAuthenticationFlows = new ArrayList<>(StringSupport.normalizeStringCollection(flows));
+        } else {
+            postAuthenticationFlows = Collections.emptyList();
+        }
+    }
+
+    /**
+     * Set a lookup strategy for the {@link #postAuthenticationFlows} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setPostAuthenticationFlowsLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
+        postAuthenticationFlowsLookupStrategy = strategy;
     }
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull @NonnullElements
-    @NotLive
-    @Unmodifiable
-    public List<String> getNameIDFormatPrecedence() {
-        return ImmutableList.copyOf(nameIDFormatPrecedence);
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
+        return ImmutableList.copyOf(getIndirectProperty(nameIDFormatPrecedenceLookupStrategy, nameIDFormatPrecedence));
     }
 
     /**
      * Set the name identifier formats to use.
-     *
-     * @param formats name identifier formats to use
+     * 
+     * @param formats   name identifier formats to use
      */
-    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final List<String> formats) {
+    public void setNameIDFormatPrecedence(@Nonnull @NonnullElements final Collection<String> formats) {
         Constraint.isNotNull(formats, "List of formats cannot be null");
-
-        nameIDFormatPrecedence = new ArrayList<>(Collections2.filter(formats, Predicates.notNull()));
+        
+        nameIDFormatPrecedence = new ArrayList<>(StringSupport.normalizeStringCollection(formats));
     }
 
+    /**
+     * Set a lookup strategy for the {@link #nameIDFormatPrecedence} property.
+     *
+     * @param strategy  lookup strategy
+     */
+    public void setNameIDFormatPrecedenceLookupStrategy(
+            @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
+        nameIDFormatPrecedenceLookupStrategy = strategy;
+    }
 
-
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
-    protected String getDefaultTicketPrefix() {
+    @Nonnull @NotEmpty protected String getDefaultTicketPrefix() {
         return DEFAULT_TICKET_PREFIX;
     }
 
+    /** {@inheritDoc} */
     @Override
-    @Nonnull
     protected int getDefaultTicketLength() {
         return DEFAULT_TICKET_LENGTH;
     }
