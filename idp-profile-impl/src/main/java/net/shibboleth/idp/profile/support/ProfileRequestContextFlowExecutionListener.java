@@ -48,7 +48,7 @@ public class ProfileRequestContextFlowExecutionListener extends FlowExecutionLis
             final ProfileRequestContext prc = getProfileRequestContext(context);
             final ServletRequest request = getRequest(context);
             if (prc != null && request != null) {
-                log.debug("Exposing ProfileRequestContext in servlet request");
+                log.trace("Exposing ProfileRequestContext in servlet request");
                 request.setAttribute(ProfileRequestContext.BINDING_KEY, prc);
             }
         }
@@ -59,7 +59,7 @@ public class ProfileRequestContextFlowExecutionListener extends FlowExecutionLis
         final ProfileRequestContext prc = getProfileRequestContext(context);
         final ServletRequest request = getRequest(context);
         if (prc != null && request != null) {
-            log.debug("Updating ProfileRequestContext in servlet request");
+            log.trace("Updating ProfileRequestContext in servlet request");
             request.setAttribute(ProfileRequestContext.BINDING_KEY, prc);
         }
     }
