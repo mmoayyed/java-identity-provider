@@ -92,7 +92,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     /** Limits the total number of delegates that may be derived from the initial SAML token. Default value: 1. */
     @NonNegative private long maximumTokenDelegationChainLength;
 
-    /** Lookup function to supply {@link #defaultAuthenticationMethods} property. */
+    /** Lookup function to supply {@link #defaultAuthenticationContexts} property. */
     @Nullable private Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>>
             defaultAuthenticationContextsLookupStrategy;
     
