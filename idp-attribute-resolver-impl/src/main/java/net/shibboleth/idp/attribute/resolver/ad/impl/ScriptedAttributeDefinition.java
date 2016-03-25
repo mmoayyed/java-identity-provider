@@ -248,11 +248,11 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
         final SubjectContext sc = scLookupStrategy.apply(prc);
         if (null == sc) {
-            log.warn("{} Could not locate SubjectContext", getLogPrefix());
+            log.debug("{} Could not locate SubjectContext", getLogPrefix());
         } else {
             final List<Subject> subjects = sc.getSubjects();
             if (null == subjects) {
-                log.warn("{} Could not locate Subjects", getLogPrefix());
+                log.debug("{} Could not locate Subjects", getLogPrefix());
             } else {
                 scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]),
                         ScriptContext.ENGINE_SCOPE);
