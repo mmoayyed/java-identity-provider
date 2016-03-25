@@ -61,7 +61,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
     /** What class we want the output to test against. */
     @Nullable private Class outputClass;
 
-    /** What class we want the output to test against. */
+    /** What class we want the input to test against. */
     @Nonnull private final Class<T> inputClass;
 
     /** The custom object we can be injected into the script. */
