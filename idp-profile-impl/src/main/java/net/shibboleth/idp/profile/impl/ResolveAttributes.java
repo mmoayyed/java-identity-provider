@@ -75,12 +75,12 @@ public final class ResolveAttributes extends AbstractProfileAction {
     @Nullable private Function<ProfileRequestContext,String> recipientLookupStrategy;
     
     /** Strategy used to locate the principal name associated with the attribute resolution. */
-    @Nonnull private Function<ProfileRequestContext,String> principalNameLookupStrategy;
+    @Nullable private Function<ProfileRequestContext,String> principalNameLookupStrategy;
 
     /**
      * Strategy used to locate an {@link AuthenticationContext} associated with a given {@link ProfileRequestContext}.
      */
-    @Nonnull private Function<ProfileRequestContext,AuthenticationContext> authnContextLookupStrategy;
+    @Nullable private Function<ProfileRequestContext,AuthenticationContext> authnContextLookupStrategy;
 
     /** Strategy used to locate or create the {@link AttributeContext} to populate. */
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextCreationStrategy;
@@ -147,10 +147,10 @@ public final class ResolveAttributes extends AbstractProfileAction {
      * 
      * @param strategy lookup strategy
      */
-    public void setPrincipalNameLookupStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+    public void setPrincipalNameLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        principalNameLookupStrategy = Constraint.isNotNull(strategy, "Principal name lookup strategy cannot be null");
+        principalNameLookupStrategy = strategy;
     }
 
     /**
@@ -161,11 +161,10 @@ public final class ResolveAttributes extends AbstractProfileAction {
      *            {@link ProfileRequestContext}
      */
     public void setAuthenticationContextLookupStrategy(
-            @Nonnull final Function<ProfileRequestContext,AuthenticationContext> strategy) {
+            @Nullable final Function<ProfileRequestContext,AuthenticationContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        authnContextLookupStrategy =
-                Constraint.isNotNull(strategy, "AuthenticationContext lookup strategy cannot be null");
+        authnContextLookupStrategy = strategy;
     }
     
     /**
@@ -214,7 +213,10 @@ public final class ResolveAttributes extends AbstractProfileAction {
             return false;
         }
         
-        authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
+        if (authnContextLookupStrategy != null) {
+            authenticationContext = authnContextLookupStrategy.apply(profileRequestContext);
+        }
+        
         if (authenticationContext == null) {
             log.debug("{} No authentication context available.", getLogPrefix());
         }
@@ -280,7 +282,11 @@ public final class ResolveAttributes extends AbstractProfileAction {
             resolutionContext.setRequestedIdPAttributeNames(attributesToResolve);
         }
         
-        resolutionContext.setPrincipal(principalNameLookupStrategy.apply(profileRequestContext));
+        if (null != principalNameLookupStrategy) {
+            resolutionContext.setPrincipal(principalNameLookupStrategy.apply(profileRequestContext));
+        } else {
+            resolutionContext.setPrincipal(null);
+        }
         
         resolutionContext.setPrincipalAuthenticationMethod(null);
         if (null != authenticationContext) {
