@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.context.UserAgentContext;
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.BrowserProfilePredicate;
 
@@ -30,7 +29,7 @@ import org.opensaml.profile.logic.BrowserProfilePredicate;
  * By default, the action is activated by a {@link BrowserProfilePredicate} condition such that only browser profiles
  * result in the creation of a {@link UserAgentContext}.
  *
- * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */
 public class PopulateUserAgentContext extends AbstractProfileAction {
 
