@@ -91,6 +91,7 @@
         <transition on="proceed" to="CheckResolveAttributes">
             <evaluate result="flowScope.hasAuthenticationContext" expression="true" />
         </transition>
+        <transition on="RestartAuthentication" to="PostInitialSetup" />
     </subflow-state>
 
     <decision-state id="CheckResolveAttributes">
@@ -128,6 +129,7 @@
     <subflow-state id="DoPostAuthnInterceptSubflow" subflow="intercept">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="GrantServiceTicket" />
+        <transition on="RestartAuthentication" to="PostInitialSetup" />
     </subflow-state>
 
     <action-state id="GrantServiceTicket">

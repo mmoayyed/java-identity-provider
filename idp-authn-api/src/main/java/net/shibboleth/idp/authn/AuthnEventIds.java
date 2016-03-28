@@ -56,7 +56,10 @@ public final class AuthnEventIds {
     
     /** ID of event returned if a flow wishes to indicate that another flow should be selected instead. */
     @Nonnull @NotEmpty public static final String RESELECT_FLOW = "ReselectFlow";
-    
+
+    /** ID of event returned if the authentication process should be restarted from scratch. */
+    @Nonnull @NotEmpty public static final String RESTART_AUTHN = "RestartAuthentication";
+
     /**
      * ID of event returned if the {@link net.shibboleth.idp.authn.context.SubjectCanonicalizationContext}
      * is missing or invalid.
