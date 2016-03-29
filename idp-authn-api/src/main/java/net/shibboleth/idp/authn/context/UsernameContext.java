@@ -17,14 +17,17 @@
 
 package net.shibboleth.idp.authn.context;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * Context, usually attached to {@link AuthenticationContext},
- * that carries a username (without a password) to be validated.
+ * Context that carries a username (without a password) to be validated.
+ * 
+ * @parent {@link AuthenticationContext}
+ * @added After extracting a username during authentication
  */
 public class UsernameContext extends BaseContext {
 
@@ -47,7 +50,7 @@ public class UsernameContext extends BaseContext {
      * 
      * @return this context
      */
-    public UsernameContext setUsername(@Nullable final String name) {
+    @Nonnull public UsernameContext setUsername(@Nullable final String name) {
         username = name;
         return this;
     }

@@ -28,7 +28,11 @@ import eu.bitwalker.useragentutils.UserAgent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import org.opensaml.messaging.context.BaseContext;
 
-/** A context, usually attached to {@link AuthenticationContext}, containing data about the user agent. */
+/**
+ * A context containing data about the user agent.
+ * 
+ * @parent {@link org.opensaml.profile.context.ProfileRequestContext}, {@link AuthenticationContext}
+ */
 public class UserAgentContext extends BaseContext {
 
     /** Address of the user-agent host. */
@@ -51,6 +55,18 @@ public class UserAgentContext extends BaseContext {
     }
 
     /**
+     * Set the address of the user-agent host.
+     * 
+     * @param userAgentAddress address of the user-agent host
+     * 
+     * @return this context
+     */
+    @Nonnull public UserAgentContext setAddress(@Nullable final InetAddress userAgentAddress) {
+        address = userAgentAddress;
+        return this;
+    }
+
+    /**
      * Get the user agent identifier.
      * 
      * @return identifier for the user agent
@@ -60,18 +76,6 @@ public class UserAgentContext extends BaseContext {
     }
     
     /**
-     * Set the address of the user-agent host.
-     * 
-     * @param userAgentAddress address of the user-agent host
-     * 
-     * @return this context
-     */
-    public UserAgentContext setAddress(@Nullable final InetAddress userAgentAddress) {
-        address = userAgentAddress;
-        return this;
-    }
-
-    /**
      * Set the user agent identifier. The parsed user agent is available via {@link #getUserAgent()} upon calling
      * this method.
      * 
@@ -79,7 +83,7 @@ public class UserAgentContext extends BaseContext {
      * 
      * @return this context
      */
-    public UserAgentContext setIdentifier(@Nullable final String id) {
+    @Nonnull public UserAgentContext setIdentifier(@Nullable final String id) {
         identifier = id;
         userAgent = new UserAgent(id);
         return this;

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.context;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.ldaptive.auth.AccountState;
@@ -26,7 +27,10 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.base.MoreObjects;
 
 /**
- * A context, usually attached to {@link AuthenticationContext}, containing data about an LDAP authentication operation.
+ * A context containing data about an LDAP authentication operation.
+ * 
+ * @parent {@link AuthenticationContext}
+ * @added After an LDAP authentication attempt
  */
 public class LDAPResponseContext extends BaseContext {
 
@@ -49,7 +53,7 @@ public class LDAPResponseContext extends BaseContext {
      * 
      * @return this context
      */
-    public LDAPResponseContext setAuthenticationResponse(@Nullable final AuthenticationResponse response) {
+    @Nonnull public LDAPResponseContext setAuthenticationResponse(@Nullable final AuthenticationResponse response) {
         authenticationResponse = response;
         return this;
     }

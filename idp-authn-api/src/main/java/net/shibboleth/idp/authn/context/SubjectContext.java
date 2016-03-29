@@ -27,7 +27,9 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 
 import org.opensaml.messaging.context.BaseContext;
@@ -35,11 +37,16 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.collect.ImmutableList;
 
 /**
- * A {@link BaseContext} that holds information about the subject of a transaction.
+ * A context that holds information about the subject of a request.
  * 
  * <p>The subject may or may not be authenticated, such as in a back-channel profile, but
  * profiles that operate on subjects can treat the information as "trusted" for their purposes.
  * This context must not be used to carry speculative or unverified subject information.</p>
+ * 
+ * <p>This is the ultimate product of a successful authentication process.</p>
+ * 
+ * @parent {@link org.opensaml.profile.context.ProfileRequestContext}
+ * @added After the subject of a request is determined
  */
 public class SubjectContext extends BaseContext {
 
@@ -47,7 +54,7 @@ public class SubjectContext extends BaseContext {
     @Nullable private String principalName;
 
     /** The active authentication results for the subject. */
-    @Nonnull private final Map<String, AuthenticationResult> authenticationResults;
+    @Nonnull @NonnullElements private final Map<String,AuthenticationResult> authenticationResults;
     
     /** Constructor. */
     public SubjectContext() {
@@ -81,7 +88,7 @@ public class SubjectContext extends BaseContext {
      * 
      * @return  mutable map of authentication flow IDs to authentication results
      */
-    @Nonnull @NonnullElements public Map<String, AuthenticationResult> getAuthenticationResults() {
+    @Nonnull @NonnullElements @Live public Map<String,AuthenticationResult> getAuthenticationResults() {
         return authenticationResults;
     }
     
@@ -91,7 +98,7 @@ public class SubjectContext extends BaseContext {
      * 
      * @return immutable list of Subjects 
      */
-    @Nonnull @Unmodifiable @NonnullElements public List<Subject> getSubjects() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Subject> getSubjects() {
         List<Subject> composite = new ArrayList<>();
         for (final AuthenticationResult e : getAuthenticationResults().values()) {
             composite.add(e.getSubject());

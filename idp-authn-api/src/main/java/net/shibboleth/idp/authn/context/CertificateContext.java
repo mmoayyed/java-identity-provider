@@ -33,8 +33,10 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
 /**
- * Context, usually attached to {@link AuthenticationContext}, that carries a {@link Certificate} to be
- * validated.
+ * Context that carries a {@link Certificate} to be validated.
+ * 
+ * @parent {@link AuthenticationContext}
+ * @added After extraction of a certificate during authentication
  */
 public class CertificateContext extends BaseContext {
 
@@ -65,7 +67,7 @@ public class CertificateContext extends BaseContext {
      * 
      * @return this context
      */
-    public CertificateContext setCertificate(@Nullable final Certificate cert) {
+    @Nonnull public CertificateContext setCertificate(@Nullable final Certificate cert) {
         certificate = cert;
         return this;
     }
@@ -86,7 +88,7 @@ public class CertificateContext extends BaseContext {
      * 
      * @return this context
      */
-    public CertificateContext setIntermediates(@Nonnull @NonnullElements final Collection<Certificate> certs) {
+    @Nonnull public CertificateContext setIntermediates(@Nonnull @NonnullElements final Collection<Certificate> certs) {
         Constraint.isNotNull(certs, "Intermediate certificate collection cannot be null");
         
         intermediates.clear();

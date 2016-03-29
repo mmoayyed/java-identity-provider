@@ -29,13 +29,15 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * A {@link BaseContext}, usually attached to {@link AuthenticationContext},
- * that holds information about authentication warnings.
+ * A context that holds information about authentication warnings.
  *
  * <p>The login process is particularly prone to requiring detailed warning
  * information to provide appropriate user feedback and auditing, and this
  * context tracks warnings that occur and preserves detailed information about
- * the kind of warnings encountered in multi-part authentication flows.
+ * the kind of warnings encountered in multi-part authentication flows.</p>
+ * 
+ * @parent {@link AuthenticationContext}
+ * @added After a warning is generated during authentication
  */
 public class AuthenticationWarningContext extends BaseContext {
 

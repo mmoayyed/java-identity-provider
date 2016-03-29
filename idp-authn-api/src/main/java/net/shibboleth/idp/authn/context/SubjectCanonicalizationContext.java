@@ -33,8 +33,14 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * A {@link BaseContext} that holds an input {@link Subject} to canonicalize into a
- * principal name.
+ * A context that holds an input {@link Subject} to canonicalize into a principal name, and
+ * the collection of c14n flows to attempt.
+ * 
+ * <p>There are different use cases in the system for the c14n process, but all of them share the
+ * use of this context as the input and output mechanism.</p>
+ * 
+ * @parent {@link org.opensaml.profile.context.ProfileRequestContext}
+ * @added At the end of a login flow or before any other execution of the subject canonicalization flow
  */
 public class SubjectCanonicalizationContext extends BaseContext {
 

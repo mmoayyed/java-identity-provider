@@ -33,6 +33,7 @@ import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonNegative;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -47,6 +48,13 @@ import com.google.common.base.MoreObjects;
  * input/output context for the action flow responsible for authentication, and
  * within that flow, the individual flows that carry out a specific kind of
  * authentication.
+ * 
+ * @parent {@link org.opensaml.profile.context.ProfileRequestContext}
+ * @child {@link RequestedPrincipalContext}, {@link net.shibboleth.idp.attribute.context.AttributeContext},
+ *  {@link UsernameContext}, {@link UsernamePasswordContext}, {@link UserAgentContext}, {@link CertificateContext},
+ *  {@link ExternalAuthenticationContext}, {@link KerberosTicketContext}, {@link LDAPResponseContext},
+ *  {@link AuthenticationErrorContext}, {@link AuthenticationWarningContext}
+ * @added Before authentication flow runs
  */
 public final class AuthenticationContext extends BaseContext {
 
@@ -122,7 +130,10 @@ public final class AuthenticationContext extends BaseContext {
     }
 
     /**
-     * Get the authentication results currently active for the subject.
+     * Get previous authentication results currently active for the subject.
+     * 
+     * <p>These should be used to identify SSO opportunities. Results produced during a particular
+     * authentication run should not be included in this collection.</p>
      * 
      * @return authentication results currently active for the subject
      */
@@ -152,6 +163,9 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Get the set of flows that could potentially be used for user authentication.
      * 
+     * <p>Authentication flows supplied by the configuration and gradually filtered down to
+     * a collection that can be used to authenticate the subject.</p>
+     * 
      * @return the potential flows
      */
     @Nonnull @NonnullElements @Live public Map<String,AuthenticationFlowDescriptor> getPotentialFlows() {
@@ -161,6 +175,9 @@ public final class AuthenticationContext extends BaseContext {
     
     /**
      * Get the set of flows that have been executed, successfully or otherwise, without producing a completed result.
+     * 
+     * <p>This tracks flows that have already been run to avoid unintentional repeated attempts to run the same
+     * flow.</p>
      * 
      * @return the intermediately executed flows
      */
@@ -172,7 +189,7 @@ public final class AuthenticationContext extends BaseContext {
      * Get the registry of predicate factories for custom principal evaluation.
      * 
      * <p>This object is only needed when evaluating a {@link RequestedPrincipalContext}, so the
-     * presence of it at this level of the tree is historical.
+     * presence of it at this level of the tree is historical.</p>
      * 
      * @return predicate factory registry
      * 
@@ -212,6 +229,10 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Get whether subject interaction is allowed.
      * 
+     * <p>Flows that support this feature <strong>MUST</strong> be implemented with awareness of
+     * this value. If a flow doesn't examine this property, it should be marked as non-supporting
+     * or would have to be universally lacking in subject interaction.</p>
+     * 
      * @return whether subject interaction may occur
      */
     public boolean isPassive() {
@@ -232,6 +253,10 @@ public final class AuthenticationContext extends BaseContext {
     
     /**
      * Get whether to require fresh subject interaction to succeed.
+     * 
+     * <p>Flows may not explicitly be aware of this property, but if they include any
+     * internal orchestration of other flows, then they <strong>MUST</strong> be aware of it
+     * to avoid reuse of previous results.</p>
      * 
      * @return whether subject interaction must occur
      */
@@ -254,9 +279,12 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Get a non-normative hint provided by the request about the user's identity.
      * 
+     * <p>This is <strong>NOT</strong> a trustworthy value, but may be used to optimize
+     * the user experience.</p>
+     * 
      * @return  the username hint
      */
-    @Nullable public String getHintedName() {
+    @Nullable @NotEmpty public String getHintedName() {
         return hintedName;
     }
     
@@ -275,7 +303,10 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Get the authentication flow that was attempted in order to authenticate the user.
      * 
-     * <p>This is not set if an existing result was reused for SSO.</p>
+     * <p>This field will hold the flow being run while it is executing, and will continue to contain
+     * that value until/unless another flow is run. It is not set if an existing result was reused
+     * <strong>by the IdP's own machinery</strong> for SSO, and subsequent to authentication will
+     * inform as to the fact that SSO was or was not done, and which flow was used.</p>
      * 
      * @return authentication flow that was attempted in order to authenticate the user
      */
@@ -300,9 +331,14 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Get the flow ID signaled as the next selection.
      * 
+     * <p>A login flow may set this value to signal the authentication flow to transfer control
+     * immediately to another login flow instead of proceeding in ordered fashion picking flows
+     * to attempt. Generally it is more effective to actually call a login flow from within
+     * another flow and subsume it than to rely on this signaling mechanism.</p>
+     * 
      * @return  ID of flow to run next
      */
-    @Nullable public String getSignaledFlowId() {
+    @Nullable @NotEmpty public String getSignaledFlowId() {
         return signaledFlowId;
     }
     
@@ -320,6 +356,9 @@ public final class AuthenticationContext extends BaseContext {
 
     /**
      * Get the map of intermediate state that flows can use to pass information amongst themselves.
+     * 
+     * <p>This is a simple string-based map of attributes that can be used to carry information between
+     * login flows or for subsequent use, without relying on native Spring WebFlow mechanisms.</p>
      * 
      * @return the state map
      */
@@ -355,6 +394,10 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Get the authentication result produced by the attempted flow, or reused for SSO.
      * 
+     * <p>The last flow to complete successfully should have its results stored here. Composite
+     * flows should be aware that they may need to preserve intermediate results, and the only get
+     * to produce one single result at the end.</p>
+     * 
      * @return authentication result, if any
      */
     @Nullable public AuthenticationResult getAuthenticationResult() {
@@ -375,6 +418,9 @@ public final class AuthenticationContext extends BaseContext {
 
     /**
      * Get whether the result is suitable for caching (such as in a session) for reuse.
+     * 
+     * <p>Allows flows to indicate at runtime if their results should be cached for future
+     * use, or thrown away after a single use.</p>
      * 
      * @return  true iff the result may be cached/reused, subject to other policy
      */

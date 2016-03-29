@@ -17,14 +17,16 @@
 
 package net.shibboleth.idp.authn.context;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.kerberos.KerberosTicket;
 
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * Context, usually attached to {@link AuthenticationContext}, that carries a {@link KerberosTicket} to be
- * validated.
+ * Context that carries a {@link KerberosTicket} to be validated.
+ * 
+ * @parent {@link AuthenticationContext}
  */
 public class KerberosTicketContext extends BaseContext {
 
@@ -47,7 +49,7 @@ public class KerberosTicketContext extends BaseContext {
      * 
      * @return this context
      */
-    public KerberosTicketContext setTicket(@Nullable final KerberosTicket kerbTicket){
+    @Nonnull public KerberosTicketContext setTicket(@Nullable final KerberosTicket kerbTicket){
         ticket = kerbTicket;
         return this;
     }

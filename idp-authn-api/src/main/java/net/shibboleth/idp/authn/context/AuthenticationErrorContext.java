@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -35,13 +36,15 @@ import org.opensaml.messaging.context.BaseContext;
 import com.google.common.collect.ImmutableList;
 
 /**
- * A {@link BaseContext}, usually attached to {@link AuthenticationContext},
- * that holds information about authentication failures.
+ * A context that holds information about authentication failures.
  *
  * <p>The login process is particularly prone to requiring detailed error
  * information to provide appropriate user feedback and auditing, and this
  * context tracks errors that occur and preserves detailed information about
- * the kind of errors encountered in multi-part authentication flows.
+ * the kind of errors encountered in multi-part authentication flows.</p>
+ * 
+ * @parent {@link AuthenticationContext}
+ * @added After authentication fails
  */
 public class AuthenticationErrorContext extends BaseContext {
 
@@ -49,12 +52,10 @@ public class AuthenticationErrorContext extends BaseContext {
     @Nonnull @NonnullElements private List<Exception> exceptions;
     
     /** Error conditions detected through classified error messages. */
-    private Collection<String> classifiedErrors;
+    @Nonnull @NonnullElements private Collection<String> classifiedErrors;
     
     /** Constructor. */
     public AuthenticationErrorContext() {
-        super();
-        
         exceptions = new ArrayList<>();
         classifiedErrors = new HashSet<>();
     }
@@ -64,7 +65,7 @@ public class AuthenticationErrorContext extends BaseContext {
      * 
      * @return  immutable list of exceptions
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<Exception> getExceptions() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Exception> getExceptions() {
         return ImmutableList.copyOf(exceptions);
     }
     
@@ -97,4 +98,5 @@ public class AuthenticationErrorContext extends BaseContext {
     public boolean isClassifiedError(@Nonnull @NotEmpty final String error) {
         return classifiedErrors.contains(error);
     }
+    
 }

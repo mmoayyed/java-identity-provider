@@ -46,14 +46,13 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
 /**
- * A {@link BaseContext} that holds information about an authentication request's
+ * A context that holds information about an authentication request's
  * requirement for a specific custom {@link Principal}.
  * 
  * <p>Authentication protocols with features for requesting specific forms of
- * authentication will populate this context type, typically as a child of the
- * {@link AuthenticationContext}, with an expression of those requirements in the
- * form of a protocol-specific operator string and an ordered list of custom
- * {@link Principal} objects.</p>
+ * authentication will populate this context type with an expression of those
+ * requirements in the form of a protocol-specific operator string and an ordered
+ * list of custom {@link Principal} objects.</p>
  * 
  * <p>During the authentication process, interactions with
  * {@link net.shibboleth.idp.authn.principal.PrincipalSupportingComponent}-supporting objects
@@ -62,6 +61,9 @@ import com.google.common.collect.ImmutableList;
  * 
  * <p>Upon successful authentication the most appropriate "matching" {@link Principal} will be
  * saved back to this context for use in generating a protocol response.</p>
+ * 
+ * @parent {@link AuthenticationContext}
+ * @added Before the authentication process begins
  */
 public class RequestedPrincipalContext extends BaseContext {
 

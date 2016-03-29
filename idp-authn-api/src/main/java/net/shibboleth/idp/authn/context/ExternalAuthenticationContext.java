@@ -28,6 +28,9 @@ import org.opensaml.messaging.context.BaseContext;
 /**
  * A context representing the state of an externalized authentication attempt,
  * a case where authentication happens outside of a web flow.
+ * 
+ * @parent {@link AuthenticationContext}
+ * @added Before dispatching control to an external login flow
  */
 public final class ExternalAuthenticationContext extends BaseContext {
     
