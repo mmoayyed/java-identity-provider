@@ -171,10 +171,10 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getPrincipalEvalPredicateFactoryRegistry().register(
-                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
         final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        rpc.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
 
@@ -281,10 +281,10 @@ public class ValidateUsernamePasswordAgainstJAASTest extends PopulateAuthenticat
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getPrincipalEvalPredicateFactoryRegistry().register(
-                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
         final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, true);
+        rpc.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("test1")));
 

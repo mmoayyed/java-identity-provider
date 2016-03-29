@@ -31,7 +31,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
-import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
@@ -193,11 +192,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         if (activeResult != null) {
             if (requestedPrincipalCtx != null) {
                 for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-                    final PrincipalEvalPredicateFactory factory =
-                            authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                                    p.getClass(), requestedPrincipalCtx.getOperator());
-                    if (factory != null) {
-                        final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                    final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+                    if (predicate != null) {
                         if (predicate.apply(activeResult)) {
                             selectActiveResult(profileRequestContext, authenticationContext, activeResult);
                             return;
@@ -218,11 +214,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
 
         if (requestedPrincipalCtx != null) {
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
-                final PrincipalEvalPredicateFactory factory =
-                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                                p.getClass(), requestedPrincipalCtx.getOperator());
-                if (factory != null) {
-                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+                if (predicate != null) {
                     if (predicate.apply(flow)) {
                         selectInactiveFlow(profileRequestContext, authenticationContext, flow);
                         return;
@@ -402,11 +395,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
             log.debug("{} Checking for an inactive flow compatible with operator '{}' and principal '{}'",
                     getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
-            final PrincipalEvalPredicateFactory factory =
-                    authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                            p.getClass(), requestedPrincipalCtx.getOperator());
-            if (factory != null) {
-                final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+            final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+            if (predicate != null) {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
                             && predicate.apply(descriptor)) {
@@ -445,11 +435,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 log.debug("{} Checking for an active result compatible with operator '{}' and principal '{}'",
                         getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
-                final PrincipalEvalPredicateFactory factory =
-                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                                p.getClass(), requestedPrincipalCtx.getOperator());
-                if (factory != null) {
-                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+                if (predicate != null) {
                     for (final AuthenticationResult result : activeResults.values()) {
                         if (predicate.apply(result)) {
                             selectActiveResult(profileRequestContext, authenticationContext, result);
@@ -477,11 +464,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 log.debug("{} Checking for an inactive flow or active result compatible with "
                         + "operator '{}' and principal '{}'", getLogPrefix(), requestedPrincipalCtx.getOperator(),
                         p.getName());
-                final PrincipalEvalPredicateFactory factory =
-                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                                p.getClass(), requestedPrincipalCtx.getOperator());
-                if (factory != null) {
-                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
+                if (predicate != null) {
                     for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                         if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
                                 && predicate.apply(descriptor)) {

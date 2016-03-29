@@ -242,7 +242,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
             log.debug("{} Checking result for compatibility with operator '{}' and principal '{}'",
                     getLogPrefix(), requestedPrincipalCtx.getOperator(), p.getName());
             final PrincipalEvalPredicateFactory factory =
-                    authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                    requestedPrincipalCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(
                             p.getClass(), requestedPrincipalCtx.getOperator());
             if (factory != null) {
                 final PrincipalEvalPredicate predicate = factory.getPredicate(p);

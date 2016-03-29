@@ -95,10 +95,10 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getPrincipalEvalPredicateFactoryRegistry().register(
-                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("PasswordAuthentication")));
         ac.addSubcontext(rpc, true);
@@ -114,10 +114,10 @@ public class ValidateUserAgentAddressTest extends PopulateAuthenticationContextT
 
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class, false);
         ac.setAttemptedFlow(authenticationFlows.get(0));
-        ac.getPrincipalEvalPredicateFactoryRegistry().register(
-                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
         final RequestedPrincipalContext rpc = new RequestedPrincipalContext();
+        rpc.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Arrays.<Principal>asList(new TestPrincipal("UserAgentAuthentication")));
         ac.addSubcontext(rpc, true);

@@ -278,7 +278,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                     getLogPrefix(), configName);
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =
-                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
+                        requestedPrincipalCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(
                                 p.getClass(), requestedPrincipalCtx.getOperator());
                 if (factory != null) {
                     final PrincipalEvalPredicate predicate = factory.getPredicate(p);

@@ -75,10 +75,10 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setAuthenticationResult(active);
-        authCtx.getPrincipalEvalPredicateFactoryRegistry().register(
-                TestPrincipal.class, "florp", new ExactPrincipalEvalPredicateFactory());
         
         final RequestedPrincipalContext rpCtx = new RequestedPrincipalContext();
+        rpCtx.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "florp", new ExactPrincipalEvalPredicateFactory());
         rpCtx.setMatchingPrincipal(new TestPrincipal("bar1"));
         rpCtx.setOperator("florp");
         rpCtx.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("bar1")));
@@ -97,10 +97,10 @@ public class FinalizeAuthenticationTest extends PopulateAuthenticationContextTes
         
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.setAuthenticationResult(active);
-        authCtx.getPrincipalEvalPredicateFactoryRegistry().register(
-                TestPrincipal.class, "florp", new ExactPrincipalEvalPredicateFactory());
         
         final RequestedPrincipalContext rpCtx = new RequestedPrincipalContext();
+        rpCtx.getPrincipalEvalPredicateFactoryRegistry().register(
+                TestPrincipal.class, "florp", new ExactPrincipalEvalPredicateFactory());
         rpCtx.setMatchingPrincipal(new TestPrincipal("bar1"));
         rpCtx.setOperator("florp");
         rpCtx.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("bar2")));

@@ -265,8 +265,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
             log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
             for (Principal p : rpCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =
-                        authenticationContext.getPrincipalEvalPredicateFactoryRegistry().lookup(
-                                p.getClass(), rpCtx.getOperator());
+                        rpCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(p.getClass(), rpCtx.getOperator());
                 if (factory != null) {
                     PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     if (predicate.apply(this)) {

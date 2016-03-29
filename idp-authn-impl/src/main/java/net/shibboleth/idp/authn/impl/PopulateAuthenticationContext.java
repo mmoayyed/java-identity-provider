@@ -28,6 +28,7 @@ import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.config.navigate.AuthenticationFlowsLookupFunction;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -123,9 +124,12 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
             @Nonnull final AuthenticationContext authenticationContext) {
 
         if (evalRegistry != null) {
-            log.debug("{} Installing custom PrincipalEvalPredicateFactoryRegistry into AuthenticationContext",
-                    getLogPrefix());
             authenticationContext.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
+            final RequestedPrincipalContext rpCtx =
+                    authenticationContext.getSubcontext(RequestedPrincipalContext.class);
+            if (rpCtx != null) {
+                rpCtx.setPrincipalEvalPredicateFactoryRegistry(evalRegistry);
+            }
         }
         
         if (availableFlows.isEmpty()) {

@@ -19,12 +19,19 @@ package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
+import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
+import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -58,6 +65,9 @@ import com.google.common.collect.ImmutableList;
  */
 public class RequestedPrincipalContext extends BaseContext {
 
+    /** The registry of predicate factories for custom principal evaluation. */
+    @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
+
     /** Comparison operator specific to request protocol. */
     @Nullable private String operatorString;
 
@@ -69,9 +79,37 @@ public class RequestedPrincipalContext extends BaseContext {
     
     /** Constructor. */
     public RequestedPrincipalContext() {
+        evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
         requestedPrincipals = Collections.emptyList();
     }
 
+    /**
+     * Get the registry of predicate factories for custom principal evaluation.
+     * 
+     * @return predicate factory registry
+     * 
+     * @since 3.3.0
+     */
+    @Nonnull public PrincipalEvalPredicateFactoryRegistry getPrincipalEvalPredicateFactoryRegistry() {
+        return evalRegistry;
+    }
+
+    /**
+     * Set the registry of predicate factories for custom principal evaluation.
+     * 
+     * @param registry predicate factory registry
+     * 
+     * @return this context
+     * 
+     * @since 3.3.0
+     */
+    @Nonnull public RequestedPrincipalContext setPrincipalEvalPredicateFactoryRegistry(
+            @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
+        
+        evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
+        return this;
+    }
+    
     /**
      * Get the comparison operator for matching requested principals. 
      * 
@@ -85,9 +123,13 @@ public class RequestedPrincipalContext extends BaseContext {
      * Set the comparison operator for matching requested principals.
      * 
      * @param operator comparison operator
+     * 
+     * @return this context
      */
-    public void setOperator(@Nullable final String operator) {
+    @Nonnull public RequestedPrincipalContext setOperator(@Nullable @NotEmpty final String operator) {
+        
         operatorString = StringSupport.trimOrNull(operator);
+        return this;
     }
 
     /**
@@ -103,11 +145,15 @@ public class RequestedPrincipalContext extends BaseContext {
      * Set list of principals reflecting the request requirements.
      * 
      * @param principals list of principals
+     * 
+     * @return this context
      */
-    public void setRequestedPrincipals(@Nonnull @NonnullElements final List<Principal> principals) {
+    @Nonnull public RequestedPrincipalContext setRequestedPrincipals(
+            @Nonnull @NonnullElements final List<Principal> principals) {
         Constraint.isNotNull(principals, "Principal list cannot be null");
         
         requestedPrincipals = new ArrayList<>(Collections2.filter(principals, Predicates.notNull()));
+        return this;
     }
     
     /**
@@ -123,9 +169,95 @@ public class RequestedPrincipalContext extends BaseContext {
      * Set the principal that matched the request's requirements, if any.
      * 
      * @param principal a matching principal, or null
+     * 
+     * @return this context
      */
-    public void setMatchingPrincipal(@Nullable final Principal principal) {
+    @Nonnull public RequestedPrincipalContext setMatchingPrincipal(@Nullable final Principal principal) {
+        
        matchingPrincipal = principal;
+       return this;
     }
     
+    /**
+     * Get a predicate to apply based on a principal type and the content of this context.
+     * 
+     * @param principal principal to obtain predicate for
+     * 
+     * @return predicate or null
+     */
+    @Nullable public PrincipalEvalPredicate getPredicate(@Nonnull final Principal principal) {
+        
+        final PrincipalEvalPredicateFactory factory = evalRegistry.lookup(principal.getClass(), operatorString);
+        return factory != null ? factory.getPredicate(principal) : null;
+    }
+    
+    /**
+     * Helper method that evaluates a {@link PrincipalSupportingComponent} against
+     * this context to determine if the input is compatible with it.
+     * 
+     * @param component component to evaluate
+     * 
+     * @return true iff the input is compatible with the requested authentication requirements
+     * 
+     * @since 3.3.0
+     */
+    public boolean isAcceptable(@Nonnull final PrincipalSupportingComponent component) {
+        for (final Principal requestedPrincipal : requestedPrincipals) {
+            final PrincipalEvalPredicate predicate = getPredicate(requestedPrincipal);
+            if (predicate != null) {
+                if (predicate.apply(component)) {
+                    return true;
+                }
+            }
+        }
+        
+        // Nothing matched the candidate.
+        return false;
+    }
+
+    /**
+     * Helper method that evaluates {@link Principal} objects against this context
+     * to determine if the input is compatible with it.
+     * 
+     * @param principals principal(s) to evaluate
+     * 
+     * @return true iff the input is compatible with the requested authentication requirements
+     *  
+     *  @since 3.3.0
+     */
+    public boolean isAcceptable(@Nonnull @NonnullElements final Collection<Principal> principals) {
+        return isAcceptable(new PrincipalSupportingComponent() {
+            public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
+                final HashSet set = new HashSet<>();
+                for (final Principal p : principals) {
+                    if (c.isAssignableFrom(p.getClass())) {
+                        set.add(p);
+                    }
+                }
+                return set;
+            }
+        });
+    }
+
+    /**
+     * Helper method that evaluates a {@link Principal} object against this context
+     * to determine if the input is compatible with it.
+     * 
+     * @param <T> type of principal
+     * @param principal principal to evaluate
+     * 
+     * @return true iff the input is compatible with the requested authentication requirements
+     */
+    public <T extends Principal> boolean isAcceptable(@Nonnull final T principal) {
+        return isAcceptable(new PrincipalSupportingComponent() {
+            public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
+                if (c.isAssignableFrom(principal.getClass())) {
+                    return Collections.singleton((TT) principal);
+                } else {
+                    return Collections.emptySet();
+                }
+            }
+        });
+    }
+
 }

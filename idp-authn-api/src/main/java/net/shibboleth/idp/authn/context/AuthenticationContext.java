@@ -19,19 +19,15 @@ package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
-import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactoryRegistry;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
@@ -71,12 +67,16 @@ public final class AuthenticationContext extends BaseContext {
 
     /** Authentication results associated with an active session and available for (re)use. */
     @Nonnull @NonnullElements private final Map<String,AuthenticationResult> activeResults;
-        
-    /** The registry of predicate factories for custom principal evaluation. */
-    @Nonnull private PrincipalEvalPredicateFactoryRegistry evalRegistry;
 
     /** Previously attempted flows (could be failures or intermediate results). */
     @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> intermediateFlows;
+    
+    /**
+     * Old copy of registry, moved to {@link RequestedPrincipalContext}.
+     * 
+     * @deprecated
+     */
+    @Nullable private PrincipalEvalPredicateFactoryRegistry evalRegistry;
     
     /** Authentication flow being attempted to authenticate the user. */
     @Nullable private AuthenticationFlowDescriptor attemptedFlow;
@@ -109,7 +109,6 @@ public final class AuthenticationContext extends BaseContext {
         
         stateMap = new HashMap<>();
         
-        evalRegistry = new PrincipalEvalPredicateFactoryRegistry();
         resultCacheable = true;
     }
 
@@ -172,20 +171,42 @@ public final class AuthenticationContext extends BaseContext {
     /**
      * Get the registry of predicate factories for custom principal evaluation.
      * 
+     * <p>This object is only needed when evaluating a {@link RequestedPrincipalContext}, so the
+     * presence of it at this level of the tree is historical.
+     * 
      * @return predicate factory registry
+     * 
+     * @deprecated Use {@link RequestedPrincipalContext#getPrincipalEvalPredicateFactoryRegistry()} instead.
      */
     @Nonnull public PrincipalEvalPredicateFactoryRegistry getPrincipalEvalPredicateFactoryRegistry() {
-        return evalRegistry;
+        
+        final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
+        if (rpCtx != null) {
+            return rpCtx.getPrincipalEvalPredicateFactoryRegistry();
+        } else if (evalRegistry != null) {
+            return evalRegistry;
+        } else {
+            return new PrincipalEvalPredicateFactoryRegistry();
+        }
     }
 
     /**
      * Set the registry of predicate factories for custom principal evaluation.
      * 
      * @param registry predicate factory registry
+     * 
+     * @deprecated Use {@link RequestedPrincipalContext#setPrincipalEvalPredicateFactoryRegistry(
+     * PrincipalEvalPredicateFactoryRegistry)} instead.
      */
     public void setPrincipalEvalPredicateFactoryRegistry(
-            @Nonnull final PrincipalEvalPredicateFactoryRegistry registry) {
-        evalRegistry = Constraint.isNotNull(registry, "PrincipalEvalPredicateFactoryRegistry cannot be null");
+            @Nullable final PrincipalEvalPredicateFactoryRegistry registry) {
+        
+        final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
+        if (rpCtx != null) {
+            rpCtx.setPrincipalEvalPredicateFactoryRegistry(registry);
+        } else {
+            evalRegistry = registry;
+        }
     }
     
     /**
@@ -403,19 +424,7 @@ public final class AuthenticationContext extends BaseContext {
     public boolean isAcceptable(@Nonnull final PrincipalSupportingComponent component) {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
-            for (final Principal requestedPrincipal : rpCtx.getRequestedPrincipals()) {
-                final PrincipalEvalPredicateFactory factory =
-                        evalRegistry.lookup(requestedPrincipal.getClass(), rpCtx.getOperator());
-                if (factory != null) {
-                    if (factory.getPredicate(requestedPrincipal).apply(component)) {
-                        return true;
-                    }
-                }
-            }
-            
-            // Nothing matched the candidate.
-            return false;
-            
+            return rpCtx.isAcceptable(component);
         } else {
             // No requirements so anything is acceptable.
             return true;
@@ -434,17 +443,7 @@ public final class AuthenticationContext extends BaseContext {
     public boolean isAcceptable(@Nonnull @NonnullElements final Collection<Principal> principals) {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
-            return isAcceptable(new PrincipalSupportingComponent() {
-                public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
-                    final HashSet set = new HashSet<>();
-                    for (final Principal p : principals) {
-                        if (c.isAssignableFrom(p.getClass())) {
-                            set.add(p);
-                        }
-                    }
-                    return set;
-                }
-            });
+            return rpCtx.isAcceptable(principals);
         } else {
             // No requirements so anything is acceptable.
             return true;
@@ -464,15 +463,7 @@ public final class AuthenticationContext extends BaseContext {
     public <T extends Principal> boolean isAcceptable(@Nonnull final T principal) {
         final RequestedPrincipalContext rpCtx = getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null) {
-            return isAcceptable(new PrincipalSupportingComponent() {
-                public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
-                    if (c.isAssignableFrom(principal.getClass())) {
-                        return Collections.singleton((TT) principal);
-                    } else {
-                        return Collections.emptySet();
-                    }
-                }
-            });
+            return rpCtx.isAcceptable(principal);
         } else {
             // No requirements so anything is acceptable.
             return true;

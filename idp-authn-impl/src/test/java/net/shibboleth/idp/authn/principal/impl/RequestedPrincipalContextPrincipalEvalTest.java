@@ -21,7 +21,6 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 
-import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.authn.principal.impl.InexactPrincipalEvalPredicateFactory;
@@ -31,10 +30,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
- * Tests the {@link AuthenticationContext#isAcceptable(Principal)} method using a mocked up
+ * Tests the {@link RequestedPrincipalContext#isAcceptable(Principal)} method using a mocked up
  * registry of evaluation predicates.
  */
-public class AuthenticationContextPrincipalEvalTest {
+public class RequestedPrincipalContextPrincipalEvalTest {
     
     /**
      * We can test with UsernamePrincipals but actual usage would involve non-user-specific
@@ -44,63 +43,52 @@ public class AuthenticationContextPrincipalEvalTest {
     private UsernamePrincipal bar;
     private UsernamePrincipal baz;
     
-    private AuthenticationContext authnContext;
+    private RequestedPrincipalContext rpCtx;
     
     @BeforeClass public void setUp() throws Exception {
         final InexactPrincipalEvalPredicateFactory factory = new InexactPrincipalEvalPredicateFactory();
         factory.getMatchingRules().put("foo", "bar");
         factory.getMatchingRules().put("foo", "bar2");
 
-        authnContext = new AuthenticationContext();
-        authnContext.getPrincipalEvalPredicateFactoryRegistry().register(
+        rpCtx = new RequestedPrincipalContext();
+        rpCtx.getPrincipalEvalPredicateFactoryRegistry().register(
                 UsernamePrincipal.class, "better", factory);
-        authnContext.getPrincipalEvalPredicateFactoryRegistry().register(
+        rpCtx.getPrincipalEvalPredicateFactoryRegistry().register(
                 UsernamePrincipal.class, "exact", new ExactPrincipalEvalPredicateFactory());
         
         foo = new UsernamePrincipal("foo");
         bar = new UsernamePrincipal("bar");
         baz = new UsernamePrincipal("baz");
     }
-    
-    @Test public void testNoRequested() {
-        authnContext.removeSubcontext(RequestedPrincipalContext.class);
-        Assert.assertTrue(authnContext.isAcceptable(foo));
-        Assert.assertTrue(authnContext.isAcceptable(bar));
-        Assert.assertTrue(authnContext.isAcceptable(baz));
-    }
 
     @Test public void testUnknownOperator() {
-        final RequestedPrincipalContext rpCtx = authnContext.getSubcontext(RequestedPrincipalContext.class, true);
         rpCtx.setOperator("unknown");
         rpCtx.setRequestedPrincipals(Collections.<Principal>singletonList(foo));
-        Assert.assertFalse(authnContext.isAcceptable(foo));
+        Assert.assertFalse(rpCtx.isAcceptable(foo));
     }
 
     @Test public void testExact() {
-        final RequestedPrincipalContext rpCtx = authnContext.getSubcontext(RequestedPrincipalContext.class, true);
         rpCtx.setOperator("exact");
         rpCtx.setRequestedPrincipals(Arrays.<Principal>asList(foo, bar));
-        Assert.assertTrue(authnContext.isAcceptable(foo));
-        Assert.assertTrue(authnContext.isAcceptable(bar));
-        Assert.assertFalse(authnContext.isAcceptable(baz));
+        Assert.assertTrue(rpCtx.isAcceptable(foo));
+        Assert.assertTrue(rpCtx.isAcceptable(bar));
+        Assert.assertFalse(rpCtx.isAcceptable(baz));
     }
 
     @Test public void testBetterKnown() {
-        final RequestedPrincipalContext rpCtx = authnContext.getSubcontext(RequestedPrincipalContext.class, true);
         rpCtx.setOperator("better");
         rpCtx.setRequestedPrincipals(Arrays.<Principal>asList(foo));
-        Assert.assertFalse(authnContext.isAcceptable(foo));
-        Assert.assertTrue(authnContext.isAcceptable(bar));
-        Assert.assertFalse(authnContext.isAcceptable(baz));
+        Assert.assertFalse(rpCtx.isAcceptable(foo));
+        Assert.assertTrue(rpCtx.isAcceptable(bar));
+        Assert.assertFalse(rpCtx.isAcceptable(baz));
     }
 
     @Test public void testBetterUnknown() {
-        final RequestedPrincipalContext rpCtx = authnContext.getSubcontext(RequestedPrincipalContext.class, true);
         rpCtx.setOperator("better");
         rpCtx.setRequestedPrincipals(Arrays.<Principal>asList(bar));
-        Assert.assertFalse(authnContext.isAcceptable(foo));
-        Assert.assertFalse(authnContext.isAcceptable(bar));
-        Assert.assertFalse(authnContext.isAcceptable(baz));
+        Assert.assertFalse(rpCtx.isAcceptable(foo));
+        Assert.assertFalse(rpCtx.isAcceptable(bar));
+        Assert.assertFalse(rpCtx.isAcceptable(baz));
     }
 
 }
