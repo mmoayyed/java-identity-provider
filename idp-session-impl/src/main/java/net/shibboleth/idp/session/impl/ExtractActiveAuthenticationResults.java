@@ -44,9 +44,12 @@ import com.google.common.base.Function;
  * {@link AuthenticationResult} objects found in a {@link SessionContext} that is a direct
  * child of the {@link ProfileRequestContext}.
  * 
+ * <p>If {@link AuthenticationContext#getHintedName() is null, then it is populated with the
+ * principal name from the session.</p>
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class, false) != null</pre>
- * @post AuthenticationContext.getActiveResults() is modified as above.
+ * @post AuthenticationContext is modified as above.
  */
 public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAction {
 
@@ -98,6 +101,10 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
+        if (authenticationContext.getHintedName() == null) {
+            authenticationContext.setHintedName(session.getPrincipalName());
+        }
+        
         final List<AuthenticationResult> actives = new ArrayList<>();
         for (AuthenticationResult result : session.getAuthenticationResults()) {
             AuthenticationFlowDescriptor descriptor =
