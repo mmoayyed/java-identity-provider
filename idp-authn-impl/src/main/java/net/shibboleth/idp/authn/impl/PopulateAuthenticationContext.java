@@ -44,8 +44,10 @@ import com.google.common.collect.Collections2;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
- * objects configured into the IdP, filtered by flow IDs from a lookup function, and optionally a customized
- * {@link PrincipalEvalPredicateFactoryRegistry}.
+ * objects configured into the IdP, filtered by flow IDs from a lookup function.
+ * 
+ * <p>If a {@link RequestedPrincipalContext} child is found, then optionally a customized
+ * {@link PrincipalEvalPredicateFactoryRegistry} will be installed into it.</p>
  * 
  * <p>The flow IDs used for filtering must omit the {@link AuthenticationFlowDescriptor#FLOW_ID_PREFIX} prefix.</p>
  * 
