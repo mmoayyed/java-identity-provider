@@ -29,8 +29,8 @@ import javax.annotation.Nullable;
 import javax.servlet.ServletRequest;
 
 /**
- * Exposes the {@link org.opensaml.profile.context.ProfileRequestContext} in a HTTP session attribute to make it
- * accessible outside the Webflow execution pipeline. The PRC is stored in a request attribute under the key
+ * Exposes the {@link org.opensaml.profile.context.ProfileRequestContext} in a request attribute to make it
+ * accessible outside the Webflow execution pipeline. The PRC is stored under the key
  * {@link ProfileRequestContext#BINDING_KEY}.
  *
  * @author Marvin S. Addison
