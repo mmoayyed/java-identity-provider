@@ -47,5 +47,15 @@ public class FileBackedHTTPMetadataProviderParser extends HTTPMetadataProviderPa
         super.doNativeParse(element, parserContext, builder);
 
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "backingFile")));
+        
+        if (element.hasAttributeNS(null, "initializeFromBackupFile")) {
+            builder.addPropertyValue("initializeFromBackupFile",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "initializeFromBackupFile")));
+        }
+        
+        if (element.hasAttributeNS(null, "backupFileInitNextRefreshDelay")) {
+            builder.addPropertyValue("backupFileInitNextRefreshDelay",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "backupFileInitNextRefreshDelay")));
+        }
     }
 }

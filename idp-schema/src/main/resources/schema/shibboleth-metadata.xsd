@@ -107,6 +107,20 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="initializeFromBackupFile" type="string">
+                    <annotation>
+                        <documentation>
+                            Flag indicating whether initialization should first attempt to load metadata from backup file.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="backupFileInitNextRefreshDelay" type="string">
+                    <annotation>
+                        <documentation>
+                            Duration in milliseconds after which to schedule next refresh when initialized from backup file. 
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>
