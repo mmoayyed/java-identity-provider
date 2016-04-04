@@ -19,9 +19,14 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.ldap;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -46,6 +51,7 @@ import org.ldaptive.provider.ProviderConfig;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.StandardEnvironment;
@@ -85,7 +91,7 @@ public class LDAPDataConnectorParserTest {
         pendingTeardownContext = null;
     }
     
-    protected void setTestContext(GenericApplicationContext context) {
+    protected void setTestContext(final GenericApplicationContext context) {
         tearDownTestContext();
         pendingTeardownContext = context;
     }
@@ -98,8 +104,8 @@ public class LDAPDataConnectorParserTest {
      */
     @BeforeTest public void setupDirectoryServer() throws LDAPException, GeneralSecurityException {
 
-        InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
-        SSLUtil sslUtil =
+        final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
+        final SSLUtil sslUtil =
                 new SSLUtil(new KeyStoreKeyManager(
                         "src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/server.keystore",
                         "changeit".toCharArray()), new TrustStoreTrustManager(
@@ -122,7 +128,7 @@ public class LDAPDataConnectorParserTest {
     }
 
     @Test public void v2Config() throws Exception {
-        LDAPDataConnector dataConnector =
+        final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
@@ -132,27 +138,27 @@ public class LDAPDataConnectorParserTest {
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
 
         dataConnector.initialize();
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
         Assert.assertNotNull(attrs.get("entryDN"));
     }
 
     @Test public void v2PropsConfig() throws Exception {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-v2.properties");
-        LDAPDataConnector dataConnector =
+        final LDAPDataConnector dataConnector =
                 getLdapDataConnector(props, new String[] {
                         "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-props.xml",});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
         dataConnector.initialize();
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
         Assert.assertEquals(attrs.size(), 4);
         Assert.assertNotNull(attrs.get("uid"));
@@ -162,16 +168,16 @@ public class LDAPDataConnectorParserTest {
     }
 
     @Test public void springConfig() throws Exception {
-        LDAPDataConnector dataConnector =
+        final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring.xml"});
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
 
         dataConnector.initialize();
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
     }
 
@@ -184,10 +190,10 @@ public class LDAPDataConnectorParserTest {
         doTest(dataConnector);
 
         dataConnector.initialize();
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
         Assert.assertEquals(attrs.size(), 3);
         Assert.assertNotNull(attrs.get("uid"));
@@ -200,11 +206,11 @@ public class LDAPDataConnectorParserTest {
      * https://issues.shibboleth.net/jira/browse/IDP-338.
      */
     @Test public void IdP338Canary() {
-        GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
 
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/dc/IdP338.xml");
         context.refresh();
@@ -215,7 +221,7 @@ public class LDAPDataConnectorParserTest {
         cc = context.getBean(Cache.class);
         cb = context.getBean("cacheBuilder");
         c = context.getBean("cache");
-        Object ccc = context.getBean(Cache.class);
+        final Object ccc = context.getBean(Cache.class);
 
         Assert.assertNotNull(cb);
         Assert.assertNotNull(c);
@@ -227,7 +233,7 @@ public class LDAPDataConnectorParserTest {
     }
 
     @Test public void hybridConfig() throws Exception {
-        LDAPDataConnector dataConnector =
+        final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {
                         "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-context.xml"});
@@ -239,34 +245,42 @@ public class LDAPDataConnectorParserTest {
                 (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
         Assert.assertNotNull(attrs);
         Assert.assertNull(attrs.get("homephone"));
         Assert.assertNotNull(attrs.get("phonenumber"));
         Assert.assertNotNull(attrs.get("entryDN"));
     }
 
-    protected LDAPDataConnector getLdapDataConnector(Resource properties, final String[] beanDefinitions) throws IOException {
-        GenericApplicationContext context = new FilesystemGenericApplicationContext() ;
+    protected LDAPDataConnector getLdapDataConnector(final Resource properties, final String[] beanDefinitions) throws IOException {
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext() ;
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + LDAPDataConnectorParserTest.class);
         
+        
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
+                new StringToResourceConverter())));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+        
         if (null != properties) {
-            ConfigurableEnvironment env = context.getEnvironment();
+            final ConfigurableEnvironment env = context.getEnvironment();
             env.getPropertySources().replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, new ResourcePropertySource(properties));
             
            env.setPlaceholderPrefix("%{");
            env.setPlaceholderSuffix("}");
         }
 
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
 
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         beanDefinitionReader.setValidating(true);
@@ -283,16 +297,16 @@ public class LDAPDataConnectorParserTest {
 
     protected void doTest(final LDAPDataConnector dataConnector) throws ResolutionException {
 
-        String id = dataConnector.getId();
+        final String id = dataConnector.getId();
         AssertJUnit.assertEquals("myLDAP", id);
         AssertJUnit.assertEquals(300000, dataConnector.getNoRetryDelay());
 
-        PooledConnectionFactory connFactory = (PooledConnectionFactory) dataConnector.getConnectionFactory();
+        final PooledConnectionFactory connFactory = (PooledConnectionFactory) dataConnector.getConnectionFactory();
         AssertJUnit.assertNotNull(connFactory);
-        BlockingConnectionPool connPool = (BlockingConnectionPool) connFactory.getConnectionPool();
+        final BlockingConnectionPool connPool = (BlockingConnectionPool) connFactory.getConnectionPool();
         AssertJUnit.assertNotNull(connPool);
         AssertJUnit.assertEquals(5000, connPool.getBlockWaitTime());
-        PoolConfig poolConfig = connPool.getPoolConfig();
+        final PoolConfig poolConfig = connPool.getPoolConfig();
         AssertJUnit.assertNotNull(poolConfig);
         AssertJUnit.assertEquals(5, poolConfig.getMinPoolSize());
         AssertJUnit.assertEquals(10, poolConfig.getMaxPoolSize());
@@ -300,56 +314,56 @@ public class LDAPDataConnectorParserTest {
         AssertJUnit.assertEquals(900, poolConfig.getValidatePeriod());
         AssertJUnit.assertFalse(connPool.getFailFastInitialize());
 
-        SearchValidator searchValidator = (SearchValidator) connPool.getValidator();
+        final SearchValidator searchValidator = (SearchValidator) connPool.getValidator();
         AssertJUnit.assertNotNull(searchValidator);
         AssertJUnit.assertEquals("dc=shibboleth,dc=net", searchValidator.getSearchRequest().getBaseDn());
         AssertJUnit.assertEquals("(ou=people)", searchValidator.getSearchRequest().getSearchFilter().getFilter());
 
-        IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) connPool.getPruneStrategy();
+        final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) connPool.getPruneStrategy();
         AssertJUnit.assertNotNull(pruneStrategy);
         AssertJUnit.assertEquals(300, pruneStrategy.getPrunePeriod());
         AssertJUnit.assertEquals(600, pruneStrategy.getIdleTime());
 
-        ConnectionConfig connConfig = connPool.getConnectionFactory().getConnectionConfig();
+        final ConnectionConfig connConfig = connPool.getConnectionFactory().getConnectionConfig();
         AssertJUnit.assertNotNull(connConfig);
         AssertJUnit.assertEquals("ldap://localhost:10389", connConfig.getLdapUrl());
         AssertJUnit.assertEquals(false, connConfig.getUseSSL());
         AssertJUnit.assertEquals(true, connConfig.getUseStartTLS());
-        BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
+        final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
         AssertJUnit.assertEquals("cn=Directory Manager", connInitializer.getBindDn());
         AssertJUnit.assertEquals("password", connInitializer.getBindCredential().getString());
 
-        SslConfig sslConfig = connPool.getConnectionFactory().getConnectionConfig().getSslConfig();
+        final SslConfig sslConfig = connPool.getConnectionFactory().getConnectionConfig().getSslConfig();
         AssertJUnit.assertNotNull(sslConfig);
-        CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
+        final CredentialConfig credentialConfig = sslConfig.getCredentialConfig();
         AssertJUnit.assertNotNull(credentialConfig);
 
         final Map<String, Object> providerProps = new HashMap<>();
         providerProps.put("name1", "value1");
         providerProps.put("name2", "value2");
-        ProviderConfig providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
+        final ProviderConfig providerConfig = connPool.getConnectionFactory().getProvider().getProviderConfig();
         AssertJUnit.assertNotNull(providerConfig);
         AssertJUnit.assertEquals(providerProps, providerConfig.getProperties());
 
-        SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
+        final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         AssertJUnit.assertNotNull(searchExecutor);
         AssertJUnit.assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
         AssertJUnit.assertNotNull(searchExecutor.getSearchFilter().getFilter());
 
-        ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
+        final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         AssertJUnit.assertNotNull(validator);
         AssertJUnit.assertTrue(validator.isThrowValidateError());
         AssertJUnit.assertNotNull(validator.getConnectionFactory());
 
-        ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
+        final ExecutableSearchBuilder searchBuilder = dataConnector.getExecutableSearchBuilder();
         AssertJUnit.assertNotNull(searchBuilder);
 
-        StringAttributeValueMappingStrategy mappingStrategy = (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
+        final StringAttributeValueMappingStrategy mappingStrategy = (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
         AssertJUnit.assertNotNull(mappingStrategy);
         AssertJUnit.assertTrue(mappingStrategy.isNoResultAnError());
         AssertJUnit.assertTrue(mappingStrategy.isMultipleResultsAnError());
 
-        Cache<String, Map<String, IdPAttribute>> resultCache = dataConnector.getResultsCache();
+        final Cache<String, Map<String, IdPAttribute>> resultCache = dataConnector.getResultsCache();
         AssertJUnit.assertNotNull(resultCache);
     }
 }

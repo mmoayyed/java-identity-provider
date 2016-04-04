@@ -32,10 +32,10 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSea
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
@@ -129,7 +129,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         final BeanDefinitionBuilder providerConfig =
                 BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.getDefaultProvider()
                         .getProviderConfig().getClass());
-        String connectionStrategy = AttributeSupport.getAttributeValue(config, new QName("connectionStrategy"));
+        final String connectionStrategy = AttributeSupport.getAttributeValue(config, new QName("connectionStrategy"));
         if (connectionStrategy == null) {
             providerConfig.addPropertyValue("connectionStrategy", ConnectionStrategy.ACTIVE_PASSIVE);
         } else {
@@ -156,7 +156,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         final List<Element> propertyElements =
                 ElementSupport.getChildElements(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
                         "LDAPProperty"));
-        for (Element e : propertyElements) {
+        for (final Element e : propertyElements) {
             props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
                     AttributeSupport.getAttributeValue(e, new QName("value")));
         }
@@ -301,7 +301,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * @return credential config
          */
         @Nonnull protected BeanDefinition createCredentialConfig(@Nonnull final ParserContext parserContext) {
-            BeanDefinitionBuilder result =
+            final BeanDefinitionBuilder result =
                     BeanDefinitionBuilder.genericBeanDefinition(CredentialConfigFactoryBean.class);
 
             final List<Element> trustElements =
@@ -643,14 +643,14 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
          * while resolving property replacement.
          * 
-         * @param duration string format
+         * @param duration the duration (which may have gone through spring translation from iso to long)
          * @param divisor to modify the duration with
          * 
          * @return result of the division
          */
-        public static long buildDuration(final String duration, final long divisor) {
-            return DOMTypeSupport.durationToLong(duration) / divisor;
-        }
+        public static long buildDuration(@Duration final long duration, final long divisor) {
+            return duration / divisor;
+        } 
 
         /**
          * Converts the supplied value to a list of strings delimited by {@link XMLConstants#LIST_DELIMITERS} and comma.

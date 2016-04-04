@@ -19,10 +19,15 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.rdbms;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -35,6 +40,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConne
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.StandardEnvironment;
@@ -69,7 +75,7 @@ public class RDBMSDataConnectorParserTest {
         pendingTeardownContext = null;
     }
     
-    protected void setTestContext(GenericApplicationContext context) {
+    protected void setTestContext(final GenericApplicationContext context) {
         tearDownTestContext();
         pendingTeardownContext = context;
     }
@@ -87,7 +93,7 @@ public class RDBMSDataConnectorParserTest {
     }
     
     @Test public void v2Config() throws Exception {
-        RDBMSDataConnector dataConnector =
+        final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
@@ -97,7 +103,7 @@ public class RDBMSDataConnectorParserTest {
     }
 
     @Test public void hybridConfig() throws Exception {
-        RDBMSDataConnector dataConnector =
+        final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-hybrid.xml",
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml");
@@ -110,7 +116,7 @@ public class RDBMSDataConnectorParserTest {
 
     @Test public void v2PropsConfig() throws Exception {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v2.properties");
-        RDBMSDataConnector dataConnector =
+        final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(props,
                         "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-props.xml");
         Assert.assertNotNull(dataConnector);
@@ -118,7 +124,7 @@ public class RDBMSDataConnectorParserTest {
     }
 
     @Test public void springConfig() throws Exception {
-        RDBMSDataConnector dataConnector =
+        final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
@@ -127,7 +133,7 @@ public class RDBMSDataConnectorParserTest {
     @Test public void springPropsConfig() throws Exception {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v3.properties");
 
-        RDBMSDataConnector dataConnector =
+        final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector(props, "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-props.xml");
         Assert.assertNotNull(dataConnector);
         doTest(dataConnector);
@@ -137,24 +143,31 @@ public class RDBMSDataConnectorParserTest {
         return getRdbmsDataConnector(null, beanDefinitions);
     }
 
-    protected RDBMSDataConnector getRdbmsDataConnector(Resource properties, final String... beanDefinitions) throws IOException {
-        GenericApplicationContext context = new GenericApplicationContext();
+    protected RDBMSDataConnector getRdbmsDataConnector(final Resource properties, final String... beanDefinitions) throws IOException {
+        final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + RDBMSDataConnectorParserTest.class);
         
         if (null != properties) {
-            ConfigurableEnvironment env = context.getEnvironment();
+            final ConfigurableEnvironment env = context.getEnvironment();
             env.getPropertySources().replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, new ResourcePropertySource(properties));
             
            env.setPlaceholderPrefix("%{");
            env.setPlaceholderSuffix("}");
         }
 
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
+                new StringToResourceConverter())));
+        service.afterPropertiesSet();
+
+        context.getBeanFactory().setConversionService(service.getObject());
+
+        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
         
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         beanDefinitionReader.setValidating(true);
@@ -166,11 +179,11 @@ public class RDBMSDataConnectorParserTest {
 
     protected void doTest(final RDBMSDataConnector dataConnector) throws ResolutionException {
 
-        String id = dataConnector.getId();
+        final String id = dataConnector.getId();
         Assert.assertEquals("myDatabase", id);
         Assert.assertEquals(300000, dataConnector.getNoRetryDelay());
 
-        ComboPooledDataSource dataSource = (ComboPooledDataSource) dataConnector.getDataSource();
+        final ComboPooledDataSource dataSource = (ComboPooledDataSource) dataConnector.getDataSource();
         Assert.assertNotNull(dataSource);
         Assert.assertEquals("jdbc:hsqldb:mem:RDBMSDataConnectorStore", dataSource.getJdbcUrl());
         Assert.assertEquals("SA", dataSource.getUser());

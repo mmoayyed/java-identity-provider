@@ -31,10 +31,10 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractDataConnecto
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionParser;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -325,14 +325,14 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
          * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
          * while resolving property replacement.
          * 
-         * @param duration string format
+         * @param duration the duration (which may have gone through spring translation from iso to long)
          * @param divisor to modify the duration with
          * 
          * @return result of the division
          */
-        public static long buildDuration(final String duration, final long divisor) {
-            return DOMTypeSupport.durationToLong(duration) / divisor;
-        }
+        public static long buildDuration(@Duration final long duration, final long divisor) {
+            return duration / divisor;
+        } 
     }
     
 }
