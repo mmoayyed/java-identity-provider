@@ -263,7 +263,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             final AuthenticationFlowDescriptor flow =
                     getUnattemptedInactiveFlow(profileRequestContext, authenticationContext);
             if (flow == null) {
-                log.error("{} No potential flows left to choose from, authentication will fail", getLogPrefix());
+                log.info("{} No potential flows left to choose from, authentication failed", getLogPrefix());
                 ActionSupport.buildEvent(profileRequestContext,
                         authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
                 return;
@@ -286,7 +286,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         final AuthenticationFlowDescriptor flow =
                 getUnattemptedInactiveFlow(profileRequestContext, authenticationContext);
         if (flow == null) {
-            log.error("{} No potential flows left to choose from, authentication will fail", getLogPrefix());
+            log.info("{} No potential flows left to choose from, authentication failed", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext,
                     authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
             return;
