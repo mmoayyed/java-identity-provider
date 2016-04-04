@@ -18,7 +18,8 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype">
+    <bean id="LogEvent" class="org.opensaml.profile.action.impl.LogEvent" scope="prototype"
+            p:suppressedEvents="#{getObject('shibboleth.SuppressedEvents') ?: getObject('shibboleth.DefaultSuppressedEvents')}">
         <property name="eventContextLookupStrategy">
             <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
         </property>

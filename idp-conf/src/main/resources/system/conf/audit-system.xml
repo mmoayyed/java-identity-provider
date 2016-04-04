@@ -10,6 +10,18 @@
 	   default-init-method="initialize"
        default-destroy-method="destroy">
     
+    <bean id="shibboleth.DefaultSuppressedEvents" lazy-init="true"
+            class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>NoPotentialFlow</value>
+                <value>AttributeReleaseRejected</value>
+                <value>TermsRejected</value>
+                <value>ContextCheckDenied</value>
+            </list>
+        </property>
+    </bean>
+    
     <!-- Controls which profiles get audited. -->
     <bean id="shibboleth.ProfileAuditingCondition" class="com.google.common.base.Predicates" factory-method="not">
         <constructor-arg>
