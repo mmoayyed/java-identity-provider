@@ -27,7 +27,9 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.xml.SAMLConstants;
 
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
@@ -43,7 +45,6 @@ import org.opensaml.saml.saml1.core.Status;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
-import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.testng.Assert;
 
 /**
@@ -80,7 +81,10 @@ public class SAML1TestResponseValidator {
 
     /** Constructor. */
     public SAML1TestResponseValidator() {
-        nameIdentifier = new NameIdentifierBuilder().buildObject();
+        final SAMLObjectBuilder<NameIdentifier> builder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                        NameIdentifier.DEFAULT_ELEMENT_NAME);
+        nameIdentifier = builder.buildObject();
         nameIdentifier.setFormat(SAMLConstants.SAML1_NAMEID_TRANSIENT);
         nameIdentifier.setNameQualifier(idpEntityID);
     }

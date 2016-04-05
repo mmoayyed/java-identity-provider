@@ -37,7 +37,6 @@ import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.opensaml.saml.saml2.profile.SAML2ActionTestingSupport;
 import org.opensaml.security.messaging.ServletRequestX509CredentialAdapter;
 import org.opensaml.soap.soap11.Envelope;
@@ -60,7 +59,10 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
     /** Initialize the SAML 2 Response validator. */
     @BeforeClass void setupValidator() {
 
-        final NameID nameID = new NameIDBuilder().buildObject();
+        final SAMLObjectBuilder<NameID> builder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME);
+        final NameID nameID = builder.buildObject();
         nameID.setValue("jdoe");
         nameID.setNameQualifier(null);
         nameID.setSPNameQualifier(null);

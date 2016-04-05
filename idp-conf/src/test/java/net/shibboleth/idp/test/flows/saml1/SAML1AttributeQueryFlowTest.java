@@ -35,7 +35,6 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 import org.opensaml.saml.saml1.core.Request;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
-import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml1.profile.SAML1ActionTestingSupport;
 import org.opensaml.security.messaging.ServletRequestX509CredentialAdapter;
 import org.opensaml.soap.soap11.Envelope;
@@ -58,7 +57,10 @@ public class SAML1AttributeQueryFlowTest extends AbstractSAML1FlowTest {
     /** Initialize the SAML 1 Response validator. */
     @BeforeClass void setupValidator() {
 
-        final NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
+        final SAMLObjectBuilder<NameIdentifier> builder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                        NameIdentifier.DEFAULT_ELEMENT_NAME);
+        final NameIdentifier nameIdentifier = builder.buildObject();
         nameIdentifier.setValue("jdoe");
         nameIdentifier.setFormat(null);
         nameIdentifier.setNameQualifier(null);

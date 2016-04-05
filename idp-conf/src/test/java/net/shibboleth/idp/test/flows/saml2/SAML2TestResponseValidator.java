@@ -29,8 +29,10 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import net.shibboleth.utilities.java.support.net.IPRange;
 
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSAny;
-import org.opensaml.core.xml.schema.impl.XSAnyBuilder;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml1.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -50,8 +52,6 @@ import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
-import org.opensaml.saml.saml2.core.impl.AttributeBuilder;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.opensaml.saml.saml2.encryption.Decrypter;
 import org.opensaml.saml.saml2.encryption.EncryptedElementTypeEncryptedKeyResolver;
 import org.opensaml.security.credential.Credential;
@@ -113,7 +113,10 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
 
     /** Constructor. */
     public SAML2TestResponseValidator() {
-        nameID = new NameIDBuilder().buildObject();
+        final SAMLObjectBuilder<NameID> builder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME);
+        nameID = builder.buildObject();
         nameID.setFormat(NameID.TRANSIENT);
         nameID.setNameQualifier(idpEntityID);
         nameID.setSPNameQualifier(spEntityID);
@@ -124,15 +127,20 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     /** Build expected attributes. */
     protected void buildExpectedAttributes() {
 
-        final AttributeBuilder builder = new AttributeBuilder();
+        final SAMLObjectBuilder<Attribute> builder = (SAMLObjectBuilder<Attribute>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<Attribute>getBuilderOrThrow(
+                        Attribute.DEFAULT_ELEMENT_NAME);
 
+        final XMLObjectBuilder<XSAny> anyBuilder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSAny>getBuilderOrThrow(
+                        XSAny.TYPE_NAME);
+        
         // the expected uid attribute
         uidAttribute = builder.buildObject();
         uidAttribute.setName("urn:oid:0.9.2342.19200300.100.1.1");
         uidAttribute.setNameFormat(Attribute.URI_REFERENCE);
         uidAttribute.setFriendlyName("uid");
-        final XSAny uidValue =
-                new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final XSAny uidValue = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
         uidValue.setTextContent("jdoe");
         uidAttribute.getAttributeValues().add(uidValue);
 
@@ -141,8 +149,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         eppnAttribute.setName("urn:oid:1.3.6.1.4.1.5923.1.1.1.6");
         eppnAttribute.setNameFormat(Attribute.URI_REFERENCE);
         eppnAttribute.setFriendlyName("eduPersonPrincipalName");
-        final XSAny eppnValue =
-                new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final XSAny eppnValue = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
         eppnValue.setTextContent("jdoe@example.org");
         eppnAttribute.getAttributeValues().add(eppnValue);
 
@@ -151,8 +158,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         mailAttribute.setName("urn:oid:0.9.2342.19200300.100.1.3");
         mailAttribute.setNameFormat(Attribute.URI_REFERENCE);
         mailAttribute.setFriendlyName("mail");
-        final XSAny mailValue =
-                new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final XSAny mailValue = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
         mailValue.setTextContent("jdoe@example.org");
         mailAttribute.getAttributeValues().add(mailValue);
 
@@ -161,8 +167,7 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
         eduPersonScopedAffiliationAttribute.setName("urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
         eduPersonScopedAffiliationAttribute.setNameFormat(Attribute.URI_REFERENCE);
         eduPersonScopedAffiliationAttribute.setFriendlyName("eduPersonScopedAffiliation");
-        final XSAny eduPersonScopedAffiliationAttributeValue =
-                new XSAnyBuilder().buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final XSAny eduPersonScopedAffiliationAttributeValue = anyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
         eduPersonScopedAffiliationAttributeValue.setTextContent("member@example.org");
         eduPersonScopedAffiliationAttribute.getAttributeValues().add(eduPersonScopedAffiliationAttributeValue);
 
