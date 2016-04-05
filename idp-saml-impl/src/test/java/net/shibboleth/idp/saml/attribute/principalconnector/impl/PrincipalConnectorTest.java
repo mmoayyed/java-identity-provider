@@ -29,10 +29,10 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponentException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -99,7 +99,10 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setId("saml1");
         connector.initialize();
         
-        final NameIdentifier nameIdentifier = new NameIdentifierBuilder().buildObject();
+        final SAMLObjectBuilder<NameIdentifier> builder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                        NameIdentifier.DEFAULT_ELEMENT_NAME);        
+        final NameIdentifier nameIdentifier = builder.buildObject();
         nameIdentifier.setValue(NAMEIDENTIFIER_TEXT);
         
         final SubjectCanonicalizationContext scc = new SubjectCanonicalizationContext();
@@ -113,7 +116,10 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setId("saml1");
         connector.initialize();
         
-        final NameID  nameID = new NameIDBuilder().buildObject();
+        final SAMLObjectBuilder<NameID> builder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME);        
+        final NameID nameID = builder.buildObject();
         nameID.setValue(NAMEID_TEXT);
 
         final SubjectCanonicalizationContext scc = new SubjectCanonicalizationContext();

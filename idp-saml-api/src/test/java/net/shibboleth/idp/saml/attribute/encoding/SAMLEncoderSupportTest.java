@@ -40,8 +40,8 @@ import org.opensaml.core.xml.schema.XSAny;
 import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSAnyImpl;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.w3c.dom.Attr;
@@ -120,8 +120,11 @@ public class SAMLEncoderSupportTest  extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void encodeXmlObjectValue() {
-        
-        final NameID objToEncode= new NameIDBuilder().buildObject();
+
+        final SAMLObjectBuilder<NameID> builder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME);        
+        final NameID objToEncode= builder.buildObject();
         objToEncode.setValue(STRING_VALUE);
         
         try {

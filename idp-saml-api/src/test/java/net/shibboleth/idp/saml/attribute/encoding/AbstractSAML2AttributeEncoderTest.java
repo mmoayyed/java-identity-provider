@@ -34,8 +34,9 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -46,7 +47,7 @@ import org.testng.annotations.Test;
  */
 public class AbstractSAML2AttributeEncoderTest extends OpenSAMLInitBaseTestCase {
 
-    private XSStringBuilder theBuilder;
+    private XMLObjectBuilder<XSString> theBuilder;
 
     private QName theQName = new QName("LocalQNAME");
 
@@ -63,7 +64,7 @@ public class AbstractSAML2AttributeEncoderTest extends OpenSAMLInitBaseTestCase 
     private final String FRIENDLY_NAME = "friendly";
     
     @BeforeClass public void initTest() throws ComponentInitializationException {
-        theBuilder = new XSStringBuilder();
+        theBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(XSString.TYPE_NAME);
     }
 
     @Test public void abstractSAML2AttributeEncoder() throws ComponentInitializationException, AttributeEncodingException {

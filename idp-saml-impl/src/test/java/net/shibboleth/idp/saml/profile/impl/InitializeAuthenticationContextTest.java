@@ -25,9 +25,10 @@ import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileR
 
 import javax.security.auth.Subject;
 
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.impl.AuthnRequestBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
@@ -96,7 +97,10 @@ public class InitializeAuthenticationContextTest {
 
     /** Test that the action proceeds properly if the inbound message is a SAML2 AuthnRequest. */
     @Test public void testCreateAuthenticationContext() throws Exception {
-        final AuthnRequest authnRequest = new AuthnRequestBuilder().buildObject();
+        final SAMLObjectBuilder<AuthnRequest> builder = (SAMLObjectBuilder<AuthnRequest>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<AuthnRequest>getBuilderOrThrow(
+                        AuthnRequest.DEFAULT_ELEMENT_NAME);        
+        final AuthnRequest authnRequest = builder.buildObject();
         authnRequest.setIsPassive(true);
         authnRequest.setForceAuthn(true);
 

@@ -28,12 +28,27 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 import org.joda.time.DateTime;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.saml1.core.*;
+import org.opensaml.saml.saml1.core.Assertion;
+import org.opensaml.saml.saml1.core.Attribute;
+import org.opensaml.saml.saml1.core.AttributeStatement;
+import org.opensaml.saml.saml1.core.AttributeValue;
+import org.opensaml.saml.saml1.core.Audience;
+import org.opensaml.saml.saml1.core.AudienceRestrictionCondition;
+import org.opensaml.saml.saml1.core.AuthenticationStatement;
+import org.opensaml.saml.saml1.core.Conditions;
+import org.opensaml.saml.saml1.core.ConfirmationMethod;
+import org.opensaml.saml.saml1.core.NameIdentifier;
+import org.opensaml.saml.saml1.core.Response;
+import org.opensaml.saml.saml1.core.Status;
+import org.opensaml.saml.saml1.core.StatusCode;
+import org.opensaml.saml.saml1.core.Subject;
+import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
@@ -52,7 +67,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
     private final Logger log = LoggerFactory.getLogger(BuildSamlValidationSuccessMessageAction.class);
 
     /** Attribute value node builder. */
-    private final XSStringBuilder attrValueBuilder = new XSStringBuilder();
+    private final XMLObjectBuilder<XSString> attrValueBuilder;
 
     /** SAML identifier generation strategy. */
     @Nonnull
@@ -73,6 +88,10 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         Constraint.isNotNull(strategy, "IdentifierGenerationStrategy cannot be null");
         identifierGenerationStrategy = strategy;
         entityID = Constraint.isNotNull(StringSupport.trimOrNull(id), "EntityID cannot be null");
+        
+        attrValueBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(
+                XSString.TYPE_NAME);
+
     }
 
 
@@ -165,7 +184,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
     }
 
     private XSString newAttributeValue(final String value) {
-        final XSString stringValue = this.attrValueBuilder.buildObject(
+        final XSString stringValue = attrValueBuilder.buildObject(
                 AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
         stringValue.setValue(value);
         return stringValue;

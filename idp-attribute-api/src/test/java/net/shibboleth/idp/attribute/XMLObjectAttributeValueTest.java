@@ -21,20 +21,26 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
+import org.opensaml.core.xml.XMLObjectBaseTestCase;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link XMLObjectAttributeValue}. */
-public class XMLObjectAttributeValueTest {
+public class XMLObjectAttributeValueTest extends XMLObjectBaseTestCase {
     
     private XSString xsId1;
     private XSString xsId2;
     private XSString xsId3;
     
-    public XMLObjectAttributeValueTest() {
-        XSStringBuilder  builder = new XSStringBuilder();
+    @BeforeClass
+    public void setUp() {
+        final XMLObjectBuilder<XSString> builder =
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(
+                        XSString.TYPE_NAME);
         QName foo = new QName("foo");
         xsId1 = builder.buildObject(foo);
         xsId1.setValue("one");

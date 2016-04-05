@@ -33,10 +33,10 @@ import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.saml1.core.NameIdentifier;
-import org.opensaml.saml.saml1.core.impl.NameIdentifierBuilder;
 import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.impl.NameIDBuilder;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -46,13 +46,21 @@ import org.testng.annotations.Test;
  */
 public class PrinicpalConnectorCanonicalizerTest extends OpenSAMLInitBaseTestCase {
 
-    private final NameIDBuilder nameIDBuilder = new NameIDBuilder();
+    private SAMLObjectBuilder<NameID> nameIDBuilder;        
 
-    private final NameIdentifierBuilder nameIdentifierBuilder = new NameIdentifierBuilder();
+    private SAMLObjectBuilder<NameIdentifier> nameIdentifierBuilder;
 
     private TestCanonicalizer testCanon;
 
     @BeforeClass public void setup() {
+        nameIDBuilder = (SAMLObjectBuilder<NameID>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameID>getBuilderOrThrow(
+                        NameID.DEFAULT_ELEMENT_NAME);        
+
+        nameIdentifierBuilder = (SAMLObjectBuilder<NameIdentifier>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().<NameIdentifier>getBuilderOrThrow(
+                        NameIdentifier.DEFAULT_ELEMENT_NAME);        
+
         final Collection<PrincipalConnector> connectors = new HashSet<>(3);
 
         MyDecoder decoder = new MyDecoder(NameID.KERBEROS);

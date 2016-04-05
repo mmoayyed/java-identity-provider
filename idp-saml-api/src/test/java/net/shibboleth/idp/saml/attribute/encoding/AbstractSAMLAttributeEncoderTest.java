@@ -39,8 +39,9 @@ import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.schema.XSString;
-import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -51,7 +52,7 @@ import org.testng.annotations.Test;
  */
 public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     
-    private XSStringBuilder theBuilder;
+    private XMLObjectBuilder<XSString> theBuilder;
     private QName theQName = new QName("LocalQNAME");
     private final String MY_NAME = "myName";
     private final String MY_NAMESPACE = "myNameSpace";
@@ -60,7 +61,7 @@ public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     private final String ATTRIBUTE_VALUE_2 = "attrValeTwo";
     
     @BeforeClass public void initTest() throws ComponentInitializationException {
-        theBuilder = new XSStringBuilder();
+        theBuilder = XMLObjectProviderRegistrySupport.getBuilderFactory().<XSString>getBuilderOrThrow(XSString.TYPE_NAME);
     }
     
     @Test public void initializeAndSetters() throws AttributeEncodingException, ComponentInitializationException {
@@ -191,7 +192,7 @@ public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
  
     protected static class mockEncoder extends AbstractSAML1AttributeEncoder {
         
-        @Nonnull private final XSStringBuilder builder;
+        @Nonnull private final XMLObjectBuilder<XSString> builder;
         @Nonnull private final QName myQName;
 
         /**
@@ -200,7 +201,7 @@ public class AbstractSAMLAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
          * @param theBuilder
          * @param theQName
          */
-        public mockEncoder(@Nonnull final XSStringBuilder theBuilder, @Nonnull final QName theQName) {
+        public mockEncoder(@Nonnull final XMLObjectBuilder<XSString> theBuilder, @Nonnull final QName theQName) {
             builder = theBuilder;
             myQName = theQName;
         }
