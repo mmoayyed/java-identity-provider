@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -67,10 +66,10 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
 
     /**
      * Set the strategy used to locate the {@link SubjectContext} associated with a given
-     * {@link AttributeResolutionContext}.
+     * {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}.
      * 
      * @param strategy strategy used to locate the {@link SubjectContext} associated with a given
-     *            {@link AttributeResolutionContext}
+     *            {@link net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext}
      */
     public void
             setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {

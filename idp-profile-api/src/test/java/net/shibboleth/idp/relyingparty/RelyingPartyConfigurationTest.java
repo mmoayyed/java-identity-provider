@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
 /** Unit test for {@link RelyingPartyConfiguration}. */
 public class RelyingPartyConfigurationTest {
 
+    @SuppressWarnings("deprecation")
     @Test public void testConstruction() throws ComponentInitializationException {
         RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setId("foo");

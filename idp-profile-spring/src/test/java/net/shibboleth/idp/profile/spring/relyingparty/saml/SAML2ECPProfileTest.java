@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 
 public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
 
+    @SuppressWarnings("deprecation")
     @Test public void defaults() {
 
         ECPProfileConfiguration profile = getBean(ECPProfileConfiguration.class, "saml/ecp.xml", "beans.xml");
@@ -59,6 +60,7 @@ public class SAML2ECPProfileTest extends BaseSAMLProfileTest {
         Assert.assertNull(profile.getArtifactConfiguration());
     }
 
+    @SuppressWarnings("deprecation")
     @Test public void values() {
         BrowserSSOProfileConfiguration profile =
                 getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/ecpValues.xml");

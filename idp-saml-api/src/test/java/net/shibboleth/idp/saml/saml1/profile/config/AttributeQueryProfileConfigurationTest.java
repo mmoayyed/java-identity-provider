@@ -26,8 +26,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
-
 /** Unit test for {@link AttributeQueryProfileConfiguration}. */
 public class AttributeQueryProfileConfigurationTest {
 

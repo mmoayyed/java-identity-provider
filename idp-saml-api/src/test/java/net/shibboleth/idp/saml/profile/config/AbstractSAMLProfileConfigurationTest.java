@@ -110,7 +110,6 @@ public class AbstractSAMLProfileConfigurationTest {
         Assert.assertEquals(config.getAssertionLifetime(), 5 * 60 * 1000);
     }
 
-    @SuppressWarnings("deprecation")
     @Test public void testIncludeNotBefore() {
         final MockSAMLProfileConfiguration config = new MockSAMLProfileConfiguration();
         Assert.assertTrue(config.includeConditionsNotBefore());

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
-import java.security.Principal;
 import java.util.List;
 
 import javax.annotation.Nonnull;
@@ -55,7 +54,7 @@ public class ContextDerivedAttributeDefinition extends AbstractAttributeDefiniti
     /**
      * Function used to generate the values associated with the {@link ProfileRequestContext}
      * 
-     * The function returns null or an empty list if the {@link Principal} isn't relevant.
+     * The function returns null or an empty list if the context isn't relevant.
      */
     @Nonnull private Function<ProfileRequestContext, List<IdPAttributeValue<?>>> attributeValuesFunction;
 

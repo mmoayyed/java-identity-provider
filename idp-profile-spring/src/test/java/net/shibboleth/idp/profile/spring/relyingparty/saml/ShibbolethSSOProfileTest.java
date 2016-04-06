@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 
 public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
 
+    @SuppressWarnings("deprecation")
     @Test public void defaults() {
 
         BrowserSSOProfileConfiguration profile = getBean(BrowserSSOProfileConfiguration.class, "saml/shibbolethSSO.xml", "beans.xml");
@@ -50,6 +51,7 @@ public class ShibbolethSSOProfileTest extends BaseSAMLProfileTest {
         Assert.assertEquals(artifact.getArtifactResolutionServiceIndex().intValue(), 1111);
     }
 
+    @SuppressWarnings("deprecation")
     @Test public void values() {
         BrowserSSOProfileConfiguration profile =
                 getBean(BrowserSSOProfileConfiguration.class, "beans.xml", "saml/shibbolethSSOValues.xml");
