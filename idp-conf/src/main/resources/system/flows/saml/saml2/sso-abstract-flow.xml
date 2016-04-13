@@ -167,7 +167,8 @@
     <!-- For ECP, local errors mean SOAP faults. -->
     
     <decision-state id="HandleErrorLocally">
-        <if test="opensamlProfileRequestContext.isBrowserProfile()" then="HandleErrorWithView" else="SOAPFault" />
+        <if test="opensamlProfileRequestContext.isBrowserProfile() or !SOAPErrorPredicate.apply(opensamlProfileRequestContext)"
+            then="HandleErrorWithView" else="SOAPFault" />
     </decision-state>
 
     <!-- We need to trap non-proceed transitions in these actions to avoid an infinite loop. -->

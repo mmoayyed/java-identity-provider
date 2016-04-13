@@ -143,6 +143,13 @@
     </bean>
     
     <!-- These are used for ECP error handling. -->
+
+    <bean id="SOAPErrorPredicate"
+            class="net.shibboleth.idp.saml.saml2.profile.config.logic.SOAPErrorPredicate">
+        <property name="eventContextLookupStrategy">
+            <bean class="net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction" />
+        </property>
+    </bean>
     
     <bean id="AddSOAPFault"
             class="org.opensaml.soap.soap11.profile.impl.AddSOAPFault" scope="prototype"
