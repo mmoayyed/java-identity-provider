@@ -116,8 +116,10 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
      * Set a lookup strategy for the {@link #ticketValidityPeriod} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
-    public void setAssertionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
+    public void setTicketValidityPeriodLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
         ticketValidityPeriodLookupStrategy = strategy;
     }
 
@@ -148,6 +150,8 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
      * Get a condition to determine whether attributes should be resolved during the profile.
      * 
      * @return condition
+     * 
+     * @since 3.3.0
      */
     @Nonnull public Predicate<ProfileRequestContext> getResolveAttributesPredicate() {
         return resolveAttributesPredicate;
@@ -157,6 +161,8 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
      * Set a condition to determine whether attributes should be resolved during the profile.
      *
      * @param condition  condition to set
+     * 
+     * @since 3.3.0
      */
     public void setResolveAttributesPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         resolveAttributesPredicate = Constraint.isNotNull(condition, "Resolve attributes predicate cannot be null");
