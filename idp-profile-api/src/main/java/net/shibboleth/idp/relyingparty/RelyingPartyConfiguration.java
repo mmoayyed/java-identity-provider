@@ -90,6 +90,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * <p>Generally this would be expected to be a proxy to the actual object.</p>
      * 
      * @param request servlet request
+     * 
+     * @since 3.3.0
      */
     public void setServletRequest(@Nullable final ServletRequest request) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -122,6 +124,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * Set a lookup strategy for the {@link #responderId} property.
      * 
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setResponderIdLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -156,6 +160,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * Get a condition to determine whether detailed information about errors should be exposed.
      *
      * @return a condition to evaluate
+     * 
+     * @since 3.3.0
      */
     @Nonnull public Predicate<ProfileRequestContext> getDetailedErrorsPredicate() {
         return detailedErrorsPredicate;
@@ -165,6 +171,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * Set a condition to determine whether detailed information about errors should be exposed.
      * 
      * @param condition  condition to set
+     * 
+     * @since 3.3.0
      */
     public void setDetailedErrorsPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -226,6 +234,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * Set a lookup strategy for the {@link #profileConfigurations} property.
      * 
      * @param strategy lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setProfileConfigurationsLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Map<String,ProfileConfiguration>> strategy) {
@@ -267,6 +277,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * Get the current {@link ProfileRequestContext}.
      * 
      * @return current profile request context
+     * 
+     * @since 3.3.0
      */
     @Nullable protected ProfileRequestContext getProfileRequestContext() {
         if (servletRequest != null) {
@@ -290,6 +302,8 @@ public class RelyingPartyConfiguration extends AbstractIdentifiableInitializable
      * @param staticValue static value to return in the absence of a lookup function or if null is returned
      * 
      * @return a dynamic or static result, if any
+     * 
+     * @since 3.3.0
      */
     @Nullable protected <T> T getIndirectProperty(@Nullable final Function<ProfileRequestContext,T> lookupStrategy,
             @Nullable final T staticValue) {

@@ -103,6 +103,8 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
      * in CAS ticket validation response.
      * 
      * @param strategy lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setPGTIOUGeneratorLookupStrategy(
             @Nullable final Function<ProfileRequestContext,IdentifierGenerationStrategy> strategy) {
@@ -133,6 +135,8 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
      * ticket requester matches the ticket validator.
      * 
      * @param strategy lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setServiceComparatorLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Comparator<String>> strategy) {
@@ -174,6 +178,8 @@ public class ValidateConfiguration extends AbstractProtocolConfiguration {
      * in CAS ticket validation response.
      * 
      * @param strategy lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setUserAttributeLookupStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
         userAttributeLookupStrategy = strategy;

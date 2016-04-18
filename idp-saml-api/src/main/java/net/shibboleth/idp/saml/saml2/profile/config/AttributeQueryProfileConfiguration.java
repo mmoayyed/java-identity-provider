@@ -76,6 +76,8 @@ public class AttributeQueryProfileConfiguration extends AbstractSAML2ProfileConf
      * Set a lookup strategy for the {@link #artifactConfig} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setArtifactConfigurationLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {

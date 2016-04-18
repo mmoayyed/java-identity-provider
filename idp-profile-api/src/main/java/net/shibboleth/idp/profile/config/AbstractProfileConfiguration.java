@@ -86,6 +86,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * <p>Generally this would be expected to be a proxy to the actual object.</p>
      *
      * @param request servlet request
+     * 
+     * @since 3.3.0
      */
     public void setServletRequest(@Nullable final ServletRequest request) {
         servletRequest = request;
@@ -116,6 +118,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * Set a lookup strategy for the {@link #securityConfiguration} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setSecurityConfigurationLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SecurityConfiguration> strategy) {
@@ -145,6 +149,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * Set a lookup strategy for the {@link #inboundFlows} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setInboundFlowsLookupStrategy(@Nullable final Function<ProfileRequestContext,List<String>> strategy) {
         inboundFlowsLookupStrategy = strategy;
@@ -173,6 +179,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * Set a lookup strategy for the {@link #outboundFlows} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setOutboundFlowsLookupStrategy(@Nullable final Function<ProfileRequestContext,List<String>> strategy) {
         outboundFlowsLookupStrategy = strategy;
@@ -207,6 +215,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * Get the current {@link ProfileRequestContext}.
      *
      * @return current profile request context
+     * 
+     * @since 3.3.0
      */
     @Nullable protected ProfileRequestContext getProfileRequestContext() {
         if (servletRequest != null) {
@@ -230,6 +240,8 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * @param staticValue static value to return in the absence of a lookup function or if null is returned
      *
      * @return a dynamic or static result, if any
+     * 
+     * @since 3.3.0
      */
     @Nullable protected <T> T getIndirectProperty(@Nullable final Function<ProfileRequestContext,T> lookupStrategy,
             @Nullable final T staticValue) {
@@ -243,4 +255,5 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
 
         return staticValue;
     }
+    
 }

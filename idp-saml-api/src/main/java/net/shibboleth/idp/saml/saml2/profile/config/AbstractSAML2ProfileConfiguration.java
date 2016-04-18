@@ -100,6 +100,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * Set a lookup strategy for the {@link #proxyCount} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setProxyCountLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
         proxyCountLookupStrategy = strategy;
@@ -127,6 +129,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * Set a lookup strategy for the {@link #proxyAudiences} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setProxyAudiencesLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
@@ -152,6 +156,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * Get condition to determine whether encryption is optional in the face of a missing key, etc.
      *
      * @return condition
+     * 
+     * @since 3.3.0
      */
     @Nonnull public Predicate<ProfileRequestContext> getEncryptionOptionalPredicate() {
         return encryptionOptionalPredicate;
@@ -161,6 +167,8 @@ public abstract class AbstractSAML2ProfileConfiguration extends AbstractSAMLProf
      * Set a condition to determine whether encryption is optional in the face of a missing key, etc.
      *
      * @param condition condition to set
+     * 
+     * @since 3.3.0
      */
     public void setEncryptionOptionalPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         encryptionOptionalPredicate = Constraint.isNotNull(condition, "Encryption optional predicate cannot be null");

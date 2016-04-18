@@ -161,6 +161,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set a lookup strategy for the {@link #artifactConfig} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setArtifactConfigurationLookupStrategy(
             @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
@@ -194,6 +196,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Get a condition to determine whether attributes should be resolved during the profile.
      * 
      * @return condition
+     * 
+     * @since 3.3.0
      */
     @Nonnull public Predicate<ProfileRequestContext> getResolveAttributesPredicate() {
         return resolveAttributesPredicate;
@@ -203,6 +207,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set a condition to determine whether attributes should be resolved during the profile.
      *
      * @param condition  condition to set
+     * 
+     * @since 3.3.0
      */
     public void setResolveAttributesPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         resolveAttributesPredicate = Constraint.isNotNull(condition, "Resolve attributes predicate cannot be null");
@@ -236,6 +242,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * attribute statement.
      * 
      * @return condition
+     * 
+     * @since 3.3.0
      */
     @Nonnull public Predicate<ProfileRequestContext> getIncludeAttributeStatementPredicate() {
         return includeAttributeStatementPredicate;
@@ -246,6 +254,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * attribute statement.
      *
      * @param condition  condition to set
+     * 
+     * @since 3.3.0
      */
     public void setIncludeAttributeStatementPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         includeAttributeStatementPredicate = Constraint.isNotNull(condition,
@@ -277,6 +287,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Get condition to determine whether the response endpoint should be validated if the request is signed.
      * 
      * @return condition
+     * 
+     * @since 3.3.0
      */
     @Nonnull public Predicate<ProfileRequestContext> getSkipEndpointValidationWhenSignedPredicate() {
         return skipEndpointValidationWhenSignedPredicate;
@@ -286,6 +298,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set condition to determine whether the response endpoint should be validated if the request is signed.
      * 
      * @param condition condition to set
+     * 
+     * @since 3.3.0
      */
     public void setSkipEndpointValidationWhenSignedPredicate(
             @Nonnull final Predicate<ProfileRequestContext> condition) {
@@ -321,6 +335,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set a lookup strategy for the {@link #maximumSPSessionLifetime} property.
      * 
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setMaximumSPSessionLifetimeLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Long> strategy) {
@@ -409,6 +425,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set a lookup strategy for the {@link #maximumTokenDelegationChainLength} property.
      * 
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setMaximumTokenDelegationChainLengthLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Long> strategy) {
@@ -440,6 +458,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set a lookup strategy for the {@link #defaultAuthenticationMethods} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setDefaultAuthenticationMethodsLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>> strategy) {
@@ -470,6 +490,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set a lookup strategy for the {@link #authenticationFlows} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setAuthenticationFlowsLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Set<String>> strategy) {
@@ -501,6 +523,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set a lookup strategy for the {@link #postAuthenticationFlows} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setPostAuthenticationFlowsLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
@@ -528,6 +552,8 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * Set a lookup strategy for the {@link #nameIDFormatPrecedence} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setNameIDFormatPrecedenceLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {

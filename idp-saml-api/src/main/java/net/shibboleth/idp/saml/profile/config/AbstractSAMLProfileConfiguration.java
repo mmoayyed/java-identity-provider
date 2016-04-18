@@ -151,6 +151,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * Set a lookup strategy for the {@link #assertionLifetime} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setAssertionLifetimeLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
         assertionLifetimeLookupStrategy = strategy;
@@ -176,6 +178,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * generated assertions.
      *
      * @return a condition to evaluate
+     * 
+     * @since 3.3.0
      */
     @Nonnull public Predicate<ProfileRequestContext> getIncludeConditionsNotBeforePredicate() {
         return includeNotBeforePredicate;
@@ -186,6 +190,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * generated assertions.
      *
      * @param condition  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setIncludeConditionsNotBeforePredicate(@Nullable final Predicate<ProfileRequestContext> condition) {
         includeNotBeforePredicate = Constraint.isNotNull(condition, "NotBefore predicate cannot be null");
@@ -236,6 +242,8 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * Set a lookup strategy for the {@link #assertionAudiences} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setAssertionAudiencesLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {

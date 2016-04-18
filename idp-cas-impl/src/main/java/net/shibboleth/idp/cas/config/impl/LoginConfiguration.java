@@ -123,6 +123,8 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * Set a lookup strategy for the {@link #defaultAuthenticationMethods} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setDefaultAuthenticationMethodsLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<AuthnContextClassRefPrincipal>> strategy) {
@@ -153,6 +155,8 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * Set a lookup strategy for the {@link #authenticationFlows} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setAuthenticationFlowsLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Set<String>> strategy) {
@@ -184,6 +188,8 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * Set a lookup strategy for the {@link #postAuthenticationFlows} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setPostAuthenticationFlowsLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
@@ -211,6 +217,8 @@ public class LoginConfiguration extends AbstractProtocolConfiguration
      * Set a lookup strategy for the {@link #nameIDFormatPrecedence} property.
      *
      * @param strategy  lookup strategy
+     * 
+     * @since 3.3.0
      */
     public void setNameIDFormatPrecedenceLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
