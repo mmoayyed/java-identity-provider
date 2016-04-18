@@ -98,7 +98,7 @@ public class ECPProfileConfiguration extends BrowserSSOProfileConfiguration {
      * 
      * @since 3.3.0
      */
-    public void setAuthenticationFlowsLookupStrategy(
+    public void setLocalEventsLookupStrategy(
             @Nullable final Function<ProfileRequestContext,Set<String>> strategy) {
         localEventsLookupStrategy = strategy;
     }
