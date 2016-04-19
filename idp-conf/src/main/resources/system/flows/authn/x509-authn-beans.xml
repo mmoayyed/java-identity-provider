@@ -31,8 +31,12 @@
 
     <bean id="ValidateExternalAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
-        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') != null ? getObject('shibboleth.authn.X509.addDefaultPrincipals') : true}"
+        p:addDefaultPrincipals="#{getObject('shibboleth.authn.X509.addDefaultPrincipals') ?: true}"
         p:classifiedMessages-ref="shibboleth.authn.X509.ClassifiedMessageMap"
         p:resultCachingPredicate="#{getObject('shibboleth.authn.X509.resultCachingPredicate')}" />
+
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
 
 </beans>

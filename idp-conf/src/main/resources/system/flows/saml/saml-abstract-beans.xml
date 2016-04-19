@@ -202,6 +202,10 @@
         </property>
     </bean>
 
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.SAMLSubjectCanonicalizationFlows" />
+
     <bean id="FinalizeSAMLSubjectCanonicalization"
         class="net.shibboleth.idp.saml.profile.impl.FinalizeSAMLSubjectCanonicalization" scope="prototype" />
 

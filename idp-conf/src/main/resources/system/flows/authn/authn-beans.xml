@@ -77,6 +77,10 @@
         class="net.shibboleth.idp.authn.impl.SelectAuthenticationFlow" scope="prototype"
         p:favorSSO="%{idp.authn.favorSSO:false}" />
     
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
+    
     <bean id="DetectIdentitySwitch"
         class="net.shibboleth.idp.session.impl.DetectIdentitySwitch" scope="prototype"
         p:sessionManager-ref="shibboleth.SessionManager" />

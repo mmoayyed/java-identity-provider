@@ -9,12 +9,13 @@
         <evaluate expression="PopulateResolution" />
         <evaluate expression="ResolveAttributes" />
         <evaluate expression="PopulateSAML1C14N" />
+        <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="C14N" />
     </action-state>    
     
-    <subflow-state id="C14N" subflow="c14n/saml">
+    <subflow-state id="C14N" subflow="c14n">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="TestAfterC14N" />
         <transition to="error"/>
