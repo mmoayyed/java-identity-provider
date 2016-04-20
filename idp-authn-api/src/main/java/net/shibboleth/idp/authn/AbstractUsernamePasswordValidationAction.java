@@ -55,11 +55,19 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
     /** Whether to save the password in the Java Subject's private credentials. */
     private boolean savePasswordToCredentialSet;
     
+    /** Whether to remove the {@link UsernamePasswordContext} after successful validation. */
+    private boolean removeContextAfterValidation;
+    
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
     
     /** UsernamePasswordContext containing the credentials to validate. */
     @Nullable private UsernamePasswordContext upContext;
+    
+    /** Constructor. */
+    public AbstractUsernamePasswordValidationAction() {
+        removeContextAfterValidation = true;
+    }
     
     /**
      * Get whether to save the password in the private credential set.
@@ -80,7 +88,35 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
         
         savePasswordToCredentialSet = flag;
     }
+
+    /**
+     * Get whether to remove the {@link UsernamePasswordContext} after it's
+     * successfully validated.
+     * 
+     * <p>Defaults to true</p>
+     * 
+     * @return whether to remove the context after successful validation
+     * 
+     * @since 3.3.0
+     */
+    public boolean removeContextAfterValidation() {
+        return removeContextAfterValidation;
+    }
     
+    /**
+     * Set whether to remove the {@link UsernamePasswordContext} after it's
+     * successfully validated.
+     * 
+     * @param flag  flag to set
+     * 
+     * @since 3.3.0
+     */
+    public void setRemoveContextAfterValidation(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        removeContextAfterValidation = flag;
+    }
+
     /**
      * Set a matching expression to apply to the username for acceptance. 
      * 
@@ -143,6 +179,13 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
         if (savePasswordToCredentialSet) {
             subject.getPrivateCredentials().add(new PasswordPrincipal(upContext.getPassword()));
         }
+        
+        if (removeContextAfterValidation) {
+            upContext.getParent().removeSubcontext(upContext);
+            upContext.setPassword(null);
+            upContext = null;
+        }
+        
         return subject;
     }
     

@@ -422,7 +422,9 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-
+        
+        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
+        
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
 
@@ -456,6 +458,8 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
+        
+        Assert.assertNull(ac.getSubcontext(UsernamePasswordContext.class));
 
         AuthenticationErrorContext aec = ac.getSubcontext(AuthenticationErrorContext.class);
         Assert.assertNull(aec);
@@ -475,8 +479,27 @@ public class ValidateUsernamePasswordAgainstLDAPTest extends PopulateAuthenticat
         Assert.assertNotNull(lp.getLdapEntry());
     }
 
+    @Test public void testAuthorizedAndKeepContext() throws Exception {
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("username", "PETER_THE_PRINCIPAL");
+        ((MockHttpServletRequest) action.getHttpServletRequest()).addParameter("password", "changeit");
+
+        AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
+        ac.setAttemptedFlow(authenticationFlows.get(0));
+
+        action.setAuthenticator(authenticator);
+        action.setRemoveContextAfterValidation(false);
+        action.initialize();
+
+        doExtract(prc);
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        
+        Assert.assertNotNull(ac.getSubcontext(UsernamePasswordContext.class));
+    }
+
     private void doExtract(ProfileRequestContext prc) throws Exception {
-        ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
+        final ExtractUsernamePasswordFromFormRequest extract = new ExtractUsernamePasswordFromFormRequest();
         extract.setHttpServletRequest(action.getHttpServletRequest());
         extract.initialize();
         extract.execute(src);
