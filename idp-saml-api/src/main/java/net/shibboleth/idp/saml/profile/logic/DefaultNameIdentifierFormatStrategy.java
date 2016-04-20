@@ -54,6 +54,9 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
      */
     @Nonnull private Function<ProfileRequestContext, RelyingPartyContext> relyingPartyContextLookupStrategy;
 
+    /** Override the {@link ProfileConfiguration} to look for rather than whatever's populated. */
+    @Nullable private String profileId;
+    
     /** Default format to use if nothing else is known. */
     @Nonnull @NotEmpty private String defaultFormat;
 
@@ -76,6 +79,19 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
         relyingPartyContextLookupStrategy =
                 Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
+    
+    /**
+     * Set the profile configuration ID to locate in the {@link RelyingPartyConfiguration} for the purposes of
+     * establishing format precedence rules.
+     * 
+     * <p>By default/without one set, the strategy is to use the configuration object populated in the
+     * {@link RelyingPartyContext}.</p>
+     * 
+     * @param id profile ID to look for
+     */
+    public void setProfileId(@Nullable final String id) {
+        profileId = StringSupport.trimOrNull(id);
+    }
 
     /**
      * Set the default format to return.
@@ -93,8 +109,16 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
         final List<String> fromMetadata = super.apply(input);
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(input);
-        if (relyingPartyCtx != null) {
-            final ProfileConfiguration profileConfig = relyingPartyCtx.getProfileConfig();
+        if (relyingPartyCtx != null && relyingPartyCtx.getConfiguration() != null) {
+            final ProfileConfiguration profileConfig;
+            
+            if (profileId != null) {
+                log.debug("Using overridden profile configuration ID: {}", profileId);
+                profileConfig = relyingPartyCtx.getConfiguration().getProfileConfiguration(profileId);
+            } else {
+                profileConfig = relyingPartyCtx.getProfileConfig();
+            }
+            
             if (profileConfig != null && profileConfig instanceof AuthenticationProfileConfiguration) {
                 fromConfig.addAll(((AuthenticationProfileConfiguration) profileConfig).getNameIDFormatPrecedence());
                 log.debug("Configuration specifies the following formats: {}", fromConfig);
@@ -102,7 +126,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
                 log.debug("No ProfileConfiguraton available (or not an AuthenticationProfileConfiguration)");
             }
         } else {
-            log.debug("No RelyingPartyContext available");
+            log.debug("No RelyingPartyContext or RelyingPartyConfiguration available");
         }
 
         if (fromConfig.isEmpty()) {
@@ -122,5 +146,5 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
             return fromConfig;
         }
     }
-
+    
 }
