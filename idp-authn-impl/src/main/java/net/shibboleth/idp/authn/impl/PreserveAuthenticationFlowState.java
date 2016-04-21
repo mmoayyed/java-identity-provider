@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class PreserveAuthenticationFlowState extends AbstractAuthenticationAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateAuthenticationContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PreserveAuthenticationFlowState.class);
     
     /** Parameter names to look for. */
     @Nonnull @NonnullElements private Collection<String> parameterNames;
