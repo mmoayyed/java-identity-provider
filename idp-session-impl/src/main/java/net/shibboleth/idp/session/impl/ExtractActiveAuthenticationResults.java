@@ -44,6 +44,9 @@ import com.google.common.base.Function;
  * {@link AuthenticationResult} objects found in a {@link SessionContext} that is a direct
  * child of the {@link ProfileRequestContext}.
  * 
+ * <p>The active results must correspond to an available {@link AuthenticationFlowDescriptor},
+ * but the flow need not be explicitly "runnable" (i.e. in the set of potential flows).</p>
+ * 
  * <p>If {@link AuthenticationContext#getHintedName() is null, then it is populated with the
  * principal name from the session.</p>
  * 
@@ -106,29 +109,30 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
         }
         
         final List<AuthenticationResult> actives = new ArrayList<>();
-        for (AuthenticationResult result : session.getAuthenticationResults()) {
-            AuthenticationFlowDescriptor descriptor =
-                    authenticationContext.getPotentialFlows().get(result.getAuthenticationFlowId());
+        for (final AuthenticationResult result : session.getAuthenticationResults()) {
+            final AuthenticationFlowDescriptor descriptor =
+                    authenticationContext.getAvailableFlows().get(result.getAuthenticationFlowId());
             if (descriptor == null) {
-                log.debug("{} authentication result {} has no corresponding flow descriptor, considering inactive", 
+                log.debug("{} Authentication result {} has no corresponding flow descriptor, considering inactive", 
                         getLogPrefix(), result.getAuthenticationFlowId());
                 continue;
             }
             
             if (descriptor.isResultActive(result)) {
-                log.debug("{} authentication result {} is active, copying from session", getLogPrefix(),
+                log.debug("{} Authentication result {} is active, copying from session", getLogPrefix(),
                         result.getAuthenticationFlowId());
                 actives.add(result);
             } else {
-                log.debug("{} authentication result {} is inactive, skipping it", getLogPrefix(),
+                log.debug("{} Authentication result {} is inactive, skipping it", getLogPrefix(),
                         result.getAuthenticationFlowId());
             }
         }
         
         if (actives.isEmpty()) {
-            log.debug("{} no active authentication results, SSO will not be possible", getLogPrefix());
+            log.debug("{} No active authentication results, SSO will not be possible", getLogPrefix());
         }
         
         authenticationContext.setActiveResults(actives);
     }
+    
 }
