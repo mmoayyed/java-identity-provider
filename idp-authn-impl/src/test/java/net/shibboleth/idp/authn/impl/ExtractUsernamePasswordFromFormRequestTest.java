@@ -30,7 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ExtractUsernamePasswordFromFormRequest} unit test. */
-public class ExtractUsernamePasswordFromFormRequestTest extends PopulateAuthenticationContextTest {
+public class ExtractUsernamePasswordFromFormRequestTest extends BaseAuthenticationContextTest {
     
     private ExtractUsernamePasswordFromFormRequest action; 
     

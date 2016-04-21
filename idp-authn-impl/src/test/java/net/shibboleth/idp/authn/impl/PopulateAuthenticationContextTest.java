@@ -19,53 +19,102 @@ package net.shibboleth.idp.authn.impl;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.profile.RequestContextBuilder;
-import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.opensaml.profile.action.ActionTestingSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+/** Base class for further action tests. */
+final public class PopulateAuthenticationContextTest extends BaseAuthenticationContextTest {
 
-/** {@link PopulateAuthenticationContext} unit test and base class for further action tests. */
-public class PopulateAuthenticationContextTest {
+    @BeforeMethod
+    public void setUp() throws Exception {
+        initializeMembers();
+    }
 
-    protected RequestContext src;
-    protected ProfileRequestContext prc;
-    protected ImmutableList<AuthenticationFlowDescriptor> authenticationFlows;
-    
-    @BeforeMethod public void setUp() throws Exception {        
-        src = new RequestContextBuilder().buildRequestContext();
-        prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        prc.addSubcontext(new AuthenticationContext(), true);
-
-        authenticationFlows = ImmutableList.of(new AuthenticationFlowDescriptor(),
-                new AuthenticationFlowDescriptor(), new AuthenticationFlowDescriptor());
-        authenticationFlows.get(0).setId("test1");
-        authenticationFlows.get(1).setId("test2");
-        authenticationFlows.get(2).setId("test3");
-
-        PopulateAuthenticationContext action = new PopulateAuthenticationContext();
+    /** Test available flows == potential flows. */
+    @Test public void testIdentical() throws Exception {
+        
+        final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
         action.setAvailableFlows(authenticationFlows);
+        action.setPotentialFlows(authenticationFlows);
         action.initialize();
 
         action.execute(src);
-    }
-
-    /** Test that the authentication context is properly added. */
-    @Test public void testAction() throws Exception {
-        
         ActionTestingSupport.assertProceedEvent(prc);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, false);
+        
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         Assert.assertNotNull(authCtx);
 
-        Assert.assertEquals(authCtx.getPotentialFlows().size(), 3);
-        Assert.assertNotNull(authCtx.getPotentialFlows().get("test1"));
-        Assert.assertNotNull(authCtx.getPotentialFlows().get("test2"));
-        Assert.assertNotNull(authCtx.getPotentialFlows().get("test3"));
+        Assert.assertEquals(authCtx.getAvailableFlows().size(), 3);
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test1"));
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test2"));
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test3"));
+        
+        Assert.assertEquals(authCtx.getPotentialFlows(), authCtx.getAvailableFlows());
     }
+    
+    /** Test available flows != potential flows. */
+    @Test public void testNonIdentical() throws Exception {
+        
+        final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
+        action.setAvailableFlows(authenticationFlows);
+        
+        final AuthenticationFlowDescriptor unavailableFlow = new AuthenticationFlowDescriptor();
+        unavailableFlow.setId("test4");
+        action.setPotentialFlows(Arrays.asList(authenticationFlows.get(0), unavailableFlow));
+        action.initialize();
+
+        action.execute(src);
+        ActionTestingSupport.assertProceedEvent(prc);
+        
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        Assert.assertNotNull(authCtx);
+
+        Assert.assertEquals(authCtx.getAvailableFlows().size(), 3);
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test1"));
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test2"));
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test3"));
+
+        Assert.assertEquals(authCtx.getPotentialFlows().size(), 1);
+        Assert.assertNotNull(authCtx.getPotentialFlows().get("test1"));
+        Assert.assertNull(authCtx.getPotentialFlows().get("test2"));
+        Assert.assertNull(authCtx.getPotentialFlows().get("test3"));
+        Assert.assertNull(authCtx.getPotentialFlows().get("test4"));
+    }
+    
+    /** Test active flow filtering. */
+    @Test public void testFiltered() throws Exception {
+        
+        final PopulateAuthenticationContext action = new PopulateAuthenticationContext();
+        action.setAvailableFlows(authenticationFlows);
+        action.setPotentialFlows(authenticationFlows);
+        action.setActiveFlowsLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,Collection<String>>constant(Collections.singletonList("test2")));
+        action.initialize();
+
+        action.execute(src);
+        ActionTestingSupport.assertProceedEvent(prc);
+        
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        Assert.assertNotNull(authCtx);
+
+        Assert.assertEquals(authCtx.getAvailableFlows().size(), 3);
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test1"));
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test2"));
+        Assert.assertNotNull(authCtx.getAvailableFlows().get("test3"));
+        
+        Assert.assertEquals(authCtx.getPotentialFlows().size(), 1);
+        Assert.assertNull(authCtx.getPotentialFlows().get("test1"));
+        Assert.assertNotNull(authCtx.getPotentialFlows().get("test2"));
+        Assert.assertNull(authCtx.getPotentialFlows().get("test3"));
+    }
+
 }

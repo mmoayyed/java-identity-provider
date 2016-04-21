@@ -34,7 +34,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ExtractRemoteUser} unit test. */
-public class ExtractRemoteUserTest extends PopulateAuthenticationContextTest {
+public class ExtractRemoteUserTest extends BaseAuthenticationContextTest {
     
     private ExtractRemoteUser action; 
     

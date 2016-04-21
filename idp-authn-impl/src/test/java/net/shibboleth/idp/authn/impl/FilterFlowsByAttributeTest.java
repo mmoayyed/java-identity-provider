@@ -37,7 +37,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link FilterFlowsByAttribute} unit test. */
-public class FilterFlowsByAttributeTest extends PopulateAuthenticationContextTest {
+public class FilterFlowsByAttributeTest extends BaseAuthenticationContextTest {
     
     private FilterFlowsByAttribute action; 
     

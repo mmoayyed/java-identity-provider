@@ -30,7 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link PreserveAuthenticationFlowState} unit test. */
-public class PreserveAuthenticationFlowStateTest extends PopulateAuthenticationContextTest {
+public class PreserveAuthenticationFlowStateTest extends BaseAuthenticationContextTest {
     
     private PreserveAuthenticationFlowState action; 
     

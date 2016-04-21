@@ -27,7 +27,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link FilterFlowsByPassivity} unit test. */
-public class FilterFlowsByPassivityTest extends PopulateAuthenticationContextTest {
+public class FilterFlowsByPassivityTest extends BaseAuthenticationContextTest {
     
     private FilterFlowsByPassivity action; 
     

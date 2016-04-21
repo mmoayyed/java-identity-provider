@@ -45,7 +45,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ValidateX509Certificate} unit test. */
-public class ValidateX509CertificateTest extends PopulateAuthenticationContextTest {
+public class ValidateX509CertificateTest extends BaseAuthenticationContextTest {
     
     private String entityCertBase64 = 
             "MIIDjDCCAnSgAwIBAgIBKjANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +

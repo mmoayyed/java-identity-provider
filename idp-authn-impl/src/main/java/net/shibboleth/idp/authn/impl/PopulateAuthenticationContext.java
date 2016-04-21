@@ -44,7 +44,7 @@ import com.google.common.collect.Collections2;
 
 /**
  * An action that populates an {@link AuthenticationContext} with the {@link AuthenticationFlowDescriptor}
- * objects configured into the IdP, filtered by flow IDs from a lookup function.
+ * objects configured into the IdP, potential flows filtered by flow IDs from a lookup function.
  * 
  * <p>If a {@link RequestedPrincipalContext} child is found, then optionally a customized
  * {@link PrincipalEvalPredicateFactoryRegistry} will be installed into it.</p>
@@ -60,8 +60,11 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateAuthenticationContext.class);
     
-    /** The flows to make available for possible use. */
+    /** All of the known flows in the system. */
     @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> availableFlows;
+
+    /** The flows to make available for possible use. */
+    @Nonnull @NonnullElements private Collection<AuthenticationFlowDescriptor> potentialFlows;
     
     /** Lookup function for the flow IDs to activate from within the available set. */
     @Nonnull private Function<ProfileRequestContext,Collection<String>> activeFlowsLookupStrategy;
@@ -72,19 +75,34 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
     /** Constructor. */
     PopulateAuthenticationContext() {
         availableFlows = Collections.emptyList();
+        potentialFlows = Collections.emptyList();
         activeFlowsLookupStrategy = new AuthenticationFlowsLookupFunction();
     }
     
     /**
-     * Set the flows available for possible use.
+     * Set the flows known to the system.
      * 
-     * @param flows the flows available for possible use
+     * @param flows the flows known to the system
      */
     public void setAvailableFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(flows, "Flow collection cannot be null");
         
         availableFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
+    }
+
+    /**
+     * Set the flows to make available for use (a subset of the available ones).
+     * 
+     * @param flows the flows to make available for use
+     * 
+     * @since 3.3.0
+     */
+    public void setPotentialFlows(@Nonnull @NonnullElements final Collection<AuthenticationFlowDescriptor> flows) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        Constraint.isNotNull(flows, "Flow collection cannot be null");
+        
+        potentialFlows = new ArrayList<>(Collections2.filter(flows, Predicates.notNull()));
     }
     
     /**
@@ -135,21 +153,29 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         }
         
         if (availableFlows.isEmpty()) {
-            log.warn("{} No authentication flows are available for this request", getLogPrefix());
+            log.warn("{} No authentication flows are available", getLogPrefix());
             return;
         }
+        
+        // Install all the available flows for reference.
+        for (final AuthenticationFlowDescriptor desc : availableFlows) {
+            authenticationContext.getAvailableFlows().put(desc.getId(), desc);
+        }
+        
+        // Now we have to filter the potential flows against the available and active flows and
+        // check for applicability before including them.
         
         final Collection<String> activeFlows = activeFlowsLookupStrategy.apply(profileRequestContext);
 
         if (activeFlows != null && !activeFlows.isEmpty()) {
-            for (final AuthenticationFlowDescriptor desc : availableFlows) {
+            for (final AuthenticationFlowDescriptor desc : potentialFlows) {
                 final String flowId = desc.getId().substring(desc.getId().indexOf('/') + 1);
                 if (activeFlows.contains(flowId)) {
-                    if (desc.apply(profileRequestContext)) {
+                    if (authenticationContext.getAvailableFlows().containsKey(desc.getId())
+                            && desc.apply(profileRequestContext)) {
                         authenticationContext.getPotentialFlows().put(desc.getId(), desc);
                     } else {
-                        log.debug("{} Filtered out authentication flow {} due to attached condition", getLogPrefix(),
-                                desc.getId());
+                        log.debug("{} Filtered out authentication flow {}", getLogPrefix(), desc.getId());
                     }
                 } else {
                     log.debug("{} Filtered out authentication flow {} due to profile configuration", getLogPrefix(),
@@ -157,12 +183,12 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
                 }
             }
         } else {
-            for (final AuthenticationFlowDescriptor desc : availableFlows) {
-                if (desc.apply(profileRequestContext)) {
+            for (final AuthenticationFlowDescriptor desc : potentialFlows) {
+                if (authenticationContext.getAvailableFlows().containsKey(desc.getId())
+                        && desc.apply(profileRequestContext)) {
                     authenticationContext.getPotentialFlows().put(desc.getId(), desc);
                 } else {
-                    log.debug("{} Filtered out authentication flow {} due to attached condition", getLogPrefix(),
-                            desc.getId());
+                    log.debug("{} Filtered out authentication flow {}", getLogPrefix(), desc.getId());
                 }
             }
         }
@@ -170,7 +196,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
         if (authenticationContext.getPotentialFlows().isEmpty()) {
             log.warn("{} No authentication flows are active for this request", getLogPrefix());
         } else {
-            log.debug("{} Installed {} authentication flows into AuthenticationContext", getLogPrefix(),
+            log.debug("{} Installed {} potential authentication flows into AuthenticationContext", getLogPrefix(),
                     authenticationContext.getPotentialFlows().size());
         }
     }

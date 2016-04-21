@@ -33,7 +33,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ExtractX509CertificateFromRequest} unit test. */
-public class ExtractX509CertificateFromRequestTest extends PopulateAuthenticationContextTest {
+public class ExtractX509CertificateFromRequestTest extends BaseAuthenticationContextTest {
     
     private String entityCertBase64 = 
         "MIIDjDCCAnSgAwIBAgIBKjANBgkqhkiG9w0BAQUFADAtMRIwEAYDVQQKEwlJbnRl" +

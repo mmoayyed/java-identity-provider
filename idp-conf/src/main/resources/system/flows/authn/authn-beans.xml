@@ -20,12 +20,14 @@
     
     <bean id="PopulateAuthenticationContext"
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows:}'.trim() + ')']}"
+        p:availableFlows-ref="shibboleth.AvailableAuthenticationFlows"
+        p:potentialFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows:}'.trim() + ')']}"
         p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
 
     <bean id="PopulateAuthenticationContextWithInitialFlow"
         class="net.shibboleth.idp.authn.impl.PopulateAuthenticationContext" scope="prototype"
-        p:availableFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows.initial:}'.trim() + ')']}"
+        p:availableFlows-ref="shibboleth.AvailableAuthenticationFlows"
+        p:potentialFlows="#{@'shibboleth.AvailableAuthenticationFlows'.?[id matches 'authn/(' + '%{idp.authn.flows.initial:}'.trim() + ')']}"
         p:principalEvalPredicateFactoryRegistry-ref="shibboleth.AuthnComparisonRegistry" />
 
     <bean id="PopulateSessionContext"

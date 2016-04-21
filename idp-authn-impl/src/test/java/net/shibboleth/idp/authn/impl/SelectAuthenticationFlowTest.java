@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableList;
 
 /** {@link SelectAuthenticationFlow} unit test. */
-public class SelectAuthenticationFlowTest extends PopulateAuthenticationContextTest {
+public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest {
     
     private SelectAuthenticationFlow action; 
     

@@ -69,7 +69,10 @@ public final class AuthenticationContext extends BaseContext {
     
     /** A non-normative hint some protocols support to indicate who the subject might be. */
     @Nullable private String hintedName;
-    
+
+    /** Flows that are known to the system. */
+    @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> availableFlows;
+
     /** Flows that could potentially be used to authenticate the user. */
     @Nonnull @NonnullElements private final Map<String,AuthenticationFlowDescriptor> potentialFlows;
 
@@ -111,6 +114,7 @@ public final class AuthenticationContext extends BaseContext {
     public AuthenticationContext() {
         initiationInstant = System.currentTimeMillis();
         
+        availableFlows = new HashMap<>();
         potentialFlows = new LinkedHashMap<>();
         activeResults = new HashMap<>();
         intermediateFlows = new HashMap<>();
@@ -159,12 +163,26 @@ public final class AuthenticationContext extends BaseContext {
 
         return this;
     }
+
     
     /**
-     * Get the set of flows that could potentially be used for user authentication.
+     * Get the set of flows known to the system overall.
      * 
      * <p>Authentication flows supplied by the configuration and gradually filtered down to
      * a collection that can be used to authenticate the subject.</p>
+     * 
+     * @return the available flows, independent of their potential for use at a given time
+     * 
+     * @since 3.3.0
+     */
+    @Nonnull @NonnullElements @Live public Map<String,AuthenticationFlowDescriptor> getAvailableFlows() {
+        return availableFlows;
+    }
+    
+    /**
+     * Get the set of flows that could potentially be used for authentication.
+     * 
+     * <p>Initially the same as {@link #getAvailableFlows()}, it may be filtered down to a smaller set.</p>
      * 
      * @return the potential flows
      */

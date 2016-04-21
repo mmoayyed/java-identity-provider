@@ -30,7 +30,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link ExtractUserAgentAddress} unit test. */
-public class ExtractUserAgentAddressTest extends PopulateAuthenticationContextTest {
+public class ExtractUserAgentAddressTest extends BaseAuthenticationContextTest {
     
     private ExtractUserAgentAddress action; 
     

@@ -38,7 +38,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** {@link AttributeSourcedSubjectCanonicalization} unit test. */
-public class AttributeSourcedSubjectCanonicalizationTest extends PopulateAuthenticationContextTest {
+public class AttributeSourcedSubjectCanonicalizationTest extends BaseAuthenticationContextTest {
     
     private AttributeSourcedSubjectCanonicalization action; 
     
