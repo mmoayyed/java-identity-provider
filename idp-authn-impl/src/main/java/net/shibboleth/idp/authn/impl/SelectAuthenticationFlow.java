@@ -160,7 +160,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         
         // See if flow exists.
-        final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
+        final AuthenticationFlowDescriptor flow = authenticationContext.getAvailableFlows().get(
                 authenticationContext.getSignaledFlowId());
         if (flow == null) {
             log.error("{} Signaled flow {} is not available", getLogPrefix(),
@@ -216,7 +216,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
                 if (predicate != null) {
-                    if (predicate.apply(flow)) {
+                    if (predicate.apply(flow) && flow.apply(profileRequestContext)) {
                         selectInactiveFlow(profileRequestContext, authenticationContext, flow);
                         return;
                     }
@@ -226,13 +226,12 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                             p.getClass());
                 }
             }
-        } else {
+        } else if (flow.apply(profileRequestContext)) {
             selectInactiveFlow(profileRequestContext, authenticationContext, flow);
             return;
         }
         
-        log.error("{} Signaled flow {} was unusable based on requester's requirements", getLogPrefix(),
-                flow.getId());
+        log.error("{} Signaled flow {} was not applicable to request", getLogPrefix(), flow.getId());
         ActionSupport.buildEvent(profileRequestContext,
                 authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
     }
@@ -250,9 +249,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         log.debug("{} No specific Principals requested", getLogPrefix());
         
         // Check for initial authentication (valid even in presence of forced authentication).
-        if (authenticationContext.getInitialAuthenticationResult() != null
-                && authenticationContext.getPotentialFlows().containsKey(
-                        authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId())) {
+        if (authenticationContext.getInitialAuthenticationResult() != null) {
             selectActiveResult(profileRequestContext, authenticationContext,
                     authenticationContext.getInitialAuthenticationResult());
             return;
@@ -273,13 +270,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         }
 
         // Pick a result to reuse if possible.
-        for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
-            final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
-                    activeResult.getAuthenticationFlowId());
-            if (flow != null) {
-                selectActiveResult(profileRequestContext, authenticationContext, activeResult);
-                return;
-            }
+        if (!authenticationContext.getActiveResults().isEmpty()) {
+            selectActiveResult(profileRequestContext, authenticationContext,
+                    authenticationContext.getActiveResults().values().iterator().next());
+            return;
         }
         
         log.debug("{} No usable active results available, selecting an inactive flow", getLogPrefix());
@@ -295,7 +289,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     }
 
     /**
-     * Return the first inactive potential flow not found in the intermediate flows collection. 
+     * Return the first inactive potential flow not found in the intermediate flows collection that applies
+     * to the request.
      * 
      * @param profileRequestContext the current profile request context
      * @param authenticationContext the current authentication context
@@ -306,7 +301,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         for (final AuthenticationFlowDescriptor flow : authenticationContext.getPotentialFlows().values()) {
             if (!authenticationContext.getIntermediateFlows().containsKey(flow.getId())) {
-                return flow;
+                if (flow.apply(profileRequestContext)) {
+                    return flow;
+                }
             }
         }
         
@@ -399,7 +396,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             if (predicate != null) {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
-                            && predicate.apply(descriptor)) {
+                            && predicate.apply(descriptor) && descriptor.apply(profileRequestContext)) {
                         selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
                         return;
                     }
@@ -468,7 +465,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 if (predicate != null) {
                     for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                         if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
-                                && predicate.apply(descriptor)) {
+                                && predicate.apply(descriptor) && descriptor.apply(profileRequestContext)) {
                             
                             // Now check for an active result we can use from this flow. Not all results from a flow
                             // will necessarily match the request just because the flow might.
