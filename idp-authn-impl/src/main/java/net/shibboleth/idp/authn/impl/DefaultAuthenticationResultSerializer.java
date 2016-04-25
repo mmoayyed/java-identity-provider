@@ -109,7 +109,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
      * @param serializers principal serializers to use
      */
     public void setPrincipalSerializers(
-            @Nonnull @NonnullElements Collection<PrincipalSerializer<String>> serializers) {
+            @Nonnull @NonnullElements final Collection<PrincipalSerializer<String>> serializers) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         principalSerializers = new ArrayList<>(Collections2.filter(serializers, Predicates.notNull()));
