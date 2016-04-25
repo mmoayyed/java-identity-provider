@@ -114,6 +114,8 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * @param isSupported whether this flow supports non-browser clients
      */
     public void setNonBrowserSupported(final boolean isSupported) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         supportsNonBrowser = isSupported;
     }
 
