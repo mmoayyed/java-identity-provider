@@ -1,0 +1,21 @@
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    parent="authn.abstract">
+    
+    <!-- This is a login flow for Duo authentication implemented as a wrapper for the Password flow. -->
+
+    <on-start>
+        <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext))" result="flowScope.authenticationContext" />
+        <evaluate expression="authenticationContext.getAttemptedFlow()" result="flowScope.mfaFlowDescriptor" />
+    </on-start>
+    
+    <action-state id="PopulateMultiFactorAuthenticationContext">
+        <evaluate expression="PopulateMultiFactorAuthenticationContext" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="TBD" />
+    </action-state>
+
+    <bean-import resource="mfa-authn-beans.xml" />
+
+</flow>
