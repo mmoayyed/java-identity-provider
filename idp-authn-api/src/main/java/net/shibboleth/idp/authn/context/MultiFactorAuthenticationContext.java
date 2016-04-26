@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.authn.context;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -35,8 +33,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.messaging.context.BaseContext;
 
 /**
- * A context that holds information about the intermediate state of the
- * multi-factor authentication login flow.
+ * A context that holds information about the intermediate state of the multi-factor login flow.
  *
  * @parent {@link AuthenticationContext}
  * @added At the beginning of the multi-factor login flow
@@ -49,8 +46,8 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     /** Map of login "factors" (flows) and the transition rules to run after it. */
     @Nonnull @NonnullElements private Map<String,MultiFactorAuthenticationTransition> transitionMap;
     
-    /** Collection of {@link AuthenticationResult} objects produced by various factors. */
-    @Nonnull @NonnullElements private List<AuthenticationResult> authenticationResults;
+    /** Authentication results that are active (may be generated earlier or during current request). */
+    @Nonnull @NonnullElements private final Map<String,AuthenticationResult> activeResults;
     
     /** The result of merging the various individual results together. */
     @Nullable private AuthenticationResult mergedResult;
@@ -58,7 +55,7 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     /** Constructor. */
     public MultiFactorAuthenticationContext() {
         transitionMap = new HashMap<>();
-        authenticationResults = new ArrayList<>();
+        activeResults = new HashMap<>();
     }
 
     /**
@@ -97,8 +94,8 @@ public class MultiFactorAuthenticationContext extends BaseContext {
      * 
      * @return list of results
      */
-    @Nonnull @NonnullElements @Live public List<AuthenticationResult> getAuthenticationResults() {
-        return authenticationResults;
+    @Nonnull @NonnullElements @Live public Map<String,AuthenticationResult> getActiveResults() {
+        return activeResults;
     }
     
     /**

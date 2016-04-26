@@ -17,7 +17,7 @@
 
 package net.shibboleth.idp.authn;
 
-import java.util.List;
+import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,6 +25,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
+import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
@@ -39,8 +40,8 @@ import com.google.common.base.Predicate;
  * A ruleset for managing the transition out of an authentication factor during the multi-factor authn flow.
  * 
  * <p>After each factor is successfully completed, this object supplies rules for determining whether additional
- * factors are required, how to combine {@link Subject}s produced by different factors, and whether a custom flow
- * needs to execute after a given factor.</p>
+ * factors are required, how to combine {@link Subject}s produced by different factors when a flow completes,
+ * and what flow should execute next.</p>
  * 
  * @since 3.3.0
  */
@@ -170,13 +171,17 @@ public class MultiFactorAuthenticationTransition {
     }
     
     /**
-     * Default merging strategy to use to combine individual {@link AuthenticationResult} objects into a
+     * Default merging strategy to combine individual {@link AuthenticationResult} objects into a
      * single result.
      * 
-     * <p>The default strategy searches for a {@link MultiFactorAuthenticationContext} child of
-     * an {@link AuthenticationContext} child of the input context, and combines all of the {@link Subject}
-     * content from {@link MultiFactorAuthenticationContext#getAuthenticationResults()} into a single
-     * result labeled with the flow ID of the final result in the list and reusing its timestamps.</p>
+     * <p>If only a single result is found, then it's returned directly.</p>
+     * 
+     * <p>When there are multiple, the default strategy searches for a {@link MultiFactorAuthenticationContext}
+     * child of an {@link AuthenticationContext} child of the input context, and combines all of the {@link Subject}
+     * content from {@link MultiFactorAuthenticationContext#getAuthenticationResults()} into a single result.</p>
+     * 
+     * <p>It assigns the flow ID based on {@link AuthenticationContext#getAttemptedFlow()}, and also preserves
+     * the original result objects in wrapper principals within the new result.</p>
      */
     public class DefaultResultMergingStrategy implements Function<ProfileRequestContext,AuthenticationResult> {
 
@@ -189,21 +194,19 @@ public class MultiFactorAuthenticationTransition {
                     final MultiFactorAuthenticationContext mfaContext =
                             authnContext.getSubcontext(MultiFactorAuthenticationContext.class);
                     if (mfaContext != null) {
-                        final List<AuthenticationResult> results = mfaContext.getAuthenticationResults();
+                        final Collection<AuthenticationResult> results = mfaContext.getActiveResults().values();
                         if (results.size() == 1) {
-                            return results.get(0);
+                            return results.iterator().next();
                         } else if (results.size() > 1) {
                             final Subject subject = new Subject();
                             for (final AuthenticationResult result : results) {
+                                subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
                                 subject.getPrincipals().addAll(result.getSubject().getPrincipals());
                                 subject.getPublicCredentials().addAll(result.getSubject().getPublicCredentials());
                                 subject.getPrivateCredentials().addAll(result.getSubject().getPrivateCredentials());
                             }
-                            final AuthenticationResult last = results.get(results.size() - 1);
-                            final AuthenticationResult merged = new AuthenticationResult(last.getAuthenticationFlowId(),
-                                    subject);
-                            merged.setAuthenticationInstant(last.getAuthenticationInstant());
-                            merged.setLastActivityInstant(last.getLastActivityInstant());
+                            final AuthenticationResult merged =
+                                    new AuthenticationResult(authnContext.getAttemptedFlow().getId(), subject);
                             return merged;
                         }
                     }
