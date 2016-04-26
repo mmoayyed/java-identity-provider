@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
@@ -262,6 +263,35 @@ public class DefaultAuthenticationResultSerializerTest {
         Assert.assertEquals(attribute.getValues().get(1).getValue(), "bar2");
         Assert.assertEquals(((ScopedStringAttributeValue) attribute.getValues().get(1)).getScope(), "scope");
         Assert.assertEquals(attribute.getValues().get(2), EmptyAttributeValue.ZERO_LENGTH);
+    }
+    
+    @Test public void testNestedAuthenticationResult() throws Exception {
+        serializer.initialize();
+        
+        final AuthenticationResult result = createResult("test", new Subject());
+        final AuthenticationResult nested = createResult("nested", new Subject());
+        nested.setLastActivityInstant(INSTANT);
+        nested.getSubject().getPrincipals().add(new UsernamePrincipal("bob"));
+        
+        result.getSubject().getPrincipals().add(new AuthenticationResultPrincipal(nested));
+
+        final String s = serializer.serialize(result);
+        final String s2 = fileToString(DATAPATH + "NestedAuthenticationResult.json");
+        Assert.assertEquals(s, s2);
+
+        final AuthenticationResult result2 = serializer.deserialize(1, CONTEXT, KEY, s2, ACTIVITY);
+
+        Assert.assertEquals(result.getAuthenticationFlowId(), result2.getAuthenticationFlowId());
+        Assert.assertEquals(result.getAuthenticationInstant(), result2.getAuthenticationInstant());
+        Assert.assertEquals(result.getLastActivityInstant(), result2.getLastActivityInstant());
+        Assert.assertEquals(result.getSubject(), result2.getSubject());
+        
+        final AuthenticationResult nested2 =
+                ((AuthenticationResultPrincipal) result2.getSubject().getPrincipals().iterator().next()).getAuthenticationResult();
+        Assert.assertEquals(nested.getAuthenticationFlowId(), nested2.getAuthenticationFlowId());
+        Assert.assertEquals(nested.getAuthenticationInstant(), nested2.getAuthenticationInstant());
+        Assert.assertEquals(nested.getLastActivityInstant(), nested2.getLastActivityInstant());
+        Assert.assertEquals(nested.getSubject(), nested2.getSubject());
     }
 
     private AuthenticationResult createResult(String flowId, Subject subject) {

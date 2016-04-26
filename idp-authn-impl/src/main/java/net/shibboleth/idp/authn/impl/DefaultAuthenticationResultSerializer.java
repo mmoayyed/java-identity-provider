@@ -22,6 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -42,6 +43,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.principal.PrincipalSerializer;
+import net.shibboleth.idp.authn.principal.impl.AuthenticationResultPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.GenericPrincipalSerializer;
 import net.shibboleth.idp.authn.principal.impl.UsernamePrincipalSerializer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -91,6 +93,9 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
     /** Principal serializers. */
     @Nonnull @NonnullElements private Collection<PrincipalSerializer<String>> principalSerializers;
 
+    /** Specialized serializer for {@link AuthenticatonResultPrincipal} that requires a circular ref. */
+    @Nonnull private final AuthenticationResultPrincipalSerializer authnResultPrincipalSerializer;
+    
     /** Generic principal serializer for any unsupported principals. */
     @Nonnull private final GenericPrincipalSerializer genericSerializer;
 
@@ -100,6 +105,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         readerFactory = Json.createReaderFactory(null);
         
         principalSerializers = Collections.emptyList();
+        authnResultPrincipalSerializer = new AuthenticationResultPrincipalSerializer(this);
         genericSerializer = new GenericPrincipalSerializer();
     }
 
@@ -132,12 +138,16 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         genericSerializer.initialize();
+        authnResultPrincipalSerializer.initialize();
         
         if (principalSerializers.isEmpty()) {
-            PrincipalSerializer<String> ups = new UsernamePrincipalSerializer();
+            final PrincipalSerializer<String> ups = new UsernamePrincipalSerializer();
             ups.initialize();
-            principalSerializers = Collections.singletonList(ups);
+            principalSerializers = Arrays.asList(ups, authnResultPrincipalSerializer);
+        } else {
+            principalSerializers.add(authnResultPrincipalSerializer);
         }
+
     }
 
     /** {@inheritDoc} */

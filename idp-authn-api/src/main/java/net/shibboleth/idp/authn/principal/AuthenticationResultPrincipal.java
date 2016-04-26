@@ -52,7 +52,7 @@ public class AuthenticationResultPrincipal implements Principal {
      * 
      * @return the authentication result
      */
-    @Nonnull public AuthenticationResult getAuthenticatonResult() {
+    @Nonnull public AuthenticationResult getAuthenticationResult() {
         return authnResult;
     }
 
@@ -72,7 +72,7 @@ public class AuthenticationResultPrincipal implements Principal {
         }
 
         if (other instanceof AuthenticationResultPrincipal) {
-            return authnResult.equals(((AuthenticationResultPrincipal) other).getAuthenticatonResult());
+            return authnResult.equals(((AuthenticationResultPrincipal) other).getAuthenticationResult());
         }
 
         return false;
