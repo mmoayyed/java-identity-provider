@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,6 +33,7 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
+import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -77,6 +80,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
         multiFactorContextCreationStrategy = Functions.compose(
                 new ChildContextLookup(MultiFactorAuthenticationContext.class, true),
                 new ChildContextLookup(AuthenticationContext.class));
+        activeResultLookupStrategy = new DefaultResultLookupStrategy();
     }
     
     /**
@@ -134,29 +138,66 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
         
         if (activeResultLookupStrategy != null) {
             final Collection<AuthenticationResult> results = activeResultLookupStrategy.apply(profileRequestContext);
-            int count = 0;
-            long now = System.currentTimeMillis();
-            if (results != null && !results.isEmpty()) {
+            if (results != null) {
                 for (final AuthenticationResult result : results) {
-                    final AuthenticationFlowDescriptor descriptor =
-                            authenticationContext.getAvailableFlows().get(result.getAuthenticationFlowId());
-                    if (descriptor != null) {
-                        if (result.getAuthenticationInstant() + descriptor.getLifetime() <= now) {
-                            mfaCtx.getActiveResults().put(descriptor.getId(), result);
-                            ++count;
-                        } else {
-                            log.debug("{} Result from login flow {} has expired", getLogPrefix(), descriptor.getId());
-                        }
-                    } else {
-                        log.warn("{} Ignoring active result from unconfigured login flow {}", getLogPrefix(),
-                                result.getAuthenticationFlowId());
-                    }
+                    mfaCtx.getActiveResults().put(result.getAuthenticationFlowId(), result);
                 }
             }
-            log.debug("{} {} active result(s) extracted for possible reuse", getLogPrefix(), count);
+            log.debug("{} {} active result(s) extracted for possible reuse", getLogPrefix(),
+                    results != null ? results.size() : 0);
         } else {
             log.debug("{} No lookup strategy provided, no active results will be made available", getLogPrefix());
         }
+    }
+    
+    /**
+     * Default strategy function to extract embedded {@link AuthenticationResult}s from inside
+     * the {@link Principal} collection of an active {@link AuthenticationResult} of the currently
+     * executing flow.
+     */
+    private class DefaultResultLookupStrategy
+            implements Function<ProfileRequestContext,Collection<AuthenticationResult>> {
+
+        /** {@inheritDoc} */
+        @Nullable public Collection<AuthenticationResult> apply(@Nullable final ProfileRequestContext input) {
+            
+            if (input != null) {
+                final AuthenticationContext ac = input.getSubcontext(AuthenticationContext.class);
+                if (ac != null && ac.getAttemptedFlow() != null) {
+                    final AuthenticationResult mfaResult = ac.getActiveResults().get(ac.getAttemptedFlow().getId());
+                    if (mfaResult != null) {
+                        final Set<AuthenticationResultPrincipal> resultPrincipals =
+                                mfaResult.getSubject().getPrincipals(AuthenticationResultPrincipal.class);
+                        if (!resultPrincipals.isEmpty()) {
+                            final long now = System.currentTimeMillis();
+                            final Collection<AuthenticationResult> results = new ArrayList<>(resultPrincipals.size());
+                            
+                            for (final AuthenticationResultPrincipal resultPrincipal : resultPrincipals) {
+                                final AuthenticationFlowDescriptor descriptor = ac.getAvailableFlows().get(
+                                        resultPrincipal.getAuthenticationResult().getAuthenticationFlowId());
+                                if (descriptor != null) {
+                                    if (resultPrincipal.getAuthenticationResult().getAuthenticationInstant()
+                                            + descriptor.getLifetime() > now) {
+                                        results.add(resultPrincipal.getAuthenticationResult());
+                                    } else {
+                                        log.debug("{} Result from login flow {} has expired", getLogPrefix(),
+                                                descriptor.getId());
+                                    }
+                                } else {
+                                    log.warn("{} Ignoring active result from unconfigured login flow {}",
+                                            getLogPrefix(),
+                                            resultPrincipal.getAuthenticationResult().getAuthenticationFlowId());
+                                }
+                            }
+                            
+                            return results;
+                        }
+                    }
+                }
+            }
+            
+            return null;
+        }    
     }
     
 }
