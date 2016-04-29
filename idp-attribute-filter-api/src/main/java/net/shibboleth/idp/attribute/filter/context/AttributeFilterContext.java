@@ -65,7 +65,7 @@ public final class AttributeFilterContext extends BaseContext {
     /** Cache of the metadata context. */
     @Nullable private SAMLMetadataContext requesterMetadataContext;
 
-    /** How to get from hus to the SP metadata context. */
+    /** Lookup strategy used to locate the SP's metadata context. */
     @NonnullAfterInit
     private Function<AttributeFilterContext,SAMLMetadataContext> requesterMetadataContextLookupStrategy;
 

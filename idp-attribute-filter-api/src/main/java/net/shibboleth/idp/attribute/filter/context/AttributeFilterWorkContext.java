@@ -58,7 +58,6 @@ public final class AttributeFilterWorkContext extends BaseContext {
     /** Values, for a given attribute, that are not permitted to be released. */
     private final Map<String, Set<IdPAttributeValue>> deniedValues;
 
-    /** How to get from hus to the SP metadata context. */
     /** Constructor. */
     public AttributeFilterWorkContext() {
         permittedValues =
