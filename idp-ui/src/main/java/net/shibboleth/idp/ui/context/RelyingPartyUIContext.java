@@ -331,7 +331,7 @@ public class RelyingPartyUIContext extends BaseContext {
         for (ServiceName name : getRPAttributeConsumingService().getNames()) {
             log.trace("Found name in AttributeConsumingService, language '{}'", name.getXMLLang());
             if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
-                log.debug("Returning name from AttributeConsumingService '{}", name.getValue());
+                log.debug("Returning name from AttributeConsumingService '{}'", name.getValue());
                 return name.getValue();
             }
         }
