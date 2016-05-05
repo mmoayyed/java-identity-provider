@@ -132,6 +132,7 @@
         <webflow:flow-location id="cas/serviceValidate" path="../system/flows/cas/serviceValidate/serviceValidate-flow.xml" />
         <webflow:flow-location id="cas/proxyValidate" path="../system/flows/cas/proxyValidate/proxyValidate-flow.xml" />
         <webflow:flow-location id="cas/samlValidate" path="../system/flows/cas/samlValidate/samlValidate-flow.xml" />
+        <webflow:flow-location id="cas/validate" path="../system/flows/cas/validate/validate-flow.xml" />
         <webflow:flow-location id="cas/logout" path="../system/flows/logout/logout-flow.xml" />
 
         <!-- Client storage flows. -->
