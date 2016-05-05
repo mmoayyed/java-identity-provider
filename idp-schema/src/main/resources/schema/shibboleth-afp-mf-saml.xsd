@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml" xmlns:afp="urn:mace:shibboleth:2.0:afp" targetNamespace="urn:mace:shibboleth:2.0:afp:mf:saml" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
+        xmlns:afp="urn:mace:shibboleth:2.0:afp"
+        targetNamespace="urn:mace:shibboleth:2.0:afp:mf:saml"
+        elementFormDefault="qualified"
+        version="3.3.0">
 
     <import namespace="urn:mace:shibboleth:2.0:afp" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-afp.xsd"/>
 
