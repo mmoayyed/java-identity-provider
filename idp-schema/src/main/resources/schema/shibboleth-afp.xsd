@@ -3,7 +3,7 @@
         xmlns:afp="urn:mace:shibboleth:2.0:afp"
         xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
         targetNamespace="urn:mace:shibboleth:2.0:afp"
-        version="3.0.0"
+        version="3.3.0"
         elementFormDefault="qualified">
 
     <import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
