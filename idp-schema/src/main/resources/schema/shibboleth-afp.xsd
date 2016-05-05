@@ -685,10 +685,25 @@
             <documentation>
                 A match function that ensures that an attribute value's scope matches a scope given in
                 metadata for the entity or role.
+                
+                Not implemented in V3.
             </documentation>
         </annotation>
         <complexContent>
             <extension base="afp:MatchFunctorType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="AttributeIssuerRegistrationAuthority">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute issuer's MDRPI content against a list of potential values.
+                
+                Not supported in V3.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:RegistrationAuthorityMatchType" />
         </complexContent>
     </complexType>
 
@@ -699,13 +714,19 @@
             </documentation>
         </annotation>
         <complexContent>
+            <extension base="afp:RegistrationAuthorityMatchType" />
+        </complexContent>
+    </complexType>
+
+    <complexType name="RegistrationAuthorityMatchType" abstract="true">
+        <complexContent>
             <extension base="afp:MatchFunctorType">
                 <attribute name="registrars" type="afp:anyURIListType" use="required">
                     <annotation>
                         <documentation>The string values to match.</documentation>
                     </annotation>
                 </attribute>
-                <attribute name="matchIfMetadataSilent" type="string">
+                <attribute name="matchIfMetadataSilent" type="boolean">
                     <annotation>
                         <documentation>
                             A boolean flag indicating whether a match should occur if the metadata does
