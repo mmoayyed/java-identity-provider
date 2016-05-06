@@ -38,19 +38,19 @@ import org.testng.annotations.Test;
 public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void withSalt() throws ComponentInitializationException {
-        ComputedIDDataConnector connector = getDataConnector("computed.xml", ComputedIDDataConnector.class);
+        final ComputedIDDataConnector connector = getDataConnector("computed.xml", ComputedIDDataConnector.class);
         
         Assert.assertEquals(connector.getId(), "computed");
         Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
-        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
+        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
 
         connector.initialize();
     }
 
     @Test(enabled=false) public void withoutSalt()  { 
         // Needs schema change
-        ComputedIDDataConnector connector = getDataConnector("computedNoSalt.xml", ComputedIDDataConnector.class);
+        final ComputedIDDataConnector connector = getDataConnector("computedNoSalt.xml", ComputedIDDataConnector.class);
         
         Assert.assertEquals(connector.getId(), "computedNoSalt");
         Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsDifferent");
@@ -60,32 +60,32 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         try {
             connector.initialize();
             Assert.fail();
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
     }
 
     @Test public void propertySalt()  {
-        final String salt = "0123456789ABCDEF";
+        final String salt = "0123456789ABCDEF ";
 
-        MockPropertySource mockEnvVars = new MockPropertySource();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
         mockEnvVars.setProperty("the.ComputedIDDataConnector.salt", salt);
 
-        GenericApplicationContext context = new FilesystemGenericApplicationContext() ;
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext() ;
         setTestContext(context);
         context.setDisplayName("ApplicationContext");
 
-        MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
         propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
 
-        PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
         placeholderConfig.setPlaceholderPrefix("%{");
         placeholderConfig.setPlaceholderSuffix("}");
         placeholderConfig.setPropertySources(propertySources);
 
         context.addBeanFactoryPostProcessor(placeholderConfig);
 
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         beanDefinitionReader.loadBeanDefinitions(DATACONNECTOR_FILE_PATH + "computedProperty.xml");

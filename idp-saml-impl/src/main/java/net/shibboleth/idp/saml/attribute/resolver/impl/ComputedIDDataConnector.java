@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.saml.attribute.resolver.impl;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -76,11 +77,11 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
      * 
      * @param salt used when computing the ID
      */
-    public void setSalt(@Nullable byte[] salt) {
+    public void setSalt(@Nullable final byte[] salt) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (null != salt) {
-            log.debug("{} Salt set as bytes to {}", getLogPrefix(), salt.toString());
+            log.debug("{} Salt set as bytes to {}", getLogPrefix(), Arrays.toString(salt));
             idStrategy.setSalt(salt);
         } else {
             log.debug("{} Null salt passed, nothing set", getLogPrefix());
@@ -92,11 +93,11 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
      * 
      * @param salt used when computing the ID
      */
-    public void setSalt(@Nullable String salt) {
+    public void setSalt(@Nullable final String salt) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (null != salt) {
-            log.debug("{} Salt set as bytes to {}", getLogPrefix(), salt.toString());
+            log.debug("{} Salt set as bytes to {}", getLogPrefix(), Arrays.toString(salt.getBytes()));
             idStrategy.setSalt(salt.getBytes());
         } else {
             log.debug("{} Null salt passed, nothing set", getLogPrefix());

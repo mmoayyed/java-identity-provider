@@ -7,7 +7,7 @@
 	
 	sourceAttributeID="theSourceRemainsTheSame"
 	generatedAttributeID="jenny"
-	salt="abcdefghijklmnopqrst"
+	salt="abcdefghijklmnopqrst "
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
                         urn:mace:shibboleth:2.0:resolver:pc http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-pc.xsd
                         urn:mace:shibboleth:2.0:resolver:ad http://shibboleth.net/schema/idp/shibboleth-attribute-resolver-ad.xsd

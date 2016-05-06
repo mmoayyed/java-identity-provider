@@ -53,7 +53,7 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
      * @param generatedIdDefaultName the name to give the generated Attribute if none was provided.
      */
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder, @Nullable String generatedIdDefaultName) {
+            @Nonnull final BeanDefinitionBuilder builder, @Nullable final String generatedIdDefaultName) {
         super.doParse(config, parserContext, builder);
         final String generatedAttribute;
         if (config.hasAttributeNS(null, "generatedAttributeID")) {
@@ -65,14 +65,14 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         final List<Element> failoverConnector = ElementSupport.getChildElements(config, 
                 AbstractDataConnectorParser.FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
         if (failoverConnector != null && !failoverConnector.isEmpty()) {
-            String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
+            final String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
             log.debug("{} Setting the following failover data connector dependencies: {}", getLogPrefix(), connectorId);
             builder.addPropertyValue("failoverDataConnectorId", connectorId);
         }
 
         final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
 
-        final String salt = StringSupport.trimOrNull(config.getAttributeNS(null, "salt"));
+        final String salt = config.getAttributeNS(null, "salt");
         if (null == salt) {
             log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', no salt provided", 
                     getLogPrefix(), generatedAttribute, sourceAttribute);
@@ -90,8 +90,9 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
      * 
      * @return "Attribute Definition: '<definitionID>' :"
      */
+    @Override
     @Nonnull @NotEmpty protected String getLogPrefix() {
-        StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
+        final StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
         return builder.toString();
     }
     
