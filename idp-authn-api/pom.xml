@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Authentication API</name>
+    <description>Authentication API</description>
     <artifactId>idp-authn-api</artifactId>
     <packaging>jar</packaging>
 
@@ -70,5 +71,12 @@
         </dependency>
         
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

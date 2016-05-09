@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: WAR</name>
+    <description>WAR</description>
     <artifactId>idp-war</artifactId>
     <packaging>war</packaging>
 
@@ -221,6 +222,13 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
 
     <build>
         <plugins>

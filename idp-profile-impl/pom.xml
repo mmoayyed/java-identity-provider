@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Profile Implementation</name>
+    <description>Profile Implementation</description>
     <artifactId>idp-profile-impl</artifactId>
     <packaging>jar</packaging>
 
@@ -137,5 +138,12 @@
         </dependency>
 
     </dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
 
 </project>

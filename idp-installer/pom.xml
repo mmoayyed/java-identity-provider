@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Installer</name>
+    <description>Installer</description>
     <artifactId>idp-installer</artifactId>
     <packaging>jar</packaging>
 
@@ -97,5 +98,12 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

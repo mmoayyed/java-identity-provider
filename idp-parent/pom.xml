@@ -59,7 +59,7 @@
     </modules>
 
     <properties>
-        <svn.relative.location>java-identity-provider</svn.relative.location>
+        <svn.relative.location>java-identity-provider/trunk</svn.relative.location>
         <idwsfconsumer.version>1.0.0</idwsfconsumer.version>
         <java-support.version>7.3.0-SNAPSHOT</java-support.version>
         <jetty9-dta-ssl.version>1.0.0</jetty9-dta-ssl.version>
@@ -67,6 +67,8 @@
         <opensaml.version>3.3.0-SNAPSHOT</opensaml.version>
         <spring-extensions.version>5.3.0-SNAPSHOT</spring-extensions.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
+        <idp-parent.site.url>${shibboleth.site.url}java-identity-provider/${project.version}/</idp-parent.site.url>
+        <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
     </properties>
 
     <repositories>
@@ -188,5 +190,32 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-parent.site.url}</url>
+        </site>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <siteDirectory>../idp-parent/src/site</siteDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

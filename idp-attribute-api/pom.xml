@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Attribute API</name>
+    <description>Attribute API</description>
     <artifactId>idp-attribute-api</artifactId>
     <packaging>jar</packaging>
 
@@ -53,5 +54,12 @@
         </dependency>
 
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Attribute Filter API</name>
+    <description>Attribute Filter API</description>
     <artifactId>idp-attribute-filter-api</artifactId>
     <packaging>jar</packaging>
 
@@ -41,5 +42,12 @@
         <!-- Test Dependencies -->
 
     </dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
 
 </project>

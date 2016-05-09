@@ -6,6 +6,10 @@
 
     <body>
         <menu ref="reports" />
+        <menu name="Parent">
+            <item name="Shibboleth IdP" href="${idp-parent.site.url}" />
+        </menu>
+        <menu ref="modules" />
     </body>
 
 </project>

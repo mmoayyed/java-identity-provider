@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: CAS Protocol Implementation</name>
+    <description>CAS Protocol Implementation</description>
     <artifactId>idp-cas-impl</artifactId>
     <packaging>jar</packaging>
 
@@ -105,5 +106,12 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

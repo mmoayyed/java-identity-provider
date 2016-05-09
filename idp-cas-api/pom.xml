@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: CAS Protocol API</name>
+    <description>CAS Protocol API</description>
     <artifactId>idp-cas-api</artifactId>
     <packaging>jar</packaging>
 
@@ -43,5 +44,12 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

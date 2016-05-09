@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Attribute Filter Spring Integration</name>
+    <description>Attribute Filter Spring Integration</description>
     <artifactId>idp-attribute-filter-spring</artifactId>
     <packaging>jar</packaging>
 
@@ -124,5 +125,12 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
 
 </project>

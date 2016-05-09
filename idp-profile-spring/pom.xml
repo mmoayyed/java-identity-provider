@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Profile Spring Integration</name>
+    <description>Profile Spring Integration</description>
     <artifactId>idp-profile-spring</artifactId>
     <packaging>jar</packaging>
 
@@ -118,5 +119,12 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

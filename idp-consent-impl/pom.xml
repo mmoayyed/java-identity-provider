@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Consent Implementation</name>
+    <description>Consent Implementation</description>
     <artifactId>idp-consent-impl</artifactId>
     <packaging>jar</packaging>
 
@@ -85,5 +86,12 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

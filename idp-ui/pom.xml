@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: UI Support</name>
+    <description>UI Support</description>
     <artifactId>idp-ui</artifactId>
     <packaging>jar</packaging>
 
@@ -59,5 +60,12 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

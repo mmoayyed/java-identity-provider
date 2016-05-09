@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: SAML Profile API</name>
+    <description>SAML Profile API</description>
     <artifactId>idp-saml-api</artifactId>
     <packaging>jar</packaging>
 
@@ -113,5 +114,12 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

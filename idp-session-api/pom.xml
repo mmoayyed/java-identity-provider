@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Session API</name>
+    <description>Session API</description>
     <artifactId>idp-session-api</artifactId>
     <packaging>jar</packaging>
 
@@ -56,5 +57,12 @@
 
         <!-- Managed Dependencies -->
     </dependencies>
-    
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
 </project>

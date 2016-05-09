@@ -12,6 +12,7 @@
     </parent>
 
     <name>Shibboleth IdP :: Configuration Files</name>
+    <description>Configuration Files</description>
     <artifactId>idp-conf</artifactId>
     <packaging>jar</packaging>
 
@@ -147,6 +148,13 @@
         <!-- Managed Dependencies -->
     </dependencies>
 
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
+
     <build>
         <!-- Exclude logs directory. -->
         <resources>
@@ -158,6 +166,6 @@
             </resource>
         </resources>
     </build>
-    
+
 </project>
 

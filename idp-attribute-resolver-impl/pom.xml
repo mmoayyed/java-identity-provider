@@ -12,6 +12,7 @@
 	</parent>
 
 	<name>Shibboleth IdP :: Attribute Resolver Implementation</name>
+    <description>Attribute Resolver Implementation</description>
 	<artifactId>idp-attribute-resolver-impl</artifactId>
 	<packaging>jar</packaging>
 
@@ -141,5 +142,12 @@
 		</dependency>
 
 	</dependencies>
+
+    <distributionManagement>
+        <site>
+            <id>site</id>
+            <url>dav:${idp-module.site.url}</url>
+        </site>
+    </distributionManagement>
 
 </project>
