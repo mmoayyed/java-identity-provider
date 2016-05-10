@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.apache.velocity.VelocityContext;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
@@ -38,6 +39,7 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.User;
 import org.ldaptive.jaas.LdapPrincipal;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
@@ -130,9 +132,11 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
         try {
             log.debug("{} Attempting to authenticate user {}", getLogPrefix(), getUsernamePasswordContext()
                     .getUsername());
+            final VelocityContext context = new VelocityContext();
+            context.put("usernamePasswordContext", getUsernamePasswordContext());
             final AuthenticationRequest request =
-                    new AuthenticationRequest(getUsernamePasswordContext().getUsername(), new Credential(
-                            getUsernamePasswordContext().getPassword()), returnAttributes);
+                    new AuthenticationRequest(new User(getUsernamePasswordContext().getUsername(), context),
+                            new Credential(getUsernamePasswordContext().getPassword()), returnAttributes);
             response = authenticator.authenticate(request);
             log.trace("{} Authentication response {}", getLogPrefix(), response);
             if (response.getResult()) {
