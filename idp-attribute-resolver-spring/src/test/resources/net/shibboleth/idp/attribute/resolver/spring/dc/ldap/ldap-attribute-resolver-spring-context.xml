@@ -62,7 +62,7 @@
             </bean>
         </property>
     </bean>
-    <bean class="org.ldaptive.SearchExecutor" p:baseDn="ou=people,dc=shibboleth,dc=net" p:returnAttributes="uid,homephone,mail">
+    <bean class="org.ldaptive.SearchExecutor" p:baseDn="ou=people,dc=shibboleth,dc=net" p:returnAttributes="uid,homephone,mail" p:timeLimit="7000">
         <property name="searchFilter">
             <bean class="org.ldaptive.SearchFilter" p:filter="(uid=${recipientContext.principal})" />
         </property>

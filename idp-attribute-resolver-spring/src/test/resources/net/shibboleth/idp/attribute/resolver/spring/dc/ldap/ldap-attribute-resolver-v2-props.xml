@@ -13,6 +13,7 @@
         principal="%{connectionConfig.bindDn}"
         principalCredential="%{connectionConfig.bindCredential}"
         useStartTLS="%{connectionConfig.useStartTLS}"
+        searchTimeLimit="%{search.timeLimit}"
         noResultIsError="%{noResultIsError}"
         multipleResultsIsError="%{multipleResultsIsError}"
         noRetryDelay="%{noRetryDelay}">

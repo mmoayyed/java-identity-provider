@@ -349,6 +349,7 @@ public class LDAPDataConnectorParserTest {
         AssertJUnit.assertNotNull(searchExecutor);
         AssertJUnit.assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
         AssertJUnit.assertNotNull(searchExecutor.getSearchFilter().getFilter());
+        AssertJUnit.assertEquals(7000, searchExecutor.getTimeLimit());
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
         AssertJUnit.assertNotNull(validator);

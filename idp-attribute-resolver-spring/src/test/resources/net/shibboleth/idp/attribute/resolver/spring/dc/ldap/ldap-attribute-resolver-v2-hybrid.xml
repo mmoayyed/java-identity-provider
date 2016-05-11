@@ -7,7 +7,7 @@
 
     <resolver:DataConnector id="myLDAP" xsi:type="dc:LDAPDirectory" ldapURL="ldap://localhost:10389"
         baseDN="ou=people,dc=shibboleth,dc=net" principal="cn=Directory Manager" principalCredential="password"
-        useStartTLS="true" mappingStrategyRef="mappings" validatorRef="validator" noRetryDelay="PT5M">
+        useStartTLS="true" searchTimeLimit="PT7S" mappingStrategyRef="mappings" validatorRef="validator" noRetryDelay="PT5M">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${resolutionContext.principal})

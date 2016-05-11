@@ -386,7 +386,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 searchExecutor.addPropertyValue("searchScope", searchScope);
             }
             if (searchTimeLimit != null) {
-                searchExecutor.addPropertyValue("timeLimit", searchTimeLimit);
+                final BeanDefinitionBuilder duration =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
+                duration.addConstructorArgValue(searchTimeLimit);
+                duration.addConstructorArgValue(1);
+                searchExecutor.addPropertyValue("timeLimit", duration.getBeanDefinition());
             } else {
                 searchExecutor.addPropertyValue("timeLimit", 3000);
             }

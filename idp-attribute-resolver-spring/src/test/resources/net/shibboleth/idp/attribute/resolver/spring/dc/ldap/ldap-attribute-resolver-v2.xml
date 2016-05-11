@@ -13,6 +13,7 @@
         principal="cn=Directory Manager"
         principalCredential="password"
         useStartTLS="true"
+        searchTimeLimit="PT7S"
         noResultIsError="true"
         multipleResultsIsError="true"
         noRetryDelay="PT5M">
