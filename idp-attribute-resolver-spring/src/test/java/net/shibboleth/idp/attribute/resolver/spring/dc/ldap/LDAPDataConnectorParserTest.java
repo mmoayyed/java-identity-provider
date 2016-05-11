@@ -332,6 +332,8 @@ public class LDAPDataConnectorParserTest {
         final BindConnectionInitializer connInitializer = (BindConnectionInitializer) connConfig.getConnectionInitializer();
         AssertJUnit.assertEquals("cn=Directory Manager", connInitializer.getBindDn());
         AssertJUnit.assertEquals("password", connInitializer.getBindCredential().getString());
+        AssertJUnit.assertEquals(2000, connConfig.getConnectTimeout());
+        AssertJUnit.assertEquals(4000, connConfig.getResponseTimeout());
 
         final SslConfig sslConfig = connPool.getConnectionFactory().getConnectionConfig().getSslConfig();
         AssertJUnit.assertNotNull(sslConfig);

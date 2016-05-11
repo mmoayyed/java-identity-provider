@@ -16,7 +16,9 @@
         searchTimeLimit="PT7S"
         noResultIsError="true"
         multipleResultsIsError="true"
-        noRetryDelay="PT5M">
+        noRetryDelay="PT5M"
+        connectTimeout="PT2S"
+        responseTimeout="PT4S">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${resolutionContext.principal})

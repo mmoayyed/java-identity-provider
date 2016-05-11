@@ -27,7 +27,7 @@
                         </property>
                         <property name="connectionConfig">
                             <bean class="org.ldaptive.ConnectionConfig" p:ldapUrl="ldap://localhost:10389"
-                                p:useStartTLS="true">
+                                p:useStartTLS="true" p:connectTimeout="2000" p:responseTimeout="4000">
                                 <property name="connectionInitializer">
                                     <bean class="org.ldaptive.BindConnectionInitializer" p:bindDn="cn=Directory Manager"
                                         p:bindCredential="password" />

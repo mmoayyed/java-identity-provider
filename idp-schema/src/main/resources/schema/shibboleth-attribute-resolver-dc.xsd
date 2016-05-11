@@ -642,6 +642,24 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="connectTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time to wait for connections to open. If this limit is
+                            reached a timeout error is raised. Default value is 3 seconds.
+                            Time is expressed in ISO8601 duration format.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="responseTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time to wait for operation responses. If this limit is
+                            reached a timeout error is raised. Default value is 3 seconds.
+                            Time is expressed in ISO8601 duration format.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="maxResultSize" type="string">
                     <annotation>
                         <documentation>

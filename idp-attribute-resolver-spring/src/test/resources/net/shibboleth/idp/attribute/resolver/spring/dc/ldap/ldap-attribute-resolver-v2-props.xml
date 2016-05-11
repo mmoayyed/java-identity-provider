@@ -16,7 +16,9 @@
         searchTimeLimit="%{search.timeLimit}"
         noResultIsError="%{noResultIsError}"
         multipleResultsIsError="%{multipleResultsIsError}"
-        noRetryDelay="%{noRetryDelay}">
+        noRetryDelay="%{noRetryDelay}"
+        connectTimeout="%{connectionConfig.connectTimeout}"
+        responseTimeout="%{connectionConfig.responseTimeout}">
         <dc:FilterTemplate>
             <![CDATA[
                 (uid=${resolutionContext.principal})

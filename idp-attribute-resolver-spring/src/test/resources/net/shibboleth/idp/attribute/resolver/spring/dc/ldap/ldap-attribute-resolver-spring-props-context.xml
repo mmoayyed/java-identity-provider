@@ -31,7 +31,8 @@
                         </property>
                         <property name="connectionConfig">
                             <bean class="org.ldaptive.ConnectionConfig" p:ldapUrl="%{connectionConfig.ldapURL}"
-                                p:useStartTLS="%{connectionConfig.useStartTLS}">
+                                p:useStartTLS="%{connectionConfig.useStartTLS}"
+                                p:connectTimeout="%{connectionConfig.connectTimeout}" p:responseTimeout="%{connectionConfig.responseTimeout}">
                                 <property name="connectionInitializer">
                                     <bean class="org.ldaptive.BindConnectionInitializer" p:bindDn="%{connectionConfig.bindDn}"
                                         p:bindCredential="%{connectionConfig.bindCredential}" />

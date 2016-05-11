@@ -260,12 +260,34 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     AttributeSupport.getAttributeValue(configElement, new QName("principalCredential"));
             final String authenticationType =
                     AttributeSupport.getAttributeValue(configElement, new QName("authenticationType"));
+            final String connectTimeout =
+                    AttributeSupport.getAttributeValue(configElement, new QName("connectTimeout"));
+            final String responseTimeout =
+                    AttributeSupport.getAttributeValue(configElement, new QName("responseTimeout"));
 
             final BeanDefinitionBuilder connectionConfig =
                     BeanDefinitionBuilder.genericBeanDefinition(ConnectionConfig.class);
             connectionConfig.addPropertyValue("ldapUrl", url);
             if (useStartTLS != null) {
                 connectionConfig.addPropertyValue("useStartTLS", useStartTLS);
+            }
+            if (connectTimeout != null) {
+                final BeanDefinitionBuilder timeout =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
+                timeout.addConstructorArgValue(connectTimeout);
+                timeout.addConstructorArgValue(1);
+                connectionConfig.addPropertyValue("connectTimeout", timeout.getBeanDefinition());
+            } else {
+                connectionConfig.addPropertyValue("connectTimeout", 3000);
+            }
+            if (responseTimeout != null) {
+                final BeanDefinitionBuilder timeout =
+                        BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildDuration");
+                timeout.addConstructorArgValue(responseTimeout);
+                timeout.addConstructorArgValue(1);
+                connectionConfig.addPropertyValue("responseTimeout", timeout.getBeanDefinition());
+            } else {
+                connectionConfig.addPropertyValue("responseTimeout", 3000);
             }
             final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
             sslConfig.addPropertyValue("credentialConfig", createCredentialConfig(parserContext));
