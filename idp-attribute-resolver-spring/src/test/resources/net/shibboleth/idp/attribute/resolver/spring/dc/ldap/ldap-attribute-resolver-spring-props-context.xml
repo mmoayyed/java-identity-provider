@@ -7,7 +7,7 @@
     <bean id="connectionFactory" class="org.ldaptive.pool.PooledConnectionFactory">
         <property name="connectionPool">
             <bean class="org.ldaptive.pool.BlockingConnectionPool" init-method="initialize"
-                p:blockWaitTime="%{connectionPool.blockWaitTime}" p:failFastInitialize="%{connectionPool.failFastInitialize}">
+                p:blockWaitTime="%{connectionPool.blockWaitTime}" p:failFastInitialize="%{connectionPool.failFastInitialize}" p:name="resolver-pool">
                 <constructor-arg index="0">
                     <bean class="org.ldaptive.pool.PoolConfig" p:minPoolSize="%{connectionPool.minPoolSize}"
                         p:maxPoolSize="%{connectionPool.maxPoolSize}" p:validatePeriodically="%{connectionPool.validatePeriodically}"

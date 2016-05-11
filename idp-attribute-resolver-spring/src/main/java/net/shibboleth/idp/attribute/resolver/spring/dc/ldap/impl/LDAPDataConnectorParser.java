@@ -703,6 +703,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             } else {
                 pool = new SoftLimitConnectionPool();
             }
+            pool.setName("resolver-pool");
             return pool;
         }
 

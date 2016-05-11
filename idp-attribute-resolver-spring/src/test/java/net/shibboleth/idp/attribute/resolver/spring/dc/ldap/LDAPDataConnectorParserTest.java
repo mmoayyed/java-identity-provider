@@ -306,6 +306,7 @@ public class LDAPDataConnectorParserTest {
         final BlockingConnectionPool connPool = (BlockingConnectionPool) connFactory.getConnectionPool();
         AssertJUnit.assertNotNull(connPool);
         AssertJUnit.assertEquals(5000, connPool.getBlockWaitTime());
+        AssertJUnit.assertEquals("resolver-pool", connPool.getName());
         final PoolConfig poolConfig = connPool.getPoolConfig();
         AssertJUnit.assertNotNull(poolConfig);
         AssertJUnit.assertEquals(5, poolConfig.getMinPoolSize());
