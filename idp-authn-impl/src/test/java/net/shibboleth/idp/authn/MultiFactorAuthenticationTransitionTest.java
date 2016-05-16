@@ -69,7 +69,7 @@ public class MultiFactorAuthenticationTransitionTest {
         mfa.getActiveResults().clear();
         Assert.assertFalse(transition.getCompletionCondition().apply(prc));
         Assert.assertNull(transition.getResultMergingStrategy().apply(prc));
-        Assert.assertNull(transition.getNextFlowStrategy().apply(prc));
+        Assert.assertNull(transition.getNextFlowStrategy("proceed").apply(prc));
     }
 
     /** Tests whether any result will satisfy a default request. */

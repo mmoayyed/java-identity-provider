@@ -18,6 +18,9 @@
 package net.shibboleth.idp.authn;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,12 +29,15 @@ import javax.security.auth.Subject;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -41,7 +47,11 @@ import com.google.common.base.Predicate;
  * 
  * <p>After each factor is successfully completed, this object supplies rules for determining whether additional
  * factors are required, how to combine {@link Subject}s produced by different factors when a flow completes,
- * and what flow should execute next.</p>
+ * and what should happen next.</p>
+ * 
+ * <p>The latter is handled with a bit of pseudo-SWF reinvention that allows an event to be mapped to a new
+ * flow to run by means of a function. If no mapping exists, or the function returns null, then the event
+ * is simply raised as the result of the overall flow execution.</p>
  * 
  * @since 3.3.0
  */
@@ -54,13 +64,13 @@ public class MultiFactorAuthenticationTransition {
     @Nonnull private Function<ProfileRequestContext,AuthenticationResult> resultMergingStrategy;
 
     /** A function that determines the next flow to execute. */
-    @Nonnull private Function<ProfileRequestContext,String> nextFlowStrategy;
+    @Nonnull @NonnullElements private Map<String,Function<ProfileRequestContext,String>> nextFlowStrategyMap;
     
     /** Constructor. */
     public MultiFactorAuthenticationTransition() {
         completionCondition = new DefaultCompletionCondition();
         resultMergingStrategy = new DefaultResultMergingStrategy();
-        setNextFlow(null);
+        nextFlowStrategyMap = new HashMap<>();
     }
     
     /**
@@ -110,34 +120,69 @@ public class MultiFactorAuthenticationTransition {
     /**
      * Get the function to run to determine the next subflow to run.
      * 
-     * <p>The flow ID must be fully-qualified; that is, for the typical case that a login subflow needs to be
-     * run, the "authn/" prefix must be included.</p>
+     * @param event the event to transition from
      * 
      * @return flow determination strategy
      */
-    @Nonnull public Function<ProfileRequestContext,String> getNextFlowStrategy() {
-        return nextFlowStrategy;
+    @Nonnull public Function<ProfileRequestContext,String> getNextFlowStrategy(@Nonnull @NotEmpty final String event) {
+        if (nextFlowStrategyMap.containsKey(event)) {
+            return nextFlowStrategyMap.get(event);
+        } else {
+            return FunctionSupport.constant(null);
+        }
     }
     
     /**
-     * Set the function to run to determine the next subflow to run.
+     * Get the map of transition rules to follow.
      * 
-     * @param strategy flow determination strategy
+     * @return a map of transition functions keyed by event ID
      */
-    public void setNextFlowStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
-        nextFlowStrategy = Constraint.isNotNull(strategy, "Flow determination strategy cannot be null");
+    @Nonnull @NonnullElements @Live Map<String,Function<ProfileRequestContext,String>> getNextFlowStrategyMap() {
+        return nextFlowStrategyMap;
     }
     
     /**
-     * Set the next flow to run instead of using a strategy function.
+     * Set the map of transition rules to follow.
      * 
-     * <p>The flow ID must be fully-qualified; that is, for the typical case that a login subflow needs to be
-     * run, the "authn/" prefix must be included.</p>
+     * <p>The values in the map must be either a {@link String} identifying the flow ID to run, or
+     * a {@link Function<ProfileRequestContext,String>} to execute.</p> 
+     * 
+     * @param map map of transition rules
+     */
+    public void setNextFlowStrategyMap(@Nonnull @NonnullElements final Map<String,Object> map) {
+        Constraint.isNotNull(map, "Transition strategy map cannot be null");
+        
+        nextFlowStrategyMap.clear();
+        for (final Map.Entry<String,Object> entry : map.entrySet()) {
+            final String trimmed = StringSupport.trimOrNull(entry.getKey());
+            if (trimmed != null) {
+                if (entry.getValue() instanceof String) {
+                    final String flowId = StringSupport.trimOrNull((String) entry.getValue());
+                    if (flowId != null) {
+                        nextFlowStrategyMap.put(trimmed,
+                                FunctionSupport.<ProfileRequestContext,String>constant(flowId));
+                    }
+                } else if (entry.getValue() instanceof Function) {
+                    nextFlowStrategyMap.put(trimmed, (Function<ProfileRequestContext, String>) entry.getValue());
+                } else if (entry.getValue() != null) {
+                    LoggerFactory.getLogger(MultiFactorAuthenticationTransition.class).warn(
+                            "Ignoring mapping from {} to unsupported object of type {}", trimmed,
+                            entry.getValue().getClass());
+                }
+            }
+        }
+    }
+    
+    /**
+     * Set the next flow to run directly, instead of using a strategy function.
+     * 
+     * <p>The transition rule is implicitly based on a "proceed" event occurring,
+     * and assumes no custom transitions for any other events.</p>
 
      * @param flowId fully-qualified flow ID to run
      */
     public void setNextFlow(@Nullable @NotEmpty final String flowId) {
-        nextFlowStrategy = FunctionSupport.constant(StringSupport.trimOrNull(flowId));
+        setNextFlowStrategyMap(Collections.<String,Object>singletonMap("proceed", flowId));
     }
 
     /**
