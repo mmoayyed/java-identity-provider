@@ -224,6 +224,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             final AuthenticationResult result = new AuthenticationResult(flowId, new Subject());
             result.setAuthenticationInstant(authnInstant);
             result.setLastActivityInstant(expiration != null ? expiration : authnInstant);
+            result.setPreviousResult(true);
 
             final JsonArray principals = obj.getJsonArray(PRINCIPAL_ARRAY_FIELD);
             if (principals != null) {

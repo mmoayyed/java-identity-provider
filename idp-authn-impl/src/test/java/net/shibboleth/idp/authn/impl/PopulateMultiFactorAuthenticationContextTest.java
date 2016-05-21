@@ -71,7 +71,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
     }
     
     @Test public void testTransitions() throws ComponentInitializationException {
-        action.setTransitionMap(Collections.singletonMap("start", new MultiFactorAuthenticationTransition()));
+        action.setTransitionMap(Collections.singletonMap("", new MultiFactorAuthenticationTransition()));
         action.initialize();
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
@@ -79,7 +79,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
         final MultiFactorAuthenticationContext mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class);
         Assert.assertNotNull(mfa);
         Assert.assertEquals(mfa.getTransitionMap().size(), 1);
-        Assert.assertNotNull(mfa.getTransitionMap().get("start"));
+        Assert.assertNotNull(mfa.getTransitionMap().get(null));
         Assert.assertTrue(mfa.getActiveResults().isEmpty());
     }
 

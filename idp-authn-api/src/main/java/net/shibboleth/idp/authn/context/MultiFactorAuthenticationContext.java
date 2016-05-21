@@ -23,10 +23,12 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -49,8 +51,11 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     /** Authentication results that are active (may be generated earlier or during current request). */
     @Nonnull @NonnullElements private final Map<String,AuthenticationResult> activeResults;
     
-    /** The result of merging the various individual results together. */
-    @Nullable private AuthenticationResult mergedResult;
+    /** The next flow due to execute (or the currently executing flow during subflow execution). */
+    @Nullable @NotEmpty private String nextFlowId;
+    
+    /** Login flow descriptor for the MFA flow. */
+    @Nullable private AuthenticationFlowDescriptor mfaFlowDescriptor;
     
     /** Constructor. */
     public MultiFactorAuthenticationContext() {
@@ -75,13 +80,13 @@ public class MultiFactorAuthenticationContext extends BaseContext {
      * @return this context
      */
     @Nonnull public MultiFactorAuthenticationContext setTransitionMap(
-            @Nonnull @NonnullElements final Map<String,MultiFactorAuthenticationTransition> map) {
+            @Nonnull final Map<String,MultiFactorAuthenticationTransition> map) {
         Constraint.isNotNull(map, "Map cannot be null");
         
         transitionMap.clear();
         for (final Map.Entry<String,MultiFactorAuthenticationTransition> entry : map.entrySet()) {
             final String trimmed = StringSupport.trimOrNull(entry.getKey());
-            if (trimmed != null && entry.getValue() != null) {
+            if (entry.getValue() != null) {
                 transitionMap.put(trimmed, entry.getValue());
             }
         }
@@ -99,24 +104,46 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     }
     
     /**
-     * Get a single merged {@link AuthenticationResult} produced by the overall flow.
+     * Get the next flow due to execute (or that is currently executing).
      * 
-     * @return merged result
+     * @return  the ID of the next flow to execute
      */
-    @Nullable public AuthenticationResult getMergedAuthenticationResult() {
-        return mergedResult;
+    @Nullable @NotEmpty public String getNextFlowId() {
+        return nextFlowId;
     }
     
     /**
-     * Set a single merged {@link AuthenticationResult} produced by the overall flow.
+     * Set the next flow due to execute.
      * 
-     * @param result merged result
+     * @param id flow ID
      * 
      * @return this context
      */
-    @Nonnull public MultiFactorAuthenticationContext setMergedAuthenticationResult(
-            @Nullable final AuthenticationResult result) {
-        mergedResult = result;
+    @Nonnull public MultiFactorAuthenticationContext setNextFlowId(@Nullable @NotEmpty final String id) {
+        nextFlowId = StringSupport.trimOrNull(id);
+        
+        return this;
+    }
+    
+    /**
+     * Get the {@link AuthenticationFlowDescriptor} representing the MFA flow.
+     * 
+     * @return descriptor
+     */
+    @Nullable public AuthenticationFlowDescriptor getAuthenticationFlowDescriptor() {
+        return mfaFlowDescriptor;
+    }
+    
+    /**
+     * Set the {@link AuthenticationFlowDescriptor} representing the MFA flow.
+     * 
+     * @param descriptor login flow descriptor
+     * 
+     * @return this context
+     */
+    @Nonnull public MultiFactorAuthenticationContext setAuthenticationFlowDescriptor(
+            @Nullable final AuthenticationFlowDescriptor descriptor) {
+        mfaFlowDescriptor = descriptor;
         
         return this;
     }

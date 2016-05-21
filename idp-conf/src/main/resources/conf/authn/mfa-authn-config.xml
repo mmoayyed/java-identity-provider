@@ -21,12 +21,13 @@
     and an instance of TBD to customize how the MFA flow handles the results and transitions between steps. 
     -->
     <util:map id="shibboleth.authn.MFA.TransitionMap">
-        <entry key="start">
+        <entry key="">
             <bean parent="shibboleth.authn.MFA.Transition"
-                p:nextFlow="IPAddress" />
+                p:nextFlow="authn/IPAddress" />
         </entry>
-        <entry key="IPAddress">
-            <bean parent="shibboleth.authn.MFA.Transition" />
+        <entry key="authn/IPAddress">
+            <bean parent="shibboleth.authn.MFA.Transition"
+                p:nextFlow="authn/Password" />
         </entry>
     </util:map>
 

@@ -13,7 +13,12 @@
         <evaluate expression="PopulateMultiFactorAuthenticationContext" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="TBD" />
+        <transition on="proceed" to="CheckForFlowReuse" />
+        
+        <on-exit>
+            <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext))" result="flowScope.mfaContext" />
+            <evaluate expression="mfaContext.getTransitionMap().get(null).getNextFlowStrategy('proceed').apply(opensamlProfileRequestContext)" result="flowScope.nextFlowId" />
+        </on-exit>
     </action-state>
 
     <bean-import resource="mfa-authn-beans.xml" />

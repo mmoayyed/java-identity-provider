@@ -34,7 +34,6 @@ import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
-import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -65,7 +64,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateMultiFactorAuthenticationContext.class);
     
     /** Map of login "factors" (flows) and the transition rules to run after them. */
-    @Nonnull @NonnullElements private Map<String,MultiFactorAuthenticationTransition> transitionMap;
+    @Nonnull private Map<String,MultiFactorAuthenticationTransition> transitionMap;
     
     /** Lookup/creation function for the context to populate. */
     @Nonnull
@@ -88,7 +87,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
      * 
      * @param map map of transition logic
      */
-    public void setTransitionMap(@Nonnull @NonnullElements final Map<String,MultiFactorAuthenticationTransition> map) {
+    public void setTransitionMap(@Nonnull final Map<String,MultiFactorAuthenticationTransition> map) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Map cannot be null");
         

@@ -64,6 +64,9 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     /** The last time, in milliseconds since the epoch, this result was used to bypass authentication. */
     @Positive private long lastActivityInstant;
     
+    /** Tracks whether a result was loaded from a previous session or created as part of the current request. */
+    private boolean previousResult;
+    
     /**
      * Constructor.
      * 
@@ -154,10 +157,32 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
 
     /**
-     * Sets the last activity instant, in milliseconds since the epoch, for this result to the current time.
+     * Set the last activity instant, in milliseconds since the epoch, for this result to the current time.
      */
     public void setLastActivityInstantToNow() {
         lastActivityInstant = System.currentTimeMillis();
+    }
+    
+    /**
+     * Get whether this result was loaded from a session as the product of a previous request.
+     * 
+     * @return true iff this result was produced as part of an earlier request
+     * 
+     * @since 3.3.0
+     */
+    public boolean isPreviousResult() {
+        return previousResult;
+    }
+    
+    /**
+     * Get whether this result was loaded from a session as the product of a previous request.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 3.3.0
+     */
+    public void setPreviousResult(final boolean flag) {
+        previousResult = flag;
     }
 
     /** {@inheritDoc} */
@@ -191,7 +216,8 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
         return MoreObjects.toStringHelper(this).add("authenticationFlowId", authenticationFlowId)
                 .add("authenticatedPrincipal", getSubjectName())
                 .add("authenticationInstant", new DateTime(authenticationInstant))
-                .add("lastActivityInstant", new DateTime(lastActivityInstant)).toString();
+                .add("lastActivityInstant", new DateTime(lastActivityInstant))
+                .add("previousResult", previousResult).toString();
     }
     
     /**

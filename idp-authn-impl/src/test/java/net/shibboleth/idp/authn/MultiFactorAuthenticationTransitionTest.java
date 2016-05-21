@@ -45,7 +45,6 @@ public class MultiFactorAuthenticationTransitionTest {
     private ProfileRequestContext prc;
     private AuthenticationContext ac;
     private MultiFactorAuthenticationContext mfa;
-    private MultiFactorAuthenticationTransition transition;
     
     @BeforeMethod public void setUp() throws ComponentInitializationException {
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(new RequestContextBuilder().buildRequestContext());
@@ -55,27 +54,26 @@ public class MultiFactorAuthenticationTransitionTest {
         ac.getAttemptedFlow().setResultSerializer(new DefaultAuthenticationResultSerializer());
         ac.getAttemptedFlow().initialize();
         mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class, true);
-        mfa.setTransitionMap(Collections.singletonMap("test", transition));
+        mfa.setTransitionMap(Collections.singletonMap("", new MultiFactorAuthenticationTransition()));
+        mfa.setAuthenticationFlowDescriptor(ac.getAttemptedFlow());
         final Subject subject = new Subject();
         subject.getPrincipals().add(new UsernamePrincipal("foo"));
         subject.getPrincipals().add(new TestPrincipal("bar"));
         mfa.getActiveResults().put("test", new AuthenticationResult("test", subject));
-        transition = new MultiFactorAuthenticationTransition();
     }
 
     
     /** Tests behavior under "empty" conditions. */
     @Test public void testEmptyState() {
         mfa.getActiveResults().clear();
-        Assert.assertFalse(transition.getCompletionCondition().apply(prc));
-        Assert.assertNull(transition.getResultMergingStrategy().apply(prc));
-        Assert.assertNull(transition.getNextFlowStrategy("proceed").apply(prc));
+        Assert.assertFalse(mfa.getTransitionMap().get(null).getCompletionCondition().apply(prc));
+        Assert.assertNull(mfa.getTransitionMap().get(null).getResultMergingStrategy().apply(prc));
+        Assert.assertNull(mfa.getTransitionMap().get(null).getNextFlowStrategy("proceed").apply(prc));
     }
 
     /** Tests whether any result will satisfy a default request. */
     @Test public void testCompletionNoRequestedPrincipals() {
-        mfa.setMergedAuthenticationResult(mfa.getActiveResults().get("test"));
-        Assert.assertTrue(transition.getCompletionCondition().apply(prc));
+        Assert.assertTrue(mfa.getTransitionMap().get(null).getCompletionCondition().apply(prc));
     }
     
     /** Tests whether result satisfies request when it should. */
@@ -86,8 +84,7 @@ public class MultiFactorAuthenticationTransitionTest {
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("bar")));
         ac.addSubcontext(rpc);
-        mfa.setMergedAuthenticationResult(mfa.getActiveResults().get("test"));
-        Assert.assertTrue(transition.getCompletionCondition().apply(prc));
+        Assert.assertTrue(mfa.getTransitionMap().get(null).getCompletionCondition().apply(prc));
     }
 
     /** Tests whether result satisfies request when it shouldn't. */
@@ -98,15 +95,20 @@ public class MultiFactorAuthenticationTransitionTest {
         rpc.setOperator("exact");
         rpc.setRequestedPrincipals(Collections.<Principal>singletonList(new TestPrincipal("baz")));
         ac.addSubcontext(rpc);
-        mfa.setMergedAuthenticationResult(mfa.getActiveResults().get("test"));
-        Assert.assertFalse(transition.getCompletionCondition().apply(prc));
+        Assert.assertFalse(mfa.getTransitionMap().get(null).getCompletionCondition().apply(prc));
     }
 
     /** Tests "merge" of a single result. */
     @Test public void testSingleResult() {
-        final AuthenticationResult result = transition.getResultMergingStrategy().apply(prc);
-        Assert.assertEquals(result, mfa.getActiveResults().get("test"));
-        Assert.assertEquals(result.getSubject(), mfa.getActiveResults().get("test").getSubject());
+        final AuthenticationResult result = mfa.getTransitionMap().get(null).getResultMergingStrategy().apply(prc);
+        Assert.assertEquals(result.getAuthenticationFlowId(), "authn/MFA");
+        final Subject merged = result.getSubject();
+        Assert.assertEquals(merged.getPrincipals().size(), 3);
+        Assert.assertEquals(merged.getPrincipals(AuthenticationResultPrincipal.class).size(), 1);
+        Assert.assertTrue(merged.getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("foo")));
+        Assert.assertFalse(merged.getPrincipals(UsernamePrincipal.class).contains(new UsernamePrincipal("foo2")));
+        Assert.assertTrue(merged.getPrincipals(TestPrincipal.class).contains(new TestPrincipal("bar")));
+        Assert.assertFalse(merged.getPrincipals(TestPrincipal.class).contains(new TestPrincipal("baz")));
     }
 
     /** Tests default merging of results. */
@@ -116,7 +118,7 @@ public class MultiFactorAuthenticationTransitionTest {
         subject.getPrincipals().add(new TestPrincipal("bar"));
         mfa.getActiveResults().put("test2", new AuthenticationResult("test2", subject));
         
-        final AuthenticationResult result = transition.getResultMergingStrategy().apply(prc);
+        final AuthenticationResult result = mfa.getTransitionMap().get(null).getResultMergingStrategy().apply(prc);
         Assert.assertEquals(result.getAuthenticationFlowId(), "authn/MFA");
         final Subject merged = result.getSubject();
         Assert.assertEquals(merged.getPrincipals().size(), 5);

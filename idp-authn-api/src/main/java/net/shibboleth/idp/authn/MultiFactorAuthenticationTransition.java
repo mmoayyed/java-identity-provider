@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.authn;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -190,8 +192,9 @@ public class MultiFactorAuthenticationTransition {
      * 
      * <p>The default condition searches for a {@link MultiFactorAuthenticationContext} child of
      * an {@link AuthenticationContext} child of the input context, and evaluates the
-     * {@link MultiFactorAuthenticationContext#getMergedAuthenticationResult()} property for suitability
-     * to satisfy the request based on supported custom {@link Principal} objects.</p>
+     * {@link MultiFactorAuthenticationContext#getActiveResults()} property for suitability
+     * to satisfy the request based on the total set of custom {@link Principal} objects
+     * found across all results.</p>
      */
     public class DefaultCompletionCondition implements Predicate<ProfileRequestContext> {
 
@@ -203,10 +206,15 @@ public class MultiFactorAuthenticationTransition {
                 if (authnContext != null) {
                     final MultiFactorAuthenticationContext mfaContext =
                             authnContext.getSubcontext(MultiFactorAuthenticationContext.class);
-                    if (mfaContext != null) {
-                        if (mfaContext.getMergedAuthenticationResult() != null) {
-                            return authnContext.isAcceptable(mfaContext.getMergedAuthenticationResult());
-                        }
+                    if (mfaContext != null && !mfaContext.getActiveResults().isEmpty()) {
+                        final ArrayList<Principal> mergedPrincipals = new ArrayList<>();
+                        for (final AuthenticationResult result : mfaContext.getActiveResults().values()) {
+                            // Only include Principals from fresh results or when forced authn is off.
+                            if (!(authnContext.isForceAuthn() && result.isPreviousResult())) {
+                                mergedPrincipals.addAll(result.getSubject().getPrincipals());
+                            }
+                        }   
+                        return authnContext.isAcceptable(mergedPrincipals);
                     }
                 }
             }
@@ -219,10 +227,8 @@ public class MultiFactorAuthenticationTransition {
      * Default merging strategy to combine individual {@link AuthenticationResult} objects into a
      * single result.
      * 
-     * <p>If only a single result is found, then it's returned directly.</p>
-     * 
-     * <p>When there are multiple, the default strategy searches for a {@link MultiFactorAuthenticationContext}
-     * child of an {@link AuthenticationContext} child of the input context, and combines all of the {@link Subject}
+     * <p>The default strategy searches for a {@link MultiFactorAuthenticationContext} child of an
+     * {@link AuthenticationContext} child of the input context, and combines all of the {@link Subject}
      * content from {@link MultiFactorAuthenticationContext#getAuthenticationResults()} into a single result.</p>
      * 
      * <p>It assigns the flow ID based on {@link AuthenticationContext#getAttemptedFlow()}, and also preserves
@@ -240,9 +246,7 @@ public class MultiFactorAuthenticationTransition {
                             authnContext.getSubcontext(MultiFactorAuthenticationContext.class);
                     if (mfaContext != null) {
                         final Collection<AuthenticationResult> results = mfaContext.getActiveResults().values();
-                        if (results.size() == 1) {
-                            return results.iterator().next();
-                        } else if (results.size() > 1) {
+                        if (!results.isEmpty()) {
                             final Subject subject = new Subject();
                             for (final AuthenticationResult result : results) {
                                 subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
@@ -250,8 +254,8 @@ public class MultiFactorAuthenticationTransition {
                                 subject.getPublicCredentials().addAll(result.getSubject().getPublicCredentials());
                                 subject.getPrivateCredentials().addAll(result.getSubject().getPrivateCredentials());
                             }
-                            final AuthenticationResult merged =
-                                    new AuthenticationResult(authnContext.getAttemptedFlow().getId(), subject);
+                            final AuthenticationResult merged = new AuthenticationResult(
+                                    mfaContext.getAuthenticationFlowDescriptor().getId(), subject);
                             return merged;
                         }
                     }
