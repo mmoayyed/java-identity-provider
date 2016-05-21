@@ -123,9 +123,9 @@
         <CustomAction Id="QtJettyAnt" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="deferred" Impersonate="no" />
 
         <?if $(var.msitype) = "x86" ?>
-        <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#768" />
+        <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#1500" />
         <?else ?>
-        <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#1024" />
+        <CustomAction Id="SetJavaJvmMx" Property="JAVA_JVMMX" Value="#2048" />
         <?endif ?>
 
         <InstallUISequence>
