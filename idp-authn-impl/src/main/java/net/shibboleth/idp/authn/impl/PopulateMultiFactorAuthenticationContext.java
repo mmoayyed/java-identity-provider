@@ -49,8 +49,9 @@ import com.google.common.base.Functions;
 
 /**
  * An action that creates and populates a {@link MultiFactorAuthenticationContext} with the set of
- * transition rules to use for coordinating activity, and with any active "factors" found,
- * if an active result from the MFA flow is present in the {@link AuthenticationContext}.
+ * transition rules to use for coordinating activity, the executing {@link AuthenticationFlowDescriptor}
+ * and with any active "factors" found, if an active result from the MFA flow is present in the
+ * {@link AuthenticationContext}.
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
@@ -133,6 +134,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
         }
         
+        mfaCtx.setAuthenticationFlowDescriptor(authenticationContext.getAttemptedFlow());
         mfaCtx.setTransitionMap(transitionMap);
         
         if (activeResultLookupStrategy != null) {
@@ -165,6 +167,11 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
                 if (ac != null && ac.getAttemptedFlow() != null) {
                     final AuthenticationResult mfaResult = ac.getActiveResults().get(ac.getAttemptedFlow().getId());
                     if (mfaResult != null) {
+                        if (ac.isForceAuthn()) {
+                            log.debug("{} Ignoring active result due to forced authentication requirement",
+                                    getLogPrefix());
+                            return null;
+                        }
                         final Set<AuthenticationResultPrincipal> resultPrincipals =
                                 mfaResult.getSubject().getPrincipals(AuthenticationResultPrincipal.class);
                         if (!resultPrincipals.isEmpty()) {

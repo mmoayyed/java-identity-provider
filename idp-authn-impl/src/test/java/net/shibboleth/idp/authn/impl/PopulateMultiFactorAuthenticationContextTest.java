@@ -66,6 +66,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
         
         final MultiFactorAuthenticationContext mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class);
         Assert.assertNotNull(mfa);
+        Assert.assertEquals(ac.getAttemptedFlow(), mfa.getAuthenticationFlowDescriptor());
         Assert.assertTrue(mfa.getTransitionMap().isEmpty());
         Assert.assertTrue(mfa.getActiveResults().isEmpty());
     }
@@ -78,6 +79,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
         
         final MultiFactorAuthenticationContext mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class);
         Assert.assertNotNull(mfa);
+        Assert.assertEquals(ac.getAttemptedFlow(), mfa.getAuthenticationFlowDescriptor());
         Assert.assertEquals(mfa.getTransitionMap().size(), 1);
         Assert.assertNotNull(mfa.getTransitionMap().get(null));
         Assert.assertTrue(mfa.getActiveResults().isEmpty());
@@ -115,6 +117,7 @@ public class PopulateMultiFactorAuthenticationContextTest {
         
         final MultiFactorAuthenticationContext mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class);
         Assert.assertNotNull(mfa);
+        Assert.assertEquals(ac.getAttemptedFlow(), mfa.getAuthenticationFlowDescriptor());
         Assert.assertEquals(mfa.getActiveResults().size(), 1);
         Assert.assertNull(mfa.getActiveResults().get("foo"));
         Assert.assertNotNull(mfa.getActiveResults().get("bar"));

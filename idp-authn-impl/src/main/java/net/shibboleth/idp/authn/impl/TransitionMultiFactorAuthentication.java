@@ -55,22 +55,26 @@ import com.google.common.base.Predicate;
  * <p>The execution of this function is driven by the {@link MultiFactorAuthenticationTransition}
  * rule associated with the flow that was most recently executed by this engine. If none (such as
  * during the first iteration), then the rule associated with a null value is used. Failure to locate
- * a transition to use is fatal, resulting in a {@link AuthnEventIds#NO_PASSIVE} or
- * {@link AuthnEventIds#NO_POTENTIAL_FLOW} event.</p>
+ * a transition to use is fatal, resulting in {@link AuthnEventIds#NO_PASSIVE} or
+ * {@link AuthnEventIds#NO_POTENTIAL_FLOW}.</p>
  * 
  * <p>If the transition signals completion, then the associated merging function is used to
  * produce a final {@link AuthenticationResult} and the context tree is mutated to store off
  * the result and prepare for subject canonicalization, in the fashion of most validation
  * actions. The {@link MultiFactorAutenticationContext}'s next flow is cleared and
- * {@link EventIds#PROCEED_EVENT_ID}is signaled.</p>
+ * {@link EventIds#PROCEED_EVENT_ID} is signaled.</p>
  * 
  * <p>Otherwise, a function is applied to obtain the "current" WebFlow event, and the event
  * is applied to the transition's rule map to obtain the name of the next flow to run. A
- * wildcard ('*') rule is used if a more specific rule isn't found. If a flow is returned,
- * it is populated into the {@link MultiFactorAutenticationContext}, and
- * {@link EventIds#PROCEED_EVENT_ID}is signaled. If no flow is returned, then the
- * current event is re-signaled as the result of this action, and ultimately the
+ * wildcard ('*') rule is used if a more specific rule isn't found. If no flow is returned,
+ * then the current event is re-signaled as the result of this action, and ultimately the
  * result of the MFA flow.</p>
+ * 
+ * <p>If a flow is returned, it is populated into the {@link MultiFactorAutenticationContext}.
+ * The flow is checked for the "authn/" prefix, and a login flow is checked against the
+ * active result map to determine if it can be reused, in which case
+ * {@link AuthnEventIds#RESELECT_FLOW} is signaled to recurse the process. Otherwise
+ * {@link EventIds#PROCEED_EVENT_ID}is signaled to run the flow.</p>
  * 
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getSubcontext(
  *      MultiFactorAuthenticationContext.class) != null</pre>
@@ -79,6 +83,7 @@ import com.google.common.base.Predicate;
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#NO_PASSIVE}
  * @event {@link AuthnEventIds#NO_POTENTIAL_FLOW}
+ * @event {@link AuthnEventIds#RESELECT_FLOW}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  */
 public class TransitionMultiFactorAuthentication extends AbstractAuthenticationAction {
@@ -196,7 +201,18 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+        
+        // Check for an authentication result and move it into the MFA context.
+        final AuthenticationResult result = authenticationContext.getAuthenticationResult();
+        if (result != null) {
+            log.debug("{} Preserving authentication result from '{}' flow", getLogPrefix(),
+                    result.getAuthenticationFlowId());
+            mfaContext.getActiveResults().put(result.getAuthenticationFlowId(), result);
+            authenticationContext.setAuthenticationResult(null);
+        }
 
+        // The "next" flow here is the "previous" flow run by the system that we're branching from.
+        // This value can be null (on the first entry) and a rule should be defined for the null value.
         log.debug("{} Accessing MFA transition rule for exiting state {}", getLogPrefix(), mfaContext.getNextFlowId());
         final MultiFactorAuthenticationTransition transition = mfaContext.getTransitionMap().get(
                 mfaContext.getNextFlowId());
@@ -214,6 +230,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
             return;
         }
         
+        // Event transitions require normalizing empty/null events into "proceed".
         final EventContext eventCtx = eventContextLookupStrategy.apply(profileRequestContext);
         final String previousEvent = eventCtx != null && eventCtx.getEvent() != null
                 ? eventCtx.getEvent().toString() : EventIds.PROCEED_EVENT_ID;
@@ -225,14 +242,14 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         if (flowId != null) {
             log.debug("{} MFA flow transition from '{}' event to '{}' flow", getLogPrefix(), previousEvent, flowId);
             mfaContext.setNextFlowId(flowId);
-            ActionSupport.buildProceedEvent(profileRequestContext);
+            doTransition(profileRequestContext, authenticationContext);
             return;
         }
         
         log.debug("{} No transition, MFA flow completing with '{}' event", getLogPrefix(), previousEvent);
         ActionSupport.buildEvent(profileRequestContext, previousEvent);
     }
-    
+        
     /**
      * Respond to a signal to complete the MFA process by computing a merged result and
      * preparing the context tree for subject c14n.
@@ -246,10 +263,9 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
             @Nonnull final MultiFactorAuthenticationTransition transition) {
         
         log.debug("{} MFA complete, producing merged result", getLogPrefix());
-        final AuthenticationResult result =
-                transition.getResultMergingStrategy().apply(profileRequestContext);
+        final AuthenticationResult result = transition.getResultMergingStrategy().apply(profileRequestContext);
         if (result == null) {
-            log.warn("{} Unable to produced merged AuthenticationResult to complete state {}", getLogPrefix(),
+            log.warn("{} Unable to produce merged AuthenticationResult to complete state {}", getLogPrefix(),
                     mfaContext.getNextFlowId());
             ActionSupport.buildEvent(profileRequestContext, authenticationContext.isPassive() ?
                     AuthnEventIds.NO_PASSIVE : AuthnEventIds.INVALID_CREDENTIALS);
@@ -279,5 +295,29 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         mfaContext.setNextFlowId(null);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
-    
+
+    /**
+     * Respond to a signal to transition the MFA process to a new flow.
+     * 
+     * @param profileRequestContext profile request context
+     * @param authenticationContext authentication context
+     */
+    private void doTransition(@Nonnull final ProfileRequestContext profileRequestContext,
+            @Nonnull final AuthenticationContext authenticationContext) {
+        
+        // Non-authentication flows can just be executed (via a "proceed" event), but a login flow is a
+        // special case. We have to check for an active result that would bypass re-running it. The ForceAuthn
+        // constraint is assumed to be enforced by limiting which active results are made available.
+        final String flowId = mfaContext.getNextFlowId();
+        if (flowId.startsWith("authn/")) {
+            if (mfaContext.getActiveResults().containsKey(flowId)) {
+                log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.RESELECT_FLOW);
+                return;
+            }
+        }
+        
+        ActionSupport.buildProceedEvent(profileRequestContext);
+    }
+
 }
