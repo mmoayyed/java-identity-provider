@@ -23,5 +23,9 @@
     <bean id="PopulateMultiFactorAuthenticationContext" scope="prototype"
         class="net.shibboleth.idp.authn.impl.PopulateMultiFactorAuthenticationContext"
         p:transitionMap-ref="shibboleth.authn.MFA.TransitionMap" />
+        
+    <bean id="TransitionMultiFactorAuthentication" scope="prototype"
+        class="net.shibboleth.idp.authn.impl.TransitionMultiFactorAuthentication"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.MFA.resultCachingPredicate')}" />
 
 </beans>

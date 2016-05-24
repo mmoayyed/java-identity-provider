@@ -13,13 +13,28 @@
         <evaluate expression="PopulateMultiFactorAuthenticationContext" />
         <evaluate expression="'proceed'" />
         
-        <transition on="proceed" to="CheckForFlowReuse" />
+        <transition on="proceed" to="TransitionMultiFactorAuthentication" />
         
         <on-exit>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext))" result="flowScope.mfaContext" />
-            <evaluate expression="mfaContext.getTransitionMap().get(null).getNextFlowStrategy('proceed').apply(opensamlProfileRequestContext)" result="flowScope.nextFlowId" />
         </on-exit>
     </action-state>
+    
+    <action-state id="TransitionMultiFactorAuthentication">
+        <evaluate expression="TransitionMultiFactorAuthentication" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="CheckProceed" />
+        <transition on="ReselectFlow" to="TransitionMultiFactorAuthentication" />
+    </action-state>
+    
+    <decision-state id="CheckProceed">
+        <if test="mfaContext.getNextFlowId() != null" then="CallSubflow" else="proceed" />
+    </decision-state>
+    
+    <subflow-state id="CallSubflow" subflow="#{mfaContext.getNextFlowId()}">
+        <transition to="TransitionMultiFactorAuthentication" />
+    </subflow-state>
 
     <bean-import resource="mfa-authn-beans.xml" />
 
