@@ -42,12 +42,6 @@ public class TransitionMultiFactorAuthenticationTest extends BaseMultiFactorAuth
         action.initialize();
     }
 
-    @Test public void testNoTransition() {
-        mfa.setNextFlowId("none");
-        Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.NO_POTENTIAL_FLOW);
-    }
-
     @Test public void testNoResult() {
         mfa.setNextFlowId("authn/test2");
         Event event = action.execute(src);
