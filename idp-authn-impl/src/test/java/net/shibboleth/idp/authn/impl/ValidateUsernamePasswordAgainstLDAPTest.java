@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.TemplateSearchDnResolver;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.AuthenticationErrorContext;
 import net.shibboleth.idp.authn.context.AuthenticationWarningContext;

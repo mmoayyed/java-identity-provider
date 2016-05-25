@@ -15,39 +15,38 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.authn.impl;
+package net.shibboleth.idp.authn;
 
 import java.util.Arrays;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.VelocityException;
 import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
-import org.ldaptive.pool.PooledConnectionFactory;
-import org.ldaptive.pool.PooledConnectionFactoryManager;
 
 /**
- * {@link Template} based pooled search dn resolver.
+ * {@link Template} based search dn resolver.
  */
-public class PooledTemplateSearchDnResolver extends AbstractTemplateSearchDnResolver
-        implements PooledConnectionFactoryManager {
+public class TemplateSearchDnResolver extends AbstractTemplateSearchDnResolver implements ConnectionFactoryManager {
 
     /** Connection factory. */
-    private PooledConnectionFactory factory;
+    private ConnectionFactory factory;
 
     /**
-     * Creates a new pooled template search DN resolver.
+     * Creates a new template search DN resolver.
      *
      * @param engine velocity engine
      * @param filter filter template
      *
      * @throws VelocityException if velocity is not configured properly or the filter template is invalid
      */
-    public PooledTemplateSearchDnResolver(final VelocityEngine engine, final String filter) throws VelocityException {
+    public TemplateSearchDnResolver(final VelocityEngine engine, final String filter) throws VelocityException {
         super(engine, filter);
     }
 
     /**
-     * Creates a new pooled template search DN resolver.
+     * Creates a new template search DN resolver.
      *
      * @param cf connection factory
      * @param engine velocity engine
@@ -55,22 +54,24 @@ public class PooledTemplateSearchDnResolver extends AbstractTemplateSearchDnReso
      *
      * @throws VelocityException if velocity is not configured properly or the filter template is invalid
      */
-    public PooledTemplateSearchDnResolver(final PooledConnectionFactory cf, final VelocityEngine engine,
-            final String filter) throws VelocityException {
+    public TemplateSearchDnResolver(final ConnectionFactory cf, final VelocityEngine engine, final String filter)
+            throws VelocityException {
         super(engine, filter);
         setConnectionFactory(cf);
     }
 
-    @Override public PooledConnectionFactory getConnectionFactory() {
+    @Override public ConnectionFactory getConnectionFactory() {
         return factory;
     }
 
-    @Override public void setConnectionFactory(final PooledConnectionFactory cf) {
+    @Override public void setConnectionFactory(final ConnectionFactory cf) {
         factory = cf;
     }
 
     @Override protected Connection getConnection() throws LdapException {
-        return factory.getConnection();
+        final Connection conn = factory.getConnection();
+        conn.open();
+        return conn;
     }
 
     @Override public String toString() {
