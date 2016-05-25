@@ -136,6 +136,8 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
         
         mfaCtx.setAuthenticationFlowDescriptor(authenticationContext.getAttemptedFlow());
         mfaCtx.setTransitionMap(transitionMap);
+        mfaCtx.setNextFlowId(null);
+        mfaCtx.getActiveResults().clear();
         
         if (activeResultLookupStrategy != null) {
             final Collection<AuthenticationResult> results = activeResultLookupStrategy.apply(profileRequestContext);

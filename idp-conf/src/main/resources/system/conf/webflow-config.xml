@@ -79,6 +79,7 @@
         <webflow:flow-location id="authn/X509Internal" path="../system/flows/authn/x509-internal-authn-flow.xml" />
         <webflow:flow-location id="authn/SPNEGO" path="../system/flows/authn/spnego-authn-flow.xml" />
         <webflow:flow-location id="authn/External" path="../system/flows/authn/external-authn-flow.xml" />
+        <webflow:flow-location id="authn/MFA" path="../system/flows/authn/mfa-authn-flow.xml" />
   
         <!-- Master flow for subject c14n. -->
         <webflow:flow-location id="c14n.events" path="../conf/c14n/subject-c14n-events-flow.xml" />

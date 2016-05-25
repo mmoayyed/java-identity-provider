@@ -21,12 +21,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -72,9 +75,11 @@ import com.google.common.base.Predicate;
  * 
  * <p>If a flow is returned, it is populated into the {@link MultiFactorAutenticationContext}.
  * The flow is checked for the "authn/" prefix, and a login flow is checked against the
- * active result map to determine if it can be reused, in which case
- * {@link AuthnEventIds#RESELECT_FLOW} is signaled to recurse the process. Otherwise
- * {@link EventIds#PROCEED_EVENT_ID}is signaled to run the flow.</p>
+ * active result map to determine if it can be reused, in which case the action recurses itself.
+ * Otherwise {@link EventIds#PROCEED_EVENT_ID}is signaled to run the flow.</p>
+ * 
+ * <p>By default, login flow transitions are validated against the request's requirements
+ * in terms of passive, forced re-authn, and non-browser compatibility.</p>
  * 
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getSubcontext(
  *      MultiFactorAuthenticationContext.class) != null</pre>
@@ -83,8 +88,9 @@ import com.google.common.base.Predicate;
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#NO_PASSIVE}
  * @event {@link AuthnEventIds#NO_POTENTIAL_FLOW}
- * @event {@link AuthnEventIds#RESELECT_FLOW}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
+ * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
+ * @event (any event signaled by another called flow)
  */
 public class TransitionMultiFactorAuthentication extends AbstractAuthenticationAction {
 
@@ -106,6 +112,9 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
 
     /** Function used to obtain the responder ID. */
     @Nullable private Function<ProfileRequestContext,String> responderLookupStrategy;
+    
+    /** Perform IsPassive, ForceAuthn, and non-browser checks when running login flows. */
+    private boolean validateLoginTransitions;
 
     /** A subordinate {@link MultiFactorAuthenticationContext}, if any. */
     @Nullable private MultiFactorAuthenticationContext mfaContext;
@@ -117,6 +126,10 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
                 new ChildContextLookup(AuthenticationContext.class));
         
         eventContextLookupStrategy = new WebFlowCurrentEventLookupFunction();
+        requesterLookupStrategy = new RelyingPartyIdLookupFunction();
+        responderLookupStrategy = new ResponderIdLookupFunction();
+        
+        validateLoginTransitions = true;
     }
 
     /**
@@ -177,6 +190,20 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
 
         responderLookupStrategy = strategy;
     }
+    
+    /**
+     * Set whether to validate transitions to a new login flow by evaluating the request
+     * and ensuring options like IsPassive and ForceAuthn are compatible with the flow.
+     * 
+     * <p>Defaults to 'true', override if your custom transition logic handles these issues.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setValidateLoginTransitions(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        validateLoginTransitions = flag;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -202,6 +229,9 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
+        // Swap MFA flow back into top-level context so that other components see only MFA flow.
+        authenticationContext.setAttemptedFlow(mfaContext.getAuthenticationFlowDescriptor());
+        
         // Check for an authentication result and move it into the MFA context.
         final AuthenticationResult result = authenticationContext.getAuthenticationResult();
         if (result != null) {
@@ -213,15 +243,12 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
 
         // The "next" flow here is the "previous" flow run by the system that we're branching from.
         // This value can be null (on the first entry) and a rule should be defined for the null value.
-        log.debug("{} Accessing MFA transition rule for exiting state {}", getLogPrefix(), mfaContext.getNextFlowId());
-        final MultiFactorAuthenticationTransition transition = mfaContext.getTransitionMap().get(
-                mfaContext.getNextFlowId());
+        MultiFactorAuthenticationTransition transition =
+                mfaContext.getTransitionMap().get(mfaContext.getNextFlowId());
+        log.debug("{} Applying {} MFA transition rule to exit state {}", getLogPrefix(),
+                transition != null ? "configured" : "default", mfaContext.getNextFlowId());
         if (transition == null) {
-            log.error("{} Unable to locate an MFA transition rule to exit state {}", getLogPrefix(),
-                    mfaContext.getNextFlowId());
-            ActionSupport.buildEvent(profileRequestContext, authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE
-                    : AuthnEventIds.NO_POTENTIAL_FLOW);
-            return;
+            transition = new MultiFactorAuthenticationTransition();
         }
         
         log.debug("{} Checking for MFA completion", getLogPrefix());
@@ -296,6 +323,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Respond to a signal to transition the MFA process to a new flow.
      * 
@@ -305,19 +333,57 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
     private void doTransition(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
-        // Non-authentication flows can just be executed (via a "proceed" event), but a login flow is a
-        // special case. We have to check for an active result that would bypass re-running it. The ForceAuthn
-        // constraint is assumed to be enforced by limiting which active results are made available.
+        // Non-authentication flows can just be executed (via a "proceed" event).
         final String flowId = mfaContext.getNextFlowId();
-        if (flowId.startsWith("authn/")) {
-            if (mfaContext.getActiveResults().containsKey(flowId)) {
-                log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
-                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.RESELECT_FLOW);
+        if (!flowId.startsWith("authn/")) {
+            ActionSupport.buildProceedEvent(profileRequestContext);
+            return;
+        }
+
+        final AuthenticationFlowDescriptor flow = authenticationContext.getAvailableFlows().get(flowId);
+        if (flow == null) {
+            log.error("{} Targeted login flow '{}' is not configured, check available flow descriptors",
+                    getLogPrefix(), flowId);
+            ActionSupport.buildEvent(profileRequestContext, authenticationContext.isPassive() ?
+                    AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
+            return;
+        }
+        
+        // We have to check for an active result that would bypass re-running it. A ForceAuthn
+        // constraint is assumed to be enforced by limiting which active results are made available.
+        // To bypass, we just call ourselves again, implicitly looping back. The protection against
+        // infinite recursion is the configuration of transitions supplied by the deployer.
+        if (mfaContext.getActiveResults().containsKey(flowId)) {
+            log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
+            ActionSupport.buildProceedEvent(profileRequestContext);
+            doExecute(profileRequestContext, authenticationContext);
+            return;
+        }
+     
+        if (validateLoginTransitions) {
+            if (authenticationContext.isPassive() && !flow.isPassiveAuthenticationSupported()) {
+                log.error("{} Targeted login flow '{}' does not support passive authentication",
+                        getLogPrefix(), flowId);
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_PASSIVE);
+                return;
+            } else if (authenticationContext.isForceAuthn() && !flow.isForcedAuthenticationSupported()) {
+                log.error("{} Targeted login flow '{}' does not support forced re-authentication",
+                        getLogPrefix(), flowId);
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
+                return;
+            } else if (!profileRequestContext.isBrowserProfile() && !flow.isNonBrowserSupported()) {
+                log.error("{} Targeted login flow '{}' does not support passive authentication",
+                        getLogPrefix(), flowId);
+                ActionSupport.buildEvent(profileRequestContext, authenticationContext.isPassive() ?
+                        AuthnEventIds.NO_PASSIVE : AuthnEventIds.REQUEST_UNSUPPORTED);
                 return;
             }
         }
         
+        // Set for compatibility with more standard runs of a login flow at the top level.
+        authenticationContext.setAttemptedFlow(flow);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
-
+// Checkstyle: CyclomaticComplexity ON
+    
 }

@@ -26,6 +26,10 @@
         
     <bean id="TransitionMultiFactorAuthentication" scope="prototype"
         class="net.shibboleth.idp.authn.impl.TransitionMultiFactorAuthentication"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.MFA.resultCachingPredicate')}" />
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.MFA.resultCachingPredicate')}"
+        p:validateLoginTransitions="#{getObject('shibboleth.authn.MFA.validateLoginTransitions') ?: true}" />
 
+    <bean id="PopulateSubjectCanonicalizationContext"
+        class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"
+        p:availableFlows-ref="shibboleth.PostLoginSubjectCanonicalizationFlows" />
 </beans>
