@@ -70,15 +70,11 @@ public class MultiFactorAuthenticationTransition {
     /** A function that determines the next flow to execute. */
     @Nonnull @NonnullElements private Map<String,Function<ProfileRequestContext,String>> nextFlowStrategyMap;
     
-    /** A map of parameters for input to flow(s) that may be run. */
-    @Nonnull private Map<String,Object> flowParameterMap;
-    
     /** Constructor. */
     public MultiFactorAuthenticationTransition() {
         completionCondition = new DefaultCompletionCondition();
         resultMergingStrategy = new DefaultResultMergingStrategy();
         nextFlowStrategyMap = new HashMap<>();
-        flowParameterMap = Collections.emptyMap();
     }
     
     /**
@@ -191,28 +187,6 @@ public class MultiFactorAuthenticationTransition {
      */
     public void setNextFlow(@Nullable @NotEmpty final String flowId) {
         setNextFlowStrategyMap(Collections.<String,Object>singletonMap("proceed", flowId));
-    }
-    
-    /**
-     * Get the mutable map of parameters for passage into flows that may be run.
-     * 
-     * @return mutable parameter map
-     */
-    @Nonnull @Live public Map<String,Object> getFlowParameterMap() {
-        return flowParameterMap;
-    }
-    
-    /**
-     * Set the map of parameters for passage into flows that may be run.
-     * 
-     * @param map parameter map
-     */
-    public void setFlowParameterMap(@Nullable final Map<String,Object> map) {
-        if (map != null) {
-            flowParameterMap = new HashMap<>(map);
-        } else {
-            flowParameterMap = Collections.emptyMap();
-        }
     }
 
     /**

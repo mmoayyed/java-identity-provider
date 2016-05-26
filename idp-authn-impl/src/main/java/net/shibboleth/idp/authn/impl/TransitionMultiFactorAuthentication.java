@@ -338,7 +338,6 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         // Non-authentication flows can just be executed (via a "proceed" event).
         final String flowId = mfaContext.getNextFlowId();
         if (!flowId.startsWith("authn/")) {
-            mfaContext.setFlowParameterMap(transition.getFlowParameterMap());
             ActionSupport.buildProceedEvent(profileRequestContext);
             return;
         }
@@ -385,7 +384,6 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         
         // Set for compatibility with more standard runs of a login flow at the top level.
         authenticationContext.setAttemptedFlow(flow);
-        mfaContext.setFlowParameterMap(transition.getFlowParameterMap());
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
 // Checkstyle: CyclomaticComplexity ON

@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.authn.context;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,14 +57,10 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     /** The next flow due to execute (or the currently executing flow during subflow execution). */
     @Nullable @NotEmpty private String nextFlowId;
     
-    /** Map of parameters into or out of flows. */
-    @Nonnull private Map<String,Object> flowParameterMap;
-    
     /** Constructor. */
     public MultiFactorAuthenticationContext() {
         transitionMap = new HashMap<>();
         activeResults = new HashMap<>();
-        flowParameterMap = Collections.emptyMap();
     }
 
     /**
@@ -149,32 +144,6 @@ public class MultiFactorAuthenticationContext extends BaseContext {
      */
     @Nonnull public MultiFactorAuthenticationContext setNextFlowId(@Nullable @NotEmpty final String id) {
         nextFlowId = StringSupport.trimOrNull(id);
-        
-        return this;
-    }
-    
-    /**
-     * Get the mutable map of parameters for passage into flows that may be run.
-     * 
-     * @return mutable parameter map
-     */
-    @Nonnull @Live Map<String,Object> getFlowParameterMap() {
-        return flowParameterMap;
-    }
-    
-    /**
-     * Set the map of parameters for passage into flows that may be run.
-     * 
-     * @param map parameter map
-     * 
-     * @return this context
-     */
-    @Nonnull public MultiFactorAuthenticationContext setFlowParameterMap(@Nullable final Map<String,Object> map) {
-        if (map != null) {
-            flowParameterMap = new HashMap<>(map);
-        } else {
-            flowParameterMap = Collections.emptyMap();
-        }
         
         return this;
     }
