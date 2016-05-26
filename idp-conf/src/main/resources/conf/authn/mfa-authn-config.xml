@@ -35,6 +35,9 @@
             - A hyper-flexible way of expressing rules for flow control. Map is keyed
                 by a previously signaled event and the value is a flow to run or a
                 function to return the flow to run.
+                
+        p:flowParameterMap (Map<String,Object>)
+            - Allows arbitrary objects to be passed into the context tree for access within flows.
     -->
     <util:map id="shibboleth.authn.MFA.TransitionMap">
         <entry key="">

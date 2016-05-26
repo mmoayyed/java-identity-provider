@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.context;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,17 +51,21 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     
     /** Authentication results that are active (may be generated earlier or during current request). */
     @Nonnull @NonnullElements private final Map<String,AuthenticationResult> activeResults;
+
+    /** Login flow descriptor for the MFA flow. */
+    @Nullable private AuthenticationFlowDescriptor mfaFlowDescriptor;
     
     /** The next flow due to execute (or the currently executing flow during subflow execution). */
     @Nullable @NotEmpty private String nextFlowId;
     
-    /** Login flow descriptor for the MFA flow. */
-    @Nullable private AuthenticationFlowDescriptor mfaFlowDescriptor;
+    /** Map of parameters into or out of flows. */
+    @Nonnull private Map<String,Object> flowParameterMap;
     
     /** Constructor. */
     public MultiFactorAuthenticationContext() {
         transitionMap = new HashMap<>();
         activeResults = new HashMap<>();
+        flowParameterMap = Collections.emptyMap();
     }
 
     /**
@@ -104,6 +109,29 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     }
     
     /**
+     * Get the {@link AuthenticationFlowDescriptor} representing the MFA flow.
+     * 
+     * @return descriptor
+     */
+    @Nullable public AuthenticationFlowDescriptor getAuthenticationFlowDescriptor() {
+        return mfaFlowDescriptor;
+    }
+
+    /**
+     * Set the {@link AuthenticationFlowDescriptor} representing the MFA flow.
+     * 
+     * @param descriptor login flow descriptor
+     * 
+     * @return this context
+     */
+    @Nonnull public MultiFactorAuthenticationContext setAuthenticationFlowDescriptor(
+            @Nullable final AuthenticationFlowDescriptor descriptor) {
+        mfaFlowDescriptor = descriptor;
+        
+        return this;
+    }
+
+    /**
      * Get the next flow due to execute (or that is currently executing).
      * 
      * @return  the ID of the next flow to execute
@@ -126,26 +154,29 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     }
     
     /**
-     * Get the {@link AuthenticationFlowDescriptor} representing the MFA flow.
+     * Get the mutable map of parameters for passage into flows that may be run.
      * 
-     * @return descriptor
+     * @return mutable parameter map
      */
-    @Nullable public AuthenticationFlowDescriptor getAuthenticationFlowDescriptor() {
-        return mfaFlowDescriptor;
+    @Nonnull @Live Map<String,Object> getFlowParameterMap() {
+        return flowParameterMap;
     }
     
     /**
-     * Set the {@link AuthenticationFlowDescriptor} representing the MFA flow.
+     * Set the map of parameters for passage into flows that may be run.
      * 
-     * @param descriptor login flow descriptor
+     * @param map parameter map
      * 
      * @return this context
      */
-    @Nonnull public MultiFactorAuthenticationContext setAuthenticationFlowDescriptor(
-            @Nullable final AuthenticationFlowDescriptor descriptor) {
-        mfaFlowDescriptor = descriptor;
+    @Nonnull public MultiFactorAuthenticationContext setFlowParameterMap(@Nullable final Map<String,Object> map) {
+        if (map != null) {
+            flowParameterMap = new HashMap<>(map);
+        } else {
+            flowParameterMap = Collections.emptyMap();
+        }
         
         return this;
     }
-    
+
 }
