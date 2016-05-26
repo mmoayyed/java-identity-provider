@@ -39,6 +39,7 @@ import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
@@ -85,8 +86,8 @@ public final class ResolveAttributes extends AbstractProfileAction {
     /** Strategy used to locate or create the {@link AttributeContext} to populate. */
     @Nonnull private Function<ProfileRequestContext,AttributeContext> attributeContextCreationStrategy;
     
-    /** Attribute IDs to pass into resolver. */
-    @Nonnull @NonnullElements private Collection<String> attributesToResolve;
+    /** Strategy used to determine the attributes to resolve. */
+    @Nonnull private Function<ProfileRequestContext,Collection<String>> attributesLookupStrategy;
     
     /** Whether to treat resolver errors as equivalent to resolving no attributes. */
     private boolean maskFailures;
@@ -115,7 +116,8 @@ public final class ResolveAttributes extends AbstractProfileAction {
         attributeContextCreationStrategy = Functions.compose(new ChildContextLookup<>(AttributeContext.class, true),
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
         
-        attributesToResolve = Collections.emptyList();
+        attributesLookupStrategy = FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
+                Collections.<String>emptyList());
         
         maskFailures = true;
     }
@@ -181,6 +183,18 @@ public final class ResolveAttributes extends AbstractProfileAction {
     }
     
     /**
+     * Set a strategy to use to obtain the names of the attributes to resolve.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setAttributesLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Collection<String>> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        attributesLookupStrategy = Constraint.isNotNull(strategy, "Attributes lookup strategy cannot be null");
+    }
+    
+    /**
      * Set the attribute IDs to pass into the resolver.
      * 
      * @param attributeIds  attribute ID collection
@@ -189,7 +203,8 @@ public final class ResolveAttributes extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         Constraint.isNotNull(attributeIds, "Attribute ID collection cannot be null");
-        attributesToResolve = StringSupport.normalizeStringCollection(attributeIds);
+        attributesLookupStrategy = FunctionSupport.<ProfileRequestContext,Collection<String>>constant(
+                StringSupport.normalizeStringCollection(attributeIds));
     }
     
     /**
@@ -279,7 +294,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
         // Populate requested attributes, if not already set.
         if (resolutionContext.getRequestedIdPAttributeNames() == null
                 || resolutionContext.getRequestedIdPAttributeNames().isEmpty()) {
-            resolutionContext.setRequestedIdPAttributeNames(attributesToResolve);
+            resolutionContext.setRequestedIdPAttributeNames(attributesLookupStrategy.apply(profileRequestContext));
         }
         
         if (null != principalNameLookupStrategy) {
