@@ -91,6 +91,9 @@ public final class ResolveAttributes extends AbstractProfileAction {
     
     /** Whether to treat resolver errors as equivalent to resolving no attributes. */
     private boolean maskFailures;
+    
+    /** Whether to create and populate {@link AttributeResolutionContext}. */
+    private boolean createResolutionContext;
 
     /** AuthenticationContext to work from (if any). */
     @Nullable private AuthenticationContext authenticationContext;
@@ -120,6 +123,7 @@ public final class ResolveAttributes extends AbstractProfileAction {
                 Collections.<String>emptyList());
         
         maskFailures = true;
+        createResolutionContext = true;
     }
     
     /**
@@ -219,6 +223,19 @@ public final class ResolveAttributes extends AbstractProfileAction {
         
         maskFailures = flag;
     }
+    
+    /**
+     * Set whether to create the {@link AttributeResolutionContext} internally.
+     * 
+     * <p>Defaults to 'true', disable to allow external creation of the context.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setCreateResolutionContext(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        createResolutionContext = flag;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -243,12 +260,20 @@ public final class ResolveAttributes extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        // Get the resolution context from the profile request
-        // this may already exist but if not, auto-create it
-        final AttributeResolutionContext resolutionContext =
-                profileRequestContext.getSubcontext(AttributeResolutionContext.class, true);
-        
-        populateResolutionContext(profileRequestContext, resolutionContext);
+        final AttributeResolutionContext resolutionContext;
+        if (createResolutionContext) {
+            resolutionContext = profileRequestContext.getSubcontext(AttributeResolutionContext.class, true);
+            populateResolutionContext(profileRequestContext, resolutionContext);
+        } else {
+            resolutionContext = profileRequestContext.getSubcontext(AttributeResolutionContext.class);
+            if (resolutionContext == null) {
+                log.error("{} Unable to locate AttributeResolutionContext", getLogPrefix());
+                if (!maskFailures) {
+                    ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_RESOLVE_ATTRIBS);
+                }
+                return;
+            }
+        }
 
         ServiceableComponent<AttributeResolver> component = null;
         try {
