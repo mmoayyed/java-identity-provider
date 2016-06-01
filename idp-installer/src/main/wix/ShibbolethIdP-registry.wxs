@@ -46,6 +46,7 @@
                         <Permission User="Administrators" GenericAll="yes" />
                         <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>-Didp.home=[JAVA_IDP_HOME]</MultiStringValue>
+                        <MultiStringValue>-Djava.io.tmpdir=[JAVA_IDP_HOME]/jetty-base/tmp</MultiStringValue>
                     </RegistryValue>
                     <RegistryValue Name="JvmMx" Value="[JAVA_JVMMX]" Type="string">
                         <!-- Its an integer, but we added the # -->
@@ -60,7 +61,7 @@
                         <Permission User="Administrators" GenericAll="yes" />
                         <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
-                        <MultiStringValue>jetty.logs=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
+                        <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
                 </RegistryKey>
                 <RegistryKey Key="SOFTWARE\Apache Software Foundation\Procrun 2.0\$(var.ServiceName)\Parameters\Stop" Root="HKLM" ForceCreateOnInstall="yes">
@@ -70,7 +71,7 @@
                         <Permission User="Administrators" GenericAll="yes" />
                         <Permission User="SYSTEM" GenericAll="yes" />
                         <MultiStringValue>jetty.base=[INSTALLDIR]\jetty-base</MultiStringValue>
-                        <MultiStringValue>jetty.logs=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
+                        <MultiStringValue>jetty.logging.dir=[INSTALLDIR]\jetty-base\logs</MultiStringValue>
                     </RegistryValue>
                 </RegistryKey>
                 <Condition>INSTALL_JETTY</Condition>

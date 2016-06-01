@@ -41,7 +41,7 @@
 
     <!-- Logs IdP, but not OpenSAML, messages -->
     <logger name="net.shibboleth.idp" level="${idp.loglevel.idp:-INFO}"/>
-
+    
     <!-- Logs OpenSAML, but not IdP, messages -->
     <logger name="org.opensaml.saml" level="${idp.loglevel.opensaml:-INFO}"/>
     
@@ -104,7 +104,7 @@
         
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <charset>UTF-8</charset>
-            <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{short}</Pattern>
+            <Pattern>%date{ISO8601} - %level [%logger:%line] - %msg%n%ex{29}</Pattern>
         </encoder>
     </appender>
     

@@ -15,7 +15,7 @@
 
     <!-- Release some attributes to an SP. -->
     <AttributeFilterPolicy id="example1">
-        <PolicyRequirementRule xsi:type="Requester" value="https://sp.example.org" />
+        <PolicyRequirementRule xsi:type="EntityAttributeExactMatch" attributeName="http://macedir.org/entity-category" attributeValue="http://refeds.org/category/research-and-scholarship"/>
 
         <AttributeRule attributeID="eduPersonPrincipalName">
             <PermitValueRule xsi:type="ANY" />
