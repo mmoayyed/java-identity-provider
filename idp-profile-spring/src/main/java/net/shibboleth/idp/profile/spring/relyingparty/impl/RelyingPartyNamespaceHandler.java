@@ -19,41 +19,15 @@ package net.shibboleth.idp.profile.spring.relyingparty.impl;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML1ArtifactResolutionProfileParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML1AttributeQueryProfileParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML2ArtifactResolutionProfileParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML2AttributeQueryProfileParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML2BrowserSSOProfileParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML2ECPProfileParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML2LogoutRequestProfileParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.SAML2SSOSProfileParser;
-import net.shibboleth.idp.profile.spring.relyingparty.saml.impl.ShibbolethSSOProfileParser;
 
-// TODO incomplete
-/** Namespace handler for the relying party files. */
+/** Namespace handler for the relying party files. Only the elements need to be handled.
+    All the types belong in the SAML namespace. */
 public class RelyingPartyNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** {@inheritDoc} */
     @Override public void init() {
         // Relying party Configuration
-        registerBeanDefinitionParser(SAML2ArtifactResolutionProfileParser.ELEMENT_NAME,
-                new SAML2ArtifactResolutionProfileParser());
-        registerBeanDefinitionParser(SAML2LogoutRequestProfileParser.ELEMENT_NAME,
-                new SAML2LogoutRequestProfileParser());
-        registerBeanDefinitionParser(SAML2AttributeQueryProfileParser.ELEMENT_NAME,
-                new SAML2AttributeQueryProfileParser());
-        registerBeanDefinitionParser(SAML2BrowserSSOProfileParser.ELEMENT_NAME, new SAML2BrowserSSOProfileParser());
-        registerBeanDefinitionParser(SAML2ECPProfileParser.ELEMENT_NAME, new SAML2ECPProfileParser());
-        registerBeanDefinitionParser(SAML2SSOSProfileParser.ELEMENT_NAME, new SAML2SSOSProfileParser());
-
-        registerBeanDefinitionParser(SAML1ArtifactResolutionProfileParser.ELEMENT_NAME,
-                new SAML1ArtifactResolutionProfileParser());
-        registerBeanDefinitionParser(SAML1AttributeQueryProfileParser.ELEMENT_NAME,
-                new SAML1AttributeQueryProfileParser());
-        registerBeanDefinitionParser(SAML1AttributeQueryProfileParser.ELEMENT_NAME,
-                new SAML1AttributeQueryProfileParser());
-        registerBeanDefinitionParser(ShibbolethSSOProfileParser.ELEMENT_NAME, new ShibbolethSSOProfileParser());
-
+        // Firstly the types that go inside the Profile
         registerBeanDefinitionParser(RelyingPartyParser.ELEMENT_NAME, new RelyingPartyParser());
         registerBeanDefinitionParser(DefaultRelyingPartyParser.ELEMENT_NAME, new DefaultRelyingPartyParser());
         registerBeanDefinitionParser(AnonymousRelyingPartyParser.ELEMENT_NAME, new AnonymousRelyingPartyParser());

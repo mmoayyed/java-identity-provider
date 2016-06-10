@@ -22,6 +22,7 @@ import java.util.HashSet;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -29,7 +30,6 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.messaging.context.MessageChannelSecurityContext;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -42,7 +42,7 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
 
     private static final String PATH = "/net/shibboleth/idp/profile/spring/relyingparty/";
 
-    protected <T extends AbstractSAMLProfileConfiguration> T getBean(Class<T> claz, String... files) {
+    protected <T extends AbstractSAMLProfileConfiguration> T getBean(final Class<T> claz, final String... files) {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -51,18 +51,24 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
 
         final GenericApplicationContext context = new GenericApplicationContext();
         try {
-            ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+            final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
             context.setDisplayName("ApplicationContext: " + claz);
             service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
             service.afterPropertiesSet();
     
             context.getBeanFactory().setConversionService(service.getObject());
+            
+            
+            final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+                    new SchemaTypeAwareXMLBeanDefinitionReader(context);
+
+         
+            
+            
     
-            final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
-    
-            configReader.setValidating(true);
-    
-            configReader.loadBeanDefinitions(resources);
+            beanDefinitionReader.setValidating(true);
+            beanDefinitionReader.loadBeanDefinitions(resources);
+            
             context.refresh();
     
             return context.getBean(claz);
@@ -71,15 +77,15 @@ public class BaseSAMLProfileTest extends OpenSAMLInitBaseTestCase {
         }
     }
 
-    protected static void assertTruePredicate(Predicate<ProfileRequestContext> predicate) {
+    protected static void assertTruePredicate(final Predicate<ProfileRequestContext> predicate) {
         Assert.assertTrue(predicate.apply(null));
     }
 
-    protected static void assertFalsePredicate(Predicate<ProfileRequestContext> predicate) {
+    protected static void assertFalsePredicate(final Predicate<ProfileRequestContext> predicate) {
         Assert.assertFalse(predicate.apply(null));
     }
 
-    protected static void assertConditionalPredicate(Predicate<ProfileRequestContext> predicate) {
+    protected static void assertConditionalPredicate(final Predicate<ProfileRequestContext> predicate) {
         try {
             final ProfileRequestContext prc = new RequestContextBuilder().buildProfileRequestContext();
             final MessageChannelSecurityContext mc = prc.getSubcontext(MessageChannelSecurityContext.class, true);

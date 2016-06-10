@@ -45,7 +45,7 @@ import org.w3c.dom.Node;
 public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE, "SAML2SSOProfile");
+    public static final QName TYPE_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE, "SAML2SSOProfile");
 
     /** logger. */
     private Logger log = LoggerFactory.getLogger(SAML2BrowserSSOProfileParser.class);

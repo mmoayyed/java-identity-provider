@@ -33,6 +33,8 @@
 			includeAttributeStatement="false" assertionLifetime="PT5M"
 			signResponses="conditional" signAssertions="never"
 			includeConditionsNotBefore="true" />
+            
+        <rp:ProfileConfiguration     xsi:type="saml:SAML2SSOSProfile" /> 
 
 		<rp:ProfileConfiguration xsi:type="saml:SAML1AttributeQueryProfile"
 			assertionLifetime="PT5M" signResponses="conditional" signAssertions="never"

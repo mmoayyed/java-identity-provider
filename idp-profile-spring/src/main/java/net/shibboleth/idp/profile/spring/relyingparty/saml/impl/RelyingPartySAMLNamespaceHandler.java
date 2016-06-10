@@ -20,8 +20,8 @@ package net.shibboleth.idp.profile.spring.relyingparty.saml.impl;
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 
 /**
- * Namespace handler for the Relying Party SAML configuration. Perfoms no function since we do not parse these children
- * in this way, but serves as an anchor and site for future extension.
+ * Namespace handler for the Relying Party SAML configuration. Just Types (since the Elements are
+ * handled by the repective parsers).
  */
 public class RelyingPartySAMLNamespaceHandler extends BaseSpringNamespaceHandler {
 
@@ -30,22 +30,23 @@ public class RelyingPartySAMLNamespaceHandler extends BaseSpringNamespaceHandler
 
     /** {@inheritDoc} */
     @Override public void init() {
-        registerBeanDefinitionParser(SAML2ArtifactResolutionProfileParser.ELEMENT_NAME,
+        // SAML2
+        registerBeanDefinitionParser(SAML2ArtifactResolutionProfileParser.TYPE_NAME,
                 new SAML2ArtifactResolutionProfileParser());
-        registerBeanDefinitionParser(SAML2LogoutRequestProfileParser.ELEMENT_NAME,
+        registerBeanDefinitionParser(SAML2LogoutRequestProfileParser.TYPE_NAME,
                 new SAML2LogoutRequestProfileParser());
-        registerBeanDefinitionParser(SAML2AttributeQueryProfileParser.ELEMENT_NAME,
+        registerBeanDefinitionParser(SAML2AttributeQueryProfileParser.TYPE_NAME,
                 new SAML2AttributeQueryProfileParser());
-        registerBeanDefinitionParser(SAML2BrowserSSOProfileParser.ELEMENT_NAME, new SAML2BrowserSSOProfileParser());
-        registerBeanDefinitionParser(SAML2ECPProfileParser.ELEMENT_NAME, new SAML2ECPProfileParser());
-
-        registerBeanDefinitionParser(SAML1ArtifactResolutionProfileParser.ELEMENT_NAME,
+        registerBeanDefinitionParser(SAML2BrowserSSOProfileParser.TYPE_NAME, new SAML2BrowserSSOProfileParser());
+        registerBeanDefinitionParser(SAML2ECPProfileParser.TYPE_NAME, new SAML2ECPProfileParser());
+        registerBeanDefinitionParser(SAML2SSOSProfileParser.TYPE_NAME, new SAML2SSOSProfileParser());
+        // SAML1
+        registerBeanDefinitionParser(SAML1ArtifactResolutionProfileParser.TYPE_NAME,
                 new SAML1ArtifactResolutionProfileParser());
-        registerBeanDefinitionParser(SAML1AttributeQueryProfileParser.ELEMENT_NAME,
+        registerBeanDefinitionParser(SAML1AttributeQueryProfileParser.TYPE_NAME,
                 new SAML1AttributeQueryProfileParser());
-        registerBeanDefinitionParser(SAML1AttributeQueryProfileParser.ELEMENT_NAME,
-                new SAML1AttributeQueryProfileParser());
-        registerBeanDefinitionParser(ShibbolethSSOProfileParser.ELEMENT_NAME, new ShibbolethSSOProfileParser());
+        // Propietary
+        registerBeanDefinitionParser(ShibbolethSSOProfileParser.TYPE_NAME, new ShibbolethSSOProfileParser());
 
     }
 }

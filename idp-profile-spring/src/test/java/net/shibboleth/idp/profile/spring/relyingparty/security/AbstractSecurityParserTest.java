@@ -24,6 +24,7 @@ import java.util.HashSet;
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
@@ -59,7 +60,7 @@ public class AbstractSecurityParserTest {
         pendingTeardownContext = null;
     }
     
-    protected void setTestContext(GenericApplicationContext context) {
+    protected void setTestContext(final GenericApplicationContext context) {
         tearDownTestContext();
         pendingTeardownContext = context;
     }
@@ -76,11 +77,11 @@ public class AbstractSecurityParserTest {
      * @param context the context
      * @throws IOException 
      */
-    protected void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
-        PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+    protected void setDirectoryPlaceholder(final GenericApplicationContext context) throws IOException {
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
         
-        MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
-        MockPropertySource mockEnvVars = new MockPropertySource();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
         mockEnvVars.setProperty("DIR", workspaceDirName);
         
         propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
@@ -89,7 +90,7 @@ public class AbstractSecurityParserTest {
         context.addBeanFactoryPostProcessor(placeholderConfig);
     }
     
-    protected <T> T getBean(Class<T> claz,  boolean validating, String... files) throws IOException{
+    protected <T> T getBean(final Class<T> claz,  final boolean validating, final String... files) throws IOException{
         final Resource[] resources = new Resource[files.length];
        
         for (int i = 0; i < files.length; i++) {
@@ -100,14 +101,14 @@ public class AbstractSecurityParserTest {
         setTestContext(context);
         setDirectoryPlaceholder(context);
         
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + claz);
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
 
-        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
 
         configReader.setValidating(true);

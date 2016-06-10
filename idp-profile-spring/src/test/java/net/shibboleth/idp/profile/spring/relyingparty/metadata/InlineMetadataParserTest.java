@@ -26,6 +26,7 @@ import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.service.ReloadableSpringService;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
@@ -43,7 +44,7 @@ import org.testng.annotations.Test;
 public class InlineMetadataParserTest extends AbstractMetadataParserTest {
 
     @Test public void entity() throws ResolverException, IOException {
-        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntity.xml");
+        final DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntity.xml");
 
         Assert.assertEquals(resolver.getId(), "inLineEntity");
 
@@ -57,7 +58,7 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
     }
 
     @Test public void entities() throws ResolverException, IOException {
-        DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntities.xml");
+        final DOMMetadataResolver resolver = getBean(DOMMetadataResolver.class, "inLineEntities.xml");
 
         Assert.assertEquals(resolver.getId(), "inLineEntities");
 
@@ -74,18 +75,18 @@ public class InlineMetadataParserTest extends AbstractMetadataParserTest {
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         registerContext(context);
         
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: ");
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
 
-        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         configReader.setValidating(true);
 
-        Resource r =
+        final Resource r =
                 new ClassPathResource("/net/shibboleth/idp/profile/spring/relyingparty/metadata/multipleResolvers.xml");
 
         configReader.loadBeanDefinitions(r);

@@ -24,6 +24,7 @@ import java.nio.file.Path;
 
 import net.shibboleth.ext.spring.resource.HTTPResource;
 import net.shibboleth.ext.spring.resource.ResourceTestHelper;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
@@ -44,12 +45,12 @@ public class HTTPResourceConfigurationTests {
     private GenericApplicationContext globalContext = null;
     
     @BeforeSuite public void setup() throws IOException {
-        Path p = Files.createTempDirectory("HTTPResourceTest");
+        final Path p = Files.createTempDirectory("HTTPResourceTest");
         theDir = p.toFile();
         
         globalContext = new GenericApplicationContext();
         final XmlBeanDefinitionReader globalContextDefinitionReader =
-                new XmlBeanDefinitionReader(globalContext);
+                new SchemaTypeAwareXMLBeanDefinitionReader(globalContext);
         
         globalContextDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
         globalContextDefinitionReader.loadBeanDefinitions(new ClassPathResource("net/shibboleth/idp/profile/spring/relyingparty/metadata/parent.xml"));
@@ -59,7 +60,7 @@ public class HTTPResourceConfigurationTests {
         theContext.getBeanFactory().registerSingleton("theDir", theDir);
 
         final XmlBeanDefinitionReader beanDefinitionReader =
-                new XmlBeanDefinitionReader(theContext);
+                new SchemaTypeAwareXMLBeanDefinitionReader(theContext);
         
         beanDefinitionReader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_XSD);
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource("net/shibboleth/idp/profile/spring/relyingparty/metadata/HTTPResources.xml"));
@@ -78,8 +79,8 @@ public class HTTPResourceConfigurationTests {
         }
     }
     
-    private void emptyDir(File dir) {
-        for (File f : dir.listFiles()) {
+    private void emptyDir(final File dir) {
+        for (final File f : dir.listFiles()) {
             if (f.isDirectory()) {
                 emptyDir(f);
             }
@@ -88,12 +89,12 @@ public class HTTPResourceConfigurationTests {
     }
 
     
-    private Resource getResource(String beanName) {
+    private Resource getResource(final String beanName) {
         
         return theContext.getBean(beanName, HTTPResource.class);
     }
 
-    private void testResource(Resource r) throws IOException {
+    private void testResource(final Resource r) throws IOException {
         ResourceTestHelper.compare(r, new ClassPathResource("net/shibboleth/idp/profile/spring/relyingparty/metadata/document.xml"));
     }
     

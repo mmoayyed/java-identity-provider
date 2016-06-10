@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
 public class SAML2ECPProfileParser extends SAML2BrowserSSOProfileParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
+    public static final QName TYPE_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
             "SAML2ECPProfile");
 
     /** Constructor. */

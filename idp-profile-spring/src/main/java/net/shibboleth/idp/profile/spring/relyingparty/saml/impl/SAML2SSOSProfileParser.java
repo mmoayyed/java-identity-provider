@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 public class SAML2SSOSProfileParser extends SAML2BrowserSSOProfileParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE, "SAML2SSOSProfile");
+    public static final QName TYPE_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE, "SAML2SSOSProfile");
 
     /** Constructor. */
     public SAML2SSOSProfileParser() {

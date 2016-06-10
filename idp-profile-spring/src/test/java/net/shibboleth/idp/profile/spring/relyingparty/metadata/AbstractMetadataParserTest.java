@@ -30,13 +30,13 @@ import java.util.List;
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.criterion.EntityIdCriterion;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -81,8 +81,8 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         contexts = new ArrayList<>();
     }
 
-    private void emptyDir(File dir) {
-        for (File f : dir.listFiles()) {
+    private void emptyDir(final File dir) {
+        for (final File f : dir.listFiles()) {
             if (f.isDirectory()) {
                 emptyDir(f);
             }
@@ -90,7 +90,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         }
     }
     
-    protected void registerContext(GenericApplicationContext context) {
+    protected void registerContext(final GenericApplicationContext context) {
         synchronized(contexts) {
             contexts.add(context);
         }        
@@ -120,13 +120,13 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
      * @param context the context
      * @throws IOException
      */
-    protected void setDirectoryPlaceholder(GenericApplicationContext context) throws IOException {
-        PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+    protected void setDirectoryPlaceholder(final GenericApplicationContext context) throws IOException {
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
         placeholderConfig.setPlaceholderPrefix("%{");
         placeholderConfig.setPlaceholderSuffix("}");
 
-        MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
-        MockPropertySource mockEnvVars = new MockPropertySource();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final MockPropertySource mockEnvVars = new MockPropertySource();
         mockEnvVars.setProperty("DIR", workspaceDirName);
         mockEnvVars.setProperty("TMPDIR", tempDirName);
 
@@ -137,7 +137,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
     }
     
-    protected ApplicationContext getApplicationContext(String contextName, String... files) throws IOException {
+    protected ApplicationContext getApplicationContext(final String contextName, final String... files) throws IOException {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -149,14 +149,14 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         
         setDirectoryPlaceholder(context);
 
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + contextName);
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
 
-        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final SchemaTypeAwareXMLBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         configReader.setValidating(true);
 
@@ -166,8 +166,8 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         return context;
     }
 
-    protected <T> T getBean(Class<T> claz, String... files) throws IOException {
-        ApplicationContext context = getApplicationContext(claz.getCanonicalName(), files);
+    protected <T> T getBean(final Class<T> claz, final String... files) throws IOException {
+        final ApplicationContext context = getApplicationContext(claz.getCanonicalName(), files);
 
         if (context.containsBean("shibboleth.ParserPool")) {
             parserPool = context.getBean("shibboleth.ParserPool");
@@ -175,18 +175,18 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
             parserPool = null;
         }
 
-        T result = SpringSupport.getBean(context, claz);
+        final T result = SpringSupport.getBean(context, claz);
         if (result != null) {
             return result;
         }
 
-        RelyingPartyMetadataProvider rpProvider = context.getBean(RelyingPartyMetadataProvider.class);
+        final RelyingPartyMetadataProvider rpProvider = context.getBean(RelyingPartyMetadataProvider.class);
 
         return claz.cast(rpProvider.getEmbeddedResolver());
     }
 
-    static public CriteriaSet criteriaFor(String entityId) {
-        EntityIdCriterion criterion = new EntityIdCriterion(entityId);
+    static public CriteriaSet criteriaFor(final String entityId) {
+        final EntityIdCriterion criterion = new EntityIdCriterion(entityId);
         return new CriteriaSet(criterion);
     }
 

@@ -45,7 +45,7 @@ import org.w3c.dom.Node;
 public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
+    public static final QName TYPE_NAME = new QName(RelyingPartySAMLNamespaceHandler.NAMESPACE,
             "ShibbolethSSOProfile");
 
     /** logger. */

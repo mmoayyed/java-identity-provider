@@ -30,6 +30,7 @@ import java.util.Properties;
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
@@ -49,7 +50,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.security.trust.impl.ChainingTrustEngine;
 import org.opensaml.xmlsec.signature.support.impl.ChainingSignatureTrustEngine;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -82,7 +82,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         pendingTeardownContext = null;
     }
     
-    protected void setTestContext(GenericApplicationContext context) {
+    protected void setTestContext(final GenericApplicationContext context) {
         tearDownTestContext();
         pendingTeardownContext = context;
     }
@@ -92,7 +92,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
         workspaceDirName = resource.getFile().getAbsolutePath();
     }
 
-    private GenericApplicationContext getContext(String... files) throws FileNotFoundException, IOException {
+    private GenericApplicationContext getContext(final String... files) throws FileNotFoundException, IOException {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -101,20 +101,20 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
 
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         setTestContext(context);
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext");
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
 
-        PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
+        final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
 
-        MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
-        Properties fileProps = new Properties();
+        final MutablePropertySources propertySources = context.getEnvironment().getPropertySources();
+        final Properties fileProps = new Properties();
         fileProps.load(new FileInputStream(new File(workspaceDirName + "/file.properties")));
 
-        MockPropertySource mockEnvVars = new MockPropertySource(fileProps);
+        final MockPropertySource mockEnvVars = new MockPropertySource(fileProps);
 
         mockEnvVars.setProperty("DIR", workspaceDirName);
         propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
@@ -122,7 +122,8 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
 
         context.addBeanFactoryPostProcessor(placeholderConfig);
 
-        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final SchemaTypeAwareXMLBeanDefinitionReader configReader =
+                new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         configReader.setValidating(true);
 
@@ -133,21 +134,21 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test(enabled = true) public void relyingPartyConfig() throws ResolverException, FileNotFoundException, IOException {
-        GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
+        final GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
 
-        DefaultRelyingPartyConfigurationResolver resolver =
+        final DefaultRelyingPartyConfigurationResolver resolver =
                 context.getBean(DefaultRelyingPartyConfigurationResolver.class);
         Assert.assertTrue(resolver.getRelyingPartyConfigurations().isEmpty());
 
-        RelyingPartyConfiguration anon = resolver.getUnverifiedConfiguration();
+        final RelyingPartyConfiguration anon = resolver.getUnverifiedConfiguration();
         Assert.assertFalse(anon.getDetailedErrorsPredicate().apply(null));
         Assert.assertTrue(anon.getProfileConfigurations().isEmpty());
 
-        RelyingPartyConfiguration def = resolver.getDefaultConfiguration();
-        Assert.assertEquals(def.getProfileConfigurations().size(), 8);
+        final RelyingPartyConfiguration def = resolver.getDefaultConfiguration();
+        Assert.assertEquals(def.getProfileConfigurations().size(), 9);
 
-        ProfileRequestContext ctx = new ProfileRequestContext<>();
-        RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
+        final ProfileRequestContext ctx = new ProfileRequestContext<>();
+        final RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
         rpCtx.setRelyingPartyId("https://idp.example.org");
         final HashSet<RelyingPartyConfiguration> set = new HashSet<>();
         for (final RelyingPartyConfiguration rpc : resolver.resolve(ctx)) {
@@ -159,12 +160,12 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test(enabled = true) public void metadataConfig() throws ResolverException, FileNotFoundException, IOException {
-        GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
+        final GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
         final Collection<RelyingPartyMetadataProvider> metadataProviders =
                 context.getBeansOfType(RelyingPartyMetadataProvider.class).values();
 
         Assert.assertEquals(metadataProviders.size(), 1);
-        RelyingPartyMetadataProvider provider = metadataProviders.iterator().next();
+        final RelyingPartyMetadataProvider provider = metadataProviders.iterator().next();
 
         Assert.assertNotNull(provider.resolveSingle(AbstractMetadataParserTest.criteriaFor("http://sp.example.org/")));
 
@@ -172,11 +173,11 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
 
     @Test(enabled = true) public void relyingPartyService() throws ResolverException, FileNotFoundException,
             IOException {
-        GenericApplicationContext context = getContext("beans.xml", "services.xml");
+        final GenericApplicationContext context = getContext("beans.xml", "services.xml");
 
-        RelyingPartyConfigurationResolver resolver = context.getBean(RelyingPartyConfigurationResolver.class);
-        ProfileRequestContext ctx = new ProfileRequestContext<>();
-        RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
+        final RelyingPartyConfigurationResolver resolver = context.getBean(RelyingPartyConfigurationResolver.class);
+        final ProfileRequestContext ctx = new ProfileRequestContext<>();
+        final RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
         rpCtx.setRelyingPartyId("https://idp.example.org");
         final HashSet<RelyingPartyConfiguration> set = new HashSet<>();
         for (final RelyingPartyConfiguration rpc : resolver.resolve(ctx)) {
@@ -188,7 +189,7 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test(enabled = true) public void metadataService() throws ResolverException, FileNotFoundException, IOException {
-        GenericApplicationContext context = getContext("beans.xml", "services.xml");
+        final GenericApplicationContext context = getContext("beans.xml", "services.xml");
         final Collection<MetadataResolver> resolvers = context.getBeansOfType(MetadataResolver.class).values();
 
         Assert.assertEquals(resolvers.size(), 1);
@@ -199,8 +200,8 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void relyingParty2() throws FileNotFoundException, IOException {
-        GenericApplicationContext context = getContext("relying-party-group2.xml", "beans.xml");
-        DefaultRelyingPartyConfigurationResolver resolver =
+        final GenericApplicationContext context = getContext("relying-party-group2.xml", "beans.xml");
+        final DefaultRelyingPartyConfigurationResolver resolver =
                 context.getBean(DefaultRelyingPartyConfigurationResolver.class);
 
         Assert.assertEquals(resolver.getId(), "RelyingPartyGroup[relying-party-group2.xml]");
@@ -226,9 +227,9 @@ public class RelyingPartyGroupTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void defaults() throws ResolverException, FileNotFoundException, IOException {
-        GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
+        final GenericApplicationContext context = getContext("beans.xml", "relying-party-group.xml");
 
-        DefaultRelyingPartyConfigurationResolver resolver =
+        final DefaultRelyingPartyConfigurationResolver resolver =
                 context.getBean(DefaultRelyingPartyConfigurationResolver.class);
 
         final SecurityConfiguration config = resolver.getDefaultSecurityConfiguration(null);

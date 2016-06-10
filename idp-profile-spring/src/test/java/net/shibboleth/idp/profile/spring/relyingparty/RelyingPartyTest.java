@@ -22,12 +22,12 @@ import java.util.HashSet;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -50,28 +50,28 @@ public class RelyingPartyTest extends OpenSAMLInitBaseTestCase {
 
         final GenericApplicationContext context = new GenericApplicationContext();
         try{
-            ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+            final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
             context.setDisplayName("ApplicationContext: ");
             service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
             service.afterPropertiesSet();
     
             context.getBeanFactory().setConversionService(service.getObject());
     
-            final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+            final SchemaTypeAwareXMLBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
     
             configReader.setValidating(true);
     
             configReader.loadBeanDefinitions(resources);
             context.refresh();
     
-            RelyingPartyConfiguration rpConf = context.getBean(RelyingPartyConfiguration.class);
+            final RelyingPartyConfiguration rpConf = context.getBean(RelyingPartyConfiguration.class);
     
             Assert.assertEquals(rpConf.getId(), "the_RP");
             Assert.assertTrue(rpConf.getDetailedErrorsPredicate().apply(null));
             Assert.assertEquals(rpConf.getProfileConfigurations().size(), 1);
     
-            ProfileRequestContext ctx = new ProfileRequestContext<>();
-            RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
+            final ProfileRequestContext ctx = new ProfileRequestContext<>();
+            final RelyingPartyContext rpCtx = ctx.getSubcontext(RelyingPartyContext.class, true);
             rpCtx.setRelyingPartyId("the_RP");
             
             Assert.assertTrue(rpConf.apply(ctx));
