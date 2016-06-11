@@ -35,11 +35,11 @@ import org.w3c.dom.Element;
 public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatcherParser {
 
     /** Schema type. */
-    public static final QName MAPPED_ATTRIBUTE_IN_METADATA = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
+    public static final QName SCHEMA_TYPE = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "MappedAttributeInMetadata");
 
     /** Schema type. */
-    public static final QName MAPPED_ATTRIBUTE_IN_METADATA_AFP = new QName(BaseFilterParser.NAMESPACE,
+    public static final QName SCHEMA_TYPE_AFP = new QName(BaseFilterParser.NAMESPACE,
             "MappedAttributeInMetadata");
 
     /** {@inheritDoc} */
@@ -49,7 +49,7 @@ public class MappedAttributeInMetadataRuleParser extends BaseAttributeValueMatch
 
     /** {@inheritDoc} */
     @Override protected QName getAFPName() {
-        return MAPPED_ATTRIBUTE_IN_METADATA_AFP;
+        return SCHEMA_TYPE_AFP;
     }
 
     /** {@inheritDoc} */

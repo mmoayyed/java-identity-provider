@@ -163,7 +163,7 @@ public class RDBMSDataConnectorParserTest {
 
         context.getBeanFactory().setConversionService(service.getObject());
 
-        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
         

@@ -54,6 +54,7 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
     @Override
     public void init() {
         BeanDefinitionParser parser = new AttributeFilterPolicyGroupParser();
+        
         registerBeanDefinitionParser(BaseFilterParser.AFP_ELEMENT_NAME, parser);
         registerBeanDefinitionParser(AttributeFilterPolicyGroupParser.TYPE_NAME, parser);
 
@@ -123,10 +124,10 @@ public class AttributeFilterNamespaceHandler extends BaseSpringNamespaceHandler 
         registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE_AFP,
                 new AttributeRequesterInEntityGroupRuleParser());
 
-        registerBeanDefinitionParser(AttributeInMetadataRuleParser.ATTRIBUTE_IN_METADATA_AFP,
+        registerBeanDefinitionParser(AttributeInMetadataRuleParser.SCHEMA_TYPE_AFP,
                 new AttributeInMetadataRuleParser());
 
-        registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.MAPPED_ATTRIBUTE_IN_METADATA_AFP,
+        registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.SCHEMA_TYPE_AFP,
                 new MappedAttributeInMetadataRuleParser());
 
         registerBeanDefinitionParser(RegistrationAuthorityRuleParser.SCHEMA_TYPE_AFP,

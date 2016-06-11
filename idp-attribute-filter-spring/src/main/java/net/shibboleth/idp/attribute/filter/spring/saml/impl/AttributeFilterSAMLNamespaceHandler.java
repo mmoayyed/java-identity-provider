@@ -60,10 +60,10 @@ public class AttributeFilterSAMLNamespaceHandler extends BaseSpringNamespaceHand
         registerBeanDefinitionParser(AttributeRequesterInEntityGroupRuleParser.SCHEMA_TYPE_V2,
                 new AttributeRequesterInEntityGroupRuleParser());
 
-        registerBeanDefinitionParser(AttributeInMetadataRuleParser.ATTRIBUTE_IN_METADATA,
+        registerBeanDefinitionParser(AttributeInMetadataRuleParser.SCHEMA_TYPE,
                 new AttributeInMetadataRuleParser());
 
-        registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.MAPPED_ATTRIBUTE_IN_METADATA,
+        registerBeanDefinitionParser(MappedAttributeInMetadataRuleParser.SCHEMA_TYPE,
                 new MappedAttributeInMetadataRuleParser());
 
         registerBeanDefinitionParser(RegistrationAuthorityRuleParser.SCHEMA_TYPE,

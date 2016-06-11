@@ -252,6 +252,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * @param parserContext bean definition parsing context
          * @return connection config bean definition
          */
+        // CheckStyle: CyclomaticComplexity OFF
         @Nonnull public BeanDefinition createConnectionConfig(@Nonnull final ParserContext parserContext) {
             final String url = AttributeSupport.getAttributeValue(configElement, new QName("ldapURL"));
             final String useStartTLS = AttributeSupport.getAttributeValue(configElement, new QName("useStartTLS"));
@@ -315,6 +316,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
             return connectionConfig.getBeanDefinition();
         }
+        // CheckStyle: CyclomaticComplexity ON
 
         /**
          * Read StartTLS trust and authentication credentials.

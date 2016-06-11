@@ -73,13 +73,13 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         pendingTeardownContext = null;
     }
     
-    protected void setTestContext(GenericApplicationContext context) {
+    protected void setTestContext(final GenericApplicationContext context) {
         tearDownTestContext();
         pendingTeardownContext = context;
     }
 
-    private void loadFile(String fileName, GenericApplicationContext context, boolean supressValid) {
-        SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
+    private void loadFile(final String fileName, final GenericApplicationContext context, final boolean supressValid) {
+        final SchemaTypeAwareXMLBeanDefinitionReader beanDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         if (supressValid) {
@@ -88,14 +88,14 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         beanDefinitionReader.loadBeanDefinitions(fileName, BEAN_FILE_PATH + "customBean.xml");
     }
 
-    protected void loadFile(String fileName, GenericApplicationContext context) {
+    protected void loadFile(final String fileName, final GenericApplicationContext context) {
         loadFile(fileName, context, false);
     }
 
-    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context,
-            boolean supressValid) {
+    protected <Type> Type getBean(final String fileName, final Class<Type> claz, final GenericApplicationContext context,
+            final boolean supressValid) {
 
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
                 new StringToResourceConverter())));
         service.afterPropertiesSet();
@@ -106,43 +106,43 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
         context.refresh();
 
-        Collection<Type> beans = context.getBeansOfType(claz).values();
+        final Collection<Type> beans = context.getBeansOfType(claz).values();
         Assert.assertEquals(beans.size(), 1);
 
         return beans.iterator().next();
     }
 
-    protected <Type> Type getBean(String fileName, Class<Type> claz, GenericApplicationContext context) {
+    protected <Type> Type getBean(final String fileName, final Class<Type> claz, final GenericApplicationContext context) {
         return getBean(fileName, claz, context, false);
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
-            GenericApplicationContext context) {
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
+            final GenericApplicationContext context) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context);
     }
 
-    private <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
-            GenericApplicationContext context, boolean supressValidation) {
+    private <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
+            final GenericApplicationContext context, final boolean supressValidation) {
 
         return getBean(ATTRIBUTE_FILE_PATH + fileName, claz, context, supressValidation);
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
-            Class<Type> claz) {
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final String beanFileName,
+            final Class<Type> claz) {
         return getAttributeDefn(fileName, beanFileName, claz, false);
 
     }
 
-    private <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, String beanFileName,
-            Class<Type> claz, boolean supressValidation) {
+    private <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final String beanFileName,
+            final Class<Type> claz, final boolean supressValidation) {
 
-        GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
-        ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
+        final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter(),
                 new StringToResourceConverter())));
         service.afterPropertiesSet();
@@ -154,31 +154,31 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getAttributeDefn(fileName, claz, context, supressValidation);
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz) {
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz) {
         return getAttributeDefn(fileName, claz, false);
 
     }
 
-    protected <Type extends AttributeDefinition> Type getAttributeDefn(String fileName, Class<Type> claz,
-            boolean supressValid) {
+    protected <Type extends AttributeDefinition> Type getAttributeDefn(final String fileName, final Class<Type> claz,
+            final boolean supressValid) {
 
-        GenericApplicationContext context = new FilesystemGenericApplicationContext();
+        final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
 
         return getAttributeDefn(fileName, claz, context, supressValid);
     }
 
-    protected <Type extends DataConnector> Type getDataConnector(String fileName, Class<Type> claz) {
+    protected <Type extends DataConnector> Type getDataConnector(final String fileName, final Class<Type> claz) {
         return getDataConnector(fileName, claz, false);
     }
     
     
 
     private <Type extends DataConnector> Type
-            getDataConnector(String fileName, Class<Type> claz, boolean supressValid) {
+            getDataConnector(final String fileName, final Class<Type> claz, final boolean supressValid) {
 
-        GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new GenericApplicationContext();
         context.getBeanFactory().addBeanPostProcessor(new IdentifiableBeanPostProcessor());
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
@@ -186,9 +186,9 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
         return getBean(DATACONNECTOR_FILE_PATH + fileName, claz, context, supressValid);
     }
 
-    protected <Type extends AttributeEncoder> Type getAttributeEncoder(String fileName, Class<Type> claz) {
+    protected <Type extends AttributeEncoder> Type getAttributeEncoder(final String fileName, final Class<Type> claz) {
 
-        GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + claz);
 
@@ -196,40 +196,40 @@ public abstract class BaseAttributeDefinitionParserTest extends OpenSAMLInitBase
 
     }
 
-    protected <Type extends AttributeEncoder> Type getAttributeEncoder(String fileName, Class<Type> claz,
-            GenericApplicationContext context) {
+    protected <Type extends AttributeEncoder> Type getAttributeEncoder(final String fileName, final Class<Type> claz,
+            final GenericApplicationContext context) {
 
         return getBean(ENCODER_FILE_PATH + fileName, claz, context);
 
     }
 
-    protected PrincipalConnector getPrincipalConnector(String fileName) {
+    protected PrincipalConnector getPrincipalConnector(final String fileName) {
 
-        GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
 
         return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
     }
 
-    protected PrincipalConnector getPrincipalConnector(String fileName, String beanFileName) {
+    protected PrincipalConnector getPrincipalConnector(final String fileName, final String beanFileName) {
 
-        GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + PrincipalConnector.class);
-        XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions(BEAN_FILE_PATH + beanFileName);
 
         return getBean(PRINCIPALCONNECTOR_FILE_PATH + fileName, PrincipalConnector.class, context);
     }
 
-    static public AttributeResolverImpl getResolver(ApplicationContext appCtx) {
-        AttributeResolverServiceStrategy strategy = new AttributeResolverServiceStrategy();
+    static public AttributeResolverImpl getResolver(final ApplicationContext appCtx) {
+        final AttributeResolverServiceStrategy strategy = new AttributeResolverServiceStrategy();
         strategy.setId("testResolver");
         try {
             strategy.initialize();
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             return null;
         }
         return (AttributeResolverImpl) strategy.apply(appCtx);

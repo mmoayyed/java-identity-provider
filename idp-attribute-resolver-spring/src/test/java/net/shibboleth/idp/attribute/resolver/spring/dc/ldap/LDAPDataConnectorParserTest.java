@@ -276,7 +276,7 @@ public class LDAPDataConnectorParserTest {
            env.setPlaceholderSuffix("}");
         }
 
-        final XmlBeanDefinitionReader configReader = new XmlBeanDefinitionReader(context);
+        final XmlBeanDefinitionReader configReader = new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         configReader.loadBeanDefinitions("net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml");
 
