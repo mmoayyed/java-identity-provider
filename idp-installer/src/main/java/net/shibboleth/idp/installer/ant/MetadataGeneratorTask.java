@@ -36,6 +36,7 @@ import org.apache.tools.ant.Task;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -95,7 +96,7 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param home The idpHome to set.
      */
-    public void setIdpHome(@Nullable String home) {
+    public void setIdpHome(@Nullable final String home) {
         idpHome = home;
     }
 
@@ -104,7 +105,7 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param file what to set.
      */
-    public void setOutput(File file) {
+    public void setOutput(final File file) {
 
         outputFile = file;
     }
@@ -114,7 +115,7 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param file what to set.
      */
-    public void setEncryptionCert(File file) {
+    public void setEncryptionCert(final File file) {
         encryptionCert = file;
     }
 
@@ -123,7 +124,7 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param file what to set.
      */
-    public void setSigningCert(File file) {
+    public void setSigningCert(final File file) {
         signingCert = file;
     }
 
@@ -132,7 +133,7 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param file what to set.
      */
-    public void setBackchannelCert(File file) {
+    public void setBackchannelCert(final File file) {
         backchannelCert = file;
     }
 
@@ -141,7 +142,7 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param id what to set.
      */
-    public void setEntityID(String id) {
+    public void setEntityID(final String id) {
         entityID = id;
     }
 
@@ -150,7 +151,7 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param name what to set.
      */
-    public void setDnsName(String name) {
+    public void setDnsName(final String name) {
         dnsName = name;
     }
 
@@ -159,38 +160,46 @@ public class MetadataGeneratorTask extends Task {
      * 
      * @param value what to set.
      */
-    public void setScope(String value) {
+    public void setScope(final String value) {
         scope = value;
     }
 
-    /** Returns whether to comment the SAML2 AA endpoint.
+    /**
+     * Returns whether to comment the SAML2 AA endpoint.
+     * 
      * @return Returns when to comment the SAML2 AA endpoint.
      */
     public boolean isSAML2AttributeQueryCommented() {
         return saml2AttributeQueryCommented;
     }
 
-    /** Sets whether to comment the SAML2 AA endpoint.
+    /**
+     * Sets whether to comment the SAML2 AA endpoint.
+     * 
      * @param asComment whether to comment or not.
      */
-    public void setSAML2AttributeQueryCommented(boolean asComment) {
+    public void setSAML2AttributeQueryCommented(final boolean asComment) {
         saml2AttributeQueryCommented = asComment;
     }
 
-    /** Returns whether to comment the SAML2 Logout endpoints.
-     * @return  whether to comment the SAML2 Logout endpoints
+    /**
+     * Returns whether to comment the SAML2 Logout endpoints.
+     * 
+     * @return whether to comment the SAML2 Logout endpoints
      */
     public boolean isSAML2LogoutCommented() {
         return saml2LogoutCommented;
     }
 
-    /** Sets whether to comment the SAML2 Logout endpoints.
+    /**
+     * Sets whether to comment the SAML2 Logout endpoints.
+     * 
      * @param asComment whether to comment or not
      */
-    public void setSAML2LogoutCommented(boolean asComment) {
+    public void setSAML2LogoutCommented(final boolean asComment) {
         saml2LogoutCommented = asComment;
     }
-    
+
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
     @Override public void execute() {
@@ -203,8 +212,8 @@ public class MetadataGeneratorTask extends Task {
 
             final GenericApplicationContext context =
                     SpringSupport.newContext(MetadataGeneratorTask.class.getName(),
-                            Collections.singletonList(resource), Collections.<BeanFactoryPostProcessor>emptyList(),
-                            Collections.<BeanPostProcessor>emptyList(), Collections.singletonList(initializer), null);
+                            Collections.singletonList(resource), Collections.<BeanFactoryPostProcessor> emptyList(),
+                            Collections.<BeanPostProcessor> emptyList(), Collections.singletonList(initializer), null);
 
             parameters = context.getBean("IdPConfiguration", MetadataGeneratorParameters.class);
 
@@ -217,7 +226,6 @@ public class MetadataGeneratorTask extends Task {
             if (backchannelCert != null) {
                 parameters.setBackchannelCert(backchannelCert);
             }
-
 
             final MetadataGenerator generator = new MetadataGenerator(outputFile);
             final List<List<String>> signing = new ArrayList<>(2);
@@ -242,7 +250,7 @@ public class MetadataGeneratorTask extends Task {
             if (entityID != null) {
                 generator.setEntityID(entityID);
             } else {
-                generator.setEntityID(parameters.getEntityID());   
+                generator.setEntityID(parameters.getEntityID());
             }
             if (scope != null) {
                 generator.setScope(scope);
@@ -253,11 +261,12 @@ public class MetadataGeneratorTask extends Task {
             generator.setSAML2LogoutCommented(isSAML2LogoutCommented());
             generator.generate();
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log("Build failed", e, Project.MSG_ERR);
             throw new BuildException(e);
         }
     }
+
     // Checkstyle: CyclomaticComplexity ON
 
     /**
@@ -265,13 +274,25 @@ public class MetadataGeneratorTask extends Task {
      * 
      */
     public class Initializer extends IdPPropertiesApplicationContextInitializer {
+
+        /** {@inheritDoc} */
+        @Override @Nonnull public String[] selectSearchLocations(
+                @Nonnull final ConfigurableApplicationContext applicationContext) {
+            if (null == idpHome) {
+                return super.selectSearchLocations(applicationContext);
+            }
+            final String[] result = {idpHome};
+            return result;
+        }
+
+        /** {@inheritDoc} */
         @Override @Nonnull public String[] getSearchLocations() {
             if (null == idpHome) {
                 return super.getSearchLocations();
             }
-            final String[] result = new String[1];
-            result[0] = idpHome;
+            final String[] result = {idpHome};
             return result;
         }
+
     }
 }
