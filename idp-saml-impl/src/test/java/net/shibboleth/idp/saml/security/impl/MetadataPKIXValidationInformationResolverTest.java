@@ -24,19 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
-import net.shibboleth.utilities.java.support.xml.XMLParserException;
-
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
 import org.opensaml.saml.metadata.resolver.filter.MetadataNodeProcessor;
 import org.opensaml.saml.metadata.resolver.filter.impl.NodeProcessingMetadataFilter;
-import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.security.credential.UsageType;
@@ -47,6 +42,11 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
+
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
 /**
  * Testing the Shibboleth metadata PKIX validation information resolver.
@@ -352,7 +352,7 @@ public class MetadataPKIXValidationInformationResolverTest extends XMLObjectBase
         mdProvider.setId("Test");
         mdProvider.initialize();
         
-        BasicRoleDescriptorResolver roleResolver = new BasicRoleDescriptorResolver(mdProvider);
+        PredicateRoleDescriptorResolver roleResolver = new PredicateRoleDescriptorResolver(mdProvider);
         roleResolver.initialize();
         
         MetadataPKIXValidationInformationResolver resolver = new MetadataPKIXValidationInformationResolver(roleResolver);

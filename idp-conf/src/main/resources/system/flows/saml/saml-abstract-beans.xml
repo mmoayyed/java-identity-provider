@@ -63,7 +63,7 @@
         <constructor-arg name="messageHandler">
             <bean class="org.opensaml.saml.common.binding.impl.SAMLMetadataLookupHandler" scope="prototype">
                 <property name="roleDescriptorResolver">
-                    <bean class="org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver"
+                    <bean class="org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver"
                         c:mdResolver-ref="shibboleth.MetadataResolver" />
                 </property>
             </bean>
