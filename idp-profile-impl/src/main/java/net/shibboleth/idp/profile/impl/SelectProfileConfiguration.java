@@ -108,8 +108,8 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
 
         final ProfileConfiguration profileConfiguration = rpConfig.getProfileConfiguration(profileId);
         if (profileConfiguration == null) {
-            log.warn("{} Profile {} is not available for relying party configuration {}",
-                    new Object[] {getLogPrefix(), profileId, rpConfig.getId(),});
+            log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
+                    new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
             return;
         }
