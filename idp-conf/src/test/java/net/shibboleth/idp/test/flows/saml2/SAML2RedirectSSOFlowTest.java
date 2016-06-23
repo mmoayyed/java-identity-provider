@@ -69,6 +69,7 @@ public class SAML2RedirectSSOFlowTest extends AbstractSAML2SSOFlowTest {
      */
     public void buildRequest() throws Exception {
 
+        request.setMethod("GET");
         request.setRequestURI("/idp/profile/" + FLOW_ID);
 
         final AuthnRequest authnRequest = buildAuthnRequest(request);

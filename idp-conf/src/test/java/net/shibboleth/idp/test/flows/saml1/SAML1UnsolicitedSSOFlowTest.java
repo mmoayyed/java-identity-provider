@@ -56,6 +56,7 @@ public class SAML1UnsolicitedSSOFlowTest extends AbstractSAML1FlowTest {
      * Build the {@link MockHttpServletRequest}.
      */
     public void buildRequest() {
+        request.setMethod("GET");
         // TODO time request parameter ?
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM, SP_ENTITY_ID);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.SHIRE_PARAM, SP_ACS_URL);

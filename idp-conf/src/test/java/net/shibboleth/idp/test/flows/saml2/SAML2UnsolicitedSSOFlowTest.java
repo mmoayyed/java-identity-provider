@@ -51,6 +51,7 @@ public class SAML2UnsolicitedSSOFlowTest extends AbstractSAML2FlowTest {
      * Build the {@link MockHttpServletRequest}.
      */
     public void buildRequest() {
+        request.setMethod("GET");
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.PROVIDER_ID_PARAM, SP_ENTITY_ID);
         request.addParameter(BaseIdPInitiatedSSORequestMessageDecoder.TARGET_PARAM, SP_RELAY_STATE);
     }
