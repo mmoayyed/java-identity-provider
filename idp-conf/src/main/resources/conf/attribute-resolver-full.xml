@@ -280,7 +280,9 @@
         baseDN="%{idp.attribute.resolver.LDAP.baseDN}" 
         principal="%{idp.attribute.resolver.LDAP.bindDN}"
         principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
-        useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}">
+        useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}"
+        connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
+        responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}">
         <dc:FilterTemplate>
             <![CDATA[
                 %{idp.attribute.resolver.LDAP.searchFilter}

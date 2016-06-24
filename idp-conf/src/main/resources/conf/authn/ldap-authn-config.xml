@@ -22,6 +22,7 @@
         p:useStartTLS="%{idp.authn.LDAP.useStartTLS:true}"
         p:useSSL="%{idp.authn.LDAP.useSSL:false}"
         p:connectTimeout="%{idp.authn.LDAP.connectTimeout:3000}"
+        p:responseTimeout="%{idp.authn.LDAP.responseTimeout:3000}"
         p:sslConfig-ref="sslConfig" />
 
     <alias name="%{idp.authn.LDAP.sslConfig:certificateTrust}" alias="sslConfig" />
