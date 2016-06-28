@@ -180,9 +180,9 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
             final ConsentManagementContext consentCtx =
                     getProfileRequestContext(request).getSubcontext(ConsentManagementContext.class, true);
             consentCtx.setRevokeConsent(true);
-        } else {
-            response.sendRedirect(extContext.getFlowExecutionUrl());
         }
+        
+        response.sendRedirect(extContext.getFlowExecutionUrl());
     }
 // Checkstyle: CyclomaticComplexity OFF
 
