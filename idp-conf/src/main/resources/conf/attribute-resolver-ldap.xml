@@ -94,6 +94,14 @@
         <dc:StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
             <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
         </dc:StartTLSTrustCredential>
+	<dc:ConnectionPool
+            minPoolSize="%{idp.pool.LDAP.minSize}"
+            maxPoolSize="%{idp.pool.LDAP.maxSize}"
+            blockWaitTime="%{idp.pool.LDAP.blockWaitTime}"
+            validatePeriodically="%{idp.pool.LDAP.validatePeriodically}"
+            validateTimerPeriod="%{idp.pool.LDAP.validatePeriod}"
+            expirationTime="%{idp.pool.LDAP.idleTime}"
+            failFastInitialize="%{idp.pool.LDAP.failFastInitialize}" />
     </resolver:DataConnector>
 
 </resolver:AttributeResolver>
