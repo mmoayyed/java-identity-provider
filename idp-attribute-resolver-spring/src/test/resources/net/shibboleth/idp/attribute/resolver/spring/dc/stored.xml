@@ -6,6 +6,7 @@
 	xmlns:enc="urn:mace:shibboleth:2.0:attribute:encoder" xmlns:sec="urn:mace:shibboleth:2.0:security"
 	
     failFast="false"
+    queryTimeout="PT5S"
     transactionRetries="5"
     retryableErrors="25000 25001"
 	sourceAttributeID="theSourceRemainsTheSame"

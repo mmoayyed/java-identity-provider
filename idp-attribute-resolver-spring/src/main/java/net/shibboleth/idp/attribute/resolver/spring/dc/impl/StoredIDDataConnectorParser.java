@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -74,8 +75,11 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         }
 
         if (config.hasAttributeNS(null, "queryTimeout")) {
-            builder.addPropertyValue("queryTimeout",
-                    StringSupport.trimOrNull(config.getAttributeNS(null, "queryTimeout")));
+            final BeanDefinitionBuilder timeout =
+                    BeanDefinitionBuilder.rootBeanDefinition(StoredIDDataConnectorParser.class, "buildDuration");
+            timeout.addConstructorArgValue(StringSupport.trimOrNull(config.getAttributeNS(null, "queryTimeout")));
+            timeout.addConstructorArgValue(1);
+            builder.addPropertyValue("queryTimeout", timeout.getBeanDefinition());
         }
 
         if (config.hasAttributeNS(null, "transactionRetries")) {
@@ -149,5 +153,18 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         final ManagedConnectionParser parser = new ManagedConnectionParser(config);
         return parser.createDataSource();
     }
+
+    /**
+     * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
+     * while resolving property replacement.
+     * 
+     * @param duration the duration (which may have gone through spring translation from iso to long)
+     * @param divisor to modify the duration with
+     * 
+     * @return result of the division
+     */
+    public static long buildDuration(@Duration final long duration, final long divisor) {
+        return duration / divisor;
+    } 
 
 }

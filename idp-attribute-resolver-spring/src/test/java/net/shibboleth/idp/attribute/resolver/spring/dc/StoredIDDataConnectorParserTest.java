@@ -39,6 +39,7 @@ public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionPars
         Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
         Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
         Assert.assertEquals(connector.getTransactionRetries(), 5);
+        Assert.assertEquals(connector.getQueryTimeout(), 5000);
         Assert.assertEquals(connector.getFailFast(), false);
         Assert.assertTrue(Arrays.areEqual(connector.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
         
