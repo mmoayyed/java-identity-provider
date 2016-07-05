@@ -18,7 +18,6 @@
 package net.shibboleth.idp.attribute.resolver.context;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,6 +28,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -70,7 +70,7 @@ public class AttributeResolutionContext extends BaseContext {
     /** Constructor. */
     public AttributeResolutionContext() {
         allowCachedResults = true;
-        requestedAttributeNames = Collections.emptySet();
+        requestedAttributeNames = new HashSet<>();
         resolvedAttributes =
                 MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
     }
@@ -170,11 +170,11 @@ public class AttributeResolutionContext extends BaseContext {
     }
 
     /**
-     * Get the (internal) names of the attributes requested to be resolved.
+     * Get a live collection of the (internal) names of the attributes requested to be resolved.
      * 
-     * @return set of attributes requested to be resolved
+     * @return live collection of attributes requested to be resolved
      */
-    @Nonnull @NonnullElements public Collection<String> getRequestedIdPAttributeNames() {
+    @Nonnull @NonnullElements @Live public Collection<String> getRequestedIdPAttributeNames() {
         return requestedAttributeNames;
     }
 
