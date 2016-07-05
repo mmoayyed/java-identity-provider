@@ -77,7 +77,7 @@ public class HttpClientProxyAuthenticatorTest extends AbstractTestNGSpringContex
             } catch (NoSuchBeanDefinitionException e) {
                 trustEngine = null;
             }
-            authenticator.setTimeout(1600); // double timeout for Windows
+            authenticator.setTimeout(2400); // triple timeout for Windows
             authenticator.authenticate(new URI("https://localhost:8443/?pgtId=A&pgtIOU=B"), trustEngine);
             if (expected != null) {
                 fail("Proxy authentication should have failed with " + expected);
