@@ -134,7 +134,9 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
         }
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
+        // We don't actually know that the context is a PRC, but we'll keep this for compatibility.
         scriptContext.setAttribute("profileContext", context, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("context", context, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
 
         try {
