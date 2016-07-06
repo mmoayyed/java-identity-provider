@@ -36,14 +36,9 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import com.google.common.base.Predicate;
 
 /**
- * Predicate that can be used as an "activationCondition" for an authentication flow.
- * The condition is defined by an Spring EL expression.
- * The expression can use the built-in #ipRange function and any variable
- * that is included in expressionVariables during construction
- * of this object.
+ * Predicate whose condition is defined by an Spring EL expression.
  * 
  * @author Daniel Lutz
- *
  */
 public class SpringExpressionPredicate implements Predicate<ProfileRequestContext<?,?>> {
     
