@@ -41,81 +41,53 @@
         </entry>
         
         <!--
-        Second rule runs a function if IPAddress succeeds, to prepare to do attribute lookup
-        based on the identity produced by the IPAddress flow, unless its self-evident that
-        an additional factor is needed.
+        Second rule runs a function if IPAddress succeeds, to determine whether an additional
+        factor is required.
         -->
         <entry key="authn/IPAddress">
             <bean parent="shibboleth.authn.MFA.Transition">
                 <property name="nextFlowStrategyMap">
                     <map>
-                        <entry key="proceed" value-ref="toAttributeLookup" />
+                        <entry key="proceed" value-ref="checkSecondFactor" />
                     </map>
                 </property>
             </bean>
         </entry>
         
-        <!-- Third rule runs the Password flow if a script says to do so. -->
-        <entry key="util/attribute">
-            <bean parent="shibboleth.authn.MFA.Transition">
-                <property name="nextFlowStrategyMap">
-                    <map>
-                        <entry key="proceed" value-ref="forcePassword" />
-                    </map>
-                </property>
-            </bean>
-        </entry>
-        
-        <!-- An implicit final rule will return whatever the Password flow returns. -->
+        <!-- An implicit final rule will return whatever the final flow returns. -->
     </util:map>
 
     <!-- Example script that sets up attribute resolution based on previous login results. -->
-    <bean id="toAttributeLookup" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript">
-        <constructor-arg>
-            <value>
-            <![CDATA[
-                // Go straight to second factor if we have to, or set up for an attribute lookup first.
-                authCtx = context.getSubcontext("net.shibboleth.idp.authn.context.AuthenticationContext");
-                mfaCtx = authCtx.getSubcontext("net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext");
-                if (!mfaCtx.satisfiesRequester()) {
-                    nextFlow = "authn/Password";
-                } else {
-                    resCtx = context.getSubcontext(
-                        "net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext", true);
-                    resCtx.setPrincipal(context.getSubcontext(
-                        "net.shibboleth.idp.authn.context.SubjectCanonicalizationContext").getPrincipalName());
-                    resCtx.setAttributeIssuerID(context.getSubcontext(
-                        "net.shibboleth.idp.profile.context.RelyingPartyContext").getConfiguration().getResponderId());
-                    resCtx.setAttributeRecipientID(context.getSubcontext(
-                        "net.shibboleth.idp.profile.context.RelyingPartyContext").getRelyingPartyId());
-                    resCtx.getRequestedIdPAttributeNames().add("allowedLoginMethods");
-                    nextFlow = "util/attribute";
-                }
-                nextFlow;
-            ]]>
-            </value>
-        </constructor-arg>
-    </bean>
-    
-    <!-- Example to force use of Password if an attribute directs it. -->
-    <bean id="forcePassword" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript">
+    <bean id="checkSecondFactor" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript"
+        p:customObject-ref="shibboleth.AttributeResolverService">
         <constructor-arg>
             <value>
             <![CDATA[
                 nextFlow = "authn/Password";
-                
-                // Check for an attribute that forces second factor.
+
+                // Go straight to second factor if we have to, or set up for an attribute lookup first.
                 authCtx = context.getSubcontext("net.shibboleth.idp.authn.context.AuthenticationContext");
                 mfaCtx = authCtx.getSubcontext("net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext");
-                attributeCtx = mfaCtx.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext");
-                if (attributeCtx != null) {
-                    attribute = attributeCtx.getUnfilteredIdPAttributes().get("allowedLoginMethods");
+                if (mfaCtx.isAcceptable()) {
+                    // Attribute check is required to decide if first factor alone is enough.
+                    resCtx = context.getSubcontext(
+                        "net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext", true);
+                    resCtx.setPrincipal(context.getSubcontext(
+                        "net.shibboleth.idp.authn.context.SubjectCanonicalizationContext").getPrincipalName());
+                    resCtx.getRequestedIdPAttributeNames().add("allowedLoginMethods");
+                    resCtx.resolveAttributes(custom);
+                    
+                    // Check for an attribute that authorizes use of first factor.
+                    attribute = resCtx.getResolvedIdPAttributes().get("allowedLoginMethods");
                     valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
                     if (attribute != null && attribute.getValues().contains(new valueType("IPAddress"))) {
                         nextFlow = null;
                     }
+                    
+                    context.removeSubcontext(resCtx);   // cleanup
                 }
-                nextFlow;
+                
+                nextFlow;   // pass control to second factor or end with the first
             ]]>
             </value>
         </constructor-arg>

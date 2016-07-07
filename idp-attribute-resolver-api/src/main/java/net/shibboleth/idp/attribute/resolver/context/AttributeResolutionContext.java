@@ -28,14 +28,20 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.AttributeResolver;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.service.ReloadableService;
+import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
 import org.opensaml.messaging.context.BaseContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
@@ -214,5 +220,30 @@ public class AttributeResolutionContext extends BaseContext {
             }
         }
     }
-    
+
+    /**
+     * Helper method to invoke an AttributeResolver service using this context.
+     * 
+     * @param attributeResolverService the service to invoke
+     */
+    public void resolveAttributes(@Nonnull final ReloadableService<AttributeResolver> attributeResolverService) {
+
+        final Logger log = LoggerFactory.getLogger(AttributeResolutionContext.class);
+        ServiceableComponent<AttributeResolver> component = null;
+        try {
+            component = attributeResolverService.getServiceableComponent();
+            if (null == component) {
+                log.error("Error resolving attributes: Invalid Attribute resolver configuration");
+            } else {
+                final AttributeResolver attributeResolver = component.getComponent();
+                attributeResolver.resolveAttributes(this);
+            }
+        } catch (final ResolutionException e) {
+            log.error("Error resolving attributes", e);
+        } finally {
+            if (null != component) {
+                component.unpinComponent();
+            }
+        }
+    }
 }

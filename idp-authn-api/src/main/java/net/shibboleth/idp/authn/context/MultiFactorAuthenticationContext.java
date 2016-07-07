@@ -181,7 +181,7 @@ public class MultiFactorAuthenticationContext extends BaseContext {
      * 
      * @return true iff at least one of the active results satisfies the request
      */
-    public boolean satisfiesRequester() {
+    public boolean isAcceptable() {
         final AuthenticationContext authnContext = (AuthenticationContext) getParent();
         if (authnContext != null) {
             for (final AuthenticationResult result : activeResults.values()) {
