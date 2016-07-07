@@ -57,6 +57,10 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext> implem
 
     /** A custom object that can be injected into the expression. */
     @Nullable private Object customObject;
+        
+    /** Whether to raise runtime exceptions if an expression fails. */
+    private boolean hideExceptions;
+
 
     /**
      * Constructor.
@@ -101,6 +105,15 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext> implem
         customObject = object;
     }
 
+    /**
+     * Set whether to hide exceptions in expression execution (default is false).
+     * 
+     * @param flag flag to set
+     */
+    public void setHideExceptions(final boolean flag) {
+        hideExceptions = flag;
+    }
+
     /** {@inheritDoc} */
     @Override public Object apply(@Nullable final T context) {
 
@@ -124,7 +137,10 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext> implem
             
         } catch (final ParseException|EvaluationException e) {
             log.error("Error evaluating Spring expression", e);
-            return null;
+            if (hideExceptions) {
+                return null;
+            }
+            throw e;
         }
     }
 

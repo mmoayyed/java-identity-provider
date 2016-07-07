@@ -51,6 +51,12 @@ public class SpringExpressionPredicate implements Predicate<ProfileRequestContex
     /** A custom object to inject into the expression context. */
     @Nullable private Object customObject;
 
+    /** Whether to raise runtime exceptions if expression fails. */
+    private boolean hideExceptions;
+    
+    /** Value to return from predicate when an error occurs. */
+    private boolean returnOnError;
+
     /**
      * Constructor.
      *
@@ -71,6 +77,24 @@ public class SpringExpressionPredicate implements Predicate<ProfileRequestContex
         customObject = object;
     }
 
+    /**
+     * Set whether to hide exceptions in expression execution (default is false).
+     * 
+     * @param flag flag to set
+     */
+    public void setHideExceptions(final boolean flag) {
+        hideExceptions = flag;
+    }
+
+    /**
+     * Set value to return if an error occurs (default is false).
+     * 
+     * @param flag flag to set
+     */
+    public void setReturnOnError(final boolean flag) {
+        returnOnError = flag;
+    }
+
     /** {@inheritDoc} */
     @Override
     public boolean apply(@Nullable final ProfileRequestContext<?,?> input) {
@@ -84,7 +108,10 @@ public class SpringExpressionPredicate implements Predicate<ProfileRequestContex
             return parser.parseExpression(springExpression).getValue(context, Boolean.class);
         } catch (final ParseException|EvaluationException e) {
             log.error("Error evaluating Spring expression", e);
-            return false;
+            if (hideExceptions) {
+                return returnOnError;
+            }
+            throw e;
         }
     }
 

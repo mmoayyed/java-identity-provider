@@ -66,6 +66,9 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
 
     /** The custom object we can be injected into the script. */
     @Nullable private Object customObject;
+    
+    /** Whether to raise runtime exceptions if a script fails. */
+    private boolean hideExceptions;
 
     /**
      * Constructor.
@@ -125,6 +128,15 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
         customObject = object;
     }
 
+    /**
+     * Set whether to hide exceptions in script execution (default is false).
+     * 
+     * @param flag flag to set
+     */
+    public void setHideExceptions(final boolean flag) {
+        hideExceptions = flag;
+    }
+
     /** {@inheritDoc} */
     @Override public Object apply(@Nullable final T context) {
 
@@ -149,7 +161,10 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
 
         } catch (final ScriptException e) {
             log.error("{} Error while executing Function script", logPrefix, e);
-            return null;
+            if (hideExceptions) {
+                return null;
+            }
+            throw new RuntimeException(e);
         }
     }
 

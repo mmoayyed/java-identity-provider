@@ -56,6 +56,12 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
 
     /** A custom object to inject into the script. */
     @Nullable private Object customObject;
+    
+    /** Whether to raise runtime exceptions if a script fails. */
+    private boolean hideExceptions;
+    
+    /** Value to return from predicate when an error occurs. */
+    private boolean returnOnError;
 
     /**
      * Constructor.
@@ -96,6 +102,24 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
         customObject = object;
     }
 
+    /**
+     * Set whether to hide exceptions in script execution (default is false).
+     * 
+     * @param flag flag to set
+     */
+    public void setHideExceptions(final boolean flag) {
+        hideExceptions = flag;
+    }
+
+    /**
+     * Set value to return if an error occurs (default is false).
+     * 
+     * @param flag flag to set
+     */
+    public void setReturnOnError(final boolean flag) {
+        returnOnError = flag;
+    }
+
     /** {@inheritDoc} */
     @Override public boolean apply(@Nullable final ProfileRequestContext profileContext) {
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
@@ -106,7 +130,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
             final Object result = script.eval(scriptContext);
             if (null == result) {
                 log.error("{} No result returned", logPrefix);
-                return false;
+                return returnOnError;
             }
 
             if (result instanceof Boolean) {
@@ -114,11 +138,13 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
                 return ((Boolean) result).booleanValue();
             } else {
                 log.error("{} returned a {}, not a java.lang.Boolean", logPrefix, result.getClass().toString());
-                return false;
+                return returnOnError;
             }
         } catch (final ScriptException e) {
-            log.error("{} Error while executing Predicate script", logPrefix, e);
-            return false;
+            if (hideExceptions) {
+                return returnOnError;
+            }
+            throw new RuntimeException(e);
         }
     }
 
