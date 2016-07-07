@@ -27,9 +27,6 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.WebFlowCurrentEventLookupFunction;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -44,39 +41,35 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
-import com.google.common.base.Predicate;
 
 /**
  * An authentication action that acts as the master evaluation step regulating execution
  * of transitions between MFA stages.
  * 
  * <p>This is the heart of the MFA processing sequence, and runs after the
- * {@link MultiFactorAuthenticationContext} has been fully populated. It uses the current/previous
- * flow, the transition and completion rules, and merging function to decide when to transition to
- * a new flow, when work is complete, and how to produce the final result.</p>
+ * {@link MultiFactorAuthenticationContext} has been populated. It uses the current/previous
+ * flow and the transition rules to decide when to transition to a new flow, when work is
+ * complete, and the final event to signal in the event of a problem.</p>
  * 
  * <p>The execution of this function is driven by the {@link MultiFactorAuthenticationTransition}
  * rule associated with the flow that was most recently executed by this engine. If none (such as
- * during the first iteration), then the rule associated with a null value is used. Failure to locate
- * a transition to use is fatal, resulting in {@link AuthnEventIds#NO_PASSIVE} or
+ * during the first iteration), then the rule associated with a null flow ID is used. Failure to
+ * locate a transition to use is fatal, resulting in {@link AuthnEventIds#NO_PASSIVE} or
  * {@link AuthnEventIds#NO_POTENTIAL_FLOW}.</p>
- * 
- * <p>If the transition signals completion, then the associated merging function is used to
- * produce a final {@link AuthenticationResult} and the context tree is mutated to store off
- * the result and prepare for subject canonicalization, in the fashion of most validation
- * actions. The {@link MultiFactorAutenticationContext}'s next flow is cleared and
- * {@link EventIds#PROCEED_EVENT_ID} is signaled.</p>
  * 
  * <p>Otherwise, a function is applied to obtain the "current" WebFlow event, and the event
  * is applied to the transition's rule map to obtain the name of the next flow to run. A
- * wildcard ('*') rule is used if a more specific rule isn't found. If no flow is returned,
- * then the current event is re-signaled as the result of this action, and ultimately the
- * result of the MFA flow.</p>
+ * wildcard ('*') rule is used if a more specific rule isn't found.</p>
+ * 
+ * <p>If the transition signals a null/empty flow ID to run, then
+ * {@link MultiFactorAuthenticationContext#getNextFlowId()} is cleared to signal the MFA flow
+ * that it should complete itself. The result of the action is either
+ * {@link MultiFactorAuthenticationContext#getEvent()} (if set), or the current WebFlow event.</p>
  * 
  * <p>If a flow is returned, it is populated into the {@link MultiFactorAutenticationContext}.
  * The flow is checked for the "authn/" prefix, and a login flow is checked against the
  * active result map to determine if it can be reused, in which case the action recurses itself.
- * Otherwise {@link EventIds#PROCEED_EVENT_ID}is signaled to run the flow.</p>
+ * Otherwise {@link EventIds#PROCEED_EVENT_ID}is signaled to run that flow.</p>
  * 
  * <p>By default, login flow transitions are validated against the request's requirements
  * in terms of passive, forced re-authn, and non-browser compatibility.</p>
@@ -88,7 +81,6 @@ import com.google.common.base.Predicate;
  * @event {@link EventIds#INVALID_PROFILE_CTX}
  * @event {@link AuthnEventIds#NO_PASSIVE}
  * @event {@link AuthnEventIds#NO_POTENTIAL_FLOW}
- * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#REQUEST_UNSUPPORTED}
  * @event (any event signaled by another called flow)
  */
@@ -103,15 +95,6 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
     
     /** Lookup function for current event context. */
     @Nonnull private Function<ProfileRequestContext,EventContext> eventContextLookupStrategy;
-
-    /** Predicate to apply when setting AuthenticationResult cacheability. */
-    @Nullable private Predicate<ProfileRequestContext> resultCachingPredicate;
-
-    /** Function used to obtain the requester ID. */
-    @Nullable private Function<ProfileRequestContext,String> requesterLookupStrategy;
-
-    /** Function used to obtain the responder ID. */
-    @Nullable private Function<ProfileRequestContext,String> responderLookupStrategy;
     
     /** Perform IsPassive, ForceAuthn, and non-browser checks when running login flows. */
     private boolean validateLoginTransitions;
@@ -126,8 +109,6 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
                 new ChildContextLookup(AuthenticationContext.class));
         
         eventContextLookupStrategy = new WebFlowCurrentEventLookupFunction();
-        requesterLookupStrategy = new RelyingPartyIdLookupFunction();
-        responderLookupStrategy = new ResponderIdLookupFunction();
         
         validateLoginTransitions = true;
     }
@@ -154,41 +135,6 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         eventContextLookupStrategy = Constraint.isNotNull(strategy, "EventContext lookup strategy cannot be null");
-    }
-
-    /**
-     * Set predicate to apply to determine cacheability of {@link AuthenticationResult}.
-     * 
-     * @param predicate predicate to apply, or null
-     */
-    public void setResultCachingPredicate(@Nullable final Predicate<ProfileRequestContext> predicate) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        
-        resultCachingPredicate = predicate;
-    }
-
-    /**
-     * Set the strategy used to locate the requester ID for canonicalization.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setRequesterLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        requesterLookupStrategy = strategy;
-    }
-
-    /**
-     * Set the strategy used to locate the responder ID for canonicalization.
-     * 
-     * @param strategy lookup strategy
-     */
-    public void setResponderLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,String> strategy) {
-        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-
-        responderLookupStrategy = strategy;
     }
     
     /**
@@ -243,87 +189,43 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
 
         // The "next" flow here is the "previous" flow run by the system that we're branching from.
         // This value can be null (on the first entry) and a rule should be defined for the null value.
-        MultiFactorAuthenticationTransition transition =
-                mfaContext.getTransitionMap().get(mfaContext.getNextFlowId());
-        log.debug("{} Applying {} MFA transition rule to exit state {}", getLogPrefix(),
-                transition != null ? "configured" : "default", mfaContext.getNextFlowId());
-        if (transition == null) {
-            transition = new MultiFactorAuthenticationTransition();
+        final String prevFlowId = mfaContext.getNextFlowId();
+        mfaContext.setNextFlowId(null);        
+        if (prevFlowId == null) {
+            log.debug("{} Applying MFA transition rule to determine initial state", getLogPrefix());
+        } else {
+            log.debug("{} Applying MFA transition rule to exit state '{}'", getLogPrefix(), prevFlowId);
         }
-        
-        log.debug("{} Checking for MFA completion", getLogPrefix());
-        if (transition.getCompletionCondition().apply(profileRequestContext)) {
-            doCompletion(profileRequestContext, authenticationContext, transition);
-            return;
-        }
-        
+
         // Event transitions require normalizing empty/null events into "proceed".
         final EventContext eventCtx = eventContextLookupStrategy.apply(profileRequestContext);
         final String previousEvent = eventCtx != null && eventCtx.getEvent() != null
                 ? eventCtx.getEvent().toString() : EventIds.PROCEED_EVENT_ID;
-        log.debug("{} MFA flow incomplete, checking for transition for '{}' event", getLogPrefix(), previousEvent);
-        String flowId = transition.getNextFlowStrategy(previousEvent).apply(profileRequestContext);
-        if (flowId == null) {
-            flowId = transition.getNextFlowStrategy("*").apply(profileRequestContext);
+                
+        String flowId = null;
+        final MultiFactorAuthenticationTransition transition = mfaContext.getTransitionMap().get(prevFlowId);
+        if (transition != null) {
+            flowId = transition.getNextFlowStrategy(previousEvent).apply(profileRequestContext);
+            if (flowId == null) {
+                flowId = transition.getNextFlowStrategy("*").apply(profileRequestContext);
+            }
         }
         if (flowId != null) {
-            log.debug("{} MFA flow transition from '{}' event to '{}' flow", getLogPrefix(), previousEvent, flowId);
+            log.debug("{} MFA flow transition after '{}' event to '{}' flow", getLogPrefix(), previousEvent, flowId);
             mfaContext.setNextFlowId(flowId);
             doTransition(profileRequestContext, authenticationContext, transition);
-            return;
+        } else {
+            final String event = mfaContext.getEvent() != null ? mfaContext.getEvent() : previousEvent;
+            log.debug("{} MFA flow completing with event '{}'", getLogPrefix(), event);
+            if (EventIds.PROCEED_EVENT_ID.equals(event)) {
+                ActionSupport.buildProceedEvent(profileRequestContext);
+            } else {
+                ActionSupport.buildEvent(profileRequestContext, event);
+            }
         }
-        
-        log.debug("{} No transition, MFA flow completing with '{}' event", getLogPrefix(), previousEvent);
-        ActionSupport.buildEvent(profileRequestContext, previousEvent);
-    }
-        
-    /**
-     * Respond to a signal to complete the MFA process by computing a merged result and
-     * preparing the context tree for subject c14n.
-     * 
-     * @param profileRequestContext profile request context
-     * @param authenticationContext authentication context
-     * @param transition transition rule to use for finalization
-     */
-    private void doCompletion(@Nonnull final ProfileRequestContext profileRequestContext,
-            @Nonnull final AuthenticationContext authenticationContext,
-            @Nonnull final MultiFactorAuthenticationTransition transition) {
-        
-        log.debug("{} MFA complete, producing merged result", getLogPrefix());
-        final AuthenticationResult result = transition.getResultMergingStrategy().apply(profileRequestContext);
-        if (result == null) {
-            log.warn("{} Unable to produce merged AuthenticationResult to complete state {}", getLogPrefix(),
-                    mfaContext.getNextFlowId());
-            ActionSupport.buildEvent(profileRequestContext, authenticationContext.isPassive() ?
-                    AuthnEventIds.NO_PASSIVE : AuthnEventIds.INVALID_CREDENTIALS);
-            return;
-        }
-        
-        authenticationContext.setAuthenticationResult(result);
-        
-        // Override cacheability if a predicate is installed.
-        if (authenticationContext.isResultCacheable() && resultCachingPredicate != null) {
-            authenticationContext.setResultCacheable(resultCachingPredicate.apply(profileRequestContext));
-            log.info("{} Predicate indicates authentication result {} be cacheable in a session", getLogPrefix(),
-                    authenticationContext.isResultCacheable() ? "will" : "will not");
-        }
-        
-        // Transfer the subject to a new c14n context.
-        final SubjectCanonicalizationContext c14n = new SubjectCanonicalizationContext();
-        c14n.setSubject(result.getSubject());
-        if (requesterLookupStrategy != null) {
-            c14n.setRequesterId(requesterLookupStrategy.apply(profileRequestContext));
-        }
-        if (responderLookupStrategy != null) {
-            c14n.setResponderId(responderLookupStrategy.apply(profileRequestContext));
-        }
-        profileRequestContext.addSubcontext(c14n, true);
-
-        mfaContext.setNextFlowId(null);
-        ActionSupport.buildProceedEvent(profileRequestContext);
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|ReturnCount OFF
     /**
      * Respond to a signal to transition the MFA process to a new flow.
      * 
@@ -386,6 +288,6 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         authenticationContext.setAttemptedFlow(flow);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|ReturnCount ON
     
 }

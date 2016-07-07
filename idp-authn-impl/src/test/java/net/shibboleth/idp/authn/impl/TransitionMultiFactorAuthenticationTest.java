@@ -17,16 +17,12 @@
 
 package net.shibboleth.idp.authn.impl;
 
-import javax.security.auth.Subject;
-
 import org.springframework.webflow.execution.Event;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 
@@ -44,8 +40,10 @@ public class TransitionMultiFactorAuthenticationTest extends BaseMultiFactorAuth
 
     @Test public void testNoResult() {
         mfa.setNextFlowId("authn/test2");
-        Event event = action.execute(src);
-        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_CREDENTIALS);
+        mfa.setEvent("Foo");
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "Foo");
+        Assert.assertNull(mfa.getNextFlowId());
     }
 
     @Test public void testTransitions() {
@@ -71,12 +69,6 @@ public class TransitionMultiFactorAuthenticationTest extends BaseMultiFactorAuth
         event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNull(mfa.getNextFlowId());
-        Assert.assertNotNull(ac.getAuthenticationResult());
-        Assert.assertEquals(ac.getAuthenticationResult().getAuthenticationFlowId(), "authn/MFA");
-        final Subject subject = ac.getAuthenticationResult().getSubject();
-        Assert.assertEquals(subject.getPrincipals().size(), 4);
-        Assert.assertEquals(subject.getPrincipals(UsernamePrincipal.class).size(), 2);
-        Assert.assertEquals(subject.getPrincipals(AuthenticationResultPrincipal.class).size(), 2);
     }
     
 }

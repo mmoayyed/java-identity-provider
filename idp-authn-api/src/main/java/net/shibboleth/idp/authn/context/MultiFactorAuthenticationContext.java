@@ -56,7 +56,10 @@ public class MultiFactorAuthenticationContext extends BaseContext {
     
     /** The next flow due to execute (or the currently executing flow during subflow execution). */
     @Nullable @NotEmpty private String nextFlowId;
-    
+
+    /** A SWF event to signal as the completion of the MFA flow. */
+    @Nullable @NotEmpty private String event;
+
     /** Constructor. */
     public MultiFactorAuthenticationContext() {
         transitionMap = new HashMap<>();
@@ -146,6 +149,52 @@ public class MultiFactorAuthenticationContext extends BaseContext {
         nextFlowId = StringSupport.trimOrNull(id);
         
         return this;
+    }
+    
+    /**
+     * Get an event that should be signaled as the result of the MFA flow.
+     * 
+     * <p>If set, the MFA flow will eventually terminate with this event once all transitions have
+     * completed.</p>
+     * 
+     * @return event to signal
+     */
+    @Nullable @NotEmpty public String getEvent() {
+        return event;
+    }
+    
+    /**
+     * Set an event that should be signaled as the result of the MFA flow.
+     * 
+     * @param e event to signal
+     * 
+     * @return this context
+     */
+    @Nonnull public MultiFactorAuthenticationContext setEvent(@Nullable @NotEmpty final String e) {
+        event = StringSupport.trimOrNull(e);
+        
+        return this;
+    }
+
+    /**
+     * Get whether one or more of the active results in this context satisfies the request.
+     * 
+     * @return true iff at least one of the active results satisfies the request
+     */
+    public boolean satisfiesRequester() {
+        final AuthenticationContext authnContext = (AuthenticationContext) getParent();
+        if (authnContext != null) {
+            for (final AuthenticationResult result : activeResults.values()) {
+                // Only include Principals from fresh results or when forced authn is off.
+                if (!(authnContext.isForceAuthn() && result.isPreviousResult())) {
+                    if (authnContext.isAcceptable(result)) {
+                        return true;
+                    }
+                }
+            }   
+        }
+        
+        return false;
     }
 
 }

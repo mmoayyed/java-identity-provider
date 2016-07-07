@@ -23,15 +23,16 @@
     </action-state>
     
     <decision-state id="CheckProceed">
-        <if test="mfaContext.getNextFlowId() != null" then="CallSubflow" else="PopulateSubjectCanonicalizationContext" />
+        <if test="mfaContext.getNextFlowId() != null" then="CallSubflow" else="FinalizeMultiFactorAuthentication" />
     </decision-state>
     
     <subflow-state id="CallSubflow" subflow="#{mfaContext.getNextFlowId()}">
         <input name="calledAsSubflow" value="true" />
         <transition to="TransitionMultiFactorAuthentication" />
     </subflow-state>
-
-    <action-state id="PopulateSubjectCanonicalizationContext">
+    
+    <action-state id="FinalizeMultiFactorAuthentication">
+        <evaluate expression="FinalizeMultiFactorAuthentication" />
         <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />
         

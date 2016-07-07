@@ -33,7 +33,6 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
 import org.testng.Assert;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 
 /** Base class for further action tests. */
@@ -93,22 +92,15 @@ public class BaseMultiFactorAuthenticationContextTest {
         final Map<String,MultiFactorAuthenticationTransition> transitionMap = new HashMap<>();
         MultiFactorAuthenticationTransition transition = new MultiFactorAuthenticationTransition();
         transition.setNextFlow("authn/test1");
-        transition.setCompletionCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         transitionMap.put(null, transition);
 
         transition = new MultiFactorAuthenticationTransition();
         transition.setNextFlow("interim");
-        transition.setCompletionCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         transitionMap.put("authn/test1", transition);
 
         transition = new MultiFactorAuthenticationTransition();
         transition.setNextFlow("authn/test2");
-        transition.setCompletionCondition(Predicates.<ProfileRequestContext>alwaysFalse());
         transitionMap.put("interim", transition);
-
-        transition = new MultiFactorAuthenticationTransition();
-        transition.setCompletionCondition(Predicates.<ProfileRequestContext>alwaysTrue());
-        transitionMap.put("authn/test2", transition);
 
         final PopulateMultiFactorAuthenticationContext mfaaction = new PopulateMultiFactorAuthenticationContext();
         mfaaction.setTransitionMap(transitionMap);

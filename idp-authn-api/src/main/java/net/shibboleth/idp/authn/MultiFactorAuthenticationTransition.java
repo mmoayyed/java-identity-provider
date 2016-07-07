@@ -17,20 +17,13 @@
 
 package net.shibboleth.idp.authn;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.context.AuthenticationContext;
-import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
-import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -42,83 +35,28 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 
 /**
- * A ruleset for managing the transition out of an authentication factor during the multi-factor authn flow.
+ * A ruleset for managing the transition out of a step during the multi-factor authn flow.
  * 
- * <p>After each factor is successfully completed, this object supplies rules for determining whether additional
- * factors are required, how to combine {@link Subject}s produced by different factors when a flow completes,
- * and what should happen next.</p>
+ * <p>After each step/flow is successfully completed, this object supplies rules for determining what to
+ * do next with a bit of pseudo-SWF reinvention that allows an event to be mapped to a new flow to run by
+ * means of a function. If no mapping exists, or the function returns null, then the active event is simply
+ * raised as the result of the overall flow execution.</p>
  * 
- * <p>The latter is handled with a bit of pseudo-SWF reinvention that allows an event to be mapped to a new
- * flow to run by means of a function. If no mapping exists, or the function returns null, then the event
- * is simply raised as the result of the overall flow execution.</p>
- * 
- * <p>A generic map can be used to pass data into flows, and allowing flows to be run with different inputs.</p>
+ * <p>Note that raising the "proceed" event from a previous step will cause the MFA flow itself to attempt
+ * successful completion by finalizing its result.</p>
  * 
  * @since 3.3.0
  */
 public class MultiFactorAuthenticationTransition {
-
-    /** Determines whether authentication has completed or not. */
-    @Nonnull private Predicate<ProfileRequestContext> completionCondition;
-        
-    /** A function that produces a merged {@link AuthenticationResult}. */
-    @Nonnull private Function<ProfileRequestContext,AuthenticationResult> resultMergingStrategy;
 
     /** A function that determines the next flow to execute. */
     @Nonnull @NonnullElements private Map<String,Function<ProfileRequestContext,String>> nextFlowStrategyMap;
     
     /** Constructor. */
     public MultiFactorAuthenticationTransition() {
-        completionCondition = new DefaultCompletionCondition();
-        resultMergingStrategy = new DefaultResultMergingStrategy();
         nextFlowStrategyMap = new HashMap<>();
-    }
-    
-    /**
-     * Get the condition to check to determine whether authentication is complete.
-     * 
-     * <p>The default condition simply evaluates whether the {@link AuthenticationResult} satisfies
-     * the request.</p>
-     * 
-     * @return condition to check
-     */
-    @Nonnull public Predicate<ProfileRequestContext> getCompletionCondition() {
-        return completionCondition;
-    }
-    
-    /**
-     * Set the condition to check to determine whether authentication is complete.
-     * 
-     * @param condition condition to check
-     */
-    public void setCompletionCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        completionCondition = Constraint.isNotNull(condition, "Completion condition cannot be null");
-    }
-
-    /**
-     * Get the function to run to merge previous and freshly produced {@link AuthenticationResult} objects into
-     * a single result.
-     * 
-     * <p>The default function simply merges the {@link Principal} collections together and labels it with the
-     * flow ID of the most recent result.</p>
-     * 
-     * @return result merging function
-     */
-    @Nonnull public Function<ProfileRequestContext,AuthenticationResult> getResultMergingStrategy() {
-        return resultMergingStrategy;
-    }
-    
-    /**
-     * Set the function to run to merge previous and freshly produced {@link AuthenticationResult} objects into
-     * a single result.
-     * 
-     * @param strategy result merging function
-     */
-    public void setResultMergingStrategy(@Nonnull final Function<ProfileRequestContext,AuthenticationResult> strategy) {
-        resultMergingStrategy = Constraint.isNotNull(strategy, "Result merging strategy cannot be null");
     }
     
     /**
@@ -178,7 +116,7 @@ public class MultiFactorAuthenticationTransition {
     }
     
     /**
-     * Set the next flow to run directly, instead of using a strategy function.
+     * Set the next flow to run directly, instead of using a strategy map.
      * 
      * <p>The transition rule is implicitly based on a "proceed" event occurring,
      * and assumes no custom transitions for any other events.</p>
@@ -189,83 +127,4 @@ public class MultiFactorAuthenticationTransition {
         setNextFlowStrategyMap(Collections.<String,Object>singletonMap("proceed", flowId));
     }
 
-    /**
-     * Default condition to apply to determine whether MFA flow has completed.
-     * 
-     * <p>The default condition searches for a {@link MultiFactorAuthenticationContext} child of
-     * an {@link AuthenticationContext} child of the input context, and evaluates the
-     * {@link MultiFactorAuthenticationContext#getActiveResults()} property for suitability
-     * to satisfy the request based on the total set of custom {@link Principal} objects
-     * found across all results.</p>
-     */
-    public class DefaultCompletionCondition implements Predicate<ProfileRequestContext> {
-
-        /** {@inheritDoc} */
-        public boolean apply(@Nullable final ProfileRequestContext input) {
-            
-            if (input != null) {
-                final AuthenticationContext authnContext = input.getSubcontext(AuthenticationContext.class);
-                if (authnContext != null) {
-                    final MultiFactorAuthenticationContext mfaContext =
-                            authnContext.getSubcontext(MultiFactorAuthenticationContext.class);
-                    if (mfaContext != null && !mfaContext.getActiveResults().isEmpty()) {
-                        final ArrayList<Principal> mergedPrincipals = new ArrayList<>();
-                        for (final AuthenticationResult result : mfaContext.getActiveResults().values()) {
-                            // Only include Principals from fresh results or when forced authn is off.
-                            if (!(authnContext.isForceAuthn() && result.isPreviousResult())) {
-                                mergedPrincipals.addAll(result.getSubject().getPrincipals());
-                            }
-                        }   
-                        return authnContext.isAcceptable(mergedPrincipals);
-                    }
-                }
-            }
-            
-            return false;
-        }
-    }
-    
-    /**
-     * Default merging strategy to combine individual {@link AuthenticationResult} objects into a
-     * single result.
-     * 
-     * <p>The default strategy searches for a {@link MultiFactorAuthenticationContext} child of an
-     * {@link AuthenticationContext} child of the input context, and combines all of the {@link Subject}
-     * content from {@link MultiFactorAuthenticationContext#getAuthenticationResults()} into a single result.</p>
-     * 
-     * <p>It assigns the flow ID based on {@link AuthenticationContext#getAttemptedFlow()}, and also preserves
-     * the original result objects in wrapper principals within the new result.</p>
-     */
-    public class DefaultResultMergingStrategy implements Function<ProfileRequestContext,AuthenticationResult> {
-
-        /** {@inheritDoc} */
-        @Nullable public AuthenticationResult apply(@Nullable final ProfileRequestContext input) {
-            
-            if (input != null) {
-                final AuthenticationContext authnContext = input.getSubcontext(AuthenticationContext.class);
-                if (authnContext != null) {
-                    final MultiFactorAuthenticationContext mfaContext =
-                            authnContext.getSubcontext(MultiFactorAuthenticationContext.class);
-                    if (mfaContext != null) {
-                        final Collection<AuthenticationResult> results = mfaContext.getActiveResults().values();
-                        if (!results.isEmpty()) {
-                            final Subject subject = new Subject();
-                            for (final AuthenticationResult result : results) {
-                                subject.getPrincipals().add(new AuthenticationResultPrincipal(result));
-                                subject.getPrincipals().addAll(result.getSubject().getPrincipals());
-                                subject.getPublicCredentials().addAll(result.getSubject().getPublicCredentials());
-                                subject.getPrivateCredentials().addAll(result.getSubject().getPrivateCredentials());
-                            }
-                            final AuthenticationResult merged = new AuthenticationResult(
-                                    mfaContext.getAuthenticationFlowDescriptor().getId(), subject);
-                            return merged;
-                        }
-                    }
-                }
-            }
-            
-            return null;
-        }
-        
-    }
 }

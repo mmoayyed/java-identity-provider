@@ -26,8 +26,12 @@
         
     <bean id="TransitionMultiFactorAuthentication" scope="prototype"
         class="net.shibboleth.idp.authn.impl.TransitionMultiFactorAuthentication"
-        p:resultCachingPredicate="#{getObject('shibboleth.authn.MFA.resultCachingPredicate')}"
         p:validateLoginTransitions="#{getObject('shibboleth.authn.MFA.validateLoginTransitions') ?: true}" />
+
+    <bean id="FinalizeMultiFactorAuthentication" scope="prototype"
+        class="net.shibboleth.idp.authn.impl.FinalizeMultiFactorAuthentication"
+        p:resultMergingStrategy="#{getObject('shibboleth.authn.MFA.resultMergingStrategy')}"
+        p:resultCachingPredicate="#{getObject('shibboleth.authn.MFA.resultCachingPredicate')}" />
 
     <bean id="PopulateSubjectCanonicalizationContext"
         class="net.shibboleth.idp.authn.impl.PopulateSubjectCanonicalizationContext" scope="prototype"

@@ -15,17 +15,11 @@
     <!--
     This is a map of transition rules that guide the behavior of the MFA flow
     and controls how factors are sequenced, skipped, etc. The key of each entry
-    is the name of the flow out of which control is passing. The initial "exit"
-    point corresponds to an empty key.
+    is the name of the step/flow out of which control is passing. The initial "exit"
+    point is identified with an empty key.
     
     Each entry is a bean inherited from "shibboleth.authn.MFA.Transition". Per
     the Javadoc for net.shibboleth.idp.authn.MultiFactorAuthenticationTransition:
-    
-        p:completionCondition (Predicate<ProfileRequestContext>)
-            - Controls when to successfully exit the MFA flow.
-                
-        p:resultMergingStrategy (Function<ProfileRequestContext,AuthenticationResult>)
-            - Combines all the sub-results into a single result.
             
         p:nextFlow (String)
             - A flow to run if the previous one signaled a "proceed" event, for simple
@@ -36,18 +30,95 @@
                 by a previously signaled event and the value is a flow to run or a
                 function to return the flow to run.
                 
-        p:flowParameterMap (Map<String,Object>)
-            - Allows arbitrary objects to be passed into the context tree for access within flows.
+    When no rule is provided, an event will be raised as the overall event result.
+    If the "proceed" event from a step is the final event, then the flow attempts to
+    complete itself successfully.
     -->
     <util:map id="shibboleth.authn.MFA.TransitionMap">
+        <!-- First rule runs the IPAddress login flow. -->
         <entry key="">
-            <bean parent="shibboleth.authn.MFA.Transition"
-                p:nextFlow="authn/IPAddress" />
+            <bean parent="shibboleth.authn.MFA.Transition" p:nextFlow="authn/IPAddress" />
         </entry>
+        
+        <!--
+        Second rule runs a function if IPAddress succeeds, to prepare to do attribute lookup
+        based on the identity produced by the IPAddress flow, unless its self-evident that
+        an additional factor is needed.
+        -->
         <entry key="authn/IPAddress">
-            <bean parent="shibboleth.authn.MFA.Transition"
-                p:nextFlow="authn/Password" />
+            <bean parent="shibboleth.authn.MFA.Transition">
+                <property name="nextFlowStrategyMap">
+                    <map>
+                        <entry key="proceed" value-ref="toAttributeLookup" />
+                    </map>
+                </property>
+            </bean>
         </entry>
+        
+        <!-- Third rule runs the Password flow if a script says to do so. -->
+        <entry key="util/attribute">
+            <bean parent="shibboleth.authn.MFA.Transition">
+                <property name="nextFlowStrategyMap">
+                    <map>
+                        <entry key="proceed" value-ref="forcePassword" />
+                    </map>
+                </property>
+            </bean>
+        </entry>
+        
+        <!-- An implicit final rule will return whatever the Password flow returns. -->
     </util:map>
 
+    <!-- Example script that sets up attribute resolution based on previous login results. -->
+    <bean id="toAttributeLookup" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+                // Go straight to second factor if we have to, or set up for an attribute lookup first.
+                authCtx = context.getSubcontext("net.shibboleth.idp.authn.context.AuthenticationContext");
+                mfaCtx = authCtx.getSubcontext("net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext");
+                if (!mfaCtx.satisfiesRequester()) {
+                    nextFlow = "authn/Password";
+                } else {
+                    resCtx = context.getSubcontext(
+                        "net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext", true);
+                    resCtx.setPrincipal(context.getSubcontext(
+                        "net.shibboleth.idp.authn.context.SubjectCanonicalizationContext").getPrincipalName());
+                    resCtx.setAttributeIssuerID(context.getSubcontext(
+                        "net.shibboleth.idp.profile.context.RelyingPartyContext").getConfiguration().getResponderId());
+                    resCtx.setAttributeRecipientID(context.getSubcontext(
+                        "net.shibboleth.idp.profile.context.RelyingPartyContext").getRelyingPartyId());
+                    resCtx.getRequestedIdPAttributeNames().add("allowedLoginMethods");
+                    nextFlow = "util/attribute";
+                }
+                nextFlow;
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+    
+    <!-- Example to force use of Password if an attribute directs it. -->
+    <bean id="forcePassword" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+                nextFlow = "authn/Password";
+                
+                // Check for an attribute that forces second factor.
+                authCtx = context.getSubcontext("net.shibboleth.idp.authn.context.AuthenticationContext");
+                mfaCtx = authCtx.getSubcontext("net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext");
+                attributeCtx = mfaCtx.getSubcontext("net.shibboleth.idp.attribute.context.AttributeContext");
+                if (attributeCtx != null) {
+                    attribute = attributeCtx.getUnfilteredIdPAttributes().get("allowedLoginMethods");
+                    valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
+                    if (attribute != null && attribute.getValues().contains(new valueType("IPAddress"))) {
+                        nextFlow = null;
+                    }
+                }
+                nextFlow;
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+    
 </beans>
