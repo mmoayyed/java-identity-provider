@@ -225,6 +225,8 @@ public class AttributeResolutionContext extends BaseContext {
      * Helper method to invoke an AttributeResolver service using this context.
      * 
      * @param attributeResolverService the service to invoke
+     * 
+     * @since 3.3.0
      */
     public void resolveAttributes(@Nonnull final ReloadableService<AttributeResolver> attributeResolverService) {
 
