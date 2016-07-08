@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.test.flows.saml2;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,8 +83,11 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
     /** Expected subject confirmation method. */
     @Nonnull public String subjectConfirmationMethod = SubjectConfirmation.METHOD_BEARER;
     
-    /** Expected subject confirmation data address range. Defaults to "127.0.0.1/32". */
-    @Nonnull public IPRange subjectConfirmationDataAddressRange = IPRange.parseCIDRBlock("127.0.0.1/32");
+    /** Expected subject confirmation data address range for IPv4 addresses. Defaults to "127.0.0.1/32". */
+    @Nonnull public IPRange subjectConfirmationDataAddressRangeV4 = IPRange.parseCIDRBlock("127.0.0.1/32");
+    
+    /** Expected subject confirmation data address range for IPv6 addresses. Defaults to "::1/128". */
+    @Nonnull public IPRange subjectConfirmationDataAddressRangeV6 = IPRange.parseCIDRBlock("::1/128");
 
     /** Whether authn statements should be validated. */
     @Nonnull public boolean validateAuthnStatements = true;
@@ -428,7 +433,13 @@ public class SAML2TestResponseValidator extends SAML2TestStatusResponseTypeValid
      */
     public void assertSubjectConfirmationData(@Nullable final SubjectConfirmationData subjectConfirmationData) {
         final InetAddress address = InetAddresses.forString(subjectConfirmationData.getAddress());
-        Assert.assertTrue(subjectConfirmationDataAddressRange.contains(address));
+        if (address instanceof Inet4Address) {
+            Assert.assertTrue(subjectConfirmationDataAddressRangeV4.contains(address));
+        } else if(address instanceof Inet6Address) {
+            Assert.assertTrue(subjectConfirmationDataAddressRangeV6.contains(address));
+        } else {
+            Assert.fail("Unable to determine whether the IP address is V4 or V6");
+        }
         // TODO only in some cases ? Assert.assertNotNull(subjectConfirmationData.getNotBefore());
         Assert.assertNotNull(subjectConfirmationData.getNotOnOrAfter());
         Assert.assertNotNull(subjectConfirmationData.getRecipient());
