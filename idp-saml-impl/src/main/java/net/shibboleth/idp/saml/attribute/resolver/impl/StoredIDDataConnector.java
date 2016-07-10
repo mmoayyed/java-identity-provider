@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStore;
 import net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStoreEx;
 import net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -119,7 +120,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
      * 
      * @return the timeout in milliseconds
      */
-    @NonNegative public long getQueryTimeout() {
+    @Duration @NonNegative public long getQueryTimeout() {
         return idStore.getQueryTimeout();
     }
     
@@ -128,7 +129,7 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
      * 
      * @param timeout the timeout to set in seconds
      */
-    public void setQueryTimeout(@Duration @NonNegative final long timeout) {
+    @Duration public void setQueryTimeout(@Duration @NonNegative final long timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         idStore.setQueryTimeout(timeout);

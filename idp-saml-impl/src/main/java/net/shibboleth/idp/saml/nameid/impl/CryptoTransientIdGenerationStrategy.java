@@ -71,7 +71,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * 
      * @return  time, in milliseconds, ids are valid
      */
-    @Positive public long getIdLifetime() {
+    @Positive @Duration public long getIdLifetime() {
         return idLifetime;
     }
 
@@ -80,7 +80,7 @@ public class CryptoTransientIdGenerationStrategy extends AbstractIdentifiableIni
      * 
      * @param lifetime time, in milliseconds, ids are valid
      */
-    public void setIdLifetime(@Duration @Positive final long lifetime) {
+    @Duration public void setIdLifetime(@Duration @Positive final long lifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         idLifetime = Constraint.isGreaterThan(0, lifetime, "ID lifetime must be positive");

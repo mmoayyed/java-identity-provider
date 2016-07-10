@@ -676,7 +676,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * 
          * @return result of the division
          */
-        public static long buildDuration(@Duration final long duration, final long divisor) {
+        @Duration public static long buildDuration(@Duration final long duration, final long divisor) {
             return duration / divisor;
         } 
 

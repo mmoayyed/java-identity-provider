@@ -139,8 +139,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public long getLastActivityInstant() {
+    @Override @Duration public long getLastActivityInstant() {
         return lastActivityInstant;
     }
 
@@ -150,7 +149,7 @@ public abstract class AbstractIdPSession implements IdPSession {
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      * @throws SessionException if an error occurs updating the session
      */
-    public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
+    @Duration public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
         doSetLastActivityInstant(instant);
     }
     
@@ -162,7 +161,7 @@ public abstract class AbstractIdPSession implements IdPSession {
      * 
      * @param instant last activity instant, in milliseconds since the epoch, for the session, must be greater than 0
      */
-    public void doSetLastActivityInstant(@Duration @Positive final long instant) {
+    @Duration public void doSetLastActivityInstant(@Duration @Positive final long instant) {
         lastActivityInstant = Constraint.isGreaterThan(0, instant, "Last activity instant must be greater than 0");
     }
 
@@ -203,7 +202,7 @@ public abstract class AbstractIdPSession implements IdPSession {
      * @param address the address to associate
      */
     public void doBindToAddress(@Nonnull @NotEmpty final String address) {
-        String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(address), "Address cannot be null or empty");
+        final String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(address), "Address cannot be null or empty");
         switch (getAddressFamily(address)) {
             case IPV6:
                 ipV6Address = StringSupport.trimOrNull(trimmed);
@@ -227,7 +226,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** {@inheritDoc} */
     @Override
     @Nullable public AuthenticationResult getAuthenticationResult(@Nonnull @NotEmpty final String flowId) {
-        Optional<AuthenticationResult> mapped = authenticationResults.get(StringSupport.trimOrNull(flowId));
+        final Optional<AuthenticationResult> mapped = authenticationResults.get(StringSupport.trimOrNull(flowId));
         return (mapped != null) ? mapped.orNull() : null;
     }
 
@@ -259,7 +258,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     @Nullable public AuthenticationResult doAddAuthenticationResult(@Nonnull final AuthenticationResult result) {
         Constraint.isNotNull(result, "AuthenticationResult cannot be null");
     
-        Optional<AuthenticationResult> prev =
+        final Optional<AuthenticationResult> prev =
                 authenticationResults.put(result.getAuthenticationFlowId(), Optional.of(result));
         if (prev != null && prev.isPresent()) {
             log.debug("IdPSession {}: replaced old AuthenticationResult for flow ID {}", id,
@@ -300,7 +299,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** {@inheritDoc} */
     @Override
     @Nullable public SPSession getSPSession(@Nonnull @NotEmpty final String serviceId) {
-        Optional<SPSession> mapped = spSessions.get(StringSupport.trimOrNull(serviceId));
+        final Optional<SPSession> mapped = spSessions.get(StringSupport.trimOrNull(serviceId));
         return (mapped != null) ? mapped.orNull() : null;
     }
 
@@ -331,7 +330,7 @@ public abstract class AbstractIdPSession implements IdPSession {
     @Nullable public SPSession doAddSPSession(@Nonnull final SPSession spSession) {
         Constraint.isNotNull(spSession, "SPSession cannot be null");
     
-        Optional<SPSession> prev = spSessions.put(spSession.getId(), Optional.of(spSession));
+        final Optional<SPSession> prev = spSessions.put(spSession.getId(), Optional.of(spSession));
         if (prev != null && prev.isPresent()) {
             log.debug("IdPSession {}: replaced old SPSession for service {}", id, prev.get().getId());
             return prev.get();
@@ -363,12 +362,12 @@ public abstract class AbstractIdPSession implements IdPSession {
     /** {@inheritDoc} */
     @Override
     public boolean checkAddress(@Nonnull @NotEmpty final String address) throws SessionException {
-        AddressFamily family = getAddressFamily(address);
+        final AddressFamily family = getAddressFamily(address);
         if (family == AddressFamily.UNKNOWN) {
             log.warn("Address {} is of unknown type", address);
             return false;
         }
-        String bound = getAddress(family);
+        final String bound = getAddress(family);
         if (bound != null) {
             if (!bound.equals(address)) {
                 log.warn("Client address is {} but session {} already bound to {}", address, id, bound);
@@ -378,7 +377,7 @@ public abstract class AbstractIdPSession implements IdPSession {
             log.info("Session {} not yet locked to a {} address, locking it to {}", id, family, address);
             try {
                 bindToAddress(address);
-            } catch (SessionException e) {
+            } catch (final SessionException e) {
                 log.error("Unable to bind session {} to address {}", id, address);
                 return false;
             }
@@ -396,7 +395,7 @@ public abstract class AbstractIdPSession implements IdPSession {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

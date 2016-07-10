@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -52,7 +51,7 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<StoredIDDataConnector> getBeanClass(Element element) {
+    @Override protected Class<StoredIDDataConnector> getBeanClass(final Element element) {
         return StoredIDDataConnector.class;
     }
 
@@ -75,11 +74,7 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         }
 
         if (config.hasAttributeNS(null, "queryTimeout")) {
-            final BeanDefinitionBuilder timeout =
-                    BeanDefinitionBuilder.rootBeanDefinition(StoredIDDataConnectorParser.class, "buildDuration");
-            timeout.addConstructorArgValue(StringSupport.trimOrNull(config.getAttributeNS(null, "queryTimeout")));
-            timeout.addConstructorArgValue(1);
-            builder.addPropertyValue("queryTimeout", timeout.getBeanDefinition());
+            builder.addPropertyValue("queryTimeout", config.getAttributeNS(null, "queryTimeout"));
         }
 
         if (config.hasAttributeNS(null, "transactionRetries")) {
@@ -148,23 +143,9 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
      * @param config the DOM element under consideration.
      * @return the DataSource
      */
-    protected BeanDefinition getv2DataSource(@Nonnull Element config) {
+    protected BeanDefinition getv2DataSource(@Nonnull final Element config) {
         log.debug("{} Parsing v2 configuration", getLogPrefix());
         final ManagedConnectionParser parser = new ManagedConnectionParser(config);
         return parser.createDataSource();
     }
-
-    /**
-     * Converts the supplied duration to milliseconds and divides it by the divisor. Useful for modifying durations
-     * while resolving property replacement.
-     * 
-     * @param duration the duration (which may have gone through spring translation from iso to long)
-     * @param divisor to modify the duration with
-     * 
-     * @return result of the division
-     */
-    public static long buildDuration(@Duration final long duration, final long divisor) {
-        return duration / divisor;
-    } 
-
 }

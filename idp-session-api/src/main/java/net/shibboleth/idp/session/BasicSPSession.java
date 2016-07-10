@@ -69,14 +69,12 @@ public class BasicSPSession implements SPSession {
     }
     
     /** {@inheritDoc} */
-    @Override
-    @Positive public long getCreationInstant() {
+    @Override @Duration @Positive public long getCreationInstant() {
         return creationInstant;
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Positive  public long getExpirationInstant() {
+    @Override @Duration @Positive public long getExpirationInstant() {
         return expirationInstant;
     }
 

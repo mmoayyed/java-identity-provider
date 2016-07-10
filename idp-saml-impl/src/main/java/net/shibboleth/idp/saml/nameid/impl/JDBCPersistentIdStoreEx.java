@@ -181,7 +181,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
      * 
      * @return the timeout in milliseconds
      */
-    @NonNegative public long getQueryTimeout() {
+    @NonNegative @Duration public long getQueryTimeout() {
         return queryTimeout;
     }
     
@@ -190,7 +190,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
      * 
      * @param timeout the timeout to set in milliseconds
      */
-    public void setQueryTimeout(@Duration @NonNegative final long timeout) {
+    @Duration public void setQueryTimeout(@Duration @NonNegative final long timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         queryTimeout = Constraint.isGreaterThanOrEqual(0, timeout, "Timeout must be greater than or equal to 0");
@@ -842,7 +842,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
         final ArrayList<PersistentIdEntry> entries = new ArrayList<>();
     
         while (resultSet.next()) {
-            PersistentIdEntry entry = new PersistentIdEntry();
+            final PersistentIdEntry entry = new PersistentIdEntry();
             entry.setIssuerEntityId(resultSet.getString(issuerColumn));
             entry.setRecipientEntityId(resultSet.getString(recipientColumn));
             entry.setPrincipalName(resultSet.getString(principalNameColumn));

@@ -165,7 +165,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @return maximum amount of time in milliseconds a flow should be considered active, never less than 0
      */
-    @NonNegative public long getLifetime() {
+    @NonNegative @Duration public long getLifetime() {
         return lifetime;
     }
 
@@ -175,7 +175,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @param flowLifetime the lifetime for the flow, must be 0 or greater
      */
-    public void setLifetime(@Duration @NonNegative final long flowLifetime) {
+    @Duration public void setLifetime(@Duration @NonNegative final long flowLifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         lifetime = Constraint.isGreaterThanOrEqual(0, flowLifetime, "Lifetime must be greater than or equal to 0");
@@ -190,7 +190,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @return the duration
      */
-    @Positive public long getInactivityTimeout() {
+    @Duration @Positive public long getInactivityTimeout() {
         return inactivityTimeout;
     }
 
@@ -199,7 +199,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
      * 
      * @param timeout the flow inactivity timeout, must be greater than zero
      */
-    public void setInactivityTimeout(@Duration @Positive final long timeout) {
+    @Duration public void setInactivityTimeout(@Duration @Positive final long timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         inactivityTimeout = Constraint.isGreaterThan(0, timeout, "Inactivity timeout must be greater than 0");
@@ -217,7 +217,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         Constraint.isTrue(result.getAuthenticationFlowId().equals(getId()),
                 "AuthenticationResult was not produced by this flow");
 
-        long now = System.currentTimeMillis();
+        final long now = System.currentTimeMillis();
         if (getLifetime() > 0 && result.getAuthenticationInstant() + getLifetime() <= now) {
             return false;
         } else if (getInactivityTimeout() > 0 && result.getLastActivityInstant() + getInactivityTimeout() <= now) {
@@ -271,7 +271,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /** {@inheritDoc} */
-    @Override public boolean apply(ProfileRequestContext input) {
+    @Override public boolean apply(final ProfileRequestContext input) {
         return activationCondition.apply(input);
     }
     
@@ -304,7 +304,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public AuthenticationResult deserialize(long version, @Nonnull @NotEmpty final String context,
+    @Override @Nonnull public AuthenticationResult deserialize(final long version, @Nonnull @NotEmpty final String context,
             @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nonnull final Long expiration)
             throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -320,7 +320,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

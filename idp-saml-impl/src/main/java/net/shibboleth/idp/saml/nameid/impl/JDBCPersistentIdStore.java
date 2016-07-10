@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
  *     
  * @deprecated
  */
+@Deprecated
 public class JDBCPersistentIdStore extends AbstractInitializableComponent implements PersistentIdStore {
 
     /** Class logger. */
@@ -330,7 +331,7 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
      * 
      * @return the timeout in milliseconds
      */
-    @NonNegative public long getQueryTimeout() {
+    @NonNegative @Duration public long getQueryTimeout() {
         return queryTimeout;
     }
 
@@ -339,7 +340,7 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
      * 
      * @param timeout the timeout to set in milliseconds
      */
-    public void setQueryTimeout(@Duration @NonNegative final long timeout) {
+    @Duration public void setQueryTimeout(@Duration @NonNegative final long timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         queryTimeout = Constraint.isGreaterThanOrEqual(0, timeout, "Timeout must be greater than or equal to 0");
@@ -366,12 +367,12 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
     }
 
     /** {@inheritDoc} */
-    @Override public void store(@Nonnull PersistentIdEntry entry) throws IOException {
+    @Override public void store(@Nonnull final PersistentIdEntry entry) throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
     
         try {
             validatePersistentIdEntry(entry);
-        } catch (SQLException e2) {
+        } catch (final SQLException e2) {
            throw new IOException(e2);
         }
     
@@ -653,7 +654,7 @@ public class JDBCPersistentIdStore extends AbstractInitializableComponent implem
         final ArrayList<PersistentIdEntry> entries = new ArrayList<>();
 
         while (resultSet.next()) {
-            PersistentIdEntry entry = new PersistentIdEntry();
+            final PersistentIdEntry entry = new PersistentIdEntry();
             entry.setIssuerEntityId(resultSet.getString(issuerColumn));
             entry.setRecipientEntityId(resultSet.getString(recipientColumn));
             entry.setPrincipalName(resultSet.getString(principalNameColumn));

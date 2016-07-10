@@ -83,8 +83,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     }
     
     /** {@inheritDoc} */
-    @Override
-    public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
+    @Override @Duration public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
         
         final long exp = instant + sessionManager.getSessionTimeout() + sessionManager.getSessionSlop();
         log.debug("Updating expiration of master record for session {} to {}", getId(), new DateTime(exp));

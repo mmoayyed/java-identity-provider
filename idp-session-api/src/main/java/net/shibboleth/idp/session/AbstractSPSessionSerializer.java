@@ -85,7 +85,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
             gen.writeEnd().close();
             
             return sink.toString();
-        } catch (JsonException e) {
+        } catch (final JsonException e) {
             log.error("Exception while serializing SPSession", e);
             throw new IOException("Exception while serializing SPSession", e);
         }
@@ -148,7 +148,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
      * @return the newly constructed object
      * @throws IOException if an error occurs during deserialization
      */
-    @Nonnull protected abstract SPSession doDeserialize(@Nonnull final JsonObject obj,
+    @Nonnull @Duration protected abstract SPSession doDeserialize(@Nonnull final JsonObject obj,
             @Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
             @Duration @Positive final long expiration) throws IOException;
     

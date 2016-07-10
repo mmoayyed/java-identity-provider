@@ -22,12 +22,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.opensaml.profile.context.ProfileRequestContext;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
@@ -38,13 +32,19 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.InitializableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.profile.context.ProfileRequestContext;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 /**
  * Base class for CAS protocol configuration.
- *
+ * 
  * @author Marvin S. Addison
  */
-public abstract class AbstractProtocolConfiguration extends AbstractProfileConfiguration
-        implements InitializableComponent {
+public abstract class AbstractProtocolConfiguration extends AbstractProfileConfiguration implements
+        InitializableComponent {
 
     /** CAS base protocol URI. */
     public static final String PROTOCOL_URI = "https://www.apereo.org/cas/protocol";
@@ -53,8 +53,8 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
     private boolean initialized;
 
     /** Lookup function to supply {@link #ticketValidityPeriod} property. */
-    @Nullable private Function<ProfileRequestContext,Long> ticketValidityPeriodLookupStrategy;
-    
+    @Nullable private Function<ProfileRequestContext, Long> ticketValidityPeriodLookupStrategy;
+
     /** Validity time period of tickets. */
     @Duration @Positive private long ticketValidityPeriod;
 
@@ -63,22 +63,19 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
 
     /**
      * Creates a new configuration instance.
-     *
+     * 
      * @param profileId Unique profile identifier.
      */
     public AbstractProtocolConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         resolveAttributesPredicate = Predicates.alwaysTrue();
         ticketValidityPeriod = 15000L;
-        setSecurityConfiguration(
-                new SecurityConfiguration(
-                    TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES),
-                    new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength())));
+        setSecurityConfiguration(new SecurityConfiguration(TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES),
+                new TicketIdentifierGenerationStrategy(getDefaultTicketPrefix(), getDefaultTicketLength())));
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void initialize() throws ComponentInitializationException {
+    @Override public void initialize() throws ComponentInitializationException {
         Constraint.isNotNull(getSecurityConfiguration(), "Security configuration cannot be null.");
         Constraint.isNotNull(getSecurityConfiguration().getIdGenerator(),
                 "Security configuration ID generator cannot be null.");
@@ -86,8 +83,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
     }
 
     /** {@inheritDoc} */
-    @Override
-    public boolean isInitialized() {
+    @Override public boolean isInitialized() {
         return initialized;
     }
 
@@ -96,8 +92,7 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
      * 
      * @return Ticket validity period in milliseconds.
      */
-    @Positive
-    public long getTicketValidityPeriod() {
+    @Positive @Duration public long getTicketValidityPeriod() {
         return Constraint.isGreaterThan(0,
                 getIndirectProperty(ticketValidityPeriodLookupStrategy, ticketValidityPeriod),
                 "Ticket validity period must be positive.");
@@ -105,45 +100,49 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
 
     /**
      * Sets the ticket validity period.
-     *
+     * 
      * @param millis Ticket validity period in milliseconds.
      */
-    public void setTicketValidityPeriod(@Duration @Positive final long millis) {
+    @Duration public void setTicketValidityPeriod(@Duration @Positive final long millis) {
         ticketValidityPeriod = Constraint.isGreaterThan(0, millis, "Ticket validity period must be positive.");
     }
 
     /**
      * Set a lookup strategy for the {@link #ticketValidityPeriod} property.
-     *
-     * @param strategy  lookup strategy
+     * 
+     * @param strategy lookup strategy
      * 
      * @since 3.3.0
      */
-    public void setTicketValidityPeriodLookupStrategy(@Nullable final Function<ProfileRequestContext,Long> strategy) {
+    public void setTicketValidityPeriodLookupStrategy(@Nullable final Function<ProfileRequestContext, Long> strategy) {
         ticketValidityPeriodLookupStrategy = strategy;
     }
 
     /**
      * Get whether attributes should be resolved during the profile.
-     *
-     * <p>Default is true</p>
+     * 
+     * <p>
+     * Default is true
+     * </p>
      * 
      * @return true iff attributes should be resolved
      * 
      * @deprecated Use {@link #getResolveAttributesPredicate()} instead.
      */
+    @Deprecated
     public boolean isResolveAttributes() {
         return resolveAttributesPredicate.apply(getProfileRequestContext());
     }
-    
+
     /**
      * Set whether attributes should be resolved during the profile.
      * 
      * @param flag flag to set
      */
     public void setResolveAttributes(final boolean flag) {
-        resolveAttributesPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
-                : Predicates.<ProfileRequestContext>alwaysFalse();
+        resolveAttributesPredicate =
+                flag ? Predicates.<ProfileRequestContext> alwaysTrue() : Predicates
+                        .<ProfileRequestContext> alwaysFalse();
     }
 
     /**
@@ -156,11 +155,11 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
     @Nonnull public Predicate<ProfileRequestContext> getResolveAttributesPredicate() {
         return resolveAttributesPredicate;
     }
-    
+
     /**
      * Set a condition to determine whether attributes should be resolved during the profile.
-     *
-     * @param condition  condition to set
+     * 
+     * @param condition condition to set
      * 
      * @since 3.3.0
      */
@@ -174,12 +173,12 @@ public abstract class AbstractProtocolConfiguration extends AbstractProfileConfi
      * @return prefix
      */
     @Nonnull @NotEmpty protected abstract String getDefaultTicketPrefix();
-    
+
     /**
      * Get default ticket length.
      * 
      * @return length
      */
     protected abstract int getDefaultTicketLength();
-    
+
 }

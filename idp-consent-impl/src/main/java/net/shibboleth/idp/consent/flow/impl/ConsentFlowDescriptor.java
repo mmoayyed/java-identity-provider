@@ -69,7 +69,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * 
      * @return time in milliseconds to expire consent storage records
      */
-    @Nonnull @NonNegative public Long getLifetime() {
+    @Nonnull @NonNegative @Duration public Long getLifetime() {
         return lifetime;
     }
 
@@ -116,7 +116,7 @@ public class ConsentFlowDescriptor extends ProfileInterceptorFlowDescriptor {
      * 
      * @param consentLifetime time in milliseconds to expire consent storage records
      */
-    public void setLifetime(@Nonnull @Duration @NonNegative final Long consentLifetime) {
+    @Duration public void setLifetime(@Nonnull @Duration @NonNegative final Long consentLifetime) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(consentLifetime, "Lifetime cannot be null");
 

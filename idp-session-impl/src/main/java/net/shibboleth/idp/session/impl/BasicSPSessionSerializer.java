@@ -47,7 +47,7 @@ public class BasicSPSessionSerializer extends AbstractSPSessionSerializer {
     }
 
     /** {@inheritDoc} */
-    @Override
+    @Override 
     @Nonnull protected SPSession doDeserialize(@Nonnull final JsonObject obj,
             @Nonnull @NotEmpty final String id, @Duration @Positive final long creation,
             @Duration @Positive final long expiration) throws IOException {

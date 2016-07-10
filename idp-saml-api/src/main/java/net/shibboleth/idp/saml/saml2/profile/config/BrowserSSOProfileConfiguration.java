@@ -178,6 +178,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * 
      * @deprecated Use {@link #getResolveAttributesPredicate()} instead.
      */
+    @Deprecated
     public boolean resolveAttributes() {
         return resolveAttributesPredicate.apply(getProfileRequestContext());
     }
@@ -223,6 +224,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * 
      * @deprecated Use {@link #getIncludeAttributeStatementPredicate()} instead.
      */
+    @Deprecated
     public boolean includeAttributeStatement() {
         return includeAttributeStatementPredicate.apply(getProfileRequestContext());
     }
@@ -269,6 +271,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * 
      * @deprecated Use {@link #getSkipEndpointValidationWhenSignedPredicate()} instead.
      */
+    @Deprecated
     public boolean skipEndpointValidationWhenSigned() {
         return skipEndpointValidationWhenSignedPredicate.apply(getProfileRequestContext());
     }
@@ -313,7 +316,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * 
      * @return max lifetime of service provider should maintain a session
      */
-    @NonNegative public long getMaximumSPSessionLifetime() {
+    @NonNegative @Duration public long getMaximumSPSessionLifetime() {
         return Constraint.isGreaterThanOrEqual(0,
                 getIndirectProperty(maximumSPSessionLifetimeLookupStrategy, maximumSPSessionLifetime),
                 "Maximum SP session lifetime must be greater or equal to 0");
@@ -325,7 +328,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
      * 
      * @param lifetime max lifetime of service provider should maintain a session
      */
-    public void setMaximumSPSessionLifetime(@Duration @NonNegative final long lifetime) {
+    @Duration public void setMaximumSPSessionLifetime(@Duration @NonNegative final long lifetime) {
         maximumSPSessionLifetime =
                 Constraint.isGreaterThanOrEqual(0, lifetime,
                         "Maximum SP session lifetime must be greater than or equal to 0");

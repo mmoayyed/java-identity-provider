@@ -119,7 +119,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * 
      * @return the value of property to set or null if never set
      */
-    @Nullable public Long getNoRetryDelay() {
+    @Nullable @Duration public Long getNoRetryDelay() {
         return noRetryDelay;
     }
     
@@ -128,7 +128,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * 
      * @param delay the value to set
      */
-    public void setNoRetryDelay(@Nullable @Duration final Long delay) {
+    @Duration public void setNoRetryDelay(@Nullable @Duration final Long delay) {
         noRetryDelay = delay;
     }
 
@@ -189,7 +189,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     }
 
     /** {@inheritDoc} */
-    @Override protected void setValues(AbstractDataConnector what) {
+    @Override protected void setValues(final AbstractDataConnector what) {
         super.setValues(what);
         if (null != getFailoverDataConnectorId()) {
             what.setFailoverDataConnectorId(getFailoverDataConnectorId());
@@ -197,7 +197,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     }
 
     /** {@inheritDoc} We do not allow non-singleton beans, if we did then we loose constructability. */
-    @Override public void setSingleton(boolean singleton) {
+    @Override public void setSingleton(final boolean singleton) {
         Constraint.isTrue(singleton, "Can only be singleton");
         super.setSingleton(singleton);
     }
@@ -217,12 +217,12 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
     }
 
     /** {@inheritDoc} */
-    @Override public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    @Override public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         parentContext = applicationContext;
     }
 
     /** {@inheritDoc} */
-    @Override protected void destroyInstance(AbstractDataConnector instance) throws Exception {
+    @Override protected void destroyInstance(final AbstractDataConnector instance) throws Exception {
         super.destroyInstance(instance);
         appContext.close();
     }
@@ -236,7 +236,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
 
         log.debug("Creating a DataConnector of type {} from resources {}", connectorClass, resources);
 
-        Constructor<? extends AbstractDataConnector> constructor = connectorClass.getConstructor();
+        final Constructor<? extends AbstractDataConnector> constructor = connectorClass.getConstructor();
         final AbstractDataConnector result = constructor.newInstance();
         if (null != getFailoverDataConnectorId()) {
             result.setFailoverDataConnectorId(getFailoverDataConnectorId());
@@ -250,10 +250,10 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
                 SpringSupport.newContext("LDAPContext", getResources(), getBeanFactoryPostProcessors(),
                         getBeanPostProcessors(), Collections.EMPTY_LIST, parentContext);
 
-        PropertyDescriptor[] descriptors =
+        final PropertyDescriptor[] descriptors =
                 Introspector.getBeanInfo(connectorClass, AbstractDataConnector.class).getPropertyDescriptors();
 
-        for (PropertyDescriptor descriptor : descriptors) {
+        for (final PropertyDescriptor descriptor : descriptors) {
             log.debug("Parsing property descriptor: {}", descriptor);
             final Map<String, ?> beans = appContext.getBeansOfType(descriptor.getPropertyType());
 

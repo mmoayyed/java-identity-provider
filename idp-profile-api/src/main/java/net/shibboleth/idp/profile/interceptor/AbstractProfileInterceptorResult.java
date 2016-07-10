@@ -84,7 +84,8 @@ public abstract class AbstractProfileInterceptorResult extends AbstractIdentifia
     }
 
     /** {@inheritDoc} */
-    @Nullable @Positive public Long getStorageExpiration() {
+    @Override
+    @Nullable @Positive @Duration public Long getStorageExpiration() {
         return storageExpiration;
     }
 }

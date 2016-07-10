@@ -25,7 +25,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -38,6 +37,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
@@ -133,7 +133,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
     }
 
     /** {@inheritDoc} */
-    @Override @Positive public long getAssertionLifetime() {
+    @Override @Positive @Duration public long getAssertionLifetime() {
         return Constraint.isGreaterThan(0, getIndirectProperty(assertionLifetimeLookupStrategy, assertionLifetime),
                 "Assertion lifetime must be greater than 0");
     }
@@ -143,7 +143,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @param lifetime lifetime of an assertion in milliseconds
      */
-    public void setAssertionLifetime(@Positive @Duration final long lifetime) {
+    @Duration public void setAssertionLifetime(@Positive @Duration final long lifetime) {
         assertionLifetime = Constraint.isGreaterThan(0, lifetime, "Assertion lifetime must be greater than 0");
     }
 
@@ -210,6 +210,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @deprecated
      */
+    @Deprecated
     public void setAdditionalAudienceForAssertion(@Nonnull @NonnullElements final Collection<String> audiences) {
         LoggerFactory.getLogger(AbstractSAMLProfileConfiguration.class).warn(
                 "Use of deprecated property name 'additionalAudienceForAssertion', please correct to "

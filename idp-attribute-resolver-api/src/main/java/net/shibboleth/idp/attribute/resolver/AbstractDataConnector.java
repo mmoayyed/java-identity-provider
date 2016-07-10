@@ -85,7 +85,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      *
      * @param time what to set
      */
-    public void setLastFail(long time) {
+    public void setLastFail(final long time) {
         lastFail = time;
     }
 
@@ -101,12 +101,12 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
      *
      * @param delay what to set
      */
-    public void setNoRetryDelay(@Duration long delay) {
+    @Duration public void setNoRetryDelay(@Duration final long delay) {
         noRetryDelay = delay;
     }
 
     /** {@inheritDoc} */
-    @Override public long getNoRetryDelay() {
+    @Override @Duration public long getNoRetryDelay() {
         return noRetryDelay;
     }
 
@@ -127,7 +127,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         } catch (NoResultAnErrorResolutionException | MultipleResultAnErrorResolutionException e) {
             // Do not record these failures, they are 'expected'
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             setLastFail(System.currentTimeMillis());
             throw e;
         }
@@ -138,8 +138,8 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         } else {
             log.debug("{} produced the following {} attributes during resolution {}", new Object[] {getLogPrefix(),
                     result.size(), result.keySet(),});
-            for (String attrName : result.keySet()) {
-                IdPAttribute attr = result.get(attrName);
+            for (final String attrName : result.keySet()) {
+                final IdPAttribute attr = result.get(attrName);
                 log.debug("{} Attribute '{}': Values '{}'", new Object[] {getLogPrefix(), attrName, attr.getValues(),});
             }
         }

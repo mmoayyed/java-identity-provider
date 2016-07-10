@@ -206,7 +206,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      * @return inactivity timeout
      */
-    @Positive public long getSessionTimeout() {
+    @Duration @Positive public long getSessionTimeout() {
         return sessionTimeout;
     }
 
@@ -215,7 +215,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      * @param timeout the policy to set
      */
-    public void setSessionTimeout(@Duration @Positive final long timeout) {
+    @Duration public void setSessionTimeout(@Duration @Positive final long timeout) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         sessionTimeout = Constraint.isGreaterThan(0, timeout, "Timeout must be greater than zero");
@@ -226,7 +226,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      * @return expiration deferrence time
      */
-    @Positive public long getSessionSlop() {
+    @Duration @Positive public long getSessionSlop() {
         return sessionSlop;
     }
 
@@ -235,7 +235,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * 
      * @param slop the policy to set
      */
-    public void setSessionSlop(@Duration @NonNegative final long slop) {
+    @Duration public void setSessionSlop(@Duration @NonNegative final long slop) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         sessionSlop = Constraint.isGreaterThanOrEqual(0, slop, "Slop must be greater than or equal to zero");
@@ -573,7 +573,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                     if (cookies != null) {
                         for (final Cookie cookie : cookies) {
                             if (cookieName.equals(cookie.getName())) {
-                                IdPSession session = lookupBySessionId(cookie.getValue());
+                                final IdPSession session = lookupBySessionId(cookie.getValue());
                                 if (session != null) {
                                     return ImmutableList.of(session);
                                 }
@@ -660,7 +660,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
             try {
                 sessionList = storageService.read(serviceId, serviceKey);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 log.error("Exception while querying based service ID {} and key {}", serviceId, serviceKey, e);
                 if (!maskStorageFailure) {
                     throw new SessionException("Exception while querying based on SPSession", e);
@@ -671,7 +671,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
                 if (sessionList != null) {
                     if (!sessionList.getValue().contains(idpSession.getId() + ',')) {
                         // Need to update record.
-                        String updated = sessionList.getValue() + idpSession.getId() + ',';
+                        final String updated = sessionList.getValue() + idpSession.getId() + ',';
                         if (storageService.updateWithVersion(sessionList.getVersion(), serviceId, serviceKey, updated,
                                 Math.max(sessionList.getExpiration(), 
                                          spSession.getExpirationInstant() + sessionSlop)) == null) {
@@ -739,7 +739,7 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
 
             try {
                 sessionList = storageService.read(serviceId, serviceKey);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 log.error("Exception while querying based service ID {} and key {}", serviceId, serviceKey, e);
                 if (!maskStorageFailure) {
                     throw new SessionException("Exception while querying based on SPSession", e);
