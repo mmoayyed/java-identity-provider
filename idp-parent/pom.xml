@@ -62,7 +62,6 @@
         <svn.relative.location>java-identity-provider/trunk</svn.relative.location>
         <idwsfconsumer.version>1.0.0</idwsfconsumer.version>
         <java-support.version>7.3.0-SNAPSHOT</java-support.version>
-        <jetty9-dta-ssl.version>1.0.0</jetty9-dta-ssl.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>3.3.0-SNAPSHOT</opensaml.version>
         <spring-extensions.version>5.3.0-SNAPSHOT</spring-extensions.version>

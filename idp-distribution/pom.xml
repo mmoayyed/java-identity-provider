@@ -33,13 +33,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>net.shibboleth.utilities.jetty9</groupId>
-            <artifactId>jetty9-dta-ssl</artifactId>
-            <version>${jetty9-dta-ssl.version}</version>
-            <optional>true</optional>
-            <scope>runtime</scope>
-        </dependency>
         <!-- Required if using classes with command line support. -->
         <dependency>
             <groupId>com.beust</groupId>
@@ -161,45 +154,6 @@
                             </artifactItems>
                         </configuration>
                     </execution>
-                    <!-- Copy Jetty DTA plugin to embedded/jetty-base/lib/ext directory. -->
-                    <execution>
-                        <id>copy-jetty-dta-ssl-92</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>net.shibboleth.utilities.jetty9</groupId>
-                                    <artifactId>jetty9-dta-ssl</artifactId>
-                                    <version>${jetty9-dta-ssl.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${idp.assemblyDirectory}/embedded/jetty-base/lib/ext</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-jetty-dta-ssl-93</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>net.shibboleth.utilities.jetty9</groupId>
-                                    <artifactId>jetty9-dta-ssl</artifactId>
-                                    <version>${jetty9-dta-ssl.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${idp.assemblyDirectory}/embedded/jetty-base-9.3/lib/ext</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
                     <!-- Copy runtime dependencies to bin\lib directory. -->
                     <execution>
                         <id>copy-runtime-dependencies</id>
@@ -231,63 +185,6 @@
                                 </artifactItem>
                             </artifactItems>
                             <outputDirectory>${idp.assemblyDirectory}/bin/lib/</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <!-- Copy logging dependencies to embedded/jetty-base/lib directory. (for Jetty logging) -->
-                    <execution>
-                        <id>copy-jetty-logging-dependencies-92</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-classic</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-core</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-access</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${slf4j.groupId}</groupId>
-                                    <artifactId>jcl-over-slf4j</artifactId>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${idp.assemblyDirectory}/embedded/jetty-base/lib/logging/</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-jetty-logging-dependencies-93</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-classic</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-core</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>ch.qos.logback</groupId>
-                                    <artifactId>logback-access</artifactId>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>${slf4j.groupId}</groupId>
-                                    <artifactId>jcl-over-slf4j</artifactId>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${idp.assemblyDirectory}/embedded/jetty-base-9.3/lib/logging/</outputDirectory>
                         </configuration>
                     </execution>
                     <!-- Copy logging dependencies to WEB-INF/lib directory. -->
