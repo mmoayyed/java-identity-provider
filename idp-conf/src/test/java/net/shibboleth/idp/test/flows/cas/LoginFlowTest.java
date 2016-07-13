@@ -103,6 +103,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final IdPSession existing = sessionManager.createSession("aurora");
         existing.addAuthenticationResult(new AuthenticationResult("authn/Password", new UsernamePrincipal("aurora")));
         externalContext.getMockRequestParameterMap().put("service", service);
+        externalContext.getMockRequestParameterMap().put("gateway", "true");
         overrideEndStateOutput(FLOW_ID, "RedirectToService");
         request.setCookies(new Cookie("shib_idp_session", existing.getId()));
         initializeThreadLocals();

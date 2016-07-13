@@ -20,6 +20,7 @@ package net.shibboleth.idp.cas.flow.impl;
 import javax.annotation.Nonnull;
 
 import com.google.common.base.Function;
+import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.cas.config.impl.ConfigLookupFunction;
 import net.shibboleth.idp.cas.config.impl.LoginConfiguration;
@@ -95,8 +96,11 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                     "Invalid service ticket configuration: SecurityConfiguration#idGenerator undefined");
         }
         final AuthenticationContext authnCtx = authnCtxLookupFunction.apply(profileRequestContext);
-        if (authnCtx == null) {
-            throw new IllegalStateException("AuthenticationContext not found");
+        final AuthenticationResult authnResult;
+        if (authnCtx != null) {
+            authnResult = authnCtx.getAuthenticationResult();
+        } else {
+            authnResult = getLatestAuthenticationResult(session);
         }
         final ServiceTicket ticket;
         try {
@@ -104,8 +108,8 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
             final TicketState state = new TicketState(
                     session.getId(),
                     session.getPrincipalName(),
-                    new Instant(authnCtx.getAuthenticationResult().getAuthenticationInstant()),
-                    authnCtx.getAuthenticationResult().getAuthenticationFlowId());
+                    new Instant(authnResult.getAuthenticationInstant()),
+                    authnResult.getAuthenticationFlowId());
             ticket = ticketService.createServiceTicket(
                     config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
                     DateTime.now().plus(config.getTicketValidityPeriod()).toInstant(),
@@ -123,5 +127,27 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
         }
         setCASResponse(profileRequestContext, response);
         return null;
+    }
+
+    /**
+     * Gets the most recent authentication result from the IdP session.
+     *
+     * @param session IdP session to ask for authentication results.
+     *
+     * @return Latest authentication result.
+     *
+     * @throws IllegalStateException If no authentication results are found.
+     */
+    private AuthenticationResult getLatestAuthenticationResult(IdPSession session) {
+        AuthenticationResult latest = null;
+        for (final AuthenticationResult result : session.getAuthenticationResults()) {
+            if (latest == null || result.getAuthenticationInstant() > latest.getAuthenticationInstant()) {
+                latest = result;
+            }
+        }
+        if (latest == null) {
+            throw new IllegalStateException("Cannot find authentication results in IdP session");
+        }
+        return latest;
     }
 }
