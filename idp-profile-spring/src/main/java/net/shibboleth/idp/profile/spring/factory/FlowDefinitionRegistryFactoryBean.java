@@ -26,6 +26,8 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.webflow.config.FlowDefinitionResource;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -58,11 +60,14 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  */
 public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowDefinitionRegistry> {
 
-    /** Explicit flow mappings. */
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(FlowDefinitionRegistryFactoryBean.class);
+
+    /** Explicit flow mappings from flow ID to resource path. */
     @Nonnull @NonnullElements private Map<String,String> flowLocations;
 
-    /** Pattern-based flow mappings. */
-    @Nonnull @NonnullElements private Collection<String> flowLocationPatterns;
+    /** Pattern-based flow mappings from pattern to base location to apply. */
+    @Nonnull @NonnullElements private Map<String,String> flowLocationPatterns;
 
     /** Required collaborator. */
     @Nullable private FlowBuilderServices flowBuilderServices;
@@ -79,7 +84,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
     /** Constructor. */
     public FlowDefinitionRegistryFactoryBean() {
         flowLocations = Collections.emptyMap();
-        flowLocationPatterns = Collections.emptyList();
+        flowLocationPatterns = Collections.emptyMap();
     }
 
     /** {@inheritDoc} */
@@ -103,16 +108,32 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
      * @param locationMap mappings from flow ID to resource
      */
     public void setFlowLocations(@Nonnull @NonnullElements final Map<String,String> locationMap) {
-        flowLocations = new LinkedHashMap(Constraint.isNotNull(locationMap, "Flow mappings cannot be null"));
+        Constraint.isNotNull(locationMap, "Flow mappings cannot be null");
+        
+        flowLocations = new LinkedHashMap(locationMap.size());
+        for (final Map.Entry<String,String> entry : locationMap.entrySet()) {
+            if (entry.getKey() != null && entry.getValue() != null) {
+                flowLocations.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     /**
-     * Registers a set of flows resolved from a resource location pattern.
+     * Registers a set of flows resolved from a resource location pattern as the mapping key,
+     * with an optional value containing a portion to strip when computing the flow IDs, with
+     * the default base location applied if empty/null.
      * 
-     * @param patterns the patterns to use
+     * @param patternMap the mappings to use
      */
-    public void setFlowLocationPatterns(@Nonnull final Collection<String> patterns) {
-        flowLocationPatterns = StringSupport.normalizeStringCollection(patterns);
+    public void setFlowLocationPatterns(@Nonnull final Map<String,String> patternMap) {
+        Constraint.isNotNull(patternMap, "Pattern mappings cannot be null");
+        
+        flowLocationPatterns = new LinkedHashMap(patternMap.size());
+        for (final Map.Entry<String,String> entry : patternMap.entrySet()) {
+            if (entry.getKey() != null && (basePath != null || entry.getValue() != null)) {
+                flowLocationPatterns.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     /**
@@ -139,7 +160,6 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
     protected FlowDefinitionRegistry createInstance() throws Exception {
 
         flowResourceFactory = new FlowDefinitionResourceFactory(flowBuilderServices.getApplicationContext());
-        flowResourceFactory.setBasePath(basePath);
         
         DefaultFlowRegistry flowRegistry = new DefaultFlowRegistry();
         flowRegistry.setParent(this.parent);
@@ -165,7 +185,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
             final LocalAttributeMap<Object> attributes = new LocalAttributeMap<Object>();
             updateFlowAttributes(attributes);
             final FlowDefinitionResource resource =
-                    flowResourceFactory.createResource(location.getValue(), attributes, location.getKey());
+                    flowResourceFactory.createResource(basePath, location.getValue(), attributes, location.getKey());
             registerFlow(resource, flowRegistry);
         }
     }
@@ -176,17 +196,16 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
      * @param flowRegistry the flow registry
      */
     private void registerFlowLocationPatterns(@Nonnull final DefaultFlowRegistry flowRegistry) {
-        for (final String pattern : flowLocationPatterns) {
+        for (final Map.Entry<String,String> pattern : flowLocationPatterns.entrySet()) {
             final LocalAttributeMap<Object> attributes = new LocalAttributeMap<Object>();
             updateFlowAttributes(attributes);
-            FlowDefinitionResource[] resources;
+            Collection<FlowDefinitionResource> resources;
             try {
-                resources = flowResourceFactory.createResources(pattern, attributes);
+                resources = flowResourceFactory.createResources(
+                        pattern.getValue() != null ? pattern.getValue() : basePath, pattern.getKey(), attributes);
             } catch (final IOException e) {
-                final IllegalStateException ise = new IllegalStateException(
-                        "An I/O Exception occurred resolving the flow location pattern '" + pattern + "'");
-                ise.initCause(e);
-                throw ise;
+                throw new IllegalStateException(
+                        "An I/O Exception occurred resolving the flow location pattern '" + pattern.getKey() + "'", e);
             }
             for (final FlowDefinitionResource resource : resources) {
                 registerFlow(resource, flowRegistry);
@@ -218,6 +237,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
 
         flowRegistry.getFlowModelRegistry().registerFlowModel(resource.getId(), flowModelHolder);
         flowRegistry.registerFlowDefinition(flowHolder);
+        log.debug("Registered flow ID '{}' using '{}'", resource.getId(), resource.getPath());
     }
 
     /**

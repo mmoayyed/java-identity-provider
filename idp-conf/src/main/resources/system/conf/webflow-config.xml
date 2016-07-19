@@ -141,11 +141,15 @@
         </property>
     </bean>
     
-    <!-- Default flow patterns. -->
+    <!-- Default flow patterns with null values signifying use of the basePath on the registry to compute flow IDs. -->
     <bean id="shibboleth.DefaultFlowPatterns" lazy-init="true"
-        class="org.springframework.beans.factory.config.ListFactoryBean">
-        <property name="sourceList">
-            <value>/**/*-flow.xml</value>
+        class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="/**/*-flow.xml">
+                    <null/>
+                </entry>
+            </map>
         </property>
     </bean>
     
