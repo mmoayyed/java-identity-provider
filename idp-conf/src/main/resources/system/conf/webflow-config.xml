@@ -146,9 +146,14 @@
         class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">
             <map>
+                <!-- Load user flows out of config directory relative to base path property. -->
                 <entry key="/**/*-flow.xml">
                     <null/>
                 </entry>
+                
+                <!-- Load plugin-defined flows from well-known classpath location. -->
+                <entry key="classpath*:/META-INF/net/shibboleth/idp/flows/**/*-flow.xml"
+                    value="/META-INF/net/shibboleth/idp/flows" />
             </map>
         </property>
     </bean>

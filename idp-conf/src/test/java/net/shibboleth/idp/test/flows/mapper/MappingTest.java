@@ -26,13 +26,13 @@ import org.testng.annotations.Test;
 /**
  *
  */
-@ContextConfiguration({"classpath:/mapping/test-webflow-config.xml", "classpath:/mapping/configs/override.xml", })
+@ContextConfiguration({"classpath:/mapping/configs/override.xml", })
 public class MappingTest extends AbstractFlowTest {
     @Test public void testResolveAndFilter() {
 
-        final FlowExecutionResult result = flowExecutor.launchExecution("testResolveAndFilter", null, externalContext);
+        final FlowExecutionResult result = flowExecutor.launchExecution("resolveAndFilter", null, externalContext);
 
-        assertFlowExecutionResult(result, "testResolveAndFilter");
+        assertFlowExecutionResult(result, "resolveAndFilter");
         assertFlowExecutionOutcome(result.getOutcome());
     }
 
