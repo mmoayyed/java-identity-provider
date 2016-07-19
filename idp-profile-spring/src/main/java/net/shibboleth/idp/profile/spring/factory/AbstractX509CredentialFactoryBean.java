@@ -25,7 +25,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ResourceBackedMetadataProviderParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import org.cryptacular.util.KeyPairUtil;
@@ -41,7 +40,7 @@ import org.springframework.beans.factory.BeanCreationException;
 public abstract class AbstractX509CredentialFactoryBean extends AbstractCredentialFactoryBean<BasicX509Credential> {
 
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractX509CredentialFactoryBean.class);
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF

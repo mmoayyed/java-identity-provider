@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.crypto.SecretKey;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.ResourceBackedMetadataProviderParser;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -54,7 +53,7 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
     }
     
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
+    private final Logger log = LoggerFactory.getLogger(AbstractBasicCredentialFactoryBean.class);
 
     /** The SecretKey algorithm. */
     @Nullable private String secretKeyAlgorithm;
