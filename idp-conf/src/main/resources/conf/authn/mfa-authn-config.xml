@@ -66,13 +66,13 @@
                 nextFlow = "authn/Password";
 
                 // Go straight to second factor if we have to, or set up for an attribute lookup first.
-                authCtx = context.getSubcontext("net.shibboleth.idp.authn.context.AuthenticationContext");
+                authCtx = input.getSubcontext("net.shibboleth.idp.authn.context.AuthenticationContext");
                 mfaCtx = authCtx.getSubcontext("net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext");
                 if (mfaCtx.isAcceptable()) {
                     // Attribute check is required to decide if first factor alone is enough.
-                    resCtx = context.getSubcontext(
+                    resCtx = input.getSubcontext(
                         "net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext", true);
-                    resCtx.setPrincipal(context.getSubcontext(
+                    resCtx.setPrincipal(input.getSubcontext(
                         "net.shibboleth.idp.authn.context.SubjectCanonicalizationContext").getPrincipalName());
                     resCtx.getRequestedIdPAttributeNames().add("allowedLoginMethods");
                     resCtx.resolveAttributes(custom);
@@ -84,7 +84,7 @@
                         nextFlow = null;
                     }
                     
-                    context.removeSubcontext(resCtx);   // cleanup
+                    input.removeSubcontext(resCtx);   // cleanup
                 }
                 
                 nextFlow;   // pass control to second factor or end with the first
