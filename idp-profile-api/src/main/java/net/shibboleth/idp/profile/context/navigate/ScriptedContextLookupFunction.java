@@ -32,19 +32,18 @@ import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import com.google.common.base.Function;
-
 /**
  * A {@link Function} over a {@link BaseContext} which calls out to a supplied script.
  * 
- * @param <T> The specific type of context (either {@link ProfileRequestContext} or {@link MessageContext})
+ * @param <T> the specific type of context
  */
-public class ScriptedContextLookupFunction<T extends BaseContext> implements Function<T, Object> {
+public class ScriptedContextLookupFunction<T extends BaseContext> implements ContextDataLookupFunction<T, Object> {
 
     /** The default language is Javascript. */
     @Nonnull @NotEmpty public static final String DEFAULT_ENGINE = "JavaScript";
@@ -147,8 +146,9 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Fun
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
         // We don't actually know that the context is a PRC, but we'll keep this for compatibility.
+        // We can't use the variable name "context" because Rhino appears to reserve that name.
         scriptContext.setAttribute("profileContext", context, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("context", context, ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("input", context, ScriptContext.ENGINE_SCOPE);
         scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
 
         try {

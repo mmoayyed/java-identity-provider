@@ -24,8 +24,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
-import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.expression.EvaluationException;
@@ -34,14 +33,13 @@ import org.springframework.expression.ParseException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-import com.google.common.base.Function;
-
 /**
  * A {@link Function} over a {@link BaseContext} which calls out to a Spring Expression.
  * 
- * @param <T> The specific type of context (either {@link ProfileRequestContext} or {@link MessageContext})
+ * @param <T> the specific type of context
  */
-public class SpringExpressionContextLookupFunction<T extends BaseContext> implements Function<T, Object> {
+public class SpringExpressionContextLookupFunction<T extends BaseContext>
+    implements ContextDataLookupFunction<T, Object> {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(SpringExpressionContextLookupFunction.class);
@@ -126,7 +124,7 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext> implem
             final ExpressionParser parser = new SpelExpressionParser();
             final StandardEvaluationContext eval = new StandardEvaluationContext();
             eval.setVariable("custom", customObject);
-            eval.setVariable("context", context);
+            eval.setVariable("input", context);
             
             final Object output = parser.parseExpression(springExpression).getValue(context);
             if (null != outputClass && null != output && !outputClass.isInstance(output)) {
