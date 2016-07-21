@@ -25,7 +25,7 @@
         <evaluate expression="PopulateSubjectCanonicalizationContext" />
         <evaluate expression="'proceed'" />
 
-        <transition on="proceed" to="PopulateSubjectCanonicalizationContext" />
+        <transition on="proceed" to="CallSubjectCanonicalization" />
     </action-state>
 
     <!-- This runs a c14n step on the result of the authentication. -->
