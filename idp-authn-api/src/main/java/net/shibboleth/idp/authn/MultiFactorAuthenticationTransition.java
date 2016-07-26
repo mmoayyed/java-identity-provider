@@ -135,7 +135,9 @@ public class MultiFactorAuthenticationTransition {
 
      * @param strategy function to run
      */
-    public void setNextFlowStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+    public void setNextFlowStrategy(@Nonnull final Function<ProfileRequestContext,String> strategy) {
+        Constraint.isNotNull(strategy, "Flow strategy function cannot be null");
+        
         setNextFlowStrategyMap(Collections.<String,Object>singletonMap("proceed", strategy));
     }
 
