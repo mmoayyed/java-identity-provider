@@ -127,4 +127,16 @@ public class MultiFactorAuthenticationTransition {
         setNextFlowStrategyMap(Collections.<String,Object>singletonMap("proceed", flowId));
     }
 
+    /**
+     * Set a function to run directly instead of using a strategy map.
+     * 
+     * <p>The transition rule is implicitly based on a "proceed" event occurring,
+     * and assumes no custom transitions for any other events.</p>
+
+     * @param strategy function to run
+     */
+    public void setNextFlowStrategy(@Nullable final Function<ProfileRequestContext,String> strategy) {
+        setNextFlowStrategyMap(Collections.<String,Object>singletonMap("proceed", strategy));
+    }
+
 }

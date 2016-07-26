@@ -45,13 +45,7 @@
         factor is required.
         -->
         <entry key="authn/IPAddress">
-            <bean parent="shibboleth.authn.MFA.Transition">
-                <property name="nextFlowStrategyMap">
-                    <map>
-                        <entry key="proceed" value-ref="checkSecondFactor" />
-                    </map>
-                </property>
-            </bean>
+            <bean parent="shibboleth.authn.MFA.Transition" p:nextFlowStrategy-ref="checkSecondFactor" />
         </entry>
         
         <!-- An implicit final rule will return whatever the final flow returns. -->
