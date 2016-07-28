@@ -77,6 +77,11 @@
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.duosecurity</groupId>
+            <artifactId>DuoWeb</artifactId>
+            <version>${duoweb.version}</version>
+        </dependency>
 
         <!-- Provided Dependencies -->
 
