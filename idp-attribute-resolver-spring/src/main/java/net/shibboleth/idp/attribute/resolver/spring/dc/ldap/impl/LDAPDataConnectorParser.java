@@ -504,29 +504,14 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
             pool.addPropertyValue("poolConfig", createPoolConfig());
 
-            final String validateDN = AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateDN"));
-            final String validateFilter =
-                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateFilter"));
-
-            final BeanDefinitionBuilder searchRequest =
-                    BeanDefinitionBuilder.genericBeanDefinition(SearchRequest.class);
-            searchRequest.addPropertyValue("returnAttributes", "1.1");
-            searchRequest.addPropertyValue("searchScope", SearchScope.OBJECT);
-            searchRequest.addPropertyValue("sizeLimit", 1);
-            if (validateDN != null) {
-                searchRequest.addPropertyValue("baseDn", validateDN);
-            } else {
-                searchRequest.addPropertyValue("baseDn", "");
-            }
-            final BeanDefinitionBuilder searchFilter = BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
-            if (validateFilter != null) {
-                searchFilter.addConstructorArgValue(validateFilter);
-            } else {
-                searchFilter.addConstructorArgValue("(objectClass=*)");
-            }
-            searchRequest.addPropertyValue("searchFilter", searchFilter.getBeanDefinition());
-            final BeanDefinitionBuilder validator = BeanDefinitionBuilder.genericBeanDefinition(SearchValidator.class);
-            validator.addPropertyValue("searchRequest", searchRequest.getBeanDefinition());
+            final BeanDefinitionBuilder validator =
+                    BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildSearchValidator");
+            validator.addConstructorArgValue(
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("validatePeriodically")));
+            validator.addConstructorArgValue(
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateDN")));
+            validator.addConstructorArgValue(
+                    AttributeSupport.getAttributeValue(poolConfigElement, new QName("validateFilter")));
             pool.addPropertyValue("validator", validator.getBeanDefinition());
 
             pool.addPropertyValue("connectionFactory", connectionFactory);
@@ -700,7 +685,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * 
          * @return soft limit or blocking connection pool
          */
-        public static BlockingConnectionPool buildConnectionPool(final String blockWhenEmpty) {
+        @Nonnull public static BlockingConnectionPool buildConnectionPool(@Nullable final String blockWhenEmpty) {
             BlockingConnectionPool pool = null;
             if (blockWhenEmpty == null || Boolean.valueOf(blockWhenEmpty)) {
                 pool = new BlockingConnectionPool();
@@ -712,13 +697,49 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         }
 
         /**
+         * Returns a search validator or null if validatePeriodically is false.
+         *
+         * @param validatePeriodically whether to create a search validator
+         * @param validateDN baseDN to search on
+         * @param validateFilter to search with
+         *
+         * @return  search validator or null
+         */
+        @Nullable public static SearchValidator buildSearchValidator(@Nullable final String validatePeriodically,
+                @Nullable final String validateDN, @Nullable final String validateFilter) {
+            if (!Boolean.valueOf(validatePeriodically)) {
+                return null;
+            }
+            final SearchRequest searchRequest = new SearchRequest();
+            searchRequest.setReturnAttributes("1.1");
+            searchRequest.setSearchScope(SearchScope.OBJECT);
+            searchRequest.setSizeLimit(1);
+            if (validateDN != null) {
+                searchRequest.setBaseDn(validateDN);
+            } else {
+                searchRequest.setBaseDn("");
+            }
+            final SearchFilter searchFilter = new SearchFilter();
+            if (validateFilter != null) {
+                searchFilter.setFilter(validateFilter);
+            } else {
+                searchFilter.setFilter("(objectClass=*)");
+            }
+            searchRequest.setSearchFilter(searchFilter);
+            final SearchValidator validator = new SearchValidator();
+            validator.setSearchRequest(searchRequest);
+            return validator;
+        }
+
+        /**
          * Factory method for handling spring property replacement. Adds a {@link DnAttributeEntryHandler} by default.
          * Adds a {@link CaseChangeEntryHandler} if lowercaseAttributeNames is true. 
          * 
          * @param lowercaseAttributeNames boolean string value
          * @return list of search entry handlers
          */
-        public static List<SearchEntryHandler> buildSearchEntryHandlers(final String lowercaseAttributeNames) {
+        @Nonnull public static List<SearchEntryHandler> buildSearchEntryHandlers(
+                @Nullable final String lowercaseAttributeNames) {
             final List<SearchEntryHandler> handlers = new ArrayList<>();
             handlers.add(new DnAttributeEntryHandler());
             if (Boolean.valueOf(lowercaseAttributeNames)) {
