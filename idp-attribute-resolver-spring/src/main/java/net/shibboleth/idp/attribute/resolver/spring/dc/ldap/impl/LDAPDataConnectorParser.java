@@ -405,7 +405,9 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             final BeanDefinitionBuilder searchExecutor =
                     BeanDefinitionBuilder.genericBeanDefinition(SearchExecutor.class);
-            searchExecutor.addPropertyValue("baseDn", baseDn);
+            if (baseDn != null) {
+                searchExecutor.addPropertyValue("baseDn", baseDn);
+            }
             if (searchScope != null) {
                 searchExecutor.addPropertyValue("searchScope", searchScope);
             }
