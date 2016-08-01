@@ -77,6 +77,7 @@
                 <entry key="authn/X509Internal" value="../system/flows/authn/x509-internal-authn-flow.xml" />
                 <entry key="authn/SPNEGO" value="../system/flows/authn/spnego-authn-flow.xml" />
                 <entry key="authn/External" value="../system/flows/authn/external-authn-flow.xml" />
+                <entry key="authn/Duo" value="../system/flows/authn/duo-authn-flow.xml" />
                 <entry key="authn/MFA" value="../system/flows/authn/mfa-authn-flow.xml" />
           
                 <!-- Master flow for subject c14n. -->
