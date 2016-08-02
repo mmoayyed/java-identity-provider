@@ -177,25 +177,10 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
                         final Set<AuthenticationResultPrincipal> resultPrincipals =
                                 mfaResult.getSubject().getPrincipals(AuthenticationResultPrincipal.class);
                         if (!resultPrincipals.isEmpty()) {
-                            final long now = System.currentTimeMillis();
                             final Collection<AuthenticationResult> results = new ArrayList<>(resultPrincipals.size());
                             
                             for (final AuthenticationResultPrincipal resultPrincipal : resultPrincipals) {
-                                final AuthenticationFlowDescriptor descriptor = ac.getAvailableFlows().get(
-                                        resultPrincipal.getAuthenticationResult().getAuthenticationFlowId());
-                                if (descriptor != null) {
-                                    if (resultPrincipal.getAuthenticationResult().getAuthenticationInstant()
-                                            + descriptor.getLifetime() > now) {
-                                        results.add(resultPrincipal.getAuthenticationResult());
-                                    } else {
-                                        log.debug("{} Result from login flow {} has expired", getLogPrefix(),
-                                                descriptor.getId());
-                                    }
-                                } else {
-                                    log.warn("{} Ignoring active result from unconfigured login flow {}",
-                                            getLogPrefix(),
-                                            resultPrincipal.getAuthenticationResult().getAuthenticationFlowId());
-                                }
+                                processActiveResult(ac, results, resultPrincipal.getAuthenticationResult());
                             }
                             
                             return results;
@@ -205,7 +190,34 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             }
             
             return null;
-        }    
+        }
+        
+        /**
+         * Check an active result for possible inclusion in the returned collection.
+         * 
+         * @param authenticationContext current authentication context
+         * @param results the collection to add to
+         * @param candidate the result to evaluate
+         */
+        void processActiveResult(@Nonnull final AuthenticationContext authenticationContext,
+                @Nonnull final Collection<AuthenticationResult> results,
+                @Nonnull final AuthenticationResult candidate) {
+            
+            final AuthenticationFlowDescriptor descriptor = authenticationContext.getAvailableFlows().get(
+                    candidate.getAuthenticationFlowId());
+            if (descriptor != null) {
+                if (candidate.getAuthenticationInstant() + descriptor.getLifetime() > System.currentTimeMillis()) {
+                    results.add(candidate);
+                } else {
+                    log.debug("{} Result from login flow {} has expired", getLogPrefix(),
+                            descriptor.getId());
+                }
+            } else {
+                log.warn("{} Ignoring active result from undefined login flow {}", getLogPrefix(),
+                        candidate.getAuthenticationFlowId());
+            }
+            
+        }
     }
     
 }
