@@ -111,11 +111,6 @@
 
     <bean id="FallbackLanguages" parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
 
-    <bean id="SetRPUIInformation"
-            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-            p:fallbackLanguages-ref="FallbackLanguages"/>
-
     <bean id="RevokeConsent"
         class="net.shibboleth.idp.consent.flow.storage.impl.RevokeConsent" scope="prototype"
         p:storageKeyLookupStrategy-ref="shibboleth.consent.UserAndRelyingPartyStorageKey"

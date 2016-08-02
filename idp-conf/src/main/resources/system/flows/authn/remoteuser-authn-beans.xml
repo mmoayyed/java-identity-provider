@@ -20,15 +20,6 @@
 
     <import resource="../../../conf/authn/remoteuser-authn-config.xml" />
 
-    <bean id="SetRPUIInformation"
-            class="net.shibboleth.idp.ui.impl.SetRPUIInformation" scope="prototype"
-            p:activationCondition-ref="shibboleth.authn.RemoteUser.populateUIInfo"
-            p:httpServletRequest-ref="shibboleth.HttpServletRequest">
-        <property name="fallbackLanguages">
-            <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
-        </property>
-    </bean>
-
     <bean id="ValidateExternalAuthentication"
         class="net.shibboleth.idp.authn.impl.ValidateExternalAuthentication" scope="prototype"
         p:matchExpression="#{getObject('shibboleth.authn.RemoteUser.matchExpression')}"

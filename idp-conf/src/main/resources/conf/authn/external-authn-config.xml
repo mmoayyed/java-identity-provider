@@ -16,9 +16,6 @@
     <bean id="shibboleth.authn.External.externalAuthnPath" class="java.lang.String"
         c:_0="contextRelative:Authn/External" />
 
-    <!-- Populate RP UI info from metadata? -->
-    <util:constant id="shibboleth.authn.External.populateUIInfo" static-field="java.lang.Boolean.FALSE" />
-
     <!--
     Add authentication flow descriptor's supportedPrincipals collection to the resulting Subject?
     You would normally only unset this if you plan to return a fully decorated Java Subject from your

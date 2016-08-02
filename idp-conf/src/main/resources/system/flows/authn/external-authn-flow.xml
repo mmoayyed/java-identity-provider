@@ -5,13 +5,6 @@
 
     <!-- This is a login flow for external authentication handled outside the webflow engine. -->
     
-    <action-state id="SetRPUIInformation">
-        <evaluate expression="SetRPUIInformation" />
-        <evaluate expression="'proceed'" />
-        
-        <transition on="proceed" to="ExternalTransfer" />
-    </action-state>
-    
     <view-state id="ExternalTransfer" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.External.externalAuthnPath'), flowExecutionContext.getKey().toString())}">
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.context.ExternalAuthenticationContext(), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />

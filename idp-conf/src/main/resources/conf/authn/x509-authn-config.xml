@@ -16,9 +16,6 @@
     <bean id="shibboleth.authn.X509.externalAuthnPath" class="java.lang.String"
         c:_0="contextRelative:x509-prompt.jsp" />
 
-    <!-- Populate RP UI info from metadata? -->
-    <util:constant id="shibboleth.authn.X509.populateUIInfo" static-field="java.lang.Boolean.TRUE" />
-
     <!--
     Define entries here to map error messages returned by external modules and classify them as particular
     kinds of errors for use in your templates and as events in flows.

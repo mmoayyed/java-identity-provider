@@ -16,9 +16,6 @@
     <bean id="shibboleth.authn.RemoteUser.externalAuthnPath" class="java.lang.String"
         c:_0="contextRelative:Authn/RemoteUser" />
 
-    <!-- Populate RP UI info from metadata? -->
-    <util:constant id="shibboleth.authn.RemoteUser.populateUIInfo" static-field="java.lang.Boolean.FALSE" />
-
     <!--
     Add authentication flow descriptor's supportedPrincipals collection to the resulting Subject?
     You would normally only unset this if you plan to use the authnMethodHeader servlet parameter to

@@ -7,6 +7,7 @@
 ## flowExecutionKey - the SWF execution key (this is built into the flowExecutionUrl)
 ## profileRequestContext - root of context tree
 ## authenticationContext - context with authentication request information
+## rpUIContext - the context with SP UI information from the metadata
 ## canonicalUsername - name of user passed to Duo
 ## duoHost - API hostname for Duo frame
 ## duoRequest - signed Duo request message
