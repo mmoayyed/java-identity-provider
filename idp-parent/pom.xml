@@ -61,6 +61,7 @@
     <properties>
         <svn.relative.location>java-identity-provider/trunk</svn.relative.location>
         <duoweb.version>1.1</duoweb.version>
+        <u2flib.version>0.16.0</u2flib.version>
         <idwsfconsumer.version>1.0.0</idwsfconsumer.version>
         <java-support.version>7.3.0-SNAPSHOT</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
@@ -174,6 +175,21 @@
                 <groupId>org.ldaptive</groupId>
                 <artifactId>ldaptive</artifactId>
                 <version>1.0.8-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.cryptacular</groupId>
+                <artifactId>cryptacular</artifactId>
+                <version>1.1.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>1.54</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>1.54</version>
             </dependency>
 
             <!-- Provided Dependencies -->
