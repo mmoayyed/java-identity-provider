@@ -24,6 +24,7 @@ import javax.security.auth.Subject;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
@@ -64,13 +65,10 @@ public class PopulateMultiFactorAuthenticationContextTest {
     @Test public void testEmpty() throws ComponentInitializationException {
         action.initialize();
         final Event event = action.execute(rc);
-        ActionTestingSupport.assertProceedEvent(event);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.RESELECT_FLOW);
         
         final MultiFactorAuthenticationContext mfa = ac.getSubcontext(MultiFactorAuthenticationContext.class);
-        Assert.assertNotNull(mfa);
-        Assert.assertEquals(ac.getAttemptedFlow(), mfa.getAuthenticationFlowDescriptor());
-        Assert.assertTrue(mfa.getTransitionMap().isEmpty());
-        Assert.assertTrue(mfa.getActiveResults().isEmpty());
+        Assert.assertNull(mfa);
     }
     
     @Test public void testTransitions() throws ComponentInitializationException {
@@ -115,6 +113,9 @@ public class PopulateMultiFactorAuthenticationContextTest {
         desc.initialize();
         ac.getAvailableFlows().put(desc.getId(), desc);
 
+        action.setTransitionMapLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>>constant(
+                        Collections.singletonMap("", new MultiFactorAuthenticationTransition())));
         action.initialize();
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);
