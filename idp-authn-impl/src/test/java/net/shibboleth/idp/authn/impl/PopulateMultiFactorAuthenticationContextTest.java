@@ -18,6 +18,7 @@
 package net.shibboleth.idp.authn.impl;
 
 import java.util.Collections;
+import java.util.Map;
 
 import javax.security.auth.Subject;
 
@@ -32,6 +33,7 @@ import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
@@ -72,7 +74,9 @@ public class PopulateMultiFactorAuthenticationContextTest {
     }
     
     @Test public void testTransitions() throws ComponentInitializationException {
-        action.setTransitionMap(Collections.singletonMap("", new MultiFactorAuthenticationTransition()));
+        action.setTransitionMapLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>>constant(
+                        Collections.singletonMap("", new MultiFactorAuthenticationTransition())));
         action.initialize();
         final Event event = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(event);

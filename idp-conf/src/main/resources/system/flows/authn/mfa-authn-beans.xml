@@ -18,11 +18,14 @@
     <bean id="shibboleth.authn.MFA.Transition"
         class="net.shibboleth.idp.authn.MultiFactorAuthenticationTransition" abstract="true" />
 
+    <bean id="shibboleth.authn.MFA.TransitionMapStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0-ref="shibboleth.authn.MFA.TransitionMap" />
+
     <import resource="../../../conf/authn/mfa-authn-config.xml" />
 
     <bean id="PopulateMultiFactorAuthenticationContext" scope="prototype"
         class="net.shibboleth.idp.authn.impl.PopulateMultiFactorAuthenticationContext"
-        p:transitionMap-ref="shibboleth.authn.MFA.TransitionMap" />
+        p:transitionMapLookupStrategy-ref="shibboleth.authn.MFA.TransitionMapStrategy" />
         
     <bean id="TransitionMultiFactorAuthentication" scope="prototype"
         class="net.shibboleth.idp.authn.impl.TransitionMultiFactorAuthentication"

@@ -24,6 +24,7 @@ import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -103,7 +104,8 @@ public class BaseMultiFactorAuthenticationContextTest {
         transitionMap.put("interim", transition);
 
         final PopulateMultiFactorAuthenticationContext mfaaction = new PopulateMultiFactorAuthenticationContext();
-        mfaaction.setTransitionMap(transitionMap);
+        mfaaction.setTransitionMapLookupStrategy(
+                FunctionSupport.<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>>constant(transitionMap));
         mfaaction.initialize();
         ActionTestingSupport.assertProceedEvent(mfaaction.execute(src));
         

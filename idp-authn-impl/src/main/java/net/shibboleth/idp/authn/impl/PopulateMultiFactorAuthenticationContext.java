@@ -19,8 +19,6 @@ package net.shibboleth.idp.authn.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,12 +28,14 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.MultiFactorAuthenticationTransition;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.MultiFactorAuthenticationContext;
 import net.shibboleth.idp.authn.principal.AuthenticationResultPrincipal;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.action.ActionSupport;
@@ -53,8 +53,12 @@ import com.google.common.base.Functions;
  * and with any active "factors" found, if an active result from the MFA flow is present in the
  * {@link AuthenticationContext}.
  * 
+ * <p>If the lookup strategy supplies no transition rules to use, then the {@link AuthnEventIds#RESELECT_FLOW}
+ * event is signaled.</p>
+ * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link AuthnEventIds#RESELECT_FLOW}
  * @pre <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class) != null</pre>
  * @post <pre>ProfileRequestContext.getSubcontext(AuthenticationContext.class).getSubcontext(
  *  MultiFactorAuthenticationContext.class) != null</pre>
@@ -64,8 +68,9 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateMultiFactorAuthenticationContext.class);
     
-    /** Map of login "factors" (flows) and the transition rules to run after them. */
-    @Nonnull private Map<String,MultiFactorAuthenticationTransition> transitionMap;
+    /** Lookup strategy for obtaining the map of transition rules to use. */
+    @Nonnull
+    private Function<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>> transitionMapLookupStrategy;
     
     /** Lookup/creation function for the context to populate. */
     @Nonnull
@@ -76,7 +81,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     
     /** Constructor. */
     PopulateMultiFactorAuthenticationContext() {
-        transitionMap = Collections.emptyMap();
+        transitionMapLookupStrategy = FunctionSupport.constant(null);
         multiFactorContextCreationStrategy = Functions.compose(
                 new ChildContextLookup(MultiFactorAuthenticationContext.class, true),
                 new ChildContextLookup(AuthenticationContext.class));
@@ -84,15 +89,15 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     }
     
     /**
-     * Set the map of transitions to apply.
+     * Set the strategy to lookup the map of transition rules to apply.
      * 
-     * @param map map of transition logic
+     * @param strategy lookup strategy
      */
-    public void setTransitionMap(@Nonnull final Map<String,MultiFactorAuthenticationTransition> map) {
+    public void setTransitionMapLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,Map<String,MultiFactorAuthenticationTransition>> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        Constraint.isNotNull(map, "Map cannot be null");
         
-        transitionMap = new HashMap<>(map);
+        transitionMapLookupStrategy = Constraint.isNotNull(strategy, "Transition map lookup strategy cannot be null");
     }
     
     /**
@@ -128,10 +133,19 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
+        final Map<String,MultiFactorAuthenticationTransition> transitionMap =
+                transitionMapLookupStrategy.apply(profileRequestContext);
+        if (transitionMap == null) {
+            log.info("No map of transition rules was returned");
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.RESELECT_FLOW);
+            return;
+        }
+        
         final MultiFactorAuthenticationContext mfaCtx = multiFactorContextCreationStrategy.apply(profileRequestContext);
         if (mfaCtx == null) {
             log.error("{} Unable to create/access MultiFactorAuthenticationContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return;
         }
         
         mfaCtx.setAuthenticationFlowDescriptor(authenticationContext.getAttemptedFlow());
