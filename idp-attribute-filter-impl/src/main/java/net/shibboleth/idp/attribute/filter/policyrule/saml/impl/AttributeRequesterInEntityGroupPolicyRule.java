@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.saml.impl;
 
+import java.util.Collections;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -27,10 +29,12 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
-import org.opensaml.saml.metadata.EntityGroupName;
+import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
 
 /**
  * A matcher that evaluates to true if attribute requester matches the provided entity group name.
@@ -39,10 +43,10 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeRequesterInEntityGroupPolicyRule.class);
-
+    
     /** The entity group to match against. */
     @Nullable private String entityGroup;
-
+    
     /**
      * Gets the entity group to match against.
      * 
@@ -97,19 +101,10 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
             return Tristate.FALSE;
         }
 
+        final Predicate<EntityDescriptor> predicate = new EntityGroupNamePredicate(Collections.singleton(entityGroup));
+        
         final EntityDescriptor entity = getEntityMetadata(input);
-        if (entity == null) {
-            // logged above
-            return Tristate.FALSE;
-        }
-
-        for (final EntityGroupName group : entity.getObjectMetadata().get(EntityGroupName.class)) {
-            if (group.getName().equals(entityGroup)) {
-                return Tristate.TRUE;
-            }
-        }
-
-        return Tristate.FALSE;
+        return predicate.apply(entity) ? Tristate.TRUE : Tristate.FALSE;
     }
 
 }
