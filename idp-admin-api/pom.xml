@@ -11,12 +11,24 @@
         <relativePath>../idp-parent</relativePath>
     </parent>
 
-    <name>idp-admin-api</name>
+    <name>Shibboleth IdP :: Administrative Profile API</name>
+    <description>Administrative Profile API</description>
     <artifactId>idp-admin-api</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <!-- Compile Dependencies -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-profile-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-authn-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- Provided Dependencies -->
 
