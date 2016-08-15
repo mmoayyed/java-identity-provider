@@ -15,6 +15,6 @@
  * limitations under the License.
  */
 
-/** A profile interceptor flow which executes other flows. */
+/** Classes supporting profile interceptor machinery. */
 
 package net.shibboleth.idp.profile.interceptor;
