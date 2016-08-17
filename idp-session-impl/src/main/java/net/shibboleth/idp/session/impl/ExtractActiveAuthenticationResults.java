@@ -44,8 +44,10 @@ import com.google.common.base.Function;
  * {@link AuthenticationResult} objects found in a {@link SessionContext} that is a direct
  * child of the {@link ProfileRequestContext}.
  * 
- * <p>The active results must correspond to an available {@link AuthenticationFlowDescriptor},
- * but the flow need not be explicitly "runnable" (i.e. in the set of potential flows).</p>
+ * <p>Only results from flows in the "potentialFlows" collection in the {@link AuthenticationContext}
+ * are extracted, which prevents cross-contamination between SPs that have differing rules established
+ * for which flows are to be active, because the potentialFlows collection is filtered by that
+ * criterion.</p>
  * 
  * <p>If {@link AuthenticationContext#getHintedName() is null, then it is populated with the
  * principal name from the session.</p>
@@ -111,7 +113,7 @@ public class ExtractActiveAuthenticationResults extends AbstractAuthenticationAc
         final List<AuthenticationResult> actives = new ArrayList<>();
         for (final AuthenticationResult result : session.getAuthenticationResults()) {
             final AuthenticationFlowDescriptor descriptor =
-                    authenticationContext.getAvailableFlows().get(result.getAuthenticationFlowId());
+                    authenticationContext.getPotentialFlows().get(result.getAuthenticationFlowId());
             if (descriptor == null) {
                 log.debug("{} Authentication result {} has no corresponding flow descriptor, considering inactive", 
                         getLogPrefix(), result.getAuthenticationFlowId());
