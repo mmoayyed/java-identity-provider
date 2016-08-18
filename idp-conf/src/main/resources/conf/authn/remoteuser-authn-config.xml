@@ -15,6 +15,12 @@
     <!-- Servlet context-relative path to wherever your implementation lives. -->
     <bean id="shibboleth.authn.RemoteUser.externalAuthnPath" class="java.lang.String"
         c:_0="contextRelative:Authn/RemoteUser" />
+    
+    <!--
+    Default is to always use the path in the bean above. If you want to determine it
+    dynamically, define a bean called "shibboleth.authn.RemoteUser.externalAuthnPathStrategy"
+    of type Function<ProfileRequestContext,String> that returns the path to use.
+    -->
 
     <!--
     Add authentication flow descriptor's supportedPrincipals collection to the resulting Subject?
