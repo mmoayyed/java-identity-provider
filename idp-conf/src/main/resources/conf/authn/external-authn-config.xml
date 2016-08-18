@@ -17,6 +17,12 @@
         c:_0="contextRelative:Authn/External" />
 
     <!--
+    Default is to always use the path in the bean above. If you want to determine it
+    dynamically, define a bean called "shibboleth.authn.External.externalAuthnPathStrategy"
+    of type Function<ProfileRequestContext,String> that returns the path to use.
+    -->
+
+    <!--
     Add authentication flow descriptor's supportedPrincipals collection to the resulting Subject?
     You would normally only unset this if you plan to return a fully decorated Java Subject from your
     external authentication source.

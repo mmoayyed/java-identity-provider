@@ -17,6 +17,12 @@
         c:_0="contextRelative:x509-prompt.jsp" />
 
     <!--
+    Default is to always use the path in the bean above. If you want to determine it
+    dynamically, define a bean called "shibboleth.authn.X509.externalAuthnPathStrategy"
+    of type Function<ProfileRequestContext,String> that returns the path to use.
+    -->
+
+    <!--
     Define entries here to map error messages returned by external modules and classify them as particular
     kinds of errors for use in your templates and as events in flows.
 

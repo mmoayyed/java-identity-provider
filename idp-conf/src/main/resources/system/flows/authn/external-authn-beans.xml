@@ -18,6 +18,11 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
+    <!-- Default strategy function to obtain the external path. -->
+    <bean id="shibboleth.authn.External.externalAuthnPathStrategy"
+        class="com.google.common.base.Functions" factory-method="constant"
+        c:_0-ref="shibboleth.authn.External.externalAuthnPath" />
+
     <import resource="../../../conf/authn/external-authn-config.xml" />
 
     <bean id="ValidateExternalAuthentication"

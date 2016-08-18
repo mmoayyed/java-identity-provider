@@ -8,7 +8,7 @@
     implemented via external authentication.
     -->
     
-    <view-state id="ExternalTransfer" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.X509.externalAuthnPath'), flowExecutionContext.getKey().toString())}">
+    <view-state id="ExternalTransfer" view="externalRedirect:#{T(net.shibboleth.idp.authn.ExternalAuthentication).getExternalRedirect(flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.authn.X509.externalAuthnPathStrategy').apply(opensamlProfileRequestContext), flowExecutionContext.getKey().toString())}">
         <on-render>
             <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext)).addSubcontext(new net.shibboleth.idp.authn.context.ExternalAuthenticationContext(), true).setFlowExecutionUrl(flowExecutionUrl + '&amp;_eventId_proceed=1')" />
             <evaluate expression="externalContext.getNativeRequest().getSession().setAttribute('conversation' + flowExecutionContext.getKey().toString(), new net.shibboleth.idp.authn.impl.ExternalAuthenticationImpl(opensamlProfileRequestContext))" />

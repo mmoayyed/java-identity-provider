@@ -21,14 +21,19 @@
     <bean id="shibboleth.KerberosRealmSettings"
         class="net.shibboleth.idp.authn.spnego.impl.KerberosRealmSettings" abstract="true" />
 
+    <bean id="shibboleth.authn.SPNEGO.externalAuthnPath" class="java.lang.String"
+        c:_0="servletRelative:%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}" />
+
+    <!-- Default strategy function to obtain the external path. -->
+    <bean id="shibboleth.authn.SPNEGO.externalAuthnPathStrategy"
+        class="com.google.common.base.Functions" factory-method="constant"
+        c:_0-ref="shibboleth.authn.SPNEGO.externalAuthnPath" />
+
     <import resource="../../../conf/authn/spnego-authn-config.xml" />
 
     <!-- Make configurable values available in flow. -->
     
     <alias name="shibboleth.authn.SPNEGO.EnforceRun" alias="enforceRun"/>
-
-    <bean id="shibboleth.authn.SPNEGO.externalAuthnPath" class="java.lang.String"
-        c:_0="servletRelative:%{idp.authn.spnego.externalAuthnPath:/Authn/SPNEGO}" />
 
     <!-- Kerberos settings and realms. -->
     
