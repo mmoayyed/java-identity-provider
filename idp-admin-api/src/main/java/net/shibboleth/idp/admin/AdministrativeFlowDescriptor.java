@@ -58,14 +58,6 @@ public interface AdministrativeFlowDescriptor extends AuthenticationProfileConfi
     boolean isAuthenticated();
     
     /**
-     * Get whether to decorate the profile request context tree with emulated relying party and user interface
-     * contexts to support e.g., login interfaces (default is false).
-     * 
-     * @return whether the context tree will be decorated
-     */
-    boolean isContextDecorated();
-    
-    /**
      * Get the user interface details for this profile.
      * 
      * @return user interface details

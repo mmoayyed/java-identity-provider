@@ -34,12 +34,21 @@ import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.FunctionSupport;
+import net.shibboleth.utilities.java.support.primitive.LangBearingString;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.ext.saml2mdui.Description;
+import org.opensaml.saml.ext.saml2mdui.DisplayName;
+import org.opensaml.saml.ext.saml2mdui.InformationURL;
+import org.opensaml.saml.ext.saml2mdui.PrivacyStatementURL;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 
 import com.google.common.base.Function;
@@ -73,11 +82,8 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     /** Whether user authentication is required. */
     private Predicate<ProfileRequestContext> authenticatedPredicate;
     
-    /** Whether to populate the context tree with pseudo-"relying-party" tree. */
-    private Predicate<ProfileRequestContext> contextDecoratedPredicate;
-    
     /** Expose user interface details. */
-    private UIInfo uiInfo;
+    @Nonnull private final UIInfo uiInfo;
     
     /** Lookup strategy for access control policy to apply. */
     @Nonnull private Function<ProfileRequestContext,String> policyNameLookupStrategy;
@@ -95,6 +101,9 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     /** Enables post-authentication interceptor flows. */
     @Nullable private Function<ProfileRequestContext,Collection<String>> postAuthenticationFlowsLookupStrategy;
     
+    /** Builder factory for XMLObjects needed in UIInfo emulation. */
+    @Nonnull private final XMLObjectBuilderFactory builderFactory;
+    
     /**
      * Constructor.
      * 
@@ -106,9 +115,12 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
         supportsNonBrowserPredicate = Predicates.alwaysTrue();
         auditedPredicate = Predicates.alwaysTrue();
         authenticatedPredicate = Predicates.alwaysFalse();
-        contextDecoratedPredicate = Predicates.alwaysFalse();
         policyNameLookupStrategy = FunctionSupport.constant(null);
         resolveAttributesPredicate = Predicates.alwaysFalse();
+        
+        builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
+        uiInfo = ((SAMLObjectBuilder<UIInfo>) builderFactory.<UIInfo>getBuilderOrThrow(
+                UIInfo.DEFAULT_ELEMENT_NAME)).buildObject();
     }
     
     /** {@inheritDoc} */
@@ -182,38 +194,101 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     public void setAuthenticatedPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         authenticatedPredicate = Constraint.isNotNull(condition, "Authentication condition cannot be null");
     }
-    
-    /** {@inheritDoc} */
-    public boolean isContextDecorated() {
-        return contextDecoratedPredicate.apply(getProfileRequestContext());
-    }
-    
-    /**
-     * Set whether to decorate the profile request context tree with emulated relying party and user interface
-     * contexts to support e.g., login interfaces (default is false).
-     * 
-     * @param flag flag to set
-     */
-    public void setContextDecorated(final boolean flag) {
-        contextDecoratedPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
-                : Predicates.<ProfileRequestContext>alwaysFalse();
-    }
-    
-    /**
-     * Set condition to determine whether to decorate the profile request context tree with emulated
-     * relying party and user interface contexts to support e.g., login interfaces.
-     * 
-     * @param condition condition to apply
-     */
-    public void setContextDecoratedPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        contextDecoratedPredicate = Constraint.isNotNull(condition, "Authentication condition cannot be null");
-    }
 
     /** {@inheritDoc} */
-    @Nullable public UIInfo getUIInfo() {
+    @Nonnull public UIInfo getUIInfo() {
         return uiInfo;
     }
     
+    /**
+     * Set the {@link DisplayName} objects to expose via {@link #getUIInfo()} via a utility class.
+     *  
+     * @param displayNames utility class collection of language-annotated strings
+     */
+    public void setDisplayNames(@Nonnull @NonnullElements final Collection<LangBearingString> displayNames) {
+        uiInfo.getDisplayNames().clear();
+        for (final LangBearingString s : Collections2.filter(displayNames, Predicates.notNull())) {
+            final DisplayName displayName =
+                    ((SAMLObjectBuilder<DisplayName>) builderFactory.<DisplayName>getBuilderOrThrow(
+                            DisplayName.DEFAULT_ELEMENT_NAME)).buildObject();
+            displayName.setValue(s.getValue());
+            displayName.setXMLLang(s.getLang());
+            uiInfo.getDisplayNames().add(displayName);
+        }
+    }
+
+    /**
+     * Set the {@link Description} objects to expose via {@link #getUIInfo()} via a utility class.
+     *  
+     * @param descriptions utility class collection of language-annotated strings
+     */
+    public void setDescriptions(@Nonnull @NonnullElements final Collection<LangBearingString> descriptions) {
+        uiInfo.getDescriptions().clear();
+        for (final LangBearingString s : Collections2.filter(descriptions, Predicates.notNull())) {
+            final Description desc =
+                    ((SAMLObjectBuilder<Description>) builderFactory.<Description>getBuilderOrThrow(
+                            Description.DEFAULT_ELEMENT_NAME)).buildObject();
+            desc.setValue(s.getValue());
+            desc.setXMLLang(s.getLang());
+            uiInfo.getDescriptions().add(desc);
+        }
+    }
+    
+    /**
+     * Set the {@link org.opensaml.saml.ext.saml2mdui.Logo} objects to expose via {@link #getUIInfo()} via a
+     * utility class.
+     * 
+     * @param logos utility class collection of logo metadata
+     */
+    public void setLogos(@Nonnull @NonnullElements final Collection<Logo> logos) {
+        uiInfo.getLogos().clear();
+        for (final Logo src : Collections2.filter(logos, Predicates.notNull())) {
+            final org.opensaml.saml.ext.saml2mdui.Logo logo =
+                    ((SAMLObjectBuilder<org.opensaml.saml.ext.saml2mdui.Logo>) 
+                            builderFactory.<org.opensaml.saml.ext.saml2mdui.Logo>getBuilderOrThrow(
+                                    org.opensaml.saml.ext.saml2mdui.Logo.DEFAULT_ELEMENT_NAME)).buildObject();
+            logo.setURL(src.getValue());
+            logo.setXMLLang(src.getLang());
+            logo.setHeight(src.getHeight());
+            logo.setWidth(src.getWidth());
+            uiInfo.getLogos().add(logo);
+        }
+    }
+    
+    /**
+     * Set the {@link InformationURL} objects to expose via {@link #getUIInfo()} via a utility class.
+     *  
+     * @param urls utility class collection of language-annotated strings
+     */
+    public void setInformationURLs(@Nonnull @NonnullElements final Collection<LangBearingString> urls) {
+        uiInfo.getInformationURLs().clear();
+        for (final LangBearingString s : Collections2.filter(urls, Predicates.notNull())) {
+            final InformationURL url =
+                    ((SAMLObjectBuilder<InformationURL>) builderFactory.<InformationURL>getBuilderOrThrow(
+                            InformationURL.DEFAULT_ELEMENT_NAME)).buildObject();
+            url.setValue(s.getValue());
+            url.setXMLLang(s.getLang());
+            uiInfo.getInformationURLs().add(url);
+        }
+    }
+
+    /**
+     * Set the {@link PrivacyStatementURL} objects to expose via {@link #getUIInfo()} via a utility class.
+     *  
+     * @param urls utility class collection of language-annotated strings
+     */
+    public void setPrivacyStatementURLs(@Nonnull @NonnullElements final Collection<LangBearingString> urls) {
+        uiInfo.getPrivacyStatementURLs().clear();
+        for (final LangBearingString s : Collections2.filter(urls, Predicates.notNull())) {
+            final PrivacyStatementURL url =
+                    ((SAMLObjectBuilder<PrivacyStatementURL>) builderFactory.<PrivacyStatementURL>getBuilderOrThrow(
+                            PrivacyStatementURL.DEFAULT_ELEMENT_NAME)).buildObject();
+            url.setValue(s.getValue());
+            url.setXMLLang(s.getLang());
+            uiInfo.getPrivacyStatementURLs().add(url);
+        }
+    }
+
     /** {@inheritDoc} */
     @Nullable public String getPolicyName() {
         return getIndirectProperty(policyNameLookupStrategy, null);
@@ -405,4 +480,50 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
                 .toString();
     }
 
+    /**
+     * A wrapper class to construct logo objects for exposure by {@link UIInfo} interface.
+     */
+    public static class Logo extends LangBearingString {
+        
+        /** Logo height. */
+        private final int height;
+
+        /** Logo width. */
+        private final int width;
+
+        /**
+         * Constructor.
+         *
+         * @param url logo URL
+         * @param lang language
+         * @param h logo height in pixels
+         * @param w logo width in pixels
+         */
+        public Logo(@Nullable final String url, @Nullable @NotEmpty final String lang, @Positive final int h,
+                @Positive final int w) {
+            super(url, lang);
+            
+            height = (int) Constraint.isGreaterThan(0, h, "Height must be greater than zero.");
+            width = (int) Constraint.isGreaterThan(0, w, "Width must be greater than zero.");
+        }
+
+        /**
+         * Get logo height in pixels.
+         * 
+         * @return height
+         */
+        public int getHeight() {
+            return height;
+        }
+
+        /**
+         * Get logo width in pixels.
+         * 
+         * @return width
+         */
+        public int getWidth() {
+            return width;
+        }
+    }
+    
 }
