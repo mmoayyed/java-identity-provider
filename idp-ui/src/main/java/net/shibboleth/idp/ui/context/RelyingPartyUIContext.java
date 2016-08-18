@@ -488,11 +488,6 @@ public class RelyingPartyUIContext extends BaseContext {
      */
     @Nullable public String getServiceName() {
 
-        if (getRPEntityDescriptor() == null) {
-            log.debug("No relying party, no name, returning null");
-            return null;
-        }
-
         for (final String lang : getUsableLanguages()) {
             String result;
             result = getNameFromUIInfo(lang);
