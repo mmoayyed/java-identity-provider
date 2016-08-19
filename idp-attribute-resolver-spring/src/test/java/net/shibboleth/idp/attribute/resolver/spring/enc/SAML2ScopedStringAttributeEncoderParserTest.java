@@ -31,8 +31,8 @@ import org.testng.annotations.Test;
  */
 public class SAML2ScopedStringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void specified() {
-        SAML2ScopedStringAttributeEncoder encoder =
+    @Test public void legacy() {
+        final SAML2ScopedStringAttributeEncoder encoder =
                 getAttributeEncoder("saml2Scoped.xml", SAML2ScopedStringAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "ATTRIBUTE_NAME");
@@ -43,8 +43,20 @@ public class SAML2ScopedStringAttributeEncoderParserTest extends BaseAttributeDe
         Assert.assertEquals(encoder.getScopeDelimiter(),"###");
     }
     
+    @Test public void resolver() {
+        final SAML2ScopedStringAttributeEncoder encoder =
+                getAttributeEncoder("resolver/saml2Scoped.xml", SAML2ScopedStringAttributeEncoder.class);
+
+        Assert.assertEquals(encoder.getName(), "ATTRIBUTE_NAME");
+        Assert.assertEquals(encoder.getFriendlyName(),"ATTRIBUTE_FRIENDLY_NAME"); 
+        Assert.assertEquals(encoder.getNameFormat(),"ATTRIBUTE_NAME_FORMAT");
+        Assert.assertEquals(encoder.getScopeType(),"attribute");
+        Assert.assertEquals(encoder.getScopeAttributeName(),"scopeAttrib");
+        Assert.assertEquals(encoder.getScopeDelimiter(),"###");
+    }
+    
     @Test public void defaultCase() {
-        SAML2ScopedStringAttributeEncoder encoder =
+        final SAML2ScopedStringAttributeEncoder encoder =
                 getAttributeEncoder("saml2ScopedDefault.xml", SAML2ScopedStringAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "name");

@@ -1,0 +1,11 @@
+<AttributeEncoder 
+    xsi:type="SAML1ScopedString"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="urn:mace:shibboleth:2.0:resolver"
+	name="SAML1_SCOPED_ATTRIBUTE_NAME" 
+	namespace="SAML1_SCOPED_ATTRIBUTE_NAME_FORMAT"
+	scopeType="attribute"
+	scopeAttribute="saml1ScopeAttrib"
+	scopeDelimiter="#@#"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"/> 
+ 

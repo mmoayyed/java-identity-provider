@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2XMLObjectAttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -33,8 +34,12 @@ import org.w3c.dom.Element;
 /** Spring Bean Definition Parser for SAML2 XMLObject attribute encoder. */
 public class SAML2XMLObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+    /** Schema type name- enc: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_ENC = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+            "SAML2XMLObject");
+
+    /** Schema type name- resolver:. */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "SAML2XMLObject");
 
     /** Local name of name format attribute. */

@@ -34,8 +34,8 @@ import com.google.common.base.Predicates;
  */
 public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void specified() {
-        SAML2StringAttributeEncoder encoder =
+    @Test public void legacy() {
+        final SAML2StringAttributeEncoder encoder =
                 getAttributeEncoder("saml2String.xml", SAML2StringAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "Saml2String_ATTRIBUTE_NAME");
@@ -43,8 +43,17 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
         Assert.assertEquals(encoder.getNameFormat(),"Saml2String_ATTRIBUTE_NAME_FORMAT");
     }
     
+    @Test public void resolver() {
+        final SAML2StringAttributeEncoder encoder =
+                getAttributeEncoder("resolver/saml2String.xml", SAML2StringAttributeEncoder.class);
+
+        Assert.assertEquals(encoder.getName(), "Saml2String_ATTRIBUTE_NAME");
+        Assert.assertEquals(encoder.getFriendlyName(),"Saml2String_ATTRIBUTE_FRIENDLY_NAME"); 
+        Assert.assertEquals(encoder.getNameFormat(),"Saml2String_ATTRIBUTE_NAME_FORMAT");
+    }
+    
     @Test public void defaultCase() {
-        SAML2StringAttributeEncoder encoder =
+        final SAML2StringAttributeEncoder encoder =
                 getAttributeEncoder("saml2StringDefault.xml", SAML2StringAttributeEncoder.class);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysTrue());
@@ -59,12 +68,12 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
     }
     
     @Test public void conditional() {
-        GenericApplicationContext context = new GenericApplicationContext();
+        final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
 
         loadFile(ENCODER_FILE_PATH + "predicates.xml", context);
         
-        SAML2StringAttributeEncoder encoder =
+        final SAML2StringAttributeEncoder encoder =
                 getAttributeEncoder("saml2StringConditional.xml", SAML2StringAttributeEncoder.class, context);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysFalse());

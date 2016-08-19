@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1XMLObjectAttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -33,9 +34,13 @@ import org.w3c.dom.Element;
 /** Spring Bean Definition Parser for {@link SAML1XMLObjectAttributeEncoder}. */
 public class SAML1XMLObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
+    /** Schema type name- enc: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_ENC =
             new QName(AttributeEncoderNamespaceHandler.NAMESPACE, "SAML1XMLObject");
+
+    /** Schema type name- enc: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SAML1XMLObject");
 
     /** Local name of namespace attribute. */
     @Nonnull @NotEmpty public static final String NAMESPACE_ATTRIBUTE_NAME = "namespace";
@@ -46,7 +51,7 @@ public class SAML1XMLObjectAttributeEncoderParser extends BaseAttributeEncoderPa
     }
 
     /** {@inheritDoc} */
-    @Override protected Class<SAML1XMLObjectAttributeEncoder> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML1XMLObjectAttributeEncoder> getBeanClass(@Nullable final Element element) {
         return SAML1XMLObjectAttributeEncoder.class;
     }
 

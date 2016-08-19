@@ -30,16 +30,24 @@ import org.testng.annotations.Test;
  */
 public class SAML2StringNameIDEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void specified() {
-        SAML2StringNameIDEncoder encoder =
+    @Test public void legacy() {
+        final SAML2StringNameIDEncoder encoder =
                 getAttributeEncoder("saml2StringNameID.xml",  SAML2StringNameIDEncoder.class);
 
         Assert.assertEquals(encoder.getNameFormat(), "S2_NAMEID_FORMAT");
         Assert.assertEquals(encoder.getNameQualifier(),"S2_NAMEID_QUALIFIER");
     }
     
+    @Test public void resolver() {
+        final SAML2StringNameIDEncoder encoder =
+                getAttributeEncoder("resolver/saml2StringNameID.xml",  SAML2StringNameIDEncoder.class);
+
+        Assert.assertEquals(encoder.getNameFormat(), "S2_NAMEID_FORMAT");
+        Assert.assertEquals(encoder.getNameQualifier(),"S2_NAMEID_QUALIFIER");
+    }
+    
     @Test public void defaultCase() {
-        SAML2StringNameIDEncoder encoder =
+        final SAML2StringNameIDEncoder encoder =
                 getAttributeEncoder("saml2StringNameIDDefault.xml", SAML2StringNameIDEncoder.class);
 
         Assert.assertEquals(encoder.getNameFormat(), NameID.UNSPECIFIED);

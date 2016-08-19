@@ -21,6 +21,16 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ResolverPluginDependencyParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1Base64AttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1ScopedStringAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringNameIdentifierEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1XMLObjectAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2Base64AttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2ScopedStringAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringAttributeEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringNameIDEncoderParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.pc.impl.DirectConnectorParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
@@ -34,11 +44,42 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
 
     /** {@inheritDoc} */
     @Override public void init() {
-        BeanDefinitionParser parser = new AttributeResolverParser();
+        final BeanDefinitionParser parser = new AttributeResolverParser();
+        
         registerBeanDefinitionParser(AttributeResolverParser.SCHEMA_TYPE, parser);
         registerBeanDefinitionParser(AttributeResolverParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(DirectConnectorParser.TYPE_NAME, new DirectConnectorParser());
         registerBeanDefinitionParser(ResolverPluginDependencyParser.ELEMENT_NAME, new ResolverPluginDependencyParser());
+        
+        // Encoders
+        registerBeanDefinitionParser(SAML1StringAttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML1StringAttributeEncoderParser());
+        registerBeanDefinitionParser(SAML1Base64AttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML1Base64AttributeEncoderParser());
+
+        registerBeanDefinitionParser(SAML1ScopedStringAttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML1ScopedStringAttributeEncoderParser());
+
+        registerBeanDefinitionParser(SAML1StringNameIdentifierEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML1StringNameIdentifierEncoderParser());
+
+        registerBeanDefinitionParser(SAML1XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML1XMLObjectAttributeEncoderParser());
+
+        registerBeanDefinitionParser(SAML2Base64AttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML2Base64AttributeEncoderParser());
+
+        registerBeanDefinitionParser(SAML2ScopedStringAttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML2ScopedStringAttributeEncoderParser());
+
+        registerBeanDefinitionParser(SAML2StringAttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML2StringAttributeEncoderParser());
+
+        registerBeanDefinitionParser(SAML2StringNameIDEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML2StringNameIDEncoderParser());
+
+        registerBeanDefinitionParser(SAML2XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
+                new SAML2XMLObjectAttributeEncoderParser());
     }
     
 }

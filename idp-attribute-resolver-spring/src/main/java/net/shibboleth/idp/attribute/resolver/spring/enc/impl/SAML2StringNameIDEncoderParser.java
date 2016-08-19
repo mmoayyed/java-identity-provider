@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -35,8 +36,12 @@ import org.w3c.dom.Element;
  */
 public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Schema type. */
-    @Nonnull public static final QName SCHEMA_TYPE = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+    /** Schema type- enc: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_ENC = new QName(AttributeEncoderNamespaceHandler.NAMESPACE,
+            "SAML2StringNameID");
+
+    /** Schema type- resolver:. */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "SAML2StringNameID");
 
     /** Local name of name format attribute. */

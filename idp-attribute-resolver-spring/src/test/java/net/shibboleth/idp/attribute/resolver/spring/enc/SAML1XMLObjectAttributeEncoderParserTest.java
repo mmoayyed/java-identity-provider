@@ -31,16 +31,24 @@ import org.testng.annotations.Test;
  */
 public class SAML1XMLObjectAttributeEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void specified() {
-        SAML1XMLObjectAttributeEncoder encoder =
+    @Test public void legacy() {
+        final SAML1XMLObjectAttributeEncoder encoder =
                 getAttributeEncoder("saml1XmlObject.xml", SAML1XMLObjectAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "SAML1_XMLObject_ATTRIBUTE_NAME");
         Assert.assertEquals(encoder.getNamespace(),"SAML1_XMLObject_ATTRIBUTE_NAME_SPACE");
     }
     
+    @Test public void resolver() {
+        final SAML1XMLObjectAttributeEncoder encoder =
+                getAttributeEncoder("resolver/saml1XmlObject.xml", SAML1XMLObjectAttributeEncoder.class);
+
+        Assert.assertEquals(encoder.getName(), "SAML1_XMLObject_ATTRIBUTE_NAME");
+        Assert.assertEquals(encoder.getNamespace(),"SAML1_XMLObject_ATTRIBUTE_NAME_SPACE");
+    }
+    
     @Test public void defaultCase() {
-        SAML1XMLObjectAttributeEncoder encoder =
+        final SAML1XMLObjectAttributeEncoder encoder =
                 getAttributeEncoder("saml1XmlObjectDefault.xml", SAML1XMLObjectAttributeEncoder.class);
 
         Assert.assertEquals(encoder.getName(), "XMLObject_ATTRIBUTE");
