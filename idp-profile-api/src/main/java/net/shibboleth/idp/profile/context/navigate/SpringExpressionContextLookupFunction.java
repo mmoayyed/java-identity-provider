@@ -126,7 +126,7 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
             eval.setVariable("custom", customObject);
             eval.setVariable("input", context);
             
-            final Object output = parser.parseExpression(springExpression).getValue(context);
+            final Object output = parser.parseExpression(springExpression).getValue(eval);
             if (null != outputClass && null != output && !outputClass.isInstance(output)) {
                 log.error("Output of type {} was not of type {}", output.getClass(), outputClass);
                 return null;
