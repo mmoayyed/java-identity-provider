@@ -21,11 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.ad.PatternFactoryBean;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -33,12 +28,22 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-/** Spring Bean Definition Parser for Regexp split attribute definitions.*/
+import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.PatternFactoryBean;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+/** Spring Bean Definition Parser for Regexp split attribute definitions. */
 public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
+    /** Schema type name : ad: (Legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
             new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "RegexSplit");
+
+    /** Schema type name : ad: (Legacy). */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "RegexSplit");
 
     /** Logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(RegexSplitAttributeDefinitionParser.class);
@@ -61,11 +66,11 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
         }
 
         final BeanDefinitionBuilder pattern = BeanDefinitionBuilder.genericBeanDefinition(PatternFactoryBean.class);
-        
+
         pattern.addPropertyValue("regexp", regexp);
 
         if (config.hasAttributeNS(null, "caseSensitive")) {
-            pattern.addPropertyValue("caseSensitive", 
+            pattern.addPropertyValue("caseSensitive",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "caseSensitive")));
         }
 
@@ -76,5 +81,5 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
-    
+
 }

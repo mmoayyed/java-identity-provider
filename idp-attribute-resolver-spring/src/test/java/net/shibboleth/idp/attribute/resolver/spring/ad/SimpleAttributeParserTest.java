@@ -23,6 +23,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
@@ -33,34 +36,42 @@ import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncod
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 /**
- * Test for {@link SimpleAttributeDefinitionParser} and by extension
- * {@link BaseAttributeDefinitionParser}.
+ * Test for {@link SimpleAttributeDefinitionParser} and by extension {@link BaseAttributeDefinitionParser}.
  */
 public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void simple() {
-        AttributeDefinition attrDef = getAttributeDefn("simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
-        
+        AttributeDefinition attrDef =
+                getAttributeDefn("simpleAttributeUnpopulated.xml", SimpleAttributeDefinition.class);
+
         Assert.assertEquals(attrDef.getId(), "simpleUnpopulated");
         Assert.assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
-        Assert.assertTrue(attrDef.getDisplayDescriptions().isEmpty(),"getDisplayDescriptions().isEmpty()");
-        Assert.assertTrue(attrDef.getDisplayNames().isEmpty(),"getDisplayNames().isEmpty()");
+        Assert.assertTrue(attrDef.getDisplayDescriptions().isEmpty(), "getDisplayDescriptions().isEmpty()");
+        Assert.assertTrue(attrDef.getDisplayNames().isEmpty(), "getDisplayNames().isEmpty()");
         Assert.assertEquals(attrDef.getDependencies().size(), 1);
-        Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(),"getgetAttributeEncoders().isEmpty()");
-}
-    
+        Assert.assertTrue(attrDef.getAttributeEncoders().isEmpty(), "getgetAttributeEncoders().isEmpty()");
+    }
+
     @Test public void populated() throws ComponentInitializationException {
-        AttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
-        
+        final AttributeDefinition attrDef =
+                getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
+        valuesPopulated(attrDef);
+    }
+
+    @Test public void resolver() throws ComponentInitializationException {
+        final AttributeDefinition attrDef =
+                getAttributeDefn("simpleAttributePopulated.xml", SimpleAttributeDefinition.class);
+        valuesPopulated(attrDef);
+    }
+
+    private void valuesPopulated(AttributeDefinition attrDef) throws ComponentInitializationException {
+
         attrDef.initialize();
-        
+
         Assert.assertEquals(attrDef.getId(), "simplePopulated");
         Assert.assertTrue(attrDef.isDependencyOnly(), "isDependencyOnly");
-        
+
         final Map<Locale, String> descriptions = attrDef.getDisplayDescriptions();
         Assert.assertEquals(descriptions.size(), 3, "getDisplayDescriptions");
         Assert.assertEquals(descriptions.get(new Locale("en")), "DescInEnglish");
@@ -79,26 +90,27 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         Assert.assertTrue(dependencies.contains(TestSources.makeResolverPluginDependency("dep3", "flibble")));
 
         Assert.assertEquals(attrDef.getAttributeEncoders().size(), 1);
-        final SAML2StringAttributeEncoder e1 = (SAML2StringAttributeEncoder) attrDef.getAttributeEncoders().iterator().next();
+        final SAML2StringAttributeEncoder e1 =
+                (SAML2StringAttributeEncoder) attrDef.getAttributeEncoders().iterator().next();
         Assert.assertEquals(e1.getName(), "urn:oid:0.9.2342.19200300.100.1.3");
         Assert.assertEquals(e1.getFriendlyName(), "mail");
-        
+
     }
 
     @Test public void populated2() throws ComponentInitializationException {
-        AttributeDefinition attrDef = getAttributeDefn("simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
-        
+        AttributeDefinition attrDef =
+                getAttributeDefn("simpleAttributePopulated2.xml", SimpleAttributeDefinition.class);
+
         attrDef.initialize();
-        
+
         Assert.assertEquals(attrDef.getId(), "simplePopulated2");
         Assert.assertFalse(attrDef.isDependencyOnly(), "isDependencyOnly");
-        
-        Assert.assertTrue(attrDef.getDisplayDescriptions().isEmpty(),"getDisplayDescriptions().isEmpty()");
+
+        Assert.assertTrue(attrDef.getDisplayDescriptions().isEmpty(), "getDisplayDescriptions().isEmpty()");
 
         final Map<Locale, String> names = attrDef.getDisplayNames();
         Assert.assertEquals(names.size(), 1, "getDisplayNames");
         Assert.assertEquals(names.get(new Locale("en")), "NameInAmerican");
-
 
         Set<ResolverPluginDependency> dependencies = attrDef.getDependencies();
         Assert.assertEquals(dependencies.size(), 1, "getDisplayDescriptions");
@@ -106,10 +118,10 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
 
         Assert.assertEquals(attrDef.getAttributeEncoders().size(), 2);
         List a = new ArrayList(attrDef.getAttributeEncoders());
-        
-        final SAML2StringAttributeEncoder saml2; 
-        final SAML1StringAttributeEncoder saml1; 
-        if (a.get(0) instanceof SAML2StringAttributeEncoder) { 
+
+        final SAML2StringAttributeEncoder saml2;
+        final SAML1StringAttributeEncoder saml1;
+        if (a.get(0) instanceof SAML2StringAttributeEncoder) {
             saml2 = (SAML2StringAttributeEncoder) a.get(0);
             saml1 = (SAML1StringAttributeEncoder) a.get(1);
         } else {
@@ -118,7 +130,7 @@ public class SimpleAttributeParserTest extends BaseAttributeDefinitionParserTest
         }
         Assert.assertEquals(saml2.getName(), "urn:oid:0.9.2342.19200300.100.1.3");
         Assert.assertEquals(saml2.getFriendlyName(), "mail");
-        
+
         Assert.assertEquals(saml1.getName(), "urn:mace:dir:attribute-def:mail");
     }
 

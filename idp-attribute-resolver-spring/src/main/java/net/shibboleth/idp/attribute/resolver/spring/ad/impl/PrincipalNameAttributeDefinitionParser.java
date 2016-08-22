@@ -21,21 +21,25 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import org.w3c.dom.Element;
+
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalNameAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-
-import org.w3c.dom.Element;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 
 /** Spring Bean Definition Parser for PrincipalName attribute definitions. */
 public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
+    /** Schema type name ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
             new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalName");
 
+    /** Schema type name ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalName");
+
     /** {@inheritDoc} */
-    @Override
-    protected Class<PrincipalNameAttributeDefinition> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<PrincipalNameAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return PrincipalNameAttributeDefinition.class;
     }
 
@@ -43,5 +47,5 @@ public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinit
     @Override protected boolean needsAttributeSourceID() {
         return false;
     }
-    
+
 }

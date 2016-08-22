@@ -20,12 +20,6 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction;
-import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -33,12 +27,23 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction;
+import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
 public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "SubjectDerivedAttribute");
+    /** Schema type name ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SubjectDerivedAttribute");
+
+    /** Schema type name resolver: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SubjectDerivedAttribute");
 
     /** log. */
     private final Logger log = LoggerFactory.getLogger(SubjectDerivedAttributeDefinitionParser.class);
@@ -52,16 +57,15 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
      * {@inheritDoc}.
      * 
      * We inject an inferred {@link SubjectDerivedAttributeValuesFunction}.<br/>
-     * If 'principalAttributeName' we also inject an inferred {@link IdPAttributePrincipalValuesFunction}
-     * If 'attributeValueFunctionRef' the user has provided the function
-     * The {@link ContextDerivedAttributeDefinitionParser} does the case when the user injects the top level function
-     * */
+     * If 'principalAttributeName' we also inject an inferred {@link IdPAttributePrincipalValuesFunction} If
+     * 'attributeValueFunctionRef' the user has provided the function The
+     * {@link ContextDerivedAttributeDefinitionParser} does the case when the user injects the top level function
+     */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
         final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, "principalAttributeName"));
         final String functionRef = StringSupport.trimOrNull(config.getAttributeNS(null, "attributeValuesFunctionRef"));
-
 
         final BeanDefinitionBuilder contextFunctionBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(SubjectDerivedAttributeValuesFunction.class);

@@ -17,15 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Test for {@link ScriptedAttributeDefinitionParser}.
@@ -48,7 +48,28 @@ public class ScriptedAttributeParserTest extends BaseAttributeDefinitionParserTe
         Assert.assertEquals(attrDef.getId(), "scriptedFile");
         Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
         Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
-        
+
+        Assert.assertNull(attrDef.getCustomObject());
+
+    }
+
+    @Test public void resolverInline() {
+        ScriptedAttributeDefinition attrDef =
+                getAttributeDefn("resolver/scriptedAttributeInline.xml", ScriptedAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "scriptedInline");
+        Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
+        Assert.assertEquals(attrDef.getScript().getScript(), "foo=\"bar\";");
+    }
+
+    @Test public void resolverFile() {
+        ScriptedAttributeDefinition attrDef =
+                getAttributeDefn("resolver/scriptedAttributeFile.xml", ScriptedAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "scriptedFile");
+        Assert.assertEquals(attrDef.getScript().getScriptLanguage(), "javascript");
+        Assert.assertEquals(StringSupport.trim(attrDef.getScript().getScript()), "foo=bar();");
+
         Assert.assertNull(attrDef.getCustomObject());
 
     }

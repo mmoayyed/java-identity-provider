@@ -29,11 +29,17 @@ import org.testng.annotations.Test;
  */
 public class PrincipalAuthenticationMethodAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
-    @Test public void test() {
+    @Test public void legacy() {
         PrincipalAuthenticationMethodAttributeDefinition attrDef =
                 getAttributeDefn("principalAuthenticationMethod.xml", PrincipalAuthenticationMethodAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "PrincipalAuthenticationMethod");
     }
 
+    @Test public void resolver() {
+        PrincipalAuthenticationMethodAttributeDefinition attrDef =
+                getAttributeDefn("resolver/principalAuthenticationMethod.xml", PrincipalAuthenticationMethodAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "PrincipalAuthenticationMethod");
+    }
 }

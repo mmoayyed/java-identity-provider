@@ -21,39 +21,42 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.ad.impl.ScopedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 /**
  * Spring Bean Definition Parser for scoped attribute definitions.
  */
 public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Scoped");
+    /** Schema type name - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Scoped");
+
+    /** Schema type name - resolver: . */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Scoped");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScopedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override
-    protected Class<ScopedAttributeDefinition> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<ScopedAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return ScopedAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
-
 
         final String scope = StringSupport.trimOrNull(config.getAttributeNS(null, "scope"));
         log.debug("{} Setting scope to '{}'.", getLogPrefix(), scope);
@@ -64,5 +67,5 @@ public class ScopedAttributeDefinitionParser extends BaseAttributeDefinitionPars
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
-    
+
 }

@@ -1,0 +1,10 @@
+ <AttributeDefinition 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="urn:mace:shibboleth:2.0:resolver"
+    storageServiceRef="testStore"
+    id="transientIdWithTime"
+    xsi:type="TransientId"
+    lifetime="PT3M"
+    
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd"
+    />

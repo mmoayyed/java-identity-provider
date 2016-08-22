@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalNameAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalNameAttributeDefinitionParser;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link PrincipalNameAttributeDefinitionParser}.
@@ -35,4 +35,12 @@ public class PrincipalNameAttributeDefinitionParserTest extends BaseAttributeDef
 
         Assert.assertEquals(attrDef.getId(), "PrincipalName");
     }
+
+    @Test public void legacy() {
+        PrincipalNameAttributeDefinition attrDef =
+                getAttributeDefn("resolver/principalName.xml", PrincipalNameAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "PrincipalName");
+    }
+
 }

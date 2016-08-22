@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierAttributeDefinitionParser;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML2NameIDAttributeDefinition;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link SAML1NameIdentifierAttributeDefinitionParser}.
@@ -45,6 +45,16 @@ public class SAML2NameIDdentifierAttributeDefinitionParserTest extends BaseAttri
         Assert.assertEquals(attrDef.getId(), "SAML2NameId-Attr");
         Assert.assertEquals(attrDef.getNameIdFormat(), "format");
         Assert.assertEquals(attrDef.getNameIdQualifier(), "qualifier");
-        Assert.assertEquals(attrDef.getNameIdSPQualifier(),"name-Id-SP-Qualifier");
+        Assert.assertEquals(attrDef.getNameIdSPQualifier(), "name-Id-SP-Qualifier");
+    }
+
+    @Test public void resolver() {
+        SAML2NameIDAttributeDefinition attrDef =
+                getAttributeDefn("resolver/saml2NameIdAttributes.xml", SAML2NameIDAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "SAML2NameId-Attr");
+        Assert.assertEquals(attrDef.getNameIdFormat(), "format");
+        Assert.assertEquals(attrDef.getNameIdQualifier(), "qualifier");
+        Assert.assertEquals(attrDef.getNameIdSPQualifier(), "name-Id-SP-Qualifier");
     }
 }

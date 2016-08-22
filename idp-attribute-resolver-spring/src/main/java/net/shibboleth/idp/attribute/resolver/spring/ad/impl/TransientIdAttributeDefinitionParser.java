@@ -21,16 +21,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
-import net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Spring bean definition parser for {@link TransientIdAttributeDefinition} using a
@@ -38,9 +39,13 @@ import org.w3c.dom.Element;
  */
 public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "TransientId");
+    /** Schema type name - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "TransientId");
+
+    /** Schema type name. - resolver: */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "TransientId");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinitionParser.class);

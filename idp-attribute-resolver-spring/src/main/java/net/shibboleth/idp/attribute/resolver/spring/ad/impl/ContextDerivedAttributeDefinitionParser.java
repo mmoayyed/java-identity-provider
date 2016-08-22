@@ -20,21 +20,26 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
 public class ContextDerivedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "ContextDerivedAttribute");
+    /** Schema type name - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ContextDerivedAttribute");
+
+    /** Schema type name - resolver: . */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ContextDerivedAttribute");
 
     /** {@inheritDoc} */
     @Override protected Class<ContextDerivedAttributeDefinition> getBeanClass(final Element element) {
@@ -60,8 +65,7 @@ public class ContextDerivedAttributeDefinitionParser extends BaseAttributeDefini
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected boolean failOnDependencies() {
+    @Override protected boolean failOnDependencies() {
         return true;
     }
 }

@@ -34,42 +34,38 @@ public class AttributeDefinitionNamespaceHandler extends BaseSpringNamespaceHand
     @Nonnull @NotEmpty public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver:ad";
 
     /** {@inheritDoc} */
-    @Override
-    public void init() {
-        registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionParser.TYPE_NAME,
+    @Override public void init() {
+        registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionParser.TYPE_NAME_AD,
                 new CryptoTransientIdAttributeDefinitionParser());
-        registerBeanDefinitionParser(PrescopedAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(PrescopedAttributeDefinitionParser.TYPE_NAME_AD,
                 new PrescopedAttributeDefinitionParser());
-        registerBeanDefinitionParser(PrincipalAuthenticationMethodAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(PrincipalAuthenticationMethodAttributeDefinitionParser.TYPE_NAME_AD,
                 new PrincipalAuthenticationMethodAttributeDefinitionParser());
-        registerBeanDefinitionParser(PrincipalNameAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(PrincipalNameAttributeDefinitionParser.TYPE_NAME_AD,
                 new PrincipalNameAttributeDefinitionParser());
-        registerBeanDefinitionParser(SubjectDerivedAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(SubjectDerivedAttributeDefinitionParser.TYPE_NAME_AD,
                 new SubjectDerivedAttributeDefinitionParser());
-        registerBeanDefinitionParser(ContextDerivedAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(ContextDerivedAttributeDefinitionParser.TYPE_NAME_AD,
                 new ContextDerivedAttributeDefinitionParser());
-        registerBeanDefinitionParser(RegexSplitAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(RegexSplitAttributeDefinitionParser.TYPE_NAME_AD,
                 new RegexSplitAttributeDefinitionParser());
-        registerBeanDefinitionParser(SAML1NameIdentifierAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(SAML1NameIdentifierAttributeDefinitionParser.TYPE_NAME_AD,
                 new SAML1NameIdentifierAttributeDefinitionParser());
-        registerBeanDefinitionParser(SAML2NameIDAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(SAML2NameIDAttributeDefinitionParser.TYPE_NAME_AD,
                 new SAML2NameIDAttributeDefinitionParser());
-        registerBeanDefinitionParser(ScopedAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(ScopedAttributeDefinitionParser.TYPE_NAME_AD,
                 new ScopedAttributeDefinitionParser());
-        registerBeanDefinitionParser(ScriptedAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(ScriptedAttributeDefinitionParser.TYPE_NAME_AD,
                 new ScriptedAttributeDefinitionParser());
-        registerBeanDefinitionParser(SimpleAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(SimpleAttributeDefinitionParser.TYPE_NAME_AD,
                 new SimpleAttributeDefinitionParser());
         registerBeanDefinitionParser(TemplateAttributeDefinitionParser.TYPE_NAME,
                 new TemplateAttributeDefinitionParser());
-        registerBeanDefinitionParser(TransientIdAttributeDefinitionParser.TYPE_NAME,
+        registerBeanDefinitionParser(TransientIdAttributeDefinitionParser.TYPE_NAME_AD,
                 new TransientIdAttributeDefinitionParser());
-        registerBeanDefinitionParser(SourceValueParser.TYPE_NAME,
-                new SourceValueParser());
-        registerBeanDefinitionParser(ValueMapParser.TYPE_NAME,
-                new ValueMapParser());
-        registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME,
-                new MappedAttributeDefinitionParser());
+        registerBeanDefinitionParser(SourceValueParser.TYPE_NAME, new SourceValueParser());
+        registerBeanDefinitionParser(ValueMapParser.TYPE_NAME, new ValueMapParser());
+        registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME, new MappedAttributeDefinitionParser());
     }
-    
+
 }

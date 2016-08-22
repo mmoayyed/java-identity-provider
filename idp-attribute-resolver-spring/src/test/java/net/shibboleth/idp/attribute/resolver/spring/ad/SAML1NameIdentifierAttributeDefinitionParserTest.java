@@ -17,12 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierAttributeDefinitionParser;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML1NameIdentifierAttributeDefinition;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link SAML1NameIdentifierAttributeDefinitionParser}.
@@ -46,4 +46,14 @@ public class SAML1NameIdentifierAttributeDefinitionParserTest extends BaseAttrib
         Assert.assertEquals(attrDef.getNameIdFormat(), "format");
         Assert.assertEquals(attrDef.getNameIdQualifier(), "qualifier");
     }
+
+    @Test public void resolver() {
+        SAML1NameIdentifierAttributeDefinition attrDef = getAttributeDefn("resolver/saml1NameIdentifierAttributes.xml",
+                SAML1NameIdentifierAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "SAML1NameIdentifierAttributes");
+        Assert.assertEquals(attrDef.getNameIdFormat(), "format");
+        Assert.assertEquals(attrDef.getNameIdQualifier(), "qualifier");
+    }
+
 }

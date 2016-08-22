@@ -31,22 +31,51 @@
         </attribute>
     </complexType>
 
-    <element name="AttributeDefinition" type="resolver:BaseAttributeDefinitionType">
+    <element name="AttributeDefinition" type="resolver:FlattenedBaseAttributeDefinitionType">
         <annotation>
             <documentation>Defines an attribute definition within this resolver.
             </documentation>
         </annotation>
     </element>
-    <complexType name="BaseAttributeDefinitionType">
+
+    <complexType name="FlattenedBaseAttributeDefinitionType">
         <annotation>
             <documentation>
                 Attribute definition define the finished attributes to be released by the
                 resolver.
+                
+                Definitions derived from this type need to explicitly include (as a choice)
+                the Dependency, DisplayName, DisplayDescription and Encoder sub elements
+                
+                Definitions derived from this type may add the sourceAttributeID element.
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:BaseResolutionPlugInType">
+            <extension base="resolver:FlattenedBaseResolutionPlugInType">
+                <attribute name="dependencyOnly" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag that indicates whether this attribute definition is
+                            only defined because its data is needed elsewhere within the resolver
+                            and as such should not be released outside the resolver.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="BaseAttributeDefinitionType">
+        <annotation>
+            <documentation>
+                Legacy attribute definition define the finished attributes to be released by the
+                resolver.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <sequence>
+                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
                     <element name="DisplayName" type="resolver:LocalizedStringType"
                         minOccurs="0" maxOccurs="unbounded">
                         <annotation>
@@ -76,15 +105,6 @@
                     <element ref="resolver:AttributeEncoder" minOccurs="0"
                         maxOccurs="unbounded" />
                 </sequence>
-                <attribute name="dependencyOnly" type="string">
-                    <annotation>
-                        <documentation>
-                            A boolean flag that indicates whether this attribute definition is
-                            only defined becaue its data is needed elsewhere within the resolver
-                            and as such should not be released outside the resolver.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="sourceAttributeID" type="string">
                     <annotation>
                         <documentation>
@@ -221,16 +241,13 @@
         </complexContent>
     </complexType>
 
-    <complexType name="BaseResolutionPlugInType" abstract="true">
+    <complexType name="FlattenedBaseResolutionPlugInType" abstract="true">
         <annotation>
             <documentation>
                 A base type for all attribute resolver plugins: data and principal
                 connectors and attribute definitions
             </documentation>
         </annotation>
-        <sequence>
-            <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-        </sequence>
         <attribute name="id" type="string" use="required">
             <annotation>
                 <documentation>A unique identifier for this definition.</documentation>
@@ -250,7 +267,22 @@
                 </documentation>
             </annotation>
         </attribute>
+    </complexType>
 
+
+    <complexType name="BaseResolutionPlugInType" abstract="true">
+        <annotation>
+            <documentation>
+                A base type for all legacy attribute resolver plugins
+            </documentation>
+        </annotation>
+        <complexContent>
+        <extension base="resolver:FlattenedBaseResolutionPlugInType">
+            <sequence>
+                <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+        </extension>        
+        </complexContent>
     </complexType>
 
     <element name="Dependency" type="resolver:PluginDependencyType">
@@ -281,9 +313,368 @@
             </extension>
         </simpleContent>
     </complexType>
+    
+    <!--  Flatten the ad: namespace into the resolver: namespace -->
+    
+    <complexType name="ContextDerivedAttribute">
+        <annotation>
+            <documentation>A attribute definition to pull attribute values from anywhere in the PRC tree</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="attributeValuesFunctionRef" type="string" use="required">
+                    <annotation>
+                        <documentation>The Function to generate the Attribute Values given a PRC</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
+    <complexType name="CryptoTransientId">
+        <annotation>
+            <documentation>An attribute definition used to construct stateless transient subject identifiers.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="dataSealerRef" type="string" use="required">
+                    <annotation>
+                        <documentation>Object used to protect and encrypt identifiers</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="lifetime" type="string">
+                    <annotation>
+                        <documentation>Lifetime of issued identifiers</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
-    <!--  Flatten the enc: namespace into the resolver: namespace -->
+    <complexType name="Prescoped">
+        <annotation>
+            <documentation>
+                An attribute definition that splits the values of the source attribute into an attribute value 
+                with a value and scope.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="sourceAttributeID" type="string"/>
+                <attribute name="scopeDelimiter" type="string">
+                    <annotation>
+                        <documentation>Delimiter between the value and scope.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+ 
+    <complexType name="PrincipalAuthenticationMethod">
+        <annotation>
+            <documentation>Exposes the principal's authentication method as an attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+     </complexType>
+
+    <complexType name="PrincipalName">
+        <annotation>
+            <documentation>Exposes the principal's name as an attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+            </extension>            
+        </complexContent>
+    </complexType>
+    
+        <complexType name="RegexSplit">
+        <annotation>
+            <documentation>An attribute definition that splits the source attribute's values based on a regular expression.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="sourceAttributeID" type="string"/>
+                <attribute name="regex" type="string" use="required">
+                    <annotation>
+                        <documentation>The regular expression used to split a value.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="caseSensitive" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating the case sensitivity of the regular expression.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML1NameIdentifier">
+        <annotation>
+            <documentation>An attribute definition that creates attributes whose values are SAML 1 NameIdentifiers.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="sourceAttributeID" type="string"/>
+                <attribute name="nameIdFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 1 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 1 NameQualifier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SAML2NameID">
+        <annotation>
+            <documentation>An attribute definition that creates attributes whose values are SAML 2 NameIDs.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="sourceAttributeID" type="string"/>
+                <attribute name="nameIdFormat" type="string">
+                    <annotation>
+                        <documentation>The SAML 2 NameFormat of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 NameQualifier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="nameIdSPQualifier" type="string" use="optional">
+                    <annotation>
+                        <documentation>The SAML 2 SPNameQualifier of the NameID.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Scoped">
+        <annotation>
+            <documentation>A basic attribute definition which supports attribute scoping.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="sourceAttributeID" type="string"/>
+                <attribute name="scope" type="string" use="required">
+                    <annotation>
+                        <documentation>Value to use for scoping the attribute.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Script">
+        <annotation>
+            <documentation>
+                An attribute definition that constructs its attributes by means of a script supported by JSR-223. The
+                script is provided all the edu.internet2.middleware.shibboleth.common.attribute.Attribute object
+                resolved from all the definitions dependencies. The resultant attribute definition must then be bound to
+                a script attribute corresponding to the script variable whose name is the ID of the definition. This
+                variable is injected into the script by the attribute definition.
+                
+                NOTE that in this version Script does not have a sourceAttributeID - all the values for scripts
+                come from the Dependency elements.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                        <element name="Script" type="string">
+                            <annotation>
+                                <documentation>The script to evaluate to construct the attribute.</documentation>
+                            </annotation>
+                        </element>
+                        <element name="ScriptFile" type="string">
+                            <annotation>
+                                <documentation>
+                                    The filesystem path to the script to evaluate to construct the attribute.
+                                </documentation>
+                            </annotation>
+                        </element>
+                    </choice>
+                </sequence>
+                <attribute name="language" type="string">
+                    <annotation>
+                        <documentation>
+                            The JSR-233 name for the scripting language that will be used. By default "javascript" is
+                            supported.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="customObjectRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of a bean defined somewhere else which will be injected into the script as an
+                            object called "custom".  If not supplied, nothing is injected.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Simple">
+        <annotation>
+            <documentation>A basic attribute definition.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="sourceAttributeID" type="string"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SubjectDerivedAttribute">
+        <annotation>
+            <documentation>A attribute definition to pull attribute values from the Principals.  A short cut looks at IdPAttributePrincipals</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="attributeValuesFunctionRef" type="string" >
+                    <annotation>
+                        <documentation>Provides a plug in point to allow general extraction of values from Principals.  Incompatible with idpAttributeName</documentation>
+                    </annotation>
+                </attribute>
+
+                <attribute name="principalAttributeName" type="string" >
+                    <annotation>
+                        <documentation>The id of the IdPAttribute contained within a IdPAttributePrincipal to look for.  Incompatible with attributeValueEngineRef.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+        <complexType name="TransientId">
+        <annotation>
+            <documentation>A attribute definition used to construct transient subject identifiers.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    </choice>
+                </sequence>
+                <attribute name="storageServiceRef" type="string" default="shibboleth.StorageService">
+                    <annotation>
+                        <documentation>Storage service used to store created identifiers</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="lifetime" type="string">
+                    <annotation>
+                        <documentation>Lifetime of issued identifiers</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+
+    <!--  Flatten the enc: namespace into the resolver: namespace -->    
     
     <!-- Encoders that produce SAML 1 or SAML 2 Attributes -->
     <complexType name="SAML1String">
@@ -501,6 +892,4 @@
             </extension>
         </complexContent>
     </complexType>
-
-
 </schema>

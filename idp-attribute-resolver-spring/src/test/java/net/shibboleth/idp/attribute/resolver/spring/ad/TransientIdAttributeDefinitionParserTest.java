@@ -17,15 +17,15 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad;
 
+import org.springframework.beans.factory.BeanCreationException;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TransientIdAttributeDefinitionParser;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
 import net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
-
-import org.springframework.beans.factory.BeanCreationException;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * test for {@link TransientIdAttributeDefinitionParser}
@@ -49,11 +49,28 @@ public class TransientIdAttributeDefinitionParserTest extends BaseAttributeDefin
                 getAttributeDefn("transientWithTime.xml", "idStore2.xml", TransientIdAttributeDefinition.class);
 
         Assert.assertEquals(defn.getId(), "transientIdWithTime");
-        
+
         Assert.assertTrue(defn.isInitialized());
-        
-        StoredTransientIdGenerationStrategy generator = (StoredTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
-        
+
+        StoredTransientIdGenerationStrategy generator =
+                (StoredTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
+
+        Assert.assertEquals(generator.getIdLifetime(), 1000 * 60 * 3);
+        Assert.assertEquals(generator.getIdSize(), 16);
+    }
+
+    @Test public void withTimeResolver() throws ComponentInitializationException {
+
+        final TransientIdAttributeDefinition defn = getAttributeDefn("resolver/transientWithTime.xml", "idStore2.xml",
+                TransientIdAttributeDefinition.class);
+
+        Assert.assertEquals(defn.getId(), "transientIdWithTime");
+
+        Assert.assertTrue(defn.isInitialized());
+
+        StoredTransientIdGenerationStrategy generator =
+                (StoredTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
+
         Assert.assertEquals(generator.getIdLifetime(), 1000 * 60 * 3);
         Assert.assertEquals(generator.getIdSize(), 16);
     }
@@ -62,8 +79,9 @@ public class TransientIdAttributeDefinitionParserTest extends BaseAttributeDefin
 
         TransientIdAttributeDefinition defn = getDefinition("transientNoTime.xml");
         Assert.assertTrue(defn.isInitialized());
-        
-        StoredTransientIdGenerationStrategy generator = (StoredTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
+
+        StoredTransientIdGenerationStrategy generator =
+                (StoredTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
 
         Assert.assertEquals(defn.getId(), "transientId");
         Assert.assertEquals(generator.getIdLifetime(), 1000 * 60 * 60 * 4);

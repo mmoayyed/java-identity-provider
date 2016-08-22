@@ -21,28 +21,32 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+
 /** Bean definition parser for a {@link SimpleAttributeDefinition}. */
 public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
+    /** Schema type names - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Simple");
+
+    /** Schema type names - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Simple");
 
     /** {@inheritDoc} */
-    @Override
-    protected Class<SimpleAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SimpleAttributeDefinition> getBeanClass(@Nullable Element element) {
         return SimpleAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
     }
@@ -51,5 +55,5 @@ public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionPars
     @Override protected boolean needsAttributeSourceID() {
         return true;
     }
-    
+
 }

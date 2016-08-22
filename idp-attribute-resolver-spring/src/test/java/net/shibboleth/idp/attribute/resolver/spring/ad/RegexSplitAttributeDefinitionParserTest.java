@@ -19,13 +19,13 @@ package net.shibboleth.idp.attribute.resolver.spring.ad;
 
 import java.util.regex.Pattern;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
 
 /**
  * Test for {@link PrescopedAttributeDefinitionParser}.
@@ -35,6 +35,18 @@ public class RegexSplitAttributeDefinitionParserTest extends BaseAttributeDefini
     @Test public void defaultCase() {
         RegexSplitAttributeDefinition attrDef =
                 getAttributeDefn("regexDefault.xml", RegexSplitAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "regexSplitDefault");
+
+        Pattern pat = attrDef.getRegularExpression();
+
+        Assert.assertTrue(pat.matcher("at1-FOOBLECONNECTector").matches());
+        Assert.assertFalse(pat.matcher("AT1-foobleconneECTOR").matches());
+    }
+
+    @Test public void resolver() {
+        RegexSplitAttributeDefinition attrDef =
+                getAttributeDefn("resolver/regexDefault.xml", RegexSplitAttributeDefinition.class);
 
         Assert.assertEquals(attrDef.getId(), "regexSplitDefault");
 

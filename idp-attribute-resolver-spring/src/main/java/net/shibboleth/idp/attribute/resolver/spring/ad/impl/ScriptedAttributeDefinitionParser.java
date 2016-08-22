@@ -23,12 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
-import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -36,21 +30,41 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
+import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /**
  * Spring bean definition parser for scripted attribute configuration elements.
  */
 public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
+    /** Schema type name - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
+
+    /** Schema type name - resolver: . */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Script");
 
     /** Script file element name. */
-    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME = new QName(
-            AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile");
+    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ScriptFile");
 
     /** Inline Script element name. */
-    @Nonnull public static final QName SCRIPT_ELEMENT_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
-            "Script");
+    @Nonnull public static final QName SCRIPT_ELEMENT_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Script");
+
+    /** Script file element name. */
+    @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ScriptFile");
+
+    /** Inline Script element name. */
+    @Nonnull public static final QName SCRIPT_ELEMENT_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Script");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
@@ -74,12 +88,16 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
             scriptBuilder.addPropertyValue("engineName", scriptLanguage);
         }
 
-        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME);
-        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME);
+        final List<Element> scriptElem = ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME_AD);
+        scriptElem.addAll(ElementSupport.getChildElements(config, SCRIPT_ELEMENT_NAME_RESOLVER));
+        final List<Element> scriptFileElem = ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME_AD);
+        scriptFileElem.addAll(ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME_RESOLVER));
         if (scriptElem != null && scriptElem.size() > 0) {
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
-                log.warn("{} Attribute definition {}: definition contains both <Script> "
-                        + "and <ScriptFile> elements, taking the <Script> element", getLogPrefix(), getDefinitionId());
+                log.warn(
+                        "{} Attribute definition {}: definition contains both <Script> "
+                                + "and <ScriptFile> elements, taking the <Script> element",
+                        getLogPrefix(), getDefinitionId());
             }
             final String script = scriptElem.get(0).getTextContent();
             log.debug("{} Script: {}", getLogPrefix(), script);

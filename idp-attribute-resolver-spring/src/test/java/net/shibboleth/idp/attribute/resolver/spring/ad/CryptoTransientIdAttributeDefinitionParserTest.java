@@ -48,6 +48,18 @@ public class CryptoTransientIdAttributeDefinitionParserTest extends BaseAttribut
         Assert.assertEquals(strategy.getIdLifetime(), 3 * 60 * 1000);
     }
 
+    @Test public void resolver() throws ComponentInitializationException {
+
+        TransientIdAttributeDefinition defn = getDefinition("resolver/cryptoWithTime.xml");
+
+        Assert.assertTrue(defn.isInitialized());
+
+        CryptoTransientIdGenerationStrategy strategy =
+                (CryptoTransientIdGenerationStrategy) defn.getTransientIdGenerationStrategy();
+
+        Assert.assertEquals(strategy.getIdLifetime(), 3 * 60 * 1000);
+    }
+
     @Test public void noTime() throws ComponentInitializationException {
 
         TransientIdAttributeDefinition defn = getDefinition("cryptoNoTime.xml");

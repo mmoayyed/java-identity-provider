@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
 import net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -38,8 +39,12 @@ import org.w3c.dom.Element;
  */
 public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+    /** Schema type name - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE,
+            "CryptoTransientId");
+
+    /** Schema type name - resolver: . */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "CryptoTransientId");
 
     /** Class logger. */

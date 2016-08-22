@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrescopedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -34,9 +35,13 @@ import org.w3c.dom.Element;
 /** Spring bean definition parser for prescoped attributes. */
 public class PrescopedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
+    /** Schema type name ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
             new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Prescoped");
+
+    /** Schema type name resolver: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Prescoped");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PrescopedAttributeDefinitionParser.class);

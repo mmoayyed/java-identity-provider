@@ -19,8 +19,23 @@ package net.shibboleth.idp.attribute.resolver.spring.impl;
 
 import javax.annotation.Nonnull;
 
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
+
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ResolverPluginDependencyParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.CryptoTransientIdAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrescopedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalAuthenticationMethodAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.PrincipalNameAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.RegexSplitAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML1NameIdentifierAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SAML2NameIDAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScopedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TransientIdAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1Base64AttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1ScopedStringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringAttributeEncoderParser;
@@ -34,8 +49,6 @@ import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttri
 import net.shibboleth.idp.attribute.resolver.spring.pc.impl.DirectConnectorParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
-
 /** Namespace handler for the attribute resolver. */
 public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandler {
 
@@ -43,14 +56,50 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
     @Nonnull @NotEmpty public static final String NAMESPACE = "urn:mace:shibboleth:2.0:resolver";
 
     /** {@inheritDoc} */
+    // Checkstyle: MethodLength OFF
     @Override public void init() {
         final BeanDefinitionParser parser = new AttributeResolverParser();
-        
+
         registerBeanDefinitionParser(AttributeResolverParser.SCHEMA_TYPE, parser);
         registerBeanDefinitionParser(AttributeResolverParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(DirectConnectorParser.TYPE_NAME, new DirectConnectorParser());
         registerBeanDefinitionParser(ResolverPluginDependencyParser.ELEMENT_NAME, new ResolverPluginDependencyParser());
-        
+
+        // Attribute Resolvers
+        registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new CryptoTransientIdAttributeDefinitionParser());
+        registerBeanDefinitionParser(PrescopedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new PrescopedAttributeDefinitionParser());
+        registerBeanDefinitionParser(PrincipalAuthenticationMethodAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new PrincipalAuthenticationMethodAttributeDefinitionParser());
+        registerBeanDefinitionParser(PrincipalNameAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new PrincipalNameAttributeDefinitionParser());
+        registerBeanDefinitionParser(RegexSplitAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new RegexSplitAttributeDefinitionParser());
+
+        registerBeanDefinitionParser(SubjectDerivedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new SubjectDerivedAttributeDefinitionParser());
+        registerBeanDefinitionParser(ContextDerivedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new ContextDerivedAttributeDefinitionParser());
+        registerBeanDefinitionParser(SAML1NameIdentifierAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new SAML1NameIdentifierAttributeDefinitionParser());
+        registerBeanDefinitionParser(SAML2NameIDAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new SAML2NameIDAttributeDefinitionParser());
+        registerBeanDefinitionParser(ScopedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new ScopedAttributeDefinitionParser());
+        registerBeanDefinitionParser(ScriptedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new ScriptedAttributeDefinitionParser());
+        registerBeanDefinitionParser(SimpleAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new SimpleAttributeDefinitionParser());
+        // registerBeanDefinitionParser(TemplateAttributeDefinitionParser.TYPE_NAME, new
+        // TemplateAttributeDefinitionParser());
+        registerBeanDefinitionParser(TransientIdAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new TransientIdAttributeDefinitionParser());
+        // registerBeanDefinitionParser(SourceValueParser.TYPE_NAME_R, new SourceValueParser());
+        // registerBeanDefinitionParser(ValueMapParser.TYPE_NAME, new ValueMapParser());
+        // registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME, new
+        // MappedAttributeDefinitionParser());
+
         // Encoders
         registerBeanDefinitionParser(SAML1StringAttributeEncoderParser.TYPE_NAME_RESOLVER,
                 new SAML1StringAttributeEncoderParser());
@@ -81,5 +130,6 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(SAML2XMLObjectAttributeEncoderParser.TYPE_NAME_RESOLVER,
                 new SAML2XMLObjectAttributeEncoderParser());
     }
-    
+    // Checkstyle: MethodLength ON
+
 }

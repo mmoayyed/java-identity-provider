@@ -22,15 +22,20 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalAuthenticationMethodAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 
 import org.w3c.dom.Element;
 
 /** Spring Bean Definition Parser for PrincipalAuthenticationMethod. */
 public class PrincipalAuthenticationMethodAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
+    /** Schema type name ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
             new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "PrincipalAuthenticationMethod");
+
+    /** Schema type name resolver:. */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalAuthenticationMethod");
 
     /** {@inheritDoc} */
     @Override protected Class<PrincipalAuthenticationMethodAttributeDefinition> getBeanClass(final Element element) {

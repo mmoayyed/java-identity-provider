@@ -37,6 +37,14 @@ public class PrescopedAttributeDefinitionParserTest extends BaseAttributeDefinit
         Assert.assertEquals(attrDef.getScopeDelimiter(), "#");
     }
 
+    @Test public void resolver() {
+        PrescopedAttributeDefinition attrDef =
+                getAttributeDefn("resolver/prescopedWith.xml", PrescopedAttributeDefinition.class);
+
+        Assert.assertEquals(attrDef.getId(), "prescopedWith");
+        Assert.assertEquals(attrDef.getScopeDelimiter(), "#");
+    }
+
     @Test public void withoutScope() {
         PrescopedAttributeDefinition attrDef =
                 getAttributeDefn("prescopedWithout.xml", PrescopedAttributeDefinition.class);
