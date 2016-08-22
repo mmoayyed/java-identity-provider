@@ -23,12 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AttributeDefinitionNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -39,15 +33,31 @@ import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AttributeDefinitionNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /** Bean definition parser for a {@link ValueMap}. */
 public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ValueMap");
+    /** Schema type name - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ValueMap");
 
-    /** return Value element name. */
-    @Nonnull public static final QName RETURN_VALUE_ELEMENT_NAME =
+    /** Schema type name - resolver: . */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ValueMap");
+
+    /** return Value element name - ad: (legacy). */
+    @Nonnull public static final QName RETURN_VALUE_ELEMENT_NAME_AD =
             new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "ReturnValue");
+
+    /** return Value element name - resolver:. */
+    @Nonnull public static final QName RETURN_VALUE_ELEMENT_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ReturnValue");
 
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(ValueMapParser.class);
@@ -62,7 +72,8 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        final List<Element> returnElems = ElementSupport.getChildElements(config, RETURN_VALUE_ELEMENT_NAME);
+        final List<Element> returnElems = ElementSupport.getChildElements(config, RETURN_VALUE_ELEMENT_NAME_AD);
+        returnElems.addAll(ElementSupport.getChildElements(config, RETURN_VALUE_ELEMENT_NAME_RESOLVER));
         String returnValue = null;
 
         if (null != returnElems && returnElems.size() > 0) {
@@ -73,8 +84,9 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
             throw new BeanCreationException("Attribute Definition: ValueMap must have a ReturnValue");
         }
 
-        final List<Element> sourceValueElements = ElementSupport.getChildElements(config, SourceValueParser.TYPE_NAME);
-
+        final List<Element> sourceValueElements =
+                ElementSupport.getChildElements(config, SourceValueParser.TYPE_NAME_AD);
+        sourceValueElements.addAll(ElementSupport.getChildElements(config, SourceValueParser.TYPE_NAME_RESOLVER));
         if (null == sourceValueElements || sourceValueElements.size() == 0) {
             throw new BeanCreationException("Attribute Definition: ValueMap must have at least one SourceValue");
         }
@@ -94,5 +106,5 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
     @Override protected boolean shouldGenerateId() {
         return true;
     }
-    
+
 }

@@ -23,11 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -35,39 +30,56 @@ import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
+import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 /**
  * Spring bean definition parser for templated attribute definition elements.
  */
 public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Template");
-
-    /** SourceValue element name. */
-    @Nonnull public static final QName TEMPLATE_ELEMENT_NAME =
+    /** Schema type name - ad: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD =
             new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Template");
 
-    /** SourceValue element name. */
-    @Nonnull public static final QName SOURCE_ATTRIBUTE_ELEMENT_NAME =
+    /** Schema type name - resolver: . */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Template");
+
+    /** SourceValue element name - ad: (legacy). */
+    @Nonnull public static final QName TEMPLATE_ELEMENT_NAME_AD =
+            new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "Template");
+
+    /** SourceValue element name - - resolver: . */
+    @Nonnull public static final QName TEMPLATE_ELEMENT_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Template");
+
+    /** SourceValue element name - ad: (legacy). */
+    @Nonnull public static final QName SOURCE_ATTRIBUTE_ELEMENT_NAME_AD =
             new QName(AttributeDefinitionNamespaceHandler.NAMESPACE, "SourceAttribute");
+
+    /** SourceValue element name - resolver: . */
+    @Nonnull public static final QName SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SourceAttribute");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(TemplateAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override
-    protected Class<TemplateAttributeDefinition> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<TemplateAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return TemplateAttributeDefinition.class;
     }
 
     /** {@inheritDoc} */
-    @Override
-    protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        final List<Element> templateElements = ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME);
-
+        final List<Element> templateElements = ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_AD);
+        templateElements.addAll(ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_RESOLVER));
         if (null != templateElements && templateElements.size() >= 1) {
             final String templateText = StringSupport.trimOrNull(templateElements.get(0).getTextContent());
             log.debug("{} Template is '{}'", getLogPrefix(), templateText);
@@ -76,7 +88,8 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
         }
 
         final List<Element> sourceAttributeElements =
-                ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME);
+                ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_AD);
+        sourceAttributeElements.addAll(ElementSupport.getChildElements(config, SOURCE_ATTRIBUTE_ELEMENT_NAME_RESOLVER));
         if (null != sourceAttributeElements) {
             final List<String> sourceAttributes = new ManagedList<>(sourceAttributeElements.size());
             for (final Element element : sourceAttributeElements) {
@@ -93,7 +106,7 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
         log.debug("{} Velocity engine reference '{}'.", getLogPrefix(), velocityEngineRef);
         builder.addPropertyReference("velocityEngine", velocityEngineRef);
     }
-    
+
     /** {@inheritDoc}. No input. */
     @Override protected boolean needsAttributeSourceID() {
         return false;

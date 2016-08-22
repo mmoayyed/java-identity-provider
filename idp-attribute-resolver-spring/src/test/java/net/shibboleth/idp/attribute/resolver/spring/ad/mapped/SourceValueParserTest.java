@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
+import org.springframework.context.support.GenericApplicationContext;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.SourceValueParser;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
-
-import org.springframework.context.support.GenericApplicationContext;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Test for {@link SourceValueParser}.
@@ -42,20 +42,33 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void simple() {
         SourceValue value = getSourceValue("sourceValue.xml");
-        
+
         Assert.assertFalse(value.isIgnoreCase());
         Assert.assertFalse(value.isPartialMatch());
         try {
             Assert.assertNull(value.getValue());
             Assert.fail();
         } catch (ConstraintViolationException e) {
-            
+
         }
     }
-    
+
+    @Test public void resolver() {
+        SourceValue value = getSourceValue("resolver/sourceValue.xml");
+
+        Assert.assertFalse(value.isIgnoreCase());
+        Assert.assertFalse(value.isPartialMatch());
+        try {
+            Assert.assertNull(value.getValue());
+            Assert.fail();
+        } catch (ConstraintViolationException e) {
+
+        }
+    }
+
     @Test public void values1() {
         SourceValue value = getSourceValue("sourceValueAttributes1.xml");
-        
+
         Assert.assertTrue(value.isIgnoreCase());
         Assert.assertTrue(value.isPartialMatch());
         Assert.assertEquals(value.getValue(), "sourceValueAttributes1");
@@ -63,14 +76,14 @@ public class SourceValueParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void values2() {
         SourceValue value = getSourceValue("sourceValueAttributes2.xml");
-        
+
         Assert.assertFalse(value.isIgnoreCase());
         Assert.assertFalse(value.isPartialMatch());
         try {
             Assert.assertEquals(value.getValue(), "sourceValueAttributes2");
             Assert.fail();
         } catch (ConstraintViolationException e) {
-            
+
         }
     }
 }

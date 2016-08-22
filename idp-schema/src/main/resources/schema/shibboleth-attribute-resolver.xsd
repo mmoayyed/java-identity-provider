@@ -269,7 +269,6 @@
         </attribute>
     </complexType>
 
-
     <complexType name="BaseResolutionPlugInType" abstract="true">
         <annotation>
             <documentation>
@@ -312,6 +311,47 @@
                 <attribute ref="xml:lang" />
             </extension>
         </simpleContent>
+    </complexType>
+
+    <complexType name="ValueMapType">
+        <annotation>
+            <documentation>
+                Performs many to one mapping of source values to a return value. SourceValue strings may include regular
+                expressions and the ReturnValue may include back references to capturing groups as supported by
+                java.util.regex.Pattern.
+            </documentation>
+        </annotation>
+        <sequence>
+            <element name="ReturnValue" type="string">
+                <annotation>
+                    <documentation>The value to be returned from this value map.</documentation>
+                </annotation>
+            </element>
+            <element name="SourceValue" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>A regular expression string to be matched against the incoming value.</documentation>
+                </annotation>
+                <complexType>
+                    <simpleContent>
+                        <extension base="string">
+                            <attribute name="ignoreCase" type="string">
+                                <annotation>
+                                    <documentation>If true, value matching will be case-insensitive.</documentation>
+                                </annotation>
+                            </attribute>
+                            <attribute name="partialMatch" type="string">
+                                <annotation>
+                                    <documentation>
+                                        If true, the SourceValue may match only a substring of the incoming value. By
+                                        default, it must match the entire value.
+                                    </documentation>
+                                </annotation>
+                            </attribute>
+                        </extension>
+                    </simpleContent>
+                </complexType>
+            </element>
+        </sequence>
     </complexType>
     
     <!--  Flatten the ad: namespace into the resolver: namespace -->
@@ -365,6 +405,53 @@
         </complexContent>
     </complexType>
 
+    <complexType name="Mapped">
+        <annotation>
+            <documentation>
+                The mapped attribute definition performs a many to many mapping from source attributes values provided
+                by the definition's dependencies to values which are returned. Each source value is passed through each
+                defined ValueMap which may result in one or more resulting values. If no ValueMaps match the source
+                value and a DefaultValue is defined, the DefaultValue is used.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                        <element name="DefaultValue" minOccurs="0">
+                            <annotation>
+                                <documentation>
+                                    A source value is mapped to the DefaultValue if none of the ValueMaps result in a match.
+                                    This string may not contain regular expression back references.
+                                </documentation>
+                            </annotation>
+                            <complexType>
+                                <simpleContent>
+                                    <extension base="string">
+                                        <attribute name="passThru" type="string">
+                                            <annotation>
+                                                <documentation>
+                                                    If true, the source value is passed thru unmodified. If passThru is
+                                                    enabled, DefaultValue may not contain a string value.
+                                                </documentation>
+                                            </annotation>
+                                        </attribute>
+                                    </extension>
+                                </simpleContent>
+                            </complexType>
+                        </element>
+                    <element name="ValueMap" type="resolver:ValueMapType" maxOccurs="unbounded"/>
+                    </choice>
+                </sequence>
+                <attribute name="sourceAttributeID" type="string"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <complexType name="Prescoped">
         <annotation>
             <documentation>
@@ -426,7 +513,7 @@
         </complexContent>
     </complexType>
     
-        <complexType name="RegexSplit">
+    <complexType name="RegexSplit">
         <annotation>
             <documentation>An attribute definition that splits the source attribute's values based on a regular expression.</documentation>
         </annotation>
@@ -645,8 +732,54 @@
             </extension>
         </complexContent>
     </complexType>
+
+    <complexType name="Template">
+        <annotation>
+            <documentation>
+                An Attribute Definition that constructs its values based on the values of its dependencies using the
+                Velocity Template Language. Dependencies may have multiple values, however multiple dependencies must
+                have the same number of values. In the case of multi-valued dependencies, the template will be evaluated
+                multiples times, iterating over each dependency.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseAttributeDefinitionType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
+                        <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                        <element name="Template" type="string" minOccurs="0">
+                            <annotation>
+                                <documentation>
+                                    Template specified in the Velocity Template Language used to construct attribute values.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="SourceAttribute" type="string" maxOccurs="unbounded">
+                            <annotation>
+                                <documentation>
+                                    Attribute IDs which should be used in this definition, rather than the sourceAttributeID
+                                    attribute. Each source attribute is available to be used in the Template as
+                                    ${attribute_name}. If the source attribute has multiple values, only one value is
+                                    available to the template at a time, but the template will be evaluated once for each
+                                    value.
+                                </documentation>
+                            </annotation>
+                        </element>
+                    </choice>
+                </sequence>
+                <attribute name="velocityEngine" type="string">
+                    <annotation>
+                        <documentation>Name of the velocity engine defined within the application.</documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
     
-        <complexType name="TransientId">
+    <complexType name="TransientId">
         <annotation>
             <documentation>A attribute definition used to construct transient subject identifiers.</documentation>
         </annotation>

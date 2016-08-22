@@ -17,14 +17,14 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
-import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.ValueMap;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
 
 /**
  * Test for {@link ValueMapParser}.
@@ -32,24 +32,36 @@ import org.testng.annotations.Test;
 public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
 
     private ValueMap getValueMap(String fileName) {
+        return getValueMap(fileName, false);
+    }
 
+    private ValueMap getValueMap(String fileName, boolean resolver) {
         GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + ValueMapParserTest.class);
 
-        return getBean(ATTRIBUTE_FILE_PATH + "mapped/" + fileName, ValueMap.class, context);
+        return getBean(ATTRIBUTE_FILE_PATH + (resolver ? "mapped/resolver/" : "mapped/") + fileName, ValueMap.class,
+                context);
     }
 
     @Test public void valueMap() {
-        
+
         ValueMap value = getValueMap("valueMap.xml");
         Assert.assertEquals(value.getReturnValue(), "return");
         Assert.assertEquals(value.getSourceValues().size(), 1);
         Assert.assertEquals(value.getSourceValues().iterator().next().getPattern().pattern(), "source");
     }
-    
+
+    @Test public void valueMapResolver() {
+
+        ValueMap value = getValueMap("valueMap.xml", true);
+        Assert.assertEquals(value.getReturnValue(), "return");
+        Assert.assertEquals(value.getSourceValues().size(), 1);
+        Assert.assertEquals(value.getSourceValues().iterator().next().getPattern().pattern(), "source");
+    }
+
     @Test public void noSourceValues() {
-        
+
         try {
             getValueMap("valueMapNoSourceValue.xml");
             Assert.fail();
@@ -57,9 +69,9 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
             // OK
         }
     }
-    
+
     @Test public void noValues() {
-        
+
         try {
             getValueMap("valueMapNoValues.xml");
             Assert.fail();
@@ -67,4 +79,4 @@ public class ValueMapParserTest extends BaseAttributeDefinitionParserTest {
             // OK
         }
     }
- }
+}

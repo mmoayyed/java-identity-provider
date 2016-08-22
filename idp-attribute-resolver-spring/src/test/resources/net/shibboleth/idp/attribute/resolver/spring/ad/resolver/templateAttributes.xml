@@ -1,0 +1,12 @@
+ <AttributeDefinition 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns="urn:mace:shibboleth:2.0:resolver"
+    id="templateIdAttr"
+    velocityEngine="otherVe"
+    xsi:type="Template"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd" >
+  <SourceAttribute>att1</SourceAttribute>
+  <Dependency xmlns:resolver="urn:mace:shibboleth:2.0:resolver" ref="TheOrphan"/>
+  <SourceAttribute>att2</SourceAttribute>
+  <Template>TheTemplate</Template>
+</AttributeDefinition>

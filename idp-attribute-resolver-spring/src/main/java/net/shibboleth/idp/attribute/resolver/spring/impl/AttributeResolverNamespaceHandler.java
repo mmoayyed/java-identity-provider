@@ -35,7 +35,11 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScopedAttributeDefin
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SimpleAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.SubjectDerivedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TemplateAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TransientIdAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.SourceValueParser;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1Base64AttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1ScopedStringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringAttributeEncoderParser;
@@ -91,14 +95,14 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
                 new ScriptedAttributeDefinitionParser());
         registerBeanDefinitionParser(SimpleAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new SimpleAttributeDefinitionParser());
-        // registerBeanDefinitionParser(TemplateAttributeDefinitionParser.TYPE_NAME, new
-        // TemplateAttributeDefinitionParser());
+        registerBeanDefinitionParser(TemplateAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new TemplateAttributeDefinitionParser());
         registerBeanDefinitionParser(TransientIdAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new TransientIdAttributeDefinitionParser());
-        // registerBeanDefinitionParser(SourceValueParser.TYPE_NAME_R, new SourceValueParser());
-        // registerBeanDefinitionParser(ValueMapParser.TYPE_NAME, new ValueMapParser());
-        // registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME, new
-        // MappedAttributeDefinitionParser());
+        registerBeanDefinitionParser(SourceValueParser.TYPE_NAME_RESOLVER, new SourceValueParser());
+        registerBeanDefinitionParser(ValueMapParser.TYPE_NAME_RESOLVER, new ValueMapParser());
+        registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
+                new MappedAttributeDefinitionParser());
 
         // Encoders
         registerBeanDefinitionParser(SAML1StringAttributeEncoderParser.TYPE_NAME_RESOLVER,

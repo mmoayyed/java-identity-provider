@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.ad.mapped;
 
-import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
-import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttributeDefinitionParser;
-
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
+import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttributeDefinitionParser;
 
 /**
  * Test for {@link MappedAttributeDefinitionParser}.
@@ -36,6 +36,14 @@ public class MappedAttributeDefinitionParserTest extends BaseAttributeDefinition
 
     @Test public void defaultCase() {
         MappedAttributeDefinition defn = getDefinition("mapped.xml");
+
+        Assert.assertTrue(defn.isPassThru());
+        Assert.assertEquals(defn.getValueMaps().size(), 2);
+        Assert.assertEquals(defn.getDefaultAttributeValue().getValue(), "foobar");
+    }
+
+    @Test public void resolver() {
+        MappedAttributeDefinition defn = getDefinition("resolver/mapped.xml");
 
         Assert.assertTrue(defn.isPassThru());
         Assert.assertEquals(defn.getValueMaps().size(), 2);
