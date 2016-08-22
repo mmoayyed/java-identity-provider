@@ -73,11 +73,11 @@ import com.google.common.collect.ImmutableSet;
 public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfiguration
         implements AdministrativeFlowDescriptor {
     
+    /** Logging ID. */
+    @Nullable private String loggingId;
+    
     /** Whether this flow supports non-browser clients. */
     private Predicate<ProfileRequestContext> supportsNonBrowserPredicate;
-    
-    /** Whether access to flow should be recorded in audit log. */
-    private Predicate<ProfileRequestContext> auditedPredicate;
 
     /** Whether user authentication is required. */
     private Predicate<ProfileRequestContext> authenticatedPredicate;
@@ -107,13 +107,12 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     /**
      * Constructor.
      * 
-     * @param profileId the profile identifier
+     * @param id profile Id
      */
-    public BasicAdministrativeFlowDescriptor(@Nonnull @NotEmpty final String profileId) {
-        super(profileId);
+    public BasicAdministrativeFlowDescriptor(@Nonnull @NotEmpty final String id) {
+        super(id);
         
         supportsNonBrowserPredicate = Predicates.alwaysTrue();
-        auditedPredicate = Predicates.alwaysTrue();
         authenticatedPredicate = Predicates.alwaysFalse();
         policyNameLookupStrategy = FunctionSupport.constant(null);
         resolveAttributesPredicate = Predicates.alwaysFalse();
@@ -121,6 +120,20 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
         builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
         uiInfo = ((SAMLObjectBuilder<UIInfo>) builderFactory.<UIInfo>getBuilderOrThrow(
                 UIInfo.DEFAULT_ELEMENT_NAME)).buildObject();
+    }
+    
+    /** {@inheritDoc} */
+    @Nullable public String getLoggingId() {
+        return loggingId;
+    }
+    
+    /**
+     * Set a logging ID to use when auditing this profile.
+     * 
+     * @param id logging ID
+     */
+    public void setLoggingId(@Nullable final String id) {
+        loggingId = StringSupport.trimOrNull(id);
     }
     
     /** {@inheritDoc} */
@@ -147,30 +160,6 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
         supportsNonBrowserPredicate = Constraint.isNotNull(condition, "Non-browser support condition cannot be null");
     }
     
-    /** {@inheritDoc} */
-    public boolean isAudited() {
-        return auditedPredicate.apply(getProfileRequestContext());
-    }
-    
-    /**
-     * Set whether access to flow should be recorded in audit log (default is true).
-     * 
-     * @param flag flag to set
-     */
-    public void setAudited(final boolean flag) {
-        auditedPredicate = flag ? Predicates.<ProfileRequestContext>alwaysTrue()
-                : Predicates.<ProfileRequestContext>alwaysFalse();
-    }
-    
-    /**
-     * Set condition to determine whether access to flow should be recorded in audit log.
-     * 
-     * @param condition condition to apply
-     */
-    public void setAuditedPredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
-        auditedPredicate = Constraint.isNotNull(condition, "Auditing condition cannot be null");
-    }
-
     /** {@inheritDoc} */
     public boolean isAuthenticated() {
         return authenticatedPredicate.apply(getProfileRequestContext());
@@ -450,7 +439,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getNameIDFormatPrecedence() {
         return Collections.emptyList();
     }
-    
+
     /** {@inheritDoc} */
     @Override public int hashCode() {
         return getId().hashCode();
@@ -525,5 +514,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
             return width;
         }
     }
+
+    /** {@inheritDoc} */
     
 }

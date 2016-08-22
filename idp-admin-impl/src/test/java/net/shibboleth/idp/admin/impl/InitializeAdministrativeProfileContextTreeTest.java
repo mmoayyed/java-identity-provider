@@ -59,6 +59,7 @@ public class InitializeAdministrativeProfileContextTreeTest extends OpenSAMLInit
         prc.removeSubcontext(RelyingPartyContext.class);
 
         descriptor = new BasicAdministrativeFlowDescriptor("foo");
+        descriptor.setLoggingId("log");
         descriptor.setNonBrowserSupported(true);
         descriptor.setDisplayNames(Collections.singletonList(new LangBearingString("name", "en")));
         descriptor.setDescriptions(Collections.singletonList(new LangBearingString("description", "en")));
@@ -91,6 +92,8 @@ public class InitializeAdministrativeProfileContextTreeTest extends OpenSAMLInit
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
 
+        Assert.assertEquals(prc.getLoggingId(), "log");
+        
         final RelyingPartyContext rpc = prc.getSubcontext(RelyingPartyContext.class);
         Assert.assertNotNull(rpc);
         

@@ -35,6 +35,13 @@ import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
  * @since 3.3.0
  */
 public interface AdministrativeFlowDescriptor extends AuthenticationProfileConfiguration {
+    
+    /**
+     * Get a logging ID to use when auditing this profile.
+     * 
+     * @return logging ID
+     */
+    @Nullable String getLoggingId();
 
     /**
      * Get whether this flow supports non-browser clients (default is true).
@@ -42,13 +49,6 @@ public interface AdministrativeFlowDescriptor extends AuthenticationProfileConfi
      * @return whether this flow supports non-browser clients
      */
     boolean isNonBrowserSupported();
-
-    /**
-     * Get whether access to flow should be recorded in audit log (default is true).
-     * 
-     * @return whether access to flow should be audited
-     */
-    boolean isAudited();
     
     /**
      * Get whether user authentication is required (default is false).
