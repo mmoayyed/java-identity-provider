@@ -92,7 +92,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         action.setHttpServletResponse(response);
         action.initialize();
 
-        request.setParameter(ReloadMetadata.RESOLVER_ID, "foo");
+        request.setParameter("id", "foo");
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_NOT_FOUND);
@@ -102,7 +102,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        request.setParameter(ReloadMetadata.RESOLVER_ID, "fileEntity");
+        request.setParameter("id", "fileEntity");
         
         final ReloadMetadata action = new ReloadMetadata();
         action.setHttpServletRequest(request);
@@ -120,7 +120,7 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        request.setParameter(ReloadMetadata.RESOLVER_ID, "fileEntity2");
+        request.setParameter("id", "fileEntity2");
         
         final ReloadMetadata action = new ReloadMetadata();
         action.setHttpServletRequest(request);
