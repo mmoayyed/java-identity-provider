@@ -67,13 +67,27 @@
         class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:accessControlService-ref="shibboleth.AccessControlService"
-        p:policyNameLookupStrategy-ref="DescriptorPolicyLookupStrategy" />
+        p:policyNameLookupStrategy-ref="DescriptorPolicyLookupStrategy"
+        p:operationLookupStrategy="#{getObject('shibboleth.AdminOperationLookupStrategy') ?: getObject('DefaultOperationLookupStrategy')}"
+        p:resourceLookupStrategy="#{getObject('shibboleth.AdminResourceLookupStrategy') ?: getObject('DefaultResourceLookupStrategy')}" />
 
     <bean id="DescriptorPolicyLookupStrategy"
         class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
         c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
         c:outputType="#{T(java.lang.String)}"
         c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.RelyingPartyContext)).getProfileConfig().getPolicyName()" />
+
+    <!-- Default operation/resource suppliers for access checks. -->
+    <bean id="DefaultOperationLookupStrategy" class="com.google.common.base.Functions" factory-method="constant">
+        <constructor-arg>
+            <null/>
+        </constructor-arg>
+    </bean>
+    <bean id="DefaultResourceLookupStrategy" class="com.google.common.base.Functions" factory-method="constant">
+        <constructor-arg>
+            <null/>
+        </constructor-arg>
+    </bean>
 
     <!-- Logging -->
 

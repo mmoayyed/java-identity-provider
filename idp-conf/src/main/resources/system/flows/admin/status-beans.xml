@@ -21,6 +21,14 @@
     <!-- Profile ID for flow. -->    
     <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/status" />
     
+    <!-- Default operation/resource suppliers for access checks. -->
+    
+    <bean id="shibboleth.AdminOperationLookupStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0="read" />
+        
+    <bean id="shibboleth.AdminResourceLookupStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0="status" />
+    
     <util:list id="ServiceCollection">
         <ref bean="shibboleth.LoggingService" />
         <ref bean="shibboleth.ReloadableAccessControlService" />

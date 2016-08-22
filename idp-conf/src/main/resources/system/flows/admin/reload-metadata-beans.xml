@@ -22,6 +22,20 @@
     <bean id="shibboleth.AdminProfileId" class="java.lang.String"
         c:_0="http://shibboleth.net/ns/profiles/reload-metadata" />
 
+    <!-- Default operation/resource suppliers for access checks. -->
+    
+    <bean id="shibboleth.AdminOperationLookupStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0="reload" />
+        
+    <bean id="shibboleth.AdminResourceLookupStrategy"
+        class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
+        c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
+        c:outputType="#{T(java.lang.String)}"
+        c:expression="T(net.shibboleth.utilities.java.support.primitive.StringSupport).trimOrNull(#custom.getParameter(T(net.shibboleth.idp.saml.profile.impl.ReloadMetadata).RESOLVER_ID))"
+        p:customObject-ref="shibboleth.HttpServletRequest" />
+
+    <!-- Work beans. -->
+
     <bean id="ReloadMetadata"
         class="net.shibboleth.idp.saml.profile.impl.ReloadMetadata" scope="prototype"
         p:httpServletRequest-ref="shibboleth.HttpServletRequest"
