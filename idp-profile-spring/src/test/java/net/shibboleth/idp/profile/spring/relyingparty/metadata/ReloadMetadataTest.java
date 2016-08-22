@@ -30,7 +30,6 @@ import net.shibboleth.utilities.java.support.service.ReloadableService;
 
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -68,12 +67,10 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
     }
 
     @Test public void serviceNotSpecified() throws ComponentInitializationException {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
         final ReloadMetadata action = new ReloadMetadata();
         action.setMetadataResolver(service);
-        action.setHttpServletRequest(request);
         action.setHttpServletResponse(response);
         action.initialize();
 
@@ -83,29 +80,25 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
     }
 
     @Test public void serviceNotFound() throws ComponentInitializationException {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
         final ReloadMetadata action = new ReloadMetadata();
         action.setMetadataResolver(service);
-        action.setHttpServletRequest(request);
         action.setHttpServletResponse(response);
         action.initialize();
 
-        request.setParameter("id", "foo");
+        src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "foo");
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertEquals(response.getStatus(), HttpServletResponse.SC_NOT_FOUND);
     }
     
     @Test public void serviceAction() throws ComponentInitializationException {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        request.setParameter("id", "fileEntity");
+        src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "fileEntity");
         
         final ReloadMetadata action = new ReloadMetadata();
-        action.setHttpServletRequest(request);
         action.setHttpServletResponse(response);
         action.setMetadataResolver(service);
         action.initialize();
@@ -117,13 +110,11 @@ public class ReloadMetadataTest extends AbstractMetadataParserTest {
     }
 
     @Test public void chainingAction() throws ComponentInitializationException {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         
-        request.setParameter("id", "fileEntity2");
+        src.getFlowScope().put(ReloadMetadata.RESOLVER_ID, "fileEntity2");
         
         final ReloadMetadata action = new ReloadMetadata();
-        action.setHttpServletRequest(request);
         action.setHttpServletResponse(response);
         action.setMetadataResolver(chainingservice);
         action.initialize();
