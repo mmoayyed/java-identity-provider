@@ -40,7 +40,6 @@
 
     <import resource="../../conf/global.xml" />
     <import resource="../../conf/errors.xml" />
-    <import resource="admin-system.xml" />
     <import resource="general-authn-system.xml" />
     <import resource="session-manager-system.xml" />
     <import resource="services-system.xml" />
@@ -48,6 +47,7 @@
     <import resource="subject-c14n-system.xml" />
     <import resource="profile-intercept-system.xml" />
     <import resource="cas-protocol-system.xml" />
+    <import resource="admin-system.xml" />
     <import resource="utilities.xml" />
 
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
