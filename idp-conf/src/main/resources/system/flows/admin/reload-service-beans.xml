@@ -31,14 +31,12 @@
         class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
         c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
         c:outputType="#{T(java.lang.String)}"
-        c:expression="T(net.shibboleth.utilities.java.support.primitive.StringSupport).trimOrNull(#custom.getParameter(T(net.shibboleth.idp.profile.impl.ReloadServiceConfiguration).SERVICE_ID))"
-        p:customObject-ref="shibboleth.HttpServletRequest" />
+        c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('serviceId')" />
 
     <!-- Work beans. -->
 
     <bean id="ReloadServiceConfiguration"
         class="net.shibboleth.idp.profile.impl.ReloadServiceConfiguration" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse" />
         
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />

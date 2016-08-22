@@ -29,7 +29,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.service.ReloadableService;
 import net.shibboleth.utilities.java.support.service.ServiceException;
 
@@ -46,7 +45,8 @@ import com.google.common.base.Function;
 /**
  * Action that refreshes a {@link ReloadableService} manually.
  * 
- * <p>The service to reload is indicated by supplying {@link #SERVICE_ID} as a query parameter.</p>
+ * <p>With the default strategy, the service to reload is indicated by supplying {@link #SERVICE_ID}
+ * as a flow variable.</p>
  * 
  * <p>On success, a 200 HTTP status with a simple response body is returned. On failure, a non-successful
  * HTTP status is returned.</p>
@@ -58,8 +58,8 @@ import com.google.common.base.Function;
  */
 public class ReloadServiceConfiguration extends AbstractProfileAction {
     
-    /** Query parameter indicating ID of service bean to reload. */
-    @Nonnull @NotEmpty public static final String SERVICE_ID = "id";
+    /** Flow variable indicating ID of service bean to reload. */
+    @Nonnull @NotEmpty public static final String SERVICE_ID = "serviceId";
     
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(ReloadServiceConfiguration.class);
@@ -127,7 +127,7 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
             service.reload();
             log.debug("{} Reloaded configuration for '{}'", getLogPrefix(), id);
             getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
-            getHttpServletResponse().getWriter().println("Configuration reloaded.");
+            getHttpServletResponse().getWriter().println("Configuration reloaded for '" + id + "'");
         } catch (final ServiceException e) {
             log.error("{} Error reloading service configuration for '{}'", getLogPrefix(), id, e);
             try {
@@ -143,24 +143,13 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
     }
     
     /**
-     * Default strategy locates a bean identified with a query parameter in the web flow application context.
+     * Default strategy locates a bean identified with a flow-scope parameter in the web flow application context.
      */
     private class WebFlowApplicationContextLookupStrategy implements Function<ProfileRequestContext,ReloadableService> {
 
         /** {@inheritDoc} */
         @Override
         @Nullable public ReloadableService apply(@Nullable final ProfileRequestContext input) {
-
-            if (getHttpServletRequest() == null) {
-                log.error("{} HttpServletRequest not found", getLogPrefix());
-                return null;
-            }
-            
-            final String id = StringSupport.trimOrNull(getHttpServletRequest().getParameter(SERVICE_ID));
-            if (id == null) {
-                log.warn("{} No 'id' parameter found in request", getLogPrefix());
-                return null;
-            }
             
             final SpringRequestContext springRequestContext = input.getSubcontext(SpringRequestContext.class);
             if (springRequestContext == null) {
@@ -171,6 +160,12 @@ public class ReloadServiceConfiguration extends AbstractProfileAction {
             final RequestContext requestContext = springRequestContext.getRequestContext();
             if (requestContext == null) {
                 log.warn("{} Web Flow request context not found in Spring request context", getLogPrefix());
+                return null;
+            }
+
+            final String id = (String) requestContext.getFlowScope().get(SERVICE_ID);
+            if (id == null) {
+                log.warn("{} No {} flow variable found in request", getLogPrefix(), SERVICE_ID);
                 return null;
             }
             

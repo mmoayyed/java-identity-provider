@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.SpringRequestContext;
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -43,11 +44,12 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.webflow.execution.RequestContext;
 
 /**
  * Action that refreshes a {@link MetadataResolver} manually.
  * 
- * <p>The {@link MetadataResolver} to reload is indicated by supplying {@link #RESOLVER_ID} as a query parameter.</p>
+ * <p>The {@link MetadataResolver} to reload is indicated by supplying {@link #RESOLVER_ID} as a flow variable.</p>
  * 
  * <p>On success, a 200 HTTP status with a simple response body is returned. On failure, a non-successful
  * HTTP status is returned.</p>
@@ -59,8 +61,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ReloadMetadata extends AbstractProfileAction {
 
-    /** Query parameter indicating ID of metadata provider bean to reload. */
-    @Nonnull @NotEmpty public static final String RESOLVER_ID = "id";
+    /** Flow variable indicating ID of metadata provider bean to reload. */
+    @Nonnull @NotEmpty public static final String RESOLVER_ID = "resolverId";
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ReloadMetadata.class);
@@ -102,9 +104,22 @@ public class ReloadMetadata extends AbstractProfileAction {
             return false;
         }
         
-        id = getHttpServletRequest() != null ? getHttpServletRequest().getParameter(RESOLVER_ID) : null;
+        final SpringRequestContext springRequestContext =
+                profileRequestContext.getSubcontext(SpringRequestContext.class);
+        if (springRequestContext == null) {
+            log.warn("{} Spring request context not found in profile request context", getLogPrefix());
+            return false;
+        }
+
+        final RequestContext requestContext = springRequestContext.getRequestContext();
+        if (requestContext == null) {
+            log.warn("{} Web Flow request context not found in Spring request context", getLogPrefix());
+            return false;
+        }
+
+        id = (String) requestContext.getFlowScope().get(RESOLVER_ID);
         if (id == null) {
-            log.warn("{} No 'id' parameter found in request", getLogPrefix());
+            log.warn("{} No '{}' flow variable found", getLogPrefix(), RESOLVER_ID);
             try {
                 getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
             } catch (final IOException e) {
@@ -148,7 +163,7 @@ public class ReloadMetadata extends AbstractProfileAction {
                 toRefresh.refresh();
                 log.debug("{} Reloaded metadata from '{}'", getLogPrefix(), id);
                 getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
-                getHttpServletResponse().getWriter().println("Metadata reloaded.");
+                getHttpServletResponse().getWriter().println("Metadata reloaded for '" + id + "'");
             } else {
                 log.warn("{} Unable to locate refreshable metadata source '{}'", getLogPrefix(), id);
                 getHttpServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "Metadata source not found.");
