@@ -17,6 +17,9 @@
 
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+
+    <!-- Profile ID for flow. -->    
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String" c:_0="http://shibboleth.net/ns/profiles/status" />
     
     <util:list id="ServiceCollection">
         <ref bean="shibboleth.LoggingService" />
@@ -27,16 +30,5 @@
         <ref bean="shibboleth.AttributeResolverService" />
         <ref bean="shibboleth.AttributeFilterService" />
     </util:list>
-
-    <bean id="InitializeProfileRequestContext"
-        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="http://shibboleth.net/ns/profiles/status"
-        p:loggingId="%{idp.service.logging.status:Status}" />
-
-    <bean id="CheckAccess"
-        class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:accessControlService-ref="shibboleth.AccessControlService"
-        p:policyName="%{idp.status.accessPolicy}" />
 
 </beans>
