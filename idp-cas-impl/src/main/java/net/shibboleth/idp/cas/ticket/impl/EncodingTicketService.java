@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.cas.ticket.impl;
 
-import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
