@@ -73,4 +73,9 @@ public class ServiceTicket extends Ticket {
     public boolean isRenew() {
         return renew;
     }
+
+    @Override
+    protected Ticket newInstance(final String newId) {
+        return new ServiceTicket(newId, getService(), getExpirationInstant(), renew);
+    }
 }

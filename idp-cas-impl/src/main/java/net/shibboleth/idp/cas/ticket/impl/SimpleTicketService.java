@@ -20,6 +20,8 @@ package net.shibboleth.idp.cas.ticket.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
+import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -66,5 +68,29 @@ public class SimpleTicketService extends AbstractTicketService {
     public ServiceTicket removeServiceTicket(@Nonnull final String id) {
         Constraint.isNotNull(id, "Id cannot be null");
         return delete(id, ServiceTicket.class);
+    }
+
+    @Nonnull
+    @Override
+    public ProxyTicket createProxyTicket(
+            @Nonnull final String id,
+            @Nonnull final Instant expiry,
+            @Nonnull final ProxyGrantingTicket pgt,
+            @Nonnull final String service) {
+        Constraint.isNotNull(pgt, "ProxyGrantingTicket cannot be null");
+        final ProxyTicket pt = new ProxyTicket(
+                Constraint.isNotNull(id, "ID cannot be null"),
+                Constraint.isNotNull(service, "Service cannot be null"),
+                Constraint.isNotNull(expiry, "Expiry cannot be null"),
+                pgt.getId());
+        pt.setTicketState(pgt.getTicketState());
+        store(pt);
+        return pt;
+    }
+
+    @Nullable
+    @Override
+    public ProxyTicket removeProxyTicket(final @Nonnull String id) {
+        return delete(id, ProxyTicket.class);
     }
 }

@@ -20,7 +20,10 @@ package net.shibboleth.idp.cas.ticket.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
+import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
+import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketState;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -32,13 +35,22 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Ticket service that uses two different strategies for ticket persistence:
+ *
  * <ol>
- *     <li>Service tickets are persisted by serializing data and encrypting it into the opaque section of the
- *     ticket ID using a {@link DataSealer}.</li>
- *     <li>Proxy-granting tickets and proxy tickets are persisted using a {@link StorageService}.</li>
+ *     <li>Service tickets and proxy tickets are persisted by serializing ticket data and encrypting it into the opaque
+ *     part of the ticket ID using a {@link DataSealer}.</li>
+ *     <li>Proxy-granting tickets are persisted using a {@link StorageService}.</li>
  * </ol>
- * <p><strong>NOTE:</strong> This implementation does not support single-use service tickets. Since there is no
- * backing store for tickets, they can be reused indefinitely until their expiration date.</p>
+ *
+ * <p><strong>NOTE:</strong> The service tickets and proxy tickets produced by this component do not support one-time
+ * use. More precisely, {@link #removeServiceTicket(String)} and {@link #removeProxyTicket(String)} simply return a
+ * decoded ticket and do not invalidate the ticket in any way. Since there is no backing store for those types of
+ * tickets, they can be reused until one of the following conditions is met:
+ *
+ * <ol>
+ *     <li>The value of {@link Ticket#getExpirationInstant()} is exceeded.</li>
+ *     <li>The {@link DataSealer} key used to encrypt data is revoked.</li>
+ * </ol>
  *
  * @author Marvin S. Addison
  * @since 3.3.0
@@ -46,7 +58,13 @@ import org.slf4j.LoggerFactory;
 public class EncodingTicketService extends AbstractTicketService {
 
     /** Default service ticket prefix. */
-    private static final String SERVICE_TICKET_PREFIX = "ST";
+    public static final String SERVICE_TICKET_PREFIX = "ST";
+
+    /** Default proxy ticket prefix. */
+    public static final String PROXY_TICKET_PREFIX = "PT";
+
+    /** Non-null marker value for unused ServiceTicket#id field. */
+    private static final String NOT_USED = "na";
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(EncodingTicketService.class);
@@ -58,6 +76,10 @@ public class EncodingTicketService extends AbstractTicketService {
     /** Service ticket prefix. */
     @NotEmpty
     private String serviceTicketPrefix = SERVICE_TICKET_PREFIX;
+
+    /** Proxy ticket prefix. */
+    @NotEmpty
+    private String proxyTicketPrefix = PROXY_TICKET_PREFIX;
 
 
     /**
@@ -79,6 +101,15 @@ public class EncodingTicketService extends AbstractTicketService {
         serviceTicketPrefix = Constraint.isNotEmpty(prefix, "Prefix cannot be null or empty");
     }
 
+    /**
+     * Sets the proxy ticket prefix. Default is PGT.
+     *
+     * @param prefix Proxy ticket prefix.
+     */
+    public void setProxyTicketPrefix(final String prefix) {
+        proxyTicketPrefix = Constraint.isNotEmpty(prefix, "Prefix cannot be null or empty");
+    }
+
     @Override
     @Nonnull
     public ServiceTicket createServiceTicket(
@@ -94,25 +125,54 @@ public class EncodingTicketService extends AbstractTicketService {
                 Constraint.isNotNull(expiry, "Expiry cannot be null"),
                 renew);
         st.setTicketState(state);
-        final String opaque;
-        try {
-            opaque = dataSealer.wrap(
-                    serializer(ServiceTicket.class).serialize(st), st.getExpirationInstant().getMillis());
-        } catch (Exception e) {
-            throw new RuntimeException("Ticket encoding failed", e);
-        }
-        final ServiceTicket encoded = new ServiceTicket(serviceTicketPrefix + '-' + opaque, service, expiry, renew);
-        encoded.setTicketState(state);
-        return encoded;
+        return encode(ServiceTicket.class, st, serviceTicketPrefix);
     }
 
     @Override
     @Nullable
     public ServiceTicket removeServiceTicket(@Nonnull final String id) {
         Constraint.isNotNull(id, "Id cannot be null");
+        return decode(ServiceTicket.class, id, serviceTicketPrefix);
+    }
+
+    @Nonnull
+    @Override
+    public ProxyTicket createProxyTicket(
+            @Nonnull final String id,
+            @Nonnull final Instant expiry,
+            @Nonnull final ProxyGrantingTicket pgt,
+            @Nonnull final String service) {
+        Constraint.isNotNull(pgt, "ProxyGrantingTicket cannot be null");
+        final ProxyTicket pt = new ProxyTicket(
+                NOT_USED,
+                Constraint.isNotNull(service, "Service cannot be null"),
+                Constraint.isNotNull(expiry, "Expiry cannot be null"),
+                pgt.getId());
+        pt.setTicketState(pgt.getTicketState());
+        return encode(ProxyTicket.class, pt, proxyTicketPrefix);
+    }
+
+    @Nullable
+    @Override
+    public ProxyTicket removeProxyTicket(final @Nonnull String id) {
+        return decode(ProxyTicket.class, id, proxyTicketPrefix);
+    }
+
+    private <T extends Ticket> T encode(final Class<T> ticketClass, final T ticket, final String prefix) {
+        final String opaque;
         try {
-            final String decrypted = dataSealer.unwrap(id.substring(serviceTicketPrefix.length() + 1));
-            return serializer(ServiceTicket.class).deserialize(0, null, id, decrypted, 0L);
+            opaque = dataSealer.wrap(
+                    serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant().getMillis());
+        } catch (Exception e) {
+            throw new RuntimeException("Ticket encoding failed", e);
+        }
+        return ticketClass.cast(ticket.clone(prefix + '-' + opaque));
+    }
+
+    private <T extends Ticket> T decode(final Class<T> ticketClass, final String id, final String prefix) {
+        try {
+            final String decrypted = dataSealer.unwrap(id.substring(prefix.length() + 1));
+            return serializer(ticketClass).deserialize(0, null, id, decrypted, 0L);
         } catch (Exception e) {
             log.warn("Ticket decoding failed with error: " + e.getMessage());
             log.debug("Ticket decoding failed", e);

@@ -133,4 +133,22 @@ public class Ticket {
     public String toString() {
         return id;
     }
+
+    /**
+     * Creates a new ticket from this one with the given identifier.
+     *
+     * @param newId New ticket ID.
+     *
+     * @return Clone of this ticket with new ID.
+     */
+    public Ticket clone(final String newId) {
+        final Ticket clone = newInstance(newId);
+        clone.setTicketState(ticketState);
+        return clone;
+    }
+
+    protected Ticket newInstance(final String newId) {
+        return new Ticket(newId, service, expirationInstant);
+    }
+
 }

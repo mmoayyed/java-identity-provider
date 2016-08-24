@@ -85,4 +85,9 @@ public class ProxyGrantingTicket extends Ticket {
     public boolean isRoot() {
         return getParentId() == null;
     }
+
+    @Override
+    protected Ticket newInstance(final String newId) {
+        return new ProxyGrantingTicket(newId, getService(), getExpirationInstant(), parentId);
+    }
 }
