@@ -34,6 +34,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -56,6 +57,7 @@ public class ValidateFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/validate";
 
     @Autowired
+    @Qualifier("cas.TicketService")
     private TicketServiceEx ticketService;
 
     @Autowired

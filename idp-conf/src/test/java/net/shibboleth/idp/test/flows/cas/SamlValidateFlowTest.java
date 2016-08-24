@@ -29,6 +29,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -62,6 +63,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
             "</samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
     @Autowired
+    @Qualifier("cas.TicketService")
     private TicketServiceEx ticketService;
 
     @Autowired

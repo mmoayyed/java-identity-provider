@@ -40,6 +40,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -65,6 +66,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/serviceValidate";
 
     @Autowired
+    @Qualifier("cas.TicketService")
     private TicketServiceEx ticketService;
 
     @Autowired

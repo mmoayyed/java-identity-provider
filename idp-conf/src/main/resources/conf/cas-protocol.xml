@@ -36,6 +36,27 @@
     </bean>
 
     <!--
+       | The default ticket service as of 3.3.0 serializes ticket data into the opaque section of the ticket ID
+       | for service tickets and proxy tickets. Proxy-granting tickets still require server-side storage, and
+       | a StorageService defined by the idp.cas.StorageService is used. Thus for deployers that do not require
+       | CAS proxy capabilities, no stateful storage mechanism is required; that means no memcached or database
+       | is required for HA deployments that want CAS (without proxy) support. A notable limitation of the new
+       | component is that the one-time use feature of service and proxy tickets is not available due to the lack
+       | of a ticket-tracking mechanism. Instead, tickets expire when their expiration period is exceeded.
+       | If this limitation is of concern, one may consider decreasing ticketValidityPeriod on the profile
+       | configuration from the default 15000ms.
+       -->
+    <alias name="encodingTicketService" alias="cas.TicketService" />
+
+    <!--
+       | Uncomment the following element and comment out the above to enable the previous default ticket service
+       | that uses a StorageService for ticket persistence. Use this if the one-time use limitation of
+       | EncodingTicketService is problematic and can't be mitigated by decreasing ticketValidityPeriod.
+       -->
+    <!--<alias name="simpleTicketService" alias="cas.TicketService" /> -->
+
+
+    <!--
        | Advanced CAS configuration.
        |
        | Override default CAS components by creating aliases to custom components where the alias

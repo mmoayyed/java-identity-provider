@@ -34,6 +34,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
@@ -58,6 +59,7 @@ public class LoginFlowInitialAuthnTest extends AbstractFlowTest {
     private StorageBackedSessionManager sessionManager;
 
     @Autowired
+    @Qualifier("cas.TicketService")
     private TicketService ticketService;
 
     @BeforeClass

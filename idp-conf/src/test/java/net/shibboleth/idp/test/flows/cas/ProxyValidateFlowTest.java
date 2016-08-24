@@ -32,6 +32,7 @@ import net.shibboleth.idp.test.flows.AbstractFlowTest;
 import org.joda.time.DateTime;
 import org.joda.time.Instant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.executor.FlowExecutionResult;
 import org.testng.annotations.Test;
@@ -53,6 +54,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/proxyValidate";
 
     @Autowired
+    @Qualifier("cas.TicketService")
     private TicketServiceEx ticketService;
 
     @Autowired
