@@ -50,6 +50,17 @@
             </bean>
         </constructor-arg>
     </bean>
+
+    <!-- Parent bean for building custom predicates that act on the principal name of the Subject. -->
+    <bean id="shibboleth.Conditions.SubjectName" abstract="true"
+            class="net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate">
+        <constructor-arg name="objectStrategy">
+            <bean class="com.google.common.base.Functions" factory-method="compose"
+                c:g-ref="shibboleth.PrincipalNameLookup.Subject"
+                c:f-ref="shibboleth.ChildLookup.SubjectContext" />
+        </constructor-arg>
+    </bean>
+    
     
     <bean id="shibboleth.Conditions.IssuingDelegatedAssertion"
         class="net.shibboleth.idp.saml.saml2.profile.delegation.IssuingDelegatedAssertionPredicate" />
