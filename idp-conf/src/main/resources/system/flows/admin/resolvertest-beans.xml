@@ -18,19 +18,20 @@
     <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-    <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->
-    <import resource="../../conf/audit-system.xml" />
-    
-    <bean id="InitializeProfileRequestContext"
-        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
-        p:profileId="http://shibboleth.net/ns/profiles/resolvertest"
-        p:loggingId="%{idp.service.logging.resolvertest:ResolverTest}" />
+    <!-- Profile ID for flow. -->    
+    <bean id="shibboleth.AdminProfileId" class="java.lang.String"
+        c:_0="http://shibboleth.net/ns/profiles/resolvertest" />
 
-    <bean id="CheckAccess"
-        class="org.opensaml.profile.action.impl.CheckAccess" scope="prototype"
-        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
-        p:accessControlService-ref="shibboleth.AccessControlService"
-        p:policyName="%{idp.resolvertest.accessPolicy}" />
+    <!-- Default operation/resource suppliers for access checks. -->
+    
+    <bean id="shibboleth.AdminOperationLookupStrategy" class="com.google.common.base.Functions"
+        factory-method="constant" c:_0="read" />
+        
+    <bean id="shibboleth.AdminResourceLookupStrategy"
+        class="net.shibboleth.idp.profile.context.navigate.SpringExpressionContextLookupFunction"
+        c:inClass="#{T(org.opensaml.profile.context.ProfileRequestContext)}"
+        c:outputType="#{T(java.lang.String)}"
+        c:expression="'subject/' + #input.getInboundMessageContext().getMessage().getPrincipal() + '/attributes'" />
         
     <bean id="DecodeMessage" class="org.opensaml.profile.action.impl.DecodeMessage" scope="prototype">
         <constructor-arg>
@@ -105,10 +106,6 @@
             <bean class="net.shibboleth.idp.profile.impl.ResolverTestPrincipalLookup" />
         </property>
     </bean>
-
-    <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
-        c:resolverService-ref="shibboleth.AttributeResolverService"
-        p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
 
     <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
         c:filterService-ref="shibboleth.AttributeFilterService"
@@ -201,9 +198,5 @@
     
     <bean id="PostResponsePopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
         p:fieldExtractors="#{getObject('shibboleth.PostResponseAuditExtractors') ?: getObject('shibboleth.DefaultPostResponseAuditExtractors')}" />
-    
-    <bean id="WriteAuditLog" class="net.shibboleth.idp.profile.audit.impl.WriteAuditLog" scope="prototype"
-        p:activationCondition-ref="shibboleth.ProfileAuditingCondition"
-        p:formattingMap-ref="shibboleth.AuditFormattingMap" />
 
 </beans>

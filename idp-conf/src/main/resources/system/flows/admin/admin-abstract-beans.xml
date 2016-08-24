@@ -53,13 +53,11 @@
 
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService"
-        p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}"
-        p:attributeContextCreationStrategy-ref="shibboleth.ChildLookupOrCreate.AttributeContext" />
+        p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />
 
     <bean id="PopulateClientStorageSaveContext"
         class="org.opensaml.storage.impl.client.PopulateClientStorageSaveContext" scope="prototype"
         p:storageServices="#{ getObject('shibboleth.ClientStorageServices') ?: getObject('shibboleth.DefaultClientStorageServices') }" />
-
 
     <!-- General access check that applies a fixed policy with no operation/resource. -->
     
