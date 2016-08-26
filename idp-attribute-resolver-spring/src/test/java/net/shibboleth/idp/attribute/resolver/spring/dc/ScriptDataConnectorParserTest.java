@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorP
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -45,25 +46,37 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
     }
 
     @Test public void simple() throws ComponentInitializationException, ResolutionException {
-        final String source;
+
         if (isV8()) {
-            source = "scriptedAttributes-8.xml";
+            testConnector("scriptedAttributes-8.xml");
         } else {
-            source = "scriptedAttributes.xml";
-        } 
-        ScriptedDataConnector dataConnector = getDataConnector(source, ScriptedDataConnector.class);
+            testConnector("scriptedAttributes.xml");
+        }
+    }
+
+    @Test public void resolver() throws ComponentInitializationException, ResolutionException {
+
+        if (isV8()) {
+            testConnector("resolver/scriptedAttributes-8.xml");
+        } else {
+            testConnector("resolver/scriptedAttributes.xml");
+        }
+    }
+
+
+    private void testConnector(final String source) throws ComponentInitializationException, ResolutionException {
+        final ScriptedDataConnector dataConnector = getDataConnector(source, ScriptedDataConnector.class);
         dataConnector.initialize();
         
         final Map custom = (Map) dataConnector.getCustomObject();
         
         Assert.assertEquals(custom.size(), 1);
         Assert.assertEquals(custom.get("bar"), "foo");
-
         
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, IdPAttribute> result = dataConnector.resolve(context);
+        final Map<String, IdPAttribute> result = dataConnector.resolve(context);
         
         Assert.assertEquals(result.size(), 2);
         
@@ -78,6 +91,26 @@ public class ScriptDataConnectorParserTest extends BaseAttributeDefinitionParser
         Assert.assertTrue(values.contains(new StringAttributeValue("2Value")));
         Assert.assertTrue(values.contains(new StringAttributeValue("3Value")));
         
+    }
+    
+    @Test public void tooManyFiles() throws ComponentInitializationException, ResolutionException {
+
+        getDataConnector("resolver/scriptedAttributeTooManyFiles.xml", ScriptedDataConnector.class);
+    }
+    
+    @Test public void tooManyScript() throws ComponentInitializationException, ResolutionException {
+
+        getDataConnector("resolver/scriptedAttributeTooManyScripts.xml", ScriptedDataConnector.class);
+    }
+
+    @Test public void both() throws ComponentInitializationException, ResolutionException {
+
+        getDataConnector("resolver/scriptedAttributeBoth.xml", ScriptedDataConnector.class);
+    }
+    
+    @Test(expectedExceptions={BeanDefinitionStoreException.class,}) public void none() throws ComponentInitializationException, ResolutionException {
+
+        getDataConnector("resolver/scriptedAttributesNone.xml", ScriptedDataConnector.class);
     }
 
 }

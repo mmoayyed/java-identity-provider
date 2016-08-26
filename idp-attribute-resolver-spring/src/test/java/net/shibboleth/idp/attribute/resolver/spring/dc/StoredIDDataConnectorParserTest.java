@@ -32,7 +32,22 @@ import org.testng.annotations.Test;
 public class StoredIDDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void withSalt() throws ComponentInitializationException {
-        StoredIDDataConnector connector = getDataConnector("stored.xml", StoredIDDataConnector.class);
+        final StoredIDDataConnector connector = getDataConnector("stored.xml", StoredIDDataConnector.class);
+        
+        Assert.assertEquals(connector.getId(), "stored");
+        Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
+        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
+        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst".getBytes());
+        Assert.assertEquals(connector.getTransactionRetries(), 5);
+        Assert.assertEquals(connector.getQueryTimeout(), 5000);
+        Assert.assertEquals(connector.getFailFast(), false);
+        Assert.assertTrue(Arrays.areEqual(connector.getRetryableErrors().toArray(), new String[]{"25000", "25001"}));
+        
+        connector.initialize();
+    }
+
+    @Test public void resolver() throws ComponentInitializationException {
+        final StoredIDDataConnector connector = getDataConnector("resolver/stored.xml", StoredIDDataConnector.class);
         
         Assert.assertEquals(connector.getId(), "stored");
         Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");

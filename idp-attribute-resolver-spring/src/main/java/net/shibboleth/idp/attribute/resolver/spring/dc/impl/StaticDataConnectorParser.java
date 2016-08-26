@@ -25,6 +25,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -39,12 +40,20 @@ import org.w3c.dom.Element;
 /** Bean definition Parser for a {@link StaticDataConnector}. */
 public class StaticDataConnectorParser extends AbstractDataConnectorParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");
+    /** Schema type name - dc: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_DC = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");
 
-    /** Local name of attribute. */
-    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME =
+    /** Schema type name - resolver:. */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Static");
+
+    /** Local name of attribute - dc: (legacy). */
+    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME_DC =
             new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
+
+    /** Local name of attribute - resolver:. */
+    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Attribute");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StaticDataConnectorParser.class);
@@ -58,7 +67,8 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
-        final List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME);
+        final List<Element> children = ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME_DC);
+        children.addAll(ElementSupport.getChildElements(config, ATTRIBUTE_ELEMENT_NAME_RESOLVER));
         final List<BeanDefinition> attributes = new ManagedList<>(children.size());
 
         for (final Element child : children) {
@@ -69,6 +79,8 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
 
             final List<Element> values =
                     ElementSupport.getChildElementsByTagNameNS(child, DataConnectorNamespaceHandler.NAMESPACE, "Value");
+            values.addAll(ElementSupport.getChildElementsByTagNameNS(child, AttributeResolverNamespaceHandler.NAMESPACE,
+                    "Value"));
             final ManagedList<BeanDefinition> inValues = new ManagedList<>(values.size());
             for (final Element val : values) {
                 final BeanDefinitionBuilder value =

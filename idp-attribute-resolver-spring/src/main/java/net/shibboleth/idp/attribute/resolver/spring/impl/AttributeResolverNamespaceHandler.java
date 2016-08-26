@@ -19,8 +19,6 @@ package net.shibboleth.idp.attribute.resolver.spring.impl;
 
 import javax.annotation.Nonnull;
 
-import org.springframework.beans.factory.xml.BeanDefinitionParser;
-
 import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.ResolverPluginDependencyParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ContextDerivedAttributeDefinitionParser;
@@ -40,6 +38,10 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TransientIdAttribute
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.SourceValueParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIDDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StaticDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StoredIDDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1Base64AttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1ScopedStringAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringAttributeEncoderParser;
@@ -52,6 +54,8 @@ import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringNameIDEn
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2XMLObjectAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.pc.impl.DirectConnectorParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+
+import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
 /** Namespace handler for the attribute resolver. */
 public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandler {
@@ -103,6 +107,16 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(ValueMapParser.TYPE_NAME_RESOLVER, new ValueMapParser());
         registerBeanDefinitionParser(MappedAttributeDefinitionParser.TYPE_NAME_RESOLVER,
                 new MappedAttributeDefinitionParser());
+        
+        // Data Connectors
+        registerBeanDefinitionParser(ComputedIDDataConnectorParser.TYPE_NAME_RESOLVER, 
+                new ComputedIDDataConnectorParser());
+        //  registerBeanDefinitionParser(RDBMSDataConnectorParser.TYPE_NAME, new RDBMSDataConnectorParser());
+        //registerBeanDefinitionParser(LDAPDataConnectorParser.TYPE_NAME, new LDAPDataConnectorParser());
+        registerBeanDefinitionParser(ScriptDataConnectorParser.TYPE_NAME_RESVOLVER, new ScriptDataConnectorParser());
+        registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME_RESOLVER, new StaticDataConnectorParser());
+        registerBeanDefinitionParser(StoredIDDataConnectorParser.TYPE_NAME_RESOLVER, new StoredIDDataConnectorParser());
+
 
         // Encoders
         registerBeanDefinitionParser(SAML1StringAttributeEncoderParser.TYPE_NAME_RESOLVER,

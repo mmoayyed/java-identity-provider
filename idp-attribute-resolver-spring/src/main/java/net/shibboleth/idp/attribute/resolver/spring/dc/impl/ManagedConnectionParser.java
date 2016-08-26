@@ -28,6 +28,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -63,16 +64,27 @@ public class ManagedConnectionParser {
      * @return data source bean definition
      */
     @Nullable public BeanDefinition createDataSource() {
-        final Element containerManagedElement =
-                ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                        "ContainerManagedConnection"));
+        Element containerManagedElement =
+                ElementSupport.getFirstChildElement(configElement, 
+                        new QName(DataConnectorNamespaceHandler.NAMESPACE, "ContainerManagedConnection"));
+        if (null == containerManagedElement) {
+            containerManagedElement =
+                    ElementSupport.getFirstChildElement(configElement, 
+                            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ContainerManagedConnection"));
+        }
+        
         if (containerManagedElement != null) {
             return createContainerManagedDataSource(containerManagedElement);
         }
 
-        final Element applicationManagedElement =
-                ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                        "ApplicationManagedConnection"));
+        Element applicationManagedElement =
+                ElementSupport.getFirstChildElement(configElement,
+                        new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ApplicationManagedConnection"));
+        if (null == applicationManagedElement) {
+            applicationManagedElement =
+                    ElementSupport.getFirstChildElement(configElement, 
+                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "ApplicationManagedConnection"));
+        }
         if (applicationManagedElement != null) {
             return createApplicationManagedDataSource(applicationManagedElement);
         }
@@ -98,7 +110,7 @@ public class ManagedConnectionParser {
                 ElementSupport.getFirstChildElement(containerManagedElement, new QName(
                         DataConnectorNamespaceHandler.NAMESPACE, "JNDIConnectionProperty"));
         final List<Element> elements = ElementSupport.getChildElements(propertyElement);
-        for (Element e : elements) {
+        for (final Element e : elements) {
             props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
                     AttributeSupport.getAttributeValue(e, new QName("value")));
         }
@@ -221,7 +233,7 @@ public class ManagedConnectionParser {
             final InitialContext initCtx = new InitialContext(new Hashtable<>(props));
             final DataSource dataSource = (DataSource) initCtx.lookup(resourceName);
             return dataSource;
-        } catch (NamingException e) {
+        } catch (final NamingException e) {
             final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
             log.error("Managed data source '{}' could not be found", resourceName, e);
             return null;
@@ -240,7 +252,7 @@ public class ManagedConnectionParser {
         final ClassLoader classLoader = ManagedConnectionParser.class.getClassLoader();
         try {
             classLoader.loadClass(jdbcDriver);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
             log.error("JDBC driver '{}' could not be found", jdbcDriver, e);
         }

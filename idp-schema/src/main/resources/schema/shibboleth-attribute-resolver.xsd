@@ -153,7 +153,7 @@
         </attribute>
     </complexType>
 
-    <element name="DataConnector" type="resolver:BaseDataConnectorType">
+    <element name="DataConnector" type="resolver:FlattenedBaseDataConnectorType">
         <annotation>
             <documentation>
                 Defines a data connector which is used to pull information from local
@@ -171,7 +171,7 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:BaseResolutionPlugInType">
+            <extension base="resolver:FlattenedBaseResolutionPlugInType">
                 <attribute name="noRetryDelay" type="string">
                     <annotation>
                         <documentation>Time to bypass connector after a failure before trying it again.</documentation>
@@ -822,8 +822,366 @@
         </complexContent>
     </complexType>
     
+    <!-- Flatten the dc: namespace into the resolver: namespace -->    
 
-    <!--  Flatten the enc: namespace into the resolver: namespace -->    
+    <complexType name="ComputedId">
+        <annotation>
+            <documentation>
+                An ID created by taking the SHA-1 hash of the requesting entity's ID, an attribute value (usually a user identifier), and a salt.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseDataConnectorType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                    </choice>
+                </sequence>
+                <attribute name="generatedAttributeID" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute produced by this data connector.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceAttributeID" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute which should be used to as input to the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="salt" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            A salt, of at least 16 bytes, used in the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    
+    <complexType name="ScriptedDataConnector">
+        <annotation>
+            <documentation>
+                A data connector that constructs attributes by means of a script supported by JSR-223.  Populated 
+                Attributes are added to the java.util.Collection "connectorResults". 
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseDataConnectorType">
+                <choice  maxOccurs="unbounded" minOccurs="0">
+                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                    <element name="Script" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>The script to evaluate to construct the attribute.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="ScriptFile" type="string" minOccurs="0">
+                        <annotation>
+                            <documentation>
+                                The filesystem path to the script to evaluate to construct the attribute.
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
+                <attribute name="language" type="string">
+                    <annotation>
+                        <documentation>
+                            The JSR-233 name for the scripting language that will be used. By default "javascript" is
+                            supported.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="customObjectRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of a bean defined somewhere else which will be injected into the script as an
+                            object called "custom".  If not supplied, nothing is injected.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Static">
+        <annotation>
+            <documentation>
+                A data connector that gets its information from a static list of attributes and values specified within
+                this configuration.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseDataConnectorType">
+                <choice  maxOccurs="unbounded" minOccurs="0">
+                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                    <element name="Attribute" minOccurs="0" maxOccurs="unbounded">
+                        <annotation>
+                            <documentation>
+                                Specifies an attribute, and its values, to be exposed by this connector.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <sequence>
+                                <element name="Value" type="string" maxOccurs="unbounded">
+                                    <annotation>
+                                        <documentation>
+                                            A value of the attribute. If the value contains characters that would
+                                            otherwise need to be XML encoded you may wrap the value in a CDATA section.
+                                        </documentation>
+                                    </annotation>
+                                </element>
+                            </sequence>
+                            <attribute name="id" type="string" use="required">
+                                <annotation>
+                                    <documentation>The ID of the attribute.</documentation>
+                                </annotation>
+                            </attribute>
+                        </complexType>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+        
+    <complexType name="StoredId">
+        <annotation>
+            <documentation>
+                A connector that either generates a persistent ID by hashing or by looking it up in a database.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:BaseDataConnectorType">
+                <choice minOccurs="0">
+                    <element ref="resolver:ContainerManagedConnection">
+                        <annotation>
+                            <documentation>
+                                A connection, or pool of connections, to the database managed by the application
+                                container.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="resolver:ApplicationManagedConnection">
+                        <annotation>
+                            <documentation>
+                                A connection, or pool of connections, to the database managed by the data connector.
+                            </documentation>
+                        </annotation>
+                    </element>
+                        <element name="BeanManagedConnection" type="string">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database configured in a Spring bean.
+                                </documentation>
+                            </annotation>
+                        </element>
+                </choice>
+                <attribute name="queryTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            Timeout for the queries made to the database.
+                            Timeout is given in ISO8601 duration form.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="transactionRetries" type="string">
+                    <annotation>
+                        <documentation>
+                            Number of retries if insert fails (defaults to 3).
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="failFast" type="string">
+                    <annotation>
+                        <documentation>
+                            Whether to fail if the store cannot be verified at startup (defaults to false).
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="retryableErrors" >
+                    <annotation>
+                        <documentation>
+                            A space-delimited list of SQLState codes to treat as retryable (indicating
+                            a duplicate insert error occurred).
+                        </documentation>
+                    </annotation>
+                    <simpleType>
+                        <list itemType="string"/>
+                    </simpleType>
+                </attribute>
+                <attribute name="generatedAttributeID" type="string">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute produced by this data connector.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceAttributeID" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            The name of the attribute which should be used to as input to the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="salt" type="string" use="required">
+                    <annotation>
+                        <documentation>
+                            A salt, of at least 16 bytes, used in the computed ID.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    
+    
+    <element name="ContainerManagedConnection" type="resolver:ContainerManagedConnectionType">
+        <annotation>
+            <documentation>
+                Describes a database connection source that is managed by the application container.
+            </documentation>
+        </annotation>
+    </element>
+    <complexType name="ContainerManagedConnectionType">
+        <sequence>
+            <element name="JNDIConnectionProperty" type="resolver:PropertyType" minOccurs="0" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>
+                        A property used when constructing a JNDI initial context which in turn is used to lookup the
+                        database DataSource.
+                    </documentation>
+                </annotation>
+            </element>
+        </sequence>
+        <attribute name="resourceName" type="string" use="required">
+            <annotation>
+                <documentation>The resource name the DataSource is bound to in the JNDI tree.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+    
+   <complexType name="PropertyType">
+        <attribute name="name" type="string" use="required">
+            <annotation>
+                <documentation>The name of the property.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="value" type="string" use="required">
+            <annotation>
+                <documentation>The value of the property,</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+
+    <element name="ApplicationManagedConnection" type="resolver:ApplicationManagedConnectionType">
+        <annotation>
+            <documentation>
+                Describes a database connection source that is managed by the attribute resolver data connector.
+            </documentation>
+        </annotation>
+    </element>
+    
+    <complexType name="ApplicationManagedConnectionType">
+        <attribute name="jdbcDriver" type="string" use="required">
+            <annotation>
+                <documentation>
+                    This is the full qualified class name of the JDBC driver used to connect to the database.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcURL" type="string" use="required">
+            <annotation>
+                <documentation>
+                    The JDBC URL for the database. These are usually of the form
+                    jdbc:databaseProduceName:databaseSpecificInformation. For example, jdbc:hsql:mem:MyDatabase
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcUserName" type="string">
+            <annotation>
+                <documentation>The user name to use while connecting to the database.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcPassword" type="string">
+            <annotation>
+                <documentation>The password to use while connecting to the database.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAcquireIncrement" type="string">
+            <annotation>
+                <documentation>
+                    The number of new connections that will be created when the pool is exhausted.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAcquireRetryAttempts" type="string">
+            <annotation>
+                <documentation>
+                    The number of times the pool will try to establish a connection to a database.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolAcquireRetryDelay" type="string">
+            <annotation>
+                <documentation>
+                    The amount of time, in milliseconds, the pool will wait before trying to retrieve a new connection
+                    after it has failed.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolBreakAfterAcquireFailure" type="string">
+            <annotation>
+                <documentation>
+                    A boolean flag that indicates whether the pool should be marked as permanently unavailable if a new
+                    connection can not be established after the acquire retry attempts is reached.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMinSize" type="string">
+            <annotation>
+                <documentation>
+                    The minimum number of connections the pool will establish with the database. A value of zero means
+                    there is no minimum.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMaxSize" type="string">
+            <annotation>
+                <documentation>
+                    The maximum number of connections the pool will establish with the database. A value of zero means
+                    there is no maximum.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolMaxIdleTime" type="string">
+            <annotation>
+                <documentation>
+                    The maximum time, in seconds, that an established connection will remain idle before it is closed.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="poolIdleTestPeriod" type="string">
+            <annotation>
+                <documentation>
+                    The interval, in seconds, that the pool will scan idle established connections, using the validation
+                    query, for liveness.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    
+    
+    <!-- Flatten the enc: namespace into the resolver: namespace -->    
     
     <!-- Encoders that produce SAML 1 or SAML 2 Attributes -->
     <complexType name="SAML1String">

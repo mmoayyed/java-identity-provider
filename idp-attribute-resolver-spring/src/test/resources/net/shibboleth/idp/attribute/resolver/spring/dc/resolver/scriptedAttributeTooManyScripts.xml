@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataConnector id="staticAttributes"
+	xsi:type="ScriptedDataConnector" 
+    xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+	<Script><![CDATA[
+    foo;
+	]]></Script>
+    <Dependency ref="asr"/>
+    <Dependency ref="ddde"/>
+    <Script><![CDATA[
+    bar;
+    ]]></Script>
+    <FailoverDataConnector ref="w"/>
+</DataConnector>

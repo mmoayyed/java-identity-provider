@@ -47,6 +47,18 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
 
         connector.initialize();
     }
+    
+    @Test public void resolver() throws ComponentInitializationException {
+        final ComputedIDDataConnector connector = getDataConnector("resolver/computed.xml", ComputedIDDataConnector.class);
+        
+        Assert.assertEquals(connector.getId(), "computed");
+        Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsTheSame");
+        Assert.assertEquals(connector.getGeneratedAttributeId(), "jenny");
+        Assert.assertEquals(connector.getSalt(), "abcdefghijklmnopqrst ".getBytes());
+
+        connector.initialize();
+    }
+
 
     @Test(enabled=false) public void withoutSalt()  { 
         // Needs schema change

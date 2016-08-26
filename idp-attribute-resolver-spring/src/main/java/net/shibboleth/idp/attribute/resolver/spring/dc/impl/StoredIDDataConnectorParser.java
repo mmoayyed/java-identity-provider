@@ -24,6 +24,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
@@ -44,8 +45,12 @@ import org.w3c.dom.Element;
  */
 public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "StoredId");
+    /** Schema type name: dc: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_AD = new QName(DataConnectorNamespaceHandler.NAMESPACE, "StoredId");
+
+    /** Schema type name: resolver: . */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+                new QName(AttributeResolverNamespaceHandler.NAMESPACE, "StoredId");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(StoredIDDataConnectorParser.class);

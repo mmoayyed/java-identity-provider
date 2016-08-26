@@ -35,10 +35,25 @@ import org.testng.annotations.Test;
 public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParserTest {
     
     @Test public void simple() {
-        StaticDataConnector connector = getDataConnector("staticAttributes.xml", StaticDataConnector.class);
+        final StaticDataConnector connector = getDataConnector("staticAttributes.xml", StaticDataConnector.class);
         
         Assert.assertEquals(connector.getAttributes().keySet().size(), 2);
-        IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
+        final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
+        List<IdPAttributeValue<?>> values = epe.getValues();
+        Assert.assertEquals(values.size(), 2);
+        Assert.assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
+        Assert.assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
+        
+        values = connector.getAttributes().get("staticEpA").getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("member")));
+    }
+
+    @Test public void resolver() {
+        final StaticDataConnector connector = getDataConnector("resolver/staticAttributes.xml", StaticDataConnector.class);
+        
+        Assert.assertEquals(connector.getAttributes().keySet().size(), 2);
+        final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
         List<IdPAttributeValue<?>> values = epe.getValues();
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
@@ -50,10 +65,10 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
     }
 
     @Test public void nativesimple() {
-        StaticDataConnector connector = getDataConnector("staticAttributesNative.xml", StaticDataConnector.class);
+        final StaticDataConnector connector = getDataConnector("staticAttributesNative.xml", StaticDataConnector.class);
         
         Assert.assertEquals(connector.getAttributes().keySet().size(), 2);
-        IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
+        final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
         List<IdPAttributeValue<?>> values = epe.getValues();
         Assert.assertEquals(values.size(), 2);
         Assert.assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataConnector id="staticAttributes"
+	xsi:type="ScriptedDataConnector" 
+    xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+    customObjectRef="other.CustomScriptObject"
+
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+	<Script><![CDATA[
+importPackage(Packages.net.shibboleth.idp.attribute);
+importPackage(Packages.java.util);
+importPackage(Packages.java.lang);
+
+attr = new IdPAttribute("ScriptedOne");
+set = new HashSet(2);
+set.add(new StringAttributeValue("Value 1"));
+set.add(new StringAttributeValue("Value 2"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+attr = new IdPAttribute("TwoScripted");
+set = new HashSet(4);
+set.add(new StringAttributeValue("1Value"));
+set.add(new StringAttributeValue("2Value"));
+set.add(new Integer(4));
+set.add(new StringAttributeValue("3Value"));
+attr.setValues(set);
+connectorResults.add(attr);
+
+connectorResults.add(new Integer(4));
+	]]></Script>
+</DataConnector>

@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -31,11 +32,15 @@ import org.w3c.dom.Element;
  */
 public class ComputedIDDataConnectorParser extends BaseComputedIDDataConnectorParser {
 
-    /** Schema type. */
-    @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "ComputedId");
+    /** Schema type - dc: (legacy). */
+    @Nonnull public static final QName TYPE_NAME_DC = new QName(DataConnectorNamespaceHandler.NAMESPACE, "ComputedId");
+
+    /** Schema type - resolver: . */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, 
+            "ComputedId");
 
     /** {@inheritDoc} */
-    @Override protected Class<ComputedIDDataConnector> getBeanClass(Element element) {
+    @Override protected Class<ComputedIDDataConnector> getBeanClass(final Element element) {
         return ComputedIDDataConnector.class;
     }
 
