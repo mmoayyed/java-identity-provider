@@ -161,7 +161,8 @@
             </documentation>
         </annotation>
     </element>
-    <complexType name="BaseDataConnectorType">
+
+    <complexType name="FlattenedBaseDataConnectorType">
         <annotation>
             <documentation>
                 Data connectors pull information from local infrastructure, such as
@@ -171,9 +172,6 @@
         </annotation>
         <complexContent>
             <extension base="resolver:BaseResolutionPlugInType">
-                <sequence>
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
-                </sequence>
                 <attribute name="noRetryDelay" type="string">
                     <annotation>
                         <documentation>Time to bypass connector after a failure before trying it again.</documentation>
@@ -203,11 +201,29 @@
         </complexContent>
     </complexType>
 
+    <complexType name="BaseDataConnectorType">
+        <annotation>
+            <documentation>
+                Data connectors pull information from local infrastructure, such as
+                databases and LDAP directories, and make these raw attributes available
+                to attribute definitions for finishing.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseDataConnectorType">
+                <sequence>
+                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <element name="PrincipalConnector" type="resolver:BasePrincipalConnectorType">
         <annotation>
             <documentation>
-                Principal connectors convert a subject's NameID into an internal principal
-                name for use within attribute definitions and data connectors.
+    Principal connectors convert a subject's NameID into an internal principal
+    name for use within attribute definitions and data connectors.
             </documentation>
         </annotation>
     </element>
@@ -631,7 +647,7 @@
         </complexContent>
     </complexType>
 
-    <complexType name="Script">
+    <complexType name="ScriptedAttribute">
         <annotation>
             <documentation>
                 An attribute definition that constructs its attributes by means of a script supported by JSR-223. The

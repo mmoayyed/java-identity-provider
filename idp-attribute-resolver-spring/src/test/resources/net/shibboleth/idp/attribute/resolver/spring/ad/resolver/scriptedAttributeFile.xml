@@ -2,7 +2,7 @@
     xmlns="urn:mace:shibboleth:2.0:resolver"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
     dependencyOnly="1"
-    xsi:type="Script" id="scriptedFile"
+    xsi:type="ScriptedAttribute" id="scriptedFile"
     xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
     <ScriptFile>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/ad/file.script</ScriptFile>
 </AttributeDefinition>
