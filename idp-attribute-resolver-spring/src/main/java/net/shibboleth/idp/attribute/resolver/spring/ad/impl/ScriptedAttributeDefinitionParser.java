@@ -23,19 +23,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * Spring bean definition parser for scripted attribute configuration elements.
@@ -48,7 +48,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
 
     /** Schema type name - resolver: . */
     @Nonnull public static final QName TYPE_NAME_RESOLVER =
-            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Script");
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ScriptedAttribute");
 
     /** Script file element name. */
     @Nonnull public static final QName SCRIPT_FILE_ELEMENT_NAME_AD =
@@ -70,7 +70,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<ScriptedAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<ScriptedAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return ScriptedAttributeDefinition.class;
     }
 
@@ -111,7 +111,7 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
             throw new BeanCreationException("No script or script file specified for this attribute definition");
         }
 
-        String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
+        final String customRef = StringSupport.trimOrNull(config.getAttributeNS(null, "customObjectRef"));
         if (null != customRef) {
             builder.addPropertyReference("customObject", customRef);
         }
