@@ -66,7 +66,7 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/serviceValidate";
 
     @Autowired
-    @Qualifier("cas.TicketService")
+    @Qualifier("shibboleth.CASTicketService")
     private TicketServiceEx ticketService;
 
     @Autowired

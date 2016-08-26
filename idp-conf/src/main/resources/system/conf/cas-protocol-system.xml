@@ -18,7 +18,10 @@
           c:service-ref="#{'%{idp.cas.StorageService:shibboleth.StorageService}'.trim()}"
           c:sealer-ref="shibboleth.DataSealer"/>
 
-    <bean id="cas.ProxyAuthenticator" class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyAuthenticator" />
+    <alias name="encodingTicketService" alias="shibboleth.DefaultCASTicketService" />
+
+    <bean id="shibboleth.DefaultCASProxyAuthenticator"
+          class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyAuthenticator" />
 
     <import resource="../../conf/cas-protocol.xml" />
 

@@ -59,7 +59,7 @@ public class LoginFlowInitialAuthnTest extends AbstractFlowTest {
     private StorageBackedSessionManager sessionManager;
 
     @Autowired
-    @Qualifier("cas.TicketService")
+    @Qualifier("shibboleth.CASTicketService")
     private TicketService ticketService;
 
     @BeforeClass

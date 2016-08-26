@@ -46,29 +46,27 @@
        | If this limitation is of concern, one may consider decreasing ticketValidityPeriod on the profile
        | configuration from the default 15000ms.
        -->
-    <alias name="encodingTicketService" alias="cas.TicketService" />
+    <alias name="encodingTicketService" alias="shibboleth.CASTicketService" />
 
     <!--
        | Uncomment the following element and comment out the above to enable the previous default ticket service
        | that uses a StorageService for ticket persistence. Use this if the one-time use limitation of
        | EncodingTicketService is problematic and can't be mitigated by decreasing ticketValidityPeriod.
        -->
-    <!--<alias name="simpleTicketService" alias="cas.TicketService" /> -->
+    <!--<alias name="simpleTicketService" alias="shibboleth.CASTicketService" /> -->
 
 
     <!--
        | Advanced CAS configuration.
        |
-       | Override default CAS components by creating aliases to custom components where the alias
-       | is the same as the default component bean ID.
+       | Uncomment any alias definitions above and define custom components for defined
+       | CAS protocol extension points.
        -->
     <!--
-    <bean id="cas.CustomTicketService"
+    <bean id="shibboleth.CASTicketService"
           class="org.example.idp.cas.CustomTicketService" />
-    <alias name="cas.CustomTicketService" alias="cas.TicketService" />
 
-    <bean id="cas.CustomProxyAuthenticator"
+    <bean id="shibboleth.CASProxyAuthenticator"
           class="org.example.idp.cas.CustomProxyAuthenticator" />
-    <alias name="cas.CustomProxyAuthenticator" alias="cas.ProxyAuthenticator" />
     -->
 </beans>

@@ -20,7 +20,7 @@
 
     <bean id="ValidateTicket"
           class="net.shibboleth.idp.cas.flow.impl.ValidateTicketAction"
-          c:ticketService-ref="cas.TicketService" />
+          c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
     <bean id="ValidateRenew"
           class="net.shibboleth.idp.cas.flow.impl.ValidateRenewAction" />
@@ -30,8 +30,8 @@
 
     <bean id="ValidateProxyCallback"
           class="net.shibboleth.idp.cas.flow.impl.ValidateProxyCallbackAction"
-          c:proxyAuthenticator-ref="cas.ProxyAuthenticator"
-          c:ticketService-ref="cas.TicketService" />
+          c:proxyAuthenticator="#{getObject('shibboleth.CASProxyAuthenticator') ?: getObject('shibboleth.DefaultCASProxyAuthenticator')}"
+          c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
     <bean id="PrepareTicketValidationResponse"
           class="net.shibboleth.idp.cas.flow.impl.PrepareTicketValidationResponseAction" />

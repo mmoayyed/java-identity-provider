@@ -53,7 +53,7 @@ public class ProxyFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/proxy";
 
     @Autowired
-    @Qualifier("cas.TicketService")
+    @Qualifier("shibboleth.CASTicketService")
     private TicketServiceEx ticketService;
 
     @Autowired

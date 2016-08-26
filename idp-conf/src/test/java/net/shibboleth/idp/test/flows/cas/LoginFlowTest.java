@@ -69,7 +69,7 @@ public class LoginFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/login";
 
     @Autowired
-    @Qualifier("cas.TicketService")
+    @Qualifier("shibboleth.CASTicketService")
     private TicketService ticketService;
 
     @Autowired

@@ -54,7 +54,7 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     private static String FLOW_ID = "cas/proxyValidate";
 
     @Autowired
-    @Qualifier("cas.TicketService")
+    @Qualifier("shibboleth.CASTicketService")
     private TicketServiceEx ticketService;
 
     @Autowired

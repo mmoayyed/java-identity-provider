@@ -37,7 +37,7 @@
 
     <bean id="GrantServiceTicket"
           class="net.shibboleth.idp.cas.flow.impl.GrantServiceTicketAction"
-          c:ticketService-ref="cas.TicketService" />
+          c:ticketService="#{getObject('shibboleth.CASTicketService') ?: getObject('shibboleth.DefaultCASTicketService')}" />
 
     <bean id="PopulateSessionContext"
           class="net.shibboleth.idp.session.impl.PopulateSessionContext"

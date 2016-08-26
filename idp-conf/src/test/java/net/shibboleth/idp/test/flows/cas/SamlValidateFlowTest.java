@@ -63,7 +63,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
             "</samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
     @Autowired
-    @Qualifier("cas.TicketService")
+    @Qualifier("shibboleth.CASTicketService")
     private TicketServiceEx ticketService;
 
     @Autowired
