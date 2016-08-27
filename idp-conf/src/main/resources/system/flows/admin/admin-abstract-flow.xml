@@ -5,6 +5,11 @@
 
     <!-- Abstract base for administrative flows. -->
     
+    <on-start>
+        <evaluate expression="'ErrorView'"  result="flowScope.ErrorState"/>
+        <evaluate expression="'AuditedErrorView'"  result="flowScope.AuditedErrorState"/>
+    </on-start>
+    
     <action-state id="DoAdminPreamble">
         <evaluate expression="InitializeAdministrativeProfileContextTree" />
         <evaluate expression="'proceed'" />
@@ -86,13 +91,11 @@
 
         <transition on="proceed" to="ClientStorageSave" />
         <transition on="NoSaveNeeded" to="DoProfileWork" />
-        <transition to="HandleErrorWithView" />
     </action-state>
     
     <subflow-state id="ClientStorageSave" subflow="client-storage/write">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="DoProfileWork"/>
-        <transition to="HandleErrorWithView" />
     </subflow-state>
 
     <!-- DoProfileWork in the child flow performs all the subsequent work of the flow. -->
@@ -104,17 +107,17 @@
             <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.profile').error('Uncaught runtime exception', flowExecutionException.getCause())" />
         </on-entry>
         <evaluate expression="'RuntimeException'" />
-        <transition to="HandleErrorWithView" />
+        <transition to="HandleError" />
     </action-state>
 
     <!-- Unsuccessful terminal states. -->
     
-    <decision-state id="HandleErrorWithView">
+    <decision-state id="HandleError">
         <on-entry>
             <evaluate expression="LogEvent" />
         </on-entry>
         <if test="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').containsKey(currentEvent.id) and flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.LocalEventMap').get(currentEvent.id)"
-            then="AuditedErrorView" else="ErrorView" />
+            then="#{AuditedErrorState}" else="#{ErrorState}" />
     </decision-state>
 
     <end-state id="AuditedErrorView" view="#{MapEventToView.apply(currentEvent)}">
@@ -145,7 +148,7 @@
     <!-- Default is to turn non-proceed events into an error. -->
     <global-transitions>
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleErrorWithView" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="HandleError" />
     </global-transitions>
 
     <bean-import resource="admin-abstract-beans.xml" />
