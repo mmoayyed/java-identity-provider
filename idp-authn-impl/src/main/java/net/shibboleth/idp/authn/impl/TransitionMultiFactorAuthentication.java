@@ -257,8 +257,10 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         // constraint is assumed to be enforced by limiting which active results are made available.
         // To bypass, we just call ourselves again, implicitly looping back. The protection against
         // infinite recursion is the configuration of transitions supplied by the deployer.
-        if (mfaContext.getActiveResults().containsKey(flowId)) {
+        final AuthenticationResult activeResult = mfaContext.getActiveResults().get(flowId);
+        if (activeResult != null) {
             log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
+            activeResult.setLastActivityInstantToNow();
             ActionSupport.buildProceedEvent(profileRequestContext);
             doExecute(profileRequestContext, authenticationContext);
             return;

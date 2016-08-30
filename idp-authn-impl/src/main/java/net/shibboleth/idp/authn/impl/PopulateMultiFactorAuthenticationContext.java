@@ -194,6 +194,11 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
                             final Collection<AuthenticationResult> results = new ArrayList<>(resultPrincipals.size());
                             
                             for (final AuthenticationResultPrincipal resultPrincipal : resultPrincipals) {
+                                // Reset the last-used time to match the MFA result.
+                                // This makes longer timeouts irrelevant but might honor a shorter timeout in
+                                // a small number of edge cases.
+                                resultPrincipal.getAuthenticationResult().setLastActivityInstant(
+                                        mfaResult.getLastActivityInstant());
                                 processActiveResult(ac, results, resultPrincipal.getAuthenticationResult());
                             }
                             
@@ -220,11 +225,10 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             final AuthenticationFlowDescriptor descriptor = authenticationContext.getAvailableFlows().get(
                     candidate.getAuthenticationFlowId());
             if (descriptor != null) {
-                if (candidate.getAuthenticationInstant() + descriptor.getLifetime() > System.currentTimeMillis()) {
+                if (descriptor.isResultActive(candidate)) {
                     results.add(candidate);
                 } else {
-                    log.debug("{} Result from login flow {} has expired", getLogPrefix(),
-                            descriptor.getId());
+                    log.debug("{} Result from login flow {} has expired", getLogPrefix(), descriptor.getId());
                 }
             } else {
                 log.warn("{} Ignoring active result from undefined login flow {}", getLogPrefix(),
