@@ -35,6 +35,7 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.utilities.java.support.net.URISupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -125,9 +126,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(outcome.getId(), "RedirectToService");
-        final String url = externalContext.getExternalRedirectUrl();
-        assertTrue(url.contains("ticket=ST-"));
-        final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assertNotNull(st);
         final IdPSession session = sessionManager.resolveSingle(
@@ -179,9 +178,7 @@ public class LoginFlowTest extends AbstractFlowTest {
 
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(result.getOutcome().getId(), "RedirectToService");
-        final String url = externalContext.getExternalRedirectUrl();
-        assertTrue(url.contains("ticket=ST-"));
-        final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assertNotNull(st);
         final IdPSession session = sessionManager.resolveSingle(
@@ -208,9 +205,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(outcome.getId(), "RedirectToService");
-        final String url = externalContext.getExternalRedirectUrl();
-        assertTrue(url.contains("ticket=ST-"));
-        final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assertNotNull(st);
         final IdPSession session = sessionManager.resolveSingle(
@@ -235,9 +230,7 @@ public class LoginFlowTest extends AbstractFlowTest {
         final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
         final FlowExecutionOutcome outcome = result.getOutcome();
         assertEquals(outcome.getId(), "RedirectToService");
-        final String url = externalContext.getExternalRedirectUrl();
-        assertTrue(url.contains("ticket=ST-"));
-        final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        final String ticketId = getTicketIdFromUrl(externalContext.getExternalRedirectUrl());
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assertNotNull(st);
         final IdPSession session = sessionManager.resolveSingle(
@@ -281,5 +274,14 @@ public class LoginFlowTest extends AbstractFlowTest {
         final AttributeContext ac= rpc.getSubcontext(AttributeContext.class, false);
         assertNotNull(ac);
         assertFalse(ac.getUnfilteredIdPAttributes().isEmpty());
+    }
+
+    private String getTicketIdFromUrl(final String url) {
+        assertTrue(url.contains("ticket=ST-"));
+        final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        assertEquals(ticketId.indexOf('/'), -1);
+        assertEquals(ticketId.indexOf('='), -1);
+        assertEquals(ticketId.indexOf('+'), -1);
+        return URISupport.doURLDecode(ticketId);
     }
 }

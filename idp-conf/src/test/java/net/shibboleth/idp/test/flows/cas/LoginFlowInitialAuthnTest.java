@@ -30,6 +30,7 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.idp.session.impl.StorageBackedSessionManager;
 import net.shibboleth.idp.test.flows.AbstractFlowTest;
+import net.shibboleth.utilities.java.support.net.URISupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -83,7 +84,7 @@ public class LoginFlowInitialAuthnTest extends AbstractFlowTest {
         assertEquals(outcome.getId(), "RedirectToService");
         final String url = externalContext.getExternalRedirectUrl();
         assertTrue(url.contains("ticket=ST-"));
-        final String ticketId = url.substring(url.indexOf("ticket=") + 7);
+        final String ticketId = URISupport.doURLDecode(url.substring(url.indexOf("ticket=") + 7));
         final Ticket st = ticketService.removeServiceTicket(ticketId);
         assertNotNull(st);
         final IdPSession session = sessionManager.resolveSingle(
