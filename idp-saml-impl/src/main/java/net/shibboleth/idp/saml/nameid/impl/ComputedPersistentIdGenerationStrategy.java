@@ -75,6 +75,18 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
         
         salt = Constraint.isNotEmpty(newValue, "Salt cannot be null or empty");
     }
+    
+    /**
+     * Set the base64-encoded salt used when computing the ID.
+     * 
+     * @param newValue used when computing the ID
+     */
+    public void setEncodedSalt(@Nonnull @NotEmpty final String newValue) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        Constraint.isNotEmpty(newValue, "Salt cannot be null or empty");
+        salt = Base64Support.decode(newValue);
+    }
 
     /**
      * Set the JCE algorithm name of the digest algorithm to use (default is SHA).

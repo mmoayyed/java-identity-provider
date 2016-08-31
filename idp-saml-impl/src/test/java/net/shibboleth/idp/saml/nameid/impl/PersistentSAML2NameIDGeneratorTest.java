@@ -29,6 +29,7 @@ import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
+import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
@@ -89,7 +90,17 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         generator.setPersistentIdGenerator(strategy);
         generator.initialize();
     }
-    
+
+    @Test
+    public void testSaltSetters() throws ComponentInitializationException {
+        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
+        strategy.setSalt(salt);
+        Assert.assertEquals(salt, strategy.getSalt());
+        
+        strategy.setEncodedSalt(Base64Support.encode(salt, false));
+        Assert.assertEquals(salt, strategy.getSalt());
+    }
+
     @Test
     public void testNoResponderId() throws Exception {
         generator.setPersistentIdGenerator(new ComputedPersistentIdGenerationStrategy());
