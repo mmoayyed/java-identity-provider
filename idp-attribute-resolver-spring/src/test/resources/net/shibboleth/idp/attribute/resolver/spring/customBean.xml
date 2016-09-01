@@ -16,5 +16,11 @@
     <util:map id="other.CustomScriptObject">
         <entry key="bar" value="foo"/>
     </util:map>    
+    
+    <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
+        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
 </beans>
+
        

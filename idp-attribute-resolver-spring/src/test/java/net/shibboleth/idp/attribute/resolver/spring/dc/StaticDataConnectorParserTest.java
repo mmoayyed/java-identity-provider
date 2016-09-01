@@ -36,7 +36,6 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
     
     @Test public void simple() {
         final StaticDataConnector connector = getDataConnector("staticAttributes.xml", StaticDataConnector.class);
-        
         Assert.assertEquals(connector.getAttributes().keySet().size(), 2);
         final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
         List<IdPAttributeValue<?>> values = epe.getValues();
@@ -63,6 +62,22 @@ public class StaticDataConnectorParserTest extends BaseAttributeDefinitionParser
         Assert.assertEquals(values.size(), 1);
         Assert.assertTrue(values.contains(new StringAttributeValue("member")));
     }
+    
+    @Test public void hybrid() {
+        final StaticDataConnector connector = getDataConnector("resolver/staticAttributesHybrid.xml", StaticDataConnector.class);
+        
+        Assert.assertEquals(connector.getAttributes().keySet().size(), 2);
+        final IdPAttribute epe = connector.getAttributes().get("eduPersonEntitlement");
+        List<IdPAttributeValue<?>> values = epe.getValues();
+        Assert.assertEquals(values.size(), 2);
+        Assert.assertTrue(values.contains(new StringAttributeValue("urn:example.org:entitlement:entitlement1")));
+        Assert.assertTrue(values.contains(new StringAttributeValue("urn:mace:dir:entitlement:common-lib-terms")));
+        
+        values = connector.getAttributes().get("staticEpA").getValues();
+        Assert.assertEquals(values.size(), 1);
+        Assert.assertTrue(values.contains(new StringAttributeValue("member")));
+    }
+
 
     @Test public void nativesimple() {
         final StaticDataConnector connector = getDataConnector("staticAttributesNative.xml", StaticDataConnector.class);

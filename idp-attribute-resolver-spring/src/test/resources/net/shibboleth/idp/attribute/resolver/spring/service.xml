@@ -42,8 +42,8 @@
             <util:list>
             	<value>net/shibboleth/idp/attribute/resolver/spring/externalBeans.xml</value>
                 <value>net/shibboleth/idp/attribute/resolver/spring/storageService.xml</value>
-                <value>net/shibboleth/idp/attribute/resolver/spring/attribute-resolver.xml</value>
-                <value>net/shibboleth/idp/attribute/resolver/spring/dc/staticAttributesNative.xml</value>
+<!--                <value>net/shibboleth/idp/attribute/resolver/spring/attribute-resolver.xml</value>
+     -->           <value>net/shibboleth/idp/attribute/resolver/spring/dc/staticAttributesNative.xml</value>
             </util:list>
         </property>
     </bean>

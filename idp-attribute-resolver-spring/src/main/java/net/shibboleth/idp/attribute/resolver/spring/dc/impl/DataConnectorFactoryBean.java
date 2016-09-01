@@ -247,7 +247,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
         setValues(result);
 
         appContext =
-                SpringSupport.newContext("LDAPContext", getResources(), getBeanFactoryPostProcessors(),
+                SpringSupport.newContext("HybridSpringDataConnector", getResources(), getBeanFactoryPostProcessors(),
                         getBeanPostProcessors(), Collections.EMPTY_LIST, parentContext);
 
         final PropertyDescriptor[] descriptors =
@@ -257,7 +257,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
             log.debug("Parsing property descriptor: {}", descriptor);
             final Map<String, ?> beans = appContext.getBeansOfType(descriptor.getPropertyType());
 
-            if (null == beans || beans.isEmpty()) {
+            if (null == beans || beans.isEmpty() || null == descriptor.getWriteMethod() ) {
                 continue;
             }
             if (beans.size() > 1) {
