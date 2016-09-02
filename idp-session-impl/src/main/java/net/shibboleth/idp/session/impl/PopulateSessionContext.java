@@ -70,7 +70,8 @@ public class PopulateSessionContext extends AbstractProfileAction {
         sessionContextCreationStrategy = new ChildContextLookup<>(SessionContext.class, true);
         
         sessionResolverCriteriaStrategy = new Function<ProfileRequestContext,CriteriaSet>() {
-            public CriteriaSet apply(ProfileRequestContext input) {
+            @Override
+            public CriteriaSet apply(final ProfileRequestContext input) {
                 return new CriteriaSet(new HttpServletRequestCriterion());
             }            
         };
@@ -121,6 +122,7 @@ public class PopulateSessionContext extends AbstractProfileAction {
         }
     }
 
+ // Checkstyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -160,5 +162,6 @@ public class PopulateSessionContext extends AbstractProfileAction {
             log.error("{} Error during timeout or address checking for session {}",getLogPrefix(), session.getId(), e);
         }
     }
+ // Checkstyle: ReturnCount ON
 
 }

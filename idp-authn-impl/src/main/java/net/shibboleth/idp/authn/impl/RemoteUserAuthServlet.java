@@ -201,7 +201,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
         }
     }
 
-// Checkstyle: MethodLength OFF
+    // Checkstyle: MethodLength|ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     protected void service(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
@@ -303,7 +303,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
             throw new ServletException("Error in RemoteUserAuthServlet processing external authentication request", e);
         }
     }
-// Checkstyle: CyclomaticComplexity|MethodLength ON
+// Checkstyle: CyclomaticComplexity|MethodLength|ReturnCount ON
     
     /**
      * Get the executing {@link AuthenticationFlowDescriptor}.

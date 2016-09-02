@@ -48,6 +48,7 @@ public class ExtractUserAgentAddress extends AbstractExtractionAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUserAgentAddress.class);
     
     /** {@inheritDoc} */
+    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -69,4 +70,5 @@ public class ExtractUserAgentAddress extends AbstractExtractionAction {
         authenticationContext.getSubcontext(UserAgentContext.class, true).setAddress(
                 InetAddresses.forString(addressString));
     }
+    // CheckStyle: ReturnCount ON
 }

@@ -149,7 +149,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         }
     }
     
-// Checkstyle: MethodLength|CyclomaticComplexity OFF
+// Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount OFF
     /**
      * Executes the selection process in the presence of an explicit flow signal.
      * 
@@ -235,8 +235,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         ActionSupport.buildEvent(profileRequestContext,
                 authenticationContext.isPassive() ? AuthnEventIds.NO_PASSIVE : AuthnEventIds.NO_POTENTIAL_FLOW);
     }
-// Checkstyle: MethodLength|CyclomaticComplexity ON
+// Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount ON
     
+// Checkstyle: ReturnCount OFF
     /**
      * Executes the selection process in the absence of specific requested principals.
      * 
@@ -287,6 +288,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         }
         selectInactiveFlow(profileRequestContext, authenticationContext, flow);
     }
+ // Checkstyle: ReturnCount ON
 
     /**
      * Return the first inactive potential flow not found in the intermediate flows collection that applies
@@ -420,7 +422,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
      * @param authenticationContext the current authentication context
      * @param activeResults active results that may be reused
      */
-// Checkstyle: MethodLength|CyclomaticComplexity OFF
+// Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount OFF
     private void selectRequestedFlow(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext,
             @Nonnull @NonnullElements final Map<String,AuthenticationResult> activeResults) {
@@ -489,6 +491,6 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.REQUEST_UNSUPPORTED);
         }
     }
-// Checkstyle: MethodLength|CyclomaticComplexity ON
+// Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount ON
         
 }

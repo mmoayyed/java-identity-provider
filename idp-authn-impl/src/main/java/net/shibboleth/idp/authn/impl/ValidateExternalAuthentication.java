@@ -103,6 +103,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
     }
     
     /** {@inheritDoc} */
+ // Checkstyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -154,6 +155,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         }
         buildAuthenticationResult(profileRequestContext, authenticationContext);
     }
+ // Checkstyle: ReturnCount ON
 
     /** {@inheritDoc} */
     @Override

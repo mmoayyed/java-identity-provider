@@ -27,15 +27,13 @@ import net.shibboleth.idp.authn.AbstractExtractionAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +58,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUsernamePasswordFromBasicAuth.class);
     
     /** {@inheritDoc} */
+    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -89,6 +88,7 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
         
         upCtx.setUsername(applyTransforms(decodedCredentials.getFirst())).setPassword(decodedCredentials.getSecond());
     }
+    // CheckStyle: ReturnCount ON
 
     /**
      * Gets the encoded credentials passed in via the {@link HttpHeaders#AUTHORIZATION} header. This method checks to
@@ -101,11 +101,11 @@ public class ExtractUsernamePasswordFromBasicAuth extends AbstractExtractionActi
      */
     @Nullable protected String extractCredentials(@Nonnull final HttpServletRequest httpRequest) {
 
-        Enumeration<String> header = httpRequest.getHeaders(HttpHeaders.AUTHORIZATION);
+        final Enumeration<String> header = httpRequest.getHeaders(HttpHeaders.AUTHORIZATION);
         while (header.hasMoreElements()) {
-            String[] splitValue = header.nextElement().split(" ");
+            final String[] splitValue = header.nextElement().split(" ");
             if (splitValue.length == 2) {
-                String authnScheme = StringSupport.trimOrNull(splitValue[0]);
+                final String authnScheme = StringSupport.trimOrNull(splitValue[0]);
                 if (HttpServletRequest.BASIC_AUTH.equalsIgnoreCase(authnScheme)) {
                     return StringSupport.trimOrNull(splitValue[1]);
                 }

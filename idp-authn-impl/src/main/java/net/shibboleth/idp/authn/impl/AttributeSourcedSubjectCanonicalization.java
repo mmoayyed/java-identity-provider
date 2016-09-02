@@ -153,6 +153,7 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
     }
     
     /** {@inheritDoc} */
+    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
@@ -189,5 +190,6 @@ public class AttributeSourcedSubjectCanonicalization extends AbstractSubjectCano
         c14nContext.setException(new SubjectCanonicalizationException("No usable attribute values were found"));
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
     }
+    // CheckStyle: ReturnCount ON
 
 }

@@ -98,10 +98,10 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param connectors data connectors loaded in to this resolver
      * @param principalResolver code to resolve the principal
      */
-    public AttributeResolverImpl(@Nonnull @NotEmpty String resolverId,
-            @Nullable @NullableElements Collection<AttributeDefinition> definitions,
-            @Nullable @NullableElements Collection<DataConnector> connectors,
-            @Nullable LegacyPrincipalDecoder principalResolver) {
+    public AttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
+            @Nullable @NullableElements final Collection<AttributeDefinition> definitions,
+            @Nullable @NullableElements final Collection<DataConnector> connectors,
+            @Nullable final LegacyPrincipalDecoder principalResolver) {
         setId(resolverId);
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
@@ -109,7 +109,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         Map<String, AttributeDefinition> checkedDefinitions;
         if (definitions != null) {
             checkedDefinitions = new HashMap<>(definitions.size());
-            for (AttributeDefinition definition : definitions) {
+            for (final AttributeDefinition definition : definitions) {
                 if (definition != null) {
                     if (checkedDefinitions.containsKey(definition.getId())) {
                         throw new IllegalArgumentException(logPrefix + " Duplicate Attribute Definition with id '"
@@ -126,7 +126,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         Map<String, DataConnector> checkedConnectors;
         if (connectors != null) {
             checkedConnectors = new HashMap<>(connectors.size());
-            for (DataConnector connector : connectors) {
+            for (final DataConnector connector : connectors) {
                 if (connector != null) {
                     if (checkedConnectors.containsKey(connector.getId())) {
                         throw new IllegalArgumentException(logPrefix + " Duplicate Data Connector Definition with id '"
@@ -194,7 +194,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         final AttributeResolverWorkContext workContext =
                 resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
 
-        for (String attributeId : attributeIds) {
+        for (final String attributeId : attributeIds) {
             resolveAttributeDefinition(attributeId, resolutionContext);
         }
 
@@ -241,6 +241,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @throws ResolutionException if unable to resolve the requested attribute definition
      */
+    // CheckStyle: ReturnCount OFF
     protected void resolveAttributeDefinition(@Nonnull final String attributeId,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(attributeId, "Attribute ID can not be null");
@@ -275,6 +276,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         workContext.recordAttributeDefinitionResolution(definition, resolvedAttribute);
     }
+    // CheckStyle: ReturnCount ON
 
     /**
      * Resolve the {@link DataConnector} which has the specified ID.
@@ -286,6 +288,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * 
      * @throws ResolutionException if unable to resolve the requested connector
      */
+    // CheckStyle: ReturnCount OFF
     protected void resolveDataConnector(@Nonnull final String connectorId,
             @Nonnull final AttributeResolutionContext resolutionContext) throws ResolutionException {
         Constraint.isNotNull(connectorId, "Data connector ID can not be null");
@@ -306,7 +309,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
 
         if (connector instanceof DataConnectorEx) {
-            DataConnectorEx connectorEx = (DataConnectorEx) connector;
+            final DataConnectorEx connectorEx = (DataConnectorEx) connector;
             if (resolveTime < connectorEx.getLastFail() + connectorEx.getNoRetryDelay()) {
                 log.debug("{} Data connector '{}' failed to resolve previously.  Still waiting", logPrefix, 
                         connectorId);
@@ -328,7 +331,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         try {
             log.debug("{} Resolving data connector {}", logPrefix, connectorId);
             resolvedAttributes = connector.resolve(resolutionContext);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             final String failoverDataConnectorId = connector.getFailoverDataConnectorId();
             if (null != failoverDataConnectorId) {
                 log.debug("{} Data connector '{}' failed to resolve, invoking failover data"
@@ -351,6 +354,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
         workContext.recordDataConnectorResolution(connector, resolvedAttributes);
     }
+    // CheckStyle: ReturnCount ON
 
     /**
      * Resolves all the dependencies for a given plugin.
@@ -372,7 +376,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         log.debug("{} Resolving dependencies for '{}'", logPrefix, plugin.getId());
 
         String pluginId;
-        for (ResolverPluginDependency dependency : plugin.getDependencies()) {
+        for (final ResolverPluginDependency dependency : plugin.getDependencies()) {
             pluginId = dependency.getDependencyPluginId();
             if (attributeDefinitions.containsKey(pluginId)) {
                 resolveAttributeDefinition(pluginId, resolutionContext);
@@ -456,13 +460,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
 
-        HashSet<String> dependencyVerifiedPlugins = new HashSet<>();
-        for (DataConnector plugin : dataConnectors.values()) {
+        final HashSet<String> dependencyVerifiedPlugins = new HashSet<>();
+        for (final DataConnector plugin : dataConnectors.values()) {
             log.debug("{} Checking if data connector '{}' is has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
 
-        for (AttributeDefinition plugin : attributeDefinitions.values()) {
+        for (final AttributeDefinition plugin : attributeDefinitions.values()) {
             log.debug("{} Checking if attribute definition '{}' has a circular dependency", logPrefix, plugin.getId());
             checkPlugInDependencies(plugin.getId(), plugin, dependencyVerifiedPlugins);
         }
@@ -482,7 +486,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         final String pluginId = plugin.getId();
 
         ResolverPlugin<?> dependencyPlugin;
-        for (ResolverPluginDependency dependency : plugin.getDependencies()) {
+        for (final ResolverPluginDependency dependency : plugin.getDependencies()) {
             if (checkedPlugins.contains(pluginId)) {
                 continue;
             }
@@ -514,7 +518,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public String canonicalize(@Nonnull SubjectCanonicalizationContext context)
+    @Override @Nullable public String canonicalize(@Nonnull final SubjectCanonicalizationContext context)
             throws ResolutionException {
         if (null == principalConnector) {
             return null;

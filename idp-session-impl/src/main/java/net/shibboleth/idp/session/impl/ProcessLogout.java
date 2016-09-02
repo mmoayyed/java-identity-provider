@@ -92,7 +92,8 @@ public class ProcessLogout extends AbstractProfileAction {
         logoutContextCreationStrategy = new ChildContextLookup<>(LogoutContext.class, true);
         
         sessionResolverCriteriaStrategy = new Function<ProfileRequestContext,CriteriaSet>() {
-            public CriteriaSet apply(ProfileRequestContext input) {
+            @Override
+            public CriteriaSet apply(final ProfileRequestContext input) {
                 return new CriteriaSet(new HttpServletRequestCriterion());
             }            
         };
@@ -184,7 +185,7 @@ public class ProcessLogout extends AbstractProfileAction {
         }
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -246,6 +247,6 @@ public class ProcessLogout extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|ReturnCount ON
     
 }

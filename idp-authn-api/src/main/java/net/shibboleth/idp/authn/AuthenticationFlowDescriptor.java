@@ -304,8 +304,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public AuthenticationResult deserialize(final long version, @Nonnull @NotEmpty final String context,
-            @Nonnull @NotEmpty final String key, @Nonnull @NotEmpty final String value, @Nonnull final Long expiration)
+    @Override @Nonnull public AuthenticationResult deserialize(final long version,
+            @Nonnull @NotEmpty final String context, @Nonnull @NotEmpty final String key, 
+            @Nonnull @NotEmpty final String value, @Nonnull final Long expiration)
             throws IOException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

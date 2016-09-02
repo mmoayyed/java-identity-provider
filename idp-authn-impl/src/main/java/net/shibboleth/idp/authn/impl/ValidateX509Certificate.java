@@ -111,6 +111,7 @@ public class ValidateX509Certificate extends AbstractValidationAction {
     }
 
     /** {@inheritDoc} */
+ // Checkstyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -150,6 +151,7 @@ public class ValidateX509Certificate extends AbstractValidationAction {
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }
+ // Checkstyle: ReturnCount ON
 
     /** {@inheritDoc} */
     @Override

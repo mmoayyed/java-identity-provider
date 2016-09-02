@@ -48,6 +48,7 @@ public class ExtractUserAgentIdentifier extends AbstractExtractionAction {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractUserAgentIdentifier.class);
     
     /** {@inheritDoc} */
+    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -68,4 +69,5 @@ public class ExtractUserAgentIdentifier extends AbstractExtractionAction {
 
         authenticationContext.getSubcontext(UserAgentContext.class, true).setIdentifier(applyTransforms(agent));
     }
+    // CheckStyle: ReturnCount ON
 }

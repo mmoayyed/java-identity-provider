@@ -19,7 +19,6 @@ package net.shibboleth.idp.session.impl;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.base.Function;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.session.LogoutPropagationFlowDescriptor;
@@ -33,6 +32,8 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
 
 /**
  * A profile action that selects a logout propagation flow to invoke.
@@ -75,10 +76,11 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
      * @param function Lookup function.
      */
     public void setLogoutPropagationContextFunction(
-            @Nonnull Function<ProfileRequestContext, LogoutPropagationContext> function) {
+            @Nonnull final Function<ProfileRequestContext, LogoutPropagationContext> function) {
         logoutPropagationContextFunction = Constraint.isNotNull(function, "Function cannot be null");
     }
 
+ // Checkstyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -99,5 +101,6 @@ public class SelectLogoutPropagationFlow extends AbstractProfileAction {
         log.debug("{} Selecting logout propagation flow {}", getLogPrefix(), flow.getId());
         ActionSupport.buildEvent(profileRequestContext, flow.getId());
     }
+ // Checkstyle: ReturnCount ON
     
 }

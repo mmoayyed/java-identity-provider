@@ -115,6 +115,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
     
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
+    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -137,8 +138,8 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
             }
         }
         
-        for (String s : checkAttributes) {
-            Object attr = request.getAttribute(s);
+        for (final String s : checkAttributes) {
+            final Object attr = request.getAttribute(s);
             if (attr != null && !attr.toString().isEmpty()) {
                 log.debug("{} User identity extracted from attribute {}: {}", getLogPrefix(), s, attr);
                 authenticationContext.getSubcontext(UsernameContext.class, true).setUsername(
@@ -147,7 +148,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
             }
         }
 
-        for (String s : checkHeaders) {
+        for (final String s : checkHeaders) {
             username = request.getHeader(s);
             if (username != null && !username.isEmpty()) {
                 log.debug("{} User identity extracted from header {}: {}", getLogPrefix(), s, username);
@@ -160,6 +161,7 @@ public class ExtractRemoteUser extends AbstractExtractionAction {
         log.debug("{} No user identity found in request", getLogPrefix());
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
     }
+    // CheckStyle: ReturnCount ON
 // Checkstyle: CyclomaticComplexity ON
     
 }

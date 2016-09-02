@@ -202,7 +202,8 @@ public abstract class AbstractIdPSession implements IdPSession {
      * @param address the address to associate
      */
     public void doBindToAddress(@Nonnull @NotEmpty final String address) {
-        final String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(address), "Address cannot be null or empty");
+        final String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(address),
+                "Address cannot be null or empty");
         switch (getAddressFamily(address)) {
             case IPV6:
                 ipV6Address = StringSupport.trimOrNull(trimmed);

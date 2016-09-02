@@ -48,6 +48,7 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractX509CertificateFromRequest.class);
     
     /** {@inheritDoc} */
+    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -82,5 +83,5 @@ public class ExtractX509CertificateFromRequest extends AbstractExtractionAction 
             certCtx.getIntermediates().add(certs[i]);
         }
     }
-
+    // CheckStyle: ReturnCount ON
 }

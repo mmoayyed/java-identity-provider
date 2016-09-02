@@ -96,7 +96,7 @@ public class X509AuthServlet extends HttpServlet {
         }
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     protected void service(final HttpServletRequest httpRequest, final HttpServletResponse httpResponse)
@@ -169,6 +169,6 @@ public class X509AuthServlet extends HttpServlet {
             throw new ServletException("Error processing external authentication request", e);
         }
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|ReturnCount ON
     
 }

@@ -151,6 +151,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
     }
     
     /** {@inheritDoc} */
+ // Checkstyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
@@ -190,6 +191,7 @@ public class X500SubjectCanonicalization extends AbstractSubjectCanonicalization
             return;
         }
     }
+ // Checkstyle: ReturnCount ON
     
     /**
      * Find an RDN with the specified OID.

@@ -129,6 +129,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
     }
 
     /** {@inheritDoc} */
+    // CheckStyle: ReturnCount OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -166,6 +167,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             log.debug("{} No lookup strategy provided, no active results will be made available", getLogPrefix());
         }
     }
+    // CheckStyle: ReturnCount ON
     
     /**
      * Default strategy function to extract embedded {@link AuthenticationResult}s from inside
@@ -176,6 +178,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
             implements Function<ProfileRequestContext,Collection<AuthenticationResult>> {
 
         /** {@inheritDoc} */
+        @Override
         @Nullable public Collection<AuthenticationResult> apply(@Nullable final ProfileRequestContext input) {
             
             if (input != null) {

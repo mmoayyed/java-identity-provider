@@ -55,7 +55,8 @@ public class ServiceContactTag extends ServiceTagSupport {
      * 
      * @param type in value
      */
-    public void setContactType(@Nullable String type) {
+    // Checkstyle: ReturnCount OFF
+    public void setContactType(@Nullable final String type) {
         if (null == type || 0 == type.length()) {
             log.warn("no parameter provided to contactType");
             return;
@@ -75,13 +76,14 @@ public class ServiceContactTag extends ServiceTagSupport {
             return;
         }
     }
+    // Checkstyle: ReturnCount ON
 
     /**
      * Set the contact name.
      * 
      * @param name new value
      */
-    public void setName(@Nullable String name) {
+    public void setName(@Nullable final String name) {
         contactName = name;
     }
 
@@ -92,7 +94,7 @@ public class ServiceContactTag extends ServiceTagSupport {
      * @param name the name to return.
      * @return either a hyperlink or a raw string, or null
      */
-    @Nullable private String buildURL(@Nullable String email, @Nullable String name) {
+    @Nullable private String buildURL(@Nullable final String email, @Nullable final String name) {
         // We have emailAdress or null and a non empty fullName.
         if (null != email) {
             // Nonempty email. Construct an href
@@ -181,7 +183,7 @@ public class ServiceContactTag extends ServiceTagSupport {
             } else {
                 pageContext.getOut().print(result);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn("Error generating contact");
             throw new JspException("EndTag", e);
         }

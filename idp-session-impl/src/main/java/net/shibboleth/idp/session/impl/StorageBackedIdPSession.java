@@ -83,7 +83,8 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
     }
     
     /** {@inheritDoc} */
-    @Override @Duration public void setLastActivityInstant(@Duration @Positive final long instant) throws SessionException {
+    @Override @Duration public void setLastActivityInstant(@Duration @Positive final long instant) 
+            throws SessionException {
         
         final long exp = instant + sessionManager.getSessionTimeout() + sessionManager.getSessionSlop();
         log.debug("Updating expiration of master record for session {} to {}", getId(), new DateTime(exp));
@@ -106,6 +107,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
         return sessionManager.isConsistentAddress() ? super.checkAddress(address) : true;
     }
 
+ // Checkstyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override
     public void bindToAddress(@Nonnull @NotEmpty final String address) throws SessionException {
@@ -145,6 +147,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             }
         }
     }
+ // Checkstyle: ReturnCount ON
 
     /** {@inheritDoc} */
     @Override
