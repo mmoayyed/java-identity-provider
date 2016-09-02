@@ -59,7 +59,9 @@
 
     <bean id="shibboleth.ComputedPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy"
-        p:salt="%{idp.persistentId.salt:}" p:algorithm="%{idp.persistentId.algorithm:SHA}" />
+        p:salt="%{idp.persistentId.salt:}"
+        p:encodedSalt="%{idp.persistentId.encodedSalt:}"
+        p:algorithm="%{idp.persistentId.algorithm:SHA}" />
 
     <bean id="shibboleth.StoredPersistentIdGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy"

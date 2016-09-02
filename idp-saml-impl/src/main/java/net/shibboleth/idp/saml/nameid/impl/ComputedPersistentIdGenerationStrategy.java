@@ -21,6 +21,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -68,24 +69,33 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
     /**
      * Set the salt used when computing the ID.
      * 
+     * <p>An empty/null input is ignored.</p>
+     * 
      * @param newValue used when computing the ID
      */
-    public void setSalt(@Nonnull @NotEmpty final byte[] newValue) {
+    public void setSalt(@Nullable final byte[] newValue) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        salt = Constraint.isNotEmpty(newValue, "Salt cannot be null or empty");
+        if (newValue != null && newValue.length > 0) {
+            salt = newValue;
+        }
     }
     
     /**
      * Set the base64-encoded salt used when computing the ID.
      * 
+     * <p>An empty/null input is ignored.</p>
+     * 
      * @param newValue used when computing the ID
+     * 
+     * @since 3.3.0
      */
-    public void setEncodedSalt(@Nonnull @NotEmpty final String newValue) {
+    public void setEncodedSalt(@Nullable final String newValue) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        Constraint.isNotEmpty(newValue, "Salt cannot be null or empty");
-        salt = Base64Support.decode(newValue);
+        if (newValue != null && !newValue.isEmpty()) {
+            salt = Base64Support.decode(newValue);
+        }
     }
 
     /**
