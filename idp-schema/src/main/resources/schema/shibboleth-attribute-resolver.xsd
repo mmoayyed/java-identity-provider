@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:resolver="urn:mace:shibboleth:2.0:resolver"
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:sec="urn:mace:shibboleth:2.0:security" 
     targetNamespace="urn:mace:shibboleth:2.0:resolver" elementFormDefault="qualified"
     version="3.0">
 
-    <import namespace="http://www.w3.org/XML/1998/namespace"
-        schemaLocation="http://www.w3.org/2001/xml.xsd" />
+    <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
+    <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
 
     <annotation>
         <documentation>Shibboleth 2.0 Attribute Resolver configuration schema
@@ -862,8 +862,238 @@
             </extension>
         </complexContent>
     </complexType>
+
+    <complexType name="LDAPDirectory">
+        <annotation>
+            <documentation>
+                A data connector that can pull information from an LDAP, version 3, directory.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseDataConnectorType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                        <element name="FilterTemplate" type="string" minOccurs="0">
+                            <annotation>
+                                <documentation>
+                                    A template used to construct the LDAP filter used to query the directory.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="ReturnAttributes" type="string" minOccurs="0">
+                            <annotation>
+                                <documentation>
+                                    A space separated list of attributes that should be returned from the query.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="LDAPProperty" type="resolver:PropertyType" minOccurs="0" maxOccurs="unbounded">
+                            <annotation>
+                                <documentation>
+                                    LDAP connection properties relevant to the underlying provider being used.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="StartTLSTrustCredential" type="sec:X509Credential" minOccurs="0">
+                            <annotation>
+                                <documentation>
+                                    The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="StartTLSAuthenticationCredential" type="sec:X509Credential" minOccurs="0">
+                            <annotation>
+                                <documentation>
+                                    The X.509 client authentication information to use when connecting to the directory over LDAPS or startTLS.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="ConnectionPool" type="resolver:LdapPoolConfigType" minOccurs="0"/>
+                        <element name="Column" type="resolver:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element name="ResultCache" type="resolver:CacheConfigType"/>
+                        <element name="ResultCacheBean" type="string"/>
+                    </choice>
+                </sequence>
+                <attribute name="ldapURL" type="string">
+                    <annotation>
+                        <documentation>
+                        The URL to the LDAP server.
+                        If the search scope is set to ONELEVEL only the entries 
+                        within this node will be searched, if SUBTREE is specified entries within this node and descendant 
+                        nodes will be searched.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="connectionStrategy" type="resolver:ConnectionStrategyType">
+                    <annotation>
+                        <documentation>
+                            The LDAP connection strategy. Acceptable values are DEFAULT, ACTIVE_PASSIVE, ROUND_ROBIN, and RANDOM.
+                            Default value is ACTIVE_PASSIVE.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="baseDN" type="string">
+                    <annotation>
+                        <documentation>
+                            The base DN from which attribute search filtering occurs
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="principal" type="string">
+                    <annotation>
+                        <documentation>The DN for the principal connecting to the LDAP directory.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="principalCredential" type="string">
+                    <annotation>
+                        <documentation>
+                            The credential for the principal connecting to the LDAP directory.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="authenticationType" type="resolver:AuthenticationType">
+                    <annotation>
+                        <documentation>
+                            The LDAP authentication type. Acceptable values are ANONYMOUS, SIMPLE, STRONG, EXTERNAL, DIGEST_MD5, CRAM_MD5, GSSAPI.
+                            Default value is SIMPLE.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchScope" type="resolver:SearchScopeType">
+                    <annotation>
+                        <documentation>
+                            The LDAP search scope. Acceptable values are OBJECT, ONELEVEL, SUBTREE.
+                            Default value is SUBTREE.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="useStartTLS" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether startTLS should be used when connecting to the LDAP.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="poolInitialSize" type="string">
+                    <annotation>
+                        <documentation>
+                            This attribute is deprecated, use LdapPoolConfig#minPoolSize instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="poolMaxIdleSize" type="string">
+                    <annotation>
+                        <documentation>
+                            This attribute is deprecated, use LdapPoolConfig#maxPoolSize instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="searchTimeLimit" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time to wait for search results. If this limit is
+                            reached a timeout error is raised. Default value is 3 seconds.
+                            Time is expressed in ISO8601 duration format.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="connectTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time to wait for connections to open. If this limit is
+                            reached a timeout error is raised. Default value is 3 seconds.
+                            Time is expressed in ISO8601 duration format.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="responseTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum amount of time to wait for operation responses. If this limit is
+                            reached a timeout error is raised. Default value is 3 seconds.
+                            Time is expressed in ISO8601 duration format.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxResultSize" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum number of results that may be returned from a query.
+                            Default value is 1.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheResults" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating that search results should be cached for the duration of a user's
+                            session.
+
+                            This option is no longer supported, use the ResultCache element instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mergeResults" type="string">
+                    <annotation>
+                        <documentation>
+                            No longer supported.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="noResultIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning no results should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="multipleResultsIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning more than one result should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="lowercaseAttributeNames" type="string">
+                    <annotation>
+                        <documentation>
+                            Whether to lowercase LDAP attribute names used as IDs for shibboleth attributes
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="templateEngine" type="string">
+                    <annotation>
+                        <documentation>Name of the template engine defined within the application.</documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mappingStrategyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the MappingStrategy implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="validatorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Validator implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
     
-    
+
     <complexType name="ScriptedDataConnector">
         <annotation>
             <documentation>
@@ -949,7 +1179,6 @@
             </extension>
         </complexContent>
     </complexType>
-    
         
     <complexType name="StoredId">
         <annotation>
@@ -1041,7 +1270,206 @@
         </complexContent>
     </complexType>
     
+    <!--  Support types for DataConnectors  -->
     
+    <complexType name="ColumnType">
+        <attribute name="columnName" type="string" use="required">
+            <annotation>
+                <documentation>The name of the database column.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="attributeID" type="string">
+            <annotation>
+                <documentation>The name of the attribute that data from this column should be added to.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="type" type="resolver:ColumnDataType">
+            <annotation>
+                <documentation>The Java data type data in the column should be extracted as.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <simpleType name="ColumnDataType">
+        <restriction base="string">
+            <enumeration value="BigDecimal"/>
+            <enumeration value="Boolean"/>
+            <enumeration value="Byte"/>
+            <enumeration value="ByteArray"/>
+            <enumeration value="Date"/>
+            <enumeration value="Double"/>
+            <enumeration value="Float"/>
+            <enumeration value="Integer"/>
+            <enumeration value="Long"/>
+            <enumeration value="Object"/>
+            <enumeration value="Short"/>
+            <enumeration value="String"/>
+            <enumeration value="Time"/>
+            <enumeration value="Timestamp"/>
+            <enumeration value="URL"/>
+        </restriction>
+    </simpleType>
+    
+    <simpleType name="ConnectionStrategyType">
+        <annotation>
+            <documentation>Supported connection strategies.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="DEFAULT"/>
+            <enumeration value="ACTIVE_PASSIVE"/>
+            <enumeration value="ROUND_ROBIN"/>
+            <enumeration value="RANDOM"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="AuthenticationType">
+        <annotation>
+            <documentation>Supported authentication types.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="ANONYMOUS"/>
+            <enumeration value="SIMPLE"/>
+            <enumeration value="STRONG"/>
+            <enumeration value="EXTERNAL"/>
+            <enumeration value="DIGEST_MD5"/>
+            <enumeration value="CRAM_MD5"/>
+            <enumeration value="GSSAPI"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="SearchScopeType">
+        <annotation>
+            <documentation>Supported search scopes.</documentation>
+        </annotation>
+        <restriction base="string">
+            <enumeration value="SUBTREE"/>
+            <enumeration value="ONELEVEL"/>
+            <enumeration value="OBJECT"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="LdapPoolConfigType">
+        <attribute name="minPoolSize" type="string">
+            <annotation>
+                <documentation>
+                    The minimum number of ldap connections that should always be available in the pool.
+                    Note that these connections are provisioned as soon as the pool is initialized.
+                    Default value is 0.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="maxPoolSize" type="string">
+            <annotation>
+                <documentation>
+                    The maximum number of ldap connections that should ever be available in the pool.
+                    Note that when this threshold is reach the pool will begin blocking until a connection
+                    is available.
+                    Default value is 3.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="blockWhenEmpty" type="string">
+            <annotation>
+                <documentation>
+                    Whether the pool should block when maxPoolSize objects are in use.
+                    If false, pool will grow beyond the maxPoolSize value.
+                    Note that a properly configured blocking pool will yield better performance. 
+                    Default value is true.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="blockWaitTime" type="string">
+            <annotation>
+                <documentation>
+                    Amount of time to block while waiting for a connection from the pool.  If no
+                    wait time is given, callers will block indefinitely.
+                    
+                    Values are expressed in ISO8601 duration format.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="validatePeriodically" type="string">
+            <annotation>
+                <documentation>
+                    Whether each ldap connection should be checked on a periodic basis.
+                    Default value is false.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="validateTimerPeriod" type="string">
+            <annotation>
+                <documentation>
+                    Time that the periodic pool validation process should repeat.
+                    Ldap objects are pruned when they have been idle beyond the expiration time.
+                    The pool is not pruned below the minimum pool size.
+                    Default value is 30 minutes.
+                    
+                    Period is expressed in ISO8601 duration format.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="validateDN" type="string">
+            <annotation>
+                <documentation>
+                    Ldap compare DN to use for connection validation.
+                    Used in conjunction with validateFilter to perform a compare.
+                    Default value is empty.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="validateFilter" type="string">
+            <annotation>
+                <documentation>
+                    Ldap compare filter to use for connection validation.
+                    Used in conjuction with validateDN to perform a compare.
+                    Default value is (objectClass=*).
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="expirationTime" type="string">
+            <annotation>
+                <documentation>
+                    Time in that an object in the pool should be considered stale and ready for removal.
+                    Time is expressed in ISO8601 duration format.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="failFastInitialize" type="string">
+            <annotation>
+                <documentation>
+                    A boolean flag indicating whether pool initialization should fail if configuration criteria is not met.
+                    Default value is true.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <complexType name="CacheConfigType">
+        <attribute name="cacheManagerRef" type="string">
+        <annotation>
+                <documentation>
+                    Name of the CacheManager bean that will manage the result cache.  This is not used.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="elementTimeToLive" type="string">
+        <annotation>
+                <documentation>
+                    Length of time a result will be cached.
+
+                    Duration is expressed in ISO8601 duration notation.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="maximumCachedElements" type="string">
+        <annotation>
+                <documentation>
+                   Maximum number of results that will be held in cache.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+ 
     
     <element name="ContainerManagedConnection" type="resolver:ContainerManagedConnectionType">
         <annotation>

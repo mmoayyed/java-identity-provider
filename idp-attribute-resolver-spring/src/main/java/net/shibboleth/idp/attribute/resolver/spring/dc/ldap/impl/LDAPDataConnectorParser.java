@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSea
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -75,12 +76,13 @@ import org.w3c.dom.Element;
  */
 public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
+    /** Schema type name - dc: (Legacy). */
+    @Nonnull public static final QName
+        TYPE_NAME_DC = new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPDirectory");
 
-    /** Local name of attribute. */
-    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME = new QName(DataConnectorNamespaceHandler.NAMESPACE,
-            "Attribute");
+    /** Schema type name - resolver: . */
+    @Nonnull public static final QName
+        TYPE_NAME_RESOLVER = new QName(AttributeResolverNamespaceHandler.NAMESPACE, "LDAPDirectory");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(LDAPDataConnectorParser.class);
@@ -118,7 +120,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         log.debug("{} Parsing v2 configuration {}", getLogPrefix(), config);
 
-        final V2Parser v2Parser = new V2Parser(config);
+        final V2Parser v2Parser = new V2Parser(config, getLogPrefix());
 
         final BeanDefinitionBuilder connectionFactory =
                 BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.class);
@@ -154,8 +156,10 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
         final ManagedMap<String, String> props = new ManagedMap<>();
         final List<Element> propertyElements =
-                ElementSupport.getChildElements(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                        "LDAPProperty"));
+                ElementSupport.getChildElements(config,
+                        new QName(DataConnectorNamespaceHandler.NAMESPACE, "LDAPProperty"));
+        propertyElements.addAll(ElementSupport.getChildElements(config,
+                        new QName(AttributeResolverNamespaceHandler.NAMESPACE, "LDAPProperty")));
         for (final Element e : propertyElements) {
             props.put(AttributeSupport.getAttributeValue(e, new QName("name")),
                     AttributeSupport.getAttributeValue(e, new QName("value")));
@@ -200,11 +204,23 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 builder.addPropertyValue("validator", v2Parser.createValidator(connectionFactory.getBeanDefinition()));
             }
         }
-
-        final Element resultCacheBean =
-                ElementSupport.getFirstChildElement(config, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                        "ResultCacheBean"));
-        if (resultCacheBean != null) {
+        
+        final List<Element> resultCacheBeans = ElementSupport.getChildElements(config,
+                new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCacheBean"));
+        resultCacheBeans.addAll(ElementSupport.getChildElements(config,
+                new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCacheBean")));
+        
+        if (!resultCacheBeans.isEmpty()) {
+            final List<Element> resultCache = ElementSupport.getChildElements(config,
+                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCache"));
+            resultCache.addAll(ElementSupport.getChildElements(config,
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCache")));
+            
+            if (resultCacheBeans.size() > 1 || !resultCache.isEmpty()) {
+                log.warn("{} Only one <ResultCacheBean> or <ResultCache> can be specified."+
+                         "  The first <ResultCacheBean> has been taken", getLogPrefix());
+            }
+            final Element resultCacheBean = resultCacheBeans.get(0);
             builder.addPropertyReference("resultsCache", resultCacheBean.getTextContent().trim());
         } else {
             builder.addPropertyValue("resultsCache", v2Parser.createCache());
@@ -231,18 +247,23 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
         /** Class logger. */
         private final Logger log = LoggerFactory.getLogger(V2Parser.class);
+        
+        /** LogPrefix of parent. */
+        private final String logPrefix;
 
         /**
          * Creates a new V2Parser with the supplied LDAPDirectory element.
          * 
          * @param config LDAPDirectory element
+         * @param prefix the parent's log prefix
          */
-        public V2Parser(@Nonnull final Element config) {
+        public V2Parser(@Nonnull final Element config, @Nonnull final String prefix) {
             Constraint.isNotNull(config, "LDAPDirectory element cannot be null");
             configElement = config;
+            logPrefix = prefix; 
             // warn about deprecated schema
             if (AttributeSupport.hasAttribute(config, new QName("mergeResults"))) {
-                log.warn("mergeResults property no longer supported and should be removed");
+                log.warn("{} mergeResults property no longer supported and should be removed", getLogPrefix());
             }
         }
 
@@ -328,33 +349,59 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final BeanDefinitionBuilder result =
                     BeanDefinitionBuilder.genericBeanDefinition(CredentialConfigFactoryBean.class);
 
-            final List<Element> trustElements =
-                    ElementSupport.getChildElements(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                            "StartTLSTrustCredential"));
-            if (trustElements != null && !trustElements.isEmpty()) {
+            final List<Element> trustElements = ElementSupport.getChildElements(configElement,
+                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSTrustCredential"));
+            trustElements.addAll(ElementSupport.getChildElements(configElement,
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")));
+            if (!trustElements.isEmpty()) {
                 if (trustElements.size() > 1) {
-                    log.warn("Too many StartTLSTrustCredential elements in {}; only the first has been consulted",
-                            parserContext.getReaderContext().getResource().getDescription());
+                    log.warn("{} Too many StartTLSTrustCredential elements in {}; only the first has been consulted",
+                            getLogPrefix(), parserContext.getReaderContext().getResource().getDescription());
                 }
                 result.addPropertyValue("trustCredential",
                         SpringSupport.parseCustomElements(trustElements, parserContext).get(0));
             }
 
             final List<Element> authElements =
-                    ElementSupport.getChildElements(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                            "StartTLSAuthenticationCredential"));
-
-            if (authElements != null && !authElements.isEmpty()) {
+                    ElementSupport.getChildElements(configElement,
+                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential"));
+            authElements.addAll(ElementSupport.getChildElements(configElement,
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential")));
+            if (!authElements.isEmpty()) {
                 if (authElements.size() > 1) {
-                    log.warn("Too many StartTLSAuthenticationCredential elements in {};"
-                            + " only the first has been consulted", parserContext.getReaderContext().getResource()
-                            .getDescription());
+                    log.warn("{} Too many StartTLSAuthenticationCredential elements in {};"
+                            + " only the first has been consulted", getLogPrefix(), 
+                            parserContext.getReaderContext().getResource().getDescription());
                 }
                 result.addPropertyValue("authCredential", SpringSupport
                         .parseCustomElements(authElements, parserContext).get(0));
             }
 
             return result.getBeanDefinition();
+        }
+        
+        /** Get the textual content of the &lt;FilterTemplate&gt;.
+         * 
+         * We have to look in two places and warn appropriately.
+         * @return the filter or null.
+         */
+        @Nullable private String getFilterText() {
+            final List<Element> filterElements = ElementSupport.getChildElements(configElement,
+                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate"));
+            filterElements.addAll(ElementSupport.getChildElements(configElement,
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "FilterTemplate")));
+            
+            final String filter;
+            if (!filterElements.isEmpty()) {
+                if (filterElements.size() > 1) {
+                    log.warn("{} only one <FilterTemlate> can be specifed; only the first has been consulted",
+                            getLogPrefix());
+                }
+                filter = StringSupport.trimOrNull(filterElements.get(0).getTextContent().trim());
+            } else {
+                filter = null;
+            }
+            return filter;
         }
 
         /**
@@ -375,15 +422,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
 
             templateBuilder.addPropertyValue("v2Compatibility", true);
 
-            String filter = null;
-            final Element filterElement =
-                    ElementSupport.getFirstChildElement(configElement, new QName(
-                            DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate"));
-            if (filterElement != null) {
-                filter = StringSupport.trimOrNull(filterElement.getTextContent().trim());
-            }
-
-            templateBuilder.addPropertyValue("templateText", filter);
+            templateBuilder.addPropertyValue("templateText", getFilterText());
 
             return templateBuilder.getBeanDefinition();
         }
@@ -431,29 +470,55 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             handlers.addConstructorArgValue(lowercaseAttributeNames);
             searchExecutor.addPropertyValue("searchEntryHandlers", handlers.getBeanDefinition());
 
-            final Element returnAttrsElement =
-                    ElementSupport.getFirstChildElement(configElement, new QName(
-                            DataConnectorNamespaceHandler.NAMESPACE, "ReturnAttributes"));
-            if (returnAttrsElement != null) {
+            final List<Element> returnAttrsElements = ElementSupport.getChildElements(configElement, 
+                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "ReturnAttributes"));
+            returnAttrsElements.addAll(ElementSupport.getChildElements(configElement, 
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ReturnAttributes")));
+            
+            if (!returnAttrsElements.isEmpty()) {
+                if (returnAttrsElements.size() > 1) {
+                    log.warn("{} Only one <ReturnAttibutes> element can be specified; "+
+                            "only the first has been consulted.", getLogPrefix());
+                }
+                final Element returnAttrsElement = returnAttrsElements.get(0);
+                
                 final BeanDefinitionBuilder returnAttrs =
                         BeanDefinitionBuilder.rootBeanDefinition(V2Parser.class, "buildStringList");
                 returnAttrs.addConstructorArgValue(ElementSupport.getElementContentAsString(returnAttrsElement));
                 searchExecutor.addPropertyValue("returnAttributes", returnAttrs.getBeanDefinition());
             }
 
-            final Element filterElement =
-                    ElementSupport.getFirstChildElement(configElement, new QName(
-                            DataConnectorNamespaceHandler.NAMESPACE, "FilterTemplate"));
-            if (filterElement != null) {
+            final String filterText = getFilterText(); 
+            if (filterText != null) {
                 final BeanDefinitionBuilder searchFilter =
                         BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
-                searchFilter.addConstructorArgValue(filterElement.getTextContent().trim());
+                searchFilter.addConstructorArgValue(filterText);
                 searchExecutor.addPropertyValue("searchFilter", searchFilter.getBeanDefinition());
             }
 
             return searchExecutor.getBeanDefinition();
         }
 
+        /** Get the Pool configuration &lt;ConnectionPool&gt; element contents, warning if there is more than one.
+         * @return the &lt;ConnectionPool&gt; or null if there isn't one.
+         */
+        @Nullable Element getConnectionPoolElement() {
+            final List<Element> poolConfigElements =
+                    ElementSupport.getChildElements(configElement,
+                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "ConnectionPool"));
+            poolConfigElements.addAll(ElementSupport.getChildElements(configElement,
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ConnectionPool")));
+            if (poolConfigElements.isEmpty()) {
+                return null;
+            }
+            if (poolConfigElements.size() > 1) {
+                log.warn("{} Only one <ConnectionPool> should be specied; only the first has been consulted.",
+                        getLogPrefix());
+            }
+
+            return poolConfigElements.get(0);
+        }
+        
         // CheckStyle: CyclomaticComplexity ON
 
         /**
@@ -465,13 +530,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          */
         // CheckStyle: MethodLength OFF
         @Nullable public BeanDefinition createConnectionPool(final BeanDefinition connectionFactory) {
-            final Element poolConfigElement =
-                    ElementSupport.getFirstChildElement(configElement, new QName(
-                            DataConnectorNamespaceHandler.NAMESPACE, "ConnectionPool"));
-            if (poolConfigElement == null) {
+
+            final Element poolConfigElement = getConnectionPoolElement();
+            if (null == poolConfigElement) {
                 return null;
             }
-
             final String blockWaitTime =
                     AttributeSupport.getAttributeValue(poolConfigElement, new QName("blockWaitTime"));
             final String expirationTime =
@@ -532,9 +595,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
          * @return pool config bean definition
          */
         @Nullable protected BeanDefinition createPoolConfig() {
-            final Element poolConfigElement =
-                    ElementSupport.getFirstChildElement(configElement, new QName(
-                            DataConnectorNamespaceHandler.NAMESPACE, "ConnectionPool"));
+            final Element poolConfigElement = getConnectionPoolElement();
             if (poolConfigElement == null) {
                 return null;
             }
@@ -594,8 +655,11 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final BeanDefinitionBuilder mapper =
                     BeanDefinitionBuilder.genericBeanDefinition(StringAttributeValueMappingStrategy.class);
             final List<Element> columns =
-                    ElementSupport.getChildElementsByTagNameNS(configElement, DataConnectorNamespaceHandler.NAMESPACE,
-                            "Column");
+                    ElementSupport.getChildElementsByTagNameNS(configElement, 
+                            DataConnectorNamespaceHandler.NAMESPACE, "Column");
+            columns.addAll(ElementSupport.getChildElementsByTagNameNS(configElement,
+                            AttributeResolverNamespaceHandler.NAMESPACE, "Column"));
+
             if (!columns.isEmpty()) {
                 final ManagedMap renamingMap = new ManagedMap();
                 for (final Element column : columns) {
@@ -606,8 +670,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                     }
 
                     if (AttributeSupport.hasAttribute(column, new QName("type"))) {
-                        LoggerFactory.getLogger(LDAPDataConnectorParser.class).warn(
-                                "dc:Column type attribute not supported for LDAP results");
+                        log.warn("{} Column type attribute not supported for LDAP results", getLogPrefix());
                     }
                 }
                 mapper.addPropertyValue("resultRenamingMap", renamingMap);
@@ -652,6 +715,13 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         @Nullable public BeanDefinition createCache() {
             final CacheConfigParser parser = new CacheConfigParser(configElement);
             return parser.createCache();
+        }
+        
+        /** The parent's log prefix.
+         * @return the log prefix.  Set up in the constructor.
+         */
+        @Nonnull String getLogPrefix() {
+            return logPrefix;
         }
 
         /**

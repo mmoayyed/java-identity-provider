@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +26,7 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
@@ -67,16 +69,23 @@ public class CacheConfigParser {
 
         final String defaultCache = AttributeSupport.getAttributeValue(configElement, new QName("cacheResults"));
         if (defaultCache != null) {
-            log.warn("The cacheResults attribute is no longer supported, please create a dc:ResultCache element");
+            log.warn("The cacheResults attribute is no longer supported, please create a ResultCache element");
             return null;
         }
         
-        final Element cacheElement =
-                ElementSupport.getFirstChildElement(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
-                        "ResultCache"));
-        if (cacheElement == null) {
+        final List<Element> cacheElements = ElementSupport.getChildElements(configElement,
+                new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCache"));
+        cacheElements.addAll(ElementSupport.getChildElements(configElement,
+                new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCache")));
+        if (cacheElements.isEmpty()) {
             return null;
         }
+        
+        if (cacheElements.size() > 1) {
+            log.warn("Only one <ResultCache> element can be specified, the first one has been taken");
+        }
+        
+        final Element cacheElement = cacheElements.get(0);
         
         final BeanDefinitionBuilder cache =
                 BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCache");
