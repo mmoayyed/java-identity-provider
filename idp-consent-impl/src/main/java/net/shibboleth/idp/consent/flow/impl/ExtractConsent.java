@@ -56,6 +56,7 @@ public class ExtractConsent extends AbstractConsentAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ExtractConsent.class);
 
+//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final ProfileInterceptorContext interceptorContext) {
@@ -91,5 +92,5 @@ public class ExtractConsent extends AbstractConsentAction {
 
         log.debug("{} Consent context '{}'", getLogPrefix(), consentContext);
     }
-
+  //CheckStyle: ReturnCount ON
 }

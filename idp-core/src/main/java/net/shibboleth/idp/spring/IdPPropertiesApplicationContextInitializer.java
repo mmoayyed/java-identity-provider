@@ -78,6 +78,7 @@ public class IdPPropertiesApplicationContextInitializer
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(IdPPropertiesApplicationContextInitializer.class);
 
+//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override public void initialize(@Nonnull final ConfigurableApplicationContext applicationContext) {
         log.debug("Initializing application context '{}'", applicationContext);
@@ -137,6 +138,7 @@ public class IdPPropertiesApplicationContextInitializer
             log.warn("Unable to find '{}' at well known locations '{}'", getSearchTarget(), getSearchLocations());
         }
     }
+//CheckStyle: ReturnCount ON
 
     /**
      * Get the target resource to be searched for. Defaults to {@link #IDP_PROPERTIES}.

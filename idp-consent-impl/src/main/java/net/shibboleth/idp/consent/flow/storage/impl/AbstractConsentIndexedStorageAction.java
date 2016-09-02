@@ -245,6 +245,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
         }
     }
 
+//CheckStyle: ReturnCount OFF
     /**
      * Storage records will be pruned based on the record maximums set on the flow descriptor,
      * and the storage service value size. Below a defined threshold, the basic maximum is applied, while at
@@ -299,7 +300,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
 
             log.debug("{} Deleting storage record with context '{}' and key '{}'", getLogPrefix(), getStorageContext(),
                     keyToDelete);
-            boolean success = getStorageService().delete(getStorageContext(), keyToDelete);
+            final boolean success = getStorageService().delete(getStorageContext(), keyToDelete);
 
             if (success) {
                 numberOfKeys--;
@@ -309,6 +310,7 @@ public class AbstractConsentIndexedStorageAction extends AbstractConsentStorageA
             removeKeyFromStorageIndex(keyToDelete);
         }
     }
+  //CheckStyle: ReturnCount ON
 
     /**
      * Store a profile interceptor result.
