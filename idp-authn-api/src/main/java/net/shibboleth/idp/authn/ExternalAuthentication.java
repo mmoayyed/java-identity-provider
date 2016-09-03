@@ -25,9 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import com.google.common.net.UrlEscapers;
+
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.URISupport;
 
 /** Public interface supporting external authentication outside the webflow engine. */
 public class ExternalAuthentication {
@@ -104,7 +105,8 @@ public class ExternalAuthentication {
         
         // Add a parameter separator for the conversation ID.
         url.append(baseLocation.indexOf('?') == -1 ? '?' : '&');
-        url.append(CONVERSATION_KEY).append('=').append(URISupport.doURLEncode(conversationValue));
+        url.append(CONVERSATION_KEY).append('=').append(
+                UrlEscapers.urlFormParameterEscaper().escape(conversationValue));
         
         return url.toString();
     }
