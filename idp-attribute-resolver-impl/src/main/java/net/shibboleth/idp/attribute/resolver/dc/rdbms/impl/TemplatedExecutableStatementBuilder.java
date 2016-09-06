@@ -153,7 +153,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
      * 
      * @param compat The mode to set.
      */
-    public void setV2Compatibility(boolean compat) {
+    public void setV2Compatibility(final boolean compat) {
         v2Compatibility = compat;
     }
 
@@ -205,7 +205,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
 
         try {
             return merge(context);
-        } catch (VelocityException ex) {
+        } catch (final VelocityException ex) {
             log.error("Error running template", ex);
             throw new ResolutionException("Error running template", ex);
         }
@@ -222,7 +222,7 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
 
         if (null == templateText) {
             throw new ComponentInitializationException(
-                    "TemplatedExecutableStatementBuilder: no template text must be non null");
+                    "TemplatedExecutableStatementBuilder: Template text must be non null");
         }
 
         template = Template.fromTemplate(engine, templateText);
@@ -237,13 +237,13 @@ public class TemplatedExecutableStatementBuilder extends AbstractExecutableState
                 return null;
             } else if (value instanceof Object[]) {
                 final List<Object> encodedValues = new ArrayList<>();
-                for (Object o : (Object[]) value) {
+                for (final Object o : (Object[]) value) {
                     encodedValues.add(encode(o));
                 }
                 return encodedValues.toArray();
             } else if (value instanceof Collection<?>) {
                 final List<Object> encodedValues = new ArrayList<>();
-                for (Object o : (Collection<?>) value) {
+                for (final Object o : (Collection<?>) value) {
                     encodedValues.add(encode(o));
                 }
                 return encodedValues;
