@@ -24,15 +24,10 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.profile.IdPEventIds;
-
-import org.opensaml.profile.action.ActionSupport;
-import org.opensaml.profile.action.EventIds;
-import org.opensaml.profile.context.ProfileRequestContext;
-
 import net.shibboleth.idp.saml.attribute.encoding.SAML2AttributeEncoder;
 import net.shibboleth.idp.saml.profile.impl.BaseAddAttributeStatementToAssertion;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -41,6 +36,9 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.profile.action.ActionSupport;
+import org.opensaml.profile.action.EventIds;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -95,9 +93,9 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
         assertionLookupStrategy = Constraint.isNotNull(strategy, "Assertion lookup strategy cannot be null");
     }
 
+//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
-    @Override
-   protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
             final AttributeStatement statement = buildAttributeStatement(profileRequestContext,
                     getAttributeContext().getIdPAttributes().values());
@@ -120,6 +118,7 @@ public class AddAttributeStatementToAssertion extends BaseAddAttributeStatementT
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.UNABLE_ENCODE_ATTRIBUTE);
         }
     }
+//CheckStyle: ReturnCount ON
 
     /**
      * Builds an attribute statement from a collection of attributes.

@@ -98,7 +98,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
     }
 
     /** {@inheritDoc} */
-    @Override public PKIXValidationInformation resolveSingle(CriteriaSet criteriaSet) throws ResolverException {
+    @Override public PKIXValidationInformation resolveSingle(final CriteriaSet criteriaSet) throws ResolverException {
         final Iterator<PKIXValidationInformation> pkixInfoIter = resolve(criteriaSet).iterator();
         if (pkixInfoIter.hasNext()) {
             return pkixInfoIter.next();
@@ -108,7 +108,8 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
     }
 
     /** {@inheritDoc} */
-    @Override public Iterable<PKIXValidationInformation> resolve(CriteriaSet criteriaSet) throws ResolverException {
+    @Override public Iterable<PKIXValidationInformation> resolve(final CriteriaSet criteriaSet)
+                            throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         checkCriteriaRequirements(criteriaSet);
@@ -128,7 +129,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Set<String> resolveTrustedNames(CriteriaSet criteriaSet) throws ResolverException {
+    @Override @Nonnull public Set<String> resolveTrustedNames(final CriteriaSet criteriaSet) throws ResolverException {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         checkCriteriaRequirements(criteriaSet);
@@ -152,10 +153,10 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
             usage = UsageType.UNSPECIFIED;
         }
 
-        Set<String> trustedNames = new HashSet<>();
+        final Set<String> trustedNames = new HashSet<>();
         trustedNames.addAll(retrieveTrustedNamesFromMetadata(criteriaSet, entityID, role, protocol, usage));
         trustedNames.add(entityID);
-        TrustedNamesCriterion trustedNamesCriterion = criteriaSet.get(TrustedNamesCriterion.class);
+        final TrustedNamesCriterion trustedNamesCriterion = criteriaSet.get(TrustedNamesCriterion.class);
         if (trustedNamesCriterion != null) {
             trustedNames.addAll(trustedNamesCriterion.getTrustedNames());
         }
@@ -172,7 +173,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      * 
      * @param criteriaSet the criteria set to evaluate
      */
-    protected void checkCriteriaRequirements(CriteriaSet criteriaSet) {
+    protected void checkCriteriaRequirements(final CriteriaSet criteriaSet) {
         final EntityIdCriterion entityCriteria =
                 Constraint.isNotNull(criteriaSet.get(EntityIdCriterion.class), "EntityIdCriterion must be supplied");
         Constraint.isNotNull(StringSupport.trimOrNull(entityCriteria.getEntityId()),
@@ -197,8 +198,8 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      * @throws ResolverException thrown if the key, certificate, or CRL information is represented in an unsupported
      *             format
      */
-    protected Collection<PKIXValidationInformation> retrievePKIXInfoFromMetadata(CriteriaSet criteriaSet,
-            String entityID, QName role, String protocol) throws ResolverException {
+    protected Collection<PKIXValidationInformation> retrievePKIXInfoFromMetadata(final CriteriaSet criteriaSet,
+            final String entityID, final QName role, final String protocol) throws ResolverException {
 
         log.debug("Attempting to retrieve PKIX validation info from resolver for entity: {}", entityID);
         // Use LinkedHashSet so we don't worry about duplicates, but keep predictable ordering (insertion order).
@@ -225,7 +226,8 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      *             format
      * 
      */
-    protected void resolvePKIXInfo(Collection<PKIXValidationInformation> accumulator, RoleDescriptor roleDescriptor)
+    protected void resolvePKIXInfo(final Collection<PKIXValidationInformation> accumulator, 
+            final RoleDescriptor roleDescriptor)
             throws ResolverException {
 
         if (roleDescriptor.getParent() instanceof EntityDescriptor) {
@@ -248,6 +250,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
 
     }
 
+//CheckStyle: ReturnCount OFF
     /**
      * Retrieves validation information from the resolver extension element.
      * 
@@ -256,7 +259,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      * @throws ResolverException thrown if the key, certificate, or CRL information is represented in an unsupported
      *             format
      */
-    protected void resolvePKIXInfo(Collection<PKIXValidationInformation> accumulator, Extensions extensions)
+    protected void resolvePKIXInfo(final Collection<PKIXValidationInformation> accumulator, final Extensions extensions)
             throws ResolverException {
         if (extensions == null) {
             return;
@@ -271,7 +274,9 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
             extractPKIXInfo(accumulator, (KeyAuthority) xmlObj);
         }
     }
+//CheckStyle: ReturnCount ON
 
+//CheckStyle: ReturnCount OFF
     /**
      * Retrieves validation information from the Shibboleth KeyAuthority resolver extension element.
      * 
@@ -331,7 +336,9 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
         }
 
     }
+//CheckStyle: ReturnCount ON
 
+//CheckStyle: ReturnCount OFF
     /**
      * Retrieves trusted name information from the provided resolver.
      * 
@@ -346,13 +353,13 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      * @throws SecurityException thrown if there is an error extracting trusted name information
      * @throws ResolverException if we have an error getting the role descriptors
      */
-    protected Set<String> retrieveTrustedNamesFromMetadata(CriteriaSet criteriaSet, String entityID, QName role,
-            String protocol, UsageType usage) throws ResolverException {
+    protected Set<String> retrieveTrustedNamesFromMetadata(final CriteriaSet criteriaSet, final String entityID,
+            final QName role, final String protocol, final UsageType usage) throws ResolverException {
 
         log.debug("Attempting to retrieve trusted names for PKIX validation from resolver for entity: {}", entityID);
-        Set<String> trustedNames = new HashSet<>();
+        final Set<String> trustedNames = new HashSet<>();
 
-        Iterable<RoleDescriptor> roleDescriptors = getRoleDescriptors(criteriaSet, entityID, role, protocol);
+        final Iterable<RoleDescriptor> roleDescriptors = getRoleDescriptors(criteriaSet, entityID, role, protocol);
         if (roleDescriptors == null) {
             return trustedNames;
         }
@@ -375,6 +382,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
 
         return trustedNames;
     }
+//CheckStyle: ReturnCount ON
 
     /**
      * Extract trusted names from a KeyInfo element.
@@ -382,7 +390,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      * @param keyInfo the KeyInfo instance from which to extract trusted names
      * @param accumulator set of trusted names to return
      */
-    protected void getTrustedNames(Set<String> accumulator, KeyInfo keyInfo) {
+    protected void getTrustedNames(final Set<String> accumulator, final KeyInfo keyInfo) {
         // TODO return anything if there are things other than names in the KeyInfo ?
         accumulator.addAll(KeyInfoSupport.getKeyNames(keyInfo));
     }
@@ -394,7 +402,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      * @param criteriaUsage the value from specified criteria
      * @return true if the two usage specifiers match for purposes of resolving validation information, false otherwise
      */
-    protected boolean matchUsage(UsageType metadataUsage, UsageType criteriaUsage) {
+    protected boolean matchUsage(final UsageType metadataUsage, final UsageType criteriaUsage) {
         if (metadataUsage == UsageType.UNSPECIFIED || criteriaUsage == UsageType.UNSPECIFIED) {
             return true;
         }
@@ -411,8 +419,8 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      * @return a list of role descriptors matching the given parameters, or null
      * @throws ResolverException thrown if there is an error retrieving role descriptors from the resolver provider
      */
-    protected Iterable<RoleDescriptor> getRoleDescriptors(CriteriaSet criteriaSet, String entityID, QName role,
-            String protocol) throws ResolverException {
+    protected Iterable<RoleDescriptor> getRoleDescriptors(final CriteriaSet criteriaSet,
+            final String entityID, final QName role, final String protocol) throws ResolverException {
         try {
             if (log.isDebugEnabled()) {
                 log.debug("Retrieving role descriptor metadata for entity '{}' in role '{}' for protocol '{}'",
@@ -421,7 +429,7 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
 
             return getRoleDescriptorResolver().resolve(criteriaSet);
 
-        } catch (ResolverException e) {
+        } catch (final ResolverException e) {
             log.error("Unable to resolve information from metadata", e);
             throw new ResolverException("Unable to resolve unformation from metadata", e);
         }

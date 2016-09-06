@@ -98,7 +98,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
      * 
      * @param mapper what to set.
      */
-    public void setRequestedAttributesMapper(@Nullable RequestedAttributesMapper mapper) {
+    public void setRequestedAttributesMapper(@Nullable final RequestedAttributesMapper mapper) {
         requestedAttributesMapper = mapper;
     }
 
@@ -116,7 +116,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
      * 
      * @param mapper what to set.
      */
-    public void setAttributesMapper(@Nullable SAML2AttributesMapper mapper) {
+    public void setAttributesMapper(@Nullable final SAML2AttributesMapper mapper) {
         attributesMapper = mapper;
     }
 
@@ -164,7 +164,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
             if (null != am) {
                 am.initialize();
             }
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             throw new FilterException(e);
         }
         setRequestedAttributesMapper(ram);
@@ -172,7 +172,7 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
     }
 
     /** {@inheritDoc} */
-    @Override public void process(XMLObject metadataNode) throws FilterException {
+    @Override public void process(final XMLObject metadataNode) throws FilterException {
         refreshMappers();
         if (metadataNode instanceof AttributeConsumingService) {
 
@@ -188,7 +188,8 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
      * 
      * @param acs the {@link AttributeConsumingService} to look at
      */
-    private void handleAttributeConsumingService(AttributeConsumingService acs) {
+//CheckStyle: ReturnCount OFF
+    private void handleAttributeConsumingService(final AttributeConsumingService acs) {
         final List<RequestedAttribute> requestedAttributes = acs.getRequestAttributes();
         final RequestedAttributesMapper mapper = getRequestedAttributesMapper();
         if (null == requestedAttributes || requestedAttributes.isEmpty() || null == mapper) {
@@ -200,13 +201,15 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
         }
         acs.getObjectMetadata().put(new AttributesMapContainer<>(maps));
     }
+//CheckStyle: ReturnCount ON
 
     /**
      * Look inside the {@link EntityDescriptor} for entities Attributes and map them.
      * 
      * @param entity the entity
      */
-    private void handleEntityDescriptor(EntityDescriptor entity) {
+//CheckStyle: ReturnCount OFF
+    private void handleEntityDescriptor(final EntityDescriptor entity) {
         final SAML2AttributesMapper mapper = getAttributesMapper();
         final Extensions extensions = entity.getExtensions();
         if (null == extensions || null == mapper) {
@@ -218,9 +221,9 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
             return;
         }
         final List<Attribute> entityAttributes = new ArrayList<>();
-        for (XMLObject xmlObj : entityAttributesList) {
+        for (final XMLObject xmlObj : entityAttributesList) {
             if (xmlObj instanceof EntityAttributes) {
-                EntityAttributes ea = (EntityAttributes) xmlObj;
+                final EntityAttributes ea = (EntityAttributes) xmlObj;
                 entityAttributes.addAll(ea.getAttributes());
             }
         }
@@ -230,4 +233,5 @@ public class AttributeMappingNodeProcessor implements MetadataNodeProcessor {
         }
         entity.getObjectMetadata().put(new AttributesMapContainer<>(maps));
     }
+  //CheckStyle: ReturnCount ON
 }

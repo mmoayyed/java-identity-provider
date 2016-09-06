@@ -113,7 +113,8 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         logoutContextCreationStrategy = new ChildContextLookup<>(LogoutContext.class, true);
         
         sessionResolverCriteriaStrategy = new Function<ProfileRequestContext,CriteriaSet>() {
-            public CriteriaSet apply(ProfileRequestContext input) {
+            @Override
+            public CriteriaSet apply(final ProfileRequestContext input) {
                 if (logoutRequest != null && logoutRequest.getIssuer() != null && logoutRequest.getNameID() != null) {
                     return new CriteriaSet(new SPSessionCriterion(logoutRequest.getIssuer().getValue(),
                             logoutRequest.getNameID().getValue()));
@@ -248,10 +249,9 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         return true;
     }
     
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|ReturnCount OFF
     /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         try {
             final Iterable<IdPSession> sessions =
                     sessionResolver.resolve(sessionResolverCriteriaStrategy.apply(profileRequestContext));
@@ -321,7 +321,7 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             ActionSupport.buildEvent(profileRequestContext, SAMLEventIds.SESSION_NOT_FOUND);
         }
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|ReturnCount ON
 
     /**
      * Check if the session contains a {@link SAML2SPSession} with the appropriate service ID and SessionIndex.

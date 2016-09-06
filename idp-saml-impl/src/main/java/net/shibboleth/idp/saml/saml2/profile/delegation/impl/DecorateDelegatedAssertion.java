@@ -238,6 +238,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     }
     
     /** {@inheritDoc} */
+    @Override
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (keyInfoGeneratorManager == null) {
@@ -250,6 +251,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
@@ -282,7 +284,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * @param profileRequestContext the current profile request context
      * @return true iff {@link #doExecute(ProfileRequestContext)} should proceed
      */
-    protected boolean doPreExecuteDelegationInfo(@Nonnull ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecuteDelegationInfo(@Nonnull final ProfileRequestContext profileRequestContext) {
         delegationContext = delegationContextLookupStrategy.apply(profileRequestContext);
         if (delegationContext == null || !delegationContext.isIssuingDelegatedAssertion()) {
             log.debug("Issuance of delegated was not indicated, skipping assertion decoration");
@@ -312,7 +314,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * @param profileRequestContext the current profile request context
      * @return true iff {@link #doExecute(ProfileRequestContext)} should proceed
      */
-    protected boolean doPreExecuteRelyingParty(@Nonnull ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecuteRelyingParty(@Nonnull final ProfileRequestContext profileRequestContext) {
         relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyContext == null) {
             log.warn("No RelyingPartyContext was available");
@@ -334,13 +336,14 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
+    @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         try {
             log.debug("Decorating assertion for use as delegated token");
             decorateDelegatedAssertion(profileRequestContext);
-        } catch (EventException e) {
+        } catch (final EventException e) {
             if (Objects.equals(EventIds.PROCEED_EVENT_ID, e.getEventID())) {
                 log.debug("Decoration of Assertion for delegation terminated with explicit proceed signal");
             } else {
@@ -356,7 +359,8 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * @param profileRequestContext  the current request context
      * 
      */
-    private void resolveLibertySSOSEndpointURL(ProfileRequestContext profileRequestContext) {
+//CheckStyle: ReturnCount OFF
+    private void resolveLibertySSOSEndpointURL(final ProfileRequestContext profileRequestContext) {
         if (libertySSOSEndpointURL != null) {
             log.debug("Using explicitly configured Liberty SSOS endpoint URL: {}", libertySSOSEndpointURL);
             return;
@@ -373,6 +377,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
         log.debug("No effective Liberty SSOS endpoint URL could be determined");
     }
+//CheckStyle: ReturnCount ON
     
     /**
      * Decorate the Assertion to allow use as a delegated security token by the SAML requester.
@@ -380,7 +385,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      * @param requestContext the current request context
      */
     private void decorateDelegatedAssertion(@Nonnull final ProfileRequestContext requestContext) {
-        for (Assertion assertion : assertions) {
+        for (final Assertion assertion : assertions) {
             addSAMLPeerSubjectConfirmation(requestContext, assertion);
             addIdPAudienceRestriction(requestContext, assertion);
             addLibertySSOSEPRAttribute(requestContext, assertion);
@@ -395,12 +400,12 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
      */
     private void addLibertySSOSEPRAttribute(@Nonnull final ProfileRequestContext requestContext, 
             @Nonnull final Assertion assertion) {
-        Attribute attribute = (Attribute) XMLObjectSupport.buildXMLObject(Attribute.DEFAULT_ELEMENT_NAME);
+        final Attribute attribute = (Attribute) XMLObjectSupport.buildXMLObject(Attribute.DEFAULT_ELEMENT_NAME);
         attribute.setName(LibertyConstants.SERVICE_TYPE_SSOS);
         attribute.setNameFormat(Attribute.URI_REFERENCE);
         attribute.getAttributeValues().add(buildLibertSSOSEPRAttributeValue(requestContext, assertion));
         
-        List<AttributeStatement> attributeStatements = assertion.getAttributeStatements();
+        final List<AttributeStatement> attributeStatements = assertion.getAttributeStatements();
         AttributeStatement attributeStatement = null;
         if (attributeStatements.isEmpty()) {
             attributeStatement = 
@@ -423,50 +428,52 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     @Nonnull private XMLObject buildLibertSSOSEPRAttributeValue(@Nonnull final ProfileRequestContext requestContext, 
             @Nonnull final Assertion assertion) {
         
-        Address address = (Address) XMLObjectSupport.buildXMLObject(Address.ELEMENT_NAME);
+        final Address address = (Address) XMLObjectSupport.buildXMLObject(Address.ELEMENT_NAME);
         address.setValue(libertySSOSEndpointURL);
         
-        MetadataAbstract libertyAbstract = (MetadataAbstract) XMLObjectSupport.buildXMLObject(
+        final MetadataAbstract libertyAbstract = (MetadataAbstract) XMLObjectSupport.buildXMLObject(
                 LibertyConstants.DISCO_ABSTRACT_ELEMENT_NAME);
         libertyAbstract.setValue(LibertyConstants.SSOS_EPR_METADATA_ABSTRACT);
         
-        ServiceType serviceType = (ServiceType) XMLObjectSupport.buildXMLObject(
+        final ServiceType serviceType = (ServiceType) XMLObjectSupport.buildXMLObject(
                 LibertyConstants.DISCO_SERVICE_TYPE_ELEMENT_NAME);
         serviceType.setValue(LibertyConstants.SERVICE_TYPE_SSOS);
         
-        ProviderID providerID = (ProviderID) XMLObjectSupport.buildXMLObject(
+        final ProviderID providerID = (ProviderID) XMLObjectSupport.buildXMLObject(
                 LibertyConstants.DISCO_PROVIDERID_ELEMENT_NAME);
         providerID.setValue(responderId);
         
-        Framework framework = (Framework) XMLObjectSupport.buildXMLObject(Framework.DEFAULT_ELEMENT_NAME);
+        final Framework framework = (Framework) XMLObjectSupport.buildXMLObject(Framework.DEFAULT_ELEMENT_NAME);
         framework.setVersion("2.0");
         
-        SecurityMechID securityMechID  = (SecurityMechID) XMLObjectSupport.buildXMLObject(
+        final SecurityMechID securityMechID  = (SecurityMechID) XMLObjectSupport.buildXMLObject(
                 LibertyConstants.DISCO_SECURITY_MECH_ID_ELEMENT_NAME);
         securityMechID.setValue(LibertyConstants.SECURITY_MECH_ID_CLIENT_TLS_PEER_SAML_V2);
         
-        Token token = (Token) XMLObjectSupport.buildXMLObject(LibertyConstants.SECURITY_TOKEN_ELEMENT_NAME);
+        final Token token = (Token) XMLObjectSupport.buildXMLObject(LibertyConstants.SECURITY_TOKEN_ELEMENT_NAME);
         token.setUsage(LibertyConstants.TOKEN_USAGE_SECURITY_TOKEN);
         token.setRef("#" + assertion.getID());
         
-        SecurityContext securityContext = (SecurityContext) XMLObjectSupport.buildXMLObject(
+        final SecurityContext securityContext = (SecurityContext) XMLObjectSupport.buildXMLObject(
                 LibertyConstants.DISCO_SECURITY_CONTEXT_ELEMENT_NAME);
         securityContext.getSecurityMechIDs().add(securityMechID);
         securityContext.getTokens().add(token);
         
-        Metadata metadata = (Metadata) XMLObjectSupport.buildXMLObject(Metadata.ELEMENT_NAME);
+        final Metadata metadata = (Metadata) XMLObjectSupport.buildXMLObject(Metadata.ELEMENT_NAME);
         metadata.getUnknownXMLObjects().add(libertyAbstract);
         metadata.getUnknownXMLObjects().add(serviceType);
         metadata.getUnknownXMLObjects().add(providerID);
         metadata.getUnknownXMLObjects().add(framework);
         metadata.getUnknownXMLObjects().add(securityContext);
         
-        EndpointReference epr = (EndpointReference) XMLObjectSupport.buildXMLObject(EndpointReference.ELEMENT_NAME);
+        final EndpointReference epr =
+                (EndpointReference) XMLObjectSupport.buildXMLObject(EndpointReference.ELEMENT_NAME);
         epr.setAddress(address);
         epr.setMetadata(metadata);
         
-        XMLObjectBuilder<XSAny> xsAnyBuilder = (XMLObjectBuilder<XSAny>) XMLObjectSupport.getBuilder(XSAny.TYPE_NAME);
-        XSAny attributeValue = xsAnyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
+        final XMLObjectBuilder<XSAny> xsAnyBuilder =
+                (XMLObjectBuilder<XSAny>) XMLObjectSupport.getBuilder(XSAny.TYPE_NAME);
+        final XSAny attributeValue = xsAnyBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME);
         attributeValue.getUnknownXMLObjects().add(epr);
         
         return attributeValue;
@@ -483,7 +490,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         
         SAML2ActionSupport.addConditionsToAssertion(this, assertion);
         
-        List<AudienceRestriction> audienceRestrictions = assertion.getConditions().getAudienceRestrictions();
+        final List<AudienceRestriction> audienceRestrictions = assertion.getConditions().getAudienceRestrictions();
         AudienceRestriction audienceRestriction = null;
         if (audienceRestrictions.isEmpty()) {
             audienceRestriction = (AudienceRestriction) XMLObjectSupport.buildXMLObject(
@@ -494,7 +501,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         }
         
         // Sanity check that IdP audience has not already been added by other code.
-        for (Audience audience : audienceRestriction.getAudiences()) {
+        for (final Audience audience : audienceRestriction.getAudiences()) {
             if (Objects.equals(responderId, StringSupport.trimOrNull(audience.getAudienceURI()))) {
                 log.debug("Local entity ID '{}' already present in assertion AudienceRestriction set, skipping",
                         responderId);
@@ -502,7 +509,7 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
             }
         }
         
-        Audience idpAudience = (Audience) XMLObjectSupport.buildXMLObject(Audience.DEFAULT_ELEMENT_NAME);
+        final Audience idpAudience = (Audience) XMLObjectSupport.buildXMLObject(Audience.DEFAULT_ELEMENT_NAME);
         idpAudience.setAudienceURI(responderId);
         audienceRestriction.getAudiences().add(idpAudience);
     }
@@ -516,30 +523,30 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
     private void addSAMLPeerSubjectConfirmation(@Nonnull final ProfileRequestContext requestContext,
             @Nonnull final Assertion assertion) {
         
-        KeyInfoConfirmationDataType scData = 
+        final KeyInfoConfirmationDataType scData = 
                 (KeyInfoConfirmationDataType) XMLObjectSupport.getBuilder(KeyInfoConfirmationDataType.TYPE_NAME)
                 .buildObject(SubjectConfirmationData.DEFAULT_ELEMENT_NAME, KeyInfoConfirmationDataType.TYPE_NAME);
         
         //TODO could support some strategy for using different named managers, rather than always the default manager.
-        KeyInfoGeneratorManager kigm = keyInfoGeneratorManager.getDefaultManager();
+        final KeyInfoGeneratorManager kigm = keyInfoGeneratorManager.getDefaultManager();
         
-        for (Credential cred : delegationContext.getSubjectConfirmationCredentials()) {
-            KeyInfoGeneratorFactory kigf = kigm.getFactory(cred);
-            KeyInfoGenerator kig = kigf.newInstance();
+        for (final Credential cred : delegationContext.getSubjectConfirmationCredentials()) {
+            final KeyInfoGeneratorFactory kigf = kigm.getFactory(cred);
+            final KeyInfoGenerator kig = kigf.newInstance();
             try {
-                KeyInfo keyInfo = kig.generate(cred);
+                final KeyInfo keyInfo = kig.generate(cred);
                 scData.getKeyInfos().add(keyInfo);
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 log.warn("Error generating KeyInfo from peer credential: {}", e.getMessage());
                 throw new EventException(EventIds.MESSAGE_PROC_ERROR, "Error generating KeyInfo from credential", e);
             }
         }
         
-        NameID nameID = (NameID) XMLObjectSupport.buildXMLObject(NameID.DEFAULT_ELEMENT_NAME);
+        final NameID nameID = (NameID) XMLObjectSupport.buildXMLObject(NameID.DEFAULT_ELEMENT_NAME);
         nameID.setValue(relyingPartyId);
         nameID.setFormat(NameID.ENTITY);
         
-        SubjectConfirmation sc = (SubjectConfirmation) XMLObjectSupport.buildXMLObject(
+        final SubjectConfirmation sc = (SubjectConfirmation) XMLObjectSupport.buildXMLObject(
                 SubjectConfirmation.DEFAULT_ELEMENT_NAME);
         sc.setMethod(SubjectConfirmation.METHOD_HOLDER_OF_KEY);
         sc.setNameID(nameID);
@@ -575,12 +582,12 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
                     log.debug("Found Assertion to decorate as outbound message");
                     return Collections.singletonList((Assertion) outboundMessage);
                 } else if (outboundMessage instanceof Response) {
-                    Response response = (Response) outboundMessage;
+                    final Response response = (Response) outboundMessage;
                     if (response.getAssertions().isEmpty()) {
                         log.debug("Outbound Response contained no Assertions, nothing to decorate");
                         return Collections.emptyList();
                     } else { 
-                        for (Assertion assertion : response.getAssertions()) {
+                        for (final Assertion assertion : response.getAssertions()) {
                             if (!assertion.getAuthnStatements().isEmpty()) {
                                 log.debug("Found Assertion with AuthnStatement to decorate in outbound Response");
                                 return Collections.singletonList(assertion);
@@ -610,13 +617,14 @@ public class DecorateDelegatedAssertion extends AbstractProfileAction {
         private Logger log = LoggerFactory.getLogger(LibertySSOSEndpointURLStrategy.class);
 
         /** {@inheritDoc} */
-        @Nullable public String apply(@Nullable Pair<ProfileRequestContext, HttpServletRequest> input) {
+        @Override
+        @Nullable public String apply(@Nullable final Pair<ProfileRequestContext, HttpServletRequest> input) {
             if (input == null) {
                 log.debug("Input Pair<ProfileRequestContext,HttpServletRequest> was null");
                 return null;
             }
             if (input.getSecond() != null) {
-                HttpServletRequest request = input.getSecond();
+                final HttpServletRequest request = input.getSecond();
                 return String.format("https://%s:%s%s", request.getServerName(), 
                         LibertyConstants.DEFAULT_SSOS_ENDPOINT_URL_PORT,
                         request.getServletContext().getContextPath() 

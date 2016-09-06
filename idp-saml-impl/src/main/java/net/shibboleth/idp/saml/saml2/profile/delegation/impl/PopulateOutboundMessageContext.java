@@ -40,21 +40,23 @@ public class PopulateOutboundMessageContext extends AbstractProfileAction {
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(PopulateOutboundMessageContext.class);
 
+//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
-    protected void doExecute(ProfileRequestContext profileRequestContext) {
-        MessageContext inboundMessageContext = profileRequestContext.getInboundMessageContext();
+    @Override
+    protected void doExecute(final ProfileRequestContext profileRequestContext) {
+        final MessageContext inboundMessageContext = profileRequestContext.getInboundMessageContext();
         if (inboundMessageContext == null) {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return;
         }
-        MessageContext outboundMessageContext = profileRequestContext.getOutboundMessageContext();
+        final MessageContext outboundMessageContext = profileRequestContext.getOutboundMessageContext();
         if (outboundMessageContext == null) {
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
             return;
         }
         
         // Set outbound wsa:RelatesTo based on inbound wsa:MessageID
-        WSAddressingContext addressingInbound = inboundMessageContext.getSubcontext(WSAddressingContext.class);
+        final WSAddressingContext addressingInbound = inboundMessageContext.getSubcontext(WSAddressingContext.class);
         if (addressingInbound != null) {
             outboundMessageContext.getSubcontext(WSAddressingContext.class, true).setRelatesToURI(
                     addressingInbound.getMessageIDURI());
@@ -64,7 +66,8 @@ public class PopulateOutboundMessageContext extends AbstractProfileAction {
         
         // Set outbound WS-S wsu:Timestamp/wsu:Created based on either outbound SAML message issue instant (if present)
         // or current time.
-        SAMLMessageInfoContext samlMsgInfoCtx = outboundMessageContext.getSubcontext(SAMLMessageInfoContext.class);
+        final SAMLMessageInfoContext samlMsgInfoCtx =
+                outboundMessageContext.getSubcontext(SAMLMessageInfoContext.class);
         if (samlMsgInfoCtx != null) {
             log.debug("Saw outbound SAMLMessageInfoContext with message issue instant: {}", 
                     samlMsgInfoCtx.getMessageIssueInstant());
@@ -77,5 +80,5 @@ public class PopulateOutboundMessageContext extends AbstractProfileAction {
                 outboundMessageContext.getSubcontext(WSSecurityContext.class).getTimestampCreated());
         
     }
-
+//CheckStyle: ReturnCount ON
 }

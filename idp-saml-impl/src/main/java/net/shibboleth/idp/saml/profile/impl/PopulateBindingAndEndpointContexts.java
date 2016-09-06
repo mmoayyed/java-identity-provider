@@ -360,6 +360,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         return true;
     }
 
+//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
@@ -427,7 +428,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
         
         final Optional<BindingDescriptor> bindingDescriptor = Iterables.tryFind(bindingDescriptors,
                 new Predicate<BindingDescriptor>() {
-                    public boolean apply(BindingDescriptor input) {
+                    @Override
+                    public boolean apply(final BindingDescriptor input) {
                         return input.getId().equals(bindingURI);
                     }
         });
@@ -459,7 +461,7 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             }            
         }
     }
-// Checkstyle: CyclomaticComplexity|MethodLength ON
+// Checkstyle: CyclomaticComplexity|MethodLength|ReturnCount ON
     
     /**
      * Check for an inbound request binding that is synchronous and handle appropriately.
@@ -475,7 +477,8 @@ public class PopulateBindingAndEndpointContexts extends AbstractProfileAction {
             if (bindingCtx != null && bindingCtx.getBindingUri() != null) {
                 final Optional<BindingDescriptor> binding = Iterables.tryFind(bindingDescriptors,
                         new Predicate<BindingDescriptor>() {
-                            public boolean apply(BindingDescriptor input) {
+                            @Override
+                            public boolean apply(final BindingDescriptor input) {
                                 return input.getId().equals(bindingCtx.getBindingUri());
                             }
                         });

@@ -38,11 +38,11 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
-import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextComparisonTypeEnumeration;
@@ -135,10 +135,9 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         return super.doPreExecute(profileRequestContext, authenticationContext);
     }
 
-// Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity|ReturnCount OFF
     /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
         
         final RequestedAuthnContext requestedCtx = authnRequest.getRequestedAuthnContext();
@@ -188,6 +187,6 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         log.debug("{} RequestedPrincipalContext created with operator {} and {} custom principal(s)",
                 getLogPrefix(), rpCtx.getOperator(), principals.size());
     }
-// Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity|ReturnCount ON
     
 }

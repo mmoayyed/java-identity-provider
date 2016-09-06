@@ -231,7 +231,7 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
             return false;
         }
         
-        Assertion attestedToken = assertionTokenStrategy.apply(profileRequestContext);
+        final Assertion attestedToken = assertionTokenStrategy.apply(profileRequestContext);
         if (attestedToken == null) {
             log.debug("{} No inbound assertion token", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -250,9 +250,9 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
         return true;
     }
     
+//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
-    @Override
-    protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
         final Assertion assertion = assertionLookupStrategy.apply(profileRequestContext);
         if (assertion == null) {
@@ -271,6 +271,7 @@ public class AddAuthnStatementToAssertionFromInboundAssertionToken extends Abstr
 
         log.debug("{} Added AuthenticationStatement to Assertion {}", getLogPrefix(), assertion.getID());
     }
+//CheckStyle: ReturnCount OFF
 
     /**
      * Obtain the new {@link AuthnStatement} to add by cloning the inbound token's statement 

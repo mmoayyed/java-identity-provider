@@ -28,7 +28,6 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
-import net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStore;
 import net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStoreEx;
 import net.shibboleth.idp.saml.nameid.impl.StoredPersistentIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -46,7 +45,7 @@ import com.google.common.base.Strings;
 
 /**
  * A data connector that delegates generation of IDs to a {@link StoredPersistentIdGenerationStrategy}
- * that makes use of a {@link JDBCPersistentIdStore}.
+ * that makes use of a {@link JDBCPersistentIdStoreEx}.
  */
 public class StoredIDDataConnector extends ComputedIDDataConnector {
 

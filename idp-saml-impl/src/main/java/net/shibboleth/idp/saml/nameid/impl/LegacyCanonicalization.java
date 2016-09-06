@@ -65,6 +65,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
         attributeResolverService = Constraint.isNotNull(resolverService, "AttributeResolver cannot be null");
     }
     
+//CheckStyle: ReturnCount OFF
     /** {@inheritDoc} */
     @Override protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final SubjectCanonicalizationContext c14nContext) {
@@ -90,7 +91,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
                 return;
             }
 
-            LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) attributeResolver;
+            final LegacyPrincipalDecoder decoder = (LegacyPrincipalDecoder) attributeResolver;
 
             final String decodedPrincipal = decoder.canonicalize(c14nContext);
             if (null == decodedPrincipal) {
@@ -102,7 +103,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
             }
             
             c14nContext.setPrincipalName(decodedPrincipal);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             c14nContext.setException(e);
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.SUBJECT_C14N_ERROR);
         } finally {
@@ -111,6 +112,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
             }
         }
     }
+//CheckStyle: ReturnCount ON
     
     /**
      * A predicate that determines if this action can run or not - it does this by inspecting the attribute resolver for
@@ -126,7 +128,7 @@ public class LegacyCanonicalization extends AbstractSubjectCanonicalizationActio
          * 
          * @param service the service we need to interrogate.
          */
-        public ActivationCondition(ReloadableService<AttributeResolver> service) {
+        public ActivationCondition(final ReloadableService<AttributeResolver> service) {
             attributeResolverService = service;
         }
 
