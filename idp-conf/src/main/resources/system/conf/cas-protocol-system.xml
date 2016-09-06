@@ -16,7 +16,18 @@
 
     <bean id="encodingTicketService" class="net.shibboleth.idp.cas.ticket.impl.EncodingTicketService"
           c:service-ref="#{'%{idp.cas.StorageService:shibboleth.StorageService}'.trim()}"
-          c:sealer-ref="shibboleth.DataSealer"/>
+          c:sealer-ref="encodedTicketSealer"/>
+
+    <bean id="encodedTicketSealer" lazy-init="true"
+          class="net.shibboleth.utilities.java.support.security.DataSealer"
+          p:keyStrategy-ref="shibboleth.DataSealerKeyStrategy"
+          p:encoder-ref="base64Codec"
+          p:decoder-ref="base64Codec" />
+
+    <bean id="base64Codec" class="org.apache.commons.codec.binary.Base64"
+          c:lineLength="0"
+          c:lineSeparator="#{new byte[] {10} }"
+          c:urlSafe="true" />
 
     <alias name="encodingTicketService" alias="shibboleth.DefaultCASTicketService" />
 

@@ -17,14 +17,8 @@
 
 package net.shibboleth.idp.cas.protocol;
 
-import java.net.MalformedURLException;
-
-import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.net.URISupport;
-import net.shibboleth.utilities.java.support.net.URLBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Nonnull;
 
@@ -34,9 +28,6 @@ import javax.annotation.Nonnull;
  * @author Marvin S. Addison
  */
 public class ServiceTicketResponse {
-    /** Logger. */
-    private final Logger logger = LoggerFactory.getLogger(ServiceTicketResponse.class);
-
     /** Service URL */
     @Nonnull
     private final String service;
@@ -90,24 +81,8 @@ public class ServiceTicketResponse {
      * @return URL that may be used to redirect to a service with a granted ticket.
      */
     public String getRedirectUrl() {
-        try {
-            final URLBuilder builder = new URLBuilder(service);
-            builder.getQueryParams().add(new Pair<>(getTicketParameterName(), ticket));
-            return builder.buildURL();
-        } catch (MalformedURLException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Error decoding URL {}", service, e);
-            } else {
-                logger.warn("Error decoding URL {}", service);
-            }
-            // Fall back to appending the ticket to service URL
-            final char sep;
-            if (service.indexOf('?') > -1) {
-                sep = '&';
-            } else {
-                sep = '?';
-            }
-            return service + sep + getTicketParameterName() + '=' + URISupport.doURLEncode(ticket);
-        }
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(service);
+        builder.queryParam(getTicketParameterName(), ticket);
+        return builder.build().toUriString();
     }
 }

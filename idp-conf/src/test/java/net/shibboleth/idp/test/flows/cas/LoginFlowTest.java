@@ -280,7 +280,6 @@ public class LoginFlowTest extends AbstractFlowTest {
         assertTrue(url.contains("ticket=ST-"));
         final String ticketId = url.substring(url.indexOf("ticket=") + 7);
         assertEquals(ticketId.indexOf('/'), -1);
-        assertEquals(ticketId.indexOf('='), -1);
         assertEquals(ticketId.indexOf('+'), -1);
         return URISupport.doURLDecode(ticketId);
     }
