@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeResolver 
+            xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <DataConnector id="myDatabase" xsi:type="RelationalDatabase"
+        noResultIsError="true"
+        multipleResultsIsError="true"
+        readOnlyConnection="false"
+        noRetryDelay="PT5M">
+
+      <ApplicationManagedConnection
+        jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
+        jdbcURL="jdbc:hsqldb:mem:RDBMSDataConnectorStore"
+        jdbcUserName="SA"
+        jdbcPassword=""
+        poolAcquireIncrement="3"
+        poolAcquireRetryAttempts="24"
+        poolAcquireRetryDelay="5000"
+        poolBreakAfterAcquireFailure="true"
+        poolMinSize="1"
+        poolMaxSize="5" 
+        poolMaxIdleTime="300"
+        poolIdleTestPeriod="360"/>
+        <Column columnName="homephone" attributeID="phonenumber" />
+        
+        <ResultCache elementTimeToLive="PT10S"/>
+        
+        <FailoverDataConnector ref="2123"/>
+        
+        <ResultCache elementTimeToLive="PT10S" maximumCachedElements="25"/>
+
+        <Dependency ref="321"/>
+        
+        <QueryTemplate>
+            <![CDATA[
+                SELECT * FROM people WHERE userid='%s'
+            ]]>
+        </QueryTemplate>
+        
+        <Dependency ref="321"/>
+        
+    </DataConnector>
+    
+</AttributeResolver>

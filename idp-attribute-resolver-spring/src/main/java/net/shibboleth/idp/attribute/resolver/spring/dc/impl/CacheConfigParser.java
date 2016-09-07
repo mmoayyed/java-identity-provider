@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -44,6 +45,22 @@ import com.google.common.cache.CacheBuilder;
 /** Utility class for parsing v2 cache configuration. */
 public class CacheConfigParser {
 
+    /** ResultCache name - dc: (Legacy). */
+    @Nonnull public static final QName RESULT_CACHE_DC =
+            new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCache");
+
+    /** ResultCacheBean name - dc: (Legacy). */
+    @Nonnull public static final QName RESULT_CACHE_BEAN_DC =
+            new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCacheBean");
+
+    /** ResultCache name - resolver:. */
+    @Nonnull public static final QName RESULT_CACHE_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCache");
+    
+    /** ResultCacheBean name - resolver:. */
+    @Nonnull public static final QName RESULT_CACHE_BEAN_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCacheBean");
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CacheConfigParser.class);
 
@@ -73,10 +90,8 @@ public class CacheConfigParser {
             return null;
         }
         
-        final List<Element> cacheElements = ElementSupport.getChildElements(configElement,
-                new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCache"));
-        cacheElements.addAll(ElementSupport.getChildElements(configElement,
-                new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCache")));
+        final List<Element> cacheElements = ElementSupport.getChildElements(configElement, RESULT_CACHE_DC);
+        cacheElements.addAll(ElementSupport.getChildElements(configElement, RESULT_CACHE_RESOLVER));
         if (cacheElements.isEmpty()) {
             return null;
         }
@@ -110,5 +125,37 @@ public class CacheConfigParser {
                 .expireAfterAccess(timeToLive != null ? DOMTypeSupport.durationToLong(timeToLive)
                         : 4 * 60 * 60 * 1000L, TimeUnit.MILLISECONDS).build();
     }
+    
+    /**
+     * Get the bean ID of an externally defined result cache.
+     * 
+     * @param config the config element
+     * @return data source bean ID
+     */
+    @Nullable public static String getBeanResultCacheID(@Nonnull final Element config) {
+        
+        final List<Element> beanResultCache = ElementSupport.getChildElements(config, RESULT_CACHE_BEAN_DC);
+        beanResultCache.addAll(ElementSupport.getChildElements(config, RESULT_CACHE_BEAN_RESOLVER)); 
+        
+        if (beanResultCache.isEmpty()) {
+            return null;
+        }
+        
+        if (beanResultCache.size() > 1) {
+            LoggerFactory.getLogger(ManagedConnectionParser.class).
+            warn("Only one <ResultCacheBean> should be specified; the first one has been consulted");
+        }
+
+        final List<Element> resultCacheElements = ElementSupport.getChildElements(config, RESULT_CACHE_DC);
+        resultCacheElements.addAll(ElementSupport.getChildElements(config, RESULT_CACHE_RESOLVER));
+        
+        if (resultCacheElements.size() > 0) {
+            LoggerFactory.getLogger(ManagedConnectionParser.class).
+            warn("<ResultCacheBean> is incompatible with <ResultCache>. The <ResultCacheBean> has been used");
+        }
+        
+        return StringSupport.trimOrNull(ElementSupport.getElementContentAsString(beanResultCache.get(0)));
+    }
+
     
 }

@@ -1093,6 +1093,131 @@
         </complexContent>
     </complexType>
     
+        <complexType name="RelationalDatabase">
+        <annotation>
+            <documentation>
+                A data connector definition that uses JDBC version 3 to connect to and pull information from a
+                relational database.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseDataConnectorType">
+                <sequence>
+                    <choice maxOccurs="unbounded" minOccurs="0">
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                        <element ref="resolver:ContainerManagedConnection">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database managed by the application
+                                    container.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element ref="resolver:ApplicationManagedConnection">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database managed by the data connector.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="BeanManagedConnection" type="string">
+                            <annotation>
+                                <documentation>
+                                    A connection, or pool of connections, to the database configured in a Spring bean.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="QueryTemplate" type="string"  minOccurs="0">
+                            <annotation>
+                                <documentation>
+                                    A template that will be used to create the SQL query thats pulls information from the
+                                    database.
+                                </documentation>
+                            </annotation>
+                        </element>
+                        <element name="Column" type="resolver:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
+                        <element name="ResultCache" type="resolver:CacheConfigType"/>
+                        <element name="ResultCacheBean" type="string"/>
+                    </choice>
+                </sequence>
+                <attribute name="readOnlyConnection" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag that determines whether the connection to the database is read-only, if the
+                            value is true, or read-write if the value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="queryUsesStoredProcedure" type="string">
+                    <annotation>
+                        <documentation>
+                            No longer supported.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="queryTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            Timeout for the queries made to the database.
+                            Timeout is given in ISO8601 duration form.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="noResultIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning no results should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="multipleResultsIsError" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether a query returning more than one result should be considered an error. If
+                            an error is raised and a failover dependency is defined for this connector the failover will
+                            be invoked.
+                            Default value is false.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="cacheResults" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag that determines whether to cache results.
+                            
+                            This option is no longer supported, use the ResultCache element instead.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="templateEngine" type="string">
+                    <annotation>
+                        <documentation>
+                            Name of the template engine defined within the application.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mappingStrategyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the MappingStrategy implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="validatorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Validator implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
 
     <complexType name="ScriptedDataConnector">
         <annotation>

@@ -92,6 +92,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         return LDAPDataConnector.class;
     }
 
+    // CheckStyle: MethodLength|CyclomaticComplexity OFF
     /**
      * Parses a version 2 configuration. <br/>
      * The following automatically created & injected beans acquire hard wired defaults:
@@ -114,8 +115,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
      * @param parserContext bean definition parsing context
      * @param builder to initialize
      */
-    // CheckStyle: MethodLength OFF
-    // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         log.debug("{} Parsing v2 configuration {}", getLogPrefix(), config);
@@ -205,23 +204,9 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             }
         }
         
-        final List<Element> resultCacheBeans = ElementSupport.getChildElements(config,
-                new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCacheBean"));
-        resultCacheBeans.addAll(ElementSupport.getChildElements(config,
-                new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCacheBean")));
-        
-        if (!resultCacheBeans.isEmpty()) {
-            final List<Element> resultCache = ElementSupport.getChildElements(config,
-                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCache"));
-            resultCache.addAll(ElementSupport.getChildElements(config,
-                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCache")));
-            
-            if (resultCacheBeans.size() > 1 || !resultCache.isEmpty()) {
-                log.warn("{} Only one <ResultCacheBean> or <ResultCache> can be specified."+
-                         "  The first <ResultCacheBean> has been taken", getLogPrefix());
-            }
-            final Element resultCacheBean = resultCacheBeans.get(0);
-            builder.addPropertyReference("resultsCache", resultCacheBean.getTextContent().trim());
+        final String resultCacheBeanID = CacheConfigParser.getBeanResultCacheID(config);
+        if (null != resultCacheBeanID) {
+            builder.addPropertyReference("resultsCache", resultCacheBeanID);
         } else {
             builder.addPropertyValue("resultsCache", v2Parser.createCache());
         }
@@ -230,8 +215,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
         builder.setDestroyMethodName("destroy");
     }
 
-    // Checkstyle: CyclomaticComplexity ON
-    // CheckStyle: MethodLength ON
+    // Checkstyle: CyclomaticComplexity|MethodLength ON
 
     /**
      * Utility class for parsing v2 schema configuration.

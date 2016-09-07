@@ -5,6 +5,7 @@
     <logger name="net.shibboleth.idp.attribute.resolver" level="DEBUG"/>
     <logger name="net.shibboleth.idp.saml.attribute.resolver" level="DEBUG"/>
     <logger name="net.shibboleth.ext.spring" level="DEBUG"/>
+    <logger name="net.shibboleth.ext.spring.util" level="TRACE"/>
     <logger name="org.springframework" level="WARN"/>
     
 

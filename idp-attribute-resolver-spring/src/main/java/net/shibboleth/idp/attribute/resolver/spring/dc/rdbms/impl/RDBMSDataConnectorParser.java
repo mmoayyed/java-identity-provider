@@ -31,7 +31,9 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractDataConnecto
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
@@ -48,13 +50,13 @@ import org.w3c.dom.Element;
 /** Bean definition Parser for a {@link RDBMSDataConnector}. */
 public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
-    /** Schema type name. */
-    @Nonnull public static final QName TYPE_NAME =
+    /** Schema type name - dc: (Legacy). */
+    @Nonnull public static final QName TYPE_NAME_DC =
             new QName(DataConnectorNamespaceHandler.NAMESPACE, "RelationalDatabase");
 
-    /** Local name of attribute. */
-    @Nonnull public static final QName ATTRIBUTE_ELEMENT_NAME =
-            new QName(DataConnectorNamespaceHandler.NAMESPACE, "Attribute");
+    /** Schema type name - resolver:. */
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "RelationalDatabase");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(RDBMSDataConnectorParser.class);
@@ -70,11 +72,12 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
 
         log.debug("{} Parsing v2 configuration {}", getLogPrefix(), config);
 
-        final V2Parser v2Parser = new V2Parser(config);
+        final V2Parser v2Parser = new V2Parser(config, getLogPrefix());
 
-        final String dataSourceID = v2Parser.getBeanDataSourceID();
-        BeanDefinition dataSource = null;
+        final String dataSourceID = ManagedConnectionParser.getBeanDataSourceID(config);
+        final BeanDefinition dataSource;
         if (dataSourceID != null) {
+            dataSource = null;
             builder.addPropertyReference("DataSource", dataSourceID);
         } else {
             dataSource = v2Parser.createManagedDataSource();
@@ -108,10 +111,11 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                 builder.addPropertyValue("validator", v2Parser.createValidator(dataSource));
             }
         }
+
+        final String resultCacheBeanID = CacheConfigParser.getBeanResultCacheID(config);
         
-        final String resultCacheID = v2Parser.getBeanResultCacheID();
-        if (resultCacheID != null) {
-            builder.addPropertyReference("resultsCache", resultCacheID);
+        if (null != resultCacheBeanID) {
+           builder.addPropertyReference("resultsCache", resultCacheBeanID);
         } else {
             builder.addPropertyValue("resultsCache", v2Parser.createCache());
         }
@@ -132,17 +136,23 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         /** Class logger. */
         private final Logger log = LoggerFactory.getLogger(V2Parser.class);
 
+        /** Parent parser's log prefix.*/
+        @Nonnull @NotEmpty private final String logPrefix;
+
         /**
          * Creates a new V2Parser with the supplied RelationalDatabase element.
          * 
          * @param config RelationalDatabase element
+         * @param prefix the parent parser's log prefix.
          */
-        public V2Parser(@Nonnull final Element config) {
+        public V2Parser(@Nonnull final Element config,  @Nonnull @NotEmpty final String prefix) {
             Constraint.isNotNull(config, "RelationalDatabase element cannot be null");
             configElement = config;
+            logPrefix = prefix;
             // warn about deprecated schema
             if (AttributeSupport.hasAttribute(config, new QName("queryUsesStoredProcedure"))) {
-                log.warn("queryUsesStoredProcedure property no longer supported and should be removed");
+                log.warn("{} queryUsesStoredProcedure property no longer supported and should be removed",
+                        getLogPrefix());
             }
         }
 
@@ -164,20 +174,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         @Nullable public String getConnectionReadOnly() {
             return AttributeSupport.getAttributeValue(configElement, new QName("readOnlyConnection"));
          }
-
-        /**
-         * Get the bean ID of an externally defined data source.
-         * 
-         * @return data source bean ID
-         */
-        @Nullable public String getBeanDataSourceID() {
-            final Element el = ElementSupport.getFirstChildElement(configElement,
-                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "BeanManagedConnection"));
-            if (el != null) {
-                return ElementSupport.getElementContentAsString(el);
-            }
-            return null;
-        }
 
         /**
          * Create the definition of the template driven search builder.
@@ -207,10 +203,22 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                 templateBuilder.addPropertyValue("queryTimeout", duration.getBeanDefinition());
             }
 
-            final Element queryTemplate =
-                    ElementSupport.getFirstChildElement(configElement, new QName(
-                            DataConnectorNamespaceHandler.NAMESPACE, "QueryTemplate"));
-            final String queryText = queryTemplate.getTextContent();
+            final List<Element> queryTemplates = ElementSupport.getChildElements(configElement, 
+                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "QueryTemplate"));
+            queryTemplates.addAll(ElementSupport.getChildElements(configElement, 
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "QueryTemplate")));
+            
+            if (queryTemplates.size() > 1) {
+                log.warn("{} A maximum of 1 <QueryTemplate> should be specified; the first one has been used",
+                        getLogPrefix());
+            }
+            
+            final String queryText;
+            if (!queryTemplates.isEmpty()) {
+                queryText = queryTemplates.get(0).getTextContent();
+            } else {
+                queryText = null;
+            }
             templateBuilder.addPropertyValue("templateText", queryText);
 
             templateBuilder.setInitMethodName("initialize");
@@ -238,6 +246,8 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                     BeanDefinitionBuilder.genericBeanDefinition(StringResultMappingStrategy.class);
             final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
                     DataConnectorNamespaceHandler.NAMESPACE, "Column");
+            columns.addAll(ElementSupport.getChildElementsByTagNameNS(configElement,
+                    AttributeResolverNamespaceHandler.NAMESPACE, "Column"));
             if (!columns.isEmpty()) {
                 final ManagedMap renamingMap = new ManagedMap();
                 for (final Element column : columns) {
@@ -249,7 +259,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                     
                     if (AttributeSupport.hasAttribute(column, new QName("type"))) {
                         LoggerFactory.getLogger(RDBMSDataConnectorParser.class).warn(
-                                "dc:Column type attribute is no longer supported");
+                                "{} Column type attribute is no longer supported", getLogPrefix());
                     }
                 }
                 mapper.addPropertyValue("resultRenamingMap", renamingMap);
@@ -298,20 +308,6 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         }
         
         /**
-         * Get the bean ID of an externally defined result cache.
-         * 
-         * @return result cache bean ID
-         */
-        @Nullable public String getBeanResultCacheID() {
-            final Element el = ElementSupport.getFirstChildElement(configElement,
-                    new QName(DataConnectorNamespaceHandler.NAMESPACE, "ResultCacheBean"));
-            if (el != null) {
-                return ElementSupport.getElementContentAsString(el);
-            }
-            return null;
-        }
-
-        /**
          * Create the results cache. See {@link CacheConfigParser}.
          * 
          * @return results cache
@@ -319,6 +315,13 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         @Nullable public BeanDefinition createCache() {
             final CacheConfigParser parser = new CacheConfigParser(configElement);
             return parser.createCache();
+        }
+        
+        /** The parent parser's log prefix.
+         * @return the log prefix.
+         */
+        @Nonnull @NotEmpty private String getLogPrefix() {
+            return logPrefix;
         }
 
         /**

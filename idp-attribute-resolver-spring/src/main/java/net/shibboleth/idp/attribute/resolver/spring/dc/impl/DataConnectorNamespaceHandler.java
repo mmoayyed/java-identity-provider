@@ -34,7 +34,7 @@ public class DataConnectorNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME_DC, new StaticDataConnectorParser());
         registerBeanDefinitionParser(ComputedIDDataConnectorParser.TYPE_NAME_DC, new ComputedIDDataConnectorParser());
         registerBeanDefinitionParser(StoredIDDataConnectorParser.TYPE_NAME_AD, new StoredIDDataConnectorParser());
-        registerBeanDefinitionParser(RDBMSDataConnectorParser.TYPE_NAME, new RDBMSDataConnectorParser());
+        registerBeanDefinitionParser(RDBMSDataConnectorParser.TYPE_NAME_DC, new RDBMSDataConnectorParser());
         registerBeanDefinitionParser(LDAPDataConnectorParser.TYPE_NAME_DC, new LDAPDataConnectorParser());
         registerBeanDefinitionParser(ScriptDataConnectorParser.TYPE_NAME_DC, new ScriptDataConnectorParser());
     }
