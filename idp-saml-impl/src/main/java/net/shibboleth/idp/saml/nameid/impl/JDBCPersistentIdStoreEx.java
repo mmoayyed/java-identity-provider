@@ -612,7 +612,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
             } catch (final SQLException e) {
                 boolean retry = false;
                 for (final String msg : retryableErrors) {
-                    if (e.getSQLState().contains(msg)) {
+                    if (e.getSQLState() != null && e.getSQLState().contains(msg)) {
                         log.warn("{} Caught retryable SQL exception", getLogPrefix(), e);
                         retry = true;
                     }
@@ -806,7 +806,7 @@ public class JDBCPersistentIdStoreEx extends AbstractInitializableComponent impl
             store(newEntry, conn);
             keyMissing = true;
         } catch (final SQLException e) {
-            if (!retryableErrors.contains(e.getSQLState())) {
+            if (e.getSQLState() != null && !retryableErrors.contains(e.getSQLState())) {
                 log.warn("{} Duplicate insert failed as required with SQL State '{}', ensure this value is "
                         + "configured as a retryable error", getLogPrefix(), e.getSQLState());
             }
