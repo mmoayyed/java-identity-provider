@@ -154,6 +154,10 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             authenticationContext.setResultCacheable(false);
         }
         buildAuthenticationResult(profileRequestContext, authenticationContext);
+        if (extContext.getAuthnInstant() != null && authenticationContext.getAuthenticationResult() != null) {
+            authenticationContext.getAuthenticationResult().setAuthenticationInstant(
+                    extContext.getAuthnInstant().getMillis());
+        }
     }
  // Checkstyle: ReturnCount ON
 
