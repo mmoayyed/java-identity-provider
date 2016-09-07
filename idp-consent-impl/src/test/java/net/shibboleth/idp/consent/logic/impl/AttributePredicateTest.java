@@ -117,4 +117,9 @@ public class AttributePredicateTest {
         Assert.assertFalse(p.apply(attribute1));
         Assert.assertTrue(p.apply(attribute2));
     }
+
+    @Test public void testNullInput() {
+        p = new AttributePredicate();
+        Assert.assertFalse(p.apply(null));
+    }
 }

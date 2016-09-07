@@ -91,6 +91,10 @@ public class AttributePredicate extends AbstractInitializableComponent implement
     @Override
     public boolean apply(@Nullable final IdPAttribute input) {
 
+        if (input == null) {
+            return false;
+        }
+
         final String attributeId = input.getId();
 
         if (!whitelistedAttributeIds.isEmpty() && !whitelistedAttributeIds.contains(attributeId)) {
