@@ -32,8 +32,8 @@ public class AttributeFilterContextTest {
 
     /** Test that post-construction state is what is expected. */
     @Test public void testPostConstructionState() {
-        AttributeFilterContext context = new AttributeFilterContext();
-        AttributeFilterWorkContext child = context.getSubcontext(AttributeFilterWorkContext.class, true);
+        final AttributeFilterContext context = new AttributeFilterContext();
+        final AttributeFilterWorkContext child = context.getSubcontext(AttributeFilterWorkContext.class, true);
         Assert.assertNotNull(context.getFilteredIdPAttributes());
         Assert.assertTrue(context.getFilteredIdPAttributes().isEmpty());
         Assert.assertNull(context.getParent());
@@ -47,17 +47,17 @@ public class AttributeFilterContextTest {
 
     /** Test methods related to prefiltered attributes. */
     @Test public void testPrefilteredAttributes() {
-        AttributeFilterContext context = new AttributeFilterContext();
+        final AttributeFilterContext context = new AttributeFilterContext();
 
-        IdPAttribute attribute1 = new IdPAttribute("attribute1");
+        final IdPAttribute attribute1 = new IdPAttribute("attribute1");
         context.getPrefilteredIdPAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getPrefilteredIdPAttributes().size(), 1);
         Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute1"), attribute1);
 
-        IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        IdPAttribute attribute3 = new IdPAttribute("attribute3");
-        List<IdPAttribute> attributes = Arrays.asList(attribute2, attribute3);
+        final IdPAttribute attribute2 = new IdPAttribute("attribute2");
+        final IdPAttribute attribute3 = new IdPAttribute("attribute3");
+        final List<IdPAttribute> attributes = Arrays.asList(attribute2, attribute3);
         context.setPrefilteredIdPAttributes(attributes);
         Assert.assertEquals(context.getPrefilteredIdPAttributes().size(), 2);
         Assert.assertFalse(context.getPrefilteredIdPAttributes().containsKey("attribute1"));
@@ -83,17 +83,6 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getPrefilteredIdPAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getPrefilteredIdPAttributes().get("attribute3"), attribute3);
 
-        try {
-            context.getPrefilteredIdPAttributes().put(null, new IdPAttribute("foo"));
-            Assert.fail("null attribute id not allowed");
-        } catch (NullPointerException e) {
-        }
-
-        try {
-            context.getPrefilteredIdPAttributes().put("foo", null);
-            Assert.fail("null attribute not allowed");
-        } catch (NullPointerException e) {
-        }
 
         context.getPrefilteredIdPAttributes().remove(null);
         Assert.assertEquals(context.getPrefilteredIdPAttributes().size(), 2);
@@ -109,17 +98,17 @@ public class AttributeFilterContextTest {
 
     /** Test methods related to filtered attributes. */
     @Test public void testFilteredAttributes() {
-        AttributeFilterContext context = new AttributeFilterContext();
+        final AttributeFilterContext context = new AttributeFilterContext();
 
-        IdPAttribute attribute1 = new IdPAttribute("attribute1");
+        final IdPAttribute attribute1 = new IdPAttribute("attribute1");
         context.getFilteredIdPAttributes().put(attribute1.getId(), attribute1);
         Assert.assertEquals(context.getFilteredIdPAttributes().size(), 1);
         Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute1"));
         Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute1"), attribute1);
 
-        IdPAttribute attribute2 = new IdPAttribute("attribute2");
-        IdPAttribute attribute3 = new IdPAttribute("attribute3");
-        List<IdPAttribute> attributes = Arrays.asList(attribute2, attribute3);
+        final IdPAttribute attribute2 = new IdPAttribute("attribute2");
+        final IdPAttribute attribute3 = new IdPAttribute("attribute3");
+        final List<IdPAttribute> attributes = Arrays.asList(attribute2, attribute3);
         context.setFilteredIdPAttributes(attributes);
         Assert.assertEquals(context.getFilteredIdPAttributes().size(), 2);
         Assert.assertFalse(context.getFilteredIdPAttributes().containsKey("attribute1"));
@@ -145,18 +134,6 @@ public class AttributeFilterContextTest {
         Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute3"));
         Assert.assertEquals(context.getFilteredIdPAttributes().get("attribute3"), attribute3);
 
-        try {
-            context.getFilteredIdPAttributes().put(null, new IdPAttribute("foo"));
-            Assert.fail("null attribute id not allowed");
-        } catch (NullPointerException e) {
-        }
-
-        try {
-            context.getFilteredIdPAttributes().put("foo", null);
-            Assert.fail("null attribute not allowed");
-        } catch (NullPointerException e) {
-        }
-
         context.getFilteredIdPAttributes().remove(null);
         Assert.assertEquals(context.getFilteredIdPAttributes().size(), 2);
         Assert.assertTrue(context.getFilteredIdPAttributes().containsKey("attribute1"));
@@ -170,7 +147,7 @@ public class AttributeFilterContextTest {
     }
 
     @Test public void fields() {
-        AttributeFilterContext context = new AttributeFilterContext();
+        final AttributeFilterContext context = new AttributeFilterContext();
         Assert.assertNull(context.getAttributeIssuerID());
         Assert.assertNull(context.getAttributeRecipientID());
         Assert.assertNull(context.getPrincipal());
@@ -191,7 +168,7 @@ public class AttributeFilterContextTest {
     }
 
     @Test public void strategies() {
-        AttributeFilterContext context = new AttributeFilterContext();
+        final AttributeFilterContext context = new AttributeFilterContext();
         Assert.assertNull(context.getRequesterMetadataContext());
 
         final SAMLMetadataContext mas = context.getSubcontext(SAMLMetadataContext.class, true);
