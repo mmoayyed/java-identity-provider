@@ -37,8 +37,6 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.collect.MapConstraints;
-
 /**
  * A context which carries and collects information through the attribute resolution process, and coordinates data
  * between the resolver implementation and the various resolver plugin implementations.
@@ -58,12 +56,9 @@ public class AttributeResolverWorkContext extends BaseContext {
 
     /** Constructor. */
     public AttributeResolverWorkContext() {
-        resolvedAttributeDefinitions =
-                MapConstraints.constrainedMap(new HashMap<String, ResolvedAttributeDefinition>(),
-                        MapConstraints.notNull());
+        resolvedAttributeDefinitions = new HashMap<String, ResolvedAttributeDefinition>();
 
-        resolvedDataConnectors =
-                MapConstraints.constrainedMap(new HashMap<String, ResolvedDataConnector>(), MapConstraints.notNull());
+        resolvedDataConnectors = new HashMap<String, ResolvedDataConnector>();
     }
 
     /**

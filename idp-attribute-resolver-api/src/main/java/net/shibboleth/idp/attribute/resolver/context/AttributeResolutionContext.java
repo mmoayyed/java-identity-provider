@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.MapConstraints;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.resolver.AttributeResolver} interface. */
 @NotThreadSafe
@@ -77,8 +76,7 @@ public class AttributeResolutionContext extends BaseContext {
     public AttributeResolutionContext() {
         allowCachedResults = true;
         requestedAttributeNames = new HashSet<>();
-        resolvedAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
+        resolvedAttributes = new HashMap<String, IdPAttribute>();
     }
     
     /**
@@ -117,7 +115,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param value the attribute issuer associated with this resolution.
      */
-    @Nullable public void setAttributeIssuerID(@Nullable String value) {
+    @Nullable public void setAttributeIssuerID(@Nullable final String value) {
         attributeIssuerID = value;
     }
 
@@ -135,7 +133,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param value the attribute recipient associated with this resolution.
      */
-    @Nullable public void setAttributeRecipientID(@Nullable String value) {
+    @Nullable public void setAttributeRecipientID(@Nullable final String value) {
         attributeRecipientID = value;
     }
 
@@ -153,7 +151,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param method The principalAuthenticationMethod to set.
      */
-    public void setPrincipalAuthenticationMethod(@Nullable String method) {
+    public void setPrincipalAuthenticationMethod(@Nullable final String method) {
         principalAuthenticationMethod = method;
     }
 
@@ -171,7 +169,7 @@ public class AttributeResolutionContext extends BaseContext {
      * 
      * @param who The principal to set.
      */
-    public void setPrincipal(@Nullable String who) {
+    public void setPrincipal(@Nullable final String who) {
         principal = who;
     }
 
@@ -213,7 +211,7 @@ public class AttributeResolutionContext extends BaseContext {
         resolvedAttributes = new HashMap<>();
 
         if (attributes != null) {
-            for (IdPAttribute attribute : attributes) {
+            for (final IdPAttribute attribute : attributes) {
                 if (attribute != null) {
                     resolvedAttributes.put(attribute.getId(), attribute);
                 }
