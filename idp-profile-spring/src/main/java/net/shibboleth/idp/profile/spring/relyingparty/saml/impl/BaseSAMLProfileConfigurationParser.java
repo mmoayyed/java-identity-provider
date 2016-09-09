@@ -70,7 +70,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * @return the builder.
      * 
      */
-    @Nullable protected BeanDefinition getArtifactConfiguration(Element element) {
+    @Nullable protected BeanDefinition getArtifactConfiguration(final Element element) {
 
         final BeanDefinitionBuilder definition =
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSAMLArtifactConfiguration.class);
@@ -105,9 +105,9 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      *            {@link LegacyEncryptionRequirementPredicate}
      * @return the bean for the appropriate predicate.
      */
-    @Nonnull private BeanDefinition predicateFor(@Nullable String value, Class<? extends Predicate> claz) {
+    @Nonnull private BeanDefinition predicateFor(@Nullable final String value, final Class<? extends Predicate> claz) {
 
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(claz);
+        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(claz);
         builder.addConstructorArgValue(StringSupport.trimOrNull(value));
 
         return builder.getBeanDefinition();
@@ -119,7 +119,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * @param value the value
      * @return the definition of an appropriate {@link LegacySigningRequirementPredicate}
      */
-    @Nonnull protected BeanDefinition predicateForSigning(@Nullable String value) {
+    @Nonnull protected BeanDefinition predicateForSigning(@Nullable final String value) {
         return predicateFor(value, LegacySigningRequirementPredicate.class);
     }
 
@@ -129,7 +129,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * @param value the value
      * @return the definition of an appropriate {@link LegacyEncryptionRequirementPredicate}
      */
-    @Nonnull protected BeanDefinition predicateForEncryption(@Nullable String value) {
+    @Nonnull protected BeanDefinition predicateForEncryption(@Nullable final String value) {
         return predicateFor(value, LegacyEncryptionRequirementPredicate.class);
     }
 
@@ -139,8 +139,8 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * @param element the element under discussion
      * @return the list of elements (which are subject to property replacement)
      */
-    protected List<String> getAudiences(Element element) {
-        List<Element> audienceElems =
+    protected List<String> getAudiences(final Element element) {
+        final List<Element> audienceElems =
                 ElementSupport.getChildElementsByTagNameNS(element, RelyingPartySAMLNamespaceHandler.NAMESPACE,
                         "Audience");
         return SpringSupport.getElementTextContentAsManagedList(audienceElems);
@@ -154,7 +154,9 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
      * @param builder the builder for the profile
      * @param parserContext the parser context
      */
-    private void setSecurityConfiguration(Element element, BeanDefinitionBuilder builder, ParserContext parserContext) {
+//CheckStyle: ReturnCount OFF
+    private void setSecurityConfiguration(final Element element, final BeanDefinitionBuilder builder, 
+            final ParserContext parserContext) {
 
         final String credentialRef;
         if (element.hasAttributeNS(null, "signingCredentialRef")) {
@@ -173,7 +175,7 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
                 return;
             }
 
-            Element relyingParty = (Element) parentNode;
+            final Element relyingParty = (Element) parentNode;
             if (!relyingParty.hasAttributeNS(null, "defaultSigningCredentialRef")) {
                 // no defaults
                 return;
@@ -192,10 +194,12 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
 
         builder.addPropertyValue("securityConfiguration", configuration.getBeanDefinition());
     }
+  //CheckStyle: ReturnCount ON
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         builder.setLazyInit(true);

@@ -56,7 +56,7 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
     }
 
     /** {@inheritDoc} */
-    @Override protected Class<? extends BrowserSSOProfileConfiguration> getBeanClass(Element element) {
+    @Override protected Class<? extends BrowserSSOProfileConfiguration> getBeanClass(final Element element) {
         return BrowserSSOProfileConfiguration.class;
     }
 
@@ -72,6 +72,7 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
      * @param element The &lt;rp:ProfileConfiguration&gt; element
      * @param builder The builder in which to set the
      */
+//CheckStyle: ReturnCount OFF
     private void setPropertiesFromRelyingParty(@Nonnull final Element element,
             @Nonnull final BeanDefinitionBuilder builder) {
 
@@ -107,9 +108,11 @@ public class SAML2BrowserSSOProfileParser extends BaseSAML2ProfileConfigurationP
                     .getAttributeNodeNS(null, "nameIDFormatPrecedence")));
         }
     }
+  //CheckStyle: ReturnCount ON
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "localityAddress")) {

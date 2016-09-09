@@ -57,7 +57,7 @@ public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationPars
     }
     
     /** {@inheritDoc} */
-    @Override protected Class<? extends BrowserSSOProfileConfiguration> getBeanClass(Element element) {
+    @Override protected Class<? extends BrowserSSOProfileConfiguration> getBeanClass(final Element element) {
         return BrowserSSOProfileConfiguration.class;
     }
 
@@ -73,6 +73,7 @@ public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationPars
      * @param element The &lt;rp:ProfileConfiguration&gt; element
      * @param builder The builder in which to set the
      */
+//CheckStyle: ReturnCount OFF
     private void setAuthnProfileFromRelyingParty(@Nonnull final Element element,
             @Nonnull final BeanDefinitionBuilder builder) {
 
@@ -111,9 +112,11 @@ public class ShibbolethSSOProfileParser extends BaseSAMLProfileConfigurationPars
             builder.addPropertyValue("nameIDFormatPrecedence", managedNameIds);
         }
     }
+//CheckStyle: ReturnCount ON
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "localityAddress")) {

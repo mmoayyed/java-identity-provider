@@ -135,8 +135,8 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     }
     
     /** {@inheritDoc} */
-    @Override
-    public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+//CheckStyle: ReturnCount OFF
+    @Override public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         if (handler == null) {
@@ -187,5 +187,6 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
             }
         }
     }
+  //CheckStyle: ReturnCount ON
 
  }
