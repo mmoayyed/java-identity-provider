@@ -39,8 +39,6 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.BaseContext;
 
-import com.google.common.collect.MapConstraints;
-
 /**
  * A context which carries and collects information through the attribute filtering process, and coordinates data
  * between the filter implementation and the various resolver MatchFunctor implementations.
@@ -60,10 +58,8 @@ public final class AttributeFilterWorkContext extends BaseContext {
 
     /** Constructor. */
     public AttributeFilterWorkContext() {
-        permittedValues =
-                MapConstraints.constrainedMap(new HashMap<String, Set<IdPAttributeValue>>(), MapConstraints.notNull());
-        deniedValues =
-                MapConstraints.constrainedMap(new HashMap<String, Set<IdPAttributeValue>>(), MapConstraints.notNull());
+        permittedValues = new HashMap<String, Set<IdPAttributeValue>>();
+        deniedValues = new HashMap<String, Set<IdPAttributeValue>>();
     }
 
     /**
@@ -85,11 +81,11 @@ public final class AttributeFilterWorkContext extends BaseContext {
      * @param attributeId ID of the attribute whose values are permitted to be released
      * @param attributeValues values for the attribute that are permitted to be released
      */
-    public void addPermittedIdPAttributeValues(@Nonnull @NotEmpty String attributeId,
-            @Nullable @NullableElements Collection<? extends IdPAttributeValue> attributeValues) {
-        AttributeFilterContext parent = (AttributeFilterContext) getParent();
+    public void addPermittedIdPAttributeValues(@Nonnull @NotEmpty final String attributeId,
+            @Nullable @NullableElements final Collection<? extends IdPAttributeValue> attributeValues) {
+        final AttributeFilterContext parent = (AttributeFilterContext) getParent();
         final Map<String, IdPAttribute> prefilteredAttributes = parent.getPrefilteredIdPAttributes();
-        String trimmedAttributeId =
+        final String trimmedAttributeId =
                 Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
         Constraint.isTrue(prefilteredAttributes.containsKey(trimmedAttributeId), "no attribute with ID "
                 + trimmedAttributeId + " exists in the pre-filtered attribute set");
@@ -104,7 +100,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
             permittedValues.put(trimmedAttributeId, permittedAttributeValues);
         }
 
-        for (IdPAttributeValue value : attributeValues) {
+        for (final IdPAttributeValue value : attributeValues) {
             if (value != null) {
                 if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
                     throw new IllegalArgumentException("permitted value is not a current value of attribute "
@@ -136,9 +132,9 @@ public final class AttributeFilterWorkContext extends BaseContext {
      * @param attributeId ID of the attribute whose values are not permitted to be released
      * @param attributeValues values for the attribute that are not permitted to be released
      */
-    public void addDeniedIdPAttributeValues(@Nonnull @NotEmpty String attributeId,
-            @Nullable @NullableElements Collection<? extends IdPAttributeValue> attributeValues) {
-        AttributeFilterContext parent = (AttributeFilterContext) getParent();
+    public void addDeniedIdPAttributeValues(@Nonnull @NotEmpty final String attributeId,
+            @Nullable @NullableElements final Collection<? extends IdPAttributeValue> attributeValues) {
+        final AttributeFilterContext parent = (AttributeFilterContext) getParent();
         final Map<String, IdPAttribute> prefilteredAttributes = parent.getPrefilteredIdPAttributes();
         final String trimmedAttributeId =
                 Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID can not be null or empty");
@@ -155,7 +151,7 @@ public final class AttributeFilterWorkContext extends BaseContext {
             deniedValues.put(trimmedAttributeId, deniedAttributeValues);
         }
 
-        for (IdPAttributeValue value : attributeValues) {
+        for (final IdPAttributeValue value : attributeValues) {
             if (value != null) {
                 if (!prefilteredAttributes.get(trimmedAttributeId).getValues().contains(value)) {
                     throw new IllegalArgumentException("denied value is not a current value of attribute "

@@ -38,7 +38,6 @@ import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
-import com.google.common.collect.MapConstraints;
 
 /** A context supplying input to the {@link net.shibboleth.idp.attribute.filter.AttributeFilter} interface. */
 @NotThreadSafe
@@ -71,10 +70,8 @@ public final class AttributeFilterContext extends BaseContext {
 
     /** Constructor. */
     public AttributeFilterContext() {
-        prefilteredAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
-        filteredAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(), MapConstraints.notNull());
+        prefilteredAttributes = new HashMap<String, IdPAttribute>();
+        filteredAttributes = new HashMap<String, IdPAttribute>();
     }
 
     /**
@@ -92,12 +89,10 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes which are to be filtered
      */
     public void setPrefilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
+        final Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
-        prefilteredAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(checkedAttributes.size()),
-                        MapConstraints.notNull());
+        prefilteredAttributes = new HashMap<String, IdPAttribute>(checkedAttributes.size());
 
         for (final IdPAttribute attribute : checkedAttributes) {
             prefilteredAttributes.put(attribute.getId(), attribute);
@@ -119,12 +114,10 @@ public final class AttributeFilterContext extends BaseContext {
      * @param attributes attributes that have been filtered
      */
     public void setFilteredIdPAttributes(@Nullable @NullableElements final Collection<IdPAttribute> attributes) {
-        Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
+        final Collection<IdPAttribute> checkedAttributes = new ArrayList<>();
         CollectionSupport.addIf(checkedAttributes, attributes, Predicates.notNull());
 
-        filteredAttributes =
-                MapConstraints.constrainedMap(new HashMap<String, IdPAttribute>(checkedAttributes.size()),
-                        MapConstraints.notNull());
+        filteredAttributes = new HashMap<String, IdPAttribute>(checkedAttributes.size());
 
         for (final IdPAttribute attribute : checkedAttributes) {
             filteredAttributes.put(attribute.getId(), attribute);
@@ -145,7 +138,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param who The principal to set.
      */
-    public void setPrincipal(String who) {
+    public void setPrincipal(final String who) {
         principal = who;
     }
 
