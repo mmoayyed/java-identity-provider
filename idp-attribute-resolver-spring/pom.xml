@@ -48,6 +48,12 @@
             <artifactId>idp-saml-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>idp-profile-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
 
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
@@ -86,13 +92,7 @@
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>idp-profile-spring</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        
+       
 
         <!-- Test Dependencies -->
         <dependency>

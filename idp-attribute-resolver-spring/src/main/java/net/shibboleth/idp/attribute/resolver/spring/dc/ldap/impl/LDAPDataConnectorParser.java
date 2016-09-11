@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractDataConnecto
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -333,11 +334,23 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final BeanDefinitionBuilder result =
                     BeanDefinitionBuilder.genericBeanDefinition(CredentialConfigFactoryBean.class);
 
-            final List<Element> trustElements = ElementSupport.getChildElements(configElement,
-                            new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSTrustCredential"));
-            trustElements.addAll(ElementSupport.getChildElements(configElement,
-                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")));
-            if (!trustElements.isEmpty()) {
+            final List<Element> trustElements =
+                    ElementSupport.getChildElements(configElement, new QName(DataConnectorNamespaceHandler.NAMESPACE,
+                            "StartTLSTrustCredential"));
+            trustElements.addAll(ElementSupport.getChildElements(configElement, new QName(
+                    AttributeResolverNamespaceHandler.NAMESPACE, "StartTLSTrustCredential")));
+            final String trustResource =
+                    StringSupport.trimOrNull(AttributeSupport.getAttributeValue(configElement, null, "trustFile"));
+            if (trustResource != null) {
+                if (!trustElements.isEmpty()) {
+                    log.warn("{} StartTLSTrustCredential and trustFile= are incompatible.  trustFile used.",
+                            getLogPrefix());
+                }
+                final BeanDefinitionBuilder credential =
+                        BeanDefinitionBuilder.genericBeanDefinition(BasicX509CredentialFactoryBean.class);
+                credential.addPropertyValue("certificateResource", trustResource);
+                result.addPropertyValue("trustCredential", credential.getBeanDefinition());
+            } else if (!trustElements.isEmpty()) {
                 if (trustElements.size() > 1) {
                     log.warn("{} Too many StartTLSTrustCredential elements in {}; only the first has been consulted",
                             getLogPrefix(), parserContext.getReaderContext().getResource().getDescription());

@@ -14,11 +14,9 @@
     documentation for a complete list of components and their options.
 -->
 <AttributeResolver
-        xmlns="urn:mace:shibboleth:2.0:resolver" 
-        xmlns:sec="urn:mace:shibboleth:2.0:security"
+        xmlns="urn:mace:shibboleth:2.0:resolver"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
-                            urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
 
     <!-- ========================================== -->
     <!--      Attribute Definitions                 -->
@@ -76,6 +74,7 @@
         principalCredential="%{idp.attribute.resolver.LDAP.bindDNCredential}"
         useStartTLS="%{idp.attribute.resolver.LDAP.useStartTLS:true}"
         connectTimeout="%{idp.attribute.resolver.LDAP.connectTimeout}"
+        trustFile="%{idp.attribute.resolver.LDAP.trustCertificates}"
         responseTimeout="%{idp.attribute.resolver.LDAP.responseTimeout}">
         <FilterTemplate>
             <![CDATA[
@@ -83,9 +82,6 @@
             ]]>
         </FilterTemplate>
         <ReturnAttributes>%{idp.attribute.resolver.LDAP.returnAttributes}</ReturnAttributes>
-        <StartTLSTrustCredential id="LDAPtoIdPCredential" xsi:type="sec:X509ResourceBacked">
-            <sec:Certificate>%{idp.attribute.resolver.LDAP.trustCertificates}</sec:Certificate>
-        </StartTLSTrustCredential>
 	<ConnectionPool
             minPoolSize="%{idp.pool.LDAP.minSize}"
             maxPoolSize="%{idp.pool.LDAP.maxSize}"
