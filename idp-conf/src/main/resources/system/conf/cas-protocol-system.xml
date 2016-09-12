@@ -29,7 +29,7 @@
           c:lineSeparator="#{new byte[] {10} }"
           c:urlSafe="true" />
 
-    <alias name="encodingTicketService" alias="shibboleth.DefaultCASTicketService" />
+    <alias name="simpleTicketService" alias="shibboleth.DefaultCASTicketService" />
 
     <bean id="shibboleth.DefaultCASProxyAuthenticator"
           class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyAuthenticator" />
