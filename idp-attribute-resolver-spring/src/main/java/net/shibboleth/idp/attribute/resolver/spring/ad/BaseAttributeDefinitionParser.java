@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamesp
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -55,6 +56,11 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     @Nonnull public static final QName ATTRIBUTE_ENCODER_ELEMENT_NAME =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "AttributeEncoder");
 
+    /**
+     * Whether we have ever warned because of ad: content.
+     */
+    private static boolean warned;
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAttributeDefinitionParser.class);
 
@@ -64,6 +70,23 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
+        final QName suppliedQname = DOMTypeSupport.getXSIType(config);
+        
+        if (!AttributeResolverNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
+            if (!warned) {
+                warned = true;
+                log.warn("{} Configuration contains at least one element in the deprecated '{}' namespace.",
+                         getLogPrefix(), AttributeResolverNamespaceHandler.NAMESPACE);
+            }
+            if (log.isDebugEnabled()) {
+                final QName otherQname =
+                        new QName(AttributeResolverNamespaceHandler.NAMESPACE,suppliedQname.getLocalPart(), "ad:");
+            log.debug("{} Deprecated Namespace element '{}' in {}, consider using '{}'",
+                    getLogPrefix(), suppliedQname.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(), otherQname.toString());
+            }
+        } 
+        
         final List<Element> displayNames =
                 ElementSupport.getChildElements(config, new QName(AttributeResolverNamespaceHandler.NAMESPACE,
                         "DisplayName"));

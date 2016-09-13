@@ -21,10 +21,13 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -39,6 +42,11 @@ import org.w3c.dom.Element;
  * {@link net.shibboleth.idp.saml.nameid.impl.StoredIDDataConnector}.
  */
 public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPluginParser {
+
+    /**
+     * Whether we have ever warned because of dc: content.
+     */
+    private static boolean warned;
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseComputedIDDataConnectorParser.class);
@@ -55,6 +63,24 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
     protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder, @Nullable final String generatedIdDefaultName) {
         super.doParse(config, parserContext, builder);
+        
+        final QName suppliedQname = DOMTypeSupport.getXSIType(config);
+        
+        if (!AttributeResolverNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
+            if (!warned) {
+                warned = true;
+                log.warn("{} Configuration contains at least one element in the deprecated '{}' namespace.",
+                         getLogPrefix(), DataConnectorNamespaceHandler.NAMESPACE);
+            }
+            if (log.isDebugEnabled()) {
+                final QName otherQname =
+                        new QName(DataConnectorNamespaceHandler.NAMESPACE,suppliedQname.getLocalPart(), "dc:");
+            log.debug("{} Deprecated Namespace element '{}' in {}, consider using' {}'",
+                    getLogPrefix(), suppliedQname.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(), otherQname.toString());
+            }
+        }
+
         final String generatedAttribute;
         if (config.hasAttributeNS(null, "generatedAttributeID")) {
             generatedAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "generatedAttributeID"));

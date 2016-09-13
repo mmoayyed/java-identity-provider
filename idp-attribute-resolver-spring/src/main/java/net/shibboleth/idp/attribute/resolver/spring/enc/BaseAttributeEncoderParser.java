@@ -18,10 +18,16 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import javax.annotation.Nonnull;
+import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.spring.enc.impl.AttributeEncoderNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -35,6 +41,14 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
 
     /** Local name of name attribute. */
     @Nonnull @NotEmpty public static final String NAME_ATTRIBUTE_NAME = "name";
+
+    /**
+     * Whether we have ever warned because of enc: content.
+     */
+    private static boolean warned;
+
+    /** Log4j logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAttributeEncoderParser.class);
 
     /** Whether the name property is required or not. */
     private boolean nameRequired;
@@ -57,6 +71,25 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
+        super.doParse(config, parserContext, builder);
+        
+        final QName suppliedQname = DOMTypeSupport.getXSIType(config);
+        if (!AttributeResolverNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
+            if (!warned) {
+                warned = true;
+                log.warn("Configuration contains at least one element in the deprecated '{}' namespace.",
+                        AttributeEncoderNamespaceHandler.NAMESPACE);
+            }
+            if (log.isDebugEnabled()) {
+                final QName otherQname =
+                        new QName(AttributeEncoderNamespaceHandler.NAMESPACE,suppliedQname.getLocalPart(), "dc:");
+            log.debug("Deprecated Namespace element '{}' in {}, consider using '{}'", suppliedQname.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(), otherQname.toString());
+            }
+        } 
+
+
+        
         final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_ATTRIBUTE_NAME));
         if (nameRequired && attributeName == null) {
             throw new BeanCreationException("Attribute encoder must contain a name property");

@@ -26,8 +26,11 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -52,11 +55,14 @@ public class AttributeResolverParser implements BeanDefinitionParser {
     /** Schema type. */
     @Nonnull public static final QName SCHEMA_TYPE = new QName(AttributeResolverNamespaceHandler.NAMESPACE,
             "AttributeResolverType");
+    
+    /** Log4j logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAttributeEncoderParser.class);
 
     /**
      * {@inheritDoc}
      */
-    @Override public BeanDefinition parse(Element config, ParserContext context) {
+    @Override public BeanDefinition parse(final Element config, final ParserContext context) {
 
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(config);
         List<Element> children;
@@ -68,6 +74,11 @@ public class AttributeResolverParser implements BeanDefinitionParser {
         SpringSupport.parseCustomElements(children, context);
 
         children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
+        if (!children.isEmpty()) {
+            log.warn("{} contains deprecated PrincipalConnector elements.  "+
+                    "See https://wiki.shibboleth.net/confluence/display/IDP30/NameIDConsumptionConfiguration",
+                    context.getReaderContext().getResource().getDescription());
+        }
         SpringSupport.parseCustomElements(children, context);
         return null;
     }

@@ -68,6 +68,11 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
     @Nonnull public static final QName FAILOVER_DATA_CONNECTOR_ELEMENT_NAME = new QName(
             AttributeResolverNamespaceHandler.NAMESPACE, "FailoverDataConnector");
 
+    /**
+     * Whether we have ever warned because of dc: content.
+     */
+    private static boolean warned;
+
     /** Log4j logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractDataConnectorParser.class);
 
@@ -97,10 +102,27 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
      */
     protected abstract Class<? extends AbstractDataConnector> getNativeBeanClass();
 
+    //CheckStyle: MethodLength|CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected final void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
+
+        final QName suppliedQname = DOMTypeSupport.getXSIType(config);
+        if (!AttributeResolverNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
+            if (!warned) {
+                warned = true;
+                log.warn("{} Configuration contains at least one element in the deprecated '{}' namespace.",
+                         getLogPrefix(), DataConnectorNamespaceHandler.NAMESPACE);
+            }
+            if (log.isDebugEnabled()) {
+                final QName otherQname =
+                        new QName(DataConnectorNamespaceHandler.NAMESPACE,suppliedQname.getLocalPart(), "dc:");
+            log.debug("{} Deprecated Namespace element '{}' in {}, consider using '{}'",
+                    getLogPrefix(), suppliedQname.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(), otherQname.toString());
+            }
+        } 
 
         final List<Element> failoverConnector =
                 ElementSupport.getChildElements(config, FAILOVER_DATA_CONNECTOR_ELEMENT_NAME);
@@ -162,6 +184,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
             doV2Parse(config, parserContext, builder);
         }
     }
+    //CheckStyle: MethodLength|CyclomaticComplexity ON
 
     /**
      * Parse the supplied {@link Element} as a legacy format and populate the supplied {@link BeanDefinitionBuilder} as
