@@ -74,7 +74,7 @@ public class AttributeResolverParser implements BeanDefinitionParser {
         SpringSupport.parseCustomElements(children, context);
 
         children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
-        if (!children.isEmpty()) {
+        if (null != children && !children.isEmpty()) {
             log.warn("{} contains deprecated PrincipalConnector elements.  "+
                     "See https://wiki.shibboleth.net/confluence/display/IDP30/NameIDConsumptionConfiguration",
                     context.getReaderContext().getResource().getDescription());
