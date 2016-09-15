@@ -14,7 +14,21 @@
     <!-- HandlerMappings: Prefer first the WebFlow one, then the standard Spring MVC default ones.
          Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
     
-    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" p:order="0" p:flowRegistry-ref="flowRegistry" />
+    <bean id="shibboleth.DefaultRESTFlows" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>admin/metrics</value>
+            </list>
+        </property>
+    </bean>
+    
+    <bean class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping" p:order="0"
+            p:flowRegistry-ref="flowRegistry">
+        <property name="flowUrlHandler">
+            <bean class="net.shibboleth.idp.profile.support.PathInfoSupportingFlowUrlHandler"
+                p:supportedFlows="#{getObject('shibboleth.RESTFlows') ?: getObject('shibboleth.DefaultRESTFlows')}" />
+        </property>
+    </bean>
 
     <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" p:order="1" />
 
