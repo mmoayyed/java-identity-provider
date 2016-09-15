@@ -52,7 +52,7 @@
     </filter>
     <!-- Manages logging MDC. -->
     <filter>
-        <filter-name>SL4JMDCServletFilter</filter-name>
+        <filter-name>SLF4JMDCServletFilter</filter-name>
         <filter-class>net.shibboleth.idp.log.SLF4JMDCServletFilter</filter-class>
     </filter>
     <filter-mapping>
@@ -77,7 +77,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>SL4JMDCServletFilter</filter-name>
+        <filter-name>SLF4JMDCServletFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
