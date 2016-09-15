@@ -36,6 +36,12 @@
             p:loggingId="%{idp.service.logging.resolvertest:ResolverTest}"
             p:policyName="%{idp.resolvertest.accessPolicy:AccessByIPAddress}" />
     
+        <!-- REST Interface to Metrics -->
+        <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/metrics"
+            p:loggingId="Metrics"
+            p:policyNameLookupStrategy-ref="shibboleth.metrics.AccessPolicyStrategy" />
+    
     </util:list>
 
 </beans>

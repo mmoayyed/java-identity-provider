@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:c="http://www.springframework.org/schema/c" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
+    <!-- Metrics Configuration -->
+
+    <!--
+    By default any requests are assumed to be for specific named metrics. You can
+    create mappings here between a logical "group" name and an implementation of the
+    com.codahale.metrics.MetricFilter interface to specify which metrics to include.
+    -->
+    <util:map id="shibboleth.metrics.MetricGroups">
+    
+    </util:map>
+        
+    <!-- If you don't specify an alternate access policy, this named policy will be enforced. -->
+    <bean id="shibboleth.metrics.DefaultAccessPolicy" class="java.lang.String" c:_0="AccessByIPAddress" />
+    
+    <!--
+    To override the default access policy, map a metric name or
+    mapped group above to an alternative policy name.
+    -->
+    <util:map id="shibboleth.metrics.AccessPolicyMap">
+    
+    </util:map>
+        
+</beans>

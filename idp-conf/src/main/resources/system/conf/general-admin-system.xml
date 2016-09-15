@@ -12,7 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <import resource="../../conf/admin.xml" />
+    <import resource="../../conf/admin/general-admin.xml" />
+    <import resource="../../conf/admin/metrics.xml" />
 
     <!-- A parent bean to default some of the flow boilerplate. -->
 
@@ -20,5 +21,18 @@
             class="net.shibboleth.idp.admin.BasicAdministrativeFlowDescriptor"
             p:servletRequest-ref="shibboleth.HttpServletRequest"
             p:nonBrowserSupported="false" />
+
+    <!-- Function for returning custom access control policies for access to metrics. -->
+
+    <bean id="shibboleth.metrics.AccessPolicyStrategy" parent="shibboleth.ContextFunctions.Expression"
+        c:expression="#custom.get('policyMap').get(#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('metricId')) ?: #custom.get('defaultPolicy')"
+        c:outputType="#{T(java.lang.String)}">
+        <property name="customObject">
+            <map>
+                <entry key="policyMap" value-ref="shibboleth.metrics.AccessPolicyMap" />
+                <entry key="defaultPolicy" value-ref="shibboleth.metrics.DefaultAccessPolicy" />
+            </map>
+        </property>
+    </bean>
 
 </beans>

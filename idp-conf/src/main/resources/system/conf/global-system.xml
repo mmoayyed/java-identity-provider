@@ -47,7 +47,7 @@
     <import resource="subject-c14n-system.xml" />
     <import resource="profile-intercept-system.xml" />
     <import resource="cas-protocol-system.xml" />
-    <import resource="admin-system.xml" />
+    <import resource="general-admin-system.xml" />
     <import resource="utilities.xml" />
 
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
@@ -326,5 +326,12 @@
         p:dateTimeFormat="#{getObject('shibboleth.AuditDateTimeFormat')}"
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
         p:fieldReplacements="#{getObject('shibboleth.AuditFieldReplacementMap')}" />
+        
+    <!-- Metric registry and a call to register it with the Metrics runtime. -->
+
+    <bean id="shibboleth.metrics.MetricRegistry" class="com.codahale.metrics.MetricRegistry" /> 
     
+    <bean class="com.codahale.metrics.SharedMetricRegistries" factory-method="add"
+        c:_0="net.shibboleth.idp" c:_1-ref="shibboleth.metrics.MetricRegistry" />
+            
  </beans>

@@ -22,10 +22,11 @@
                 <!-- Status flow (location is for backward compatibility). -->
                 <entry key="status" value="../system/flows/admin/status-flow.xml" />
         
-                <!-- New administrative and debugging flows. -->
+                <!-- Administrative and debugging flows. -->
                 <entry key="admin/resolvertest" value="../system/flows/admin/resolvertest-flow.xml" />
                 <entry key="admin/reload-service" value="../system/flows/admin/reload-service-flow.xml" />
                 <entry key="admin/reload-metadata" value="../system/flows/admin/reload-metadata-flow.xml" />
+                <entry key="admin/metrics" value="../system/flows/admin/metrics-flow.xml" />
                 
                 <!-- Proprietary logout flow. -->
                 <entry key="Logout" value="../system/flows/logout/logout-flow.xml" />
