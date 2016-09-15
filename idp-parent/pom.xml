@@ -103,6 +103,10 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+        </dependency>
+        <dependency>
             <!-- needed for logback SMTP appender -->
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
