@@ -18,7 +18,7 @@ sn: Doe
 uid: jdoe
 userpassword: changeit
 homephone: 555-111-2222
-mail: jdoe@shibboleth.net
+mail: jdoe@example.org
 description: test user
 #businessCategory: accountStateWarning
 #businessCategory: accountStateError
@@ -32,7 +32,7 @@ sn: Doe
 uid: bdoe
 userpassword: changeit
 homephone: 555-111-3333
-mail: bdoe@shibboleth.net
+mail: bdoe@example.org
 description: test user
 
 dn: ou=system
