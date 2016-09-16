@@ -327,11 +327,4 @@
         p:useDefaultTimeZone="#{getObject('shibboleth.AuditDefaultTimeZone') ?: false}"
         p:fieldReplacements="#{getObject('shibboleth.AuditFieldReplacementMap')}" />
         
-    <!-- Metric registry and a call to register it with the Metrics runtime. -->
-
-    <bean id="shibboleth.metrics.MetricRegistry" class="com.codahale.metrics.MetricRegistry" /> 
-    
-    <bean class="com.codahale.metrics.SharedMetricRegistries" factory-method="add"
-        c:_0="net.shibboleth.idp" c:_1-ref="shibboleth.metrics.MetricRegistry" />
-            
  </beans>

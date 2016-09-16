@@ -9,8 +9,38 @@
 
     default-init-method="initialize"
     default-destroy-method="destroy">
+    
+    <!-- Metrics enablement / activation. -->
 
-    <!-- Metrics Configuration -->
+    <!--
+    Uncomment to register one or more of the built-in system metric sets available.
+    Each bean can register only one metric set at a time (artifact of the metrics API).
+    -->
+    <!--
+    <bean parent="shibboleth.metrics.RegisterMetricSet">
+        <property name="arguments">
+            <bean class="com.codahale.metrics.jvm.CachedThreadStatesGaugeSet"
+                c:_0="1" c:_1="#{T(java.util.concurrent.TimeUnit).MINUTES}" />
+        </property>
+    </bean>
+    <bean parent="shibboleth.metrics.RegisterMetricSet">
+        <property name="arguments">
+            <bean class="com.codahale.metrics.jvm.ClassLoadingGaugeSet" />
+        </property>
+    </bean>
+    <bean parent="shibboleth.metrics.RegisterMetricSet">
+        <property name="arguments">
+            <bean class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
+        </property>
+    </bean>
+    <bean parent="shibboleth.metrics.RegisterMetricSet">
+        <property name="arguments">
+            <bean class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
+        </property>
+    </bean>
+    -->
+
+    <!-- Metrics REST API Configuration -->
 
     <!--
     By default any requests are assumed to be for specific named metrics. You can
@@ -31,5 +61,5 @@
     <util:map id="shibboleth.metrics.AccessPolicyMap">
     
     </util:map>
-        
+    
 </beans>

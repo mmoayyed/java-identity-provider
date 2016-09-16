@@ -49,6 +49,7 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 
 /**
  * Action that outputs one or more {@link Metric} objects.
@@ -69,10 +70,16 @@ public class OutputMetrics extends AbstractProfileAction {
     
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(OutputMetrics.class);
-    
+        
     /** The metric registry. */
     @NonnullAfterInit private MetricRegistry metricRegistry;
+
+    /** Value for Access-Control-Allow-Origin header, if any. */
+    @Nullable private String allowedOrigin;
     
+    /** Name of JSONP callback function, if any. */
+    @Nullable private String jsonpCallbackName;
+
     /** Map of custom metric groups to filters. */
     @Nonnull @NonnullElements private Map<String,MetricFilter> metricFilterMap;
     
@@ -93,6 +100,28 @@ public class OutputMetrics extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         metricRegistry = Constraint.isNotNull(registry, "MetricRegistry cannot be null");
+    }
+    
+    /**
+     * Set the value of the Access-Control-Allow-Origin CORS header, if any.
+     * 
+     * @param origin header value
+     */
+    public void setAllowedOrigin(@Nullable final String origin) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        allowedOrigin = StringSupport.trimOrNull(origin);
+    }
+    
+    /**
+     * Set a JSONP callback function to wrap the result in, if any.
+     * 
+     * @param callbackName callback function name.
+     */
+    public void setJSONPCallbackName(@Nullable final String callbackName) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        jsonpCallbackName = StringSupport.trimOrNull(callbackName);
     }
     
     /**
@@ -180,13 +209,22 @@ public class OutputMetrics extends AbstractProfileAction {
         try {
             final HttpServletResponse response = getHttpServletResponse();
             
-            response.setContentType("application/json");
             response.setHeader("Cache-Control", "must-revalidate,no-cache,no-store");
             response.setStatus(HttpServletResponse.SC_OK);
+            if (allowedOrigin != null) {
+                response.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+            }
             
             final ObjectMapper mapper = new ObjectMapper().registerModule(
                     new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, true, filter));
-            mapper.writer().writeValue(response.getOutputStream(), metricRegistry);
+            if (jsonpCallbackName != null) {
+                response.setContentType("application/javascript");
+                mapper.writer().writeValue(response.getOutputStream(),
+                        new JSONPObject(jsonpCallbackName, metricRegistry));
+            } else {
+                response.setContentType("application/json");
+                mapper.writer().writeValue(response.getOutputStream(), metricRegistry);
+            }
         } catch (final IOException e) {
             log.error("{} I/O error responding to request", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);

@@ -34,5 +34,24 @@
             </map>
         </property>
     </bean>
+    
+    <!-- Metric registry and a call to register it with the Metrics runtime. -->
 
+    <bean id="shibboleth.metrics.MetricRegistry" class="com.codahale.metrics.MetricRegistry" /> 
+    
+    <bean class="com.codahale.metrics.SharedMetricRegistries" factory-method="add"
+        c:_0="net.shibboleth.idp" c:_1-ref="shibboleth.metrics.MetricRegistry" />
+
+    <!-- Parent beans for registering MetricSets and Metrics. -->
+    
+    <bean id="shibboleth.metrics.RegisterMetricSet" abstract="true"
+        class="org.springframework.beans.factory.config.MethodInvokingBean"
+        p:targetObject-ref="shibboleth.metrics.MetricRegistry"
+        p:targetMethod="registerAll" />
+
+    <bean id="shibboleth.metrics.RegisterMetric" abstract="true"
+        class="org.springframework.beans.factory.config.MethodInvokingBean"
+        p:targetObject-ref="shibboleth.metrics.MetricRegistry"
+        p:targetMethod="register" />
+    
 </beans>

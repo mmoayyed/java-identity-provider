@@ -37,7 +37,9 @@
         class="net.shibboleth.idp.profile.impl.OutputMetrics" scope="prototype"
         p:httpServletResponse-ref="shibboleth.HttpServletResponse"
         p:metricRegistry-ref="shibboleth.metrics.MetricRegistry"
-        p:metricFilterMap-ref="shibboleth.metrics.MetricGroups" />
+        p:metricFilterMap-ref="shibboleth.metrics.MetricGroups"
+        p:allowedOrigin="#{getObject('shibboleth.metrics.AllowedOrigin')}"
+        p:JSONPCallbackName="#{getObject('shibboleth.metrics.JSONPCallback')}" />
         
     <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
 
