@@ -101,6 +101,9 @@
         <CustomAction Id="InheritQIInstallJetty" Property="INSTALL_JETTY" Value="TRUE" />
         <CustomAction Id="InheritQIConfigAd" Property="CONFIGURE_AD" Value="TRUE" />
 
+        <!-- Pass the NO_FIREWALL_EXCEPTION parameter down to the Jetty Merge Module -->
+        <CustomAction Id="PassdownNoFireWall" Property="NO_FIREWALL.684B3207_0D64_43E6_9E6A_3ACB8B7672D7" Value="[NO_FIREWALL_EXCEPTION]" />
+
         <!-- Other properties -->
         <CustomAction Id="SetDNSName" Property="DNSNAME" Value="[ComputerName]" />
 
@@ -160,6 +163,9 @@
             <Custom Action="InheritInstallDir" After="AppSearch">OLD_INSTALLDIR</Custom>
 
             <Custom Action="InheritInstallJetty" After="AppSearch">OLD_JETTY_INSTALL AND NOT JETTY_INSTALL</Custom>
+
+            <!-- Pass across the instruction about the firewall-->
+            <Custom Action="PassdownNoFireWall" After="AppSearch">NO_FIREWALL_EXCEPTION</Custom>
 
             <!-- Setup JAVA_IDP_HOME before we use it -->
 
