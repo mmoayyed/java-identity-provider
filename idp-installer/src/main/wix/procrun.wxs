@@ -87,9 +87,15 @@
             <!-- Configure the service -->
 
             <Component Id="ServiceParameters" Directory="PROCRUNROOT" Guid="{EC1EA760-0113-4CAD-9719-ADFF1885FC53}" KeyPath="yes">
+                <Condition>NOT Installed</Condition>
                 <!-- Start component here - that way if the start fails the user will be prompted and things will continue with the service declared. -->
                 <RegistryKey ForceCreateOnInstall="yes" Key="SYSTEM\CurrentControlSet\services\$(var.ServiceName)\Parameters" Root="HKLM" />
                 <ServiceControl Id="controlService" Name="$(var.ServiceName)" Stop="both" Remove="uninstall" Start="install" Wait="no" />
+            </Component>
+            <Component Id="ServiceParametersStop" Directory="PROCRUNROOT" Guid="{C1A519A5-1FD9-4BA7-85CD-6D4D532D7C4F}" KeyPath="yes">
+                <Condition>Installed</Condition>
+                <!-- Stop component here - and wait -->
+                <ServiceControl Id="controlServiceUninstall" Name="$(var.ServiceName)" Stop="both" Remove="uninstall" Start="install" Wait="yes" />
             </Component>
             <Component Id="cmp92C942ECAFC0924D02B9B447DB497D3A" Directory="PROCRUNROOT" Guid="{F4D1B5FA-F7CC-4693-9123-84B960DB98B0}" KeyPath="yes">
                 <!-- ForceDeleteOnUninstall stops us accumulating Stop keys -->
