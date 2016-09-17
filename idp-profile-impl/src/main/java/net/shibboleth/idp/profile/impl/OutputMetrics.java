@@ -70,7 +70,10 @@ public class OutputMetrics extends AbstractProfileAction {
     
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(OutputMetrics.class);
-        
+    
+    /** Pre-installed filter to apply alongside dynamically derived filter. */
+    @Nullable private MetricFilter metricFilter;
+    
     /** The metric registry. */
     @NonnullAfterInit private MetricRegistry metricRegistry;
 
@@ -89,6 +92,17 @@ public class OutputMetrics extends AbstractProfileAction {
     /** Constructor. */
     public OutputMetrics() {
         metricFilterMap = Collections.emptyMap();
+    }
+
+    /**
+     * Set the external metric filter to apply.
+     * 
+     * @param filter metric filter
+     */
+    public void setMetricFilter(@Nullable final MetricFilter filter) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        metricFilter = filter;
     }
 
     /**
@@ -206,6 +220,9 @@ public class OutputMetrics extends AbstractProfileAction {
             };
         }
         
+        // Wrap with logger check.
+        filter = new ChainedMetricFilter(filter);
+        
         try {
             final HttpServletResponse response = getHttpServletResponse();
             
@@ -231,4 +248,28 @@ public class OutputMetrics extends AbstractProfileAction {
         }
     }
 
+    /**
+     * {@link MetricFilter} that combines two other filters.
+     */
+    private class ChainedMetricFilter implements MetricFilter {
+
+        /** Filter to apply before the logger-driven filter. */
+        @Nonnull private final MetricFilter parentFilter;
+        
+        /**
+         * Constructor.
+         *
+         * @param parent filter to apply before this one
+         */
+        public ChainedMetricFilter(@Nonnull final MetricFilter parent) {
+            parentFilter = parent;
+        }
+        
+        /** {@inheritDoc} */
+        public boolean matches(String name, Metric metric) {
+            return parentFilter.matches(name, metric) && metricFilter.matches(name, metric);
+        }
+
+    }
+    
 }
