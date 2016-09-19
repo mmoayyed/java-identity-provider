@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute;
 
-
 /**
  * IdP Representation of the SAML2 RequestedAttribute.
  */
@@ -25,7 +24,7 @@ public class IdPRequestedAttribute extends IdPAttribute {
 
     /** Is this attribute required. */
     private boolean isRequired;
-    
+
     /**
      * Constructor.
      *
@@ -35,14 +34,18 @@ public class IdPRequestedAttribute extends IdPAttribute {
         super(attributeId);
     }
 
-    /** Is this attribute marked as required.
+    /**
+     * Is this attribute marked as required.
+     * 
      * @return Returns the isRequired flag
      */
     public boolean getIsRequired() {
         return isRequired;
     }
 
-    /** Set whether this attribute is to be marked as required.
+    /**
+     * Set whether this attribute is to be marked as required.
+     * 
      * @param required The flag to set.
      */
     public void setRequired(boolean required) {
