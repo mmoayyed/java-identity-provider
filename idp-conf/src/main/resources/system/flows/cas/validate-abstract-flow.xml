@@ -40,14 +40,8 @@
         <transition on="ServiceMismatch" to="ProtocolErrorView" />
         <transition on="TicketExpired" to="ProtocolErrorView" />
         <transition on="TicketRetrievalError" to="ProtocolErrorView" />
-        <transition on="ServiceTicketValidated" to="ValidateIdPSession" />
+        <transition on="ServiceTicketValidated" to="ValidateRenew" />
         <transition on="ProxyTicketValidated" to="HandleValidProxyTicket" />
-    </action-state>
-
-    <action-state id="ValidateIdPSession">
-        <evaluate expression="ValidateIdPSession" />
-        <evaluate expression="'proceed'" />
-        <transition on="proceed" to="ValidateRenew" />
     </action-state>
 
     <action-state id="ValidateRenew">

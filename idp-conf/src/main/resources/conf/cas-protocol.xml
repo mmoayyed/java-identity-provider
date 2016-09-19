@@ -55,17 +55,29 @@
        -->
     <!--<alias name="simpleTicketService" alias="shibboleth.CASTicketService" /> -->
 
-
     <!--
-       | Advanced CAS configuration.
-       |
-       | Uncomment any alias definitions above and define custom components for defined
-       | CAS protocol extension points.
+       | The predicate used to determine whether IdP session validation is performed during the process of granting
+       | a proxy ticket. When the predicate evaluates to true, an IdP session is resolved and validated prior to
+       | granting a proxy ticket. This feature prevents issuing proxy tickets when an IdP session is expired, but comes
+       | at the cost of requiring server-side storage of IdP session data. If this is configured to a predicate that
+       | evaluates to true under any condition, a server-side storage service must be enabled for IdP session
+       | storage. The most common non-default value is "alwaysTrue."
        -->
+    <bean id="shibboleth.CASProxyValidateIdPSessionPredicate"
+          class="com.google.common.base.Predicates"
+          factory-method="alwaysFalse" />
+
+
+    <!-- ============== Advanced CAS Configuration ============== -->
+
+    <!-- Configure a third-party ticket service. -->
     <!--
     <bean id="shibboleth.CASTicketService"
           class="org.example.idp.cas.CustomTicketService" />
+    -->
 
+    <!-- Configure a third-party proxy authenticator. -->
+    <!--
     <bean id="shibboleth.CASProxyAuthenticator"
           class="org.example.idp.cas.CustomProxyAuthenticator" />
     -->

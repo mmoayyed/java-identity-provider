@@ -63,26 +63,10 @@
           scope="prototype"
           p:relyingPartyConfigurationResolver-ref="shibboleth.RelyingPartyConfigurationResolver" />
 
-    <bean id="ValidateIdPSession"
-          class="net.shibboleth.idp.cas.flow.impl.ValidateIdpSessionAction"
-          c:resolver-ref="shibboleth.SessionManager" />
-
-    <bean id="SessionPrincipalLookupFunction"
-          class="com.google.common.base.Functions"
-          factory-method="compose">
-        <constructor-arg index="0">
-            <bean class="net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction" />
-        </constructor-arg>
-        <constructor-arg index="1">
-            <bean class="org.opensaml.messaging.context.navigate.ChildContextLookup"
-                  c:type="net.shibboleth.idp.session.context.SessionContext" />
-        </constructor-arg>
-    </bean>
-
     <bean id="PopulateSubjectContext"
           class="net.shibboleth.idp.profile.impl.PopulateSubjectContext"
           scope="prototype"
-          p:principalNameLookupStrategy-ref="SessionPrincipalLookupFunction" />
+          p:principalNameLookupStrategy-ref="PrincipalLookupFunction" />
 
     <bean id="ResolveAttributes"
           class="net.shibboleth.idp.profile.impl.ResolveAttributes"

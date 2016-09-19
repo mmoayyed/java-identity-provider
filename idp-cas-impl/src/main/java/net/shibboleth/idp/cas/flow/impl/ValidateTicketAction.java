@@ -81,7 +81,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
 
         final ValidateConfiguration config = configLookupFunction.apply(profileRequestContext);
         if (config == null) {
-            log.info("Ticket validation configuration undefined");
+            log.warn("Ticket validation configuration undefined");
             return ProtocolError.IllegalState.event(this);
         }
 

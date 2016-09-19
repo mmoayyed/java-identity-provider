@@ -188,26 +188,6 @@ public class ServiceValidateFlowTest extends AbstractFlowTest {
     }
 
     @Test
-    public void testFailureSessionExpired() throws Exception {
-        final ServiceTicket ticket = ticketService.createServiceTicket(
-                "ST-1415133227-o5ly5eArKccYkb2P+80uRE7Gq9xSAqWtOg",
-                DateTime.now().plusSeconds(5).toInstant(),
-                "https://test.example.org/",
-                new TicketState("No-Such-Session-Id", "nobody", Instant.now(), "Password"),
-                false);
-
-        externalContext.getMockRequestParameterMap().put("service", ticket.getService());
-        externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-
-        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
-
-        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
-        final String responseBody = response.getContentAsString();
-        assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
-        assertTrue(responseBody.contains("E_SESSION_EXPIRED"));
-    }
-
-    @Test
     public void testSuccessWithProxy() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);

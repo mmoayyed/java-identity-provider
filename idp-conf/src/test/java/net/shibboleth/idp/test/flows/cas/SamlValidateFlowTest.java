@@ -115,27 +115,6 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     }
 
     @Test
-    public void testFailureSessionExpired() throws Exception {
-        final ServiceTicket ticket = ticketService.createServiceTicket(
-                "ST-1415133227-o5ly5eArKccYkb2P+80uRE7Gq9xSAqWtOg",
-                DateTime.now().plusSeconds(5).toInstant(),
-                "https://test.example.org/",
-                new TicketState("No-Such-Session-Id", "bob", Instant.now(), "Password"),
-                false);
-        final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
-        request.setMethod("POST");
-        request.setContent(requestBody.getBytes("UTF-8"));
-        externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
-
-        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
-
-        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
-        final String responseBody = response.getContentAsString();
-        assertTrue(responseBody.contains("<saml1p:StatusCode Value=\"INVALID_TICKET\""));
-        assertTrue(responseBody.contains("<saml1p:StatusMessage>E_SESSION_EXPIRED</saml1p:StatusMessage>"));
-    }
-
-    @Test
     public void testSuccessWhenResolveAttributesFalse() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);

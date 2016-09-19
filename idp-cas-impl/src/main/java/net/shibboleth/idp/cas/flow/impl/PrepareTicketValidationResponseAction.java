@@ -29,6 +29,7 @@ import net.shibboleth.idp.cas.config.impl.ValidateConfiguration;
 import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
+import net.shibboleth.idp.cas.ticket.TicketPrincipalLookupFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.session.context.SessionContext;
 import net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction;
@@ -61,10 +62,7 @@ public class PrepareTicketValidationResponseAction extends
                     new ChildContextLookup<ProfileRequestContext, RelyingPartyContext>(RelyingPartyContext.class));
 
     /** Function used to retrieve subject principal. */
-    private Function<ProfileRequestContext,String> principalLookupFunction =
-            Functions.compose(
-                    new SessionContextPrincipalLookupFunction(),
-                    new ChildContextLookup<ProfileRequestContext, SessionContext>(SessionContext.class));
+    private Function<ProfileRequestContext,String> principalLookupFunction = new TicketPrincipalLookupFunction();
 
     /** Profile configuration lookup function. */
     private final ConfigLookupFunction<ValidateConfiguration> configLookupFunction =

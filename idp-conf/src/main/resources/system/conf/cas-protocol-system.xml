@@ -34,6 +34,10 @@
     <bean id="shibboleth.DefaultCASProxyAuthenticator"
           class="net.shibboleth.idp.cas.proxy.impl.HttpClientProxyAuthenticator" />
 
+    <bean id="shibboleth.DefaultCASProxyValidateIdPSessionPredicate"
+          class="com.google.common.base.Predicates"
+          factory-method="alwaysFalse" />
+
     <import resource="../../conf/cas-protocol.xml" />
 
 </beans>

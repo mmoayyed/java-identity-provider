@@ -99,15 +99,12 @@
 
     <bean id="grantProxyTicketAction"
           class="net.shibboleth.idp.cas.flow.impl.GrantProxyTicketAction"
-          c:ticketService-ref="shibboleth.CASTicketService" />
+          c:ticketService-ref="shibboleth.CASTicketService"
+          c:resolver-ref="shibboleth.SessionManager" />
 
     <bean id="grantServiceTicketAction"
           class="net.shibboleth.idp.cas.flow.impl.GrantServiceTicketAction"
           c:ticketService-ref="shibboleth.CASTicketService" />
-
-    <bean id="validateIdPSessionAction"
-          class="net.shibboleth.idp.cas.flow.impl.ValidateIdpSessionAction"
-          c:resolver-ref="shibboleth.SessionManager" />
 
     <bean id="validateProxyCallbackAction"
           class="net.shibboleth.idp.cas.flow.impl.ValidateProxyCallbackAction"

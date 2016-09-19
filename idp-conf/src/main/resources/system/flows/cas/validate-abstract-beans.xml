@@ -38,7 +38,8 @@
 
     <bean id="UpdateIdPSessionWithSPSession"
           class="net.shibboleth.idp.cas.flow.impl.UpdateIdPSessionWithSPSessionAction"
-          c:lifetime="%{idp.session.defaultSPlifetime:PT2H}" />
+          c:lifetime="%{idp.session.defaultSPlifetime:PT2H}"
+          c:resolver-ref="shibboleth.SessionManager" />
 
     <bean id="PopulateAuditContext" parent="shibboleth.AbstractPopulateAuditContext"
           p:fieldExtractors="#{getObject('shibboleth.CASValidationAuditExtractors') ?: getObject('shibboleth.DefaultCASValidationAuditExtractors')}" />
@@ -46,4 +47,7 @@
     <bean id="ValidateConfigLookup"
           class="net.shibboleth.idp.cas.config.impl.ConfigLookupFunction"
           c:clazz="net.shibboleth.idp.cas.config.impl.ValidateConfiguration" />
+
+    <!-- Supplementary beans -->
+    <bean id="PrincipalLookupFunction" class="net.shibboleth.idp.cas.ticket.TicketPrincipalLookupFunction" />
 </beans>

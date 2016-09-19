@@ -96,21 +96,6 @@ public class ProxyValidateFlowTest extends AbstractFlowTest {
     }
 
     @Test
-    public void testFailureSessionExpired() throws Exception {
-        final ProxyTicket ticket = createProxyTicket("No-Such-SessionId", "nobody");
-
-        externalContext.getMockRequestParameterMap().put("service", ticket.getService());
-        externalContext.getMockRequestParameterMap().put("ticket", ticket.getId());
-
-        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
-
-        assertEquals(result.getOutcome().getId(), "ProtocolErrorView");
-        final String responseBody = response.getContentAsString();
-        assertTrue(responseBody.contains("<cas:authenticationFailure code=\"INVALID_TICKET\""));
-        assertTrue(responseBody.contains("E_SESSION_EXPIRED"));
-    }
-
-    @Test
     public void testSuccessWithProxy() throws Exception {
         final String principal = "john";
         final IdPSession session = sessionManager.createSession(principal);

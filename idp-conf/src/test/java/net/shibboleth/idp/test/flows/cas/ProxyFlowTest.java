@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.webflow.execution.FlowExecutionOutcome;
 import org.springframework.webflow.executor.FlowExecutionResult;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nonnull;
@@ -58,6 +59,15 @@ public class ProxyFlowTest extends AbstractFlowTest {
 
     @Autowired
     private SessionManager sessionManager;
+
+    @Autowired
+    @Qualifier("shibboleth.CASProxyValidateIdPSessionPredicate")
+    private ToggleablePredicate validateIdPSessionPredicate;
+
+    @BeforeMethod
+    public void disableIdPSessionValidation() {
+        validateIdPSessionPredicate.setResult(false);
+    }
 
     @Test
     public void testInvalidRequestNoTicket() throws Exception {
@@ -104,6 +114,25 @@ public class ProxyFlowTest extends AbstractFlowTest {
         assertTrue(responseBody.contains("<cas:proxyTicket>PT-"));
     }
 
+
+    @Test
+    public void testSuccessWithIdPSessionValidation() throws Exception {
+        validateIdPSessionPredicate.setResult(true);
+        final String principal = "john";
+        final IdPSession session = sessionManager.createSession(principal);
+        final ProxyGrantingTicket ticket = createProxyGrantingTicket(session.getId(), principal);
+
+        externalContext.getMockRequestParameterMap().put("targetService", ticket.getService());
+        externalContext.getMockRequestParameterMap().put("pgt", ticket.getId());
+
+        final FlowExecutionResult result = flowExecutor.launchExecution(FLOW_ID, null, externalContext);
+
+        final String responseBody = response.getContentAsString();
+        assertEquals(result.getOutcome().getId(), "ProxySuccess");
+        assertTrue(responseBody.contains("<cas:proxySuccess>"));
+        assertTrue(responseBody.contains("<cas:proxyTicket>PT-"));
+    }
+
     @Test
     public void testFailureTicketExpired() throws Exception {
         externalContext.getMockRequestParameterMap().put("targetService", "https://test.example.org/");
@@ -119,6 +148,7 @@ public class ProxyFlowTest extends AbstractFlowTest {
 
     @Test
     public void testFailureSessionExpired() throws Exception {
+        validateIdPSessionPredicate.setResult(true);
         final ProxyGrantingTicket ticket = createProxyGrantingTicket("No-Such-SessionId", "nobody");
 
         externalContext.getMockRequestParameterMap().put("targetService", ticket.getService());
@@ -135,13 +165,13 @@ public class ProxyFlowTest extends AbstractFlowTest {
     private ProxyGrantingTicket createProxyGrantingTicket(final String sessionId, final String principal) {
         final ServiceTicket st = ticketService.createServiceTicket(
                 new TicketIdentifierGenerationStrategy("ST", 25).generateIdentifier(),
-                DateTime.now().plusSeconds(5).toInstant(),
+                DateTime.now().plusSeconds(10).toInstant(),
                 "https://service.example.org/",
                 new TicketState(sessionId, principal, Instant.now(), "Password"),
                 false);
         return ticketService.createProxyGrantingTicket(
                 new TicketIdentifierGenerationStrategy("PGT", 50).generateIdentifier(),
-                DateTime.now().plusSeconds(10).toInstant(),
+                DateTime.now().plusHours(1).toInstant(),
                 st);
     }
 }

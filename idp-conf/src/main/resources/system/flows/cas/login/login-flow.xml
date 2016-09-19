@@ -10,6 +10,7 @@
             <evaluate result="flowScope.hasAuthenticationContext" expression="false" />
         </on-entry>
         <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="InitializeLogin" />
         <evaluate expression="PopulateClientStorageLoadContext" />
         <evaluate expression="'proceed'" />
         <transition on="proceed" to="ClientStorageLoad" />
@@ -23,7 +24,6 @@
 
     <action-state id="ContinueLogin">
         <evaluate expression="PopulateSessionContext"/>
-        <evaluate expression="InitializeLogin" />
         <evaluate expression="BuildRelyingPartyContext" />
         <evaluate expression="BuildSAMLMetadataContext" />
         <evaluate expression="SelectRelyingPartyConfiguration" />
@@ -53,7 +53,7 @@
     </decision-state>
 
     <decision-state id="CheckForExistingSession">
-        <if test="SessionPrincipalLookupFunction.apply(opensamlProfileRequestContext) == null"
+        <if test="PrincipalLookupFunction.apply(opensamlProfileRequestContext) == null"
             then="PrepareForReturnToService"
             else="CheckResolveAttributes" />
     </decision-state>

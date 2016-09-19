@@ -19,6 +19,7 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.cas.protocol.ProtocolError;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.session.impl.CASSPSession;
 import net.shibboleth.idp.cas.ticket.Ticket;
@@ -26,10 +27,14 @@ import net.shibboleth.idp.cas.ticket.TicketContext;
 import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SessionException;
+import net.shibboleth.idp.session.SessionResolver;
 import net.shibboleth.idp.session.context.SessionContext;
+import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +46,6 @@ import org.springframework.webflow.execution.RequestContext;
  * If the service granted access to indicates participation in SLO via {@link Service#singleLogoutParticipant},
  * then a {@link CASSPSession} is created to track the SP session in order that it may receive SLO messages upon
  * a request to the CAS <code>/logout</code> URI.
- * <p>
- * Requires the following to be available under the {@link ProfileRequestContext}:
- * <ul>
- *     <li>{@link SessionContext}</li>
- *     <li>{@link TicketContext}</li>
- *     <li>{@link net.shibboleth.idp.cas.service.ServiceContext ServiceContext}</li>
- * </ul>
  *
  * @author Marvin S. Addison
  */
@@ -56,6 +54,9 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(UpdateIdPSessionWithSPSessionAction.class);
 
+    /** Looks up IdP sessions. */
+    @Nonnull
+    private final SessionResolver sessionResolver;
 
     /** Lifetime of sessions to create. */
     @Positive
@@ -66,10 +67,14 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
     /**
      * Creates a new instance with given parameters.
      *
+     * @param resolver Session resolver component
      * @param lifetime lifetime in milliseconds, determines upper bound for expiration of the
      * {@link CASSPSession} to be created
      */
-    public UpdateIdPSessionWithSPSessionAction(@Positive @Duration final long lifetime) {
+    public UpdateIdPSessionWithSPSessionAction(
+            @Nonnull final SessionResolver resolver,
+            @Positive@Duration final long lifetime) {
+        sessionResolver = Constraint.isNotNull(resolver, "Session resolver cannot be null.");
         sessionLifetime = Constraint.isGreaterThan(0, lifetime, "Lifetime must be greater than 0");
     }
 
@@ -84,18 +89,28 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
         if (!service.isSingleLogoutParticipant()) {
             return null;
         }
-        final IdPSession session = getIdPSession(profileRequestContext);
-        final long now = System.currentTimeMillis();
-        final SPSession sps = new CASSPSession(
-                ticket.getService(),
-                now,
-                now + sessionLifetime,
-                ticket.getId());
-        log.debug("Created SP session {}", sps);
+        IdPSession session = null;
         try {
-            session.addSPSession(sps);
-        } catch (SessionException e) {
-            throw new IllegalStateException("Failed updating IdP session with CAS SP session", e);
+            log.debug("Attempting to retrieve session {}", ticket.getSessionId());
+            session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(ticket.getSessionId())));
+        } catch (ResolverException e) {
+            log.warn("Cannot store CASSPSession due to IdPSession resolution error: {}", e);
+        }
+        if (session != null) {
+            final long now = System.currentTimeMillis();
+            final SPSession sps = new CASSPSession(
+                    ticket.getService(),
+                    now,
+                    now + sessionLifetime,
+                    ticket.getId());
+            log.debug("Created SP session {}", sps);
+            try {
+                session.addSPSession(sps);
+            } catch (SessionException e) {
+                log.warn("Failed updating IdPSession with CASSPSession", e);
+            }
+        } else {
+            log.warn("Cannot store CASSPSession since IdPSession not found");
         }
         return null;
     }
