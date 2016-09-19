@@ -41,14 +41,14 @@
     <util:map id="shibboleth.authn.MFA.TransitionMap">
         <!-- First rule runs the IPAddress login flow. -->
         <entry key="">
-            <bean parent="shibboleth.authn.MFA.Transition" p:nextFlow="authn/Password" />
+            <bean parent="shibboleth.authn.MFA.Transition" p:nextFlow="authn/IPAddress" />
         </entry>
         
         <!--
         Second rule runs a function if IPAddress succeeds, to determine whether an additional
         factor is required.
         -->
-        <entry key="authn/Password">
+        <entry key="authn/IPAddress">
             <bean parent="shibboleth.authn.MFA.Transition" p:nextFlowStrategy-ref="checkSecondFactor" />
         </entry>
         
@@ -61,7 +61,7 @@
         <constructor-arg>
             <value>
             <![CDATA[
-                nextFlow = "authn/Duo";
+                nextFlow = "authn/Password";
 
                 // Go straight to second factor if we have to, or set up for an attribute lookup first.
                 authCtx = input.getSubcontext("net.shibboleth.idp.authn.context.AuthenticationContext");
@@ -78,7 +78,7 @@
                     // Check for an attribute that authorizes use of first factor.
                     attribute = resCtx.getResolvedIdPAttributes().get("allowedLoginMethods");
                     valueType =  Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
-                    if (attribute != null && attribute.getValues().contains(new valueType("Password"))) {
+                    if (attribute != null && attribute.getValues().contains(new valueType("IPAddress"))) {
                         nextFlow = null;
                     }
                     
