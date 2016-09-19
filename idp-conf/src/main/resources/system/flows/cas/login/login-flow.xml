@@ -53,9 +53,12 @@
     </decision-state>
 
     <decision-state id="CheckForExistingSession">
-        <if test="PrincipalLookupFunction.apply(opensamlProfileRequestContext) == null"
-            then="PrepareForReturnToService"
-            else="CheckResolveAttributes" />
+        <on-entry>
+            <set name="flowScope.sessionContext" value="SessionContextLookup.apply(opensamlProfileRequestContext)" />
+        </on-entry>
+        <if test="sessionContext != null and sessionContext.idPSession.authenticationResults.size() > 0"
+            then="CheckResolveAttributes"
+            else="PrepareForReturnToService" />
     </decision-state>
 
     <action-state id="PrepareForReturnToService">
