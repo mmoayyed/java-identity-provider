@@ -93,8 +93,8 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
         try {
             log.debug("Attempting to retrieve session {}", ticket.getSessionId());
             session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(ticket.getSessionId())));
-        } catch (ResolverException e) {
-            log.warn("Cannot store CASSPSession due to IdPSession resolution error: {}", e);
+        } catch (Exception e) {
+            log.warn("IdPSession resolution error: {}. Possible sign of misconfiguration.", e.getMessage());
         }
         if (session != null) {
             final long now = System.currentTimeMillis();
@@ -110,7 +110,7 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
                 log.warn("Failed updating IdPSession with CASSPSession", e);
             }
         } else {
-            log.warn("Cannot store CASSPSession since IdPSession not found");
+            log.info("Cannot store CASSPSession since IdPSession not found");
         }
         return null;
     }
