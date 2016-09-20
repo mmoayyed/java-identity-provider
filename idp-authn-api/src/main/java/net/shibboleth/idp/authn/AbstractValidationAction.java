@@ -36,6 +36,7 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
+import net.shibboleth.idp.metrics.MetricsSupport;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -44,6 +45,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -75,8 +77,14 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         extends AbstractAuthenticationAction<InboundMessageType, OutboundMessageType>
             implements PrincipalSupportingComponent {
 
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.validation"; 
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractValidationAction.class);
+    
+    /** Base name of metrics. */
+    @Nonnull @NotEmpty private String metricName;
     
     /** Basis for {@link AuthenticationResult}. */
     @Nonnull private final Subject authenticatedSubject;
@@ -107,6 +115,30 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         classifiedMessages = Collections.emptyMap();
         requesterLookupStrategy = new RelyingPartyIdLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
+        
+        setMetricName(DEFAULT_METRIC_NAME);
+    }
+    
+    /**
+     * Set the base name to use for metrics reported.
+     * 
+     * @return root for name of metrics
+     */
+    @Nonnull @NotEmpty public String getMetricName() {
+        return metricName;
+    }
+    
+    /**
+     * Set the base name to use for metrics reported.
+     * 
+     * @param name root for name of metrics
+     * 
+     * @since 3.3.0
+     */
+    public void setMetricName(@Nonnull @NotEmpty final String name) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        metricName = Constraint.isNotNull(StringSupport.trimOrNull(name), "Metric name cannot be null or empty");
     }
 
     /**
@@ -127,6 +159,8 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * @param flag flag to set
      */
     public void setAddDefaultPrincipals(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         addDefaultPrincipals = flag;
     }
     
@@ -343,6 +377,24 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * @return  the input subject
      */
     @Nonnull protected abstract Subject populateSubject(@Nonnull final Subject subject);
+    
+    /**
+     * Record a successful authentication attempt against the configured counter.
+     * 
+     * @since 3.3.0
+     */
+    protected void recordSuccess() {
+        MetricsSupport.getDefaultMetricRegistry().counter(getMetricName() + ".successes").inc();
+    }
+    
+    /**
+     * Record a failed authentication attempt against the configured counter.
+     * 
+     * @since 3.3.0
+     */
+    protected void recordFailure() {
+        MetricsSupport.getDefaultMetricRegistry().counter(getMetricName() + ".failures").inc();
+    }
     
     /**
      * Adds an exception encountered during the action to an {@link AuthenticationErrorContext}, creating one if

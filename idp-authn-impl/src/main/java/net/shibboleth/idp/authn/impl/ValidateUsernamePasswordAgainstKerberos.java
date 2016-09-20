@@ -69,6 +69,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePasswordValidationAction {
     
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.krb5"; 
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstKerberos.class);
 
@@ -96,6 +99,7 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePas
     /** Constructor. */
     public ValidateUsernamePasswordAgainstKerberos() {
         loginModuleClassName = "com.sun.security.auth.module.Krb5LoginModule";
+        setMetricName(DEFAULT_METRIC_NAME);
     }
     
     /**
@@ -203,22 +207,26 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePas
             }
             
             log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
-            
+            recordSuccess();
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             log.error("{} Unable to instantiate JAAS module for Kerberos", getLogPrefix(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
+            recordFailure();
         } catch (final LoginException e) {
             log.info("{} Login by {} failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
         } catch(final GSSException e) {
             log.warn("{} Login by {} failed during GSS context establishment to verify KDC", getLogPrefix(),
                     getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
         } catch (final Exception e) {
             log.warn("{} Login by {} produced unknown exception", getLogPrefix(),
                     getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
+            recordFailure();
         }
     }
 

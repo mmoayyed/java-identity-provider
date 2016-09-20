@@ -37,16 +37,19 @@
     
     <!-- Metric registry and a call to register it with the Metrics runtime. -->
 
-    <bean id="shibboleth.metrics.MetricRegistry" class="com.codahale.metrics.MetricRegistry" /> 
+    <bean id="shibboleth.metrics.MetricRegistry" class="net.shibboleth.idp.metrics.FilteredMetricRegistry"
+        c:_0-ref="shibboleth.metrics.LoggerDrivenMetricFilter" /> 
     
     <bean class="com.codahale.metrics.SharedMetricRegistries" factory-method="add"
-        c:_0="net.shibboleth.idp" c:_1-ref="shibboleth.metrics.MetricRegistry" />
+        c:_0="#{T(net.shibboleth.idp.metrics.MetricsSupport).DEFAULT_METRIC_REGISTRY}"
+        c:_1-ref="shibboleth.metrics.MetricRegistry" />
 
     <!-- MetricFilter we can control with logging categories. -->
 
-    <bean id="shibboleth.LoggerDrivenMetricFilter"
+    <bean id="shibboleth.metrics.LoggerDrivenMetricFilter"
         class="net.shibboleth.idp.metrics.LoggerDrivenMetricFilter"
-        c:_0="metrics." />
+        c:_0="metrics."
+        c:_1="#{getObject('shibboleth.metrics.MetricLevelMap')}" />
 
     <!-- Parent beans for registering MetricSets and Metrics. -->
     

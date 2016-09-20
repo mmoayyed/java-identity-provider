@@ -27,6 +27,7 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.UsernamePasswordContext;
 import net.shibboleth.idp.authn.principal.PasswordPrincipal;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -49,6 +50,9 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractUsernamePasswordValidationAction extends AbstractValidationAction {
 
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.password"; 
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractUsernamePasswordValidationAction.class);
 
@@ -67,6 +71,7 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
     /** Constructor. */
     public AbstractUsernamePasswordValidationAction() {
         removeContextAfterValidation = true;
+        setMetricName(DEFAULT_METRIC_NAME);
     }
     
     /**
@@ -150,15 +155,18 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
         if (upContext == null) {
             log.info("{} No UsernamePasswordContext available within authentication context", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
+            recordFailure();
             return false;
         } else if (upContext.getUsername() == null) {
             log.info("{} No username available within UsernamePasswordContext", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, "NoCredentials", AuthnEventIds.NO_CREDENTIALS);
+            recordFailure();
             return false;
         } else if (upContext.getPassword() == null) {
             log.info("{} No password available within UsernamePasswordContext", getLogPrefix());
             handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
                     AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
             return false;
         }
         
@@ -166,6 +174,7 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
             log.debug("{} Username '{}' did not match expression", getLogPrefix(), upContext.getUsername());
             handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
                     AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
             return false;
         }
         

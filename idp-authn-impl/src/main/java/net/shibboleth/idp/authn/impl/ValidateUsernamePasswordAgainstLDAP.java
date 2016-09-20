@@ -26,6 +26,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.LDAPResponseContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -65,6 +66,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswordValidationAction {
 
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.ldap"; 
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstLDAP.class);
 
@@ -77,6 +81,11 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
     /** Authentication response associated with the login. */
     @Nullable private AuthenticationResponse response;
 
+    /** Constructor. */
+    public ValidateUsernamePasswordAgainstLDAP() {
+        setMetricName(DEFAULT_METRIC_NAME);
+    }
+    
     /**
      * Returns the authenticator.
      * 
@@ -141,6 +150,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
             log.trace("{} Authentication response {}", getLogPrefix(), response);
             if (response.getResult()) {
                 log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
+                recordSuccess();
                 authenticationContext.getSubcontext(LDAPResponseContext.class, true)
                         .setAuthenticationResponse(response);
                 if (response.getAccountState() != null) {
@@ -161,15 +171,18 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
                     handleError(profileRequestContext, authenticationContext,
                             String.format("%s:%s", response.getAuthenticationResultCode(), response.getMessage()),
                             AuthnEventIds.INVALID_CREDENTIALS);
+                    recordFailure();
                 } else if (response.getAccountState() != null) {
                     final AccountState state = response.getAccountState();
                     handleError(profileRequestContext, authenticationContext, String.format("%s:%s:%s",
                             state.getError(), response.getResultCode(), response.getMessage()),
                             AuthnEventIds.ACCOUNT_ERROR);
+                    recordFailure();
                 } else if (response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
                     handleError(profileRequestContext, authenticationContext,
                             String.format("%s:%s", response.getResultCode(), response.getMessage()),
                             AuthnEventIds.INVALID_CREDENTIALS);
+                    recordFailure();
                 } else {
                     throw new LdapException(response.getMessage(), response.getResultCode(), response.getMatchedDn(),
                             response.getControls(), response.getReferralURLs(), response.getMessageId());
@@ -178,6 +191,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
         } catch (final LdapException e) {
             log.warn("{} Login by {} produced exception", getLogPrefix(), getUsernamePasswordContext().getUsername(),
                     e);
+            recordFailure();
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }

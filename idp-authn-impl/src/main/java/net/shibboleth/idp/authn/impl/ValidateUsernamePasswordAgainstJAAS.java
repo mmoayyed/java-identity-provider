@@ -74,6 +74,9 @@ import com.google.common.base.Function;
  */
 public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswordValidationAction {
 
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn"; 
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstJAAS.class);
     
@@ -95,6 +98,9 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
     
     /** Tracks any principals derived from the login configuration to add to the Subject. */
     @Nullable private Subject derivedSubject;
+    
+    /** Tracker for current login config for reporting. */
+    @Nullable private String currentLoginConfigName;
     
     /** Constructor. */
     public ValidateUsernamePasswordAgainstJAAS() {
@@ -233,10 +239,12 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
             }
             
             try {
+                currentLoginConfigName = loginConfig.getFirst();
                 log.debug("{} Attempting to authenticate user '{}' via '{}'", getLogPrefix(),
-                        getUsernamePasswordContext().getUsername(), loginConfig.getFirst());
-                authenticate(loginConfig.getFirst());
+                        getUsernamePasswordContext().getUsername(), currentLoginConfigName);
+                authenticate(currentLoginConfigName);
                 log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
+                recordSuccess();
                 derivedSubject = loginConfig.getSecond();
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 ActionSupport.buildProceedEvent(profileRequestContext);
@@ -244,11 +252,13 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
             } catch (final LoginException e){ 
                 log.info("{} Login by '{}' failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
+                recordFailure();
                 eventSignaled = true;
             } catch (final Exception e) {
                 log.warn("{} Login by '{}' produced exception", getLogPrefix(),
                         getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
+                recordFailure();
                 eventSignaled = true;
             }
         }
@@ -349,8 +359,13 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
         }
         return theSubject;
     }
-    
-    
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NotEmpty public String getMetricName() {
+        return super.getMetricName() + '.' + currentLoginConfigName;
+    }
+        
     /**
      * A callback handler that provides static name and password data to a JAAS login process.
      * 
