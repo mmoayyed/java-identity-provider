@@ -39,7 +39,7 @@ public class Service implements Principal {
 
     /** Group to which service belongs. */
     @Nullable
-    private final String group;
+    private final String serviceGroup;
 
     /** Proxy authorization flag. */
     private final boolean authorizedToProxy;
@@ -75,30 +75,44 @@ public class Service implements Principal {
             @Nullable @NotEmpty final String group,
             final boolean proxy,
             final boolean wantsSLO) {
-        this.serviceURL = Constraint.isNotNull(StringSupport.trimOrNull(url), "Service URL cannot be null or empty");
-        this.group = StringSupport.trimOrNull(group);
-        this.authorizedToProxy = proxy;
-        this.singleLogoutParticipant = wantsSLO;
+        serviceURL = Constraint.isNotNull(StringSupport.trimOrNull(url), "Service URL cannot be null or empty");
+        serviceGroup = StringSupport.trimOrNull(group);
+        authorizedToProxy = proxy;
+        singleLogoutParticipant = wantsSLO;
     }
 
-    /** @return Service URL. */
-    @Override
-    public String getName() {
+    /**
+     * Get the service URL.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public String getName() {
         return serviceURL;
     }
 
-    /** @return Service group name. */
-    @Nullable
-    public String getGroup() {
-        return group;
+    /**
+     * Get the group to which the service belongs.
+     * 
+     * @return service group name
+     */
+    @Nullable public String getGroup() {
+        return serviceGroup;
     }
 
-    /** @return True if proxying is authorized, false otherwise. */
+    /**
+     * Get whether proxying is authorized.
+     * 
+     * @return true if proxying is authorized, false otherwise
+     */
     public boolean isAuthorizedToProxy() {
         return authorizedToProxy;
     }
 
-    /** @return True to indicate the service wants to receive SLO messages, false otherwise. */
+    /**
+     * Get whether the service wants to receive SLO message.
+     * 
+     * @return true to indicate the service wants to receive SLO messages, false otherwise
+     */
     public boolean isSingleLogoutParticipant() {
         return singleLogoutParticipant;
     }

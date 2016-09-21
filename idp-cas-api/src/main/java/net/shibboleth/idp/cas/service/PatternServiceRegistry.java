@@ -59,15 +59,16 @@ public class PatternServiceRegistry extends AbstractServiceableComponent<Service
 
     /**
      * Sets the list of service definitions that back the registry.
-     * @param definitions List of service definitions, each of which defines a match pattern to evaluate a candidate
-     *                    service URL.
+     * 
+     * @param serviceDefinitions List of service definitions, each of which defines a match pattern to evaluate a
+     *            candidate service URL.
      */
-    public void setDefinitions(@Nonnull @NonnullElements List<ServiceDefinition> definitions) {
-        Constraint.noNullItems(definitions, "Definitions cannot be null or contain null items");
+    public void setDefinitions(@Nonnull @NonnullElements final List<ServiceDefinition> serviceDefinitions) {
+        Constraint.noNullItems(serviceDefinitions, "Definitions cannot be null or contain null items");
         // Preserve order of services in map
-        this.definitions = new LinkedHashMap<>(definitions.size());
-        for (ServiceDefinition definition : definitions) {
-            this.definitions.put(definition, Pattern.compile(definition.getId()));
+        definitions = new LinkedHashMap<>(serviceDefinitions.size());
+        for (ServiceDefinition definition : serviceDefinitions) {
+            definitions.put(definition, Pattern.compile(definition.getId()));
         }
     }
 
@@ -79,7 +80,7 @@ public class PatternServiceRegistry extends AbstractServiceableComponent<Service
 
     @Override
     @Nullable
-    public Service lookup(@Nonnull String serviceURL) {
+    public Service lookup(@Nonnull final String serviceURL) {
         Constraint.isNotNull(serviceURL, "Service URL cannot be null");
         for (ServiceDefinition def : definitions.keySet()) {
             log.debug("Evaluating whether {} matches {}", serviceURL, def);

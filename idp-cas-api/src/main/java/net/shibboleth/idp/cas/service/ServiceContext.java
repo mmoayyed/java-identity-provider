@@ -29,8 +29,8 @@ import javax.annotation.Nonnull;
  * @author Marvin S. Addison
  */
 public class ServiceContext extends BaseContext {
-    @Nonnull
-    private final Service service;
+    /** Service metadata held by context. */
+    @Nonnull private final Service serviceMetadata;
 
     /**
      * Creates a new instance.
@@ -38,13 +38,15 @@ public class ServiceContext extends BaseContext {
      * @param service Service metadata held by context.
      */
     public ServiceContext(@Nonnull final Service service) {
-        Constraint.isNotNull(service, "Service cannot be null");
-        this.service = service;
+        serviceMetadata = Constraint.isNotNull(service, "Service cannot be null");
     }
 
-    /** @return Service metadata held by this context. */
-    @Nonnull
-    public Service getService() {
-        return service;
+    /**
+     * Get the service metadata held by this context.
+     * 
+     * @return service metadata held by this context
+     */
+    @Nonnull public Service getService() {
+        return serviceMetadata;
     }
 }

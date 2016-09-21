@@ -29,25 +29,37 @@ import javax.annotation.Nonnull;
 public class ProxyIdentifiers {
 
     /** Proxy-granting ticket ID. */
-    @Nonnull
-    private final String pgtId;
+    @Nonnull private final String pgTicketID;
 
     /** Proxy-granting ticket IOU. */
-    @Nonnull
-    private final String pgtIou;
+    @Nonnull private final String pgTicketIOU;
 
+    /**
+     * Constructor.
+     *
+     * @param pgtId proxy-granting ticket ID
+     * @param pgtIou proxy-granting ticket IOU
+     */
     public ProxyIdentifiers(@Nonnull final String pgtId, @Nonnull final String pgtIou) {
-        this.pgtId = Constraint.isNotNull(pgtId, "PGT cannot be null");
-        this.pgtIou = Constraint.isNotNull(pgtIou, "PGTIOU cannot be null");
+        pgTicketID = Constraint.isNotNull(pgtId, "PGT cannot be null");
+        pgTicketIOU = Constraint.isNotNull(pgtIou, "PGTIOU cannot be null");
     }
 
-    @Nonnull
-    public String getPgtId() {
-        return pgtId;
+    /**
+     * Get the proxy-granting ticket ID.
+     * 
+     * @return proxy-granting ticket ID
+     */
+    @Nonnull public String getPgtId() {
+        return pgTicketID;
     }
 
-    @Nonnull
-    public String getPgtIou() {
-        return pgtIou;
+    /**
+     * Get the proxy-granting ticket IOU.
+     * 
+     * @return proxy-granting ticket IOU
+     */
+    @Nonnull public String getPgtIou() {
+        return pgTicketIOU;
     }
 }

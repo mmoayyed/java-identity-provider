@@ -55,28 +55,38 @@ public class ServiceDefinition {
         this.id = Constraint.isNotNull(StringSupport.trimOrNull(regex), "ID cannot be null or empty");
     }
 
-    /** @return Service identifier. */
+    /**
+     * Get the service identifier.
+     * 
+     * @return Service identifier
+     */
     @Nonnull public String getId() {
         return id;
     }
 
     /**
-     * @return Group name to which services matching this definition belong.
+     * Get the logical group to which service belong.
+     * 
+     * @return Group name to which services matching this definition belong
      */
     @Nullable public String getGroup() {
         return group;
     }
 
     /**
-     * Sets the group name.
+     * Set the group name.
      *
-     * @param group Group name.
+     * @param name Group name.
      */
-    public void setGroup(@NotEmpty final String group) {
-        this.group = StringSupport.trimOrNull(group);
+    public void setGroup(@NotEmpty final String name) {
+        group = StringSupport.trimOrNull(name);
     }
 
-    /** @return True if proxy is authorized, false otherwise. */
+    /**
+     * Get whether proxying is authorized.
+     * 
+     * @return true if proxying is authorized, false otherwise
+     */
     public boolean isAuthorizedToProxy() {
         return authorizedToProxy;
     }
@@ -90,7 +100,11 @@ public class ServiceDefinition {
         this.authorizedToProxy = proxy;
     }
 
-    /** @return True to indicate the service wants to receive SLO messages, false otherwise. */
+    /**
+     * Get whether the service wants to receive SLO message.
+     * 
+     * @return true to indicate the service wants to receive SLO messages, false otherwise
+     */
     public boolean isSingleLogoutParticipant() {
         return singleLogoutParticipant;
     }
