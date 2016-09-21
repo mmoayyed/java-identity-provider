@@ -27,7 +27,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
-import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
@@ -49,8 +48,8 @@ import com.duosecurity.duoweb.DuoWebException;
 import com.google.common.base.Function;
 
 /**
- * An action that validates a DuoWeb response message and produces an {@link AuthenticationResult}
- * or records error state.
+ * An action that validates a DuoWeb response message and produces an
+ * {@link net.shibboleth.idp.authn.AuthenticationResult} or records error state.
  * 
  * <p>The username to cross-check comes from a lookup strategy, by default a {@link CanonicalUsernameLookupStrategy}
  * that returns a username produced by an earlier authentication flow, and on success the same name is populated into

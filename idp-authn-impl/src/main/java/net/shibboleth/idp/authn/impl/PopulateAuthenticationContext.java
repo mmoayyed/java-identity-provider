@@ -139,6 +139,7 @@ public class PopulateAuthenticationContext extends AbstractAuthenticationAction 
 
 // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
+    @SuppressWarnings("deprecation")
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
