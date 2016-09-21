@@ -31,8 +31,6 @@ import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 import net.shibboleth.idp.cas.ticket.TicketPrincipalLookupFunction;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.session.context.SessionContext;
-import net.shibboleth.idp.session.context.navigate.SessionContextPrincipalLookupFunction;
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
