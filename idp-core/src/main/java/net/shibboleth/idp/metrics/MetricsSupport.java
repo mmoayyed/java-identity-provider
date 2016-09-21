@@ -33,6 +33,13 @@ public final class MetricsSupport {
 
     /** Default metric registry name for the IdP. */
     @Nonnull @NotEmpty public static final String DEFAULT_METRIC_REGISTRY = "net.shibboleth.idp";
+
+    /**
+     * Private constructor.
+     */
+    private MetricsSupport() {
+        
+    }
     
     /**
      * Get the default metric registry to use.
@@ -54,11 +61,4 @@ public final class MetricsSupport {
         return SharedMetricRegistries.getOrCreate(name);
     }
     
-    /**
-     * Private constructor.
-     */
-    private MetricsSupport() {
-        
-    }
-
 }
