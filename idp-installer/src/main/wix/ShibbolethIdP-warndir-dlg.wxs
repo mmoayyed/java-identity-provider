@@ -17,7 +17,7 @@
      permissions and limitations under the License.  -->
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <!-- The dialog to display if we sense an upgrade -->
+    <!-- The dialog to display if we sense a non default installation directory -->
     <Fragment>
 
         <UI>
