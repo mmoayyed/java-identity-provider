@@ -84,22 +84,38 @@ public enum ProtocolError {
     TicketRemovalError("INTERNAL_ERROR", "E_TICKET_REMOVAL_ERROR");
 
     /** Error code. */
-    private final String code;
+    @Nonnull private final String errorCode;
 
     /** Error detail code. */
-    private final String detailCode;
+    @Nonnull private final String errorDetailCode;
 
-    ProtocolError(final String code, final String detailCode) {
-        this.code = code;
-        this.detailCode = detailCode;
+    /**
+     * Constructor.
+     *
+     * @param code error code
+     * @param detailCode error detail code
+     */
+    ProtocolError(@Nonnull final String code, @Nonnull final String detailCode) {
+        errorCode = code;
+        errorDetailCode = detailCode;
     }
 
+    /**
+     * Get the error code.
+     * 
+     * @return error code
+     */
     @Nonnull public String getCode() {
-        return code;
+        return errorCode;
     }
 
+    /**
+     * Get the error detail code.
+     * 
+     * @return detail error code
+     */
     @Nonnull public String getDetailCode() {
-        return detailCode;
+        return errorDetailCode;
     }
 
     /**
@@ -116,10 +132,10 @@ public enum ProtocolError {
      *
      * @return Spring webflow event.
      */
-    @Nonnull public Event event(final Object source) {
+    @Nonnull public Event event(@Nonnull final Object source) {
         final LocalAttributeMap attributes = new LocalAttributeMap();
-        attributes.put("code", this.code);
-        attributes.put("detailCode", this.detailCode);
+        attributes.put("code", errorCode);
+        attributes.put("detailCode", errorDetailCode);
         return new Event(source, name(), attributes);
     }
 }

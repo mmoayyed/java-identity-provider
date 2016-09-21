@@ -23,6 +23,9 @@ import org.opensaml.messaging.context.BaseContext;
  * Context container for CAS protocol request and response messages.
  *
  * @author Marvin S. Addison
+ * 
+ * @param <RequestType> request type
+ * @param <ResponseType> response type
  */
 public class ProtocolContext<RequestType, ResponseType> extends BaseContext {
     /** CAS protocol request. */
@@ -31,31 +34,39 @@ public class ProtocolContext<RequestType, ResponseType> extends BaseContext {
     /** CAS protocol response. */
     private ResponseType response;
 
-    /** @return CAS protocol request. */
+    /**
+     * Get the CAS protocol request.
+     * 
+     * @return CAS protocol request
+     */
     public RequestType getRequest() {
         return request;
     }
 
     /**
-     * Sets the CAS protocol request.
+     * Set the CAS protocol request.
      *
-     * @param request CAS protocol request.
+     * @param req CAS protocol request.
      */
-    public void setRequest(final RequestType request) {
-        this.request = request;
+    public void setRequest(final RequestType req) {
+        request = req;
     }
 
-    /** @return CAS protocol response. */
+    /**
+     * Get the CAS protocol response.
+     * 
+     * @return CAS protocol response
+     */
     public ResponseType getResponse() {
         return response;
     }
 
     /**
-     * Sets the CAS protocol request.
+     * Set the CAS protocol request.
      *
-     * @param response CAS protocol response.
+     * @param resp CAS protocol response.
      */
-    public void setResponse(final ResponseType response) {
-        this.response = response;
+    public void setResponse(final ResponseType resp) {
+        response = resp;
     }
 }

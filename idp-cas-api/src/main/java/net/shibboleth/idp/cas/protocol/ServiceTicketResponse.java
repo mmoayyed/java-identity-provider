@@ -28,13 +28,11 @@ import javax.annotation.Nonnull;
  * @author Marvin S. Addison
  */
 public class ServiceTicketResponse {
-    /** Service URL */
-    @Nonnull
-    private final String service;
+    /** Service URL. */
+    @Nonnull private final String serviceURL;
 
     /** Granted service ticket. */
-    @Nonnull
-    private final String ticket;
+    @Nonnull private final String serviceTicket;
 
     /** Flag indicating whether ticket request is via SAML 1.1 protocol. */
     private boolean saml;
@@ -47,16 +45,26 @@ public class ServiceTicketResponse {
      * @param ticket Granted service ticket.
      */
     public ServiceTicketResponse(@Nonnull final String service, @Nonnull final String ticket) {
-        this.service = Constraint.isNotNull(service, "Service cannot be null");
-        this.ticket = Constraint.isNotNull(ticket, "Ticket cannot be null");
+        serviceURL = Constraint.isNotNull(service, "Service cannot be null");
+        serviceTicket = Constraint.isNotNull(ticket, "Ticket cannot be null");
     }
 
+    /**
+     * Get the service that requested the ticket.
+     * 
+     * @return service that requested the ticket
+     */
     @Nonnull public String getService() {
-        return service;
+        return serviceURL;
     }
 
+    /**
+     * Get the service that requested the ticket.
+     * 
+     * @return the service that requested the ticket
+     */
     @Nonnull public String getTicket() {
-        return ticket;
+        return serviceTicket;
     }
 
     public boolean isSaml() {
@@ -68,7 +76,9 @@ public class ServiceTicketResponse {
     }
 
     /**
-     * @return The name of the ticket parameter returned to the requesting service.
+     * Get the name of the ticket parameter returned to the requesting service.
+     * 
+     * @return the name of the ticket parameter returned to the requesting service
      */
     public String getTicketParameterName() {
         if (saml) {
@@ -78,11 +88,13 @@ public class ServiceTicketResponse {
     }
 
     /**
-     * @return URL that may be used to redirect to a service with a granted ticket.
+     * Get the URL that may be used to redirect to a service with a granted ticket.
+     * 
+     * @return URL that may be used to redirect to a service with a granted ticket
      */
     public String getRedirectUrl() {
-        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(service);
-        builder.queryParam(getTicketParameterName(), ticket);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(serviceURL);
+        builder.queryParam(getTicketParameterName(), serviceTicket);
         return builder.build().toUriString();
     }
 }

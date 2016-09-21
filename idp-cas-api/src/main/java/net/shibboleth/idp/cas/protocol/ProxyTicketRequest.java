@@ -28,10 +28,10 @@ import javax.annotation.Nonnull;
  */
 public class ProxyTicketRequest {
     /** Proxy-granting ticket ID. */
-    @Nonnull private final String pgt;
+    @Nonnull private final String proxyGrantingTicketId;
 
     /** Target service to which proxy ticket will be delivered. */
-    @Nonnull private final String targetService;
+    @Nonnull private final String proxyTargetService;
 
 
     /**
@@ -41,19 +41,25 @@ public class ProxyTicketRequest {
      * @param targetService Non-null
      */
     public ProxyTicketRequest(@Nonnull final String pgt, @Nonnull final String targetService) {
-        Constraint.isNotNull(pgt, "PGT cannot be null");
-        Constraint.isNotNull(targetService, "TargetService cannot be null");
-        this.pgt = pgt;
-        this.targetService = targetService;
+        proxyGrantingTicketId = Constraint.isNotNull(pgt, "PGT cannot be null");
+        proxyTargetService = Constraint.isNotNull(targetService, "TargetService cannot be null");
     }
 
-    /** @return Proxy-granting ticket ID. */
+    /**
+     * Get the proxy-granting ticket ID.
+     * 
+     * @return proxy-granting ticket ID
+     */
     @Nonnull public String getPgt() {
-        return pgt;
+        return proxyGrantingTicketId;
     }
 
-    /** @return Target service to which proxy ticket will be delivered. */
+    /**
+     * Get the target service to which proxy ticket will be delivered.
+     * 
+     * @return target service to which proxy ticket will be delivered
+     */
     @Nonnull public String getTargetService() {
-        return targetService;
+        return proxyTargetService;
     }
 }

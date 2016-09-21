@@ -20,9 +20,14 @@ package net.shibboleth.idp.cas.protocol;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
 
 /**
  * Service ticket validation response protocol message.
@@ -31,36 +36,53 @@ import java.util.*;
  */
 public class TicketValidationResponse extends AbstractProtocolResponse {
 
+    /** Subject principal on ticket validation success. */
     @Nullable private String userName;
 
+    /** User attributes. */
     @Nonnull private Map<String, List<String>> attributes = new HashMap<>();
 
+    /** Proxy granting ticket IOU. */
     @Nullable private String pgtIou;
 
+    /** Proxies traversed. */
     @Nonnull private List<String> proxies = new ArrayList<>();
 
 
-    /** @return Non-null subject principal on ticket validation success. */
+    /**
+     * Get the non-null subject principal on ticket validation success.
+     * 
+     * @return non-null subject principal on ticket validation success
+     */
     @Nullable public String getUserName() {
         return userName;
     }
 
+    /**
+     * Set the non-null subject principal on ticket validation success.
+     * 
+     * @param user non-null subject principal on ticket validation success
+     */
     public void setUserName(@Nonnull final String user) {
-        Constraint.isNotNull(user, "Username cannot be null");
-        this.userName = user;
+        userName = Constraint.isNotNull(user, "Username cannot be null");
     }
 
-    /** @return Immutable map of user attributes. */
+    /**
+     * Get the Immutable map of user attributes.
+     * 
+     * @return immutable map of user attributes
+     */
     @Nonnull public Map<String, List<String>> getAttributes() {
         return Collections.unmodifiableMap(attributes);
     }
 
     /**
-     * Adds an attribute to the attribute mapping.
-     *
-     * @param proxy Name of a proxying service, typically a URI.
+     * Add an attribute to the attribute mapping.
+     * 
+     * @param name attribute name
+     * @param value attribute value
      */
-    public void addAttribute(final String name, final String value) {
+    public void addAttribute(@Nonnull final String name, @Nonnull final String value) {
         List<String> values = attributes.get(name);
         if (values == null) {
             values = new ArrayList<>();
@@ -69,15 +91,29 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
         values.add(value);
     }
 
+    /**
+     * Get the proxy granting ticket IOU.
+     * 
+     * @return proxy granting ticket IOU
+     */
     @Nullable public String getPgtIou() {
         return pgtIou;
     }
 
-    public void setPgtIou(@Nullable final String pgtIou) {
-        this.pgtIou = StringSupport.trimOrNull(pgtIou);
+    /**
+     * Set the proxy granting ticket IOU.
+     * 
+     * @param iou proxy granting ticket IOU
+     */
+    public void setPgtIou(@Nullable final String iou) {
+        pgtIou = StringSupport.trimOrNull(iou);
     }
 
-    /** @return Immutable list of proxies traversed in order of most recent to last recent. */
+    /**
+     * Get the immutable list of proxies traversed in order of most recent to last recent.
+     * 
+     * @return immutable list of proxies traversed in order of most recent to last recent
+     */
     @Nonnull public List<String> getProxies() {
         return Collections.unmodifiableList(proxies);
     }
@@ -87,7 +123,7 @@ public class TicketValidationResponse extends AbstractProtocolResponse {
      *
      * @param proxy Name of a proxying service, typically a URI.
      */
-    public void addProxy(final String proxy) {
+    public void addProxy(@Nonnull final String proxy) {
         proxies.add(proxy);
     }
 }

@@ -28,10 +28,12 @@ import javax.annotation.Nullable;
  * @author Marvin S. Addison
  */
 public class ProxyTicketResponse extends AbstractProtocolResponse {
-    @Nullable private String pt;
+    /** Proxy ticket. */
+    @Nullable private String proxyTicket;
 
     /** Default no-arg constructor. */
-    public ProxyTicketResponse() {}
+    public ProxyTicketResponse() {
+    }
 
     /**
      * Creates a new instance with given parameters.
@@ -39,12 +41,15 @@ public class ProxyTicketResponse extends AbstractProtocolResponse {
      * @param pt Proxy ticket ID.
      */
     public ProxyTicketResponse(@Nonnull final String pt) {
-        Constraint.isNotNull(pt, "PT cannot be null");
-        this.pt = pt;
+        proxyTicket = Constraint.isNotNull(pt, "PT cannot be null");
     }
 
-    /** @return Proxy ticket ID. */
+    /**
+     * Get the proxy ticket ID.
+     * 
+     * @return proxy ticket ID
+     */
     @Nullable public String getPt() {
-        return pt;
+        return proxyTicket;
     }
 }

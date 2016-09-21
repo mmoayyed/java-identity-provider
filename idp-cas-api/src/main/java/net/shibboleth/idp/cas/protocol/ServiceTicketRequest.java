@@ -34,8 +34,8 @@ public class ServiceTicketRequest {
     /** HTTP POST method. */
     public static final String METHOD_POST = "POST";
 
-    /** Service URL */
-    @Nonnull private final String service;
+    /** Service URL. */
+    @Nonnull private final String serviceURL;
 
     /** CAS protocol renew flag. */
     private boolean renew;
@@ -49,29 +49,58 @@ public class ServiceTicketRequest {
     /** CAS protocol 3.0 "method" parameter. */
     private String method = METHOD_GET;
 
-
+    /**
+     * Constructor.
+     *
+     * @param service URL of service requesting the ticket
+     */
     public ServiceTicketRequest(@Nonnull final String service) {
-        this.service = Constraint.isNotNull(service, "Service cannot be null");
+        serviceURL = Constraint.isNotNull(service, "Service cannot be null");
     }
 
+    /**
+     * Get the service requesting the ticket.
+     * 
+     * @return service requesting the ticket
+     */
     @Nonnull public String getService() {
-        return service;
+        return serviceURL;
     }
 
+    /**
+     * Get whether to require fresh subject interaction to succeed.
+     * 
+     * @return whether subject interaction must occur
+     */
     public boolean isRenew() {
         return renew;
     }
 
-    public void setRenew(final boolean renew) {
-        this.renew = renew;
+    /**
+     * Set whether to require fresh subject interaction to succeed.
+     * 
+     * @param force whether subject interaction must occur
+     */
+    public void setRenew(final boolean force) {
+        renew = force;
     }
 
+    /**
+     * Whether to not require fresh subject interaction to succeed.
+     * 
+     * @return whether subject interaction should not occur
+     */
     public boolean isGateway() {
         return gateway;
     }
 
-    public void setGateway(final boolean gateway) {
-        this.gateway = gateway;
+    /**
+     * Set whether to not require fresh subject interaction to succeed.
+     * 
+     * @param doNotForce whether subject interaction should not occur
+     */
+    public void setGateway(final boolean doNotForce) {
+        gateway = doNotForce;
     }
 
     public boolean isSAML() {
@@ -97,15 +126,15 @@ public class ServiceTicketRequest {
      *     http://jasig.github.io/cas/development/protocol/CAS-Protocol-Specification.html#head2.1.1</a> for more
      * information.
      *
-     * @param method {@value #METHOD_GET} or {@value #METHOD_POST}.
+     * @param m {@value #METHOD_GET} or {@value #METHOD_POST}.
      */
-    public void setMethod(final String method) {
-        if (METHOD_GET.equalsIgnoreCase(method)) {
-            this.method = METHOD_GET;
-        } else if (METHOD_POST.equalsIgnoreCase(method)) {
-            this.method = METHOD_POST;
+    public void setMethod(@Nonnull final String m) {
+        if (METHOD_GET.equalsIgnoreCase(m)) {
+            method = METHOD_GET;
+        } else if (METHOD_POST.equalsIgnoreCase(m)) {
+            method = METHOD_POST;
         } else {
-            throw new IllegalArgumentException("Unsupported method " + method);
+            throw new IllegalArgumentException("Unsupported method " + m);
         }
     }
 }

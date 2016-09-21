@@ -34,22 +34,39 @@ public class AbstractProtocolResponse {
     /** CAS protocol error detail populated on failure. */
     @Nullable private String errorDetail;
 
-
-    /** @return Non-null error code on a ticket validation failure condition. */
+    /**
+     * Get the non-null error code on a ticket validation failure condition.
+     * 
+     * @return non-null error code on a ticket validation failure condition
+     */
     @Nullable public String getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(@Nonnull String code) {
-        this.errorCode = code;
+    /**
+     * Set the non-null error code on a ticket validation failure condition.
+     * 
+     * @param code non-null error code on a ticket validation failure condition
+     */
+    public void setErrorCode(@Nonnull final String code) {
+        errorCode = code;
     }
 
-    /** @return Non-null error detail on a ticket validation failure condition. */
+    /**
+     * Get the non-null error detail on a ticket validation failure condition.
+     * 
+     * @return non-null error detail on a ticket validation failure condition
+     */
     @Nullable public String getErrorDetail() {
         return errorDetail;
     }
 
-    public void setErrorDetail(@Nonnull String code) {
-        this.errorDetail = code;
+    /**
+     * Set the non-null error detail on a ticket validation failure condition.
+     * 
+     * @param code non-null error detail on a ticket validation failure condition
+     */
+    public void setErrorDetail(@Nonnull final String code) {
+        errorDetail = code;
     }
 }

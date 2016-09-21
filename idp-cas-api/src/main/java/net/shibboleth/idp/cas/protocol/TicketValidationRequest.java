@@ -44,18 +44,38 @@ public class TicketValidationRequest extends ServiceTicketResponse {
         super(service, ticket);
     }
 
+    /**
+     * Get whether to require fresh subject interaction to succeed.
+     * 
+     * @return whether subject interaction must occur
+     */
     public boolean isRenew() {
         return renew;
     }
 
-    public void setRenew(final boolean renew) {
-        this.renew = renew;
+    /**
+     * Set whether to require fresh subject interaction to succeed.
+     * 
+     * @param force whether subject interaction must occur
+     */
+    public void setRenew(final boolean force) {
+        renew = force;
     }
 
+    /**
+     * Get the proxy-granting ticket validation URL.
+     * 
+     * @return proxy-granting ticket validation URL
+     */
     @Nonnull public String getPgtUrl() {
         return pgtUrl;
     }
 
+    /**
+     * Set the proxy-granting ticket validation URL.
+     * 
+     * @param url proxy-granting ticket validation URL
+     */
     public void setPgtUrl(@Nonnull final String url) {
         this.pgtUrl = StringSupport.trimOrNull(url);
     }
