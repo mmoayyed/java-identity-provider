@@ -32,11 +32,11 @@ public class TicketState {
 
     /** ID of session in which ticket is created. */
     @Nonnull
-    private String sessionId;
+    private String sessId;
 
     /** Canonical authenticated principal name. */
     @Nonnull
-    private String principalName;
+    private String authenticatedPrincipalName;
 
     /** Authentication instant. */
     @Nonnull
@@ -47,40 +47,47 @@ public class TicketState {
     private String authenticationMethod;
 
 
-    /** Creates a new instance with required fields. */
+    /**
+     * Creates a new instance with required fields.
+     *
+     * @param sessionId ID of the session in which the ticket was created
+     * @param principalName canonical authenticated principal name
+     * @param authnInstant instant at which the principal authenticated
+     * @param authnMethod principal authentication method ID/name/description
+     */
     public TicketState(
             @Nonnull final String sessionId,
             @Nonnull final String principalName,
             @Nonnull final Instant authnInstant,
             @Nonnull final String authnMethod) {
-        this.sessionId = Constraint.isNotNull(sessionId, "SessionID cannot be null");
-        this.principalName = Constraint.isNotNull(principalName, "PrincipalName cannot be null");
-        this.authenticationInstant = Constraint.isNotNull(authnInstant, "AuthnInstant cannot be null");
-        this.authenticationMethod = Constraint.isNotNull(authnMethod, "AuthnMethod cannot be null");
+        sessId = Constraint.isNotNull(sessionId, "SessionID cannot be null");
+        authenticatedPrincipalName = Constraint.isNotNull(principalName, "PrincipalName cannot be null");
+        authenticationInstant = Constraint.isNotNull(authnInstant, "AuthnInstant cannot be null");
+        authenticationMethod = Constraint.isNotNull(authnMethod, "AuthnMethod cannot be null");
     }
 
     /**
-     * Gets the ID of the session in which the ticket was created.
+     * Get the ID of the session in which the ticket was created.
      *
      * @return IdP session ID.
      */
     @Nonnull
     public String getSessionId() {
-        return sessionId;
+        return sessId;
     }
 
     /**
-     * Gets the canonical authenticated principal name.
+     * Get the canonical authenticated principal name.
      *
      * @return Canonical principal.
      */
     @Nonnull
     public String getPrincipalName() {
-        return principalName;
+        return authenticatedPrincipalName;
     }
 
     /**
-     * Gets the instant at which the principal authenticated.
+     * Get the instant at which the principal authenticated.
      *
      * @return Principal authentication instant.
      */
@@ -90,7 +97,7 @@ public class TicketState {
     }
 
     /**
-     * Gets the principal authentication method ID/name/description.
+     * Get the principal authentication method ID/name/description.
      *
      * @return Principal authentication method.
      */
@@ -103,15 +110,16 @@ public class TicketState {
     public boolean equals(final Object o) {
         if (o instanceof TicketState) {
             final TicketState other = (TicketState) o;
-            return sessionId.equals(other.sessionId) &&
-                    principalName.equals(other.principalName) &&
+            return sessId.equals(other.sessId) &&
+                    authenticatedPrincipalName.equals(other.authenticatedPrincipalName) &&
                     authenticationInstant.equals(other.authenticationInstant) &&
                     authenticationMethod.equals(other.authenticationMethod);
         }
         return false;
     }
 
+    @Override
     public int hashCode() {
-        return Objects.hash(sessionId, principalName, authenticationInstant, authenticationMethod);
+        return Objects.hash(sessId, authenticatedPrincipalName, authenticationInstant, authenticationMethod);
     }
 }

@@ -30,9 +30,9 @@ import javax.annotation.Nullable;
  */
 public class ProxyTicket extends Ticket {
 
-    /** Proxy-granting ticket used to create ticket. */
+    /** Proxy-granting ticket ID used to create ticket. */
     @Nonnull
-    private final String pgtId;
+    private final String pgTicketId;
 
     /**
      * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
@@ -52,7 +52,7 @@ public class ProxyTicket extends Ticket {
             @Nonnull final Instant expiration,
             @Nonnull final String pgtId) {
         super(id, sessionId, service, expiration);
-        this.pgtId = Constraint.isNotNull(pgtId, "PgtId cannot be null");
+        pgTicketId = Constraint.isNotNull(pgtId, "PgtId cannot be null");
     }
 
     /**
@@ -69,16 +69,20 @@ public class ProxyTicket extends Ticket {
             @Nonnull final Instant expiration,
             @Nonnull final String pgtId) {
         super(id, service, expiration);
-        this.pgtId = Constraint.isNotNull(pgtId, "PgtId cannot be null");
+        pgTicketId = Constraint.isNotNull(pgtId, "PgtId cannot be null");
     }
 
-    @Nonnull
-    public String getPgtId() {
-        return pgtId;
+    /**
+     * Get the proxy-granting ticket ID used to create ticket.
+     * 
+     * @return proxy-granting ticket ID used to create ticket
+     */
+    @Nonnull public String getPgtId() {
+        return pgTicketId;
     }
 
     @Override
     protected Ticket newInstance(final String newId) {
-        return new ProxyTicket(newId, getService(), getExpirationInstant(), pgtId);
+        return new ProxyTicket(newId, getService(), getExpirationInstant(), pgTicketId);
     }
 }

@@ -29,8 +29,8 @@ import javax.annotation.Nonnull;
  * @author Marvin S. Addison
  */
 public class TicketContext extends BaseContext {
-    @Nonnull
-    private final Ticket ticket;
+    /** Ticket held by this context. */
+    @Nonnull private final Ticket t;
 
     /**
      * Creates a new ticket context to hold a CAS protocol ticket.
@@ -38,13 +38,15 @@ public class TicketContext extends BaseContext {
      * @param ticket Ticket to hold.
      */
     public TicketContext(@Nonnull final Ticket ticket) {
-        Constraint.isNotNull(ticket, "Ticket cannot be null");
-        this.ticket = ticket;
+        t = Constraint.isNotNull(ticket, "Ticket cannot be null");
     }
 
-    /** @return Ticket held by this context. */
-    @Nonnull
-    public Ticket getTicket() {
-        return ticket;
+    /**
+     * Get the ticket held by this context.
+     * 
+     * @return ticket held by this context
+     */
+    @Nonnull public Ticket getTicket() {
+        return t;
     }
 }

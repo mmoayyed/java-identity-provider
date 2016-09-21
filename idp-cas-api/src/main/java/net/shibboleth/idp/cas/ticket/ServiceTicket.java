@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 public class ServiceTicket extends Ticket {
 
     /** Forced authentication flag. */
-    private final boolean renew;
+    private final boolean forceAuthn;
 
     /**
      * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
@@ -50,7 +50,7 @@ public class ServiceTicket extends Ticket {
             @Nonnull final Instant expiration,
             final boolean renew) {
         super(id, sessionId, service, expiration);
-        this.renew = renew;
+        forceAuthn = renew;
     }
 
     /**
@@ -67,15 +67,20 @@ public class ServiceTicket extends Ticket {
             @Nonnull final Instant expiration,
             final boolean renew) {
         super(id, service, expiration);
-        this.renew = renew;
+        forceAuthn = renew;
     }
 
+    /**
+     * Get whether ticket was issued from forced authentication.
+     * 
+     * @return true if ticket was issued from forced authentication, false otherwise
+     */
     public boolean isRenew() {
-        return renew;
+        return forceAuthn;
     }
 
     @Override
     protected Ticket newInstance(final String newId) {
-        return new ServiceTicket(newId, getService(), getExpirationInstant(), renew);
+        return new ServiceTicket(newId, getService(), getExpirationInstant(), forceAuthn);
     }
 }

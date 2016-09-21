@@ -33,11 +33,11 @@ public class Ticket {
 
     /** Ticket identifier. */
     @Nonnull
-    private final String id;
+    private final String ticketId;
 
     /** Service/relying party that requested the ticket. */
     @Nonnull
-    private final String service;
+    private final String ticketService;
 
     /** Expiration instant. */
     @Nonnull
@@ -62,9 +62,9 @@ public class Ticket {
             @Nullable final String sessionId,
             @Nonnull final String service,
             @Nonnull final Instant expiration) {
-        this.id = Constraint.isNotNull(id, "Id cannot be null");
-        this.service = Constraint.isNotNull(service, "Service cannot be null");
-        this.expirationInstant = Constraint.isNotNull(expiration, "Expiration cannot be null");
+        ticketId = Constraint.isNotNull(id, "Id cannot be null");
+        ticketService = Constraint.isNotNull(service, "Service cannot be null");
+        expirationInstant = Constraint.isNotNull(expiration, "Expiration cannot be null");
     }
 
     /**
@@ -78,41 +78,66 @@ public class Ticket {
             @Nonnull final String id,
             @Nonnull final String service,
             @Nonnull final Instant expiration) {
-        this.id = Constraint.isNotNull(id, "Id cannot be null");
-        this.service = Constraint.isNotNull(service, "Service cannot be null");
-        this.expirationInstant = Constraint.isNotNull(expiration, "Expiration cannot be null");
+        ticketId = Constraint.isNotNull(id, "Id cannot be null");
+        ticketService = Constraint.isNotNull(service, "Service cannot be null");
+        expirationInstant = Constraint.isNotNull(expiration, "Expiration cannot be null");
     }
 
-    @Nonnull
-    public String getId() {
-        return id;
+    /**
+     * Get the ticket ID.
+     * 
+     * @return ticket ID
+     */
+    @Nonnull public String getId() {
+        return ticketId;
     }
 
-    @Nullable
-    public String getSessionId() {
+    /**
+     * Get the session ID.
+     * 
+     * @return session ID
+     */
+    @Nullable public String getSessionId() {
         if (ticketState != null) {
             return ticketState.getSessionId();
         }
         return null;
     }
 
-    @Nonnull
-    public String getService() {
-        return service;
+    /**
+     * Get the service that requested the ticket.
+     * 
+     * @return service that requested the ticket
+     */
+    @Nonnull public String getService() {
+        return ticketService;
     }
 
-    @Nonnull
-    public Instant getExpirationInstant() {
+    /**
+     * Get the expiration instant.
+     * 
+     * @return expiration instant
+     */
+    @Nonnull public Instant getExpirationInstant() {
         return expirationInstant;
     }
 
-    @Nullable
-    public TicketState getTicketState() {
+    /**
+     * Get the supplemental ticket state data.
+     * 
+     * @return ticket state
+     */
+    @Nullable public TicketState getTicketState() {
         return ticketState;
     }
 
+    /**
+     * Set the supplemental ticket state data.
+     * 
+     * @param state supplemental ticket state
+     */
     public void setTicketState(@Nullable final TicketState state) {
-        this.ticketState = state;
+        ticketState = state;
     }
 
     @Override
@@ -121,34 +146,40 @@ public class Ticket {
             return false;
         }
         final Ticket other = (Ticket) o;
-        return other.id.equals(id);
+        return other.ticketId.equals(ticketId);
     }
 
     @Override
     public int hashCode() {
-        return 23 + 31 * id.hashCode();
+        return 23 + 31 * ticketId.hashCode();
     }
 
     @Override
     public String toString() {
-        return id;
+        return ticketId;
     }
 
     /**
-     * Creates a new ticket from this one with the given identifier.
+     * Create a new ticket from this one with the given identifier.
      *
      * @param newId New ticket ID.
      *
      * @return Clone of this ticket with new ID.
      */
-    public Ticket clone(final String newId) {
+    public Ticket clone(@Nonnull final String newId) {
         final Ticket clone = newInstance(newId);
         clone.setTicketState(ticketState);
         return clone;
     }
 
-    protected Ticket newInstance(final String newId) {
-        return new Ticket(newId, service, expirationInstant);
+    /**
+     * Create a new ticket with this ticket's service and expiration.
+     * 
+     * @param newId new ticket ID
+     * @return newly created ticket
+     */
+    protected Ticket newInstance(@Nonnull final String newId) {
+        return new Ticket(newId, ticketService, expirationInstant);
     }
 
 }

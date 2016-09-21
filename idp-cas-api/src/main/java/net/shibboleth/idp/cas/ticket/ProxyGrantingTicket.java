@@ -32,7 +32,7 @@ public class ProxyGrantingTicket extends Ticket {
 
     /** The ID of the parent proxy-granting ticket. */
     @Nullable
-    private String parentId;
+    private String parentPgTicketId;
 
     /**
      * Deprecated. Session IDs are now optional and should be specified via {@link TicketState#setSessionId(String)}
@@ -52,7 +52,7 @@ public class ProxyGrantingTicket extends Ticket {
             @Nonnull final Instant expiration,
             @Nullable final String parentId) {
         super(id, sessionId, service, expiration);
-        this.parentId = StringSupport.trimOrNull(parentId);
+        parentPgTicketId = StringSupport.trimOrNull(parentId);
     }
 
     /**
@@ -69,12 +69,16 @@ public class ProxyGrantingTicket extends Ticket {
             @Nonnull final Instant expiration,
             @Nullable final String parentId) {
         super(id, service, expiration);
-        this.parentId = StringSupport.trimOrNull(parentId);
+        parentPgTicketId = StringSupport.trimOrNull(parentId);
     }
 
-    @Nullable
-    public String getParentId() {
-        return parentId;
+    /**
+     * Get ID of parent proxy-granting ticket.
+     * 
+     * @return ID of parent proxy-granting ticket
+     */
+    @Nullable public String getParentId() {
+        return parentPgTicketId;
     }
 
     /**
@@ -88,6 +92,6 @@ public class ProxyGrantingTicket extends Ticket {
 
     @Override
     protected Ticket newInstance(final String newId) {
-        return new ProxyGrantingTicket(newId, getService(), getExpirationInstant(), parentId);
+        return new ProxyGrantingTicket(newId, getService(), getExpirationInstant(), parentPgTicketId);
     }
 }

@@ -18,9 +18,7 @@
 package net.shibboleth.idp.cas.ticket;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import net.shibboleth.idp.authn.AuthenticationResult;
 import org.joda.time.Instant;
 
 /**
