@@ -17,8 +17,8 @@
 
 package net.shibboleth.idp.profile.context;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,8 +27,11 @@ import org.opensaml.messaging.context.BaseContext;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 
 import net.shibboleth.idp.metrics.MetricsSupport;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
@@ -49,15 +52,15 @@ public class TimerContext extends BaseContext {
      * 
      * <p>The first member is the timer name, the second the object to associate with the timer.</p>
      */
-    @Nonnull @NonnullElements private Map<String,Pair<String,String>> timerMap;
+    @Nonnull @NonnullElements private Multimap<String,Pair<String,String>> timerMap;
     
     /** Map of objects to contexts to perform a stop signal. */
-    @Nonnull @NonnullElements private Map<String,Timer.Context> timerContextMap;
+    @Nonnull @NonnullElements private Multimap<String,Timer.Context> timerContextMap;
     
     /** Constructor. */
     public TimerContext() {
-        timerMap = new HashMap();
-        timerContextMap = new HashMap();
+        timerMap = ArrayListMultimap.create();
+        timerContextMap = ArrayListMultimap.create();
     }
     
     /**
@@ -96,42 +99,54 @@ public class TimerContext extends BaseContext {
         return this;
     }
     
-    
+    /**
+     * Get a modifiable collection of timer name / stop object pairs for the supplied
+     * start object ID.
+     * 
+     * @param objectId the object ID input
+     * 
+     * @return the collection of associated mappings
+     */
+    @Nonnull @NonnullElements @Live public Collection<Pair<String,String>> getTimerMappings(
+            @Nonnull @NotEmpty final String objectId) {
+        return timerMap.get(objectId);
+    }
     
     /**
-     * Conditionally starts a timer based on the supplied object identifier.
+     * Conditionally starts one or more timers based on the supplied object identifier.
      * 
      *  <p>The configured state of the context is used to determine whether, and which,
-     *  timer to start, further influenced by the runtime state of the system with regard
+     *  timers to start, further influenced by the runtime state of the system with regard
      *  to enabling of metrics.</p>
      * 
      * @param objectId ID of the object being timed
      */
     public void start(@Nonnull @NotEmpty final String objectId) {
-        final Pair<String,String> timer = timerMap.get(objectId);
-        if (timer != null) {
-            final MetricRegistry reg = metricRegistryName != null
-                    ? MetricsSupport.getNamedMetricRegistry(metricRegistryName) :
-                        MetricsSupport.getDefaultMetricRegistry();
-            timerContextMap.put(timer.getSecond(), reg.timer(timer.getFirst()).time());
+        
+        for (final Pair<String,String> timer : timerMap.get(objectId)) {
+            if (timer != null) {
+                final MetricRegistry reg = metricRegistryName != null
+                        ? MetricsSupport.getNamedMetricRegistry(metricRegistryName) :
+                            MetricsSupport.getDefaultMetricRegistry();
+                timerContextMap.put(timer.getSecond(), reg.timer(timer.getFirst()).time());
+            }
         }
     }
 
     /**
-     * Conditionally starts a timer based on the supplied class and the active profile,
-     * as determined by the configured lookup strategy.
-     * 
-     *  <p>The configured state of the context is used to determine whether, and which,
-     *  timer to start, further influenced by the runtime state of the system with regard
-     *  to enabling of metrics.</p>
+     * Stops any timers associated with the supplied object identifier and removes them
+     * from the tracking map.
      * 
      * @param objectId ID of the object being timed
      */
     public void stop(@Nonnull @NotEmpty final String objectId) {
-        final Timer.Context tc = timerContextMap.get(objectId);
-        if (tc != null) {
-            tc.stop();
-            timerContextMap.remove(objectId);
+        final Iterator<Timer.Context> iter = timerContextMap.get(objectId).iterator();
+        while (iter.hasNext()) {
+            final Timer.Context tc = iter.next();
+            if (tc != null) {
+                tc.stop();
+                timerContextMap.remove(objectId, tc);
+            }
         }
     }
     
