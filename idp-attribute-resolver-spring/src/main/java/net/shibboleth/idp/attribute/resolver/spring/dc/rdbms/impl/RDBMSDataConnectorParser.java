@@ -154,6 +154,11 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
                 log.warn("{} queryUsesStoredProcedure property no longer supported and should be removed",
                         getLogPrefix());
             }
+            if (AttributeSupport.hasAttribute(config, new QName("cacheResults"))) {
+                log.warn("{} cacheResults property no longer supported.  Use the ResultCache element instead",
+                        getLogPrefix());
+            }
+
         }
 
         /**
