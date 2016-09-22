@@ -977,20 +977,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="poolInitialSize" type="string">
-                    <annotation>
-                        <documentation>
-                            This attribute is deprecated, use LdapPoolConfig#minPoolSize instead.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="poolMaxIdleSize" type="string">
-                    <annotation>
-                        <documentation>
-                            This attribute is deprecated, use LdapPoolConfig#maxPoolSize instead.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="searchTimeLimit" type="string">
                     <annotation>
                         <documentation>
@@ -1023,23 +1009,6 @@
                         <documentation>
                             The maximum number of results that may be returned from a query.
                             Default value is 1.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="cacheResults" type="string">
-                    <annotation>
-                        <documentation>
-                            A boolean flag indicating that search results should be cached for the duration of a user's
-                            session.
-
-                            This option is no longer supported, use the ResultCache element instead.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="mergeResults" type="string">
-                    <annotation>
-                        <documentation>
-                            No longer supported.
                         </documentation>
                     </annotation>
                 </attribute>
@@ -1156,13 +1125,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="queryUsesStoredProcedure" type="string">
-                    <annotation>
-                        <documentation>
-                            No longer supported.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="queryTimeout" type="string">
                     <annotation>
                         <documentation>
@@ -1188,15 +1150,6 @@
                             an error is raised and a failover dependency is defined for this connector the failover will
                             be invoked.
                             Default value is false.
-                        </documentation>
-                    </annotation>
-                </attribute>
-                <attribute name="cacheResults" type="string">
-                    <annotation>
-                        <documentation>
-                            A boolean flag that determines whether to cache results.
-                            
-                            This option is no longer supported, use the ResultCache element instead.
                         </documentation>
                     </annotation>
                 </attribute>
