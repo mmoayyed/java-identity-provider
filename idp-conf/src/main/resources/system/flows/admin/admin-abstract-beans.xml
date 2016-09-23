@@ -21,6 +21,9 @@
     <bean id="InitializeProfileRequestContext"
         class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" scope="prototype"
         p:profileId-ref="shibboleth.AdminProfileId" />
+
+    <bean id="PopulateTimerContext" class="net.shibboleth.idp.profile.impl.PopulateTimerContext"
+        p:timerStrategy="#{getObject('shibboleth.metrics.TimerStrategy')}" />
     
     <!--
     The collection selection expression works because Spring converts the first member of a collection into

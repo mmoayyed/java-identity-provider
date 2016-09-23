@@ -79,22 +79,22 @@ public class TimerContext extends BaseContext {
     /**
      * Add an object/timer mapping.
      * 
-     * @param objectId ID of object to start timer with
-     * @param timerInfo a pair containing the timer name to use and the object ID that should stop it
+     * @param timerName name of timer
+     * @param startId ID of object to start timer with
+     * @param stopId ID of object to stop timer
      * 
      * @return this context
      */
-    @Nonnull public TimerContext addTimerMapping(@Nonnull @NotEmpty final String objectId,
-            @Nonnull final Pair<String,String> timerInfo) {
+    @Nonnull public TimerContext addTimer(@Nonnull @NotEmpty final String timerName,
+            @Nonnull @NotEmpty final String startId, @Nonnull @NotEmpty final String stopId) {
         
-        final String key = Constraint.isNotNull(StringSupport.trimOrNull(objectId),
-                "Object ID cannot be null or empty");
-        Constraint.isNotNull(timerInfo, "Timer info pair cannot be null");
-        final String timerName = Constraint.isNotNull(StringSupport.trimOrNull(timerInfo.getFirst()),
-                "Timer name cannot be null or empty");
-        final String stopObject = Constraint.isNotNull(StringSupport.trimOrNull(timerInfo.getSecond()),
+        final String key = Constraint.isNotNull(StringSupport.trimOrNull(startId),
+                "Starting object ID cannot be null or empty");
+        final String stop = Constraint.isNotNull(StringSupport.trimOrNull(stopId),
                 "Stop object ID cannot be null or empty");
-        timerMap.put(key, new Pair<>(timerName, stopObject));
+        final String name = Constraint.isNotNull(StringSupport.trimOrNull(timerName),
+                "Timer name cannot be null or empty");
+        timerMap.put(key, new Pair<>(name, stop));
         
         return this;
     }
@@ -145,7 +145,7 @@ public class TimerContext extends BaseContext {
             final Timer.Context tc = iter.next();
             if (tc != null) {
                 tc.stop();
-                timerContextMap.remove(objectId, tc);
+                iter.remove();
             }
         }
     }

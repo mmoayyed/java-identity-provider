@@ -6,6 +6,7 @@
 
     <action-state id="PropagateLogout">
         <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="PopulateTimerContext" />
         <evaluate expression="PopulateLogoutPropagationContext" />
         <evaluate expression="PopulateUserAgentContext" />
         <evaluate expression="SelectPropagationFlow" />

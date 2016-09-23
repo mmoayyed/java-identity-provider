@@ -23,10 +23,9 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.context.TimerContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.FunctionSupport;
 
-import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +43,7 @@ import com.google.common.base.Function;
  * rather than returning the data to use. The function may return false to indicate a lack of success,
  * but this value is merely logged.</p>
  * 
- * @event {@link EventIds#PROCEED_EVENT_ID}
+ * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */
 public class PopulateTimerContext extends AbstractProfileAction {
 
@@ -54,11 +53,6 @@ public class PopulateTimerContext extends AbstractProfileAction {
     /** Strategy function for establishing timer mappings to apply. */
     @NonnullAfterInit private Function<ProfileRequestContext,Boolean> timerStrategy;
     
-    /** Constructor. */
-    public PopulateTimerContext() {
-        timerStrategy = FunctionSupport.constant(Boolean.TRUE);
-    }
-    
     /**
      * Set strategy to establish the timer mappings to use.
      * 
@@ -67,10 +61,19 @@ public class PopulateTimerContext extends AbstractProfileAction {
     public void setTimerStrategy(@Nullable final Function<ProfileRequestContext,Boolean> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        timerStrategy = strategy != null ? strategy 
-                : FunctionSupport.<ProfileRequestContext,Boolean>constant(Boolean.TRUE);
+        timerStrategy = strategy;
     }
     
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (timerStrategy == null) {
+            timerStrategy = new NullFunction();
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
@@ -82,4 +85,17 @@ public class PopulateTimerContext extends AbstractProfileAction {
         }
     }
 
+    /**
+     * Default function to remove the context from the tree when no timers are installed.
+     */
+    private class NullFunction implements Function<ProfileRequestContext,Boolean> {
+
+        /** {@inheritDoc} */
+        public Boolean apply(final ProfileRequestContext input) {
+            input.removeSubcontext(TimerContext.class);
+            return true;
+        }
+        
+    }
+    
 }
