@@ -29,7 +29,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Initializes the CAS protocol interaction at the <code>/login</code> URI and returns one of the following events:
+ * Initializes the CAS protocol interaction at the <code>/login</code> URI. Returns one of the following events:
  *
  * <ul>
  *     <li><code>null</code> on success</li>

@@ -33,7 +33,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 
 /**
- * CAS protocol configuration that applies to the following ticket validation URIs:
+ * CAS protocol configuration. Applies to the following ticket validation URIs:
  *
  * <ul>
  *     <li><code>/proxyValidate</code></li>

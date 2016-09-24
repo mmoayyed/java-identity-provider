@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
  * Base class for ticket serializers that use a simple field-delimited serialization strategy.
  * Tickets are expected to be stored using the ticket ID as a key, so the ticket ID is not contained as part
  * of the serialized form.
+ * 
+ * @param <T> type of ticket
  *
  * @author Marvin S. Addison
  */
@@ -147,11 +149,27 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
         }
     }
 
+    /**
+     * Create a ticket.
+     * 
+     * @param o JSON object
+     * @param id ticket ID
+     * @param service service that requested the ticket
+     * @param expiry expiration instant
+     * 
+     * @return the newly created ticket
+     */
     protected abstract T createTicket(
             @Nonnull final JsonObject o,
             @Nonnull final String id,
             @Nonnull final String service,
             @Nonnull final Instant expiry);
 
+    /**
+     * Serialize a ticket.
+     * 
+     * @param generator JSON generator
+     * @param ticket ticket
+     */
     protected abstract void serializeInternal(@Nonnull final JsonGenerator generator, @Nonnull final T ticket);
 }

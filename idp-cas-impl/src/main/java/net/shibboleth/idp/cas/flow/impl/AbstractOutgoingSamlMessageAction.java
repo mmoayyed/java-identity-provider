@@ -48,18 +48,27 @@ import org.springframework.webflow.execution.RequestContext;
 public abstract class AbstractOutgoingSamlMessageAction extends
         AbstractCASProtocolAction<TicketValidationRequest, TicketValidationResponse> {
 
+    /** CAS namespace. */
+    protected static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
+    
     /** SOAP envelope needed for old/broken CAS clients. */
     private QName ENVELOPE_NAME = new QName(SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
 
     /** SOAP body needed for old/broken CAS clients. */
     private QName BODY_NAME = new QName(SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
 
-    /** CAS namespace. */
-    protected static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
-
-    protected static <T extends SAMLObject> T newSAMLObject(final Class<T> type, final QName elementName) {
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
-                XMLObjectProviderRegistrySupport.getBuilderFactory().<T>getBuilderOrThrow(elementName);
+    /**
+     * Build the SAML object.
+     * 
+     * @param type the type of SAML object being built
+     * @param elementName name of the 
+     * @param <T> type of SAML object
+     * 
+     * @return SAML object
+     */
+    @Nonnull protected static <T extends SAMLObject> T newSAMLObject(final Class<T> type, final QName elementName) {
+        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory()
+                .<T> getBuilderOrThrow(elementName);
         return builder.buildObject();
     }
 
@@ -90,6 +99,13 @@ public abstract class AbstractOutgoingSamlMessageAction extends
         return ActionSupport.buildProceedEvent(this);
     }
 
+    /**
+     * Build the SAML response.
+     * 
+     * @param springRequestContext Spring request context
+     * @param profileRequestContext profile request context
+     * @return SAML response
+     */
     protected abstract Response buildSamlResponse(
             @Nonnull RequestContext springRequestContext,
             @Nonnull ProfileRequestContext<SAMLObject, SAMLObject> profileRequestContext);

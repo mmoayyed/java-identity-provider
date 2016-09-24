@@ -73,7 +73,7 @@ public class ProcessSamlMessageAction extends
         final MessageContext<SAMLObject> msgContext = profileRequestContext.getInboundMessageContext();
         String ticket = null;
         if (msgContext.getMessage() instanceof Request) {
-            final Request request = ((Request) msgContext.getMessage());
+            final Request request = (Request) msgContext.getMessage();
             for (AssertionArtifact artifact : request.getAssertionArtifacts()) {
                 ticket = artifact.getAssertionArtifact();
                 break;

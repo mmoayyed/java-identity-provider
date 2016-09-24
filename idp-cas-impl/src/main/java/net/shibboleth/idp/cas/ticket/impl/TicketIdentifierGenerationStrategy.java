@@ -22,7 +22,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import org.cryptacular.generator.IdGenerator;
 import org.cryptacular.generator.RandomIdGenerator;
 
 import javax.annotation.Nonnull;
@@ -46,15 +45,15 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
     /** Ticket prefix. */
     @Nonnull
     @NotEmpty
-    private String prefix;
+    private String ticketPrefix;
 
     /** Ticket suffix. */
     @Nullable
-    private String suffix;
+    private String ticketSuffix;
 
     /** Number of characters in random part of generated ticket. */
     @Positive
-    private int randomLength;
+    private int ticketLength;
 
 
     /**
@@ -66,10 +65,10 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
     public TicketIdentifierGenerationStrategy(
             @Nonnull @NotEmpty final String prefix,
             @Positive final int randomLength) {
-        this.randomLength = (int) Constraint.isGreaterThan(0, randomLength, "Random length must be positive");
-        this.prefix = Constraint.isNotNull(StringSupport.trimOrNull(prefix), "Prefix cannot be null or empty");
-        if (!isUrlSafe(this.prefix)) {
-            throw new IllegalArgumentException("Unsupported prefix " + this.prefix);
+        ticketLength = (int) Constraint.isGreaterThan(0, randomLength, "Random length must be positive");
+        ticketPrefix = Constraint.isNotNull(StringSupport.trimOrNull(prefix), "Prefix cannot be null or empty");
+        if (!isUrlSafe(this.ticketPrefix)) {
+            throw new IllegalArgumentException("Unsupported prefix " + this.ticketPrefix);
         }
     }
 
@@ -84,19 +83,19 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
             if (!isUrlSafe(s)) {
                 throw new IllegalArgumentException("Unsupported suffix " + s);
             }
-            this.suffix = s;
+            ticketSuffix = s;
         }
     }
 
     @Override
     @Nonnull
     public String generateIdentifier() {
-        final StringBuilder builder = new StringBuilder(randomLength * 2);
-        builder.append(prefix).append('-');
+        final StringBuilder builder = new StringBuilder(ticketLength * 2);
+        builder.append(ticketPrefix).append('-');
         builder.append(System.currentTimeMillis()).append('-');
-        builder.append(new RandomIdGenerator(randomLength).generate());
-        if (suffix != null) {
-            builder.append('-').append(suffix);
+        builder.append(new RandomIdGenerator(ticketLength).generate());
+        if (ticketSuffix != null) {
+            builder.append('-').append(ticketSuffix);
         }
         return builder.toString();
     }
@@ -107,6 +106,12 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
         return generateIdentifier();
     }
 
+    /**
+     * Whether the URL is safe.
+     * 
+     * @param s URL
+     * @return whether the URL is safe
+     */
     private static boolean isUrlSafe(final String s) {
         try {
             return URLEncoder.encode(s, StandardCharsets.US_ASCII.name()).equals(s);

@@ -86,6 +86,7 @@ public class EncodingTicketService extends AbstractTicketService {
      * Creates a new instance.
      *
      * @param service Storage service to which tickets are persisted.
+     * @param sealer data sealer
      */
     public EncodingTicketService(@Nonnull final StorageService service, @Nonnull final DataSealer sealer) {
         super(service);
@@ -158,20 +159,47 @@ public class EncodingTicketService extends AbstractTicketService {
         return decode(ProxyTicket.class, id, proxyTicketPrefix);
     }
 
+    /**
+     * Encode a ticket.
+     * 
+     * @param ticketClass class of ticket
+     * @param ticket ticket
+     * @param prefix ticket ID prefix
+     * @param <T> type of ticket
+     * 
+     * @return ticket encoded ticket
+     */
     private <T extends Ticket> T encode(final Class<T> ticketClass, final T ticket, final String prefix) {
         final String opaque;
         try {
+            String y = serializer(ticketClass).serialize(ticket);
+            log.debug("encode y [{}]", y);
             opaque = dataSealer.wrap(
-                    serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant().getMillis());
+                    y, ticket.getExpirationInstant().getMillis());
+            log.debug("encode opaque [{}]", opaque);
         } catch (Exception e) {
             throw new RuntimeException("Ticket encoding failed", e);
         }
         return ticketClass.cast(ticket.clone(prefix + '-' + opaque));
     }
 
+    /**
+     * Decode a ticket.
+     * 
+     * @param ticketClass class of ticket
+     * @param id ticket ID
+     * @param prefix ticket ID prefix
+     * @param <T> type of ticket
+     * 
+     * @return decoded ticket
+     */
     private <T extends Ticket> T decode(final Class<T> ticketClass, final String id, final String prefix) {
         try {
-            final String decrypted = dataSealer.unwrap(id.substring(prefix.length() + 1));
+            String x = id.substring(prefix.length() + 1);
+            log.debug("decode x [{}]", x);
+            log.debug("decode unwrapping");
+            final String decrypted = dataSealer.unwrap(x);
+            log.debug("decrypted [{}]", decrypted);
             return serializer(ticketClass).deserialize(0, null, id, decrypted, 0L);
         } catch (Exception e) {
             log.warn("Ticket decoding failed with error: " + e.getMessage());

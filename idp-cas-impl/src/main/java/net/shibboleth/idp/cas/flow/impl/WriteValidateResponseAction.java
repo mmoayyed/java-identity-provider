@@ -42,8 +42,13 @@ public class WriteValidateResponseAction extends
     /** Protocol success flag indicates what kind of response to provide. */
     private final boolean success;
 
+    /**
+     * Constructor.
+     *
+     * @param successFlag success flag
+     */
     public WriteValidateResponseAction(final boolean successFlag) {
-        this.success = successFlag;
+        success = successFlag;
     }
 
     @Override

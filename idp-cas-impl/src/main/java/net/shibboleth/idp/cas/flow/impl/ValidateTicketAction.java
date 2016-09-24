@@ -37,7 +37,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * CAS protocol service ticket validation action emits one of the following events based on validation result:
+ * CAS protocol service ticket validation action. Emits one of the following events based on validation result:
  *
  * <ul>
  *     <li>{@link Events#ServiceTicketValidated ServiceTicketValidated}</li>
@@ -61,7 +61,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
 
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketServiceEx ticketService;
+    private final TicketServiceEx ticketServiceEx;
 
 
     /**
@@ -70,7 +70,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
      * @param ticketService Ticket service component.
      */
     public ValidateTicketAction(@Nonnull TicketServiceEx ticketService) {
-        this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+        ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 
     @Nonnull
@@ -91,9 +91,9 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             final String ticketId = request.getTicket();
             log.debug("Attempting to validate {}", ticketId);
             if (ticketId.startsWith(LoginConfiguration.DEFAULT_TICKET_PREFIX)) {
-                ticket = ticketService.removeServiceTicket(request.getTicket());
+                ticket = ticketServiceEx.removeServiceTicket(request.getTicket());
             } else if (ticketId.startsWith(ProxyConfiguration.DEFAULT_TICKET_PREFIX)) {
-                ticket = ticketService.removeProxyTicket(ticketId);
+                ticket = ticketServiceEx.removeProxyTicket(ticketId);
             } else {
                 return ProtocolError.InvalidTicketFormat.event(this);
             }

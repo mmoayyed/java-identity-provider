@@ -64,11 +64,17 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
      */
     private static class TrustEngineTrustStrategy implements TrustStrategy {
 
+        /** Trust engine. */
         private final TrustEngine<? super X509Credential> trustEngine;
 
         /** Class logger. */
         private final Logger log = LoggerFactory.getLogger(TrustEngineTrustStrategy.class);
 
+        /**
+         * Constructor.
+         *
+         * @param engine trust engine
+         */
         public TrustEngineTrustStrategy(final TrustEngine<? super X509Credential> engine) {
             trustEngine = engine;
         }
@@ -99,7 +105,7 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
 
     /** Connection and socket timeout. */
     @Positive
-    private int timeout = DEFAULT_TIMEOUT;
+    private int t = DEFAULT_TIMEOUT;
 
 
     /**
@@ -108,7 +114,7 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
      * @param timeout Non-zero timeout in milliseconds for both connection and socket timeouts.
      */
     public void setTimeout(@Positive final int timeout) {
-        this.timeout = (int) Constraint.isGreaterThan(0, timeout, "Timeout must be positive");
+        t = (int) Constraint.isGreaterThan(0, timeout, "Timeout must be positive");
     }
 
     @Override
@@ -125,8 +131,8 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
             final HttpGet request = new HttpGet(callbackUri);
             request.setConfig(
                     RequestConfig.custom()
-                            .setConnectTimeout(timeout)
-                            .setSocketTimeout(timeout)
+                            .setConnectTimeout(t)
+                            .setSocketTimeout(t)
                             .build());
             response = httpClient.execute(request);
             return response.getStatusLine().getStatusCode();
@@ -145,6 +151,12 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
         }
     }
 
+    /**
+     * Build HTTP client.
+     * 
+     * @param x509TrustEngine trust engine
+     * @return HTTP client
+     */
     private CloseableHttpClient createHttpClient(final TrustEngine<? super X509Credential> x509TrustEngine) {
         final SSLConnectionSocketFactory socketFactory;
         try {
@@ -164,6 +176,11 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
         return HttpClients.custom().setConnectionManager(connectionManager).build();
     }
 
+    /**
+     * Close the resource.
+     * 
+     * @param resource the resource to close
+     */
     private void close(Closeable resource) {
         if (resource != null) {
             try {

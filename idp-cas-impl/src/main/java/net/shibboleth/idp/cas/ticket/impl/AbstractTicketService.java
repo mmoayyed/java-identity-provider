@@ -58,8 +58,13 @@ public abstract class AbstractTicketService implements TicketServiceEx {
     private static final Map<Class<? extends Ticket>, StorageSerializer<? extends Ticket>> SERIALIZER_MAP =
             new HashMap<>();
 
+    /** Service ticket serializer. */
     private static final ServiceTicketSerializer ST_SERIALIZER = new ServiceTicketSerializer();
+    
+    /** Proxy ticket serialize. */
     private static final ProxyTicketSerializer PT_SERIALIZER = new ProxyTicketSerializer();
+    
+    /** Proxy granting ticket serializer. */
     private static final ProxyGrantingTicketSerializer PGT_SERIALIZER = new ProxyGrantingTicketSerializer();
 
     /** Class logger. */
@@ -163,6 +168,7 @@ public abstract class AbstractTicketService implements TicketServiceEx {
      * Gets the storage service serializer for the given ticket type.
      *
      * @param clazz Ticket class.
+     * @param <T> type of object being serialized
      *
      * @return Storage service serializer.
      */
@@ -224,6 +230,7 @@ public abstract class AbstractTicketService implements TicketServiceEx {
      *
      * @param id Ticket identifier.
      * @param <T> Type of ticket.
+     * @param clazz Ticket class
      *
      * @return Deleted ticket or null if ticket not found.
      */

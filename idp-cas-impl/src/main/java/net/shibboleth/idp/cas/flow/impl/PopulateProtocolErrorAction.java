@@ -19,10 +19,16 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.cas.protocol.*;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import net.shibboleth.idp.cas.protocol.AbstractProtocolResponse;
+import net.shibboleth.idp.cas.protocol.ProtocolError;
+import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
+import net.shibboleth.idp.cas.protocol.ProxyTicketResponse;
+import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
+import net.shibboleth.idp.cas.protocol.TicketValidationResponse;
 
 /**
  * Populates error information needed for protocol error messages.

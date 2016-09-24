@@ -19,7 +19,9 @@ package net.shibboleth.idp.cas.flow.impl;
 
 import javax.annotation.Nonnull;
 
-import net.shibboleth.idp.cas.protocol.*;
+import net.shibboleth.idp.cas.protocol.ProxyTicketRequest;
+import net.shibboleth.idp.cas.protocol.ServiceTicketRequest;
+import net.shibboleth.idp.cas.protocol.TicketValidationRequest;
 import net.shibboleth.idp.cas.service.Service;
 import net.shibboleth.idp.cas.service.ServiceRegistry;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;

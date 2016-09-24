@@ -35,7 +35,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * Initializes the CAS protocol interaction at the <code>/proxy</code> URI and returns one of the following events:
+ * Initializes the CAS protocol interaction at the <code>/proxy</code> URI. Returns one of the following events:
  * <ul>
  *     <li><code>null</code> on success</li>
  *     <li>{@link ProtocolError#ServiceNotSpecified ServiceNotSpecified}</li>
@@ -59,11 +59,16 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
 
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketServiceEx ticketService;
+    private final TicketServiceEx ticketServiceEx;
 
 
+    /**
+     * Constructor.
+     *
+     * @param ticketService ticket service
+     */
     public InitializeProxyAction(@Nonnull final TicketServiceEx ticketService) {
-        this.ticketService = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
+        ticketServiceEx = Constraint.isNotNull(ticketService, "Ticket service cannot be null.");
     }
 
     @Nonnull
@@ -89,7 +94,7 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
         if (result == null) {
             try {
                 log.debug("Fetching proxy-granting ticket {}", proxyTicketRequest.getPgt());
-                final ProxyGrantingTicket pgt = ticketService.fetchProxyGrantingTicket(proxyTicketRequest.getPgt());
+                final ProxyGrantingTicket pgt = ticketServiceEx.fetchProxyGrantingTicket(proxyTicketRequest.getPgt());
                 if (pgt == null) {
                     return ProtocolError.TicketExpired.event(this);
                 }

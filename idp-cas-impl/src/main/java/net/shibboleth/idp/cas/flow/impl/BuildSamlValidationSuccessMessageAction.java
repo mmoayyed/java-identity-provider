@@ -158,7 +158,13 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         return response;
     }
 
-    private Subject newSubject(final String identifier) {
+    /**
+     * Build a new subject.
+     * 
+     * @param identifier subject identifier
+     * @return new subject
+     */
+    @Nonnull private Subject newSubject(final String identifier) {
         final SubjectConfirmation confirmation = newSAMLObject(
                 SubjectConfirmation.class, SubjectConfirmation.DEFAULT_ELEMENT_NAME);
         final ConfirmationMethod method = newSAMLObject(
@@ -173,6 +179,14 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         return subject;
     }
 
+    /**
+     * Build new authentication statement.
+     * 
+     * @param authnInstant authentication instant
+     * @param authnMethod authentication method
+     * @param principal authenticated principal
+     * @return new authentication statement
+     */
     private AuthenticationStatement newAuthenticationStatement(
             final DateTime authnInstant, final String authnMethod, final String principal) {
         final AuthenticationStatement authnStatement = newSAMLObject(
@@ -183,6 +197,12 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
         return authnStatement;
     }
 
+    /**
+     * Build new attribute value.
+     * 
+     * @param value attribute value
+     * @return new attribute value
+     */
     private XSString newAttributeValue(final String value) {
         final XSString stringValue = attrValueBuilder.buildObject(
                 AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);

@@ -61,7 +61,7 @@ import org.w3c.dom.Element;
 public class ServiceEntityDescriptor implements EntityDescriptor {
 
     /** Underlying CAS service. */
-    private final Service service;
+    private final Service svc;
 
     /** The multimap holding class-indexed instances of additional info associated with this XML object. */
     @Nonnull
@@ -74,36 +74,54 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * @param service CAS service metadata object.
      */
     public ServiceEntityDescriptor(@Nonnull final Service service) {
-        this.service = Constraint.isNotNull(service, "Service cannot be null");
-        this.objectMetadata = new LockableClassToInstanceMultiMap<>(true);
+        svc = Constraint.isNotNull(service, "Service cannot be null");
+        objectMetadata = new LockableClassToInstanceMultiMap<>(true);
         if (StringSupport.trimOrNull(service.getGroup()) != null) {
-            this.objectMetadata.put(new EntityGroupName(service.getGroup()));
+            objectMetadata.put(new EntityGroupName(service.getGroup()));
         }
     }
 
     @Override
     public String getEntityID() {
-        return service.getName();
+        return svc.getName();
     }
 
-    @Override
-    public void setEntityID(final String id) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setEntityID(final String id) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public String getID() {
-        return service.getName();
+        return svc.getName();
     }
 
-    @Override
-    public void setID(final String newID) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setID(final String newID) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public Extensions getExtensions() {
         return null;
     }
 
-    @Override
-    public void setExtensions(final Extensions extensions) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setExtensions(final Extensions extensions) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public List<RoleDescriptor> getRoleDescriptors() {
@@ -160,8 +178,14 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
         return null;
     }
 
-    @Override
-    public void setOrganization(Organization organization) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setOrganization(Organization organization) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public List<ContactPerson> getContactPersons() {
@@ -184,8 +208,14 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
         return null;
     }
 
-    @Override
-    public void setCacheDuration(Long duration) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setCacheDuration(Long duration) {
+        throw new UnsupportedOperationException();
+    }
 
     @Nullable
     @Override
@@ -204,8 +234,14 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
         return null;
     }
 
-    @Override
-    public void setSignature(@Nullable Signature newSignature) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setSignature(@Nullable Signature newSignature) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public boolean isValid() {
@@ -217,8 +253,14 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
         return DateTime.now().plusDays(1);
     }
 
-    @Override
-    public void setValidUntil(final DateTime validUntil) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setValidUntil(final DateTime validUntil) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public void detach() {}
@@ -314,19 +356,37 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
         return null;
     }
 
-    @Override
-    public void setDOM(@Nullable final Element dom) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setDOM(@Nullable final Element dom) {
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public void setNoNamespaceSchemaLocation(@Nullable final String location) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void setParent(@Nullable final XMLObject parent) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setParent(@Nullable final XMLObject parent) {
+        throw new UnsupportedOperationException();
+    }
 
-    @Override
-    public void setSchemaLocation(@Nullable final String location) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setSchemaLocation(@Nullable final String location) {
+        throw new UnsupportedOperationException();
+    }
 
     @Nullable
     @Override
@@ -340,11 +400,23 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
         return null;
     }
 
-    @Override
-    public void setNil(@Nullable final Boolean newNil) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setNil(@Nullable final Boolean newNil) {
+        throw new UnsupportedOperationException();
+    }
 
-    @Override
-    public void setNil(@Nullable final XSBooleanValue newNil) { throw new UnsupportedOperationException(); }
+    /**
+     * Throws {@link UnsupportedOperationException}.
+     * 
+     * {@inheritDoc}
+     */
+    @Override public void setNil(@Nullable final XSBooleanValue newNil) {
+        throw new UnsupportedOperationException();
+    }
 
     @Nonnull
     @Override

@@ -29,7 +29,6 @@ import net.shibboleth.utilities.java.support.security.BasicKeystoreKeyStrategy;
 import net.shibboleth.utilities.java.support.security.DataSealer;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
 import net.shibboleth.utilities.java.support.security.RandomIdentifierGenerationStrategy;
-import org.apache.commons.codec.binary.Hex;
 import org.joda.time.Instant;
 import org.opensaml.storage.impl.MemoryStorageService;
 import org.springframework.core.io.ClassPathResource;

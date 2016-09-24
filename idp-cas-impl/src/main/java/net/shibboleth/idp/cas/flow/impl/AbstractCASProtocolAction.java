@@ -34,6 +34,9 @@ import org.opensaml.profile.context.ProfileRequestContext;
 
 /**
  * Base class for CAS protocol actions.
+ * 
+ * @param <RequestType> request
+ * @param <ResponseType> response
  *
  * @author Marvin S. Addison
  */
@@ -45,11 +48,18 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
     /** Looks up an IdP session context from IdP profile request context. */
     private final Function<ProfileRequestContext, SessionContext> sessionContextFunction;
 
+    /** Constructor. */
     public AbstractCASProtocolAction() {
         protocolLookupFunction = new ChildContextLookup(ProtocolContext.class, true);
         sessionContextFunction = new ChildContextLookup(SessionContext.class, false);
     }
 
+    /**
+     * Get the CAS request.
+     * 
+     * @param prc profile request context
+     * @return CAS request
+     */
     @Nonnull
     protected RequestType getCASRequest(final ProfileRequestContext prc) {
         final RequestType request = getProtocolContext(prc).getRequest();
@@ -59,10 +69,22 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
         return request;
     }
 
+    /**
+     * Set the CAS request.
+     * 
+     * @param prc profile request context
+     * @param request CAS request
+     */
     protected void setCASRequest(final ProfileRequestContext prc, @Nonnull final RequestType request) {
         getProtocolContext(prc).setRequest(Constraint.isNotNull(request, "CAS request cannot be null"));
     }
 
+    /**
+     * Get the CAS response.
+     * 
+     * @param prc profile request context
+     * @return CAS response
+     */
     @Nonnull
     protected ResponseType getCASResponse(final ProfileRequestContext prc) {
         final ResponseType response = getProtocolContext(prc).getResponse();
@@ -72,12 +94,23 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
         return response;
     }
 
+    /**
+     * Set the CAS response.
+     * 
+     * @param prc profile request context
+     * @param response CAS response
+     */
     protected void setCASResponse(final ProfileRequestContext prc, @Nonnull final ResponseType response) {
         getProtocolContext(prc).setResponse(Constraint.isNotNull(response, "CAS response cannot be null"));
     }
 
-    @Nonnull
-    protected Ticket getCASTicket(final ProfileRequestContext prc) {
+    /**
+     * Get the CAS ticket.
+     * 
+     * @param prc profile request context
+     * @return CAS ticket
+     */
+    @Nonnull protected Ticket getCASTicket(final ProfileRequestContext prc) {
         final TicketContext context = getProtocolContext(prc).getSubcontext(TicketContext.class);
         if (context == null || context.getTicket() == null) {
             throw new IllegalStateException("CAS protocol ticket not found");
@@ -85,14 +118,24 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
         return context.getTicket();
     }
 
+    /**
+     * Set the CAS ticket.
+     * 
+     * @param prc profile request context
+     * @param ticket CAS ticket
+     */
     protected void setCASTicket(final ProfileRequestContext prc, @Nonnull final Ticket ticket) {
         getProtocolContext(prc).addSubcontext(
                 new TicketContext(Constraint.isNotNull(ticket, "CAS ticket cannot be null")));
     }
 
-
-    @Nonnull
-    protected Service getCASService(final ProfileRequestContext prc) {
+    /**
+     * Get the CAS service.
+     * 
+     * @param prc profile request context
+     * @return CAS service
+     */
+    @Nonnull protected Service getCASService(final ProfileRequestContext prc) {
         final ServiceContext context = getProtocolContext(prc).getSubcontext(ServiceContext.class);
         if (context == null || context.getService() == null) {
             throw new IllegalStateException("CAS protocol service not found");
@@ -100,13 +143,24 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
         return context.getService();
     }
 
+    /**
+     * Set the CAS service.
+     * 
+     * @param prc profile request context
+     * @param service CAS service
+     */
     protected void setCASService(final ProfileRequestContext prc, @Nonnull final Service service) {
         getProtocolContext(prc).addSubcontext(
                 new ServiceContext(Constraint.isNotNull(service, "CAS service cannot be null")));
     }
 
-    @Nonnull
-    protected IdPSession getIdPSession(final ProfileRequestContext prc) {
+    /**
+     * Get the IdP session.
+     * 
+     * @param prc profile request context
+     * @return IdP session
+     */
+    @Nonnull protected IdPSession getIdPSession(final ProfileRequestContext prc) {
         final SessionContext sessionContext = sessionContextFunction.apply(prc);
         if (sessionContext == null || sessionContext.getIdPSession() == null) {
             throw new IllegalStateException("Cannot locate IdP session");
@@ -114,8 +168,13 @@ public abstract class AbstractCASProtocolAction<RequestType, ResponseType> exten
         return sessionContext.getIdPSession();
     }
 
-    @Nonnull
-    protected ProtocolContext<RequestType, ResponseType> getProtocolContext(final ProfileRequestContext prc) {
+    /**
+     * Get the CAS protocol context.
+     * 
+     * @param prc profile request context
+     * @return CAS protocol context
+     */
+    @Nonnull protected ProtocolContext<RequestType, ResponseType> getProtocolContext(final ProfileRequestContext prc) {
         final ProtocolContext<RequestType, ResponseType> casCtx = protocolLookupFunction.apply(prc);
         if (casCtx == null) {
             throw new IllegalArgumentException("CAS ProtocolContext not found in ProfileRequestContext");

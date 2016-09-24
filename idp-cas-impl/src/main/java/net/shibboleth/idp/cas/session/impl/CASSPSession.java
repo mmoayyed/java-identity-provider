@@ -35,7 +35,7 @@ public class CASSPSession extends BasicSPSession {
 
     /** Validated ticket that started the SP session. */
     @Nonnull @NotEmpty
-    private final String ticketId;
+    private final String ticket;
 
 
     /**
@@ -52,21 +52,26 @@ public class CASSPSession extends BasicSPSession {
             @Duration @Positive long expiration,
             @Nonnull @NotEmpty String ticketId) {
         super(id, creation, expiration);
-        this.ticketId = Constraint.isNotNull(StringSupport.trimOrNull(ticketId), "Ticket ID cannot be null or empty");
+        ticket = Constraint.isNotNull(StringSupport.trimOrNull(ticketId), "Ticket ID cannot be null or empty");
     }
 
+    /** 
+     * Get the ticket ID.
+     * 
+     * @return ticket ID
+     */
     @Nonnull @NotEmpty
     public String getTicketId() {
-        return ticketId;
+        return ticket;
     }
 
     @Override
     public String getSPSessionKey() {
-        return ticketId;
+        return ticket;
     }
 
     @Override
     public String toString() {
-        return "CASSPSession: " + getId() + " via " + ticketId;
+        return "CASSPSession: " + getId() + " via " + ticket;
     }
 }

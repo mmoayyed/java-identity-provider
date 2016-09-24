@@ -60,9 +60,8 @@ public abstract class AbstractProxyAuthenticator implements ProxyAuthenticator<T
         this.allowedResponseCodes = responseCodes;
     }
 
-    @Override
-    public final void authenticate(@Nonnull final URI credential, @Nullable TrustEngine<? super X509Credential> criteria)
-            throws GeneralSecurityException {
+    @Override public final void authenticate(@Nonnull final URI credential,
+            @Nullable TrustEngine<? super X509Credential> criteria) throws GeneralSecurityException {
 
         Constraint.isNotNull(credential, "URI to authenticate cannot be null.");
         if (!HTTPS_SCHEME.equalsIgnoreCase(credential.getScheme())) {

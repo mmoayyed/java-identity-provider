@@ -79,6 +79,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
      * Creates a new instance.
      *
      * @param ticketService Ticket service component.
+     * @param resolver session resolver
      */
     public GrantProxyTicketAction(
             @Nonnull final TicketServiceEx ticketService, @Nonnull final SessionResolver resolver) {

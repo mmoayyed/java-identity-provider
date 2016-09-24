@@ -66,7 +66,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
 
     /** Manages CAS tickets. */
     @Nonnull
-    private final TicketServiceEx ticketService;
+    private final TicketServiceEx ticketServiceEx;
 
 
     /**
@@ -75,7 +75,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      * @param ticketService Ticket service component.
      */
     public GrantServiceTicketAction(@Nonnull TicketServiceEx ticketService) {
-        this.ticketService = Constraint.isNotNull(ticketService, "TicketService cannot be null");
+        ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 
     /** {@inheritDoc} */
@@ -110,7 +110,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                     session.getPrincipalName(),
                     new Instant(authnResult.getAuthenticationInstant()),
                     authnResult.getAuthenticationFlowId());
-            ticket = ticketService.createServiceTicket(
+            ticket = ticketServiceEx.createServiceTicket(
                     config.getSecurityConfiguration().getIdGenerator().generateIdentifier(),
                     DateTime.now().plus(config.getTicketValidityPeriod()).toInstant(),
                     request.getService(),
