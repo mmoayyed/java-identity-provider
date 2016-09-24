@@ -38,19 +38,29 @@ public class StatusCodeLookupFunction implements Function<ProfileRequestContext,
     /** Synthetic success result code. */
     public static final String SUCCESS_CODE = "SUCCESS";
 
-    @Nonnull
-    private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
+    /** Lookup strategy for protocol context. */
+    @Nonnull private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
 
+    /** Constructor. */
     public StatusCodeLookupFunction() {
         this(new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param protocolLookup lookup strategy for protocol context
+     */
     public StatusCodeLookupFunction(@Nonnull final Function<ProfileRequestContext, ProtocolContext> protocolLookup) {
         protocolContextFunction = Constraint.isNotNull(protocolLookup, "ProtocolContext lookup cannot be null");
     }
 
-    @Nullable
-    @Override
+    /**
+     * Get protocol message status code.
+     * 
+     * {@inheritDoc}
+     */
+    @Nullable @Override
     public String apply(@Nonnull final ProfileRequestContext input) {
         final ProtocolContext protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {

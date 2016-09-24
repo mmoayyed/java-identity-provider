@@ -33,19 +33,29 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * @author Marvin S. Addison
  */
 public class GatewayLookupFunction implements Function<ProfileRequestContext, Boolean> {
-    @Nonnull
-    private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
+    /** Lookup strategy for protocol context. */
+    @Nonnull private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
 
+    /** Constructor. */
     public GatewayLookupFunction() {
         this(new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param protocolLookup lookup strategy for protocol context
+     */
     public GatewayLookupFunction(@Nonnull final Function<ProfileRequestContext, ProtocolContext> protocolLookup) {
         protocolContextFunction = Constraint.isNotNull(protocolLookup, "ProtocolContext lookup cannot be null");
     }
 
-    @Nullable
-    @Override
+    /**
+     * Whether the gateway parameter is true.
+     * 
+     * {@inheritDoc}
+     */
+    @Nullable @Override
     public Boolean apply(@Nonnull final ProfileRequestContext input) {
         final ProtocolContext protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {

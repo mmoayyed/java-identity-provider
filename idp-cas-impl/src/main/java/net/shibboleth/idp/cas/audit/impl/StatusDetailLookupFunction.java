@@ -35,19 +35,29 @@ import org.opensaml.profile.context.ProfileRequestContext;
  */
 public class StatusDetailLookupFunction implements Function<ProfileRequestContext, String> {
 
-    @Nonnull
-    private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
+    /** Lookup strategy for protocol context. */
+    @Nonnull private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
 
+    /** Constructor. */
     public StatusDetailLookupFunction() {
         this(new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param protocolLookup lookup strategy for protocol context
+     */
     public StatusDetailLookupFunction(@Nonnull final Function<ProfileRequestContext, ProtocolContext> protocolLookup) {
         protocolContextFunction = Constraint.isNotNull(protocolLookup, "ProtocolContext lookup cannot be null");
     }
 
-    @Nullable
-    @Override
+    /**
+     * Get protocol message status detail.
+     * 
+     * {@inheritDoc}
+     */
+    @Nullable @Override
     public String apply(@Nonnull final ProfileRequestContext input) {
         final ProtocolContext protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {

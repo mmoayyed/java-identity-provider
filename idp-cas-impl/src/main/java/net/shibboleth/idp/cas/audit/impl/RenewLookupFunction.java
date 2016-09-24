@@ -33,19 +33,30 @@ import org.opensaml.profile.context.ProfileRequestContext;
  * @author Marvin S. Addison
  */
 public class RenewLookupFunction implements Function<ProfileRequestContext, Boolean> {
+    /** Lookup strategy for protocol context. */
     @Nonnull
     private final Function<ProfileRequestContext, ProtocolContext> protocolContextFunction;
 
+    /** Constructor. */
     public RenewLookupFunction() {
         this(new ChildContextLookup<ProfileRequestContext, ProtocolContext>(ProtocolContext.class));
     }
 
+    /**
+     * Constructor.
+     *
+     * @param protocolLookup lookup strategy for protocol context
+     */
     public RenewLookupFunction(@Nonnull final Function<ProfileRequestContext, ProtocolContext> protocolLookup) {
         protocolContextFunction = Constraint.isNotNull(protocolLookup, "ProtocolContext lookup cannot be null");
     }
 
-    @Nullable
-    @Override
+    /**
+     * Whether to require fresh subject interaction to succeed.
+     * 
+     * {@inheritDoc}
+     */
+    @Nullable @Override
     public Boolean apply(@Nonnull final ProfileRequestContext input) {
         final ProtocolContext protocolContext = protocolContextFunction.apply(input);
         if (protocolContext == null || protocolContext.getRequest() ==  null) {
