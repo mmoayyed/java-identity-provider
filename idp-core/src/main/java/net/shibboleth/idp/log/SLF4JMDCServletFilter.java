@@ -55,8 +55,8 @@ public class SLF4JMDCServletFilter implements Filter {
 
     /** {@inheritDoc} */
     @Override
-    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException,
-            ServletException {
+    public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
+            throws IOException, ServletException {
         try {
             MDC.put(Version.MDC_ATTRIBUTE, Version.getVersion());
             MDC.put(CLIENT_ADDRESS_MDC_ATTRIBUTE, request.getRemoteAddr());

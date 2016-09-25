@@ -50,7 +50,8 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
         Function<ApplicationContext, ServiceableComponent<MetadataResolver>> {
 
     /** {@inheritDoc} */
-    @Override @Nullable public ServiceableComponent<MetadataResolver> apply(@Nullable final ApplicationContext appContext) {
+    @Override @Nullable public ServiceableComponent<MetadataResolver>
+            apply(@Nullable final ApplicationContext appContext) {
         final Collection<RelyingPartyMetadataProvider> resolvers =
                 appContext.getBeansOfType(RelyingPartyMetadataProvider.class).values();
 

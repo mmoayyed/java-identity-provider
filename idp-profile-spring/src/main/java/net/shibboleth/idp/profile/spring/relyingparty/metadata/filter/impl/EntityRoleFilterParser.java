@@ -47,7 +47,8 @@ public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         final List<QName> retainedRoles = new ArrayList<>();
         final List<Element> retainedRoleElems =
                 ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,

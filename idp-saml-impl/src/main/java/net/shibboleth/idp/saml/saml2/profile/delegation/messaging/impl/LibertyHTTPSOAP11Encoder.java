@@ -232,7 +232,8 @@ public class LibertyHTTPSOAP11Encoder extends BaseHttpServletResponseXMLMessageE
      * @return the HTTP response status code
      */
     protected int getHTTPResponseStatusCode() {
-        final Integer contextStatus = getMessageContext().getSubcontext(SOAP11Context.class, true).getHTTPResponseStatus();
+        final Integer contextStatus =
+                getMessageContext().getSubcontext(SOAP11Context.class, true).getHTTPResponseStatus();
         if (contextStatus != null) {
             return contextStatus;
         }

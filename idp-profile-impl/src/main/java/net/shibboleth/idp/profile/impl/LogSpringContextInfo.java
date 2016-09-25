@@ -89,7 +89,8 @@ public class LogSpringContextInfo extends AbstractProfileAction implements Appli
         
         String contextualDescription = null;
         
-        final SpringRequestContext springRequestContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
+        final SpringRequestContext springRequestContext =
+                profileRequestContext.getSubcontext(SpringRequestContext.class);
         if (springRequestContext != null && springRequestContext.getRequestContext() != null) {
             final RequestContext requestContext = springRequestContext.getRequestContext();
             contextualDescription = requestContext.getAttributes().getString(ATTRIB_DESC);

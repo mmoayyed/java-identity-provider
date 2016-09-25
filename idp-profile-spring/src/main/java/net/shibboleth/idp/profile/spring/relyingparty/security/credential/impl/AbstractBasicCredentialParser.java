@@ -57,7 +57,8 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
     private final Logger log = LoggerFactory.getLogger(AbstractBasicCredentialParser.class);
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         builder.addPropertyValue("configDescription", parserContext.getReaderContext().getResource().getDescription());
 

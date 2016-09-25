@@ -60,7 +60,8 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
 
         final Unmarshaller unmarshaller = XMLObjectSupport.getUnmarshaller(Attribute.DEFAULT_ELEMENT_NAME);
         if (unmarshaller == null) {

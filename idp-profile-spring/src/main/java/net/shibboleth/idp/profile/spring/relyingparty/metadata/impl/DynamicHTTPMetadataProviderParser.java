@@ -116,9 +116,11 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
         final Element regex = ElementSupport.getFirstChildElement(element, REGEX);
         if (regex != null) {
             final String replacement = StringSupport.trimOrNull(ElementSupport.getElementContentAsString(regex));
-            final String match = StringSupport.trimOrNull(StringSupport.trimOrNull(regex.getAttributeNS(null, "match")));
+            final String match =
+                    StringSupport.trimOrNull(StringSupport.trimOrNull(regex.getAttributeNS(null, "match")));
 
-            final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(RegexRequestURLBuilder.class);
+            final BeanDefinitionBuilder builder =
+                    BeanDefinitionBuilder.genericBeanDefinition(RegexRequestURLBuilder.class);
             builder.addConstructorArgValue(match);
             builder.addConstructorArgValue(replacement);
             return builder.getBeanDefinition();

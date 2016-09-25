@@ -42,7 +42,8 @@ public class ScopeMarshaller extends AbstractXMLObjectMarshaller {
     }
 
     /** {@inheritDoc} */
-    protected void marshallElementContent(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
+    protected void marshallElementContent(final XMLObject xmlObject, final Element domElement)
+            throws MarshallingException {
         final Scope shibMDScope = (Scope) xmlObject;
 
         ElementSupport.appendTextContent(domElement, shibMDScope.getValue());

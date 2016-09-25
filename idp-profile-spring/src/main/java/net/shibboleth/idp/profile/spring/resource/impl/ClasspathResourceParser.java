@@ -41,7 +41,8 @@ public class ClasspathResourceParser extends AbstractSingleBeanDefinitionParser 
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         builder.setLazyInit(true);
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
     }

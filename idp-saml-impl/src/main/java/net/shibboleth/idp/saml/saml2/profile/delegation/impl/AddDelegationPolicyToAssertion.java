@@ -186,7 +186,8 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
         } else {
             // If no inbound assertion token, this must be initial SSO, so pull from RP's IdP config.
             log.debug("Attempting to resolve max delegation chain length from RP profile config");
-            final RelyingPartyContext relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+            final RelyingPartyContext relyingPartyContext =
+                    relyingPartyContextLookupStrategy.apply(profileRequestContext);
             if (relyingPartyContext != null) {
                 if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
                     return ((BrowserSSOProfileConfiguration) relyingPartyContext.getProfileConfig())

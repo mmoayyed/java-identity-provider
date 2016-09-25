@@ -60,7 +60,8 @@ public class PropertiesWithComments {
      * @param isComment whether this is a comment or not.
      * @throws IOException when badness happens.
      */
-    protected void addCommentedProperty(@Nonnull @NotEmpty final String line, final boolean isComment) throws IOException {
+    protected void addCommentedProperty(@Nonnull @NotEmpty final String line, final boolean isComment)
+            throws IOException {
         final Properties parser = new Properties();
         final String modifiedLine;
 

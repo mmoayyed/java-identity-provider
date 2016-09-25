@@ -141,7 +141,8 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      */
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
-    private BeanDefinition buildHttpClient(final Element element, final ParserContext parserContext, final boolean haveTLSTrustEngine) {
+    private BeanDefinition buildHttpClient(final Element element, final ParserContext parserContext,
+            final boolean haveTLSTrustEngine) {
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
             caching = StringSupport.trimOrNull(element.getAttributeNS(null, "httpCaching"));
@@ -237,7 +238,8 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * @return the bean definition with the username and password.
      */
     private BeanDefinition buildBasicCredentials(final Element element) {
-        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);
+        final BeanDefinitionBuilder builder =
+                BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);
 
         builder.setLazyInit(true);
 

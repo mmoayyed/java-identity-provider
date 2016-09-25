@@ -83,7 +83,8 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
     protected BeanDefinition getPKIXTrustEvaluator(@Nonnull final Element element,
             @Nonnull final ParserContext parserContext) {
 
-        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(CertPathPKIXTrustEvaluator.class);
+        final BeanDefinitionBuilder builder =
+                BeanDefinitionBuilder.genericBeanDefinition(CertPathPKIXTrustEvaluator.class);
 
         final List<Element> validationOptionsElements =
                 ElementSupport.getChildElements(element, PKIXValidationOptionsParser.ELEMENT_NAME);

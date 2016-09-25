@@ -84,7 +84,8 @@ public class AddSenderHandler extends AbstractHeaderGeneratingMessageHandler {
     /** {@inheritDoc} */
     protected void doInvoke(@Nonnull final MessageContext messageContext) throws MessageHandlerException {
         log.debug("Issuing Liberty ID-WSF Sender with providerId value: {}", providerId);
-        final Sender sender = (Sender) XMLObjectSupport.buildXMLObject(LibertyConstants.SOAP_BINDING_SENDER_ELEMENT_NAME);
+        final Sender sender =
+                (Sender) XMLObjectSupport.buildXMLObject(LibertyConstants.SOAP_BINDING_SENDER_ELEMENT_NAME);
         sender.setProviderID(providerId);
         decorateGeneratedHeader(messageContext, sender);
         SOAPMessagingSupport.addHeaderBlock(messageContext, sender);

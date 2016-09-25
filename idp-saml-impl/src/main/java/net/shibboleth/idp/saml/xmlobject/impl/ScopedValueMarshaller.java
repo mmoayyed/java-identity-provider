@@ -42,7 +42,8 @@ public class ScopedValueMarshaller extends AbstractXMLObjectMarshaller {
     }
 
     /** {@inheritDoc} */
-    protected void marshallElementContent(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
+    protected void marshallElementContent(final XMLObject xmlObject, final Element domElement)
+            throws MarshallingException {
         final ScopedValue scopedValue = (ScopedValue) xmlObject;
 
         ElementSupport.appendTextContent(domElement, scopedValue.getValue());

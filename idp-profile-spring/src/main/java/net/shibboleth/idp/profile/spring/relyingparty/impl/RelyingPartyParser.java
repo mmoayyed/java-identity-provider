@@ -53,7 +53,8 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
      * {@link RelyingPartyIdPredicate} and an {@link EntityGroupNamePredicate} These however may have injected lookup
      * strategies and so these need to be constructed as a BeanDefinition.
      * */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         final String id = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));

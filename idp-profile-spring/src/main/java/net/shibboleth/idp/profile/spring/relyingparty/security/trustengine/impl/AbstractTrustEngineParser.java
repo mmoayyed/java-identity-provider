@@ -26,17 +26,18 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Basis of all parsers for &lt;security:TrustEngine&gt;. 
+ * Basis of all parsers for &lt;security:TrustEngine&gt;.
  */
 public abstract class AbstractTrustEngineParser extends AbstractSingleBeanDefinitionParser {
 
     /** {@inheritDoc} */
-    @Override
-    protected String resolveId(final Element element, final AbstractBeanDefinition definition, final ParserContext parserContext) {
+    @Override protected String resolveId(final Element element, final AbstractBeanDefinition definition,
+            final ParserContext parserContext) {
         return StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
     }
 
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         builder.setLazyInit(true);
     }

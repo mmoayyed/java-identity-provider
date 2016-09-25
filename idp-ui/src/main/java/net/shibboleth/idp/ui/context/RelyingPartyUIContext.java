@@ -705,7 +705,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight max Height
      * @return whether it fits
      */
-    private boolean logoFits(final Logo logo, final int minWidth, final int minHeight, final int maxWidth, final int maxHeight) {
+    private boolean logoFits(final Logo logo, final int minWidth, final int minHeight, final int maxWidth,
+            final int maxHeight) {
         return logo.getHeight() <= maxHeight && logo.getHeight() >= minHeight && logo.getWidth() <= maxWidth
                 && logo.getWidth() >= minWidth;
     }
@@ -720,8 +721,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight the maximum height to allow.
      * @return an appropriate logo URL or null.
      */
-    @Nullable private String getLogoByLanguage(@Nonnull final String lang, final int minWidth, final int minHeight, final int maxWidth,
-            final int maxHeight) {
+    @Nullable private String getLogoByLanguage(@Nonnull final String lang, final int minWidth, final int minHeight,
+            final int maxWidth, final int maxHeight) {
         for (final Logo logo : rpUIInfo.getLogos()) {
             log.trace("Found logo in UIInfo, '{}' ({} x {})", logo.getXMLLang(), logo.getWidth(), logo.getHeight());
             if (logo.getXMLLang() == null || !logo.getXMLLang().equals(lang)) {
@@ -748,7 +749,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight the maximum height to allow.
      * @return an appropriate logo URL or null.
      */
-    @Nullable private String getLogoNoLanguage(final int minWidth, final int minHeight, final int maxWidth, final int maxHeight) {
+    @Nullable private String getLogoNoLanguage(final int minWidth, final int minHeight, final int maxWidth,
+            final int maxHeight) {
         for (final Logo logo : rpUIInfo.getLogos()) {
             if (null != logo.getXMLLang()) {
                 continue;
@@ -801,7 +803,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight the maximum height to allow.
      * @return an appropriate logo URL or null.
      */
-    @Nullable public String getLogo(final String minWidth, final String minHeight, final String maxWidth, final String maxHeight) {
+    @Nullable public String getLogo(final String minWidth, final String minHeight, final String maxWidth,
+            final String maxHeight) {
 
         int minW;
         try {

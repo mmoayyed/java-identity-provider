@@ -285,8 +285,8 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
     /** {@inheritDoc} */
     @Override @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
-            @Nonnull final AttributeResolutionContext resolutionContext, @Nonnull final AttributeResolverWorkContext workContext)
-            throws ResolutionException {
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
         Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
 

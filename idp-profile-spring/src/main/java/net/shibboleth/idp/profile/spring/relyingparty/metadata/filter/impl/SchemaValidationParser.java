@@ -56,7 +56,8 @@ public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         final List<Element> schemaNameElements = ElementSupport.getChildElements(element, EXTENSION_SCHEMA_NAME);
 
         if (element.hasAttributeNS(null, "schemaBuilderRef")) {

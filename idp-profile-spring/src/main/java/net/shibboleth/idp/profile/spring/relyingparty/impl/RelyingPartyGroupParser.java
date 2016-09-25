@@ -60,7 +60,8 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(element);
         builder.setLazyInit(true);

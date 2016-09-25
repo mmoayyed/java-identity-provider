@@ -42,7 +42,8 @@ public class KeyAuthorityParser extends AbstractSingleBeanDefinitionParser {
 
     /** {@inheritDoc} */
     @Override
-    protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         
     }
 

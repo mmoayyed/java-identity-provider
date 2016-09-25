@@ -62,7 +62,8 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
 
         if (element.hasAttributeNS(null, "removeEmptyEntitiesDescriptors")) {
             builder.addPropertyValue("removeEmptyEntitiesDescriptors",

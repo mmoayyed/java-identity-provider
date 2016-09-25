@@ -78,7 +78,8 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
      * @param requirementRule criterion used to determine if this policy is active for a given request
      * @param attributeRules value filtering policies employed if this policy is active
      */
-    public AttributeFilterPolicy(@Nonnull @NotEmpty final String policyId, @Nonnull final PolicyRequirementRule requirementRule,
+    public AttributeFilterPolicy(@Nonnull @NotEmpty final String policyId,
+            @Nonnull final PolicyRequirementRule requirementRule,
             @Nullable @NullableElements final Collection<AttributeRule> attributeRules) {
         setId(policyId);
 

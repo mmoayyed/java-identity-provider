@@ -55,7 +55,8 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         builder.setLazyInit(true);
         super.doParse(element, parserContext, builder);
 

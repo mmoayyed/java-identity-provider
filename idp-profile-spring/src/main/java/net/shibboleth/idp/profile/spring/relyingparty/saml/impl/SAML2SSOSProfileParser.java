@@ -50,7 +50,8 @@ public class SAML2SSOSProfileParser extends SAML2BrowserSSOProfileParser {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         if (element.hasAttributeNS(null, "delegationPredicateRef")) {
             builder.addPropertyReference("delegationPredicate",

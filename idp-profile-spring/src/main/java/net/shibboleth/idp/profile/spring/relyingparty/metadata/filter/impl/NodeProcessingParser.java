@@ -47,7 +47,8 @@ public class NodeProcessingParser extends AbstractSingleBeanDefinitionParser {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
         builder.setLazyInit(true);

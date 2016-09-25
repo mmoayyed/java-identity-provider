@@ -39,7 +39,8 @@ public class DefaultRelyingPartyParser extends AbstractRelyingPartyParser {
             "DefaultRelyingParty");
 
     /** {@inheritDoc} */
-    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         builder.addPropertyValue("id", "DefaultRelyingParty");

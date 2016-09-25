@@ -166,7 +166,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
      * @param builder used to define the {@code BeanDefinition}
      * @see #doParse(Element, BeanDefinitionBuilder)
      */
-    protected void doNativeParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    protected void doNativeParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
 
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");

@@ -160,9 +160,11 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param parserContext the parser context
      * @param builder the builder for the {@link ResourceBackedMetadataResolver}.
      */
-    private void parseResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    private void parseResource(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
 
-        final BeanDefinitionBuilder resourceConverter = BeanDefinitionBuilder.genericBeanDefinition(ResourceHelper.class);
+        final BeanDefinitionBuilder resourceConverter =
+                BeanDefinitionBuilder.genericBeanDefinition(ResourceHelper.class);
         resourceConverter.setLazyInit(true);
         resourceConverter.setFactoryMethod("of");
         resourceConverter.addConstructorArgValue(parserContext.getDelegate().parseCustomElement(element));
@@ -180,9 +182,11 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param parserContext the parser context
      * @param builder the builder for the {@link HTTPMetadataResolver}.
      */
-    private void parseHTTPResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    private void parseHTTPResource(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
 
-        final BeanDefinitionBuilder clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
+        final BeanDefinitionBuilder clientBuilder =
+                BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
 
         clientBuilder.setLazyInit(true);
 
@@ -199,7 +203,8 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param builder the builder for the {@link FileBackedHTTPMetadataResolver}.
      */
     private void
-            parseFileBackedHTTPResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+            parseFileBackedHTTPResource(final Element element, final ParserContext parserContext,
+                    final BeanDefinitionBuilder builder) {
 
         parseHTTPResource(element, parserContext, builder);
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
@@ -215,7 +220,8 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param parserContext the parser context
      * @param builder the builder for the {@link FilesystemMetadataResolver}.
      */
-    private void parseFilesystemResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+    private void parseFilesystemResource(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
     }
 

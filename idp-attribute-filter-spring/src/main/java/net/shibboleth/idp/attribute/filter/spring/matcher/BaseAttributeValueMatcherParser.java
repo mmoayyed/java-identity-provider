@@ -97,7 +97,8 @@ public abstract class BaseAttributeValueMatcherParser extends AbstractWarningFil
         builder.addPropertyValue("id", myId);
 
         if (isPolicyRule(element)) {
-            final BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
+            final BeanDefinitionBuilder childBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
             
             childBuilder.setInitMethodName("initialize");
             childBuilder.setDestroyMethodName("destroy");
@@ -111,11 +112,13 @@ public abstract class BaseAttributeValueMatcherParser extends AbstractWarningFil
             }
         } else if (hasAttributeId(element)) {
             // Bean inside PolicyFromMatcherId inside MatcherFromPolicy
-            final BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(PolicyFromMatcherId.class);
+            final BeanDefinitionBuilder childBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(PolicyFromMatcherId.class);
             childBuilder.setInitMethodName("initialize");
             childBuilder.setDestroyMethodName("destroy");
             
-            final BeanDefinitionBuilder grandChildBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
+            final BeanDefinitionBuilder grandChildBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
             grandChildBuilder.setInitMethodName("initialize");
             grandChildBuilder.setDestroyMethodName("destroy");
 
