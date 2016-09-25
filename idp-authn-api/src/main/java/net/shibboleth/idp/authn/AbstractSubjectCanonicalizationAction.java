@@ -117,7 +117,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
         Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
         
         transforms = new ArrayList();
-        for (Pair<String,String> p : newTransforms) {
+        for (final Pair<String,String> p : newTransforms) {
             final Pattern pattern = Pattern.compile(StringSupport.trimOrNull(p.getFirst()));
             transforms.add(new Pair(pattern, Constraint.isNotNull(
                     StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));
@@ -239,7 +239,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
             return s;
         }
         
-        for (Pair<Pattern,String> p : transforms) {            
+        for (final Pair<Pattern,String> p : transforms) {            
             final Matcher m = p.getFirst().matcher(s);
             log.debug("{} applying replacement expression '{}' against input '{}'", getLogPrefix(),
                     p.getFirst().pattern(), s);

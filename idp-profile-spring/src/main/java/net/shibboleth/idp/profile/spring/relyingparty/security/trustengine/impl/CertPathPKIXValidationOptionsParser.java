@@ -77,7 +77,7 @@ public class CertPathPKIXValidationOptionsParser extends PKIXValidationOptionsPa
         final List<Element> childElems = ElementSupport.getChildElements(element, POLICY_OID_ELEMENT);
         if (null != childElems && !childElems.isEmpty()) {
             final List<String> initialPolicies = new ManagedList<>(childElems.size());
-            for (Element nameElem : childElems) {
+            for (final Element nameElem : childElems) {
                 final String value = StringSupport.trimOrNull(nameElem.getTextContent());
                 if (null != value) {
                     initialPolicies.add(value);

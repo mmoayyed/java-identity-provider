@@ -157,7 +157,7 @@ public final class AuthenticationContext extends BaseContext {
         Constraint.isNotNull(results, "AuthenticationResult collection cannot be null");
 
         activeResults.clear();
-        for (AuthenticationResult result : results) {
+        for (final AuthenticationResult result : results) {
             activeResults.put(result.getAuthenticationFlowId(), result);
         }
 

@@ -67,7 +67,7 @@ public class PatternServiceRegistry extends AbstractServiceableComponent<Service
         Constraint.noNullItems(serviceDefinitions, "Definitions cannot be null or contain null items");
         // Preserve order of services in map
         definitions = new LinkedHashMap<>(serviceDefinitions.size());
-        for (ServiceDefinition definition : serviceDefinitions) {
+        for (final ServiceDefinition definition : serviceDefinitions) {
             definitions.put(definition, Pattern.compile(definition.getId()));
         }
     }
@@ -82,7 +82,7 @@ public class PatternServiceRegistry extends AbstractServiceableComponent<Service
     @Nullable
     public Service lookup(@Nonnull final String serviceURL) {
         Constraint.isNotNull(serviceURL, "Service URL cannot be null");
-        for (ServiceDefinition def : definitions.keySet()) {
+        for (final ServiceDefinition def : definitions.keySet()) {
             log.debug("Evaluating whether {} matches {}", serviceURL, def);
             if (definitions.get(def).matcher(serviceURL).matches()) {
                 log.debug("Found match");

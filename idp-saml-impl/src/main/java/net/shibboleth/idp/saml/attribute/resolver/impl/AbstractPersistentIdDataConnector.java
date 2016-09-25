@@ -102,7 +102,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
 
         // We have an input id, so that gets added to the dependencies.
         if (null != getSourceAttributeId()) {
-            for (ResolverPluginDependency depends : getDependencies()) {
+            for (final ResolverPluginDependency depends : getDependencies()) {
                 depends.setDependencyAttributeId(getSourceAttributeId());
             }
         }

@@ -90,7 +90,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         mappings = new HashMap(newMappings.size());
-        for (Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {
+        for (final Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {
             if (!Strings.isNullOrEmpty(e.getKey())) {
                 mappings.put(e.getKey(), new ArrayList(Collections2.filter(e.getValue(), Predicates.notNull())));
             }
@@ -133,7 +133,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
-        for (Map.Entry<String,Collection<IPRange>> e : mappings.entrySet()) {
+        for (final Map.Entry<String,Collection<IPRange>> e : mappings.entrySet()) {
             if (isAuthenticated(uaContext.getAddress(), e.getValue())) {
                 principalName = e.getKey();
                 log.debug("{} Authenticated user agent with address {} as {}",
@@ -160,7 +160,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
             @Nonnull @NonnullElements final Collection<IPRange> ranges) {
         final byte[] resolvedAddress = address.getAddress();
 
-        for (IPRange range : ranges) {
+        for (final IPRange range : ranges) {
             if (range.contains(resolvedAddress)) {
                 return true;
             }

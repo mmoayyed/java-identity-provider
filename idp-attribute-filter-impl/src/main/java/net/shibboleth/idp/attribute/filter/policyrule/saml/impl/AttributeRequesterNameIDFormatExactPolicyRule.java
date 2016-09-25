@@ -115,7 +115,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
             return Tristate.FALSE;
         }
 
-        for (NameIDFormat supportedFormat : supportedFormats) {
+        for (final NameIDFormat supportedFormat : supportedFormats) {
             if (nameIdFormat.equals(supportedFormat.getFormat())) {
                 log.debug("{} Entity does support the NameID format '{}'", getLogPrefix(), nameIdFormat);
                 return Tristate.TRUE;

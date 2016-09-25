@@ -77,7 +77,7 @@ public class StaticDataConnector extends AbstractDataConnector {
         }
 
         final Map<String, IdPAttribute> map = new HashMap<>(newValues.size());
-        for (IdPAttribute attr : newValues) {
+        for (final IdPAttribute attr : newValues) {
             if (null == attr) {
                 continue;
             }

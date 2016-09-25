@@ -435,7 +435,7 @@ public class MetadataGenerator {
         writeNameIdFormat(NameIDType.TRANSIENT);
         writer.newLine();
 
-        for (Endpoints endpoint : SSO_ENDPOINTS) {
+        for (final Endpoints endpoint : SSO_ENDPOINTS) {
             if (getEndpoints().contains(endpoint)) {
                 outputEndpoint(endpoint);
             }
@@ -484,7 +484,7 @@ public class MetadataGenerator {
         closeExtensions();
         writer.newLine();
         writeKeyDescriptors();
-        for (Endpoints endpoint : AA_ENDPOINTS) {
+        for (final Endpoints endpoint : AA_ENDPOINTS) {
             if (getEndpoints().contains(endpoint)) {
                 outputEndpoint(endpoint);
             }
@@ -680,7 +680,7 @@ public class MetadataGenerator {
         if (null == certs || certs.isEmpty()) {
             return;
         }
-        for (List<String> cert : certs) {
+        for (final List<String> cert : certs) {
             writer.write("        <");
             writer.write(KeyDescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write(" use=\"");
@@ -699,7 +699,7 @@ public class MetadataGenerator {
             writeNameSpaceQualified(SignatureConstants.XMLSIG_PREFIX, X509Certificate.DEFAULT_ELEMENT_LOCAL_NAME);
             writer.write('>');
             writer.newLine();
-            for (String certLine : cert) {
+            for (final String certLine : cert) {
                 writer.write(certLine);
                 writer.newLine();
             }

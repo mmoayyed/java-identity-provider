@@ -281,7 +281,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
             return null;
         }
         
-        for (Condition conditionChild : conditions.getConditions()) {
+        for (final Condition conditionChild : conditions.getConditions()) {
             if (DelegationRestrictionType.TYPE_NAME.equals(conditionChild.getSchemaType())) {
                 if (conditionChild instanceof DelegationRestrictionType) {
                     return (DelegationRestrictionType) conditionChild;

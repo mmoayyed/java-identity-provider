@@ -63,7 +63,7 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
             return resolvers.iterator().next();
         }
         // initialize so we can sort
-        for (RelyingPartyMetadataProvider resolver:resolvers) {
+        for (final RelyingPartyMetadataProvider resolver:resolvers) {
             try {
                 resolver.initialize();
             } catch (final ComponentInitializationException e) {

@@ -62,7 +62,7 @@ public abstract class BaseTransformingDecoder extends AbstractIdentifiableInitia
         Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
         
         transforms = new ArrayList();
-        for (Pair<String,String> p : newTransforms) {
+        for (final Pair<String,String> p : newTransforms) {
             final Pattern pattern = Pattern.compile(StringSupport.trimOrNull(p.getFirst()));
             transforms.add(new Pair(pattern, Constraint.isNotNull(
                     StringSupport.trimOrNull(p.getSecond()), "Replacement expression cannot be null")));

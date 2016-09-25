@@ -241,7 +241,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
         logger.info("Java version='{}' vendor='{}'", StandardSystemProperty.JAVA_VERSION.value(),
                 StandardSystemProperty.JAVA_VENDOR.value());
         if (logger.isDebugEnabled()) {
-            for (StandardSystemProperty standardSystemProperty : StandardSystemProperty.values()) {
+            for (final StandardSystemProperty standardSystemProperty : StandardSystemProperty.values()) {
                 logger.debug("{}", standardSystemProperty);
             }
         }

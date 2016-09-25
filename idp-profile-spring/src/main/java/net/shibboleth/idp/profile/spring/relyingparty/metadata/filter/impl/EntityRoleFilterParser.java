@@ -53,7 +53,7 @@ public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
                 ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,
                         "RetainedRole");
         if (retainedRoleElems != null) {
-            for (Element retainedRoleElem : retainedRoleElems) {
+            for (final Element retainedRoleElem : retainedRoleElems) {
                 retainedRoles.add(ElementSupport.getElementContentAsQName(retainedRoleElem));
             }
         }

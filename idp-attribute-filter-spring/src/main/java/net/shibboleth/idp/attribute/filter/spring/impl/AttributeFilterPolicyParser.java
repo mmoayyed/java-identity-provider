@@ -120,7 +120,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
 
         final List<Element> rulesRef = ElementSupport.getChildElements(config, ATTRIBUTE_RULE_REF);
         if (rulesRef != null && rulesRef.size() > 0) {
-            for (Element ruleRef : rulesRef) {
+            for (final Element ruleRef : rulesRef) {
                 final String reference = getAbsoluteReference(config, "AttributeRule", getReferenceText(ruleRef));
                 attributeRules.add(new RuntimeBeanReference(reference));
             }

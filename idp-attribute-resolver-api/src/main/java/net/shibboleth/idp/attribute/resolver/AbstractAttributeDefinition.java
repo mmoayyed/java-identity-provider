@@ -120,7 +120,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
         final HashMap<Locale, String> checkedDescriptions = new HashMap<>();
         String trimmedDescription;
-        for (Entry<Locale, String> entry : descriptions.entrySet()) {
+        for (final Entry<Locale, String> entry : descriptions.entrySet()) {
             trimmedDescription = StringSupport.trimOrNull(entry.getValue());
             if (trimmedDescription != null) {
                 checkedDescriptions.put(entry.getKey(), trimmedDescription);
@@ -151,7 +151,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
 
         final HashMap<Locale, String> checkedNames = new HashMap<>();
         String trimmedName;
-        for (Entry<Locale, String> entry : names.entrySet()) {
+        for (final Entry<Locale, String> entry : names.entrySet()) {
             trimmedName = StringSupport.trimOrNull(entry.getValue());
             if (trimmedName != null) {
                 checkedNames.put(entry.getKey(), trimmedName);
@@ -212,7 +212,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         // Set up the dependencies first. Then the initialize in the parent
         // will correctly rehash the dependencies.
         if (null != getSourceAttributeId()) {
-            for (ResolverPluginDependency depends : getDependencies()) {
+            for (final ResolverPluginDependency depends : getDependencies()) {
                 depends.setDependencyAttributeId(getSourceAttributeId());
             }
         }

@@ -46,7 +46,7 @@ public class KeyAuthorityMarshaller extends AbstractXMLObjectMarshaller {
         }
 
         Attr attr;
-        for (Entry<QName, String> entry : keyAuthority.getUnknownAttributes().entrySet()) {
+        for (final Entry<QName, String> entry : keyAuthority.getUnknownAttributes().entrySet()) {
             attr = AttributeSupport.constructAttribute(domElement.getOwnerDocument(), entry.getKey());
             attr.setValue(entry.getValue());
             domElement.setAttributeNodeNS(attr);

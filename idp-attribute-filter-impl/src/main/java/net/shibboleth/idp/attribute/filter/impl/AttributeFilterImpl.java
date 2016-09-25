@@ -109,12 +109,12 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
                 prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
 
         final List<AttributeFilterPolicy> policies = getFilterPolicies();
-        for (AttributeFilterPolicy policy : policies) {
+        for (final AttributeFilterPolicy policy : policies) {
             policy.apply(filterContext);
         }
 
         IdPAttribute filteredAttribute;
-        for (String attributeId : filterContext.getPrefilteredIdPAttributes().keySet()) {
+        for (final String attributeId : filterContext.getPrefilteredIdPAttributes().keySet()) {
             final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
             if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
                 try {

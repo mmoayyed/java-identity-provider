@@ -193,7 +193,7 @@ public class WriteAuditLog extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        for (Map.Entry<String,List<String>> entry : formattingMap.entrySet()) {
+        for (final Map.Entry<String,List<String>> entry : formattingMap.entrySet()) {
         
             final StringBuilder record = new StringBuilder();
     

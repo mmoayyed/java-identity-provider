@@ -265,7 +265,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
         final Collection outputCollection = (Collection) res;
         final Map<String, IdPAttribute> outputMap = new HashMap<>(outputCollection.size());
-        for (Object o : outputCollection) {
+        for (final Object o : outputCollection) {
             if (o instanceof IdPAttribute) {
                 final IdPAttribute attribute = (IdPAttribute) o;
                 if (null == attribute.getId()) {

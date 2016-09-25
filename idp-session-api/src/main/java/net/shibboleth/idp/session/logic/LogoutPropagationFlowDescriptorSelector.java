@@ -53,7 +53,7 @@ public class LogoutPropagationFlowDescriptorSelector implements Function<SPSessi
     /** {@inheritDoc} */
     @Override
     @Nullable public LogoutPropagationFlowDescriptor apply(@Nonnull final SPSession input) {
-        for (LogoutPropagationFlowDescriptor flowDescriptor : availableFlows) {
+        for (final LogoutPropagationFlowDescriptor flowDescriptor : availableFlows) {
             if (flowDescriptor.getSessionType().isInstance(input)) {
                 return flowDescriptor;
             }

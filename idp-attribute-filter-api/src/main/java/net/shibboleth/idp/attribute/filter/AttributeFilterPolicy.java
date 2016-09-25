@@ -160,7 +160,7 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
                 attributes.keySet());
 
         IdPAttribute attribute;
-        for (AttributeRule valuePolicy : valuePolicies) {
+        for (final AttributeRule valuePolicy : valuePolicies) {
             attribute = attributes.get(valuePolicy.getAttributeId());
             if (attribute != null) {
                 if (!attribute.getValues().isEmpty()) {

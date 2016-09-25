@@ -148,7 +148,7 @@ public class OutputMetrics extends AbstractProfileAction {
         
         Constraint.isNotNull(map, "MetricFilter map cannot be null");
         metricFilterMap = new HashMap<>(map.size());
-        for (Map.Entry<String,MetricFilter> entry : map.entrySet()) {
+        for (final Map.Entry<String,MetricFilter> entry : map.entrySet()) {
             final String trimmed = StringSupport.trimOrNull(entry.getKey());
             if (trimmed != null && entry.getValue() != null) {
                 metricFilterMap.put(trimmed, entry.getValue());

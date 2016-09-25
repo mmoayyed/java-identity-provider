@@ -93,9 +93,9 @@ public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String>
         if (entry != null) {
             final JsonObjectBuilder objectBuilder = getJsonObjectBuilder();
             objectBuilder.add("dn", entry.getDn());
-            for (LdapAttribute attr : entry.getAttributes()) {
+            for (final LdapAttribute attr : entry.getAttributes()) {
                 final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
-                for (String value : attr.getStringValues()) {
+                for (final String value : attr.getStringValues()) {
                     arrayBuilder.add(value);
                 }
                 objectBuilder.add(attr.getName(), arrayBuilder.build());
@@ -134,12 +134,12 @@ public class LDAPPrincipalSerializer extends AbstractPrincipalSerializer<String>
                 final JsonObject jsonEntry = obj.getJsonObject(PRINCIPAL_ENTRY_FIELD);
                 if (jsonEntry != null) {
                     entry = new LdapEntry();
-                    for (Map.Entry<String, JsonValue> e : jsonEntry.entrySet()) {
+                    for (final Map.Entry<String, JsonValue> e : jsonEntry.entrySet()) {
                         if ("dn".equalsIgnoreCase(e.getKey())) {
                             entry.setDn(((JsonString) e.getValue()).getString());
                         } else {
                             final LdapAttribute attr = new LdapAttribute(e.getKey());
-                            for (JsonValue v : (JsonArray) e.getValue()) {
+                            for (final JsonValue v : (JsonArray) e.getValue()) {
                                 attr.addStringValue(((JsonString) v).getString());
                             }
                             entry.addAttribute(attr);

@@ -81,7 +81,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
         Constraint.isNotNull(rules, "Map cannot be null");
         matchingRules.clear();
         
-        for (Map.Entry<String,Collection<String>> e : rules.entrySet()) {
+        for (final Map.Entry<String,Collection<String>> e : rules.entrySet()) {
             if (!Strings.isNullOrEmpty(e.getKey()) && e.getValue() != null) {
                 matchingRules.putAll(e.getKey(), new HashSet(Collections2.filter(e.getValue(), Predicates.notNull())));
             }
@@ -116,7 +116,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
             final Set<String> matches = matchingRules.get(principal.getName());
             final Set<? extends Principal> inputs = input.getSupportedPrincipals(principal.getClass());
             
-            for (Principal p : inputs) {
+            for (final Principal p : inputs) {
                 if (matches.contains(p.getName())) {
                     theMatch = p;
                     return true;

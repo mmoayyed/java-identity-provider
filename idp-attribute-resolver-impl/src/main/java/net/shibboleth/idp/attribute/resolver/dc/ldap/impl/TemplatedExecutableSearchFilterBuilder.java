@@ -174,7 +174,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
             for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
                 final List<Object> values = new ArrayList<>(entry.getValue().size());
-                for (IdPAttributeValue<?> value : entry.getValue()) {
+                for (final IdPAttributeValue<?> value : entry.getValue()) {
                     values.add(value.getValue());
                 }
                 log.trace("Adding dependency {} to context with {} value(s)", entry.getKey(), values.size());
@@ -238,13 +238,13 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
                 return null;
             } else if (value instanceof Object[]) {
                 final List<Object> encodedValues = new ArrayList();
-                for (Object o : (Object[]) value) {
+                for (final Object o : (Object[]) value) {
                     encodedValues.add(encode(o));
                 }
                 return encodedValues.toArray();
             } else if (value instanceof Collection<?>) {
                 final List<Object> encodedValues = new ArrayList();
-                for (Object o : (Collection<?>) value) {
+                for (final Object o : (Collection<?>) value) {
                     encodedValues.add(encode(o));
                 }
                 return encodedValues;

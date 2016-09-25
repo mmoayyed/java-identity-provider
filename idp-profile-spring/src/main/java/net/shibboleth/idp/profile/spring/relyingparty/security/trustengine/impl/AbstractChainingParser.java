@@ -50,7 +50,7 @@ public abstract class AbstractChainingParser extends AbstractTrustEngineParser {
         
         allChildren.addAll(SpringSupport.parseCustomElements(childEngines, parserContext));
         
-        for (Element ref:childEngineRefs) {
+        for (final Element ref:childEngineRefs) {
             final String reference = StringSupport.trimOrNull(ref.getAttributeNS(null, "ref"));
             if (null != reference) {
                 allChildren.add(new RuntimeBeanReference(StringSupport.trim(reference)));

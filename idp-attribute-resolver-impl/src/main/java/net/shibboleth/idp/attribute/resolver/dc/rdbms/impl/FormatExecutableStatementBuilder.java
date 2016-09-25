@@ -65,7 +65,7 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
         final List<Object> args = new ArrayList<>();
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
             for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
-                for (IdPAttributeValue<?> value : entry.getValue()) {
+                for (final IdPAttributeValue<?> value : entry.getValue()) {
                     if (value.getValue() instanceof String){ 
                         args.add(StringEscapeUtils.escapeSql((String) value.getValue()));
                     } else {

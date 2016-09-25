@@ -227,7 +227,7 @@ public final class PluginDependencySupport {
      */
     @Nonnull private static void addAttributeValues(@Nonnull final Map<String, IdPAttribute> sources,
             @Nullable final Map<String, List<IdPAttributeValue<?>>> target) {
-        for (IdPAttribute source : sources.values()) {
+        for (final IdPAttribute source : sources.values()) {
             if (source == null) {
                 continue;
             }

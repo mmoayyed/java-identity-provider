@@ -54,7 +54,7 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
         final SearchFilter sf = new SearchFilter(searchFilter);
         sf.setParameter("principalName", resolutionContext.getPrincipal());
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {
-            for (Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
+            for (final Map.Entry<String, List<IdPAttributeValue<?>>> entry : dependencyAttributes.entrySet()) {
                 int i = 0;
                 for (final IdPAttributeValue<?> value : entry.getValue()) {
                     if (i == 0) {

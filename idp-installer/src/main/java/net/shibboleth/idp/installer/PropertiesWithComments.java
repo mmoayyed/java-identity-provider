@@ -133,7 +133,7 @@ public class PropertiesWithComments {
     public void store(final OutputStream output) throws IOException {
         final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
 
-        for (Object o : contents) {
+        for (final Object o : contents) {
             if (o instanceof String) {
                 writer.write((String) o);
             } else if (o instanceof CommentedProperty) {

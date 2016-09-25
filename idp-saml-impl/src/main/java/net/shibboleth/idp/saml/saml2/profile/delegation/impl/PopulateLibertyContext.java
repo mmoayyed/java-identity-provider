@@ -157,7 +157,7 @@ public class PopulateLibertyContext extends AbstractProfileAction {
                 return null;
             }
             
-            for (Token token : wssContext.getTokens()) {
+            for (final Token token : wssContext.getTokens()) {
                 if (token.getValidationStatus().equals(ValidationStatus.VALID) 
                         && token instanceof SAML20AssertionToken) {
                     return (SAML20AssertionToken) token;

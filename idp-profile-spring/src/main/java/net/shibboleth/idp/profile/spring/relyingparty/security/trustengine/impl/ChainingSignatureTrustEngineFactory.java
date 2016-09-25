@@ -57,7 +57,7 @@ public class ChainingSignatureTrustEngineFactory extends
     @Override protected ChainingSignatureTrustEngine doCreateInstance() throws Exception {
         final List<SignatureTrustEngine> list = new ArrayList<>(engines.size());
 
-        for (Object engine : engines) {
+        for (final Object engine : engines) {
             if (engine instanceof SignatureTrustEngine) {
                 list.add((SignatureTrustEngine) engine);
 

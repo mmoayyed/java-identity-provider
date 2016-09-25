@@ -232,7 +232,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
             return usernames.iterator().next().getName();
         }
         
-        for (Principal p : getSubject().getPrincipals()) {
+        for (final Principal p : getSubject().getPrincipals()) {
             return p.getName();
         }
         

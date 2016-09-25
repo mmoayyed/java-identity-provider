@@ -220,7 +220,7 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
                     if (response.getAssertions().isEmpty()) {
                         return null;
                     } else {
-                        for (Assertion theAssertion : response.getAssertions()) {
+                        for (final Assertion theAssertion : response.getAssertions()) {
                             if (!theAssertion.getAuthnStatements().isEmpty()) {
                                 log.debug("Found Assertion with AuthnStatement to decorate in outbound Response");
                                 return theAssertion;

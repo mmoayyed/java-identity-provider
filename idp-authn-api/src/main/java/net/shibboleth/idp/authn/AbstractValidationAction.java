@@ -297,7 +297,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         final RequestedPrincipalContext rpCtx = authenticationContext.getSubcontext(RequestedPrincipalContext.class);
         if (rpCtx != null && rpCtx.getOperator() != null && !authenticatedSubject.getPrincipals().isEmpty()) {
             log.debug("{} Request contains principal requirements, evaluating for compatibility", getLogPrefix());
-            for (Principal p : rpCtx.getRequestedPrincipals()) {
+            for (final Principal p : rpCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicateFactory factory =
                         rpCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(p.getClass(), rpCtx.getOperator());
                 if (factory != null) {
@@ -489,7 +489,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         if (!Strings.isNullOrEmpty(message)) {
             final MessageChecker checker = new MessageChecker(message);
             
-            for (Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
+            for (final Map.Entry<String, Collection<String>> entry : classifiedMessages.entrySet()) {
                 if (Iterables.any(entry.getValue(), checker)) {
                     authenticationContext.getSubcontext(AuthenticationWarningContext.class,
                             true).getClassifiedWarnings().add(entry.getKey());

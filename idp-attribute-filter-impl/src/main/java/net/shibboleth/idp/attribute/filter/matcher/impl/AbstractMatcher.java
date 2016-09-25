@@ -65,7 +65,7 @@ public abstract class AbstractMatcher extends AbstractIdentifiableInitializableC
 
         log.debug("{} Applying value comparison to all values of Attribute '{}'", getLogPrefix(), attribute.getId());
 
-        for (IdPAttributeValue value : attribute.getValues()) {
+        for (final IdPAttributeValue value : attribute.getValues()) {
             if (compareAttributeValue(value)) {
                 matchedValues.add(value);
             }

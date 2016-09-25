@@ -107,7 +107,7 @@ public class IdPAttributePrincipalSerializer extends AbstractPrincipalSerializer
         
         final IdPAttribute attribute = ((IdPAttributePrincipal) principal).getAttribute();
         final JsonArrayBuilder arrayBuilder = getJsonArrayBuilder();
-        for (IdPAttributeValue<?> value : attribute.getValues()) {
+        for (final IdPAttributeValue<?> value : attribute.getValues()) {
             final JsonObject obj = serializeValue(value);
             if (obj != null) {
                 arrayBuilder.add(obj);

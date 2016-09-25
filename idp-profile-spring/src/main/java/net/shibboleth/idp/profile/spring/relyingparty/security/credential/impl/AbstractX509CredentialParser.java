@@ -103,7 +103,7 @@ public abstract class AbstractX509CredentialParser extends AbstractCredentialPar
 
         final List<String> certs = new ManagedList<>(childElements.size());
 
-        for (Element elem : childElements) {
+        for (final Element elem : childElements) {
             final String cert = StringSupport.trimOrNull(elem.getTextContent());
             if (null == cert) {
                 throw new BeanCreationException("All <Certificate> elements must contain text.");

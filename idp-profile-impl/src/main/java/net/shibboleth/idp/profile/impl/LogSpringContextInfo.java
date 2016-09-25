@@ -116,7 +116,7 @@ public class LogSpringContextInfo extends AbstractProfileAction implements Appli
             log.debug("Spring Context Bean Details:");
             log.debug("");
             
-            for (String beanName : current.getBeanDefinitionNames()) {
+            for (final String beanName : current.getBeanDefinitionNames()) {
                 log.debug(String.format("Spring Bean id: %s, singleton?: %s, prototype?: %s, type: %s",
                         beanName, current.isSingleton(beanName), current.isPrototype(beanName), 
                         current.getType(beanName).getName()));

@@ -471,7 +471,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
         
         final ArrayList<Credential> creds = new ArrayList<>();
         try {
-            for (Credential cred : credentialResolver.resolve(criteriaSet)) {
+            for (final Credential cred : credentialResolver.resolve(criteriaSet)) {
                 if (cred != null) {
                     creds.add(cred);
                 }
@@ -521,7 +521,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
             return DelegationRequest.NOT_REQUESTED;
         }
         
-        for (RequestedAttribute requestedAttribute : attributeConsumingService.getRequestAttributes()) {
+        for (final RequestedAttribute requestedAttribute : attributeConsumingService.getRequestAttributes()) {
             if (Objects.equals(LibertyConstants.SERVICE_TYPE_SSOS, 
                     StringSupport.trimOrNull(requestedAttribute.getName()))) {
                 log.debug("Saw requested attribute '{}' in metadata AttributeConsumingService for SP: {}",
@@ -556,8 +556,8 @@ public class PopulateDelegationContext extends AbstractProfileAction {
         final AuthnRequest authnRequest = (AuthnRequest) requestContext.getInboundMessageContext().getMessage();
         if (authnRequest.getConditions() != null) {
             final Conditions conditions = authnRequest.getConditions();
-            for (AudienceRestriction ar : conditions.getAudienceRestrictions()) {
-                for (Audience audience : ar.getAudiences()) {
+            for (final AudienceRestriction ar : conditions.getAudienceRestrictions()) {
+                for (final Audience audience : ar.getAudiences()) {
                     final String audienceValue = StringSupport.trimOrNull(audience.getAudienceURI());
                     if (Objects.equals(audienceValue, responderId)) {
                         log.debug("Saw an AuthnRequest/Conditions/AudienceRestriction/Audience with value of '{}'",

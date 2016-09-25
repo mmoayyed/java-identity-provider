@@ -74,7 +74,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
         log.debug("Saw at least one KeyAuthority for EntitiesDescriptor with id '{}', name '{}'", 
                 entitiesDescriptor.getID(), entitiesDescriptor.getName());
         
-        for (XMLObject keyAuthority : keyAuthorities) {
+        for (final XMLObject keyAuthority : keyAuthorities) {
             try {
                 final PKIXValidationInformation pkixInfo = KeyAuthoritySupport.
                         extractPKIXValidationInfo((KeyAuthority) keyAuthority);
@@ -100,7 +100,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
         XMLObject currentParent = entityDescriptor.getParent();
         while (currentParent != null) {
             if (currentParent instanceof EntitiesDescriptor) {
-                for (XMLObject keyAuthority : getKeyAuthorities((EntitiesDescriptor) currentParent)) {
+                for (final XMLObject keyAuthority : getKeyAuthorities((EntitiesDescriptor) currentParent)) {
                     entityDescriptor.getObjectMetadata().putAll(keyAuthority.getObjectMetadata()
                             .get(PKIXValidationInformation.class));
                 }

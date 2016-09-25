@@ -67,7 +67,7 @@ public class OrMatcher extends AbstractComposedMatcher {
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         final Set<IdPAttributeValue<?>> matchingValues = new LazySet<>();
-        for (Matcher matchFunctor : currentMatchers) {
+        for (final Matcher matchFunctor : currentMatchers) {
             final Set<IdPAttributeValue<?>> matches = matchFunctor.getMatchingValues(attribute, filterContext);
             if (null == matches) {
                 return null;
