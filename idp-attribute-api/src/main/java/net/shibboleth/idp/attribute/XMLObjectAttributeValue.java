@@ -73,7 +73,7 @@ public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
             return false;
         }
 
-        XMLObjectAttributeValue other = (XMLObjectAttributeValue) obj;
+        final XMLObjectAttributeValue other = (XMLObjectAttributeValue) obj;
         return value.equals(other.value);
     }
 

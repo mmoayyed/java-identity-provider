@@ -125,7 +125,7 @@ public class SAML1StringNameIdentifierEncoder extends AbstractSAML1NameIdentifie
                     + " does not contain any values to encode");
         }
 
-        NameIdentifier nameId = identifierBuilder.buildObject();
+        final NameIdentifier nameId = identifierBuilder.buildObject();
         nameId.setFormat(format);
         nameId.setNameQualifier(qualifier);
 

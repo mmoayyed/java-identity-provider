@@ -79,7 +79,7 @@ public class UsernamePrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public UsernamePrincipal clone() throws CloneNotSupportedException {
-        UsernamePrincipal copy = (UsernamePrincipal) super.clone();
+        final UsernamePrincipal copy = (UsernamePrincipal) super.clone();
         copy.username = username;
         return copy;
     }

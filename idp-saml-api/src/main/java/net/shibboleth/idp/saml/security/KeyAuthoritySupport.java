@@ -79,7 +79,7 @@ public final class KeyAuthoritySupport {
             return null;
         }
         
-        for (KeyInfo keyInfo : keyInfos) {
+        for (final KeyInfo keyInfo : keyInfos) {
             certs.addAll(getX509Certificates(keyInfo));
             crls.addAll(getX509CRLs(keyInfo));
         }

@@ -301,7 +301,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
                 final PrincipalEvalPredicateFactory factory =
                         rpCtx.getPrincipalEvalPredicateFactoryRegistry().lookup(p.getClass(), rpCtx.getOperator());
                 if (factory != null) {
-                    PrincipalEvalPredicate predicate = factory.getPredicate(p);
+                    final PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     if (predicate.apply(this)) {
                         log.debug("{} Compatible with principal type '{}' and operator '{}'", getLogPrefix(),
                                 p.getClass(), rpCtx.getOperator());

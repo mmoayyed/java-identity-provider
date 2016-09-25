@@ -232,7 +232,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         OutType out = newAttribute(prototype, getId());
         out.setValues(outputValues);
 
-        for (String id : attributeIds) {
+        for (final String id : attributeIds) {
             out = newAttribute(prototype, getId());
             out.setValues(outputValues);
             output.put(id, out);
@@ -249,7 +249,7 @@ public abstract class AbstractSAMLAttributeMapper<InType extends Attribute, OutT
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder();
+            final StringBuilder builder = new StringBuilder();
             if (null != getValueMapper()) {
                 builder.append(getValueMapper().getAttributeTypeName()).append(" ");
             }

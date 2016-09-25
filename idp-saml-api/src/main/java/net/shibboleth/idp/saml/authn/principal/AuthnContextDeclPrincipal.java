@@ -101,7 +101,7 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
 
     /** {@inheritDoc} */
     public AuthnContextDeclPrincipal clone() throws CloneNotSupportedException {
-        AuthnContextDeclPrincipal copy = (AuthnContextDeclPrincipal) super.clone();
+        final AuthnContextDeclPrincipal copy = (AuthnContextDeclPrincipal) super.clone();
         try {
             copy.authnContextDecl = XMLObjectSupport.cloneXMLObject(authnContextDecl, 
                     CloneOutputOption.RootDOMInNewDocument);

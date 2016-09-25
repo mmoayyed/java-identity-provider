@@ -77,7 +77,7 @@ public class DefaultServiceComparator implements Comparator<String> {
         try {
             final URI uri = new URI(uriString);
             String path = uri.getPath();
-            for (Pattern pattern : ignoredPatterns) {
+            for (final Pattern pattern : ignoredPatterns) {
                 final Matcher m = pattern.matcher(path);
                 path = m.replaceAll("");
             }

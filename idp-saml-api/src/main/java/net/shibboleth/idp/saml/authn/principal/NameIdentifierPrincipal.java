@@ -94,7 +94,7 @@ public class NameIdentifierPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public NameIdentifierPrincipal clone() throws CloneNotSupportedException {
-        NameIdentifierPrincipal copy = (NameIdentifierPrincipal) super.clone();
+        final NameIdentifierPrincipal copy = (NameIdentifierPrincipal) super.clone();
         try {
             copy.nameIdentifier = XMLObjectSupport.cloneXMLObject(nameIdentifier, 
                     CloneOutputOption.RootDOMInNewDocument);

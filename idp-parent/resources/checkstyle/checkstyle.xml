@@ -95,6 +95,10 @@
     <module name="FinalParameters">
       <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH"/>
     </module>
+    <module name="FinalLocalVariable">
+      <property name="tokens" value="PARAMETER_DEF,VARIABLE_DEF"/>
+      <property name="validateEnhancedForLoopVariable" value="true"/>
+    </module>
   </module>
   <module name="SuppressionCommentFilter">
     <property name="offCommentFormat" value="\bCheck[Ss]tyle:\s*([\w|]+)\s+OFF\b"/>

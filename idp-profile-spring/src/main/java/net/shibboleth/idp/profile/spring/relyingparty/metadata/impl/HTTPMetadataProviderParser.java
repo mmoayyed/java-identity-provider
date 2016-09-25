@@ -101,7 +101,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
                     StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef")));
             haveTLSTrustEngine = true;
         } else {
-            BeanDefinition tlsTrustEngine = parseTLSTrustEngine(element, parserContext);
+            final BeanDefinition tlsTrustEngine = parseTLSTrustEngine(element, parserContext);
             if (tlsTrustEngine != null) {
                 builder.addPropertyValue("tLSTrustEngine", tlsTrustEngine);
                 haveTLSTrustEngine = true;
@@ -237,7 +237,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * @return the bean definition with the username and password.
      */
     private BeanDefinition buildBasicCredentials(final Element element) {
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);
+        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);
 
         builder.setLazyInit(true);
 
@@ -255,9 +255,9 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * @return the bean definition
      */
     private BeanDefinition parseTLSTrustEngine(final Element element, final ParserContext parserContext) {
-        Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, TLS_TRUST_ENGINE_ELEMENT_NAME);
+        final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, TLS_TRUST_ENGINE_ELEMENT_NAME);
         if (tlsTrustEngine != null) {
-            Element trustEngine =
+            final Element trustEngine =
                     ElementSupport.getFirstChildElement(tlsTrustEngine,
                             AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
             if (trustEngine != null) {

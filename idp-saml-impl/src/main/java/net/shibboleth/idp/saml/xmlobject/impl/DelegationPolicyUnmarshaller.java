@@ -32,7 +32,7 @@ public class DelegationPolicyUnmarshaller extends AbstractSAMLObjectUnmarshaller
 
     /** {@inheritDoc} */
     protected void processAttribute(final XMLObject xmlObject, final Attr attribute) throws UnmarshallingException {
-        DelegationPolicy delegationPolicy = (DelegationPolicy) xmlObject;
+        final DelegationPolicy delegationPolicy = (DelegationPolicy) xmlObject;
 
         if (attribute.getLocalName().equals(DelegationPolicy.MAX_DELEGATION_CHAIN_LENGTH_ATTRIB_NAME)) {
             delegationPolicy.setMaximumTokenDelegationChainLength(Long.valueOf(attribute.getValue()));

@@ -154,7 +154,7 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
     
     /** {@inheritDoc} */
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        DelegationPolicy delegationPolicy = (DelegationPolicy) XMLObjectSupport.buildXMLObject(
+        final DelegationPolicy delegationPolicy = (DelegationPolicy) XMLObjectSupport.buildXMLObject(
                 DelegationPolicy.DEFAULT_ELEMENT_NAME);
         delegationPolicy.setMaximumTokenDelegationChainLength(maxChainLength);
         
@@ -177,7 +177,7 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
             log.debug("Saw inbound assertion token, attempting to extract max delegation chain length " 
                     + "from token's DelegationPolicy");
             if (attestedAssertion.getAdvice() != null) {
-                List<XMLObject> inboundPolicies = 
+                final List<XMLObject> inboundPolicies = 
                         attestedAssertion.getAdvice().getChildren(DelegationPolicy.DEFAULT_ELEMENT_NAME);
                 if (inboundPolicies != null && !inboundPolicies.isEmpty()) {
                     return ((DelegationPolicy)inboundPolicies.get(0)).getMaximumTokenDelegationChainLength();
@@ -186,7 +186,7 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
         } else {
             // If no inbound assertion token, this must be initial SSO, so pull from RP's IdP config.
             log.debug("Attempting to resolve max delegation chain length from RP profile config");
-            RelyingPartyContext relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+            final RelyingPartyContext relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
             if (relyingPartyContext != null) {
                 if (relyingPartyContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
                     return ((BrowserSSOProfileConfiguration) relyingPartyContext.getProfileConfig())
@@ -216,7 +216,7 @@ public class AddDelegationPolicyToAssertion extends AbstractProfileAction {
                 if (outboundMessage instanceof Assertion) {
                     return (Assertion) outboundMessage;
                 } else if (outboundMessage instanceof Response) {
-                    Response response = (Response) outboundMessage;
+                    final Response response = (Response) outboundMessage;
                     if (response.getAssertions().isEmpty()) {
                         return null;
                     } else {

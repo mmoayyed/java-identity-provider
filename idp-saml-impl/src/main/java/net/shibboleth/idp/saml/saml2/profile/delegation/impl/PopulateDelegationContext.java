@@ -366,7 +366,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
      * @return true iff {@link #doExecute(ProfileRequestContext)} should proceed, false otherwise
      */
     protected boolean doPreExecuteMetadata(@Nonnull final ProfileRequestContext profileRequestContext) {
-        SAMLMetadataContext samlMetadataContext = samlMetadataContextLookupStrategy.apply(profileRequestContext);
+        final SAMLMetadataContext samlMetadataContext = samlMetadataContextLookupStrategy.apply(profileRequestContext);
         if (samlMetadataContext == null) {
             log.debug("No SAMLMetadataContext was available, skipping further delegation processing");
             return false;
@@ -378,7 +378,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
             return false;
         }
         
-        AttributeConsumingServiceContext acsContext = 
+        final AttributeConsumingServiceContext acsContext = 
                 samlMetadataContext.getSubcontext(AttributeConsumingServiceContext.class);
         if (acsContext != null) {
             attributeConsumingService = acsContext.getAttributeConsumingService();
@@ -443,7 +443,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
      * @param profileRequestContext the current request context
      */
     private void createAndPopulateDelegationContext(final ProfileRequestContext profileRequestContext) {
-        DelegationContext delegationContext = 
+        final DelegationContext delegationContext = 
                 delegationContextLookupStrategy.apply(profileRequestContext);
         if (delegationContext == null) {
             log.warn("No DelegationContext was available");
@@ -461,7 +461,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
      * @return the subject confirmation credentials, or null if not resolveable or there is an error
      */
     private List<Credential> resolveConfirmationCredentials(@Nonnull final ProfileRequestContext requestContext) {
-        CriteriaSet criteriaSet = new CriteriaSet();
+        final CriteriaSet criteriaSet = new CriteriaSet();
         criteriaSet.add(new RoleDescriptorCriterion(roleDescriptor));
         criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
         // Add an entityID criterion just in case don't have a MetadataCredentialResolver,
@@ -469,7 +469,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
         // or other more general resolver type.
         criteriaSet.add(new EntityIdCriterion(relyingPartyId));
         
-        ArrayList<Credential> creds = new ArrayList<>();
+        final ArrayList<Credential> creds = new ArrayList<>();
         try {
             for (Credential cred : credentialResolver.resolve(criteriaSet)) {
                 if (cred != null) {
@@ -496,7 +496,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
             return DelegationRequest.REQUESTED_REQUIRED;
         }
         
-        DelegationRequest requestedByMetadata = getDelegationRequestedByMetadata(requestContext);
+        final DelegationRequest requestedByMetadata = getDelegationRequestedByMetadata(requestContext);
         if (requestedByMetadata != DelegationRequest.NOT_REQUESTED) {
             log.debug("Delegation was requested via metadata: {}", requestedByMetadata);
             return requestedByMetadata;
@@ -553,12 +553,12 @@ public class PopulateDelegationContext extends AbstractProfileAction {
             return false;
         }
         
-        AuthnRequest authnRequest = (AuthnRequest) requestContext.getInboundMessageContext().getMessage();
+        final AuthnRequest authnRequest = (AuthnRequest) requestContext.getInboundMessageContext().getMessage();
         if (authnRequest.getConditions() != null) {
-            Conditions conditions = authnRequest.getConditions();
+            final Conditions conditions = authnRequest.getConditions();
             for (AudienceRestriction ar : conditions.getAudienceRestrictions()) {
                 for (Audience audience : ar.getAudiences()) {
-                    String audienceValue = StringSupport.trimOrNull(audience.getAudienceURI());
+                    final String audienceValue = StringSupport.trimOrNull(audience.getAudienceURI());
                     if (Objects.equals(audienceValue, responderId)) {
                         log.debug("Saw an AuthnRequest/Conditions/AudienceRestriction/Audience with value of '{}'",
                                 responderId);

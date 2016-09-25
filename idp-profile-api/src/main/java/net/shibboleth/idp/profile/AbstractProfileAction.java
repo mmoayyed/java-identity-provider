@@ -147,7 +147,7 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
             @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
         
         // Attach the Spring context to the context tree.
-        SpringRequestContext springSubcontext =
+        final SpringRequestContext springSubcontext =
                 profileRequestContext.getSubcontext(SpringRequestContext.class, true);      
         springSubcontext.setRequestContext(springRequestContext);
 

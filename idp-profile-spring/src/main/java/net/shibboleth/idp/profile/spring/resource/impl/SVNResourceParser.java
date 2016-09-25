@@ -150,7 +150,7 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
      */
     @Nonnull protected BeanDefinition buildClientManager(final Element element, final BeanDefinition url,
             final ParserContext parserContext) {
-        List<BeanDefinition> authnMethods = new ManagedList<>();
+        final List<BeanDefinition> authnMethods = new ManagedList<>();
 
         final String username = getAttribute(element, USERNAME_ATTRIB_NAME, parserContext);
         if (username != null) {
@@ -186,7 +186,7 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
         final String proxyUser = getAttribute(element, PROXY_USERNAME_ATTRIB_NAME, parserContext);
         final String proxyPassword = getAttribute(element, PROXY_PASSWORD_ATTRIB_NAME, parserContext, false);
 
-        BeanDefinitionBuilder authnManager =
+        final BeanDefinitionBuilder authnManager =
                 BeanDefinitionBuilder.genericBeanDefinition(SVNBasicAuthenticationManager.class);
         authnManager.setLazyInit(true);
 
@@ -206,7 +206,7 @@ public class SVNResourceParser extends AbstractSingleBeanDefinitionParser {
             log.warn("SVN resource definition attribute '{}' is ignored.", READ_TIMEOUT_ATTRIB_NAME);
         }
 
-        BeanDefinitionBuilder clientManager = BeanDefinitionBuilder.genericBeanDefinition(SVNClientManager.class);
+        final BeanDefinitionBuilder clientManager = BeanDefinitionBuilder.genericBeanDefinition(SVNClientManager.class);
         clientManager.setLazyInit(true);
         clientManager.setFactoryMethod("newInstance");
         clientManager.addPropertyValue("authenticationManager", authnManager.getBeanDefinition());

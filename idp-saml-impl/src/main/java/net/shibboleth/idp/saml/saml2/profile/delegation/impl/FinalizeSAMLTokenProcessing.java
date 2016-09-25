@@ -51,7 +51,7 @@ public class FinalizeSAMLTokenProcessing extends AbstractProfileAction {
             return false;
         }
         
-        SubjectCanonicalizationContext c14nContext = 
+        final SubjectCanonicalizationContext c14nContext = 
                 profileRequestContext.getSubcontext(SubjectCanonicalizationContext.class);
         
         if (c14nContext == null) {
@@ -77,7 +77,7 @@ public class FinalizeSAMLTokenProcessing extends AbstractProfileAction {
     protected void doExecute(final ProfileRequestContext profileRequestContext) {
         profileRequestContext.removeSubcontext(SubjectCanonicalizationContext.class);
         
-        SubjectContext subjectContext = profileRequestContext.getSubcontext(SubjectContext.class, true);
+        final SubjectContext subjectContext = profileRequestContext.getSubcontext(SubjectContext.class, true);
         subjectContext.setPrincipalName(principalName);
     }
 

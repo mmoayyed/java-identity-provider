@@ -91,7 +91,7 @@ public class ValueMapParser extends AbstractSingleBeanDefinitionParser {
             throw new BeanCreationException("Attribute Definition: ValueMap must have at least one SourceValue");
         }
 
-        ManagedList<BeanDefinition> sourceValues =
+        final ManagedList<BeanDefinition> sourceValues =
                 SpringSupport.parseCustomElements(sourceValueElements, parserContext);
 
         log.debug("AttributeDefinition(ValueMap): return value: {}, {} source values ", returnValue,

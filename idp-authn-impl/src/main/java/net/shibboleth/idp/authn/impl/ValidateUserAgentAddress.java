@@ -158,7 +158,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
      */
     private boolean isAuthenticated(@Nonnull final InetAddress address,
             @Nonnull @NonnullElements final Collection<IPRange> ranges) {
-        byte[] resolvedAddress = address.getAddress();
+        final byte[] resolvedAddress = address.getAddress();
 
         for (IPRange range : ranges) {
             if (range.contains(resolvedAddress)) {

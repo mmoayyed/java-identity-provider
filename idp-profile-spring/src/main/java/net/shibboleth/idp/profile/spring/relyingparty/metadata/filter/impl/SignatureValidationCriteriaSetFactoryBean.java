@@ -121,14 +121,14 @@ public class SignatureValidationCriteriaSetFactoryBean implements FactoryBean<Cr
     /** {@inheritDoc} */
     public CriteriaSet getObject() throws Exception {
         log.debug("Building CriteriaSet based on factory bean inputs");
-        CriteriaSet criteriaSet = new CriteriaSet();
+        final CriteriaSet criteriaSet = new CriteriaSet();
         
         if (otherCriteria != null && !otherCriteria.isEmpty()) {
             log.debug("Added generic collection of other criteria");
             criteriaSet.addAll(otherCriteria);
         }
         
-        List<SignatureValidationConfiguration> sigConfigs = new ArrayList<>();
+        final List<SignatureValidationConfiguration> sigConfigs = new ArrayList<>();
         if (signatureValidationConfigs != null && !signatureValidationConfigs.isEmpty()) {
             sigConfigs.addAll(signatureValidationConfigs);
         }
@@ -149,9 +149,9 @@ public class SignatureValidationCriteriaSetFactoryBean implements FactoryBean<Cr
                 paramsResolver = new BasicSignatureValidationParametersResolver();
             }
             
-            CriteriaSet configCriteria = new CriteriaSet(
+            final CriteriaSet configCriteria = new CriteriaSet(
                     new SignatureValidationConfigurationCriterion(sigConfigs));
-            SignatureValidationParameters params = paramsResolver.resolveSingle(configCriteria);
+            final SignatureValidationParameters params = paramsResolver.resolveSingle(configCriteria);
             
             if (params != null) {
                 criteriaSet.add(new SignatureValidationParametersCriterion(params), true);

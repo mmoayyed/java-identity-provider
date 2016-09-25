@@ -67,7 +67,7 @@ public class OrPolicyRule extends AbstractComposedPolicyRule {
         final List<PolicyRequirementRule> rules = getComposedRules();
         
         for (PolicyRequirementRule rule:rules) {
-            Tristate match = rule.matches(filterContext);
+            final Tristate match = rule.matches(filterContext);
             if (Tristate.FAIL == match) {
                 return Tristate.FAIL;
             } else if (Tristate.TRUE == match) {

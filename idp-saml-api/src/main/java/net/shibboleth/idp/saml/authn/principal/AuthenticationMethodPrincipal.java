@@ -79,7 +79,7 @@ public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
 
     /** {@inheritDoc} */
     public AuthenticationMethodPrincipal clone() throws CloneNotSupportedException {
-        AuthenticationMethodPrincipal copy = (AuthenticationMethodPrincipal) super.clone();
+        final AuthenticationMethodPrincipal copy = (AuthenticationMethodPrincipal) super.clone();
         copy.authnMethod = authnMethod;
         return copy;
     }

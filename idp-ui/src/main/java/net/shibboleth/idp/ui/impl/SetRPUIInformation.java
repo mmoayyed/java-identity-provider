@@ -171,7 +171,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
     @Nullable protected UIInfo getRPUInfo() {
         final Extensions exts = spSSODescriptor.getExtensions();
         if (exts != null) {
-            for (XMLObject object : exts.getOrderedChildren()) {
+            for (final XMLObject object : exts.getOrderedChildren()) {
                 if (object instanceof UIInfo) {
                     return (UIInfo) object;
                 }

@@ -60,7 +60,7 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        BeanDefinitionBuilder strategyBuilder =
+        final BeanDefinitionBuilder strategyBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(StoredTransientIdGenerationStrategy.class);
 
         strategyBuilder.setInitMethodName("initialize");

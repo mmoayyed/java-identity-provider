@@ -227,7 +227,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
      */
     @Nullable private String getSubjectName() {
         
-        Set<UsernamePrincipal> usernames = getSubject().getPrincipals(UsernamePrincipal.class);
+        final Set<UsernamePrincipal> usernames = getSubject().getPrincipals(UsernamePrincipal.class);
         if (!usernames.isEmpty()) {
             return usernames.iterator().next().getName();
         }

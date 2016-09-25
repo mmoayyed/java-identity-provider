@@ -99,7 +99,7 @@ public class SubjectContext extends BaseContext {
      * @return immutable list of Subjects 
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Subject> getSubjects() {
-        List<Subject> composite = new ArrayList<>();
+        final List<Subject> composite = new ArrayList<>();
         for (final AuthenticationResult e : getAuthenticationResults().values()) {
             composite.add(e.getSubject());
         }

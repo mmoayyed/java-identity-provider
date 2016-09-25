@@ -188,7 +188,7 @@ public abstract class AbstractSAMLAttributeDesignatorMapper<OutType extends IdPA
 
         OutType out = newAttribute(prototype, getId());
 
-        for (String id : attributeIds) {
+        for (final String id : attributeIds) {
             out = newAttribute(prototype, getId());
             output.put(id, out);
         }
@@ -204,7 +204,7 @@ public abstract class AbstractSAMLAttributeDesignatorMapper<OutType extends IdPA
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder();
+            final StringBuilder builder = new StringBuilder();
 
             builder.append("Attribute Mapper '").append(getId()).append("':");
             prefix = builder.toString();

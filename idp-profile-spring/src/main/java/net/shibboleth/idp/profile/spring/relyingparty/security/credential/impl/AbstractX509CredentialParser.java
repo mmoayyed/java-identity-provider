@@ -101,7 +101,7 @@ public abstract class AbstractX509CredentialParser extends AbstractCredentialPar
             throw new BeanCreationException("At least one <Certificate> should be present.");
         }
 
-        List<String> certs = new ManagedList<>(childElements.size());
+        final List<String> certs = new ManagedList<>(childElements.size());
 
         for (Element elem : childElements) {
             final String cert = StringSupport.trimOrNull(elem.getTextContent());

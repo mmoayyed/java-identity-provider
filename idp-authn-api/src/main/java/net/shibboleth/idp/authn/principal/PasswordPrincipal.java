@@ -78,7 +78,7 @@ public class PasswordPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public PasswordPrincipal clone() throws CloneNotSupportedException {
-        PasswordPrincipal copy = (PasswordPrincipal) super.clone();
+        final PasswordPrincipal copy = (PasswordPrincipal) super.clone();
         copy.password = password;
         return copy;
     }

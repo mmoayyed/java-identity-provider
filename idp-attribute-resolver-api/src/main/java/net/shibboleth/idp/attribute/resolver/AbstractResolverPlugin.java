@@ -144,7 +144,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        HashSet<ResolverPluginDependency> checkedDeps = new HashSet<>();
+        final HashSet<ResolverPluginDependency> checkedDeps = new HashSet<>();
         CollectionSupport.addIf(checkedDeps, pluginDependencies, Predicates.notNull());
         dependencies = Collections.unmodifiableSet(checkedDeps);
     }
@@ -174,7 +174,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
         Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
 
         if (null != activationCondition) {
-            ProfileRequestContext profileRequestContext = profileContextStrategy.apply(resolutionContext);
+            final ProfileRequestContext profileRequestContext = profileContextStrategy.apply(resolutionContext);
             if (!activationCondition.apply(profileRequestContext)) {
                 log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
                 return null;
@@ -220,7 +220,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
         // rebuild the hash set - we may have modified the dependencies in the
         // child class initialization.
-        HashSet<ResolverPluginDependency> checkedDeps = new HashSet<>(dependencies);
+        final HashSet<ResolverPluginDependency> checkedDeps = new HashSet<>(dependencies);
         dependencies = ImmutableSet.copyOf(checkedDeps);
     }
 
@@ -243,7 +243,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
             return false;
         }
 
-        AbstractResolverPlugin<ResolvedType> other = (AbstractResolverPlugin<ResolvedType>) obj;
+        final AbstractResolverPlugin<ResolvedType> other = (AbstractResolverPlugin<ResolvedType>) obj;
         return java.util.Objects.equals(getId(), other.getId());
     }
 

@@ -135,7 +135,7 @@ public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
                 continue;
             }
             
-            Object value = attrValue.getValue();
+            final Object value = attrValue.getValue();
             if (value instanceof String) {
                 // Check for empty or all-whitespace, but don't trim.
                 if (StringSupport.trimOrNull((String) value) == null) {

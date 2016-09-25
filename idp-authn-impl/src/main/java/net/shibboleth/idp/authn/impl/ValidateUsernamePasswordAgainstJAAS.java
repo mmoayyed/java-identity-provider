@@ -389,10 +389,10 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
 
             for (Callback cb : callbacks) {
                 if (cb instanceof NameCallback) {
-                    NameCallback ncb = (NameCallback) cb;
+                    final NameCallback ncb = (NameCallback) cb;
                     ncb.setName(getUsernamePasswordContext().getUsername());
                 } else if (cb instanceof PasswordCallback) {
-                    PasswordCallback pcb = (PasswordCallback) cb;
+                    final PasswordCallback pcb = (PasswordCallback) cb;
                     pcb.setPassword(getUsernamePasswordContext().getPassword().toCharArray());
                 }
             }

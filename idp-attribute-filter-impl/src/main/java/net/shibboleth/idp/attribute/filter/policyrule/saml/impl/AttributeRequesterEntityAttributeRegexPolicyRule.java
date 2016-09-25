@@ -64,7 +64,7 @@ public class AttributeRequesterEntityAttributeRegexPolicyRule extends AbstractEn
 
     /** {@inheritDoc} */
     @Override protected boolean entityAttributeValueMatches(final String entityAttributeValue) {
-        Matcher valueMatcher = valueRegex.matcher(StringSupport.trim(entityAttributeValue));
+        final Matcher valueMatcher = valueRegex.matcher(StringSupport.trim(entityAttributeValue));
         return valueMatcher.matches();
     }
 

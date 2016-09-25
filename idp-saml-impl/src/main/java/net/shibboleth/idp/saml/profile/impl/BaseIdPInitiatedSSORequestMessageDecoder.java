@@ -117,7 +117,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
      */
     @Nonnull @NotEmpty protected String getEntityId(@Nonnull final HttpServletRequest request)
             throws MessageDecodingException {
-        String entityId = StringSupport.trimOrNull(request.getParameter(PROVIDER_ID_PARAM));
+        final String entityId = StringSupport.trimOrNull(request.getParameter(PROVIDER_ID_PARAM));
 
         if (entityId == null) {
             throw new MessageDecodingException("Shibboleth Authentication Request message did not contain the "
@@ -158,13 +158,13 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
      *             negative time
      */
     @Nullable protected Long getTime(@Nonnull final HttpServletRequest request) throws MessageDecodingException {
-        String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
+        final String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
         if (timeString == null) {
             return null;
         }
 
         try {
-            long time = Long.parseLong(timeString);
+            final long time = Long.parseLong(timeString);
             if (time < 0) {
                 throw new MessageDecodingException("Shibboleth Authentication Request contained a negative time value");
             }
@@ -195,13 +195,13 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
      * @return the message ID to use
      */
     @Nonnull protected String getMessageID() {
-        HttpServletRequest request = getHttpServletRequest();
-        String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
+        final HttpServletRequest request = getHttpServletRequest();
+        final String timeString = StringSupport.trimOrNull(request.getParameter(TIME_PARAM));
         
         // If both a timestamp and session ID are available, construct a pseudo message ID 
         // by combining them. Otherwise return a generated one.
         if (timeString != null) {
-            String sessionID = request.getRequestedSessionId();
+            final String sessionID = request.getRequestedSessionId();
             if (sessionID != null) {
                 return "_" + sessionID + '!' + timeString;
             } else {

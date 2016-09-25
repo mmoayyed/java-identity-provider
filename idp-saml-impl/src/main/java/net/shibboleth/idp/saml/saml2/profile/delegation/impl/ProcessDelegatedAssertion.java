@@ -141,7 +141,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
             return false;
         }
         
-        org.opensaml.saml.saml2.core.Subject samlSubject = assertion.getSubject();
+        final org.opensaml.saml.saml2.core.Subject samlSubject = assertion.getSubject();
         if (samlSubject == null || samlSubject.getNameID() == null) {
             log.warn("{} SAML 2 Assertion does not contain either a Subject or a NameID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_SUBJECT);
@@ -167,7 +167,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
         }
         
         // Set up Subject c14n context for call to c14n subflow.
-        Subject subject = new Subject();
+        final Subject subject = new Subject();
         subject.getPrincipals().add(new NameIDPrincipal(nameID));
         
         final SubjectCanonicalizationContext c14n = new SubjectCanonicalizationContext();

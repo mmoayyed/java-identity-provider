@@ -34,7 +34,7 @@ public class ScopedValueUnmarshaller extends AbstractXMLObjectUnmarshaller {
 
     /** {@inheritDoc} */
     protected void processAttribute(final XMLObject xmlObject, final Attr attribute) throws UnmarshallingException {
-        ScopedValue sv = (ScopedValue) xmlObject;
+        final ScopedValue sv = (ScopedValue) xmlObject;
 
         if (Strings.isNullOrEmpty(sv.getScopeAttributeName())) {
             sv.setScopeAttributeName(attribute.getName());
@@ -45,7 +45,7 @@ public class ScopedValueUnmarshaller extends AbstractXMLObjectUnmarshaller {
 
     /** {@inheritDoc} */
     protected void processElementContent(final XMLObject xmlObject, final String elementContent) {
-        ScopedValue sv = (ScopedValue) xmlObject;
+        final ScopedValue sv = (ScopedValue) xmlObject;
 
         sv.setValue(elementContent);
     }

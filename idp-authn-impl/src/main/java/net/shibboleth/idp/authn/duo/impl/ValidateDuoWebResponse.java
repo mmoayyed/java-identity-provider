@@ -174,7 +174,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
 
         log.trace("{} Signed Duo response is: {}", getLogPrefix(), signedResponse);
                 
-        String usernameFromDuo;
+        final String usernameFromDuo;
         try {
             usernameFromDuo = DuoSupport.validateSignedResponseToken(duoIntegration, signedResponse);
         } catch (final InvalidKeyException | NoSuchAlgorithmException | DuoWebException | IOException e) {

@@ -59,7 +59,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
         final String id = StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
         builder.addPropertyValue("id", id);
 
-        List<String> ids = new ManagedList<>(1);
+        final List<String> ids = new ManagedList<>(1);
         ids.add(id);
 
         // This is a simple predicate acting directly on the RelyingPartyContext.
@@ -86,7 +86,7 @@ public class RelyingPartyParser extends AbstractRelyingPartyParser {
         indirectPredicate.addConstructorArgValue(lookupFunction.getBeanDefinition());
         indirectPredicate.addConstructorArgValue(egPredicate.getBeanDefinition());
 
-        BeanDefinitionBuilder orPredicate = BeanDefinitionBuilder.genericBeanDefinition(Predicates.class);
+        final BeanDefinitionBuilder orPredicate = BeanDefinitionBuilder.genericBeanDefinition(Predicates.class);
         orPredicate.setFactoryMethod("or");
         orPredicate.addConstructorArgValue(rpPredicate.getBeanDefinition());
         orPredicate.addConstructorArgValue(indirectPredicate.getBeanDefinition());

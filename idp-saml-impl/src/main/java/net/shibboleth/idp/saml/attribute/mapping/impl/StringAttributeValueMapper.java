@@ -35,7 +35,7 @@ public class StringAttributeValueMapper extends AbstractSAMLAttributeValueMapper
     /** {@inheritDoc} */
     @Nullable protected IdPAttributeValue<?> decodeValue(final XMLObject object) {
         Constraint.isNotNull(object, "Object supplied to must not be null");
-        String value = getStringValue(object);
+        final String value = getStringValue(object);
         if (null == value) {
             return null;
         }

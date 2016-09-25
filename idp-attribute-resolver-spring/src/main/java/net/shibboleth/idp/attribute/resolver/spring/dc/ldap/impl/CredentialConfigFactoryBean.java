@@ -58,7 +58,7 @@ public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBe
 
         if (trustCredential != null) {
             if (trustCredential instanceof X509Credential) {
-                X509Credential cred = (X509Credential) trustCredential;
+                final X509Credential cred = (X509Credential) trustCredential;
                 trustCerts =
                         cred.getEntityCertificateChain().toArray(
                                 new X509Certificate[cred.getEntityCertificateChain().size()]);
@@ -73,7 +73,7 @@ public class CredentialConfigFactoryBean extends AbstractComponentAwareFactoryBe
 
         if (authCredential != null) {
             if (authCredential instanceof X509Credential) {
-                X509Credential cred = (X509Credential) authCredential;
+                final X509Credential cred = (X509Credential) authCredential;
                 authCert = cred.getEntityCertificate();
                 authKey = cred.getPrivateKey();
             } else {

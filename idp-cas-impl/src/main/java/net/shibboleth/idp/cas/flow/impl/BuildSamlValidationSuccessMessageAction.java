@@ -147,7 +147,7 @@ public class BuildSamlValidationSuccessMessageAction extends AbstractOutgoingSam
             final Attribute attribute = newSAMLObject(Attribute.class, Attribute.DEFAULT_ELEMENT_NAME);
             attribute.setAttributeName(attrName);
             attribute.setAttributeNamespace(NAMESPACE);
-            for (String value : ticketResponse.getAttributes().get(attrName)) {
+            for (final String value : ticketResponse.getAttributes().get(attrName)) {
                 attribute.getAttributeValues().add(newAttributeValue(value));
             }
             attrStatement.getAttributes().add(attribute);

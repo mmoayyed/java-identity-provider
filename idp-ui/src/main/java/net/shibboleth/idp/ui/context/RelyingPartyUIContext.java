@@ -223,7 +223,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * Construct the usableLanguages from the {@link #browserLanguages} and the {@link #fallbackLanguages}. 
      */
     protected void makeNewusableList() {
-        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        final ImmutableList.Builder<String> builder = ImmutableList.builder();
         if (null != browserLanguages) {
             builder.addAll(browserLanguages);
         }
@@ -328,7 +328,7 @@ public class RelyingPartyUIContext extends BaseContext {
             return null;
         }
 
-        for (ServiceName name : getRPAttributeConsumingService().getNames()) {
+        for (final ServiceName name : getRPAttributeConsumingService().getNames()) {
             log.trace("Found name in AttributeConsumingService, language '{}'", name.getXMLLang());
             if (name.getXMLLang() != null && name.getXMLLang().equals(lang)) {
                 log.debug("Returning name from AttributeConsumingService '{}'", name.getValue());

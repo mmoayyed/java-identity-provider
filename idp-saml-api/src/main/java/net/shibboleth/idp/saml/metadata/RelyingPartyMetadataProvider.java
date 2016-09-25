@@ -169,7 +169,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     /** {@inheritDoc} */
     @Override public int compareTo(final RelyingPartyMetadataProvider other) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        int result = sortKey.compareTo(other.sortKey);
+        final int result = sortKey.compareTo(other.sortKey);
         if (result != 0) {
             return result;
         }

@@ -66,7 +66,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
         log.debug("Processing EntitiesDescriptor with id '{}', name '{}'", 
                 entitiesDescriptor.getID(), entitiesDescriptor.getName());
         
-        List<XMLObject> keyAuthorities = getKeyAuthorities(entitiesDescriptor);
+        final List<XMLObject> keyAuthorities = getKeyAuthorities(entitiesDescriptor);
         if (keyAuthorities.isEmpty()) {
             return;
         }
@@ -76,7 +76,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
         
         for (XMLObject keyAuthority : keyAuthorities) {
             try {
-                PKIXValidationInformation pkixInfo = KeyAuthoritySupport.
+                final PKIXValidationInformation pkixInfo = KeyAuthoritySupport.
                         extractPKIXValidationInfo((KeyAuthority) keyAuthority);
                 if (pkixInfo != null) {
                     keyAuthority.getObjectMetadata().put(pkixInfo);
@@ -116,12 +116,12 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
      * @return list of XMLObjects
      */
     @Nonnull protected List<XMLObject> getKeyAuthorities(@Nonnull final EntitiesDescriptor entitiesDescriptor) {
-        Extensions extensions = entitiesDescriptor.getExtensions();
+        final Extensions extensions = entitiesDescriptor.getExtensions();
         if (extensions == null) {
             return Collections.emptyList();
         }
         
-        List<XMLObject> keyAuthorities = extensions.getUnknownXMLObjects(KeyAuthority.DEFAULT_ELEMENT_NAME);
+        final List<XMLObject> keyAuthorities = extensions.getUnknownXMLObjects(KeyAuthority.DEFAULT_ELEMENT_NAME);
         if (keyAuthorities == null) {
             return Collections.emptyList();
         } else {

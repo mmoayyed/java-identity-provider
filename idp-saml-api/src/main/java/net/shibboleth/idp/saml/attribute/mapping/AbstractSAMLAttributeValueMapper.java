@@ -66,10 +66,10 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
      */
     @Nonnull @Unmodifiable public List<IdPAttributeValue<?>>
             decodeValues(@Nonnull @NonnullElements final List<XMLObject> inputs) {
-        List<IdPAttributeValue<?>> outputs = new ArrayList<>(inputs.size());
+        final List<IdPAttributeValue<?>> outputs = new ArrayList<>(inputs.size());
 
-        for (XMLObject input : inputs) {
-            IdPAttributeValue output = decodeValue(input);
+        for (final XMLObject input : inputs) {
+            final IdPAttributeValue output = decodeValue(input);
             if (null != output) {
                 outputs.add(output);
             }
@@ -173,7 +173,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
         }
 
         if (obj instanceof AbstractSAMLAttributeValueMapper) {
-            AbstractSAMLAttributeValueMapper other = (AbstractSAMLAttributeValueMapper) obj;
+            final AbstractSAMLAttributeValueMapper other = (AbstractSAMLAttributeValueMapper) obj;
 
             return getClass().equals(other.getClass());
         }

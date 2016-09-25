@@ -199,7 +199,7 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
      * @return true iff {@link #doExecute(ProfileRequestContext)} should proceed
      */
     protected boolean doPreExecuteRelyingParty(@Nonnull final ProfileRequestContext profileRequestContext) {
-        RelyingPartyContext relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        final RelyingPartyContext relyingPartyContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (relyingPartyContext == null) {
             log.warn("No RelyingPartyContext was available");
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -289,7 +289,7 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
      * @return the token delegation chain length
      */
     protected Long getTokenDelegationChainLength(@Nonnull final Assertion token) {
-        DelegationRestrictionType delRestrict = getDelegationRestrictionCondition(token.getConditions());
+        final DelegationRestrictionType delRestrict = getDelegationRestrictionCondition(token.getConditions());
         
         if (delRestrict != null && delRestrict.getDelegates() != null) {
             return (long) delRestrict.getDelegates().size();
@@ -330,7 +330,7 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
     @Nonnull protected Long getPolicyMaxDelegationChainLength(
             @Nonnull final ProfileRequestContext profileRequestContext) {
         
-        Long value = policyMaxChainLengthStrategy.apply(profileRequestContext);
+        final Long value = policyMaxChainLengthStrategy.apply(profileRequestContext);
         if (value != null) {
             log.debug("Strategy resolved policy max token delegation chain length: {}", value);
             return value;
@@ -359,8 +359,8 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
             if (assertionToken == null || assertionToken.getAdvice() == null) {
                 return null;
             }
-            Advice inboundAdvice = assertionToken.getAdvice();
-            List<XMLObject> inboundPolicies = inboundAdvice.getChildren(DelegationPolicy.DEFAULT_ELEMENT_NAME);
+            final Advice inboundAdvice = assertionToken.getAdvice();
+            final List<XMLObject> inboundPolicies = inboundAdvice.getChildren(DelegationPolicy.DEFAULT_ELEMENT_NAME);
             if (inboundPolicies != null && !inboundPolicies.isEmpty()) {
                 return ((DelegationPolicy)inboundPolicies.get(0)).getMaximumTokenDelegationChainLength();
             }

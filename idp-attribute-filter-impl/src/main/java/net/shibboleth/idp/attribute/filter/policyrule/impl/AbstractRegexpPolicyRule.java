@@ -62,7 +62,7 @@ public abstract class AbstractRegexpPolicyRule extends AbstractPolicyRule {
     protected Tristate regexpCompare(@Nullable final String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        boolean result;
+        final boolean result;
         if (regex == null || value == null) {
             result = false;
         } else if (regex.matcher(value).matches()) {

@@ -33,7 +33,7 @@ public class ScopedValueMarshaller extends AbstractXMLObjectMarshaller {
 
     /** {@inheritDoc} */
     protected void marshallAttributes(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
-        ScopedValue scopedValue = (ScopedValue) xmlObject;
+        final ScopedValue scopedValue = (ScopedValue) xmlObject;
 
         if (null != scopedValue.getScopeAttributeName()) {
             domElement.setAttributeNS(null, scopedValue.getScopeAttributeName(), scopedValue.getScope());
@@ -43,7 +43,7 @@ public class ScopedValueMarshaller extends AbstractXMLObjectMarshaller {
 
     /** {@inheritDoc} */
     protected void marshallElementContent(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
-        ScopedValue scopedValue = (ScopedValue) xmlObject;
+        final ScopedValue scopedValue = (ScopedValue) xmlObject;
 
         ElementSupport.appendTextContent(domElement, scopedValue.getValue());
     }

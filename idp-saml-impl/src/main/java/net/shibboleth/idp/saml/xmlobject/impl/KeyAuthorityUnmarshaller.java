@@ -40,12 +40,12 @@ public class KeyAuthorityUnmarshaller extends AbstractXMLObjectUnmarshaller {
 
     /** {@inheritDoc} */
     protected void processAttribute(final XMLObject xmlObject, final Attr attribute) throws UnmarshallingException {
-        KeyAuthority authority = (KeyAuthority) xmlObject;
+        final KeyAuthority authority = (KeyAuthority) xmlObject;
 
         if (attribute.getLocalName().equals(KeyAuthority.VERIFY_DEPTH_ATTRIB_NAME)) {
             authority.setVerifyDepth(Integer.valueOf(attribute.getValue()));
         } else {
-            QName attribQName = QNameSupport.getNodeQName(attribute);
+            final QName attribQName = QNameSupport.getNodeQName(attribute);
             if (attribute.isId()) {
                 authority.getUnknownAttributes().registerID(attribQName);
             }
@@ -56,7 +56,7 @@ public class KeyAuthorityUnmarshaller extends AbstractXMLObjectUnmarshaller {
     /** {@inheritDoc} */
     protected void processChildElement(final XMLObject parentXMLObject, final XMLObject childXMLObject)
             throws UnmarshallingException {
-        KeyAuthority authority = (KeyAuthority) parentXMLObject;
+        final KeyAuthority authority = (KeyAuthority) parentXMLObject;
 
         if (childXMLObject instanceof KeyInfo) {
             authority.getKeyInfos().add((KeyInfo) childXMLObject);

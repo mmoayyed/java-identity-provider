@@ -131,15 +131,15 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {
-        MessageContext<SAMLObject> messageContext = new MessageContext<>();
-        HttpServletRequest request = getHttpServletRequest();
+        final MessageContext<SAMLObject> messageContext = new MessageContext<>();
+        final HttpServletRequest request = getHttpServletRequest();
 
         if (!"POST".equalsIgnoreCase(request.getMethod())) {
             throw new MessageDecodingException("This message decoder only supports the HTTP POST method");
         }
 
         log.debug("Unmarshalling SOAP message");
-        Envelope soapMessage;
+        final Envelope soapMessage;
         try {
             soapMessage = (Envelope) unmarshallMessage(request.getInputStream());
             messageContext.getSubcontext(SOAP11Context.class, true).setEnvelope(soapMessage);
@@ -164,7 +164,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
         
         populateBindingContext(getMessageContext());
         
-        SAMLObject samlMessage = getMessageContext().getMessage();
+        final SAMLObject samlMessage = getMessageContext().getMessage();
         log.debug("Decoded SOAP messaged which included SAML message of type {}", samlMessage.getElementQName());
     }
     
@@ -174,7 +174,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
      * @param messageContext the current message context
      */
     protected void populateBindingContext(final MessageContext<SAMLObject> messageContext) {
-        SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
+        final SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setBindingDescriptor(bindingDescriptor);
         bindingContext.setHasBindingSignature(false);

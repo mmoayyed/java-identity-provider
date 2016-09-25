@@ -80,7 +80,7 @@ public abstract class BasePolicyRuleParser extends AbstractWarningFilterParser {
             doNativeParse(element, parserContext, builder);
         } else {
 
-            BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
+            final BeanDefinitionBuilder childBuilder = BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass());
 
             childBuilder.setInitMethodName("initialize");
             childBuilder.setDestroyMethodName("destroy");

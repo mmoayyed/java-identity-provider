@@ -105,7 +105,7 @@ public class DefaultNameIdentifierFormatStrategy extends MetadataNameIdentifierF
 
     /** {@inheritDoc} */
     @Override @Nullable public List<String> apply(@Nullable final ProfileRequestContext input) {
-        List<String> fromConfig = new ArrayList<>();
+        final List<String> fromConfig = new ArrayList<>();
         final List<String> fromMetadata = super.apply(input);
 
         final RelyingPartyContext relyingPartyCtx = relyingPartyContextLookupStrategy.apply(input);

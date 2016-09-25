@@ -77,7 +77,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
             log.warn("{} Could not locate SP metadata context", getLogPrefix());
             return null;
         }
-        RoleDescriptor role = metadataContext.getRoleDescriptor();
+        final RoleDescriptor role = metadataContext.getRoleDescriptor();
         if (null == role) {
             log.warn("{} Could not locate RoleDescriptor in SP metadata", getLogPrefix());
             return null;

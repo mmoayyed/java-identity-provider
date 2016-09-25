@@ -66,7 +66,7 @@ public class ScopedValueImpl extends XSAnyImpl implements ScopedValue {
     /** {@inheritDoc} */
     public void setScopeAttributeName(final String newScopeAttributeName) {
         if (scopeAttributeName != null) {
-            QName oldName = new QName(scopeAttributeName);
+            final QName oldName = new QName(scopeAttributeName);
             if (getUnknownAttributes().containsKey(oldName)) {
                 getUnknownAttributes().remove(oldName);
             }

@@ -229,8 +229,8 @@ public class ScriptedDataConnector extends AbstractDataConnector {
             return;
         }
         log.debug("{} Attribute '{}' has {} values.", getLogPrefix(), attribute.getId(), attribute.getValues().size());
-        List<IdPAttributeValue<?>> inputValues = attribute.getValues();
-        List<IdPAttributeValue<?>> outputValues = new ArrayList<>(inputValues.size());
+        final List<IdPAttributeValue<?>> inputValues = attribute.getValues();
+        final List<IdPAttributeValue<?>> outputValues = new ArrayList<>(inputValues.size());
 
         for (final Object o : inputValues) {
             if (o instanceof IdPAttributeValue<?>) {
@@ -251,7 +251,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
      * @throws ResolutionException if the output was "wrong".
      */
     private Map<String, IdPAttribute> buildResult(final ScriptContext context) throws ResolutionException {
-        Object res = context.getAttribute(RESULTS_STRING);
+        final Object res = context.getAttribute(RESULTS_STRING);
 
         if (null == res) {
             log.error("{} Could not locate output '{}' from script", getLogPrefix(), RESULTS_STRING);
@@ -267,7 +267,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
         final Map<String, IdPAttribute> outputMap = new HashMap<>(outputCollection.size());
         for (Object o : outputCollection) {
             if (o instanceof IdPAttribute) {
-                IdPAttribute attribute = (IdPAttribute) o;
+                final IdPAttribute attribute = (IdPAttribute) o;
                 if (null == attribute.getId()) {
                     log.error("{} Anonymous Attribute encountered, ignored", getLogPrefix());
                 } else {

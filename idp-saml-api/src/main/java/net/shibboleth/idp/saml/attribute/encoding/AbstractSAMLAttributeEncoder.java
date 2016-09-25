@@ -162,7 +162,7 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
 
         EncodedType attributeValue;
         XMLObject samlAttributeValue;
-        for (IdPAttributeValue o : attribute.getValues()) {
+        for (final IdPAttributeValue o : attribute.getValues()) {
             if (o == null) {
                 // filtered out upstream leave in test for sanity
                 log.debug("Skipping null value of attribute {}", attributeId);

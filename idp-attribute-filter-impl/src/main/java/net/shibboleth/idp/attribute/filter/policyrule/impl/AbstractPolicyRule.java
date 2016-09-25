@@ -49,7 +49,7 @@ public abstract class AbstractPolicyRule extends AbstractIdentifiableInitializab
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Attribute Filter '").append(getId()).append("':");
+            final StringBuilder builder = new StringBuilder("Attribute Filter '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;

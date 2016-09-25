@@ -150,7 +150,7 @@ public class PopulateLibertyContext extends AbstractProfileAction {
             if (input == null) {
                 return null;
             }
-            WSSecurityContext wssContext = 
+            final WSSecurityContext wssContext = 
                     input.getInboundMessageContext().getSubcontext(WSSecurityContext.class);
             if (wssContext == null) {
                 log.info("{} No WSSecurityContext available within inbound message context", getLogPrefix());

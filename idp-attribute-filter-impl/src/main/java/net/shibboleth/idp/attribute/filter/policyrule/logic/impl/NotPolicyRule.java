@@ -62,7 +62,7 @@ public final class NotPolicyRule extends AbstractIdentifiableInitializableCompon
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        Tristate match = negatedRule.matches(filterContext);
+        final Tristate match = negatedRule.matches(filterContext);
         if (Tristate.FAIL == match) {
             return Tristate.FAIL;
         } else if (Tristate.FALSE == match) {

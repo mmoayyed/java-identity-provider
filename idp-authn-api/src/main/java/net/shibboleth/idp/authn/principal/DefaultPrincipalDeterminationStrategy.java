@@ -123,7 +123,7 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
             return principals.iterator().next();
         }
             
-        Object[] principalArray = principals.toArray();
+        final Object[] principalArray = principals.toArray();
         Arrays.sort(principalArray, new WeightedComparator());
         return (T) principalArray[principalArray.length - 1];
     }
@@ -138,8 +138,8 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
         @Override
         public int compare(final Object o1, final Object o2) {
             
-            int weight1 = weightMap.containsKey(o1) ? weightMap.get(o1) : 0;
-            int weight2 = weightMap.containsKey(o2) ? weightMap.get(o2) : 0;
+            final int weight1 = weightMap.containsKey(o1) ? weightMap.get(o1) : 0;
+            final int weight2 = weightMap.containsKey(o2) ? weightMap.get(o2) : 0;
             if (weight1 < weight2) {
                 return -1;
             } else if (weight1 > weight2) {

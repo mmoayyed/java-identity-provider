@@ -83,7 +83,7 @@ public final class PluginDependencySupport {
                 continue;
             }
 
-            ResolvedDataConnector dataConnector =
+            final ResolvedDataConnector dataConnector =
                     workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
                 if (dependency.getDependencyAttributeId() == null) {
@@ -151,7 +151,7 @@ public final class PluginDependencySupport {
                 continue;
             }
 
-            ResolvedDataConnector dataConnector =
+            final ResolvedDataConnector dataConnector =
                     workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
             if (dataConnector != null) {
                 if (dependency.getDependencyAttributeId() == null) {

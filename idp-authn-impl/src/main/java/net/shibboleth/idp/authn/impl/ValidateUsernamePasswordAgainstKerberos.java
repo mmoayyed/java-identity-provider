@@ -273,7 +273,7 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePas
             // so that the null credential above indicating the default credentials pulls from the JAAS subject.
             final byte[] token = Subject.doAs(getSubject(), new PrivilegedExceptionAction<byte[]>() {
                 public byte[] run() throws GSSException {
-                    byte[] token = new byte[0];
+                    final byte[] token = new byte[0];
                     // This is a one pass context initialization.
                     context.requestMutualAuth(false);
                     context.requestCredDeleg(false);
@@ -338,10 +338,10 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePas
 
             for (Callback cb : callbacks) {
                 if (cb instanceof NameCallback) {
-                    NameCallback ncb = (NameCallback) cb;
+                    final NameCallback ncb = (NameCallback) cb;
                     ncb.setName(getUsernamePasswordContext().getUsername());
                 } else if (cb instanceof PasswordCallback) {
-                    PasswordCallback pcb = (PasswordCallback) cb;
+                    final PasswordCallback pcb = (PasswordCallback) cb;
                     pcb.setPassword(getUsernamePasswordContext().getPassword().toCharArray());
                 }
             }

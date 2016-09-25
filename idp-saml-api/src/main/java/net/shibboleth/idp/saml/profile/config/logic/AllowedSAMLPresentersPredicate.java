@@ -71,14 +71,14 @@ public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestC
             return false;
         }
         
-        SAMLPresenterEntityContext presenterContext = input.getInboundMessageContext().getSubcontext(
+        final SAMLPresenterEntityContext presenterContext = input.getInboundMessageContext().getSubcontext(
                 SAMLPresenterEntityContext.class);
         if (presenterContext == null) {
             log.debug("No inbound SAMLPresenterEntityContext");
             return false;
         }
         
-        boolean result = allowedPresenters.contains(presenterContext.getEntityId());
+        final boolean result = allowedPresenters.contains(presenterContext.getEntityId());
         log.debug("SAML presenter '{}' was {} in set of allowed presenters", 
                 presenterContext.getEntityId(), result ? "found" : "NOT found");
         return result;

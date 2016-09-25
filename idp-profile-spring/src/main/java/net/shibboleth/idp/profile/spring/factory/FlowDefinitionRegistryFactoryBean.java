@@ -161,7 +161,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
 
         flowResourceFactory = new FlowDefinitionResourceFactory(flowBuilderServices.getApplicationContext());
         
-        DefaultFlowRegistry flowRegistry = new DefaultFlowRegistry();
+        final DefaultFlowRegistry flowRegistry = new DefaultFlowRegistry();
         flowRegistry.setParent(this.parent);
 
         registerFlowLocations(flowRegistry);
@@ -199,7 +199,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
         for (final Map.Entry<String,String> pattern : flowLocationPatterns.entrySet()) {
             final LocalAttributeMap<Object> attributes = new LocalAttributeMap<Object>();
             updateFlowAttributes(attributes);
-            Collection<FlowDefinitionResource> resources;
+            final Collection<FlowDefinitionResource> resources;
             try {
                 resources = flowResourceFactory.createResources(
                         pattern.getValue() != null ? pattern.getValue() : basePath, pattern.getKey(), attributes);
@@ -271,7 +271,7 @@ public class FlowDefinitionRegistryFactoryBean extends AbstractFactoryBean<FlowD
         public void setParent(@Nullable final FlowDefinitionRegistry parent) {
             super.setParent(parent);
             if (parent instanceof DefaultFlowRegistry) {
-                DefaultFlowRegistry parentFlowRegistry = (DefaultFlowRegistry) parent;
+                final DefaultFlowRegistry parentFlowRegistry = (DefaultFlowRegistry) parent;
                 // Link so a flow in the child registry that extends from a flow
                 // in the parent registry can find its parent.
                 flowModelRegistry.setParent(parentFlowRegistry.getFlowModelRegistry());

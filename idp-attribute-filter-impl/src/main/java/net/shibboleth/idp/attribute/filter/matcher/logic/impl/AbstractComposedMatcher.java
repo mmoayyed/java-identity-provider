@@ -53,7 +53,7 @@ public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitia
      */
     public AbstractComposedMatcher(@Nullable @NullableElements final 
             Collection<Matcher> composedMatchers) {
-        ArrayList<Matcher> checkedMatchers = new ArrayList<>();
+        final ArrayList<Matcher> checkedMatchers = new ArrayList<>();
 
         if (composedMatchers != null) {
             CollectionSupport.addIf(checkedMatchers, composedMatchers, Predicates.notNull());

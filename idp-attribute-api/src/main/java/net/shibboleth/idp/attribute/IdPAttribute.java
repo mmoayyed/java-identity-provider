@@ -241,7 +241,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
             return false;
         }
 
-        IdPAttribute other = (IdPAttribute) obj;
+        final IdPAttribute other = (IdPAttribute) obj;
         return java.util.Objects.equals(id, other.getId());
     }
 

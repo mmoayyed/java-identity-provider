@@ -72,10 +72,10 @@ public final class PrincipalEvalPredicateFactoryRegistry {
     @Nullable public PrincipalEvalPredicateFactory lookup(@Nonnull final Class<? extends Principal> principalType,
             @Nonnull @NotEmpty final String operator) {
         Constraint.isNotNull(principalType, "Principal subtype cannot be null");
-        String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
+        final String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         
-        Pair key = new Pair(principalType, trimmed);
-        PrincipalEvalPredicateFactory factory = registry.get(key);
+        final Pair key = new Pair(principalType, trimmed);
+        final PrincipalEvalPredicateFactory factory = registry.get(key);
         if (factory != null) {
             log.debug("Registry located predicate factory of type '{}' for principal type '{}' and operator '{}'",
                     factory.getClass().getName(), principalType, trimmed);
@@ -97,7 +97,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
     public void register(@Nonnull final Class<? extends Principal> principalType,
             @Nonnull @NotEmpty final String operator, @Nonnull final PrincipalEvalPredicateFactory factory) {
         Constraint.isNotNull(principalType, "Principal subtype cannot be null");
-        String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
+        final String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         Constraint.isNotNull(factory, "PrincipalEvalPredicateFactory cannot be null");
         
         log.debug("Registering predicate factory of type '{}' for principal type '{}' and operator '{}'",
@@ -114,7 +114,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
     public void deregister(@Nonnull final Class<? extends Principal> principalType,
             @Nonnull @NotEmpty final String operator) {
         Constraint.isNotNull(principalType, "Principal subtype cannot be null");
-        String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
+        final String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         
         log.debug("Deregistering predicate factory for principal type '{}' and operator '{}'", principalType, operator);
         registry.remove(new Pair(principalType, trimmed));

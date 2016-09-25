@@ -58,7 +58,7 @@ public class IssuingDelegatedAssertionPredicate implements Predicate<ProfileRequ
         if (input == null) {
             return false;
         }
-        DelegationContext delegationContext = delegationContextLookupStrategy.apply(input);
+        final DelegationContext delegationContext = delegationContextLookupStrategy.apply(input);
         if (delegationContext == null) {
             return false;
         }

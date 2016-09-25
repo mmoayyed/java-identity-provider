@@ -56,14 +56,14 @@ public class IdPInitiatedSSORequestMessageDecoder extends
     /** {@inheritDoc} */
     @Override
     protected void doDecode() throws MessageDecodingException {
-        IdPInitiatedSSORequest ssoRequest = buildIdPInitiatedSSORequest();
+        final IdPInitiatedSSORequest ssoRequest = buildIdPInitiatedSSORequest();
 
-        MessageContext<IdPInitiatedSSORequest> messageContext = new MessageContext<>();
+        final MessageContext<IdPInitiatedSSORequest> messageContext = new MessageContext<>();
         messageContext.setMessage(ssoRequest);
         
         messageContext.getSubcontext(SAMLPeerEntityContext.class, true).setEntityId(ssoRequest.getEntityId());
         
-        SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
+        final SAMLMessageInfoContext msgInfoContext = messageContext.getSubcontext(SAMLMessageInfoContext.class, true);
         msgInfoContext.setMessageIssueInstant(new DateTime(ssoRequest.getTime(), ISOChronology.getInstanceUTC()));
         msgInfoContext.setMessageId(getMessageID());
         
@@ -87,7 +87,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends
         }
         log.debug("Decoded SAML relay state: {}", relayState);
         
-        SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
+        final SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setRelayState(relayState);
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setBindingDescriptor(getBindingDescriptor());

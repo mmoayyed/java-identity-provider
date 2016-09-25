@@ -69,7 +69,7 @@ public class AddFrameworkHandler extends AbstractHeaderGeneratingMessageHandler 
     /** {@inheritDoc} */
     protected void doInvoke(@Nonnull final MessageContext messageContext) throws MessageHandlerException {
         log.debug("Issuing Liberty ID-WSF Framework header with version value: {}", getVersion());
-        Framework framework = (Framework) XMLObjectSupport.buildXMLObject(Framework.DEFAULT_ELEMENT_NAME);
+        final Framework framework = (Framework) XMLObjectSupport.buildXMLObject(Framework.DEFAULT_ELEMENT_NAME);
         framework.setVersion(getVersion());
         decorateGeneratedHeader(messageContext, framework);
         SOAPMessagingSupport.addHeaderBlock(messageContext, framework);

@@ -103,7 +103,7 @@ public class LoggerDrivenMetricFilter implements MetricFilter {
     /** {@inheritDoc} */
     public boolean matches(final String name, final Metric metric) {
         final Logger logger = LoggerFactory.getLogger(loggerPrefix + name);
-        Level level = levelMap.get(logger.getName());
+        final Level level = levelMap.get(logger.getName());
         if (level == null) {
             return logger.isInfoEnabled();
         }

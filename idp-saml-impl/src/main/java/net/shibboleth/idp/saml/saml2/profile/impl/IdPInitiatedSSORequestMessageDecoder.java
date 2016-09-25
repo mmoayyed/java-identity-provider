@@ -138,10 +138,10 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
      * @param messageContext the current message context
      */
     protected void populateBindingContext(@Nonnull final MessageContext<SAMLObject> messageContext) {
-        String relayState = ssoRequest.getRelayState();
+        final String relayState = ssoRequest.getRelayState();
         log.debug("Decoded SAML RelayState of: {}", relayState);
         
-        SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
+        final SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setRelayState(relayState);
         
         bindingContext.setBindingUri(getBindingURI());

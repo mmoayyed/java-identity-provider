@@ -32,7 +32,7 @@ public class DelegationPolicyMarshaller extends AbstractSAMLObjectMarshaller {
 
     /** {@inheritDoc} */
     protected void marshallAttributes(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
-        DelegationPolicy delegationPolicy = (DelegationPolicy) xmlObject;
+        final DelegationPolicy delegationPolicy = (DelegationPolicy) xmlObject;
 
         if (delegationPolicy.getMaximumTokenDelegationChainLength() != null) {
             domElement.setAttributeNS(null, DelegationPolicy.MAX_DELEGATION_CHAIN_LENGTH_ATTRIB_NAME,

@@ -94,7 +94,7 @@ public class NameIDPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public NameIDPrincipal clone() throws CloneNotSupportedException {
-        NameIDPrincipal copy = (NameIDPrincipal) super.clone();
+        final NameIDPrincipal copy = (NameIDPrincipal) super.clone();
         try {
             copy.nameID = XMLObjectSupport.cloneXMLObject(nameID, CloneOutputOption.RootDOMInNewDocument);
             copy.name = SerializeSupport.nodeToString(

@@ -90,7 +90,7 @@ public class FlowDefinitionResourceFactory {
         Constraint.isNotEmpty(path, "Flow path cannot be null or empty");
         Constraint.isNotEmpty(flowId, "Flow ID cannot be null or empty");
         
-        Resource resource;
+        final Resource resource;
         if (basePath == null || isAbsolute(path)) {
             resource = resourceLoader.getResource(path);
         } else {
@@ -132,7 +132,7 @@ public class FlowDefinitionResourceFactory {
                     "Cannot create flow definition resources from patterns without a ResourcePatternResolver");
         }
 
-        Resource[] resources;
+        final Resource[] resources;
         final ResourcePatternResolver resolver = (ResourcePatternResolver) resourceLoader;
         
         if (isAbsolute(pattern)) {
@@ -172,8 +172,8 @@ public class FlowDefinitionResourceFactory {
      */
     protected String getFlowId(@Nonnull @NotEmpty final String basePath, @Nonnull final Resource flowResource)
             throws IOException {
-        String localBasePath = removeScheme(basePath);
-        String filePath;
+        final String localBasePath = removeScheme(basePath);
+        final String filePath;
         if (flowResource instanceof ContextResource) {
             filePath = ((ContextResource) flowResource).getPathWithinContext();
         } else if (flowResource instanceof ClassPathResource) {
@@ -219,7 +219,7 @@ public class FlowDefinitionResourceFactory {
      */
     @Nonnull @NotEmpty private String truncateFilePath(@Nonnull @NotEmpty final String filePath,
             @Nonnull @NotEmpty final String basePath) {
-        int basePathIndex = filePath.lastIndexOf(basePath);
+        final int basePathIndex = filePath.lastIndexOf(basePath);
         if (basePathIndex != -1) {
             return filePath.substring(basePathIndex);
         } else {

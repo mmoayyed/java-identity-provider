@@ -141,11 +141,11 @@ public class PopulateAuditContext extends AbstractProfileAction {
         fieldsToExtract = new HashSet<>(10);
         
         for (final String s : map.values()) {
-            int len = s.length();
+            final int len = s.length();
             boolean inToken = false;
-            StringBuilder field = new StringBuilder();
+            final StringBuilder field = new StringBuilder();
             for (int pos = 0; pos < len; ++pos) {
-                char ch = s.charAt(pos);
+                final char ch = s.charAt(pos);
                 if (inToken) {
                     if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
                         fieldsToExtract.add(field.substring(1));

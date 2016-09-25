@@ -53,7 +53,7 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiableIni
      * @param theRules matchers being composed
      */
     public AbstractComposedPolicyRule(@Nullable @NullableElements final Collection<PolicyRequirementRule> theRules) {
-        ArrayList<PolicyRequirementRule> checkedMatchers = new ArrayList<>();
+        final ArrayList<PolicyRequirementRule> checkedMatchers = new ArrayList<>();
 
         if (theRules != null) {
             CollectionSupport.addIf(checkedMatchers, theRules, Predicates.notNull());

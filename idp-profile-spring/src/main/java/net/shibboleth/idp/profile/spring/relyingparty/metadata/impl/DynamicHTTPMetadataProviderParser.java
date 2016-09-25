@@ -83,9 +83,9 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
         // inject the VelocityEngine. Otherwise would be easier to just return the Function directly.
 
         // Template child
-        Element template = ElementSupport.getFirstChildElement(element, TEMPLATE);
+        final Element template = ElementSupport.getFirstChildElement(element, TEMPLATE);
         if (template != null) {
-            String templateString = StringSupport.trimOrNull(ElementSupport.getElementContentAsString(template));
+            final String templateString = StringSupport.trimOrNull(ElementSupport.getElementContentAsString(template));
             Boolean encoded = null;
             if (template.hasAttributeNS(null, "encoded")) {
                 encoded = AttributeSupport.getAttributeValueAsBoolean(template.getAttributeNodeNS(null, "encoded"));
@@ -98,10 +98,10 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
             if (null == velocityEngineRef) {
                 velocityEngineRef = DEFAULT_VELOCITY_ENGINE_REF;
             }
-            String transformRef =
+            final String transformRef =
                     StringSupport.trimOrNull(StringSupport.trimOrNull(template.getAttributeNS(null, "transformRef")));
 
-            BeanDefinitionBuilder builder =
+            final BeanDefinitionBuilder builder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplateRequestURLBuilder.class);
             builder.addConstructorArgReference(velocityEngineRef);
             builder.addConstructorArgValue(templateString);
@@ -113,25 +113,25 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
         }
 
         // Regex child
-        Element regex = ElementSupport.getFirstChildElement(element, REGEX);
+        final Element regex = ElementSupport.getFirstChildElement(element, REGEX);
         if (regex != null) {
-            String replacement = StringSupport.trimOrNull(ElementSupport.getElementContentAsString(regex));
-            String match = StringSupport.trimOrNull(StringSupport.trimOrNull(regex.getAttributeNS(null, "match")));
+            final String replacement = StringSupport.trimOrNull(ElementSupport.getElementContentAsString(regex));
+            final String match = StringSupport.trimOrNull(StringSupport.trimOrNull(regex.getAttributeNS(null, "match")));
 
-            BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(RegexRequestURLBuilder.class);
+            final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(RegexRequestURLBuilder.class);
             builder.addConstructorArgValue(match);
             builder.addConstructorArgValue(replacement);
             return builder.getBeanDefinition();
         }
 
         // MetadataQueryProtocol child
-        Element mdq = ElementSupport.getFirstChildElement(element, METADATA_QUERY_PROTOCOL);
+        final Element mdq = ElementSupport.getFirstChildElement(element, METADATA_QUERY_PROTOCOL);
         if (mdq != null) {
-            String baseURL = ElementSupport.getElementContentAsString(mdq);
-            String transformRef =
+            final String baseURL = ElementSupport.getElementContentAsString(mdq);
+            final String transformRef =
                     StringSupport.trimOrNull(StringSupport.trimOrNull(mdq.getAttributeNS(null, "transformRef")));
 
-            BeanDefinitionBuilder builder =
+            final BeanDefinitionBuilder builder =
                     BeanDefinitionBuilder.genericBeanDefinition(MetadataQueryProtocolRequestURLBuilder.class);
             builder.addConstructorArgValue(baseURL);
             if (transformRef != null) {
@@ -141,7 +141,7 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
         }
 
         // None of the above, so return the well-known location one. Takes no args or properties.
-        BeanDefinitionBuilder builder =
+        final BeanDefinitionBuilder builder =
                 BeanDefinitionBuilder.genericBeanDefinition(HTTPEntityIDRequestURLBuilder.class);
         return builder.getBeanDefinition();
     }

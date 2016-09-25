@@ -132,12 +132,12 @@ public class WriteAuditLog extends AbstractProfileAction {
                 continue;
             }
             
-            int len = s.length();
+            final int len = s.length();
             boolean inToken = false;
             final List<String> format = new ArrayList<>();
             final StringBuilder field = new StringBuilder();
             for (int pos = 0; pos < len; ++pos) {
-                char ch = s.charAt(pos);
+                final char ch = s.charAt(pos);
                 if (inToken) {
                     if (!Character.isLetterOrDigit(ch) && ch != '-' && ch != '%') {
                         format.add(field.toString());

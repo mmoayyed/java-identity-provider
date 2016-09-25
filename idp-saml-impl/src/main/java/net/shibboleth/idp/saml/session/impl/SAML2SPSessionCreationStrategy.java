@@ -129,7 +129,7 @@ public class SAML2SPSessionCreationStrategy implements Function<ProfileRequestCo
         
         final long now = System.currentTimeMillis();
         final DateTime sessionBound = result.getSecond().getSessionNotOnOrAfter();
-        long expiration;
+        final long expiration;
         if (sessionBound != null) {
             expiration = sessionBound.getMillis(); 
         } else {

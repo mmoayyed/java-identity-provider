@@ -92,7 +92,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
     /** {@inheritDoc} */
     @Override
     protected void doSerializeAdditional(@Nonnull final SPSession instance, @Nonnull final JsonGenerator generator) {
-        SAML2SPSession saml2Session = (SAML2SPSession) instance;
+        final SAML2SPSession saml2Session = (SAML2SPSession) instance;
         
         try {
             generator.write(NAMEID_FIELD, SerializeSupport.nodeToString(

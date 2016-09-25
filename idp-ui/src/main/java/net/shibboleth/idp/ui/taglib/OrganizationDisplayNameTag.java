@@ -57,9 +57,9 @@ public class OrganizationDisplayNameTag extends ServiceTagSupport {
 
         try {
             if (null == name) {
-                BodyContent bc = getBodyContent();
+                final BodyContent bc = getBodyContent();
                 if (null != bc) {
-                    JspWriter ew = bc.getEnclosingWriter();
+                    final JspWriter ew = bc.getEnclosingWriter();
                     if (ew != null) {
                         bc.writeOut(ew);
                     }

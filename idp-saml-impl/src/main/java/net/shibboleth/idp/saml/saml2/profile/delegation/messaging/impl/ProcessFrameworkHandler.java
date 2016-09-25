@@ -77,8 +77,8 @@ public class ProcessFrameworkHandler extends AbstractMessageHandler {
 
     /** {@inheritDoc} */
     protected void doInvoke(final MessageContext messageContext) throws MessageHandlerException {
-        Framework header = getFramework(messageContext);
-        String headerVersion = header != null ? StringSupport.trimOrNull(header.getVersion()) : null;
+        final Framework header = getFramework(messageContext);
+        final String headerVersion = header != null ? StringSupport.trimOrNull(header.getVersion()) : null;
         log.debug("Checking inbound message Liberty ID-WSF Framework version value: {}", headerVersion);
         if (Objects.equals(getExpectedVersion(), headerVersion)) {
             log.debug("Inbound Liberty ID-WSF Framework version matched expected value");
@@ -101,7 +101,7 @@ public class ProcessFrameworkHandler extends AbstractMessageHandler {
      * @return the message Action header
      */
     protected Framework getFramework(@Nonnull final MessageContext messageContext) {
-        List<XMLObject> frameworks = SOAPMessagingSupport.getInboundHeaderBlock(messageContext, 
+        final List<XMLObject> frameworks = SOAPMessagingSupport.getInboundHeaderBlock(messageContext, 
                 Framework.DEFAULT_ELEMENT_NAME);
         if (frameworks != null && !frameworks.isEmpty()) {
             return (Framework) frameworks.get(0);

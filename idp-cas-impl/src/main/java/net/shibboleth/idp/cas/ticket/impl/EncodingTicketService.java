@@ -172,7 +172,7 @@ public class EncodingTicketService extends AbstractTicketService {
     private <T extends Ticket> T encode(final Class<T> ticketClass, final T ticket, final String prefix) {
         final String opaque;
         try {
-            String y = serializer(ticketClass).serialize(ticket);
+            final String y = serializer(ticketClass).serialize(ticket);
             log.debug("encode y [{}]", y);
             opaque = dataSealer.wrap(
                     y, ticket.getExpirationInstant().getMillis());
@@ -195,7 +195,7 @@ public class EncodingTicketService extends AbstractTicketService {
      */
     private <T extends Ticket> T decode(final Class<T> ticketClass, final String id, final String prefix) {
         try {
-            String x = id.substring(prefix.length() + 1);
+            final String x = id.substring(prefix.length() + 1);
             log.debug("decode x [{}]", x);
             log.debug("decode unwrapping");
             final String decrypted = dataSealer.unwrap(x);

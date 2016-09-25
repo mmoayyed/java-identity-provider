@@ -80,9 +80,9 @@ public class LogContextTree extends AbstractProfileAction {
         
         String contextualDescription = null;
         
-        SpringRequestContext springRequestContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
+        final SpringRequestContext springRequestContext = profileRequestContext.getSubcontext(SpringRequestContext.class);
         if (springRequestContext != null && springRequestContext.getRequestContext() != null) {
-            RequestContext requestContext = springRequestContext.getRequestContext();
+            final RequestContext requestContext = springRequestContext.getRequestContext();
             contextualDescription = requestContext.getAttributes().getString(ATTRIB_DESC);
         }
         
@@ -108,17 +108,17 @@ public class LogContextTree extends AbstractProfileAction {
             return;
         }
         
-        String indentString = getIndent(indent);
+        final String indentString = getIndent(indent);
         
         if (current instanceof ProfileRequestContext) {
-            ProfileRequestContext<?,?> prc = (ProfileRequestContext) current;
+            final ProfileRequestContext<?,?> prc = (ProfileRequestContext) current;
             
             log.debug("{} PRC: {}", indentString, prc.getClass().getName());
             for (BaseContext subcontext : prc) {
                 logContext(subcontext, indent+1);
             }
             
-            MessageContext<?> inbound = prc.getInboundMessageContext();
+            final MessageContext<?> inbound = prc.getInboundMessageContext();
             if (inbound != null) {
                 log.debug("{} PRC InboundMessageContext: {}", indentString, inbound.getClass().getName());
                 for (BaseContext subcontext : inbound) {
@@ -128,7 +128,7 @@ public class LogContextTree extends AbstractProfileAction {
                 log.debug("{} PRC InboundMessageContext not present", indentString);
             }
             
-            MessageContext<?> outbound = prc.getOutboundMessageContext();
+            final MessageContext<?> outbound = prc.getOutboundMessageContext();
             if (outbound != null) {
                 log.debug("{} PRC OutboundMessageContext: {}", indentString, outbound.getClass().getName());
                 for (BaseContext subcontext : outbound) {
@@ -155,7 +155,7 @@ public class LogContextTree extends AbstractProfileAction {
      * @return the leading indent string to print
      */
     private String getIndent(final int indent) {
-        StringBuffer buffer = new StringBuffer();
+        final StringBuffer buffer = new StringBuffer();
         for (int i=0; i<indent; i++) {
             buffer.append("----");
         }

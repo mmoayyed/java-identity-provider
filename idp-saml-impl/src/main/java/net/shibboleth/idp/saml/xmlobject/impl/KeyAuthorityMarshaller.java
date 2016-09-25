@@ -38,7 +38,7 @@ public class KeyAuthorityMarshaller extends AbstractXMLObjectMarshaller {
 
     /** {@inheritDoc} */
     protected void marshallAttributes(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
-        KeyAuthority keyAuthority = (KeyAuthority) xmlObject;
+        final KeyAuthority keyAuthority = (KeyAuthority) xmlObject;
 
         if (keyAuthority.getVerifyDepth() != null) {
             domElement.setAttributeNS(null, KeyAuthority.VERIFY_DEPTH_ATTRIB_NAME, keyAuthority.getVerifyDepth()

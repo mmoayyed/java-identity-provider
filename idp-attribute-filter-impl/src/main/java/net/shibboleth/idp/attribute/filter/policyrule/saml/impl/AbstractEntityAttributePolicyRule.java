@@ -112,7 +112,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
         Constraint.isNotNull(filterContext, "Context must be supplied");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        EntityDescriptor entityDescriptor = getEntityMetadata(filterContext);
+        final EntityDescriptor entityDescriptor = getEntityMetadata(filterContext);
         if (entityDescriptor == null) {
             log.info("{} No metadata available for the entity, returning FALSE", getLogPrefix());
             return Tristate.FALSE;

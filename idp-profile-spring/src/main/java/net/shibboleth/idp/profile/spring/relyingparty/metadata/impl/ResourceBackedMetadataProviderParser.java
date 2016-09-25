@@ -162,7 +162,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      */
     private void parseResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
-        BeanDefinitionBuilder resourceConverter = BeanDefinitionBuilder.genericBeanDefinition(ResourceHelper.class);
+        final BeanDefinitionBuilder resourceConverter = BeanDefinitionBuilder.genericBeanDefinition(ResourceHelper.class);
         resourceConverter.setLazyInit(true);
         resourceConverter.setFactoryMethod("of");
         resourceConverter.addConstructorArgValue(parserContext.getDelegate().parseCustomElement(element));
@@ -182,7 +182,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      */
     private void parseHTTPResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
-        BeanDefinitionBuilder clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
+        final BeanDefinitionBuilder clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
 
         clientBuilder.setLazyInit(true);
 

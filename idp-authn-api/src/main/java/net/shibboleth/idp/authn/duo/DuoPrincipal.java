@@ -80,7 +80,7 @@ public class DuoPrincipal implements CloneablePrincipal {
     /** {@inheritDoc} */
     @Override
     public DuoPrincipal clone() throws CloneNotSupportedException {
-        DuoPrincipal copy = (DuoPrincipal) super.clone();
+        final DuoPrincipal copy = (DuoPrincipal) super.clone();
         copy.username = username;
         return copy;
     }

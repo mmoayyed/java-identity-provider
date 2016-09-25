@@ -72,7 +72,7 @@ public class PKIXInlineValidationInfoFactoryBean extends AbstractBasicPKIXValida
         if (null == certificateFiles) {
             return null;
         }
-        List<X509Certificate> certificates = new ArrayList<>(certificateFiles.size());
+        final List<X509Certificate> certificates = new ArrayList<>(certificateFiles.size());
         for (String cert : certificateFiles) {
             try {
                 certificates.add(X509Support.decodeCertificate(cert.trim()));
@@ -93,7 +93,7 @@ public class PKIXInlineValidationInfoFactoryBean extends AbstractBasicPKIXValida
         if (null == crlStrings) {
             return null;
         }
-        List<X509CRL> crls = new ArrayList<>(crlStrings.size());
+        final List<X509CRL> crls = new ArrayList<>(crlStrings.size());
         for (String crl : crlStrings) {
             try {
                 crls.add(X509Support.decodeCRL(crl));

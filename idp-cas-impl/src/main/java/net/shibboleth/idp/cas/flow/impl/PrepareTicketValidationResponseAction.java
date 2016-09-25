@@ -103,9 +103,9 @@ public class PrepareTicketValidationResponseAction extends
 
         final TicketValidationResponse response = getCASResponse(profileRequestContext);
         response.setUserName(principal);
-        for (IdPAttribute attribute : ac.getIdPAttributes().values()) {
+        for (final IdPAttribute attribute : ac.getIdPAttributes().values()) {
             log.debug("Processing {}", attribute);
-            for (IdPAttributeValue<?> value : attribute.getValues()) {
+            for (final IdPAttributeValue<?> value : attribute.getValues()) {
                 response.addAttribute(attribute.getId(), value.getValue().toString());
             }
         }

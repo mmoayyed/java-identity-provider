@@ -61,12 +61,12 @@ public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
     /** {@inheritDoc} */
     @Override public BeanDefinition parse(final Element config, final ParserContext context) {
 
-        String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
+        final String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
 
         log.debug("Parsing attribute filter policy group {}", policyId);
 
         List<Element> children;
-        Map<QName, List<Element>> childrenMap = ElementSupport.getIndexedChildElements(config);
+        final Map<QName, List<Element>> childrenMap = ElementSupport.getIndexedChildElements(config);
 
         //
         // Top level definitions

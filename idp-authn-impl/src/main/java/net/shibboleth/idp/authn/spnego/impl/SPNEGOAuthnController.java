@@ -157,7 +157,7 @@ public class SPNEGOAuthnController {
             return null;
         }
 
-        byte[] tokenBytes;
+        final byte[] tokenBytes;
         try {
             tokenBytes = acceptor.acceptSecContext(gssapiData, 0, gssapiData.length);
             log.trace("GSS token accepted");
@@ -391,7 +391,7 @@ public class SPNEGOAuthnController {
      * @return true iff it represents a NTLM mechanism
      */
     private boolean isNTLMMechanism(@Nonnull final byte[] token) {
-        byte[] headerNTLM = {(byte) 0x4E, (byte) 0x54, (byte) 0x4C, (byte) 0x4D, (byte) 0x53, (byte) 0x53, (byte) 0x50};
+        final byte[] headerNTLM = {(byte) 0x4E, (byte) 0x54, (byte) 0x4C, (byte) 0x4D, (byte) 0x53, (byte) 0x53, (byte) 0x50};
         return Arrays.equals(headerNTLM, Arrays.copyOfRange(token, 0, 7));
     }
     

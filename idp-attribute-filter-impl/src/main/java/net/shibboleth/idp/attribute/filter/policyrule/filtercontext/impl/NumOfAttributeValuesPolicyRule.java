@@ -84,7 +84,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
         }
         
         final int numOfValues = attribute.getValues().size();
-        boolean result = (numOfValues >= minimumValues) && (numOfValues <= maximumValues);
+        final boolean result = (numOfValues >= minimumValues) && (numOfValues <= maximumValues);
         log.debug("{} Attribute {} has {} values, returning {}", getLogPrefix(), attributeId, numOfValues, result);
         
         if (result) {

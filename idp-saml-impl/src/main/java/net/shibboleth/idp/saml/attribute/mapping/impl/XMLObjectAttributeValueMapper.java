@@ -99,7 +99,7 @@ public class XMLObjectAttributeValueMapper extends AbstractSAMLAttributeValueMap
         }
         
         if (obj instanceof XMLObjectAttributeValueMapper) {
-            XMLObjectAttributeValueMapper other = (XMLObjectAttributeValueMapper) obj;
+            final XMLObjectAttributeValueMapper other = (XMLObjectAttributeValueMapper) obj;
             return isIncludeAttributeValue() == other.isIncludeAttributeValue(); 
         }
         return false;

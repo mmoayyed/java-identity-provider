@@ -139,7 +139,7 @@ public abstract class BaseCryptoTransientDecoder extends AbstractIdentifiableIni
         // local cache of cached entry to allow unsynchronised clearing.
         String prefix = logPrefix;
         if (null == prefix) {
-            StringBuilder builder = new StringBuilder("Crypto Transient Decoder '").append(getId()).append("':");
+            final StringBuilder builder = new StringBuilder("Crypto Transient Decoder '").append(getId()).append("':");
             prefix = builder.toString();
             if (null == logPrefix) {
                 logPrefix = prefix;

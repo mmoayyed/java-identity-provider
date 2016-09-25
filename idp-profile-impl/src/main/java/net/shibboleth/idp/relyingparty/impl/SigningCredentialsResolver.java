@@ -74,7 +74,7 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
     
     /** {@inheritDoc} */
     @Nullable public Credential resolveSingle(@Nullable final CriteriaSet criteriaSet) throws ResolverException {
-        Iterable<Credential> creds = resolve(criteriaSet);
+        final Iterable<Credential> creds = resolve(criteriaSet);
         if (creds.iterator().hasNext()) {
             return creds.iterator().next();
         } else {

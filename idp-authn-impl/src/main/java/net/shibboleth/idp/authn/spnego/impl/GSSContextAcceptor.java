@@ -114,7 +114,7 @@ public class GSSContextAcceptor {
         }
         
         log.trace("Processing an additional GSS input token");
-        byte[] tokenOut = context.acceptSecContext(inToken, offset, len);
+        final byte[] tokenOut = context.acceptSecContext(inToken, offset, len);
         if (context.isEstablished()) {
             log.trace("Security context established");
         } else {
@@ -248,8 +248,8 @@ public class GSSContextAcceptor {
             throws PrivilegedActionException {
         final PrivilegedExceptionAction<GSSCredential> action = new PrivilegedExceptionAction<GSSCredential>() {
             public GSSCredential run() throws GSSException {
-                GSSManager manager = GSSManager.getInstance();
-                GSSCredential newServerCreds =
+                final GSSManager manager = GSSManager.getInstance();
+                final GSSCredential newServerCreds =
                         manager.createCredential(null, GSSCredential.INDEFINITE_LIFETIME, spnegoOid,
                                 GSSCredential.ACCEPT_ONLY);
                 return newServerCreds;

@@ -49,8 +49,8 @@ public class ProcessSenderHandler extends AbstractMessageHandler {
 
     /** {@inheritDoc} */
     protected void doInvoke(final MessageContext messageContext) throws MessageHandlerException {
-        Sender header = getSender(messageContext);
-        String headerValue = header != null ? StringSupport.trimOrNull(header.getProviderID()) : null;
+        final Sender header = getSender(messageContext);
+        final String headerValue = header != null ? StringSupport.trimOrNull(header.getProviderID()) : null;
         log.debug("Extracted inbound Liberty ID-WSF Sender providerId value: {}", headerValue);
         if (header != null && headerValue != null) {
             messageContext.getSubcontext(SAMLPresenterEntityContext.class, true).setEntityId(headerValue);
@@ -65,7 +65,7 @@ public class ProcessSenderHandler extends AbstractMessageHandler {
      * @return the Sender header
      */
     protected Sender getSender(@Nonnull final MessageContext messageContext) {
-        List<XMLObject> senders = SOAPMessagingSupport.getInboundHeaderBlock(messageContext, 
+        final List<XMLObject> senders = SOAPMessagingSupport.getInboundHeaderBlock(messageContext, 
                 LibertyConstants.SOAP_BINDING_SENDER_ELEMENT_NAME);
         if (senders != null && !senders.isEmpty()) {
             return (Sender) senders.get(0);

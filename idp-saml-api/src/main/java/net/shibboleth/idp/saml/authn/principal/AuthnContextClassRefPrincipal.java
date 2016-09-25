@@ -56,7 +56,7 @@ public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
      * @return  the principal value in the form of an {@link AuthnContextClassRef}
      */
     @Nonnull public AuthnContextClassRef getAuthnContextClassRef() {
-        AuthnContextClassRef ref = (AuthnContextClassRef) Constraint.isNotNull(
+        final AuthnContextClassRef ref = (AuthnContextClassRef) Constraint.isNotNull(
                 XMLObjectSupport.getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME),
                     "No builder for AuthnContextClassRef").buildObject(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
         ref.setAuthnContextClassRef(getName());
@@ -95,7 +95,7 @@ public final class AuthnContextClassRefPrincipal implements CloneablePrincipal {
 
     /** {@inheritDoc} */
     public AuthnContextClassRefPrincipal clone() throws CloneNotSupportedException {
-        AuthnContextClassRefPrincipal copy = (AuthnContextClassRefPrincipal) super.clone();
+        final AuthnContextClassRefPrincipal copy = (AuthnContextClassRefPrincipal) super.clone();
         copy.authnContextClassRef = authnContextClassRef;
         return copy;
     }

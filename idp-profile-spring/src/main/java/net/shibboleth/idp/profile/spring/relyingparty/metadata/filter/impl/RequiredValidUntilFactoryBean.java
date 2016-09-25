@@ -63,7 +63,7 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
                 throw new IllegalArgumentException("Negative durations are not supported");
             } else {
                 // Treat as a Long and seconds.
-                long durationInMs = 1000 * Long.valueOf(maxValidityIntervalDuration);
+                final long durationInMs = 1000 * Long.valueOf(maxValidityIntervalDuration);
                 log.warn("Numerical duration form is deprecated. The property 'maxValidityInterval'"
                         + " on RequiredValidUntil metadata filter should use the duration notation: {}",
                         DOMTypeSupport.longToDuration(durationInMs));

@@ -88,7 +88,7 @@ public class KeyAuthorityImpl extends AbstractXMLObject implements KeyAuthority 
             return Collections.emptyList();
         }
         
-        ArrayList<XMLObject> children = new ArrayList<>();
+        final ArrayList<XMLObject> children = new ArrayList<>();
         children.addAll(keyInfos);
         return Collections.unmodifiableList(children);
     }

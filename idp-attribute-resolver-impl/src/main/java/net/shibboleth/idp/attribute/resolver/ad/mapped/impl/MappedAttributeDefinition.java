@@ -125,7 +125,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
     public void setDefaultValue(@Nullable final String newDefaultValue) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        String trimmedDefault = StringSupport.trimOrNull(newDefaultValue);
+        final String trimmedDefault = StringSupport.trimOrNull(newDefaultValue);
         if (null == trimmedDefault) {
             defaultValue = null;
         } else {

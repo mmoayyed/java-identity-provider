@@ -157,7 +157,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
             return false;
         }
         
-        Response response = responseLookupStrategy.apply(profileRequestContext);
+        final Response response = responseLookupStrategy.apply(profileRequestContext);
         if (response == null) {
             log.debug("{} No SAML Response located in current profile request context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MSG_CTX);
@@ -173,7 +173,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
         log.debug("{} Attempting to add a DelegationRestrictionType Condition to {} Assertion(s) in Response",
                 getLogPrefix(), assertions.size());
         
-        SAMLPresenterEntityContext presenterContext = presenterContextLookupStrategy.apply(profileRequestContext);
+        final SAMLPresenterEntityContext presenterContext = presenterContextLookupStrategy.apply(profileRequestContext);
         if (presenterContext == null || presenterContext.getEntityId() == null) {
             log.debug("{} No SAML presenter entityID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -181,7 +181,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
         }
         presenterEntityID = presenterContext.getEntityId();
         
-        LibertySSOSContext libertyContext = libertyContextLookupStrategy.apply(profileRequestContext);
+        final LibertySSOSContext libertyContext = libertyContextLookupStrategy.apply(profileRequestContext);
         if (libertyContext == null) {
             log.debug("{} No LibertySSOSContext", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
@@ -227,7 +227,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
      */
     protected void addDelegationRestriction(@Nonnull final ProfileRequestContext profileRequestContext, 
             @Nonnull final Conditions conditions) {
-        DelegationRestrictionType drt = buildDelegationRestriction(profileRequestContext);
+        final DelegationRestrictionType drt = buildDelegationRestriction(profileRequestContext);
         if (drt != null) {
             conditions.getConditions().add(drt);
         } else {
@@ -248,7 +248,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
             @Nonnull final ProfileRequestContext profileRequestContext) {
         DelegationRestrictionType drt = null;
         
-        Delegate newDelegate = buildDelegate(profileRequestContext);
+        final Delegate newDelegate = buildDelegate(profileRequestContext);
         
         drt = getDelegationRestrictionCondition(attestedAssertion.getConditions());
         
@@ -303,11 +303,11 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
      * @return the new Delegate instance
      */
     @Nonnull protected Delegate buildDelegate(@Nonnull final ProfileRequestContext profileRequestContext) {
-        NameID delegateNameID = (NameID) XMLObjectSupport.buildXMLObject(NameID.DEFAULT_ELEMENT_NAME);
+        final NameID delegateNameID = (NameID) XMLObjectSupport.buildXMLObject(NameID.DEFAULT_ELEMENT_NAME);
         delegateNameID.setValue(presenterEntityID);
         delegateNameID.setFormat(NameID.ENTITY);
         
-        Delegate newDelegate = (Delegate) XMLObjectSupport.buildXMLObject(Delegate.DEFAULT_ELEMENT_NAME);
+        final Delegate newDelegate = (Delegate) XMLObjectSupport.buildXMLObject(Delegate.DEFAULT_ELEMENT_NAME);
         newDelegate.setNameID(delegateNameID);
         newDelegate.setConfirmationMethod(attestedSubjectConfirmationMethod);
         newDelegate.setDelegationInstant(delegationInstant);

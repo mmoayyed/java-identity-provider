@@ -69,7 +69,7 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
             @Nonnull final BeanDefinitionBuilder builder) {
 
         if (element.hasAttributeNS(null, MATCH_IF_METADATA_SILENT_ATTR_NAME)) {
-            String matchIfSilent =
+            final String matchIfSilent =
                     StringSupport.trimOrNull(element.getAttributeNS(null, MATCH_IF_METADATA_SILENT_ATTR_NAME));
             log.debug("Registration Authority Filter: Match if Metadata silent = {}", matchIfSilent);
             builder.addPropertyValue("matchIfMetadataSilent", matchIfSilent);

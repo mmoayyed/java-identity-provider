@@ -111,7 +111,7 @@ public class MergePropertiesTask extends Task {
         
         for (Object propName:merge.keySet()) {
             if (propName instanceof String) {
-                String name = (String) propName;
+                final String name = (String) propName;
                 in.replaceProperty(name, merge.getProperty(name));
             } 
         }

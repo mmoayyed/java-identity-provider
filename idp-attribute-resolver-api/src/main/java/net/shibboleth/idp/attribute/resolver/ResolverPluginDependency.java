@@ -102,7 +102,7 @@ public final class ResolverPluginDependency {
             return false;
         }
 
-        ResolverPluginDependency other = (ResolverPluginDependency) obj;
+        final ResolverPluginDependency other = (ResolverPluginDependency) obj;
         if (java.util.Objects.equals(getDependencyPluginId(), other.getDependencyPluginId())
                 && java.util.Objects.equals(getDependencyAttributeId(), other.getDependencyAttributeId())) {
             return true;

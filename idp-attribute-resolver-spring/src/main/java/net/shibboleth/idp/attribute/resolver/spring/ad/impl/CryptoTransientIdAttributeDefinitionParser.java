@@ -60,7 +60,7 @@ public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDef
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
-        BeanDefinitionBuilder strategyBuilder =
+        final BeanDefinitionBuilder strategyBuilder =
                 BeanDefinitionBuilder.genericBeanDefinition(CryptoTransientIdGenerationStrategy.class);
 
         strategyBuilder.setInitMethodName("initialize");

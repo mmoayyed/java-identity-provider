@@ -81,9 +81,9 @@ public final class NotMatcher extends AbstractIdentifiableInitializableComponent
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        Set<IdPAttributeValue<?>> attributeValues = new HashSet<>(attribute.getValues());
+        final Set<IdPAttributeValue<?>> attributeValues = new HashSet<>(attribute.getValues());
 
-        Set<IdPAttributeValue<?>> matches = currentMatcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> matches = currentMatcher.getMatchingValues(attribute, filterContext);
         if (null == matches) {
             return matches;
         }

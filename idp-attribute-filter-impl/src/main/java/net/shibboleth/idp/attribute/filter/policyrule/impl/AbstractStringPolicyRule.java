@@ -79,7 +79,7 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
     protected Tristate stringCompare(@Nullable final String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
-        boolean result;
+        final boolean result;
         if (value == null) {
             result = matchString == null;
         } else if (ignoreCase) {

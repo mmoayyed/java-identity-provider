@@ -106,7 +106,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
 
-        Map<String, AttributeDefinition> checkedDefinitions;
+        final Map<String, AttributeDefinition> checkedDefinitions;
         if (definitions != null) {
             checkedDefinitions = new HashMap<>(definitions.size());
             for (final AttributeDefinition definition : definitions) {
@@ -123,7 +123,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
         attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
 
-        Map<String, DataConnector> checkedConnectors;
+        final Map<String, DataConnector> checkedConnectors;
         if (connectors != null) {
             checkedConnectors = new HashMap<>(connectors.size());
             for (final DataConnector connector : connectors) {
@@ -327,7 +327,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
 
         resolveDependencies(connector, resolutionContext);
-        Map<String, IdPAttribute> resolvedAttributes;
+        final Map<String, IdPAttribute> resolvedAttributes;
         try {
             log.debug("{} Resolving data connector {}", logPrefix, connectorId);
             resolvedAttributes = connector.resolve(resolutionContext);

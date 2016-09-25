@@ -72,7 +72,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
             @Nullable @NullableElements final Collection<AttributeFilterPolicy> policies) {
         setId(engineId);
 
-        ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<>();
+        final ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
         filterPolicies = ImmutableList.copyOf(Iterables.filter(checkedPolicies, Predicates.notNull()));
     }
@@ -100,7 +100,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
-        Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredIdPAttributes();
+        final Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredIdPAttributes();
 
         // Create work context to hold intermediate results.
         filterContext.getSubcontext(AttributeFilterWorkContext.class, true);

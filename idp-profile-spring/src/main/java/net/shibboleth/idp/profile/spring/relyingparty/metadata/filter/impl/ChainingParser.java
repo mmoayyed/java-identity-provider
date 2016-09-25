@@ -47,7 +47,7 @@ public class ChainingParser extends AbstractSingleBeanDefinitionParser {
 
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
-        List<Element> children =
+        final List<Element> children =
                 ElementSupport.getChildElements(element, AbstractMetadataProviderParser.METADATA_FILTER_ELEMENT_NAME);
 
         if (null != children && !children.isEmpty()) {

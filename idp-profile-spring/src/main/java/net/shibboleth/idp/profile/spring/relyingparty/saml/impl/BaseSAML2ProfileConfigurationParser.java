@@ -41,7 +41,7 @@ public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfil
      * @return the list of elements (which are subject to property replacement)
      */
     protected List<String> getProxyAudiences(final Element element) {
-        List<Element> audienceElems =
+        final List<Element> audienceElems =
                 ElementSupport.getChildElementsByTagNameNS(element, RelyingPartySAMLNamespaceHandler.NAMESPACE,
                         "ProxyAudience");
         return SpringSupport.getElementTextContentAsManagedList(audienceElems);

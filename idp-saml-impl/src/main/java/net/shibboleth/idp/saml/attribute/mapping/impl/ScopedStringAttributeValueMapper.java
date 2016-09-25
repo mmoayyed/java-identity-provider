@@ -96,7 +96,7 @@ public class ScopedStringAttributeValueMapper extends AbstractSAMLAttributeValue
         }
         
         if (obj instanceof ScopedStringAttributeValueMapper) {
-            ScopedStringAttributeValueMapper other = (ScopedStringAttributeValueMapper) obj;
+            final ScopedStringAttributeValueMapper other = (ScopedStringAttributeValueMapper) obj;
             return java.util.Objects.equals(getDelimiter(), other.getDelimiter());
         }
         return false;

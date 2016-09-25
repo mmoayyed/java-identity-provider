@@ -64,7 +64,7 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
         final List<Element> validationInfoElements = ElementSupport.getChildElements(element, VALIDATION_INFO);
         final List<Element> trustedNameElements = ElementSupport.getChildElements(element, TRUSTED_NAMES);
 
-        BeanDefinitionBuilder builder =
+        final BeanDefinitionBuilder builder =
                 BeanDefinitionBuilder.genericBeanDefinition(StaticPKIXValidationInformationResolver.class);
         builder.addConstructorArgValue(SpringSupport.parseCustomElements(validationInfoElements, parserContext));
         builder.addConstructorArgValue(SpringSupport.getElementTextContentAsManagedList(trustedNameElements));
@@ -83,7 +83,7 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
     protected BeanDefinition getPKIXTrustEvaluator(@Nonnull final Element element,
             @Nonnull final ParserContext parserContext) {
 
-        BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(CertPathPKIXTrustEvaluator.class);
+        final BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(CertPathPKIXTrustEvaluator.class);
 
         final List<Element> validationOptionsElements =
                 ElementSupport.getChildElements(element, PKIXValidationOptionsParser.ELEMENT_NAME);
@@ -108,7 +108,7 @@ public abstract class AbstractStaticPKIXParser extends AbstractTrustEngineParser
 
         final BeanDefinitionBuilder builder =
                 BeanDefinitionBuilder.genericBeanDefinition(X509CredentialNameEvaluatorFactoryBean.class);
-        String attrValue = StringSupport.trimOrNull(element.getAttributeNS(null, "trustedNameCheckEnabled"));
+        final String attrValue = StringSupport.trimOrNull(element.getAttributeNS(null, "trustedNameCheckEnabled"));
         if (attrValue != null) {
             builder.addPropertyValue("trustedNameCheckEnabled", attrValue);
         }

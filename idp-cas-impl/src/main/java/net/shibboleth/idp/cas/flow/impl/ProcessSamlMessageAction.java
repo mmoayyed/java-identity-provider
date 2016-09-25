@@ -74,7 +74,7 @@ public class ProcessSamlMessageAction extends
         String ticket = null;
         if (msgContext.getMessage() instanceof Request) {
             final Request request = (Request) msgContext.getMessage();
-            for (AssertionArtifact artifact : request.getAssertionArtifacts()) {
+            for (final AssertionArtifact artifact : request.getAssertionArtifacts()) {
                 ticket = artifact.getAssertionArtifact();
                 break;
             }

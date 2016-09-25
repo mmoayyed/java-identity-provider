@@ -33,7 +33,7 @@ public class ScopeMarshaller extends AbstractXMLObjectMarshaller {
 
     /** {@inheritDoc} */
     protected void marshallAttributes(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
-        Scope scope = (Scope) xmlObject;
+        final Scope scope = (Scope) xmlObject;
 
         if (scope.getRegexpXSBoolean() != null) {
             domElement.setAttributeNS(null, Scope.REGEXP_ATTRIB_NAME, scope.getRegexpXSBoolean().toString());
@@ -43,7 +43,7 @@ public class ScopeMarshaller extends AbstractXMLObjectMarshaller {
 
     /** {@inheritDoc} */
     protected void marshallElementContent(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
-        Scope shibMDScope = (Scope) xmlObject;
+        final Scope shibMDScope = (Scope) xmlObject;
 
         ElementSupport.appendTextContent(domElement, shibMDScope.getValue());
     }

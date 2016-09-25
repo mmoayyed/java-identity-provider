@@ -219,7 +219,7 @@ public class DefaultAuthenticationResultSerializer extends AbstractInitializable
             final JsonObject obj = (JsonObject) st;
 
             final String flowId = obj.getString(FLOW_ID_FIELD);
-            long authnInstant = obj.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact();
+            final long authnInstant = obj.getJsonNumber(AUTHN_INSTANT_FIELD).longValueExact();
 
             final AuthenticationResult result = new AuthenticationResult(flowId, new Subject());
             result.setAuthenticationInstant(authnInstant);

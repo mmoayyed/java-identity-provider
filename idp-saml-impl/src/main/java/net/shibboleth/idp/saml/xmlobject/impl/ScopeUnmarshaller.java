@@ -37,7 +37,7 @@ public class ScopeUnmarshaller extends AbstractXMLObjectUnmarshaller {
 
     /** {@inheritDoc} */
     protected void processAttribute(final XMLObject xmlObject, final Attr attribute) throws UnmarshallingException {
-        Scope scope = (Scope) xmlObject;
+        final Scope scope = (Scope) xmlObject;
 
         if (attribute.getLocalName().equals(Scope.REGEXP_ATTRIB_NAME)) {
             scope.setRegexp(Boolean.valueOf(attribute.getValue()));
@@ -49,7 +49,7 @@ public class ScopeUnmarshaller extends AbstractXMLObjectUnmarshaller {
 
     /** {@inheritDoc} */
     protected void processElementContent(final XMLObject xmlObject, final String elementContent) {
-        Scope scope = (Scope) xmlObject;
+        final Scope scope = (Scope) xmlObject;
         scope.setValue(elementContent);
     }
 }

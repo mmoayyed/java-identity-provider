@@ -184,7 +184,7 @@ public class SAML1NameIdentifierAttributeDefinition extends AbstractAttributeDef
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-        List<? extends IdPAttributeValue<?>> inputValues;
+        final List<? extends IdPAttributeValue<?>> inputValues;
         List<? extends IdPAttributeValue<?>> outputValues = null;
         final IdPAttribute result = new IdPAttribute(getId());
 
