@@ -80,7 +80,7 @@ public class PreferExplicitOrderComparator implements Comparator<String> {
      * 
      * @throws NullPointerException if either argument is null
      */
-    public int compare(String o1, String o2) {
+    public int compare(final String o1, final String o2) {
 
         final boolean containsLeft = explicitOrder.contains(o1);
         final boolean containsRight = explicitOrder.contains(o2);

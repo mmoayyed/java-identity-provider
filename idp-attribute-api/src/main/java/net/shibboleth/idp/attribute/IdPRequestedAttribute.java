@@ -30,7 +30,7 @@ public class IdPRequestedAttribute extends IdPAttribute {
      *
      * @param attributeId the id
      */
-    public IdPRequestedAttribute(String attributeId) {
+    public IdPRequestedAttribute(final String attributeId) {
         super(attributeId);
     }
 
@@ -48,7 +48,7 @@ public class IdPRequestedAttribute extends IdPAttribute {
      * 
      * @param required The flag to set.
      */
-    public void setRequired(boolean required) {
+    public void setRequired(final boolean required) {
         this.isRequired = required;
     }
 

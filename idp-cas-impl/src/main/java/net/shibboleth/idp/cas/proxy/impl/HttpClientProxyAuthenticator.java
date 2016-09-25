@@ -91,7 +91,7 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
                         certificates[0].getSubjectDN().getName(),
                         certificates[0].getIssuerDN().getName());
                 return trustEngine.validate(new BasicX509Credential(certificates[0]), new CriteriaSet());
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 throw new CertificateException("X509 validation error", e);
             }
         }
@@ -136,14 +136,14 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
                             .build());
             response = httpClient.execute(request);
             return response.getStatusLine().getStatusCode();
-        } catch (ClientProtocolException e) {
+        } catch (final ClientProtocolException e) {
             throw new GeneralSecurityException("HTTP protocol error", e);
-        } catch (SSLException e) {
+        } catch (final SSLException e) {
             if (e.getCause() instanceof CertificateException) {
                 throw (CertificateException) e.getCause();
             }
             throw new GeneralSecurityException("SSL connection error", e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new GeneralSecurityException("IO error", e);
         } finally {
             close(response);
@@ -167,7 +167,7 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
             socketFactory = new SSLConnectionSocketFactory(
                     sslContext,
                     SSLConnectionSocketFactory.STRICT_HOSTNAME_VERIFIER);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("SSL initialization error", e);
         }
         final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -181,11 +181,11 @@ public class HttpClientProxyAuthenticator extends AbstractProxyAuthenticator {
      * 
      * @param resource the resource to close
      */
-    private void close(Closeable resource) {
+    private void close(final Closeable resource) {
         if (resource != null) {
             try {
                 resource.close();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 log.warn("Error closing " + resource, e);
             }
         }

@@ -51,7 +51,7 @@ public class KeyAuthorityImpl extends AbstractXMLObject implements KeyAuthority 
      * @param elementLocalName the local name of the XML element this Object represents
      * @param namespacePrefix the prefix for the given namespace
      */
-    protected KeyAuthorityImpl(String namespaceURI, String elementLocalName, String namespacePrefix) {
+    protected KeyAuthorityImpl(final String namespaceURI, final String elementLocalName, final String namespacePrefix) {
         super(namespaceURI, elementLocalName, namespacePrefix);
         keyInfos = new XMLObjectChildrenList<>(this);
         unknownAttributes = new AttributeMap(this);
@@ -71,7 +71,7 @@ public class KeyAuthorityImpl extends AbstractXMLObject implements KeyAuthority 
 
     /** {@inheritDoc} */
     @Override
-    public void setVerifyDepth(Integer newVerifyDepth) {
+    public void setVerifyDepth(final Integer newVerifyDepth) {
         verifyDepth = prepareForAssignment(verifyDepth, newVerifyDepth);
     }
 

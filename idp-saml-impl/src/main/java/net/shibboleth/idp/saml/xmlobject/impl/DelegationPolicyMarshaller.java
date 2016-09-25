@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 public class DelegationPolicyMarshaller extends AbstractSAMLObjectMarshaller {
 
     /** {@inheritDoc} */
-    protected void marshallAttributes(XMLObject xmlObject, Element domElement) throws MarshallingException {
+    protected void marshallAttributes(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
         DelegationPolicy delegationPolicy = (DelegationPolicy) xmlObject;
 
         if (delegationPolicy.getMaximumTokenDelegationChainLength() != null) {

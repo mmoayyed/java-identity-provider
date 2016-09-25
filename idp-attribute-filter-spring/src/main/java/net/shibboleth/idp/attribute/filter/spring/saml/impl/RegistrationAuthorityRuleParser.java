@@ -66,7 +66,7 @@ public class RegistrationAuthorityRuleParser extends BasePolicyRuleParser {
 
     /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
-            @Nonnull BeanDefinitionBuilder builder) {
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         if (element.hasAttributeNS(null, MATCH_IF_METADATA_SILENT_ATTR_NAME)) {
             String matchIfSilent =

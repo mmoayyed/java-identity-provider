@@ -73,7 +73,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Nonnull public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         
         final IdPAttribute attribute = filterContext.getPrefilteredIdPAttributes().get(attributeId);
@@ -107,7 +107,7 @@ public class NumOfAttributeValuesPolicyRule extends AbstractPolicyRule {
      * 
      * @param attribute The attributeId to set.
      */
-    public void setAttributeId(@Nonnull @NotEmpty String attribute) {
+    public void setAttributeId(@Nonnull @NotEmpty final String attribute) {
         attributeId = Constraint.isNotNull(StringSupport.trimOrNull(attribute), "attributeID must be nonempty");
     }
 

@@ -146,7 +146,7 @@ public class PopulateLibertyContext extends AbstractProfileAction {
 
         /** {@inheritDoc} */
         @Nullable
-        public SAML20AssertionToken apply(@Nullable ProfileRequestContext input) {
+        public SAML20AssertionToken apply(@Nullable final ProfileRequestContext input) {
             if (input == null) {
                 return null;
             }

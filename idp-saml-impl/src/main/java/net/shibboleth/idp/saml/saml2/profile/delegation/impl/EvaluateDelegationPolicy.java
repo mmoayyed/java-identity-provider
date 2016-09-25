@@ -154,7 +154,7 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
@@ -355,7 +355,7 @@ public class EvaluateDelegationPolicy extends AbstractProfileAction {
 
         /** {@inheritDoc} */
         @Nullable
-        public Long apply(@Nullable ProfileRequestContext input) {
+        public Long apply(@Nullable final ProfileRequestContext input) {
             if (assertionToken == null || assertionToken.getAdvice() == null) {
                 return null;
             }

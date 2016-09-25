@@ -55,12 +55,12 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
     private final Logger log = LoggerFactory.getLogger(RelyingPartyGroupParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<DefaultRelyingPartyConfigurationResolver> getBeanClass(Element element) {
+    @Override protected Class<DefaultRelyingPartyConfigurationResolver> getBeanClass(final Element element) {
         return DefaultRelyingPartyConfigurationResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         final Map<QName, List<Element>> configChildren = ElementSupport.getIndexedChildElements(element);
         builder.setLazyInit(true);
@@ -118,7 +118,7 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
      * 
      * @param builder the builder for the resolver
      */
-    private void seDefaultSecurityConfiguration(BeanDefinitionBuilder builder) {
+    private void seDefaultSecurityConfiguration(final BeanDefinitionBuilder builder) {
 
         final BeanDefinitionBuilder signatureValidationConfig =
                 BeanDefinitionBuilder.genericBeanDefinition(BasicSignatureValidationConfiguration.class);

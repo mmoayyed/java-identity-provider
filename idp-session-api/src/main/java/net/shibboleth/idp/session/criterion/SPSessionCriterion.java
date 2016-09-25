@@ -82,7 +82,7 @@ public final class SPSessionCriterion implements Criterion {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

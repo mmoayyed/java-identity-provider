@@ -35,12 +35,12 @@ public class DisabledHistogram extends Histogram implements DisabledMetric {
     }
 
     /** {@inheritDoc} */
-    @Override public void update(int value) {
+    @Override public void update(final int value) {
         
     }
 
     /** {@inheritDoc} */
-    @Override public void update(long value) {
+    @Override public void update(final long value) {
         
     }
 

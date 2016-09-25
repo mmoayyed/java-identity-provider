@@ -76,7 +76,7 @@ public class ProcessFrameworkHandler extends AbstractMessageHandler {
     }
 
     /** {@inheritDoc} */
-    protected void doInvoke(MessageContext messageContext) throws MessageHandlerException {
+    protected void doInvoke(final MessageContext messageContext) throws MessageHandlerException {
         Framework header = getFramework(messageContext);
         String headerVersion = header != null ? StringSupport.trimOrNull(header.getVersion()) : null;
         log.debug("Checking inbound message Liberty ID-WSF Framework version value: {}", headerVersion);

@@ -104,7 +104,7 @@ public class SignatureValidationCriteriaSetFactoryBean implements FactoryBean<Cr
      * 
      * @param flag the flag value
      */
-    public void setIncludeOpenSAMLGlobalConfig(boolean flag) {
+    public void setIncludeOpenSAMLGlobalConfig(final boolean flag) {
         includeOpenSAMLGlobalConfig = flag;
     }
 

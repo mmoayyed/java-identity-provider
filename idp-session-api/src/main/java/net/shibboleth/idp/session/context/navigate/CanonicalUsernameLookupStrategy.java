@@ -32,7 +32,7 @@ public class CanonicalUsernameLookupStrategy implements Function<ProfileRequestC
 
     /** {@inheritDoc} */
     @Override
-    public String apply(ProfileRequestContext input) {
+    public String apply(final ProfileRequestContext input) {
         
         if (input != null) {
             final SubjectCanonicalizationContext c14nContext =

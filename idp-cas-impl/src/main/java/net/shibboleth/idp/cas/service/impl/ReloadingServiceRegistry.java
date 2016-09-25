@@ -47,13 +47,13 @@ public class ReloadingServiceRegistry extends AbstractIdentifiableInitializableC
      *
      * @param delegate The service to which operations are delegated.
      */
-    public ReloadingServiceRegistry(@Nonnull ReloadableService<ServiceRegistry> delegate) {
+    public ReloadingServiceRegistry(@Nonnull final ReloadableService<ServiceRegistry> delegate) {
         service = Constraint.isNotNull(delegate, "ReloadableService cannot be null");
     }
 
     @Nullable
     @Override
-    public Service lookup(@Nonnull String serviceURL) {
+    public Service lookup(@Nonnull final String serviceURL) {
         ServiceableComponent<ServiceRegistry> component = null;
         try {
             component = service.getServiceableComponent();

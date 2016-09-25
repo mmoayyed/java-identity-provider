@@ -203,7 +203,7 @@ public final class SAMLEncoderSupport {
      */
     public static XMLObject encodeScopedStringValueInline(@Nonnull final IdPAttribute attribute,
             @Nonnull final QName attributeValueElementName, @Nullable final ScopedStringAttributeValue value,
-            @Nonnull String scopeDelimiter, final boolean withType) {
+            @Nonnull final String scopeDelimiter, final boolean withType) {
         Constraint.isNotNull(attribute, "Attribute cannot be null");
         Constraint.isNotNull(attributeValueElementName, "Attribute Element Name cannot be null");
         Constraint.isNotNull(scopeDelimiter, "Scope delimiter cannot be null");

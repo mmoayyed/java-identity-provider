@@ -137,7 +137,7 @@ public class FilterAttributes extends AbstractProfileAction {
         metadataFromFilterLookupStrategy = Functions.compose(
                 new Function<ProfileRequestContext,SAMLMetadataContext>() {
                     @Override
-                    public SAMLMetadataContext apply(ProfileRequestContext input) {
+                    public SAMLMetadataContext apply(final ProfileRequestContext input) {
                         return metadataContextLookupStrategy.apply(input);
                     }
                 },

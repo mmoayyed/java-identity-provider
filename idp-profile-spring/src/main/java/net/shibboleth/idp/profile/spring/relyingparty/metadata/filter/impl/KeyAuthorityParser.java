@@ -36,13 +36,13 @@ public class KeyAuthorityParser extends AbstractSingleBeanDefinitionParser {
     public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "KeyAuthority");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return KeyAuthorityNodeProcessor.class;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         
     }
 

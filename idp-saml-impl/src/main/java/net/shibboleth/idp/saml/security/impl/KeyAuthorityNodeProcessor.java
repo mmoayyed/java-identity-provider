@@ -47,7 +47,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
 
     /** {@inheritDoc} */
     @Override
-    public void process(XMLObject metadataNode) throws FilterException {
+    public void process(final XMLObject metadataNode) throws FilterException {
         if (metadataNode instanceof EntitiesDescriptor) {
             handleEntitiesDescriptor((EntitiesDescriptor) metadataNode);
         } else if (metadataNode instanceof EntityDescriptor) {
@@ -62,7 +62,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
      * 
      * @throws FilterException if there is a fatal error during processing
      */
-    protected void handleEntitiesDescriptor(EntitiesDescriptor entitiesDescriptor) throws FilterException {
+    protected void handleEntitiesDescriptor(final EntitiesDescriptor entitiesDescriptor) throws FilterException {
         log.debug("Processing EntitiesDescriptor with id '{}', name '{}'", 
                 entitiesDescriptor.getID(), entitiesDescriptor.getName());
         
@@ -81,7 +81,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
                 if (pkixInfo != null) {
                     keyAuthority.getObjectMetadata().put(pkixInfo);
                 }
-            } catch (SecurityException e) {
+            } catch (final SecurityException e) {
                 //TODO should throw here or just log error and continue?  
                 throw new FilterException("Error extracting PKIX validation info from KeyAuthority", e);
             }
@@ -96,7 +96,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
      * 
      * @throws FilterException if there is a fatal error during processing
      */
-    protected void handleEntityDescriptor(EntityDescriptor entityDescriptor) throws FilterException {
+    protected void handleEntityDescriptor(final EntityDescriptor entityDescriptor) throws FilterException {
         XMLObject currentParent = entityDescriptor.getParent();
         while (currentParent != null) {
             if (currentParent instanceof EntitiesDescriptor) {
@@ -115,7 +115,7 @@ public class KeyAuthorityNodeProcessor implements MetadataNodeProcessor {
      * @param entitiesDescriptor the entities descriptor to process.
      * @return list of XMLObjects
      */
-    @Nonnull protected List<XMLObject> getKeyAuthorities(@Nonnull EntitiesDescriptor entitiesDescriptor) {
+    @Nonnull protected List<XMLObject> getKeyAuthorities(@Nonnull final EntitiesDescriptor entitiesDescriptor) {
         Extensions extensions = entitiesDescriptor.getExtensions();
         if (extensions == null) {
             return Collections.emptyList();

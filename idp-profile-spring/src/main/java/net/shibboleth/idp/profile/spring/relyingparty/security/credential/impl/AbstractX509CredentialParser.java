@@ -58,7 +58,7 @@ public abstract class AbstractX509CredentialParser extends AbstractCredentialPar
     private Logger log = LoggerFactory.getLogger(AbstractX509CredentialParser.class);
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final BeanDefinitionBuilder builder) {
         super.doParse(element, builder);
         parsePrivateKey(ElementSupport.getChildElements(element, PRIVATE_KEY_ELEMENT_NAME), builder);
         parseCertificates(ElementSupport.getChildElements(element, CERTIFICATE_ELEMENT_NAME), builder);

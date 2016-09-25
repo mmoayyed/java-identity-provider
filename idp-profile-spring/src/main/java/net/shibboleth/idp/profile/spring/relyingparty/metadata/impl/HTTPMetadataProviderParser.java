@@ -71,14 +71,14 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
     private final Logger log = LoggerFactory.getLogger(HTTPMetadataProviderParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<? extends HTTPMetadataResolver> getNativeBeanClass(Element element) {
+    @Override protected Class<? extends HTTPMetadataResolver> getNativeBeanClass(final Element element) {
         return HTTPMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF
-    @Override protected void doNativeParse(Element element, ParserContext parserContext,
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "cacheDuration")) {
@@ -141,7 +141,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      */
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
-    private BeanDefinition buildHttpClient(Element element, ParserContext parserContext, boolean haveTLSTrustEngine) {
+    private BeanDefinition buildHttpClient(final Element element, final ParserContext parserContext, final boolean haveTLSTrustEngine) {
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
             caching = StringSupport.trimOrNull(element.getAttributeNS(null, "httpCaching"));
@@ -236,7 +236,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * @param element the HTTPMetadataProvider parser.
      * @return the bean definition with the username and password.
      */
-    private BeanDefinition buildBasicCredentials(Element element) {
+    private BeanDefinition buildBasicCredentials(final Element element) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);
 
         builder.setLazyInit(true);
@@ -254,7 +254,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * @param parserContext context
      * @return the bean definition
      */
-    private BeanDefinition parseTLSTrustEngine(Element element, ParserContext parserContext) {
+    private BeanDefinition parseTLSTrustEngine(final Element element, final ParserContext parserContext) {
         Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, TLS_TRUST_ENGINE_ELEMENT_NAME);
         if (tlsTrustEngine != null) {
             Element trustEngine =

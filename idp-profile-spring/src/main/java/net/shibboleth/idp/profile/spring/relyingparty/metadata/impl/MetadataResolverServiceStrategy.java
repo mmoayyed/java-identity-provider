@@ -50,7 +50,7 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
         Function<ApplicationContext, ServiceableComponent<MetadataResolver>> {
 
     /** {@inheritDoc} */
-    @Override @Nullable public ServiceableComponent<MetadataResolver> apply(@Nullable ApplicationContext appContext) {
+    @Override @Nullable public ServiceableComponent<MetadataResolver> apply(@Nullable final ApplicationContext appContext) {
         final Collection<RelyingPartyMetadataProvider> resolvers =
                 appContext.getBeansOfType(RelyingPartyMetadataProvider.class).values();
 
@@ -66,7 +66,7 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
         for (RelyingPartyMetadataProvider resolver:resolvers) {
             try {
                 resolver.initialize();
-            } catch (ComponentInitializationException e) {
+            } catch (final ComponentInitializationException e) {
                 throw new BeanCreationException("could not preinitialize , metadata provider " + resolver.getId(), e);
             }
         }
@@ -82,7 +82,7 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
             final RelyingPartyMetadataProvider result = new RelyingPartyMetadataProvider(chain);
             result.initialize();
             return result;
-        } catch (ResolverException | ComponentInitializationException e) {
+        } catch (final ResolverException | ComponentInitializationException e) {
            throw new ServiceException("Chaining constructor create failed", e);
         }
     }

@@ -37,13 +37,13 @@ public class FileBackedHTTPMetadataProviderParser extends HTTPMetadataProviderPa
             "FileBackedHTTPMetadataProvider");
 
     /** {@inheritDoc} */
-    @Override protected Class<FileBackedHTTPMetadataResolver> getNativeBeanClass(Element element) {
+    @Override protected Class<FileBackedHTTPMetadataResolver> getNativeBeanClass(final Element element) {
         return FileBackedHTTPMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext,
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "backingFile")));

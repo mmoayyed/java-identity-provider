@@ -58,7 +58,7 @@ public class CounterStorageKeyComparator implements Comparator<String> {
     }
 
     /** {@inheritDoc} */
-    public int compare(String o1, String o2) {
+    public int compare(final String o1, final String o2) {
 
         final Long counter1 = keyToCounterMap.get(o1);
         final Long counter2 = keyToCounterMap.get(o2);

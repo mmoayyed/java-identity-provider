@@ -57,7 +57,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
      * 
      * @param fromMap  map to populate registry with
      */
-    public PrincipalEvalPredicateFactoryRegistry(@Nonnull @NonnullElements
+    public PrincipalEvalPredicateFactoryRegistry(@Nonnull @NonnullElements final
             Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
         registry = new ConcurrentHashMap(Constraint.isNotNull(fromMap, "Source map cannot be null"));
     }
@@ -95,7 +95,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
      * @param factory   the predicate factory to register
      */
     public void register(@Nonnull final Class<? extends Principal> principalType,
-            @Nonnull @NotEmpty final String operator, @Nonnull PrincipalEvalPredicateFactory factory) {
+            @Nonnull @NotEmpty final String operator, @Nonnull final PrincipalEvalPredicateFactory factory) {
         Constraint.isNotNull(principalType, "Principal subtype cannot be null");
         String trimmed = Constraint.isNotNull(StringSupport.trimOrNull(operator), "Operator cannot be null or empty");
         Constraint.isNotNull(factory, "PrincipalEvalPredicateFactory cannot be null");

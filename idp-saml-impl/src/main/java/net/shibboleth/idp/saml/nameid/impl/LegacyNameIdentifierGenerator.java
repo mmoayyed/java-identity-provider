@@ -77,7 +77,7 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
      * 
      * @param clazz encoder class type
      */
-    protected LegacyNameIdentifierGenerator(@Nonnull Class<? extends NameIdentifierAttributeEncoder> clazz) {
+    protected LegacyNameIdentifierGenerator(@Nonnull final Class<? extends NameIdentifierAttributeEncoder> clazz) {
         activationCondition = Predicates.alwaysTrue();
         encoderType = Constraint.isNotNull(clazz, "Encoder class type cannot be null");
 
@@ -141,7 +141,7 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
                         log.debug("Encoded attribute {} into name identifier with format {}", idpAttribute.getId(),
                                 format);
                         return nameId;
-                    } catch (AttributeEncodingException e) {
+                    } catch (final AttributeEncodingException e) {
                         log.error("Error encoding IdPAttribute into name identifier", e);
                     }
                 }

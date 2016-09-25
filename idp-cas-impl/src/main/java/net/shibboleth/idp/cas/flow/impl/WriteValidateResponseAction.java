@@ -69,7 +69,7 @@ public class WriteValidateResponseAction extends
                 output.print("no\n\n");
             }
             output.flush();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("IO error writing CAS protocol response", e);
         }
         return null;

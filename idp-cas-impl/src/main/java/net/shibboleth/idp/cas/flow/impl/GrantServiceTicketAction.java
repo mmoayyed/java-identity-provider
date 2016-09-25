@@ -74,7 +74,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      *
      * @param ticketService Ticket service component.
      */
-    public GrantServiceTicketAction(@Nonnull TicketServiceEx ticketService) {
+    public GrantServiceTicketAction(@Nonnull final TicketServiceEx ticketService) {
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 
@@ -116,7 +116,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
                     request.getService(),
                     state,
                     request.isRenew());
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             log.error("Failed granting service ticket due to error.", e);
             return ProtocolError.TicketCreationError.event(this);
         }
@@ -138,7 +138,7 @@ public class GrantServiceTicketAction extends AbstractCASProtocolAction<ServiceT
      *
      * @throws IllegalStateException If no authentication results are found.
      */
-    private AuthenticationResult getLatestAuthenticationResult(IdPSession session) {
+    private AuthenticationResult getLatestAuthenticationResult(final IdPSession session) {
         AuthenticationResult latest = null;
         for (final AuthenticationResult result : session.getAuthenticationResults()) {
             if (latest == null || result.getAuthenticationInstant() > latest.getAuthenticationInstant()) {

@@ -163,7 +163,7 @@ public class SelfSignedCertificateGeneratorTask extends Task {
     public void execute() {
         try {
             generator.generate();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log("Build failed", e, Project.MSG_ERR);
             throw new BuildException(e);
         }

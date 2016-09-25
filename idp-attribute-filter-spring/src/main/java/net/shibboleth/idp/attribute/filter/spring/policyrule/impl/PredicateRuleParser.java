@@ -51,8 +51,8 @@ public class PredicateRuleParser extends BasePolicyRuleParser {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(@Nonnull Element element, @Nonnull ParserContext parserContext,
-            @Nonnull BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         builder.addPropertyReference("rulePredicate",
                 StringSupport.trimOrNull(element.getAttributeNS(null, "rulePredicateRef")));

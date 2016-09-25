@@ -57,7 +57,7 @@ public class NameIDCanonicalizationFlowDescriptor extends SubjectCanonicalizatio
      * 
      * @param theFormats The formats to set.
      */
-    public void setFormats(@Nonnull Collection<String> theFormats) {
+    public void setFormats(@Nonnull final Collection<String> theFormats) {
         Constraint.isNotNull(theFormats, "Format list must be non null");
         Constraint.isNotEmpty(theFormats, "Format list must be non empty");
         final Set<String> newFormats = new HashSet(theFormats.size());

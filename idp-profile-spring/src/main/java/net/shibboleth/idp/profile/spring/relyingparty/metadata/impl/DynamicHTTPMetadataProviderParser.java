@@ -59,13 +59,13 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
 
     /** {@inheritDoc} */
     @Override
-    protected Class<? extends MetadataResolver> getNativeBeanClass(Element element) {
+    protected Class<? extends MetadataResolver> getNativeBeanClass(final Element element) {
         return FunctionDrivenDynamicHTTPMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext,
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         builder.addPropertyValue("requestURLBuilder", getRequestURLBuilder(element));
@@ -78,7 +78,7 @@ public class DynamicHTTPMetadataProviderParser extends AbstractDynamicHTTPMetada
      * @param element the parent metadata provider element
      * @return the function
      */
-    protected BeanDefinition getRequestURLBuilder(Element element) {
+    protected BeanDefinition getRequestURLBuilder(final Element element) {
         // Note: we have to do this BeanDefinitionBuilder business b/c for the template one, we need to
         // inject the VelocityEngine. Otherwise would be easier to just return the Function directly.
 

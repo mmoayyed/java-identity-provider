@@ -120,7 +120,7 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
      * 
      * @param password The password to set.
      */
-    public void setPrivateKeyPassword(@Nullable char[] password) {
+    public void setPrivateKeyPassword(@Nullable final char[] password) {
         if (null != password && password.length > 0) {
             privateKeyPassword = password;
         } else {
@@ -138,7 +138,7 @@ public abstract class AbstractCredentialFactoryBean<T extends Credential> extend
     /** For logging, set the description of the resource that defined this bean.
      * @param desc what to set.
      */
-    public void setConfigDescription(@Nonnull String desc) {
+    public void setConfigDescription(@Nonnull final String desc) {
         configDescription = desc;
     }
 }

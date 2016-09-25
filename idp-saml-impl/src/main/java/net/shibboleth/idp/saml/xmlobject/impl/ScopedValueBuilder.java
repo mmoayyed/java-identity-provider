@@ -28,7 +28,7 @@ import org.opensaml.core.xml.AbstractXMLObjectBuilder;
 public class ScopedValueBuilder extends AbstractXMLObjectBuilder<ScopedValue> {
 
     /** {@inheritDoc} */
-    public ScopedValue buildObject(String namespaceURI, String localName, String namespacePrefix) {
+    public ScopedValue buildObject(final String namespaceURI, final String localName, final String namespacePrefix) {
         return new ScopedValueImpl(namespaceURI, localName, namespacePrefix);
     }
 }

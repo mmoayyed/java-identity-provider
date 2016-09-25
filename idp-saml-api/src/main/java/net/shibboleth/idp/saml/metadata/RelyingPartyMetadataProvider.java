@@ -71,7 +71,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
      * 
      * @param key what to set
      */
-    public void setSortKey(int key) {
+    public void setSortKey(final int key) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         sortKey = new Integer(key);
     }
@@ -167,7 +167,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     }
     
     /** {@inheritDoc} */
-    @Override public int compareTo(RelyingPartyMetadataProvider other) {
+    @Override public int compareTo(final RelyingPartyMetadataProvider other) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         int result = sortKey.compareTo(other.sortKey);
         if (result != 0) {
@@ -183,7 +183,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
      * {@inheritDoc}. We are within a spring context and so equality can be determined by ID, however we also test by
      * sortKey just in case.
      */
-    @Override public boolean equals(Object other) {
+    @Override public boolean equals(final Object other) {
         if (null == other) {
             return false;
         }

@@ -43,12 +43,12 @@ public class StaticExplicitKeySignatureParser extends AbstractTrustEngineParser 
             new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "StaticExplicitKeySignature");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return ExplicitKeySignatureTrustEngine.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         final List<Element> credentials =

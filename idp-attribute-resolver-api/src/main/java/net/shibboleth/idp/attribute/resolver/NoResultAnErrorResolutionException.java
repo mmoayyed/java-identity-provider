@@ -31,7 +31,7 @@ public class NoResultAnErrorResolutionException extends ResolutionException {
      *
      * @param message exception message
      */
-    public NoResultAnErrorResolutionException(String message) {
+    public NoResultAnErrorResolutionException(final String message) {
         super(message);
     }
 

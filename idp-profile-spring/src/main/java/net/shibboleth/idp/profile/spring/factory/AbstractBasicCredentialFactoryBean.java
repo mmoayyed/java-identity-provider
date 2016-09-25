@@ -67,14 +67,14 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
      * @param data the Secret key data
      * @return the decoded SecretKey byte array
      */
-    protected byte[] decodeSecretKey(String data) {
+    protected byte[] decodeSecretKey(final String data) {
         Constraint.isNotNull(data, "SecretKey data was null");
         switch (getSecretKeyEncoding()) {
             case binary:
                 // This sort of doesn't make sense for the String input, but just assume it's UTF-8
                 try {
                     return data.getBytes("UTF-8");
-                } catch (UnsupportedEncodingException e) {
+                } catch (final UnsupportedEncodingException e) {
                     // Can't actually happen, UTF-8 always supported.
                     return null;
                 }
@@ -94,7 +94,7 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
      * @param data the Secret key data
      * @return the decoded SecretKey byte array
      */
-    protected byte[] decodeSecretKey(byte[] data) {
+    protected byte[] decodeSecretKey(final byte[] data) {
         Constraint.isNotNull(data, "SecretKey data was null");
         switch (getSecretKeyEncoding()) {
             case binary:
@@ -160,7 +160,7 @@ public abstract class AbstractBasicCredentialFactoryBean extends AbstractCredent
      * 
      * @param algorithm The algorithm to set.
      */
-    public void setSecretKeyAlgorithm(@Nonnull String algorithm) {
+    public void setSecretKeyAlgorithm(@Nonnull final String algorithm) {
         secretKeyAlgorithm = Constraint.isNotNull(StringSupport.trimOrNull(algorithm), 
                 "SecretKey algorithm may not be null");
     }

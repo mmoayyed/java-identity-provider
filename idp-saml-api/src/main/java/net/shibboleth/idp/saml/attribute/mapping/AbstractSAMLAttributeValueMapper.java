@@ -65,7 +65,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
      * @return a list of IdP Attributes
      */
     @Nonnull @Unmodifiable public List<IdPAttributeValue<?>>
-            decodeValues(@Nonnull @NonnullElements List<XMLObject> inputs) {
+            decodeValues(@Nonnull @NonnullElements final List<XMLObject> inputs) {
         List<IdPAttributeValue<?>> outputs = new ArrayList<>(inputs.size());
 
         for (XMLObject input : inputs) {
@@ -149,7 +149,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
      * 
      * @param prefix The logPrefix to set.
      */
-    public void setLogPrefix(@Nonnull String prefix) {
+    public void setLogPrefix(@Nonnull final String prefix) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         logPrefix = Constraint.isNotNull(prefix, "prefix can not be null or empty");
     }
@@ -163,7 +163,7 @@ public abstract class AbstractSAMLAttributeValueMapper extends AbstractInitializ
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

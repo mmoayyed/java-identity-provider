@@ -33,7 +33,7 @@ import com.google.common.base.Strings;
 public class ScopedValueUnmarshaller extends AbstractXMLObjectUnmarshaller {
 
     /** {@inheritDoc} */
-    protected void processAttribute(XMLObject xmlObject, Attr attribute) throws UnmarshallingException {
+    protected void processAttribute(final XMLObject xmlObject, final Attr attribute) throws UnmarshallingException {
         ScopedValue sv = (ScopedValue) xmlObject;
 
         if (Strings.isNullOrEmpty(sv.getScopeAttributeName())) {
@@ -44,7 +44,7 @@ public class ScopedValueUnmarshaller extends AbstractXMLObjectUnmarshaller {
     }
 
     /** {@inheritDoc} */
-    protected void processElementContent(XMLObject xmlObject, String elementContent) {
+    protected void processElementContent(final XMLObject xmlObject, final String elementContent) {
         ScopedValue sv = (ScopedValue) xmlObject;
 
         sv.setValue(elementContent);

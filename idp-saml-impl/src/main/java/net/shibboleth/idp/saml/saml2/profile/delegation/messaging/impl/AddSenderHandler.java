@@ -62,7 +62,7 @@ public class AddSenderHandler extends AbstractHeaderGeneratingMessageHandler {
      * 
      * @param function the lookup function
      */
-    public void setProviderIdLookupFunction(Function<MessageContext, String> function) {
+    public void setProviderIdLookupFunction(final Function<MessageContext, String> function) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         providerIdLookupFunction = Constraint.isNotNull(function, 
@@ -94,7 +94,7 @@ public class AddSenderHandler extends AbstractHeaderGeneratingMessageHandler {
     public static class SAMLSelfEntityIDLookupFunction implements Function<MessageContext, String> {
 
         /** {@inheritDoc} */
-        @Nullable public String apply(@Nullable MessageContext input) {
+        @Nullable public String apply(@Nullable final MessageContext input) {
             if (input != null) {
                 SAMLSelfEntityContext selfContext = input.getSubcontext(SAMLSelfEntityContext.class);
                 if (selfContext != null) {

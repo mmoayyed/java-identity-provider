@@ -49,7 +49,7 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
      * Constructor.
      * @param theMatcher the class we are bridging to
      */
-    public PolicyFromMatcher(@Nonnull Matcher theMatcher) {
+    public PolicyFromMatcher(@Nonnull final Matcher theMatcher) {
         super(theMatcher);
         matcher = theMatcher;
     }
@@ -63,7 +63,7 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
 
     /** {@inheritDoc} */
     @Override
-    public Tristate matches(@Nonnull AttributeFilterContext context) {
+    public Tristate matches(@Nonnull final AttributeFilterContext context) {
         
         log.debug("{} Applying matcher supplied as policy to all values of all attributes", getLogPrefix());
 

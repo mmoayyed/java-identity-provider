@@ -41,7 +41,7 @@ public class ScopedValueImpl extends XSAnyImpl implements ScopedValue {
      * @param elementLocalName the local name of the XML element this Object represents
      * @param namespacePrefix the prefix for the given namespace
      */
-    protected ScopedValueImpl(String namespaceURI, String elementLocalName, String namespacePrefix) {
+    protected ScopedValueImpl(final String namespaceURI, final String elementLocalName, final String namespacePrefix) {
         super(namespaceURI, elementLocalName, namespacePrefix);
     }
 
@@ -56,7 +56,7 @@ public class ScopedValueImpl extends XSAnyImpl implements ScopedValue {
     }
 
     /** {@inheritDoc} */
-    public void setScope(String newScope) {
+    public void setScope(final String newScope) {
         scope = prepareForAssignment(scope, newScope);
         if (scope != null && scopeAttributeName != null) {
             getUnknownAttributes().put(new QName(scopeAttributeName), scope);
@@ -64,7 +64,7 @@ public class ScopedValueImpl extends XSAnyImpl implements ScopedValue {
     }
 
     /** {@inheritDoc} */
-    public void setScopeAttributeName(String newScopeAttributeName) {
+    public void setScopeAttributeName(final String newScopeAttributeName) {
         if (scopeAttributeName != null) {
             QName oldName = new QName(scopeAttributeName);
             if (getUnknownAttributes().containsKey(oldName)) {
@@ -85,7 +85,7 @@ public class ScopedValueImpl extends XSAnyImpl implements ScopedValue {
     }
 
     /** {@inheritDoc} */
-    public void setValue(String newValue) {
+    public void setValue(final String newValue) {
         setTextContent(newValue);
     }
 }

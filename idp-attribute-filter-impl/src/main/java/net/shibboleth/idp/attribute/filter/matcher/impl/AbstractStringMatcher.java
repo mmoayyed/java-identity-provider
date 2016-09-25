@@ -64,7 +64,7 @@ public abstract class AbstractStringMatcher extends AbstractMatcher implements M
      * 
      * @param isCaseInsensitive whether the match evaluation is case sensitive
      */
-    public void setIgnoreCase(boolean isCaseInsensitive) {
+    public void setIgnoreCase(final boolean isCaseInsensitive) {
         ignoreCase = isCaseInsensitive;
     }
     

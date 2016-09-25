@@ -109,7 +109,7 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
             }
             serializeInternal(gen, ticket);
             gen.writeEnd();
-        } catch (JsonException e) {
+        } catch (final JsonException e) {
             logger.error("Exception serializing {}", ticket, e);
             throw new IOException("Exception serializing ticket", e);
         }
@@ -143,7 +143,7 @@ public abstract class AbstractTicketSerializer<T extends Ticket> implements Stor
             final T ticket = createTicket(to, key, service, expiry);
             ticket.setTicketState(state);
             return ticket;
-        } catch (JsonException e) {
+        } catch (final JsonException e) {
             logger.error("Exception deserializing {}", value, e);
             throw new IOException("Exception deserializing ticket", e);
         }

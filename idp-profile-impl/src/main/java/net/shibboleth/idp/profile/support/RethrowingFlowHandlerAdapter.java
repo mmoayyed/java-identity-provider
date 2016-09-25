@@ -33,8 +33,8 @@ public class RethrowingFlowHandlerAdapter extends FlowHandlerAdapter {
 
     /** {@inheritDoc} */
     @Override
-    protected void defaultHandleException(String flowId, FlowException e, HttpServletRequest request,
-            HttpServletResponse response) throws IOException {
+    protected void defaultHandleException(final String flowId, final FlowException e, final HttpServletRequest request,
+            final HttpServletResponse response) throws IOException {
         
         throw e;
     }

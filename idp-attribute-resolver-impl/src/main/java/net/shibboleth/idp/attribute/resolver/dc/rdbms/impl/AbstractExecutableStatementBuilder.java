@@ -86,7 +86,7 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
             }
 
             /** {@inheritDoc} */
-            @Override @Nonnull public ResultSet execute(@Nonnull Connection connection) throws SQLException {
+            @Override @Nonnull public ResultSet execute(@Nonnull final Connection connection) throws SQLException {
                 final Statement stmt = connection.createStatement();
                 stmt.setQueryTimeout(queryTimeout);
                 return stmt.executeQuery(query);

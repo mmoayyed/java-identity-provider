@@ -31,18 +31,18 @@ public class ProfileActionBeanPostProcessor implements BeanPostProcessor {
 
     /** {@inheritDoc} */
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) {
+    public Object postProcessBeforeInitialization(final Object bean, final String beanName) {
         return bean;
     }
 
     /** {@inheritDoc} */
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) {
+    public Object postProcessAfterInitialization(final Object bean, final String beanName) {
         if (bean instanceof ProfileAction && !(bean instanceof Action)) {
             final WebFlowProfileActionAdaptor wrapper = new WebFlowProfileActionAdaptor((ProfileAction) bean);
             try {
                 wrapper.initialize();
-            } catch (ComponentInitializationException e) {
+            } catch (final ComponentInitializationException e) {
                 throw new BeanCreationException("WebFlowProfileActionAdaptor failed to initialize around ProfileAction "
                         + beanName, e);
             }

@@ -30,13 +30,13 @@ public class RethrowingFlowExecutionExceptionHandler implements FlowExecutionExc
 
     /** {@inheritDoc} */
     @Override
-    public boolean canHandle(FlowExecutionException exception) {
+    public boolean canHandle(final FlowExecutionException exception) {
         return exception.getCause() instanceof RuntimeException;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void handle(FlowExecutionException exception, RequestControlContext context) {
+    public void handle(final FlowExecutionException exception, final RequestControlContext context) {
         throw new RuntimeException(exception.getCause());
     }
 

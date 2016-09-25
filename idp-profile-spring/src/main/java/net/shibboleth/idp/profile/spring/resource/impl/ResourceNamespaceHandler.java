@@ -71,7 +71,7 @@ public class ResourceNamespaceHandler extends BaseSpringNamespaceHandler {
      * @param readerContext the reader context
      * @throws BeanDefinitionParsingException if we encounter a filter
      */
-    public static void noFilters(Element resourceElement, XmlReaderContext readerContext) {
+    public static void noFilters(final Element resourceElement, final XmlReaderContext readerContext) {
         List<Element> filters = ElementSupport.getChildElements(resourceElement, FILTER_NAME);
 
         if (null == filters || filters.isEmpty()) {

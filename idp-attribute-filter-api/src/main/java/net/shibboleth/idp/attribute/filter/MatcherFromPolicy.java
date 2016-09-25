@@ -55,7 +55,7 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
      * 
      * @param theRule the class we are bridging to
      */
-    public MatcherFromPolicy(@Nonnull PolicyRequirementRule theRule) {
+    public MatcherFromPolicy(@Nonnull final PolicyRequirementRule theRule) {
         super(theRule);
         rule = theRule;
     }
@@ -70,8 +70,8 @@ public class MatcherFromPolicy extends BaseBridgingClass implements Matcher, Ide
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
-            @Nonnull AttributeFilterContext filterContext) {
+    @Nullable public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+            @Nonnull final AttributeFilterContext filterContext) {
 
         final Tristate result= rule.matches(filterContext);
 

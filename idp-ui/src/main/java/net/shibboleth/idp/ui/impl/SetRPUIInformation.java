@@ -201,7 +201,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
+    @Override protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
 
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -229,7 +229,7 @@ public class SetRPUIInformation extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
 
         rpUIContext = rpUIContextCreateStrategy.apply(profileRequestContext);
         if (rpUIContext == null) {

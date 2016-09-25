@@ -39,7 +39,7 @@ public class SAML2LogoutRequestProfileParser extends BaseSAML2ProfileConfigurati
     }
 
     /** {@inheritDoc} */
-    @Override protected Class<SingleLogoutProfileConfiguration> getBeanClass(Element element) {
+    @Override protected Class<SingleLogoutProfileConfiguration> getBeanClass(final Element element) {
         return SingleLogoutProfileConfiguration.class;
     }
 

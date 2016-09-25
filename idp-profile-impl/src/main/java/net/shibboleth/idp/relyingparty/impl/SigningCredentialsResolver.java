@@ -55,7 +55,7 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
      * 
      * @param resolverService the Spring service exposing the relying party configuration service
      */
-    public SigningCredentialsResolver(ReloadableSpringService<RelyingPartyConfigurationResolver> resolverService) {
+    public SigningCredentialsResolver(final ReloadableSpringService<RelyingPartyConfigurationResolver> resolverService) {
         service = Constraint.isNotNull(resolverService, 
                 "ReloadableSpringService for RelyingPartyConfigurationResolver cannot be null");
     }
@@ -66,12 +66,12 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
     }
 
     /** {@inheritDoc} */
-    public void setId(@Nonnull String componentId) {
+    public void setId(@Nonnull final String componentId) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(componentId), "Component ID can not be null or empty");
     }
     
     /** {@inheritDoc} */
-    @Nullable public Credential resolveSingle(@Nullable CriteriaSet criteriaSet) throws ResolverException {
+    @Nullable public Credential resolveSingle(@Nullable final CriteriaSet criteriaSet) throws ResolverException {
         Iterable<Credential> creds = resolve(criteriaSet);
         if (creds.iterator().hasNext()) {
             return creds.iterator().next();

@@ -44,7 +44,7 @@ public class ServiceInformationURLTag extends ServiceTagSupport {
      * 
      * @param text the link text to put in
      */
-    public void setLinkText(@Nullable String text) {
+    public void setLinkText(@Nullable final String text) {
         linkText = text;
     }
 
@@ -77,7 +77,7 @@ public class ServiceInformationURLTag extends ServiceTagSupport {
             } else {
                 pageContext.getOut().print(buildHyperLink(infoURL, linkText));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn("Error generating InformationURL", e);
             throw new JspException("EndTag", e);
         }

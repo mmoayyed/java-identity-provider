@@ -137,7 +137,7 @@ public class X509InlineCredentialFactoryBean extends AbstractX509CredentialFacto
         for (final String crl : crls) {
             try {
                 result.add(X509Support.decodeCRL(crl));
-            } catch (CRLException | CertificateException e) {
+            } catch (final CRLException | CertificateException e) {
                 log.error("{}: Could not decode provided CRL", getConfigDescription(), e);
                 throw new FatalBeanException("Could not decode provided CRL", e);
             }

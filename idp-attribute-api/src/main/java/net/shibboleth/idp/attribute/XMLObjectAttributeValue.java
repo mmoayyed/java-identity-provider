@@ -60,7 +60,7 @@ public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
         }

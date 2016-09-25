@@ -42,12 +42,12 @@ public class EntityRoleFilterParser extends AbstractSingleBeanDefinitionParser {
             "EntityRoleWhiteList");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return EntityRoleFilter.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         List<QName> retainedRoles = new ArrayList<>();
         List<Element> retainedRoleElems =
                 ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,

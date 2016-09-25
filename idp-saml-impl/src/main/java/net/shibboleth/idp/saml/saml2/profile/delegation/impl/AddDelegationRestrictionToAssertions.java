@@ -255,7 +255,7 @@ public class AddDelegationRestrictionToAssertions extends AbstractProfileAction 
         if (drt != null) {
             try {
                 drt = XMLObjectSupport.cloneXMLObject(drt);
-            } catch (MarshallingException | UnmarshallingException e) {
+            } catch (final MarshallingException | UnmarshallingException e) {
                 log.error("{} Error cloning DelegationRestriction Condition", getLogPrefix(), e);
                 return null;
             }

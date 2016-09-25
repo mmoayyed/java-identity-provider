@@ -88,7 +88,7 @@ public abstract class AbstractAttributeReleaseAction extends AbstractConsentActi
      * 
      * @param strategy the attribute context lookup strategy
      */
-    public void setAttributeContextLookupStrategy(Function<ProfileRequestContext, AttributeContext> strategy) {
+    public void setAttributeContextLookupStrategy(final Function<ProfileRequestContext, AttributeContext> strategy) {
         attributeContextLookupStrategy =
                 Constraint.isNotNull(strategy, "Attribute context lookup strategy cannot be null");
     }

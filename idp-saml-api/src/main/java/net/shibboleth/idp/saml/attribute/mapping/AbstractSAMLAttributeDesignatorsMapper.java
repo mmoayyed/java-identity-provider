@@ -134,7 +134,7 @@ public abstract class AbstractSAMLAttributeDesignatorsMapper<OutType extends IdP
      * 
      * @param theMappers The mappers to set.
      */
-    public void setMappers(@Nonnull Collection<AttributeMapper<AttributeDesignator,OutType>> theMappers) {
+    public void setMappers(@Nonnull final Collection<AttributeMapper<AttributeDesignator,OutType>> theMappers) {
         mappers = Constraint.isNotNull(theMappers, "Mappers list cannot be null");
     }
 

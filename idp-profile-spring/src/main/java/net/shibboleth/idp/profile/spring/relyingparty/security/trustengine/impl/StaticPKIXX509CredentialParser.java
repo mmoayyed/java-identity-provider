@@ -36,7 +36,7 @@ public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXParser {
             "StaticPKIXX509Credential");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return PKIXX509CredentialTrustEngine.class;
     }
 
@@ -49,7 +49,7 @@ public class StaticPKIXX509CredentialParser extends AbstractStaticPKIXParser {
      *   org.opensaml.security.x509.impl.X509CredentialNameEvaluator)}
      * .
      */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         builder.addConstructorArgValue(getPKIXValidationInformationResolver(element, parserContext));

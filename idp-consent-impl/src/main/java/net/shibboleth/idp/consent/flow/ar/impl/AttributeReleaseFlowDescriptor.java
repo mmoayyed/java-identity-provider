@@ -92,7 +92,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * 
      * @param flag true if consent should not be remembered
      */
-    public void setDoNotRememberConsentAllowed(boolean flag) {
+    public void setDoNotRememberConsentAllowed(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         doNotRememberConsentAllowed = flag;
@@ -103,7 +103,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * 
      * @param flag true iff consent to any attribute and to any relying party is allowed
      */
-    public void setGlobalConsentAllowed(boolean flag) {
+    public void setGlobalConsentAllowed(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         globalConsentAllowed = flag;
@@ -114,7 +114,7 @@ public class AttributeReleaseFlowDescriptor extends ConsentFlowDescriptor {
      * 
      * @param flag true iff per-attribute consent is enabled
      */
-    public void setPerAttributeConsentEnabled(boolean flag) {
+    public void setPerAttributeConsentEnabled(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         perAttributeConsentEnabled = flag;

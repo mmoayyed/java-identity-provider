@@ -57,7 +57,7 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
     private final Logger log = LoggerFactory.getLogger(AbstractBasicCredentialParser.class);
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         builder.addPropertyValue("configDescription", parserContext.getReaderContext().getResource().getDescription());
 
@@ -73,7 +73,7 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
      * @param parserContext used for logging.
      * @param builder the builder.
      */
-    private void parsePrivateKey(@Nullable final List<Element> childElements, ParserContext parserContext,
+    private void parsePrivateKey(@Nullable final List<Element> childElements, final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         if (null == childElements || childElements.isEmpty()) {
             return;
@@ -102,7 +102,7 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
      * @param parserContext used for logging.
      * @param builder the builder
      */
-    private void parsePublicKey(@Nullable final List<Element> childElements, ParserContext parserContext,
+    private void parsePublicKey(@Nullable final List<Element> childElements, final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         if (null == childElements || childElements.isEmpty()) {
             return;
@@ -134,7 +134,7 @@ public abstract class AbstractBasicCredentialParser extends AbstractCredentialPa
      * @param parserContext used for logging.
      * @param builder the builder
      */
-    private void parseSecretKey(@Nullable final List<Element> childElements, ParserContext parserContext,
+    private void parseSecretKey(@Nullable final List<Element> childElements, final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         if (null == childElements || childElements.isEmpty()) {
             return;

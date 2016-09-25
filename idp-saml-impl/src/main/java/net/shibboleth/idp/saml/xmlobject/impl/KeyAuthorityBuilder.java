@@ -29,7 +29,7 @@ import org.opensaml.core.xml.AbstractXMLObjectBuilder;
 public class KeyAuthorityBuilder extends AbstractXMLObjectBuilder<KeyAuthority> {
 
     /** {@inheritDoc} */
-    public KeyAuthority buildObject(String namespaceURI, String localName, String namespacePrefix) {
+    public KeyAuthority buildObject(final String namespaceURI, final String localName, final String namespacePrefix) {
         return new KeyAuthorityImpl(namespaceURI, localName, namespacePrefix);
     }
 

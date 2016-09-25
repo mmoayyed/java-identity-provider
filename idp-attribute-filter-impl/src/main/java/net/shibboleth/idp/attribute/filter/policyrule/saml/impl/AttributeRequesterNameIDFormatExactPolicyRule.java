@@ -100,7 +100,7 @@ public class AttributeRequesterNameIDFormatExactPolicyRule extends AbstractPolic
      *         {@inheritDoc}
      */
     @Override
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final SSODescriptor role = getEntitySSODescriptor(filterContext);

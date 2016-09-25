@@ -53,7 +53,7 @@ public class StringAttributeValue implements IdPAttributeValue<String> {
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

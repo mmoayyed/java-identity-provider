@@ -68,7 +68,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * @param engineId ID of this engine
      * @param policies filter policies used by this engine
      */
-    public AttributeFilterImpl(@Nonnull @NotEmpty String engineId,
+    public AttributeFilterImpl(@Nonnull @NotEmpty final String engineId,
             @Nullable @NullableElements final Collection<AttributeFilterPolicy> policies) {
         setId(engineId);
 
@@ -119,7 +119,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
             if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
                 try {
                     filteredAttribute = prefilteredAttributes.get(attributeId).clone();
-                } catch (CloneNotSupportedException e) {
+                } catch (final CloneNotSupportedException e) {
                     throw new AttributeFilterException(e);
                 }
                 filteredAttribute.setValues(filteredAttributeValues);

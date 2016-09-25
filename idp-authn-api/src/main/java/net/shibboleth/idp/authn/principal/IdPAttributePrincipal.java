@@ -65,7 +65,7 @@ public class IdPAttributePrincipal implements Principal {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (other == null) {
             return false;
         }

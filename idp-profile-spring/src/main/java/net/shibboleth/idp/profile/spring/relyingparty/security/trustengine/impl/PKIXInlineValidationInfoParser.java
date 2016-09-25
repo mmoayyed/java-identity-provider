@@ -35,7 +35,7 @@ public class PKIXInlineValidationInfoParser extends AbstractPKIXValidationInfoPa
     public static final QName SCHEMA_TYPE = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "PKIXInline");
     
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return PKIXInlineValidationInfoFactoryBean.class;
     }
 }

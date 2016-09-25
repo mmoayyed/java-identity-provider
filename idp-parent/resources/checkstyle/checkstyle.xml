@@ -92,6 +92,9 @@
     <module name="TrailingComment"/>
     <module name="EqualsAvoidNull"/>
     <module name="ModifiedControlVariable"/>
+    <module name="FinalParameters">
+      <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH"/>
+    </module>
   </module>
   <module name="SuppressionCommentFilter">
     <property name="offCommentFormat" value="\bCheck[Ss]tyle:\s*([\w|]+)\s+OFF\b"/>

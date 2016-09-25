@@ -58,7 +58,7 @@ public final class NotPolicyRule extends AbstractIdentifiableInitializableCompon
     }
 
     /** {@inheritDoc} */
-    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

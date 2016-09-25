@@ -33,7 +33,7 @@ public class SignatureChainingParser extends AbstractChainingParser {
             "SignatureChaining");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return ChainingSignatureTrustEngineFactory.class;
     }
 }

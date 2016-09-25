@@ -42,12 +42,12 @@ public class NodeProcessingParser extends AbstractSingleBeanDefinitionParser {
             new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "NodeProcessing");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return NodeProcessingMetadataFilter.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
         builder.setLazyInit(true);

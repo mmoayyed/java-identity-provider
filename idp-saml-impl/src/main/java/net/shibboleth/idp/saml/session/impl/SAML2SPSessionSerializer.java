@@ -71,7 +71,7 @@ public class SAML2SPSessionSerializer extends AbstractSPSessionSerializer {
      * 
      * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
-    public SAML2SPSessionSerializer(@Duration @NonNegative long offset) {
+    public SAML2SPSessionSerializer(@Duration @NonNegative final long offset) {
         super(offset);
         
         parserPool = Constraint.isNotNull(XMLObjectProviderRegistrySupport.getParserPool(),

@@ -46,7 +46,7 @@ public abstract class BaseBridgingClass extends AbstractIdentifiableInitializabl
      * Constructor.
      * @param base the object we are bridging to.
      */
-    public BaseBridgingClass(@Nonnull Object base) {
+    public BaseBridgingClass(@Nonnull final Object base) {
         bridgedObject = Constraint.isNotNull(base, "base rule can not be null");
     }
 

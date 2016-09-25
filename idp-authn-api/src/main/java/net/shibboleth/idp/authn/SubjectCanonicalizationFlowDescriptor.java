@@ -63,7 +63,7 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override public boolean apply(ProfileRequestContext input) {
+    @Override public boolean apply(final ProfileRequestContext input) {
         return activationCondition.apply(input);
     }
 
@@ -73,7 +73,7 @@ public class SubjectCanonicalizationFlowDescriptor extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

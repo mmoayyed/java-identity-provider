@@ -44,7 +44,7 @@ public class OrganizationURLTag extends ServiceTagSupport {
      * 
      * @param text the link text to put in
      */
-    public void setLinkText(String text) {
+    public void setLinkText(final String text) {
         linkText = text;
     }
 
@@ -77,7 +77,7 @@ public class OrganizationURLTag extends ServiceTagSupport {
             } else {
                 pageContext.getOut().print(buildHyperLink(orgURL, linkText));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn("Error generating OrganizationURL", e);
             throw new JspException("EndTag", e);
         }

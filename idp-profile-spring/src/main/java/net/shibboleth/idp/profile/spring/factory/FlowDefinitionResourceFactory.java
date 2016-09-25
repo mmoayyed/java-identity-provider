@@ -85,7 +85,7 @@ public class FlowDefinitionResourceFactory {
      * @return the flow definition resource
      */
     public FlowDefinitionResource createResource(@Nullable final String basePath,
-            @Nonnull @NotEmpty final String path, @Nonnull AttributeMap<Object> attributes,
+            @Nonnull @NotEmpty final String path, @Nonnull final AttributeMap<Object> attributes,
             @Nonnull @NotEmpty final String flowId) {
         Constraint.isNotEmpty(path, "Flow path cannot be null or empty");
         Constraint.isNotEmpty(flowId, "Flow ID cannot be null or empty");

@@ -58,7 +58,7 @@ public class AttributeFilterServiceStrategy extends AbstractIdentifiableInitiali
 
         try {
             filter.initialize();
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             throw new ServiceException("Unable to initialize attribute filter for " + appContext.getDisplayName(), e);
         }
         return filter;

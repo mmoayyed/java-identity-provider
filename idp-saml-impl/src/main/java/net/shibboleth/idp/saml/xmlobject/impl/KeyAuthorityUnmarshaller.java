@@ -39,7 +39,7 @@ public class KeyAuthorityUnmarshaller extends AbstractXMLObjectUnmarshaller {
     private final Logger log = LoggerFactory.getLogger(KeyAuthorityUnmarshaller.class);
 
     /** {@inheritDoc} */
-    protected void processAttribute(XMLObject xmlObject, Attr attribute) throws UnmarshallingException {
+    protected void processAttribute(final XMLObject xmlObject, final Attr attribute) throws UnmarshallingException {
         KeyAuthority authority = (KeyAuthority) xmlObject;
 
         if (attribute.getLocalName().equals(KeyAuthority.VERIFY_DEPTH_ATTRIB_NAME)) {
@@ -54,7 +54,7 @@ public class KeyAuthorityUnmarshaller extends AbstractXMLObjectUnmarshaller {
     }
 
     /** {@inheritDoc} */
-    protected void processChildElement(XMLObject parentXMLObject, XMLObject childXMLObject)
+    protected void processChildElement(final XMLObject parentXMLObject, final XMLObject childXMLObject)
             throws UnmarshallingException {
         KeyAuthority authority = (KeyAuthority) parentXMLObject;
 

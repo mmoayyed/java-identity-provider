@@ -54,7 +54,7 @@ public class ScopedStringAttributeValueMapper extends AbstractSAMLAttributeValue
      * 
      * @param delim what to set.
      */
-    public void setDelimiter(@Nonnull @NotEmpty String delim) {
+    public void setDelimiter(@Nonnull @NotEmpty final String delim) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         final String trimmed = StringSupport.trimOrNull(delim);
         Constraint.isNotNull(trimmed, "ScopedStringAttributeDecoder: delimiter can not be empty null");
@@ -86,7 +86,7 @@ public class ScopedStringAttributeValueMapper extends AbstractSAMLAttributeValue
     }
     
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

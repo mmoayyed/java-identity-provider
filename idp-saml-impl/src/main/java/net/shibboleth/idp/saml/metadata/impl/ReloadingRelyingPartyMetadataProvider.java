@@ -54,12 +54,12 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
      * 
      * @param resolverService the service which will manage the loading.
      */
-    public ReloadingRelyingPartyMetadataProvider(@Nonnull ReloadableService<MetadataResolver> resolverService) {
+    public ReloadingRelyingPartyMetadataProvider(@Nonnull final ReloadableService<MetadataResolver> resolverService) {
         service = Constraint.isNotNull(resolverService, "MetadataResolver Service cannot be null");
     }
 
     /** {@inheritDoc} */
-    @Override @Nonnull public Iterable<EntityDescriptor> resolve(CriteriaSet criteria) throws ResolverException {
+    @Override @Nonnull public Iterable<EntityDescriptor> resolve(final CriteriaSet criteria) throws ResolverException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ServiceableComponent<MetadataResolver> component = null;
@@ -83,7 +83,7 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override @Nullable public EntityDescriptor resolveSingle(CriteriaSet criteria) throws ResolverException {
+    @Override @Nullable public EntityDescriptor resolveSingle(final CriteriaSet criteria) throws ResolverException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ServiceableComponent<MetadataResolver> component = null;
@@ -128,7 +128,7 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override public void setRequireValidMetadata(boolean requireValidMetadata) {
+    @Override public void setRequireValidMetadata(final boolean requireValidMetadata) {
         throw new IllegalAccessError("Cannot set RequireValidMetadata");
     }
 
@@ -154,7 +154,7 @@ public class ReloadingRelyingPartyMetadataProvider extends AbstractIdentifiableI
     }
 
     /** {@inheritDoc} */
-    @Override public void setMetadataFilter(MetadataFilter newFilter) {
+    @Override public void setMetadataFilter(final MetadataFilter newFilter) {
         throw new IllegalAccessError("Cannot set Metadata filter");
     }
     

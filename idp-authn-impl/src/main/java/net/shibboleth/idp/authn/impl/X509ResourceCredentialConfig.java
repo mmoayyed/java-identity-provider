@@ -103,7 +103,7 @@ public class X509ResourceCredentialConfig implements CredentialConfig {
                 sslInit.setAuthenticationKey(KeySupport.decodePrivateKey(authenticationKey.getFile(),
                         authenticationKeyPassword != null ? authenticationKeyPassword.toCharArray() : null));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new GeneralSecurityException(e);
         }
         return sslInit;

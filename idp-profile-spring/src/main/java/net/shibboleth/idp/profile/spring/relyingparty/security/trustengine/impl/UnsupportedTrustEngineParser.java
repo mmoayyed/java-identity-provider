@@ -61,12 +61,12 @@ public class UnsupportedTrustEngineParser extends AbstractTrustEngineParser {
     private final Logger log = LoggerFactory.getLogger(UnsupportedTrustEngineParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return Object.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         log.warn("Configuration {} contained unsupported Trust Engine type {}. This has been ignored.", parserContext
                 .getReaderContext().getResource().getDescription(), DOMTypeSupport.getXSIType(element).toString());

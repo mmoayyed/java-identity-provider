@@ -103,7 +103,7 @@ public class FilterFlowsByAttribute extends AbstractAuthenticationAction {
      * 
      * @param id attribute ID to look for
      */
-    public void setAttributeId(@Nullable String id) {
+    public void setAttributeId(@Nullable final String id) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         attributeId = StringSupport.trimOrNull(id);

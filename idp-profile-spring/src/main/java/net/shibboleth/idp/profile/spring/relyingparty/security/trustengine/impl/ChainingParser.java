@@ -32,7 +32,7 @@ public class ChainingParser extends AbstractChainingParser {
     public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "Chaining");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return ChainingTrustEngineFactory.class;
     }
 }

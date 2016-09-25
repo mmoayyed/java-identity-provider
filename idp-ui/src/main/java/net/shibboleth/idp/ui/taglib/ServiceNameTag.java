@@ -57,7 +57,7 @@ public class ServiceNameTag extends ServiceTagSupport {
      * 
      * @param value what to set
      */
-    public void setDefaultValue(String value) {
+    public void setDefaultValue(final String value) {
         defaultValue = value;
     }
     
@@ -85,7 +85,7 @@ public class ServiceNameTag extends ServiceTagSupport {
             } else {
                 pageContext.getOut().print(serviceName);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn("Error generating name");
             throw new JspException("StartTag", e);
         }

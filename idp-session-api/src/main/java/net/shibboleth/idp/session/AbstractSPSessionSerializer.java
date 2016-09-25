@@ -114,7 +114,7 @@ public abstract class AbstractSPSessionSerializer extends AbstractInitializableC
 
             return doDeserialize(obj, serviceId, creation, expiration - expirationOffset);
             
-        } catch (NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
+        } catch (final NullPointerException | ClassCastException | ArithmeticException | JsonException e) {
             log.error("Exception while parsing SPSession", e);
             throw new IOException("Found invalid data structure while parsing SPSession", e);
         }

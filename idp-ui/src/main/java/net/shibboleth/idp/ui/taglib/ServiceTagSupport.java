@@ -139,7 +139,7 @@ public class ServiceTagSupport extends BodyTagSupport {
                 return "";
             }
             encodedUrl = HTMLEncoder.encodeForHTMLAttribute(url);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             //
             // It wasn't an URI.
             //

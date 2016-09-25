@@ -59,7 +59,7 @@ public class AttributeFilterPolicyGroupParser implements BeanDefinitionParser {
     private final Logger log = LoggerFactory.getLogger(AttributeFilterPolicyGroupParser.class);
 
     /** {@inheritDoc} */
-    @Override public BeanDefinition parse(Element config, ParserContext context) {
+    @Override public BeanDefinition parse(final Element config, final ParserContext context) {
 
         String policyId = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
 

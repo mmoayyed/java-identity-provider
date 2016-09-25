@@ -255,7 +255,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
                 for (final Principal candidate
                         : authenticationContext.getAuthenticationResult().getSupportedPrincipals(p.getClass())) {
                     if (predicate.apply(new PrincipalSupportingComponent() {
-                        public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
+                        public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
                             return Collections.<T>singleton((T) candidate);
                         }
                     })) {
@@ -296,7 +296,7 @@ public class FinalizeAuthentication extends AbstractAuthenticationAction {
 
         /** {@inheritDoc} */
         @Override
-        public int compare(Object o1, Object o2) {
+        public int compare(final Object o1, final Object o2) {
             
             int weight1 = weightMap.containsKey(o1) ? weightMap.get(o1) : 0;
             int weight2 = weightMap.containsKey(o2) ? weightMap.get(o2) : 0;

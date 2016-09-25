@@ -42,7 +42,7 @@ public class AuthenticationMethodPolicyRule extends AbstractStringPolicyRule {
      * 
      *         {@inheritDoc}
      */
-    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

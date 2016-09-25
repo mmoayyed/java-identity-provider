@@ -112,7 +112,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * 
      * @param newTransforms collection of replacement transforms
      */
-    public void setTransforms(@Nonnull @NonnullElements Collection<Pair<String, String>> newTransforms) {
+    public void setTransforms(@Nonnull @NonnullElements final Collection<Pair<String, String>> newTransforms) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(newTransforms, "Transforms collection cannot be null");
         
@@ -129,7 +129,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * 
      * @param flag  uppercase flag
      */
-    public void setUppercase(boolean flag) {
+    public void setUppercase(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         uppercase = flag;
@@ -140,7 +140,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * 
      * @param flag lowercase flag
      */
-    public void setLowercase(boolean flag) {
+    public void setLowercase(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         lowercase = flag;
@@ -151,7 +151,7 @@ public abstract class AbstractSubjectCanonicalizationAction<InboundMessageType, 
      * 
      * @param flag trim flag
      */
-    public void setTrim(boolean flag) {
+    public void setTrim(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         trim = flag;

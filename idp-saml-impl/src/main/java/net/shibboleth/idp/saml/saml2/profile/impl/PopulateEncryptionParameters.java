@@ -248,7 +248,7 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
             throw new ComponentInitializationException("EncryptionParametersResolver cannot be null");
         } else if (configurationLookupStrategy == null) {
             configurationLookupStrategy = new Function<ProfileRequestContext,List<EncryptionConfiguration>>() {
-                public List<EncryptionConfiguration> apply(ProfileRequestContext input) {
+                public List<EncryptionConfiguration> apply(final ProfileRequestContext input) {
                     return Collections.singletonList(SecurityConfigurationSupport.getGlobalEncryptionConfiguration());
                 }
             };

@@ -200,7 +200,7 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
      * 
      * @param attributeId the source attribute id
      */
-    public void setSourceAttributeId(String attributeId) {
+    public void setSourceAttributeId(final String attributeId) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         sourceAttributeID = StringSupport.trimOrNull(attributeId);
     }

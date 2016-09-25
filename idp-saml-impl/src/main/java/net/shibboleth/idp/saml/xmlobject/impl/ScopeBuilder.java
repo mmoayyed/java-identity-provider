@@ -29,7 +29,7 @@ import org.opensaml.core.xml.AbstractXMLObjectBuilder;
 public class ScopeBuilder extends AbstractXMLObjectBuilder<Scope> {
 
     /** {@inheritDoc} */
-    public Scope buildObject(String namespaceURI, String localName, String namespacePrefix) {
+    public Scope buildObject(final String namespaceURI, final String localName, final String namespacePrefix) {
         return new ScopeImpl(namespaceURI, localName, namespacePrefix);
     }
 

@@ -93,7 +93,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
      * 
      * @param velocityTemplate template to be evaluated
      */
-    public void setTemplateText(@Nullable String velocityTemplate) {
+    public void setTemplateText(@Nullable final String velocityTemplate) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         templateText = StringSupport.trimOrNull(velocityTemplate);
@@ -153,7 +153,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
      * 
      * @param compat The mode to set.
      */
-    public void setV2Compatibility(boolean compat) {
+    public void setV2Compatibility(final boolean compat) {
         v2Compatibility = compat;
     }
 
@@ -191,7 +191,7 @@ public class TemplatedExecutableSearchFilterBuilder extends AbstractExecutableSe
         try {
             final SearchFilter searchFilter = new SearchFilter(merge(context));
             return super.build(searchFilter);
-        } catch (VelocityException e) {
+        } catch (final VelocityException e) {
             log.error("Error running template", e);
             throw new ResolutionException("Error running template", e);
         }

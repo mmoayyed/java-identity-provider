@@ -95,7 +95,7 @@ public class BasicSAMLArtifactConfiguration implements SAMLArtifactConfiguration
      * 
      * @param index index of resolution service endpoint
      */
-    public void setArtifactResolutionServiceIndex(@Nullable Integer index) {
+    public void setArtifactResolutionServiceIndex(@Nullable final Integer index) {
         artifactResolutionIndex = index;
     }
     

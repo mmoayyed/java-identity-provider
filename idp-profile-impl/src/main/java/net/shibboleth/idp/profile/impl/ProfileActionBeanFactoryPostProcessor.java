@@ -42,7 +42,7 @@ public class ProfileActionBeanFactoryPostProcessor implements BeanFactoryPostPro
 
     /** {@inheritDoc} */
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+    public void postProcessBeanFactory(final ConfigurableListableBeanFactory beanFactory) {
         for (final String beanName : beanFactory.getBeanNamesForAnnotation(Prototype.class)) {
             final BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
             if (!beanDefinition.isPrototype()) {

@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 public class ScopeMarshaller extends AbstractXMLObjectMarshaller {
 
     /** {@inheritDoc} */
-    protected void marshallAttributes(XMLObject xmlObject, Element domElement) throws MarshallingException {
+    protected void marshallAttributes(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
         Scope scope = (Scope) xmlObject;
 
         if (scope.getRegexpXSBoolean() != null) {
@@ -42,7 +42,7 @@ public class ScopeMarshaller extends AbstractXMLObjectMarshaller {
     }
 
     /** {@inheritDoc} */
-    protected void marshallElementContent(XMLObject xmlObject, Element domElement) throws MarshallingException {
+    protected void marshallElementContent(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
         Scope shibMDScope = (Scope) xmlObject;
 
         ElementSupport.appendTextContent(domElement, shibMDScope.getValue());

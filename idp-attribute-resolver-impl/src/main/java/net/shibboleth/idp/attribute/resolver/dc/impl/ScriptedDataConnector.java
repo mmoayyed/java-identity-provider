@@ -102,7 +102,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(Object object) {
+    @Nullable public void setCustomObject(final Object object) {
         customObject = object;
     }
 
@@ -172,7 +172,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
      * @throws ResolutionException thrown if dependent data connectors or attribute definitions can not be resolved
      */
     @Nonnull private ScriptContext getScriptContext(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull AttributeResolverWorkContext workContext) throws ResolutionException {
+            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         final SimpleScriptContext scriptContext = new SimpleScriptContext();
 
@@ -250,7 +250,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
      * @return the map of attributesids to attributes.
      * @throws ResolutionException if the output was "wrong".
      */
-    private Map<String, IdPAttribute> buildResult(ScriptContext context) throws ResolutionException {
+    private Map<String, IdPAttribute> buildResult(final ScriptContext context) throws ResolutionException {
         Object res = context.getAttribute(RESULTS_STRING);
 
         if (null == res) {
@@ -285,7 +285,7 @@ public class ScriptedDataConnector extends AbstractDataConnector {
 
     /** {@inheritDoc} */
     @Override @Nullable protected Map<String, IdPAttribute> doDataConnectorResolve(
-            @Nonnull AttributeResolutionContext resolutionContext, @Nonnull AttributeResolverWorkContext workContext)
+            @Nonnull final AttributeResolutionContext resolutionContext, @Nonnull final AttributeResolverWorkContext workContext)
             throws ResolutionException {
         Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
         Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");

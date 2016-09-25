@@ -49,21 +49,21 @@ public class MergePropertiesTask extends Task {
     /** Set the input file.
      * @param what what to set
      */
-    public void setInFile(@Nonnull File what) {
+    public void setInFile(@Nonnull final File what) {
         inFile = Constraint.isNotNull(what, "Provided file must not be null");
     }
     
     /** Set the output file.
      * @param what what to set
      */
-    public void setOutFile(@Nonnull File what) {
+    public void setOutFile(@Nonnull final File what) {
         outFile = Constraint.isNotNull(what, "Provided file must not be null");
     }
 
     /** Set the merge file.
      * @param what what to set
      */
-    public void setMergeFile(@Nonnull File what) {
+    public void setMergeFile(@Nonnull final File what) {
         mergeFile = Constraint.isNotNull(what, "Provided file must not be null");
     }
 
@@ -95,7 +95,7 @@ public class MergePropertiesTask extends Task {
 
         try {
             in.load(new FileInputStream(inFile));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log("Could not load input " + inFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }
@@ -103,7 +103,7 @@ public class MergePropertiesTask extends Task {
         final Properties merge = new Properties(); 
         try {
             merge.load(new FileInputStream(mergeFile));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log("Could not load merge " + mergeFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }
@@ -118,7 +118,7 @@ public class MergePropertiesTask extends Task {
 
         try {
             in.store(new FileOutputStream(outFile));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log("Could not store output " + outFile.getAbsolutePath(), e, Project.MSG_ERR);
             throw new BuildException(e);
         }

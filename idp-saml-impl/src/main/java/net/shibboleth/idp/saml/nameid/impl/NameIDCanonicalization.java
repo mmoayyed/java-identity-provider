@@ -89,7 +89,7 @@ public class NameIDCanonicalization extends AbstractSubjectCanonicalizationActio
      * 
      * @param theDecoder the decoder
      */
-    @NonnullAfterInit public void setDecoder(@Nonnull NameIDDecoder theDecoder) {
+    @NonnullAfterInit public void setDecoder(@Nonnull final NameIDDecoder theDecoder) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         decoder = Constraint.isNotNull(theDecoder, "Name ID decoder cannot be null");
     }

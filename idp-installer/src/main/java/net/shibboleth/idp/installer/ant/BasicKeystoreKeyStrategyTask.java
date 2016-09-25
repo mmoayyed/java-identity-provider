@@ -120,7 +120,7 @@ public class BasicKeystoreKeyStrategyTask extends Task {
     public void execute() {
         try {
             tool.changeKey();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log("Build failed", e, Project.MSG_ERR);
             throw new BuildException(e);
         }

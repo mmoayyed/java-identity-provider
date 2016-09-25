@@ -56,7 +56,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
      * 
      * @param info The info to set.
      */
-    public void setPublicKeyInfo(@Nullable byte[] info) {
+    public void setPublicKeyInfo(@Nullable final byte[] info) {
         publicKeyInfo = info;
     }
 
@@ -74,7 +74,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
      * 
      * @param info The info to set.
      */
-    public void setPrivateKeyInfo(@Nullable byte[] info) {
+    public void setPrivateKeyInfo(@Nullable final byte[] info) {
         privateKeyInfo = info;
     }
 
@@ -92,7 +92,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
      * 
      * @param info The info to set.
      */
-    public void setSecretKeyInfo(@Nullable byte[] info) {
+    public void setSecretKeyInfo(@Nullable final byte[] info) {
         secretKeyInfo = info;
     }
 
@@ -119,7 +119,7 @@ public class BasicInlineCredentialFactoryBean extends AbstractBasicCredentialFac
         }
         try {
             return KeySupport.decodeSecretKey(decodeSecretKey(getSecretKeyInfo()), getSecretKeyAlgorithm());
-        } catch (KeyException e) {
+        } catch (final KeyException e) {
             throw new BeanCreationException("Could not decode secret key", e);
         }
     }

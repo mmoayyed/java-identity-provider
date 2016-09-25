@@ -37,12 +37,12 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
             "RequiredValidUntil");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return RequiredValidUntilFactoryBean.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         if (element.hasAttributeNS(null, "maxValidityInterval")) {
             builder.addPropertyValue("maxValidityInterval",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "maxValidityInterval")));

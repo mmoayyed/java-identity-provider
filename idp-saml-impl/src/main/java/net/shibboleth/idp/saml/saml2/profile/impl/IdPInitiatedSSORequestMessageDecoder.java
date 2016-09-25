@@ -167,7 +167,7 @@ public class IdPInitiatedSSORequestMessageDecoder extends BaseIdPInitiatedSSOReq
             final Element dom = XMLObjectSupport.marshall(message);
             builder.append(SerializeSupport.prettyPrintXML(dom));
             return builder.toString();
-        } catch (MarshallingException e) {
+        } catch (final MarshallingException e) {
             log.error("Unable to marshall message for logging purposes", e);
             return null;
         }

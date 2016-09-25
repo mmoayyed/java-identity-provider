@@ -269,7 +269,7 @@ public class RelyingPartyUIContext extends BaseContext {
             log.warn("The logo URL '{}' contained an invalid scheme (expected '{}'), returning null", url,
                     acceptableSchemes);
             return null;
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             log.warn("The logo URL '{}' contained was not a URL, returning null", url);
             return null;
         }
@@ -463,7 +463,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param contactType what type to look up.
      * @return the {@link ContactPerson} or null.
      */
-    @Nullable public ContactPerson getContactPerson(ContactPersonTypeEnumeration contactType) {
+    @Nullable public ContactPerson getContactPerson(final ContactPersonTypeEnumeration contactType) {
         if (null == getRPEntityDescriptor()) {
             return null;
         }
@@ -606,7 +606,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param contactType the type of contact to look for
      * @return An appropriate string or null
      */
-    @Nullable public String getContactSurName(@Nullable String contactType) {
+    @Nullable public String getContactSurName(@Nullable final String contactType) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getSurName()) {
@@ -621,7 +621,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param contactType the type of contact to look for
      * @return An appropriate string or null
      */
-    @Nullable public String getContactGivenName(@Nullable String contactType) {
+    @Nullable public String getContactGivenName(@Nullable final String contactType) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getGivenName()) {
@@ -636,7 +636,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param contactType the type of contact to look for
      * @return An appropriate string or null
      */
-    @Nullable public String getContactEmail(@Nullable String contactType) {
+    @Nullable public String getContactEmail(@Nullable final String contactType) {
 
         final ContactPerson contact = getContactPerson(getContactType(contactType));
         if (null == contact || null == contact.getEmailAddresses() || contact.getEmailAddresses().isEmpty()) {
@@ -705,7 +705,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight max Height
      * @return whether it fits
      */
-    private boolean logoFits(Logo logo, int minWidth, int minHeight, int maxWidth, int maxHeight) {
+    private boolean logoFits(final Logo logo, final int minWidth, final int minHeight, final int maxWidth, final int maxHeight) {
         return logo.getHeight() <= maxHeight && logo.getHeight() >= minHeight && logo.getWidth() <= maxWidth
                 && logo.getWidth() >= minWidth;
     }
@@ -720,8 +720,8 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight the maximum height to allow.
      * @return an appropriate logo URL or null.
      */
-    @Nullable private String getLogoByLanguage(@Nonnull String lang, int minWidth, int minHeight, int maxWidth,
-            int maxHeight) {
+    @Nullable private String getLogoByLanguage(@Nonnull final String lang, final int minWidth, final int minHeight, final int maxWidth,
+            final int maxHeight) {
         for (final Logo logo : rpUIInfo.getLogos()) {
             log.trace("Found logo in UIInfo, '{}' ({} x {})", logo.getXMLLang(), logo.getWidth(), logo.getHeight());
             if (logo.getXMLLang() == null || !logo.getXMLLang().equals(lang)) {
@@ -748,7 +748,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight the maximum height to allow.
      * @return an appropriate logo URL or null.
      */
-    @Nullable private String getLogoNoLanguage(int minWidth, int minHeight, int maxWidth, int maxHeight) {
+    @Nullable private String getLogoNoLanguage(final int minWidth, final int minHeight, final int maxWidth, final int maxHeight) {
         for (final Logo logo : rpUIInfo.getLogos()) {
             if (null != logo.getXMLLang()) {
                 continue;
@@ -773,7 +773,7 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight the maximum height to allow.
      * @return an appropriate logo URL or null.
      */
-    @Nullable public String getLogo(int minWidth, int minHeight, int maxWidth, int maxHeight) {
+    @Nullable public String getLogo(final int minWidth, final int minHeight, final int maxWidth, final int maxHeight) {
         if (null == getRPUInfo() || null == rpUIInfo.getLogos() || rpUIInfo.getLogos().isEmpty()) {
             log.debug("No UIInfo or logos returning null");
             return null;
@@ -801,33 +801,33 @@ public class RelyingPartyUIContext extends BaseContext {
      * @param maxHeight the maximum height to allow.
      * @return an appropriate logo URL or null.
      */
-    @Nullable public String getLogo(String minWidth, String minHeight, String maxWidth, String maxHeight) {
+    @Nullable public String getLogo(final String minWidth, final String minHeight, final String maxWidth, final String maxHeight) {
 
         int minW;
         try {
             minW = Integer.parseInt(minWidth);
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             minW = Integer.MIN_VALUE;
         }
 
         int minH;
         try {
             minH = Integer.parseInt(minHeight);
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             minH = Integer.MIN_VALUE;
         }
 
         int maxW;
         try {
             maxW = Integer.parseInt(maxWidth);
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             maxW = Integer.MAX_VALUE;
         }
 
         int maxH;
         try {
             maxH = Integer.parseInt(maxHeight);
-        } catch (NumberFormatException ex) {
+        } catch (final NumberFormatException ex) {
             maxH = Integer.MAX_VALUE;
         }
 

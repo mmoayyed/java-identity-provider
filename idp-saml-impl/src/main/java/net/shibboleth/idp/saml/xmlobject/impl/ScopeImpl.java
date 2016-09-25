@@ -48,7 +48,7 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
      * @param elementLocalName the local name of the XML element this Object represents
      * @param namespacePrefix the prefix for the given namespace
      */
-    protected ScopeImpl(String namespaceURI, String elementLocalName, String namespacePrefix) {
+    protected ScopeImpl(final String namespaceURI, final String elementLocalName, final String namespacePrefix) {
         super(namespaceURI, elementLocalName, namespacePrefix);
         regexp = null;
     }
@@ -62,7 +62,7 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
     }
 
     /** {@inheritDoc} */
-    public void setRegexp(Boolean newRegexp) {
+    public void setRegexp(final Boolean newRegexp) {
         if (newRegexp != null) {
             regexp = prepareForAssignment(regexp, new XSBooleanValue(newRegexp, false));
         } else {
@@ -76,7 +76,7 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
     }
 
     /** {@inheritDoc} */
-    public void setRegexp(XSBooleanValue newRegexp) {
+    public void setRegexp(final XSBooleanValue newRegexp) {
         regexp = prepareForAssignment(regexp, newRegexp);
     }
 
@@ -86,7 +86,7 @@ public class ScopeImpl extends AbstractXMLObject implements Scope {
     }
 
     /** {@inheritDoc} */
-    public void setValue(String newScopeValue) {
+    public void setValue(final String newScopeValue) {
         scopeValue = prepareForAssignment(scopeValue, newScopeValue);
         matchPattern = null;
     }

@@ -80,7 +80,7 @@ public class MessageSourceConsentFunction extends AbstractInitializableComponent
 
     /** {@inheritDoc} */
     @Override
-    public void setMessageSource(MessageSource source) {
+    public void setMessageSource(final MessageSource source) {
         messageSource = source;
     }
 

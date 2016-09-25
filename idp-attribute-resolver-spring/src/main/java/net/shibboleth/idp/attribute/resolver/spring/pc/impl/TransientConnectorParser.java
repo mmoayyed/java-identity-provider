@@ -43,8 +43,8 @@ public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected void addSAMLDecoders(@Nonnull Element config, @Nonnull ParserContext parserContext,
-            @Nonnull BeanDefinitionBuilder builder) {
+    @Override protected void addSAMLDecoders(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         String idStore = "shibboleth.StorageService";
         if (config.hasAttributeNS(null, "storageServiceRef")) {

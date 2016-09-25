@@ -51,7 +51,7 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<TransientIdAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<TransientIdAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return TransientIdAttributeDefinition.class;
     }
 

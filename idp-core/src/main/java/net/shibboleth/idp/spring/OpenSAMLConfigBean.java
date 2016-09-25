@@ -71,7 +71,7 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
         // Initialize OpenSAML.
         try {
             InitializationService.initialize();
-        } catch (InitializationException e) {
+        } catch (final InitializationException e) {
             throw new ComponentInitializationException("Exception initializing OpenSAML", e);
         }
         

@@ -193,7 +193,7 @@ public class CounterStorageKeyFunction extends AbstractInitializableComponent im
         for (final String storageKey : storageKeys) {
             try {
                 map.put(storageKey, getStorageKeyCounter(storageService, storageContext, storageKey));
-            } catch (NumberFormatException | IOException e) {
+            } catch (final NumberFormatException | IOException e) {
                 log.error("Unable to retrieve counter for storage key '{}'", storageKey, e);
             }
         }

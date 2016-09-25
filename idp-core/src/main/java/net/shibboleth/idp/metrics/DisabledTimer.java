@@ -39,13 +39,13 @@ public class DisabledTimer extends Timer implements DisabledMetric {
     
     /** {@inheritDoc} */
     @Override
-    public void update(long duration, TimeUnit unit) {
+    public void update(final long duration, final TimeUnit unit) {
         
     }
 
     /** {@inheritDoc} */
     @Override
-    public <T> T time(Callable<T> event) throws Exception {
+    public <T> T time(final Callable<T> event) throws Exception {
         return null;
     }
 

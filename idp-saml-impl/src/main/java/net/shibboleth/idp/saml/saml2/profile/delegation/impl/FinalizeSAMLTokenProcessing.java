@@ -46,7 +46,7 @@ public class FinalizeSAMLTokenProcessing extends AbstractProfileAction {
     private String principalName;
 
     /** {@inheritDoc} */
-    protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
         }
@@ -74,7 +74,7 @@ public class FinalizeSAMLTokenProcessing extends AbstractProfileAction {
     }
     
     /** {@inheritDoc} */
-    protected void doExecute(ProfileRequestContext profileRequestContext) {
+    protected void doExecute(final ProfileRequestContext profileRequestContext) {
         profileRequestContext.removeSubcontext(SubjectCanonicalizationContext.class);
         
         SubjectContext subjectContext = profileRequestContext.getSubcontext(SubjectContext.class, true);

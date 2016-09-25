@@ -115,7 +115,7 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
     private static boolean isUrlSafe(final String s) {
         try {
             return URLEncoder.encode(s, StandardCharsets.US_ASCII.name()).equals(s);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         }
     }

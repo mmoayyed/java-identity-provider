@@ -39,8 +39,8 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
      * We assume that we will be summoning up a class which extends an
      * {@link org.opensaml.saml.metadata.resolver.impl.AbstractDynamicMetadataResolver}.
      */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
 
         super.doNativeParse(element, parserContext, builder);
 
@@ -90,7 +90,7 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
      * 
      * @return task timer reference
      */
-    protected String getTaskTimerRef(Element element) {
+    protected String getTaskTimerRef(final Element element) {
 
         if (element.hasAttributeNS(null, "taskTimerRef")) {
             return StringSupport.trimOrNull(StringSupport.trimOrNull(element.getAttributeNS(null, "taskTimerRef")));
@@ -106,7 +106,7 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
      * 
      * @return parser pool reference
      */
-    protected String getParserPoolRef(Element element) {
+    protected String getParserPoolRef(final Element element) {
         String parserPoolRef = null;
         if (element.hasAttributeNS(null, "parserPoolRef")) {
             parserPoolRef =

@@ -38,13 +38,13 @@ public class InlineMetadataProviderParser extends AbstractMetadataProviderParser
             "InlineMetadataProvider");
 
     /** {@inheritDoc} */
-    @Override protected Class<DOMMetadataResolver> getNativeBeanClass(Element element) {
+    @Override protected Class<DOMMetadataResolver> getNativeBeanClass(final Element element) {
         return DOMMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         List<Element> metadataContent =

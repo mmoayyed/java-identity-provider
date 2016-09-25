@@ -39,7 +39,7 @@ public class SAML2ECPProfileParser extends SAML2BrowserSSOProfileParser {
     }
     
     /** {@inheritDoc} */
-    @Override protected Class<ECPProfileConfiguration> getBeanClass(Element element) {
+    @Override protected Class<ECPProfileConfiguration> getBeanClass(final Element element) {
         return ECPProfileConfiguration.class;
     }
 

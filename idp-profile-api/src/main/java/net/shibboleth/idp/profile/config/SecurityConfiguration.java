@@ -185,7 +185,7 @@ public class SecurityConfiguration {
      * 
      * @param config configuration used when validating client TLS X509Credentials, or null
      */
-    public void setClientTLSValidationConfiguration(ClientTLSValidationConfiguration config) {
+    public void setClientTLSValidationConfiguration(final ClientTLSValidationConfiguration config) {
         clientTLSConfig = config;
     }
 }

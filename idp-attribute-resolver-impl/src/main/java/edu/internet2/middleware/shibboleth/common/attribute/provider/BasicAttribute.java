@@ -37,7 +37,7 @@ public class BasicAttribute extends ScriptedIdPAttributeImpl {
      * 
      * @param id The attribute Id.
      */
-    public BasicAttribute(String id) {
+    public BasicAttribute(final String id) {
         super(new IdPAttribute(id), "Scripted Attribute Definition: ");
         log.info("{}  Use of V2 emulated class \"BasicAttribute\", consider replacing this code", getLogPrefix());
     }

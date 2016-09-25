@@ -39,7 +39,7 @@ public class SAML2AttributeQueryProfileParser extends BaseSAML2ProfileConfigurat
     }
     
     /** {@inheritDoc} */
-    @Override protected Class<AttributeQueryProfileConfiguration> getBeanClass(Element element) {
+    @Override protected Class<AttributeQueryProfileConfiguration> getBeanClass(final Element element) {
         return AttributeQueryProfileConfiguration.class;
     }
 

@@ -58,7 +58,7 @@ public class AndPolicyRule extends AbstractComposedPolicyRule {
     * 
     * {@inheritDoc}
     */
-    public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

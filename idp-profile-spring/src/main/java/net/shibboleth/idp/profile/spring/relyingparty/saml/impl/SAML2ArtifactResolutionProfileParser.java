@@ -34,7 +34,7 @@ public class SAML2ArtifactResolutionProfileParser extends BaseSAML2ProfileConfig
             "SAML2ArtifactResolutionProfile");
 
     /** {@inheritDoc} */
-    @Override protected Class<ArtifactResolutionProfileConfiguration> getBeanClass(Element element) {
+    @Override protected Class<ArtifactResolutionProfileConfiguration> getBeanClass(final Element element) {
         return ArtifactResolutionProfileConfiguration.class;
     }
 

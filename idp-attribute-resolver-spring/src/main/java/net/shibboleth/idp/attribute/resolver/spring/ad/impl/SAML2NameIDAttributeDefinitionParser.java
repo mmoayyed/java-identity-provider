@@ -47,7 +47,7 @@ public class SAML2NameIDAttributeDefinitionParser extends BaseAttributeDefinitio
     @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1NameIdentifierAttributeDefinitionParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<SAML2NameIDAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SAML2NameIDAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return SAML2NameIDAttributeDefinition.class;
     }
 

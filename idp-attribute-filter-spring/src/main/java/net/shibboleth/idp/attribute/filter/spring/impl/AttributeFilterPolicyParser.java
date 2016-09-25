@@ -66,7 +66,7 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
 
     /** {@inheritDoc} */
     @Override
-    protected Class<?> getBeanClass(Element arg0) {
+    protected Class<?> getBeanClass(final Element arg0) {
         return AttributeFilterPolicy.class;
     }
 

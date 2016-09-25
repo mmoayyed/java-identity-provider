@@ -477,7 +477,7 @@ public class PopulateDelegationContext extends AbstractProfileAction {
                 }
             }
             return creds;
-        } catch (ResolverException e) {
+        } catch (final ResolverException e) {
             log.warn("Error resolving subject confirmation credentials for relying party: {}", relyingPartyId, e);
             return null;
         }

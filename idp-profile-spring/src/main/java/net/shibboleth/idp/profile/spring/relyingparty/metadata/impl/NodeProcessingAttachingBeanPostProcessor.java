@@ -59,13 +59,13 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
      *
      * @param service the attribute resolver we use to map attributes
      */
-    public NodeProcessingAttachingBeanPostProcessor(@Nullable ReloadableService<AttributeResolver> service) {
+    public NodeProcessingAttachingBeanPostProcessor(@Nullable final ReloadableService<AttributeResolver> service) {
         atributeResolverService = service;
     }
 
     // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    @Override public Object postProcessBeforeInitialization(Object bean, String beanName) {
+    @Override public Object postProcessBeforeInitialization(final Object bean, final String beanName) {
         if (!(bean instanceof MetadataResolver) || bean instanceof ChainingMetadataResolver
                 || bean instanceof RelyingPartyMetadataProvider) {
             // Do not attach to beans which just include other ones.
@@ -121,7 +121,7 @@ public class NodeProcessingAttachingBeanPostProcessor implements BeanPostProcess
     // Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
-    @Override public Object postProcessAfterInitialization(Object bean, String beanName) {
+    @Override public Object postProcessAfterInitialization(final Object bean, final String beanName) {
         return bean;
     }
 

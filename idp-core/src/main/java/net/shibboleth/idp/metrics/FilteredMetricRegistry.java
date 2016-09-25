@@ -65,7 +65,7 @@ public class FilteredMetricRegistry extends MetricRegistry {
     }
 
     /** {@inheritDoc} */
-    @Override public Counter counter(String name) {
+    @Override public Counter counter(final String name) {
         if (metricFilter.matches(name, null)) {
             return super.counter(name);
         } else {
@@ -74,7 +74,7 @@ public class FilteredMetricRegistry extends MetricRegistry {
     }
 
     /** {@inheritDoc} */
-    @Override public Histogram histogram(String name) {
+    @Override public Histogram histogram(final String name) {
         if (metricFilter.matches(name, null)) {
             return super.histogram(name);
         } else {
@@ -83,7 +83,7 @@ public class FilteredMetricRegistry extends MetricRegistry {
     }
 
     /** {@inheritDoc} */
-    @Override public Meter meter(String name) {
+    @Override public Meter meter(final String name) {
         if (metricFilter.matches(name, null)) {
             return super.meter(name);
         } else {
@@ -92,7 +92,7 @@ public class FilteredMetricRegistry extends MetricRegistry {
     }
 
     /** {@inheritDoc} */
-    @Override public Timer timer(String name) {
+    @Override public Timer timer(final String name) {
         if (metricFilter.matches(name, null)) {
             return super.timer(name);
         } else {

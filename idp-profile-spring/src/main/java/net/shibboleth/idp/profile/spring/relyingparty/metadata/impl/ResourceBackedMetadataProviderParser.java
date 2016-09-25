@@ -65,7 +65,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
     private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<? extends AbstractBatchMetadataResolver> getNativeBeanClass(Element element) {
+    @Override protected Class<? extends AbstractBatchMetadataResolver> getNativeBeanClass(final Element element) {
 
         final List<Element> resources = ElementSupport.getChildElements(element, RESOURCES_NAME);
         if (null == resources || resources.isEmpty()) {
@@ -97,8 +97,8 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext,
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "maxCacheDuration")) {
@@ -160,7 +160,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param parserContext the parser context
      * @param builder the builder for the {@link ResourceBackedMetadataResolver}.
      */
-    private void parseResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    private void parseResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
         BeanDefinitionBuilder resourceConverter = BeanDefinitionBuilder.genericBeanDefinition(ResourceHelper.class);
         resourceConverter.setLazyInit(true);
@@ -180,7 +180,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param parserContext the parser context
      * @param builder the builder for the {@link HTTPMetadataResolver}.
      */
-    private void parseHTTPResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    private void parseHTTPResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
         BeanDefinitionBuilder clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
 
@@ -199,7 +199,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param builder the builder for the {@link FileBackedHTTPMetadataResolver}.
      */
     private void
-            parseFileBackedHTTPResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            parseFileBackedHTTPResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
         parseHTTPResource(element, parserContext, builder);
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
@@ -215,7 +215,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param parserContext the parser context
      * @param builder the builder for the {@link FilesystemMetadataResolver}.
      */
-    private void parseFilesystemResource(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    private void parseFilesystemResource(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
     }
 

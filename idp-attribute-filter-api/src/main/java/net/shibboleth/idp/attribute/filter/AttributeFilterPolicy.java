@@ -78,8 +78,8 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
      * @param requirementRule criterion used to determine if this policy is active for a given request
      * @param attributeRules value filtering policies employed if this policy is active
      */
-    public AttributeFilterPolicy(@Nonnull @NotEmpty String policyId, @Nonnull PolicyRequirementRule requirementRule,
-            @Nullable @NullableElements Collection<AttributeRule> attributeRules) {
+    public AttributeFilterPolicy(@Nonnull @NotEmpty final String policyId, @Nonnull final PolicyRequirementRule requirementRule,
+            @Nullable @NullableElements final Collection<AttributeRule> attributeRules) {
         setId(policyId);
 
         rule = Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");

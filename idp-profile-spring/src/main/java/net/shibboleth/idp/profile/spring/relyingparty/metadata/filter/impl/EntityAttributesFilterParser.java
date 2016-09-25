@@ -55,12 +55,12 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
     @Nonnull private final Logger log = LoggerFactory.getLogger(EntityAttributesFilterParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return EntityAttributesFilter.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
         final Unmarshaller unmarshaller = XMLObjectSupport.getUnmarshaller(Attribute.DEFAULT_ELEMENT_NAME);
         if (unmarshaller == null) {

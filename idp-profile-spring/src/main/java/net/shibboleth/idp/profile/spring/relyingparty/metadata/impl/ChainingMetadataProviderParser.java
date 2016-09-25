@@ -34,13 +34,13 @@ import org.w3c.dom.Element;
 public class ChainingMetadataProviderParser extends AbstractMetadataProviderParser {
 
     /** {@inheritDoc} */
-    @Override protected Class<ChainingMetadataResolver> getNativeBeanClass(Element element) {
+    @Override protected Class<ChainingMetadataResolver> getNativeBeanClass(final Element element) {
         return ChainingMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         final List<Element> childProviders =

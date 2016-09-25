@@ -50,12 +50,12 @@ public abstract class AbstractRelyingPartyParser extends AbstractSingleBeanDefin
     private Logger log = LoggerFactory.getLogger(AbstractRelyingPartyParser.class);
 
     /** {@inheritDoc} */
-    @Override protected java.lang.Class<RelyingPartyConfiguration> getBeanClass(Element element) {
+    @Override protected java.lang.Class<RelyingPartyConfiguration> getBeanClass(final Element element) {
         return RelyingPartyConfiguration.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         builder.setLazyInit(true);
         super.doParse(element, parserContext, builder);
 

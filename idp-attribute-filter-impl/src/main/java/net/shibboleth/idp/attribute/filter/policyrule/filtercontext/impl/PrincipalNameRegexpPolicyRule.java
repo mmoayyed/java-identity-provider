@@ -40,7 +40,7 @@ public class PrincipalNameRegexpPolicyRule extends AbstractRegexpPolicyRule {
      * @param filterContext the context
      * @return whether it matches {@inheritDoc}
      */
-    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 

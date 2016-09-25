@@ -51,12 +51,12 @@ public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
     private final Logger log = LoggerFactory.getLogger(SchemaValidationParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return SchemaValidationFilter.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         List<Element> schemaNameElements = ElementSupport.getChildElements(element, EXTENSION_SCHEMA_NAME);
 
         if (element.hasAttributeNS(null, "schemaBuilderRef")) {

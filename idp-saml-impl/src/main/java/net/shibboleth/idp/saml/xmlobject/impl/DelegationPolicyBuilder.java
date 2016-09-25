@@ -29,7 +29,7 @@ import org.opensaml.saml.common.AbstractSAMLObjectBuilder;
 public class DelegationPolicyBuilder extends AbstractSAMLObjectBuilder<DelegationPolicy> {
 
     /** {@inheritDoc} */
-    public DelegationPolicy buildObject(String namespaceURI, String localName, String namespacePrefix) {
+    public DelegationPolicy buildObject(final String namespaceURI, final String localName, final String namespacePrefix) {
         return new DelegationPolicyImpl(namespaceURI, localName, namespacePrefix);
     }
 

@@ -67,8 +67,8 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF -- more readable not split up
-    @Override protected void doNativeParse(Element element, ParserContext parserContext, 
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         boolean haveTLSTrustEngine = false;
@@ -132,7 +132,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      */
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
-    private BeanDefinition buildHttpClient(Element element, ParserContext parserContext, boolean haveTLSTrustEngine) {
+    private BeanDefinition buildHttpClient(final Element element, final ParserContext parserContext, final boolean haveTLSTrustEngine) {
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
             caching = StringSupport.trimOrNull(element.getAttributeNS(null, "httpCaching"));
@@ -227,7 +227,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      * @param element the HTTPMetadataProvider parser.
      * @return the bean definition with the username and password.
      */
-    private BeanDefinition buildBasicCredentials(Element element) {
+    private BeanDefinition buildBasicCredentials(final Element element) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);
 
         builder.setLazyInit(true);
@@ -245,7 +245,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      * @param parserContext the context
      * @return the bean definition
      */
-    private BeanDefinition parseTLSTrustEngine(Element element, ParserContext parserContext) {
+    private BeanDefinition parseTLSTrustEngine(final Element element, final ParserContext parserContext) {
         Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, TLS_TRUST_ENGINE_ELEMENT_NAME);
         if (tlsTrustEngine != null) {
             Element trustEngine =

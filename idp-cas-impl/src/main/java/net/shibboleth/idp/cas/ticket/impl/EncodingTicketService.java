@@ -177,7 +177,7 @@ public class EncodingTicketService extends AbstractTicketService {
             opaque = dataSealer.wrap(
                     y, ticket.getExpirationInstant().getMillis());
             log.debug("encode opaque [{}]", opaque);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Ticket encoding failed", e);
         }
         return ticketClass.cast(ticket.clone(prefix + '-' + opaque));
@@ -201,7 +201,7 @@ public class EncodingTicketService extends AbstractTicketService {
             final String decrypted = dataSealer.unwrap(x);
             log.debug("decrypted [{}]", decrypted);
             return serializer(ticketClass).deserialize(0, null, id, decrypted, 0L);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warn("Ticket decoding failed with error: " + e.getMessage());
             log.debug("Ticket decoding failed", e);
         }

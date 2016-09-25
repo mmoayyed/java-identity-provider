@@ -77,7 +77,7 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (other == null) {
             return false;
         }
@@ -108,7 +108,7 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
             copy.name = SerializeSupport.nodeToString(
                     Constraint.isNotNull(XMLObjectSupport.getMarshaller(copy.authnContextDecl),
                             "No marshaller for AuthnContextDecl").marshall(copy.authnContextDecl));
-        } catch (MarshallingException | UnmarshallingException e) {
+        } catch (final MarshallingException | UnmarshallingException e) {
             throw new XMLRuntimeException(e);
         }
         return copy;

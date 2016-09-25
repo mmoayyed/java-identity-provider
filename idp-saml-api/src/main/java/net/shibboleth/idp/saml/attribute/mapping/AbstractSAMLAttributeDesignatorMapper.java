@@ -219,7 +219,7 @@ public abstract class AbstractSAMLAttributeDesignatorMapper<OutType extends IdPA
      * {@inheritDoc}. The identity is not part of equality of hash
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

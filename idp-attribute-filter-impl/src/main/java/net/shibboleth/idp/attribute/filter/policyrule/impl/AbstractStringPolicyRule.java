@@ -65,7 +65,7 @@ public abstract class AbstractStringPolicyRule extends AbstractPolicyRule implem
      * 
      * @param isIgnoreCase whether the match evaluation is case sensitive
      */
-    public void setIgnoreCase(boolean isIgnoreCase) {
+    public void setIgnoreCase(final boolean isIgnoreCase) {
         ignoreCase = isIgnoreCase;
     }
 

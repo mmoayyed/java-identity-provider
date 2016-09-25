@@ -59,7 +59,7 @@ public class DelegatedAssertionLookupStrategy implements Function<ProfileRequest
 
     /** {@inheritDoc} */
     @Nullable
-    public Assertion apply(@Nullable ProfileRequestContext input) {
+    public Assertion apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }

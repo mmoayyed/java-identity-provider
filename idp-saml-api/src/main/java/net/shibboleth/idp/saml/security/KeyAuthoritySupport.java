@@ -99,10 +99,10 @@ public final class KeyAuthoritySupport {
      * @return a collection of X509 certificates, possibly empty
      * @throws SecurityException thrown if the certificate information is represented in an unsupported format
      */
-    private static Collection<X509Certificate> getX509Certificates(KeyInfo keyInfo) throws SecurityException {
+    private static Collection<X509Certificate> getX509Certificates(final KeyInfo keyInfo) throws SecurityException {
         try {
             return KeyInfoSupport.getCertificates(keyInfo);
-        } catch (CertificateException e) {
+        } catch (final CertificateException e) {
             throw new SecurityException("Error extracting certificates from KeyAuthority KeyInfo", e);
         }
 
@@ -115,10 +115,10 @@ public final class KeyAuthoritySupport {
      * @return a collection of X509 CRL's, possibly empty
      * @throws SecurityException thrown if the CRL information is represented in an unsupported format
      */
-    private static Collection<X509CRL> getX509CRLs(KeyInfo keyInfo) throws SecurityException {
+    private static Collection<X509CRL> getX509CRLs(final KeyInfo keyInfo) throws SecurityException {
         try {
             return KeyInfoSupport.getCRLs(keyInfo);
-        } catch (CRLException e) {
+        } catch (final CRLException e) {
             throw new SecurityException("Error extracting CRL's from KeyAuthority KeyInfo", e);
         }
 

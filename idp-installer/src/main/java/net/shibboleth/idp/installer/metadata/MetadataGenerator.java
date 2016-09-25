@@ -186,7 +186,7 @@ public class MetadataGenerator {
      * 
      * @param id what to set.
      */
-    public void setEntityID(String id) {
+    public void setEntityID(final String id) {
         entityID = id;
     }
 
@@ -204,7 +204,7 @@ public class MetadataGenerator {
      * 
      * @param id what to set.
      */
-    public void setScope(String id) {
+    public void setScope(final String id) {
         scope = id;
     }
 
@@ -222,7 +222,7 @@ public class MetadataGenerator {
      * 
      * @param id what to set.
      */
-    public void setDNSName(String id) {
+    public void setDNSName(final String id) {
         dnsName = id;
     }
 
@@ -240,7 +240,7 @@ public class MetadataGenerator {
      * 
      * @param certs what to set.
      */
-    public void setSigningCerts(List<List<String>> certs) {
+    public void setSigningCerts(final List<List<String>> certs) {
         signingCerts = certs;
     }
 
@@ -258,7 +258,7 @@ public class MetadataGenerator {
      * 
      * @param certs what to set.
      */
-    public void setEncryptionCerts(List<List<String>> certs) {
+    public void setEncryptionCerts(final List<List<String>> certs) {
         encryptionCerts = certs;
     }
 
@@ -283,7 +283,7 @@ public class MetadataGenerator {
      * 
      * @param points what to set.
      */
-    public void setEndpoints(@Nonnull EnumSet<Endpoints> points) {
+    public void setEndpoints(@Nonnull final EnumSet<Endpoints> points) {
         endpoints = Constraint.isNotNull(points, "supplied endpoints should not be null");
     }
 
@@ -301,7 +301,7 @@ public class MetadataGenerator {
      * 
      * @param asComment whether to comment or not.
      */
-    public void setSAML2AttributeQueryCommented(boolean asComment) {
+    public void setSAML2AttributeQueryCommented(final boolean asComment) {
         saml2AttributeQueryCommented = asComment;
     }
 
@@ -319,7 +319,7 @@ public class MetadataGenerator {
      * 
      * @param asComment whether to comment or not
      */
-    public void setSAML2LogoutCommented(boolean asComment) {
+    public void setSAML2LogoutCommented(final boolean asComment) {
         saml2LogoutCommented = asComment;
     }
 
@@ -384,7 +384,7 @@ public class MetadataGenerator {
      * @param name the namespace
      * @throws IOException if badness happens
      */
-    protected void writeNameSpace(@Nullable String prefix, @Nonnull String name) throws IOException {
+    protected void writeNameSpace(@Nullable final String prefix, @Nonnull final String name) throws IOException {
         writer.write(" xmlns");
         if (null != prefix) {
             writer.write(':');
@@ -453,7 +453,7 @@ public class MetadataGenerator {
      * @param format what to support
      * @throws IOException when badness occurrs
      */
-    protected void writeNameIdFormat(String format) throws IOException {
+    protected void writeNameIdFormat(final String format) throws IOException {
         writer.write("        <");
         writer.write(NameIDFormat.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write('>');
@@ -503,7 +503,7 @@ public class MetadataGenerator {
      * @param protocols the supported protocols
      * @throws IOException when badness happebns
      */
-    protected void writeRoleDescriptor(String name, List<String> protocols) throws IOException {
+    protected void writeRoleDescriptor(final String name, final List<String> protocols) throws IOException {
         writer.write("    <");
         writer.write(name);
         writer.write(" protocolSupportEnumeration=\"");
@@ -649,7 +649,7 @@ public class MetadataGenerator {
      * @param language which languages
      * @throws IOException if badness happens
      */
-    protected void writeLangAttribute(String language) throws IOException {
+    protected void writeLangAttribute(final String language) throws IOException {
         writeNameSpaceQualified(XMLConstants.XML_PREFIX, LangBearing.XML_LANG_ATTR_LOCAL_NAME);
         writer.write("=\"");
         writer.write(language);
@@ -730,7 +730,7 @@ public class MetadataGenerator {
      * @throws IOException if badness happens.
      */
     // Checkstyle: MethodLength|CyclomaticComplexity OFF
-    protected void outputEndpoint(Endpoints endpoint) throws IOException {
+    protected void outputEndpoint(final Endpoints endpoint) throws IOException {
         switch (endpoint) {
             case SAML1Artifact:
                 writer.write("        ");
@@ -899,7 +899,7 @@ public class MetadataGenerator {
      * @param what the identifier
      * @throws IOException if badness happens
      */
-    protected void writeNameSpaceQualified(@Nonnull String nameSpace, String what) throws IOException {
+    protected void writeNameSpaceQualified(@Nonnull final String nameSpace, final String what) throws IOException {
         writer.write(nameSpace);
         writer.write(':');
         writer.write(what);

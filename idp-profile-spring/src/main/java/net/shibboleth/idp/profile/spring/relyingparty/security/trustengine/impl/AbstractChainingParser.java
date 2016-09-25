@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 public abstract class AbstractChainingParser extends AbstractTrustEngineParser {
     
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         final List<Element> childEngines =

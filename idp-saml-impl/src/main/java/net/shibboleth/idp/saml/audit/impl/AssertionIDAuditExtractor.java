@@ -66,7 +66,7 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                 if (!assertions.isEmpty()) {
                     return Collections2.transform(assertions,
                             new Function<org.opensaml.saml.saml2.core.Assertion,String>() {
-                                    public String apply(org.opensaml.saml.saml2.core.Assertion input) {
+                                    public String apply(final org.opensaml.saml.saml2.core.Assertion input) {
                                         return input.getID();
                                     }
                                 });
@@ -79,7 +79,7 @@ public class AssertionIDAuditExtractor implements Function<ProfileRequestContext
                 if (!assertions.isEmpty()) {
                     return Collections2.transform(assertions,
                             new Function<org.opensaml.saml.saml1.core.Assertion,String>() {
-                                    public String apply(org.opensaml.saml.saml1.core.Assertion input) {
+                                    public String apply(final org.opensaml.saml.saml1.core.Assertion input) {
                                         return input.getID();
                                     }
                                 });

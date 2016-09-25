@@ -168,7 +168,7 @@ public class OutputMetrics extends AbstractProfileAction {
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doPreExecute(ProfileRequestContext profileRequestContext) {
+    protected boolean doPreExecute(final ProfileRequestContext profileRequestContext) {
         
         if (!super.doPreExecute(profileRequestContext)) {
             return false;
@@ -208,13 +208,13 @@ public class OutputMetrics extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    @Override protected void doExecute(ProfileRequestContext profileRequestContext) {
+    @Override protected void doExecute(final ProfileRequestContext profileRequestContext) {
         
         MetricFilter filter = ALL_METRICS.equals(metricId) ? MetricFilter.ALL : metricFilterMap.get(metricId);
         if (filter == null) {
             // Use a filter matching one metric. 
             filter = new MetricFilter() {
-                public boolean matches(String name, Metric metric) {
+                public boolean matches(final String name, final Metric metric) {
                     return name.equals(metricId);
                 }
             };
@@ -266,7 +266,7 @@ public class OutputMetrics extends AbstractProfileAction {
         }
         
         /** {@inheritDoc} */
-        public boolean matches(String name, Metric metric) {
+        public boolean matches(final String name, final Metric metric) {
             return parentFilter.matches(name, metric) && metricFilter.matches(name, metric);
         }
 

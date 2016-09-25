@@ -57,12 +57,12 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
     @Nonnull private final Logger log = LoggerFactory.getLogger(PredicateFilterParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return PredicateFilter.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
         if (element.hasAttributeNS(null, "removeEmptyEntitiesDescriptors")) {
             builder.addPropertyValue("removeEmptyEntitiesDescriptors",

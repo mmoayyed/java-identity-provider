@@ -82,7 +82,7 @@ public class DefaultServiceComparator implements Comparator<String> {
                 path = m.replaceAll("");
             }
             return new URI(uri.getScheme(), uri.getAuthority(), path, uri.getQuery(), uri.getFragment()).toString();
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             log.warn("Error parsing {}", uriString);
             return uriString;
         }

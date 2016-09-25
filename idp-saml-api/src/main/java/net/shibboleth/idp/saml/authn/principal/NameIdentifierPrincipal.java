@@ -50,7 +50,7 @@ public class NameIdentifierPrincipal implements CloneablePrincipal {
         try {
             name = SerializeSupport.nodeToString(Constraint.isNotNull(XMLObjectSupport.getMarshaller(theNameIdentifier),
                     "No marshaller for NameIdentifier").marshall(theNameIdentifier));
-        } catch (MarshallingException e) {
+        } catch (final MarshallingException e) {
             throw new XMLRuntimeException(e);
         }
     }
@@ -75,7 +75,7 @@ public class NameIdentifierPrincipal implements CloneablePrincipal {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (other == null) {
             return false;
         }
@@ -101,7 +101,7 @@ public class NameIdentifierPrincipal implements CloneablePrincipal {
             copy.name = SerializeSupport.nodeToString(
                     Constraint.isNotNull(XMLObjectSupport.getMarshaller(copy.nameIdentifier),
                             "No marshaller for NameIdentifier").marshall(copy.nameIdentifier));
-        } catch (MarshallingException | UnmarshallingException e) {
+        } catch (final MarshallingException | UnmarshallingException e) {
             throw new XMLRuntimeException(e);
         }
         return copy;

@@ -56,7 +56,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
      * @param matcher the class we are bridging to
      * @param attribute the Id of the attribute in question.
      */
-    public PolicyFromMatcherId(@Nonnull Matcher matcher, @Nonnull @NotEmpty String attribute) {
+    public PolicyFromMatcherId(@Nonnull final Matcher matcher, @Nonnull @NotEmpty final String attribute) {
         super(matcher);
         theMatcher = matcher;
         attributeId = Constraint.isNotNull(StringSupport.trimOrNull(attribute), "attribute must not be null or empty");
@@ -78,7 +78,7 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull public Tristate matches(@Nonnull AttributeFilterContext context) {
+    @Nonnull public Tristate matches(@Nonnull final AttributeFilterContext context) {
         
         log.debug("{} Applying matcher supplied as policy to all values of attribute {}", getLogPrefix(), attributeId);
 

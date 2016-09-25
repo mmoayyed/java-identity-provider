@@ -117,7 +117,7 @@ public class PopulateProfileInterceptorContext extends AbstractProfileIntercepto
                 final String flowId = ProfileInterceptorFlowDescriptor.FLOW_ID_PREFIX + id;
                 final Optional<ProfileInterceptorFlowDescriptor> flow = Iterables.tryFind(availableFlows,
                         new Predicate<ProfileInterceptorFlowDescriptor>() {
-                            public boolean apply(ProfileInterceptorFlowDescriptor input) {
+                            public boolean apply(final ProfileInterceptorFlowDescriptor input) {
                                 return input.getId().equals(flowId);
                             }
                 });

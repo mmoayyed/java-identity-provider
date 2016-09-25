@@ -36,7 +36,7 @@ public class ProxyGrantingTicketSerializer extends AbstractTicketSerializer<Prox
 
 
     @Override
-    protected void serializeInternal(@Nonnull JsonGenerator generator, @Nonnull ProxyGrantingTicket ticket) {
+    protected void serializeInternal(@Nonnull final JsonGenerator generator, @Nonnull final ProxyGrantingTicket ticket) {
         if (ticket.getParentId() != null) {
             generator.write(PARENT_FIELD, ticket.getParentId());
         }

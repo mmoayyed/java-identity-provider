@@ -68,7 +68,7 @@ public final class ResolverPluginDependency {
      * @param attributeId ID of the attribute, produced by the identified plugin, whose values will be used by the
      *            dependent plugin
      */
-    public void setDependencyAttributeId(@Nullable String attributeId) {
+    public void setDependencyAttributeId(@Nullable final String attributeId) {
         dependencyAttributeId = StringSupport.trimOrNull(attributeId);
     }
 
@@ -89,7 +89,7 @@ public final class ResolverPluginDependency {
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

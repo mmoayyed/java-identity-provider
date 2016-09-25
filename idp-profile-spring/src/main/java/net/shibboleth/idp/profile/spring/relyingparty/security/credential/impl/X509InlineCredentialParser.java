@@ -32,7 +32,7 @@ public class X509InlineCredentialParser extends AbstractX509CredentialParser {
     /** Element Name.*/
     public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE, "X509Inline");
 
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return X509InlineCredentialFactoryBean.class;
     }
 }

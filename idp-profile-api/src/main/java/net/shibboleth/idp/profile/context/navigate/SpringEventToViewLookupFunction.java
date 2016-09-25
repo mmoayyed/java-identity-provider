@@ -61,7 +61,7 @@ public class SpringEventToViewLookupFunction implements Function<Event,String> {
      * 
      * @param map map to use
      */
-    public void setEventMap(@Nonnull @NonnullElements Map<String,String> map) {
+    public void setEventMap(@Nonnull @NonnullElements final Map<String,String> map) {
         if (map == null) {
             eventMap = Collections.emptyMap();
         } else {

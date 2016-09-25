@@ -107,7 +107,7 @@ public abstract class AbstractEntityAttributePolicyRule extends AbstractPolicyRu
      * 
      * @return whether the entity has the configured attribute {@inheritDoc}
      */
-    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
 
         Constraint.isNotNull(filterContext, "Context must be supplied");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);

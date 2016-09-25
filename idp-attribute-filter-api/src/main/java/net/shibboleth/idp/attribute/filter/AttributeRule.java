@@ -96,7 +96,7 @@ public class AttributeRule extends AbstractIdentifiableInitializableComponent im
      * 
      * @param id ID of the attribute to which this rule applies
      */
-    public void setAttributeId(@Nonnull @NotEmpty String id) {
+    public void setAttributeId(@Nonnull @NotEmpty final String id) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -118,7 +118,7 @@ public class AttributeRule extends AbstractIdentifiableInitializableComponent im
      * 
      * @param theMatcher matcher used to determine permitted attribute values filtered by this rule
      */
-    public void setMatcher(@Nonnull Matcher theMatcher) {
+    public void setMatcher(@Nonnull final Matcher theMatcher) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -140,7 +140,7 @@ public class AttributeRule extends AbstractIdentifiableInitializableComponent im
      * 
      * @param isDeny - whether the rule is deny or not.
      */
-    public void setIsDenyRule(boolean isDeny) {
+    public void setIsDenyRule(final boolean isDeny) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 

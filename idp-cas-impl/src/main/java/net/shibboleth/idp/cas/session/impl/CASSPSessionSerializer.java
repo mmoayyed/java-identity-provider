@@ -46,7 +46,7 @@ public class CASSPSessionSerializer extends AbstractSPSessionSerializer {
      *
      * @param offset milliseconds to subtract from record expiration to establish session expiration value
      */
-    public CASSPSessionSerializer(@Duration @NonNegative long offset) {
+    public CASSPSessionSerializer(@Duration @NonNegative final long offset) {
         super(offset);
     }
 

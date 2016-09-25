@@ -31,7 +31,7 @@ public class MultipleResultAnErrorResolutionException extends ResolutionExceptio
      *
      * @param message exception message
      */
-    public MultipleResultAnErrorResolutionException(String message) {
+    public MultipleResultAnErrorResolutionException(final String message) {
         super(message);
     }
 

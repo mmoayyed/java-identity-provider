@@ -67,7 +67,7 @@ public class CreateGlobalConsentResult extends AbstractConsentIndexedStorageActi
 
             storeResultWithIndex(profileRequestContext, result);
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.debug("{} Unable to serialize consent", getLogPrefix(), e);
             ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
         }

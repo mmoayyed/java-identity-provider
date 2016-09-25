@@ -167,14 +167,14 @@ public class UpdateSessionWithAuthenticationResult extends AbstractAuthenticatio
         if (session != null) {
             try {
                 updateIdPSession(authenticationContext, session);
-            } catch (SessionException e) {
+            } catch (final SessionException e) {
                 log.error("{} Error updating session {}", getLogPrefix(), session.getId(), e);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);
             }
         } else {
             try {
                 createIdPSession(authenticationContext);
-            } catch (SessionException e) {
+            } catch (final SessionException e) {
                 log.error("{} Error creating session for principal {}", getLogPrefix(),
                         subjectCtx.getPrincipalName(), e);
                 ActionSupport.buildEvent(profileRequestContext, EventIds.IO_ERROR);

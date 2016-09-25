@@ -162,7 +162,7 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
                         + " but multiple certificates were decoded");
             }
             return certs.iterator().next();
-        } catch (CertificateException | IOException e) {
+        } catch (final CertificateException | IOException e) {
             log.error("{}: Could not decode provided Entity Certificate at {}: {}", getConfigDescription(),
                     entityResource.getDescription(), e);
             throw new FatalBeanException("Could not decode provided Entity Certificate file "
@@ -176,7 +176,7 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
         for (final Resource r : certificateResources) {
             try(InputStream is = r.getInputStream()) {
                 certificates.addAll(X509Support.decodeCertificates(is));
-            } catch (CertificateException | IOException e) {
+            } catch (final CertificateException | IOException e) {
                 log.error("{}: could not decode CertificateFile at {}: {}", getConfigDescription(),
                         r.getDescription(), e);
                 throw new FatalBeanException("Could not decode provided CertificateFile: " + r.getDescription(), e);
@@ -192,7 +192,7 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
         }
         try (InputStream is = privateKeyResource.getInputStream()) {
             return KeySupport.decodePrivateKey(is, getPrivateKeyPassword());
-        } catch (KeyException | IOException e) {
+        } catch (final KeyException | IOException e) {
             log.error("{}: Could not decode KeyFile at {}: {}", getConfigDescription(),
                     privateKeyResource.getDescription(), e);
             throw new FatalBeanException("Could not decode provided KeyFile " + privateKeyResource.getDescription(), e);
@@ -208,7 +208,7 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
         for (final Resource crl : crlResources) {
             try (InputStream is = crl.getInputStream()) {
                 crls.addAll(X509Support.decodeCRLs(is));
-            } catch (CRLException | IOException e) {
+            } catch (final CRLException | IOException e) {
                 log.error("{}: Could not decode CRL file: {}", getConfigDescription(), crl.getDescription(), e);
                 throw new FatalBeanException("Could not decode provided CRL file " + crl.getDescription(), e);
             }

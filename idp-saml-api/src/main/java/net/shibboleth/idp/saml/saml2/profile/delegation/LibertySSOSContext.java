@@ -49,7 +49,7 @@ public class LibertySSOSContext extends BaseContext {
      * 
      * @param newAttestedToken The attestedToken to set.
      */
-    public void setAttestedToken(Assertion newAttestedToken) {
+    public void setAttestedToken(final Assertion newAttestedToken) {
         attestedToken = newAttestedToken;
     }
     
@@ -69,7 +69,7 @@ public class LibertySSOSContext extends BaseContext {
      * 
      * @param newAttestedSubjectConfirmationMethod The attestedSubjectConfirmationMethod to set.
      */
-    public void setAttestedSubjectConfirmationMethod(String newAttestedSubjectConfirmationMethod) {
+    public void setAttestedSubjectConfirmationMethod(final String newAttestedSubjectConfirmationMethod) {
         attestedSubjectConfirmationMethod = newAttestedSubjectConfirmationMethod;
     }
 

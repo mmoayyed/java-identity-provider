@@ -36,7 +36,7 @@ public class PredicateFilterDirectionFactoryBean extends AbstractFactoryBean<Pre
      * Constructor.
      * @param what the value to set
      */
-    public PredicateFilterDirectionFactoryBean(@Nullable String what) {
+    public PredicateFilterDirectionFactoryBean(@Nullable final String what) {
         value = what;
     }
     

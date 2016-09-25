@@ -50,7 +50,7 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractPrincipalConnectorParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<PrincipalConnector> getBeanClass(Element element) {
+    @Override protected Class<PrincipalConnector> getBeanClass(final Element element) {
         return PrincipalConnector.class;
     }
 

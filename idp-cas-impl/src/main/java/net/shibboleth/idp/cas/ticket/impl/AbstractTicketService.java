@@ -194,7 +194,7 @@ public abstract class AbstractTicketService implements TicketServiceEx {
                     ticket.getExpirationInstant().getMillis())) {
                 throw new RuntimeException("Failed to store ticket " + ticket);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Failed to store ticket " + ticket, e);
         }
     }
@@ -219,7 +219,7 @@ public abstract class AbstractTicketService implements TicketServiceEx {
                 return null;
             }
             ticket = record.getValue(serializer(clazz), context, id);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Error reading ticket.");
         }
         return ticket;
@@ -245,7 +245,7 @@ public abstract class AbstractTicketService implements TicketServiceEx {
             if (!storageService.delete(context, id)) {
                 log.info("Failed deleting {}. Ticket probably expired from storage service.", id);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Error deleting ticket " + id, e);
         }
         return ticket;

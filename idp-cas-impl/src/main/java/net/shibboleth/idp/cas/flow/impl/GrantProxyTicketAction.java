@@ -126,7 +126,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
             try {
                 log.debug("Attempting to retrieve session {}", pgt.getSessionId());
                 session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(pgt.getSessionId())));
-            } catch (ResolverException e) {
+            } catch (final ResolverException e) {
                 log.warn("IdPSession resolution error: {}", e);
             }
             boolean expired = true;
@@ -136,7 +136,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
                 try {
                     expired = !session.checkTimeout();
                     log.debug("Session {} expired={}", pgt.getSessionId(), expired);
-                } catch (SessionException e) {
+                } catch (final SessionException e) {
                     log.warn("Error performing session timeout check: {}. Assuming session has expired.", e);
                 }
             }
@@ -153,7 +153,7 @@ public class GrantProxyTicketAction extends AbstractCASProtocolAction<ProxyTicke
                     DateTime.now().plus(config.getTicketValidityPeriod()).toInstant(),
                     pgt,
                     request.getTargetService());
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             log.error("Failed granting proxy ticket due to error.", e);
             return ProtocolError.TicketCreationError.event(this);
         }

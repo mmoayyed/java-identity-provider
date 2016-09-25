@@ -67,7 +67,7 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                 if (!assertions.isEmpty()) {
                     return Collections2.transform(assertions,
                             new Function<org.opensaml.saml.saml2.core.Assertion,DateTime>() {
-                                    public DateTime apply(org.opensaml.saml.saml2.core.Assertion input) {
+                                    public DateTime apply(final org.opensaml.saml.saml2.core.Assertion input) {
                                         return input.getIssueInstant();
                                     }
                                 });
@@ -80,7 +80,7 @@ public class AssertionInstantAuditExtractor implements Function<ProfileRequestCo
                 if (!assertions.isEmpty()) {
                     return Collections2.transform(assertions,
                             new Function<org.opensaml.saml.saml1.core.Assertion,DateTime>() {
-                                    public DateTime apply(org.opensaml.saml.saml1.core.Assertion input) {
+                                    public DateTime apply(final org.opensaml.saml.saml1.core.Assertion input) {
                                         return input.getIssueInstant();
                                     }
                                 });

@@ -69,7 +69,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
      *
      * @param ticketService Ticket service component.
      */
-    public ValidateTicketAction(@Nonnull TicketServiceEx ticketService) {
+    public ValidateTicketAction(@Nonnull final TicketServiceEx ticketService) {
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
 
@@ -100,7 +100,7 @@ public class ValidateTicketAction extends AbstractCASProtocolAction<TicketValida
             if (ticket != null) {
                 log.debug("Found and removed {}/{} from ticket store", ticket, ticket.getSessionId());
             }
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             log.debug("CAS ticket retrieval failed with error: {}", e);
             return ProtocolError.TicketRetrievalError.event(this);
         }

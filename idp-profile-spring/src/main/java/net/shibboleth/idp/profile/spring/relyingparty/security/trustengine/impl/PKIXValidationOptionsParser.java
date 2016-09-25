@@ -38,12 +38,12 @@ public class PKIXValidationOptionsParser extends AbstractSingleBeanDefinitionPar
             "ValidationOptions");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return PKIXValidationOptions.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "processEmptyCRLs")) {

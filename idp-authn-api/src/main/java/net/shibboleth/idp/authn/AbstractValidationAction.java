@@ -523,7 +523,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
         }
         
         /** {@inheritDoc} */
-        public boolean apply(String input) {
+        public boolean apply(final String input) {
             return s.contains(input);
         }
     }

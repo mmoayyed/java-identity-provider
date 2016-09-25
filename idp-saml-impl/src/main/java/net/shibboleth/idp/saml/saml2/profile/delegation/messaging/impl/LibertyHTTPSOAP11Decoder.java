@@ -114,7 +114,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
      * 
      * @param newBodyHandler The bodyHandler to set.
      */
-    public void setBodyHandler(MessageHandler<SAMLObject> newBodyHandler) {
+    public void setBodyHandler(final MessageHandler<SAMLObject> newBodyHandler) {
         bodyHandler = newBodyHandler;
     }
     
@@ -143,14 +143,14 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
         try {
             soapMessage = (Envelope) unmarshallMessage(request.getInputStream());
             messageContext.getSubcontext(SOAP11Context.class, true).setEnvelope(soapMessage);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.error("Unable to obtain input stream from HttpServletRequest", e);
             throw new MessageDecodingException("Unable to obtain input stream from HttpServletRequest", e);
         }
         
         try {
             getBodyHandler().invoke(messageContext);
-        } catch (MessageHandlerException e) {
+        } catch (final MessageHandlerException e) {
             log.error("Error processing SOAP Envelope body", e);
             throw new MessageDecodingException("Error processing SOAP Envelope body", e);
         }
@@ -173,7 +173,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
      * 
      * @param messageContext the current message context
      */
-    protected void populateBindingContext(MessageContext<SAMLObject> messageContext) {
+    protected void populateBindingContext(final MessageContext<SAMLObject> messageContext) {
         SAMLBindingContext bindingContext = messageContext.getSubcontext(SAMLBindingContext.class, true);
         bindingContext.setBindingUri(getBindingURI());
         bindingContext.setBindingDescriptor(bindingDescriptor);

@@ -40,8 +40,8 @@ public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorPa
             new QName(PrincipalConnectorNamespaceHandler.NAMESPACE, "CryptoTransient");
 
     /** {@inheritDoc} */
-    @Override protected void addSAMLDecoders(@Nonnull Element config, @Nonnull ParserContext parserContext,
-            @Nonnull BeanDefinitionBuilder builder) {
+    @Override protected void addSAMLDecoders(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         final String dataSealer = StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef"));
         if (dataSealer == null) {

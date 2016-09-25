@@ -72,7 +72,7 @@ public abstract class AbstractBasicPKIXValidationInfoFactoryBean extends
      * 
      * @param desc what to set.
      */
-    public void setConfigDescription(@Nonnull String desc) {
+    public void setConfigDescription(@Nonnull final String desc) {
         configDescription = desc;
     }
 

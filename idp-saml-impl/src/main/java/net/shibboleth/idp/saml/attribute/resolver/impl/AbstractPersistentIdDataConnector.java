@@ -69,7 +69,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
      * 
      * @param newAttributeId what to set.
      */
-    public void setSourceAttributeId(@Nullable String newAttributeId) {
+    public void setSourceAttributeId(@Nullable final String newAttributeId) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         sourceAttribute = StringSupport.trimOrNull(newAttributeId);
     }
@@ -88,7 +88,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
      * 
      * @param newAttributeId what to set.
      */
-    public void setGeneratedAttributeId(@Nullable String newAttributeId) {
+    public void setGeneratedAttributeId(@Nullable final String newAttributeId) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         generatedAttribute = newAttributeId;
     }
@@ -174,7 +174,7 @@ public abstract class AbstractPersistentIdDataConnector extends AbstractDataConn
      * @param value the value to encode or null if that failed
      * @return null or the attribute.
      */
-    @Nullable protected Map<String, IdPAttribute> encodeAsAttribute(@Nullable String value) {
+    @Nullable protected Map<String, IdPAttribute> encodeAsAttribute(@Nullable final String value) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         if (null == value) {
             // The message will have been logged above

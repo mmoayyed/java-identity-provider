@@ -80,7 +80,7 @@ public abstract class AbstractOutgoingSamlMessageAction extends
         final MessageContext<SAMLObject> msgContext = new MessageContext<>();
         try {
             msgContext.setMessage(buildSamlResponse(springRequestContext, profileRequestContext));
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             return ProtocolError.IllegalState.event(this);
         }
         final SAMLBindingContext bindingContext = new SAMLBindingContext();

@@ -78,7 +78,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
      * @param attribute the attribute
      * @return true iff this is not a chaining resolver and the attribute is present
      */
-    private boolean isPresentNotChaining(@Nonnull Element element, @Nonnull String attribute) {
+    private boolean isPresentNotChaining(@Nonnull final Element element, @Nonnull final String attribute) {
 
         if (!element.hasAttributeNS(null, attribute)) {
             return false;
@@ -98,7 +98,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
      * @param element the element.
      * @return whether it is the outmost element.
      */
-    private boolean isTopMost(@Nonnull Element element) {
+    private boolean isTopMost(@Nonnull final Element element) {
         final Node parent = element.getParentNode();
 
         if (parent.getNodeType() == Node.DOCUMENT_NODE) {
@@ -125,7 +125,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     protected abstract Class<? extends MetadataResolver> getNativeBeanClass(Element element);
 
     /** {@inheritDoc} */
-    @Override protected final Class<? extends MetadataResolver> getBeanClass(Element element) {
+    @Override protected final Class<? extends MetadataResolver> getBeanClass(final Element element) {
         if (isTopMost(element)) {
             return RelyingPartyMetadataProvider.class;
         }
@@ -133,8 +133,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
     }
 
     /** {@inheritDoc} */
-    @Override protected final void doParse(Element element, ParserContext parserContext, 
-            BeanDefinitionBuilder builder) {
+    @Override protected final void doParse(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
         if (isTopMost(element)) {
             builder.setLazyInit(true);
@@ -166,7 +166,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
      * @param builder used to define the {@code BeanDefinition}
      * @see #doParse(Element, BeanDefinitionBuilder)
      */
-    protected void doNativeParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    protected void doNativeParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");

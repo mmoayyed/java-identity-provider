@@ -32,7 +32,7 @@ public class DisabledCounter extends Counter implements DisabledMetric {
     }
 
     /** {@inheritDoc} */
-    @Override public void inc(long n) {
+    @Override public void inc(final long n) {
         
     }
 
@@ -42,7 +42,7 @@ public class DisabledCounter extends Counter implements DisabledMetric {
     }
 
     /** {@inheritDoc} */
-    @Override public void dec(long n) {
+    @Override public void dec(final long n) {
         
     }
 

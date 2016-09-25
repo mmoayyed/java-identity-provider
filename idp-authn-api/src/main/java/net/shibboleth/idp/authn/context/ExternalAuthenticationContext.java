@@ -145,7 +145,7 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * 
      * @param instant time of authentication to set
      */
-    public void setAuthnInstant(DateTime instant) {
+    public void setAuthnInstant(final DateTime instant) {
         authnInstant = instant;
     }
 
@@ -163,7 +163,7 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * 
      * @param message message to set
      */
-    public void setAuthnError(String message) {
+    public void setAuthnError(final String message) {
         authnError = message;
     }
 
@@ -181,7 +181,7 @@ public final class ExternalAuthenticationContext extends BaseContext {
      * 
      * @param exception exception to set
      */
-    public void setAuthnException(Exception exception) {
+    public void setAuthnException(final Exception exception) {
         authnException = exception;
     }
     

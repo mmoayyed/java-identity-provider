@@ -169,7 +169,7 @@ public abstract class BaseIdPInitiatedSSORequestMessageDecoder<RequestType> exte
                 throw new MessageDecodingException("Shibboleth Authentication Request contained a negative time value");
             }
             return time * 1000;
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new MessageDecodingException("Shibboleth Authentication Request contained a non-numeric time value");
         }
     }

@@ -40,7 +40,7 @@ public class ReloadingAccessControlService extends AbstractServiceableComponent<
      * 
      * @param svc the embedded service
      */
-    public ReloadingAccessControlService(@Nonnull AccessControlService svc) {
+    public ReloadingAccessControlService(@Nonnull final AccessControlService svc) {
         service = Constraint.isNotNull(svc, "AccessControlService cannot be null");
     }
 

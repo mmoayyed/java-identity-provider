@@ -90,7 +90,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
     }
 
     /** {@inheritDoc} */
-    @Override public void setApplicationContext(ApplicationContext context) {
+    @Override public void setApplicationContext(final ApplicationContext context) {
         applicationContext = context;
     }
 
@@ -197,7 +197,7 @@ public class LogbackLoggingService extends AbstractReloadableService<Object>
      * 
      * @throws ServiceException thrown is there is a problem loading the logging configuration
      */
-    protected void loadLoggingConfiguration(InputStream loggingConfig) {
+    protected void loadLoggingConfiguration(final InputStream loggingConfig) {
         try {
             loggerContext.reset();
             loadIdPHomeProperty();

@@ -145,7 +145,7 @@ public abstract class AbstractSAML2AttributeEncoder<EncodedType extends IdPAttri
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
 
         if (!super.equals(obj)) {
             return false;

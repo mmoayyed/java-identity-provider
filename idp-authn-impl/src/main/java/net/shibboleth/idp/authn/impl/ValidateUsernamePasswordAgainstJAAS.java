@@ -293,7 +293,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                 if (factory != null) {
                     final PrincipalEvalPredicate predicate = factory.getPredicate(p);
                     final PrincipalSupportingComponent wrapper = new PrincipalSupportingComponent() {
-                        public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
+                        public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
                             return subject.getPrincipals(c);
                         }
                     };

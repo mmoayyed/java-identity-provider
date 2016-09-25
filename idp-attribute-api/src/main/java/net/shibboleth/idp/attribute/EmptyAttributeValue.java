@@ -71,7 +71,7 @@ public class EmptyAttributeValue implements IdPAttributeValue<EmptyAttributeValu
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(@Nullable Object obj) {
+    @Override public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -55,8 +55,8 @@ public class OrMatcher extends AbstractComposedMatcher {
     }
 
     /** {@inheritDoc} */
-    @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
-            @Nonnull AttributeFilterContext filterContext) {
+    @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+            @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
 

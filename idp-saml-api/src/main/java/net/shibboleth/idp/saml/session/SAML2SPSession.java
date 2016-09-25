@@ -102,7 +102,7 @@ public class SAML2SPSession extends BasicSPSession {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!super.equals(obj)) {
             return false;
         }

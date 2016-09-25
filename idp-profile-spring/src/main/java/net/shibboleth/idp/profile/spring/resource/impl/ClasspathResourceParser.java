@@ -36,12 +36,12 @@ public class ClasspathResourceParser extends AbstractSingleBeanDefinitionParser 
     public static final QName ELEMENT_NAME = new QName(ResourceNamespaceHandler.NAMESPACE, "ClasspathResource");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return ClassPathResource.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         builder.setLazyInit(true);
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, "file")));
     }

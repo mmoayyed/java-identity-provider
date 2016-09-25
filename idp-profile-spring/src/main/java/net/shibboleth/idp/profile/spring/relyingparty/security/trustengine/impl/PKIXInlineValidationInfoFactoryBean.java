@@ -76,7 +76,7 @@ public class PKIXInlineValidationInfoFactoryBean extends AbstractBasicPKIXValida
         for (String cert : certificateFiles) {
             try {
                 certificates.add(X509Support.decodeCertificate(cert.trim()));
-            } catch (CertificateException e) {
+            } catch (final CertificateException e) {
                 log.error("{}: Could not decode provided Certificate", getConfigDescription(), e);
                 throw new FatalBeanException("Could not decode provided Certificate", e);
             }
@@ -97,7 +97,7 @@ public class PKIXInlineValidationInfoFactoryBean extends AbstractBasicPKIXValida
         for (String crl : crlStrings) {
             try {
                 crls.add(X509Support.decodeCRL(crl));
-            } catch (CRLException | CertificateException e) {
+            } catch (final CRLException | CertificateException e) {
                 log.error("{}: Could not decode provided CRL", getConfigDescription(), e);
                 throw new FatalBeanException("Could not decode provided CRL", e);
             }

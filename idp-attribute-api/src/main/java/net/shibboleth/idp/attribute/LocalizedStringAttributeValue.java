@@ -40,7 +40,7 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
      * @param attributeValueLocale the locale of the attribute value
      */
     public LocalizedStringAttributeValue(@Nonnull @NotEmpty final String attributeValue,
-            @Nullable Locale attributeValueLocale) {
+            @Nullable final Locale attributeValueLocale) {
         super(attributeValue);
         valueLocale = attributeValueLocale;
     }
@@ -56,7 +56,7 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
 
     /** {@inheritDoc} */
     @Override
-    public boolean equals(@Nullable Object obj) {
+    public boolean equals(@Nullable final Object obj) {
         if (obj == null) {
             return false;
         }

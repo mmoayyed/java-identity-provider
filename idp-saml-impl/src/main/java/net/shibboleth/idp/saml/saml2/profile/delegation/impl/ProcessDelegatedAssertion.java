@@ -161,7 +161,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
             try {
                 log.debug("{} Authenticated user based on inbound SAML 2 Assertion token with NameID: {}", 
                         getLogPrefix(), SerializeSupport.nodeToString(XMLObjectSupport.marshall(nameID)));
-            } catch (MarshallingException e) {
+            } catch (final MarshallingException e) {
                 log.debug("{} Could not marshall SAML 2 NameID for logging purposes", getLogPrefix(), e);
             }
         }

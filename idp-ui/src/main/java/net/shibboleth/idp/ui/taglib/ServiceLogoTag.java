@@ -66,7 +66,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
      * 
      * @param value what to set
      */
-    public void setMaxWidth(Integer value) {
+    public void setMaxWidth(final Integer value) {
         maxWidth = value.intValue();
     }
 
@@ -75,7 +75,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
      * 
      * @param value what to set
      */
-    public void setMinWidth(Integer value) {
+    public void setMinWidth(final Integer value) {
         minWidth = value.intValue();
     }
 
@@ -84,7 +84,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
      * 
      * @param value what to set
      */
-    public void setMinHeight(Integer value) {
+    public void setMinHeight(final Integer value) {
         minHeight = value.intValue();
     }
 
@@ -93,7 +93,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
      * 
      * @param value what to set
      */
-    public void setMaxHeight(Integer value) {
+    public void setMaxHeight(final Integer value) {
         maxHeight = value.intValue();
     }
 
@@ -102,7 +102,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
      * 
      * @param value what to set
      */
-    public void setAlt(String value) {
+    public void setAlt(final String value) {
         altTxt = value;
     }
 
@@ -166,7 +166,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
                 log.warn("The logo URL '{}' contained an invalid scheme (expected http:, https: or data:)", url);
                 return null;
             }
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             //
             // Could not encode
             //
@@ -209,7 +209,7 @@ public class ServiceLogoTag extends ServiceTagSupport {
             } else {
                 pageContext.getOut().print(result);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn("Error generating Logo", e);
             throw new JspException("EndTag", e);
         }

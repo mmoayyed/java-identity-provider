@@ -48,7 +48,7 @@ public class ProcessSenderHandler extends AbstractMessageHandler {
     private Logger log = LoggerFactory.getLogger(ProcessSenderHandler.class);
 
     /** {@inheritDoc} */
-    protected void doInvoke(MessageContext messageContext) throws MessageHandlerException {
+    protected void doInvoke(final MessageContext messageContext) throws MessageHandlerException {
         Sender header = getSender(messageContext);
         String headerValue = header != null ? StringSupport.trimOrNull(header.getProviderID()) : null;
         log.debug("Extracted inbound Liberty ID-WSF Sender providerId value: {}", headerValue);

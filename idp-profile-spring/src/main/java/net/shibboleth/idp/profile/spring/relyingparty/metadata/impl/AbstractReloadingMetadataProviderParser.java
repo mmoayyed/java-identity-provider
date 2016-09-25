@@ -39,8 +39,8 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
      * We assume in setting the that we will be summoning up a class which extends 
      * {@link org.opensaml.saml.metadata.resolver.impl.AbstractReloadingMetadataResolver}.
      */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext,
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
 
         super.doNativeParse(element, parserContext, builder);
 
@@ -75,7 +75,7 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
      * 
      * @return task timer reference
      */
-    protected String getTaskTimerRef(Element element) {
+    protected String getTaskTimerRef(final Element element) {
         if (element.hasAttributeNS(null, "taskTimerRef")) {
             return StringSupport.trimOrNull(element.getAttributeNS(null, "taskTimerRef"));
         } else {
@@ -90,7 +90,7 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
      * 
      * @return parser pool reference
      */
-    protected String getParserPoolRef(Element element) {
+    protected String getParserPoolRef(final Element element) {
         String parserPoolRef = null;
         if (element.hasAttributeNS(null, "parserPoolRef")) {
             parserPoolRef = StringSupport.trimOrNull(element.getAttributeNS(null, "parserPoolRef"));

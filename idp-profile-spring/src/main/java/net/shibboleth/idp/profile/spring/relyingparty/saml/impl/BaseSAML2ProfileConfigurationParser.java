@@ -40,7 +40,7 @@ public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfil
      * @param element the element under discussion
      * @return the list of elements (which are subject to property replacement)
      */
-    protected List<String> getProxyAudiences(Element element) {
+    protected List<String> getProxyAudiences(final Element element) {
         List<Element> audienceElems =
                 ElementSupport.getChildElementsByTagNameNS(element, RelyingPartySAMLNamespaceHandler.NAMESPACE,
                         "ProxyAudience");
@@ -48,7 +48,7 @@ public abstract class BaseSAML2ProfileConfigurationParser extends BaseSAMLProfil
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "encryptionOptional")) {

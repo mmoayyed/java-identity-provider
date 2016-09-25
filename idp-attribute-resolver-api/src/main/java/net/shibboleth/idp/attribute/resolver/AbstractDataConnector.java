@@ -124,7 +124,7 @@ public abstract class AbstractDataConnector extends AbstractResolverPlugin<Map<S
         final Map<String, IdPAttribute> result;
         try {
             result = doDataConnectorResolve(resolutionContext, workContext);
-        } catch (NoResultAnErrorResolutionException | MultipleResultAnErrorResolutionException e) {
+        } catch (final NoResultAnErrorResolutionException | MultipleResultAnErrorResolutionException e) {
             // Do not record these failures, they are 'expected'
             throw e;
         } catch (final Exception e) {

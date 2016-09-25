@@ -60,7 +60,7 @@ public class PropertiesWithComments {
      * @param isComment whether this is a comment or not.
      * @throws IOException when badness happens.
      */
-    protected void addCommentedProperty(@Nonnull @NotEmpty final String line, boolean isComment) throws IOException {
+    protected void addCommentedProperty(@Nonnull @NotEmpty final String line, final boolean isComment) throws IOException {
         final Properties parser = new Properties();
         final String modifiedLine;
 
@@ -99,7 +99,7 @@ public class PropertiesWithComments {
      * @param input what to read
      * @throws IOException if readline fails
      */
-    public void load(InputStream input) throws IOException {
+    public void load(final InputStream input) throws IOException {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
         contents = new ArrayList<>();
         properties = new HashMap<>();
@@ -130,7 +130,7 @@ public class PropertiesWithComments {
      * @param output where to write
      * @throws IOException is the write fails
      */
-    public void store(OutputStream output) throws IOException {
+    public void store(final OutputStream output) throws IOException {
         final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
 
         for (Object o : contents) {
@@ -154,7 +154,7 @@ public class PropertiesWithComments {
      * @param newPropValue the value to replace
      * @return true if the property was replaced false if it was added
      */
-    public boolean replaceProperty(String propName, String newPropValue) {
+    public boolean replaceProperty(final String propName, final String newPropValue) {
 
         CommentedProperty p = properties.get(propName);
         if (null != p) {
@@ -172,7 +172,7 @@ public class PropertiesWithComments {
      * 
      * @param what what to add
      */
-    public void addComment(String what) {
+    public void addComment(final String what) {
         contents.add("# " + what);
     }
 
@@ -211,7 +211,7 @@ public class PropertiesWithComments {
          * 
          * @param newValue what to set
          */
-        protected void setValue(String newValue) {
+        protected void setValue(final String newValue) {
             value = newValue;
             isComment = false;
         }

@@ -71,7 +71,7 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
      * 
      * @param predicate what to set.
      */
-    public void setRulePredicate(Predicate<ProfileRequestContext> predicate) {
+    public void setRulePredicate(final Predicate<ProfileRequestContext> predicate) {
         rulePredicate = predicate;
     }
 
@@ -89,7 +89,7 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
      * 
      * @param strategy what to set.
      */
-    public void setProfileContextStrategy(Function<AttributeFilterContext,ProfileRequestContext> strategy) {
+    public void setProfileContextStrategy(final Function<AttributeFilterContext,ProfileRequestContext> strategy) {
         profileContextStrategy = Constraint.isNotNull(strategy, "ProfileContext lookup strategy cannot be null");
     }
 
@@ -111,7 +111,7 @@ public class PredicatePolicyRule extends AbstractPolicyRule {
      * 
      * {@inheritDoc}
      */
-    @Override public Tristate matches(@Nonnull AttributeFilterContext filterContext) {
+    @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final ProfileRequestContext pc = profileContextStrategy.apply(filterContext);

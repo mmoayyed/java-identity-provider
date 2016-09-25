@@ -228,13 +228,13 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
 
     /** {@inheritDoc} */
     @Override
-    public void setMessageSource(MessageSource source) {
+    public void setMessageSource(final MessageSource source) {
         messageSource = source;
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+    public String getMessage(final String code, final Object[] args, final String defaultMessage, final Locale locale) {
         if (messageSource != null) {
             return messageSource.getMessage(code, args, defaultMessage, locale);
         }
@@ -243,7 +243,7 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
 
     /** {@inheritDoc} */
     @Override
-    public String getMessage(String code, Object[] args, Locale locale) {
+    public String getMessage(final String code, final Object[] args, final Locale locale) {
         if (messageSource != null) {
             return messageSource.getMessage(code, args, locale);
         }
@@ -252,7 +252,7 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
 
     /** {@inheritDoc} */
     @Override
-    public String getMessage(MessageSourceResolvable resolvable, Locale locale) {
+    public String getMessage(final MessageSourceResolvable resolvable, final Locale locale) {
         if (messageSource != null) {
             return messageSource.getMessage(resolvable, locale);
         }

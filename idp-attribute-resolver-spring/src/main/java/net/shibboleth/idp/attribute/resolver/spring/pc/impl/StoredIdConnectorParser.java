@@ -72,7 +72,7 @@ public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
          * 
          * @param connector the data connector of interest
          */
-        public EmbeddedStoredPersistentIdDecoder(StoredIDDataConnector connector) {
+        public EmbeddedStoredPersistentIdDecoder(final StoredIDDataConnector connector) {
             setPersistentIdStore(connector.getStoredIDStore());
         }
     }
@@ -81,8 +81,8 @@ public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
     public static class NotImplementedNameIdentifierDecoder implements NameIdentifierDecoder {
 
         /** {@inheritDoc} */
-        @Override @Nullable public String decode(@Nonnull SubjectCanonicalizationContext c14nContext,
-                @Nonnull NameIdentifier nameID) throws NameDecoderException {
+        @Override @Nullable public String decode(@Nonnull final SubjectCanonicalizationContext c14nContext,
+                @Nonnull final NameIdentifier nameID) throws NameDecoderException {
             throw new NameDecoderException("Name Decoding for SAML1?");
         }
 

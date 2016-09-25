@@ -66,7 +66,7 @@ public class DelegationContext extends BaseContext {
      * 
      * @param flag true is issuing a delegated assertion false otherwise
      */
-    public void setIssuingDelegatedAssertion(boolean flag) {
+    public void setIssuingDelegatedAssertion(final boolean flag) {
         issuingDelegatedAssertion = flag;
     }
     
@@ -84,7 +84,7 @@ public class DelegationContext extends BaseContext {
      * 
      * @param requested the delegation request status
      */
-    public void setDelegationRequested(DelegationRequest requested) {
+    public void setDelegationRequested(final DelegationRequest requested) {
         delegationRequested = Constraint.isNotNull(requested, "DelegationRequest was null");
     }
 

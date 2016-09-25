@@ -41,7 +41,7 @@ public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionPars
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "Simple");
 
     /** {@inheritDoc} */
-    @Override protected Class<SimpleAttributeDefinition> getBeanClass(@Nullable Element element) {
+    @Override protected Class<SimpleAttributeDefinition> getBeanClass(@Nullable final Element element) {
         return SimpleAttributeDefinition.class;
     }
 

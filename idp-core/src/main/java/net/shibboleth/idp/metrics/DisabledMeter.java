@@ -32,7 +32,7 @@ public class DisabledMeter extends Meter implements DisabledMetric {
     }
 
     /** {@inheritDoc} */
-    @Override public void mark(long n) {
+    @Override public void mark(final long n) {
         
     }
 

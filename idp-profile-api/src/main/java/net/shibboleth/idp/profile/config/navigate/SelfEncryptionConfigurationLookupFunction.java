@@ -72,7 +72,7 @@ public class SelfEncryptionConfigurationLookupFunction
      *  
      * @param flag true if profile default should be included, false otherwise
      */
-    public void setIncludeProfileDefaultConfiguration(boolean flag) {
+    public void setIncludeProfileDefaultConfiguration(final boolean flag) {
         includeProfileDefaultConfiguration = flag;
     }
     

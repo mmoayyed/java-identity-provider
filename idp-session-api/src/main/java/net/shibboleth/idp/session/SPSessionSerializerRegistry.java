@@ -56,7 +56,7 @@ public final class SPSessionSerializerRegistry extends AbstractInitializableComp
      * 
      * @param map  map to populate registry with
      */
-    public void setMappings(@Nonnull @NonnullElements
+    public void setMappings(@Nonnull @NonnullElements final
             Map<Class<? extends SPSession>,StorageSerializer<? extends SPSession>> map) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         Constraint.isNotNull(map, "Map cannot be null");

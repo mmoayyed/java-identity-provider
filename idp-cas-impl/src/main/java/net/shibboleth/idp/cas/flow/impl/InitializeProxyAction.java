@@ -99,7 +99,7 @@ public class InitializeProxyAction extends AbstractCASProtocolAction<ProxyTicket
                     return ProtocolError.TicketExpired.event(this);
                 }
                 setCASTicket(profileRequestContext, pgt);
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 log.error("Failed looking up " + proxyTicketRequest.getPgt(), e);
                 return ProtocolError.TicketRetrievalError.event(this);
             }

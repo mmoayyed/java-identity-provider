@@ -55,7 +55,7 @@ public class XMLObjectAttributeValueMapper extends AbstractSAMLAttributeValueMap
     /** Sets whether we look at the AttributeValue, or just its child.
      * @param doInclude The includeAttributeValue to set.
      */
-    public void setIncludeAttributeValue(boolean doInclude) {
+    public void setIncludeAttributeValue(final boolean doInclude) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         includeAttributeValue = doInclude;
     }
@@ -89,7 +89,7 @@ public class XMLObjectAttributeValueMapper extends AbstractSAMLAttributeValueMap
     }
 
     /** {@inheritDoc} */
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

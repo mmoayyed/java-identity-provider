@@ -320,7 +320,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundSAMLMessage(SAMLObject param) {
+    public void setInboundSAMLMessage(final SAMLObject param) {
         unsupportedMethod("setInboundSAMLMessage");
     }
 
@@ -329,7 +329,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundSAMLMessageAuthenticated(boolean param) {
+    public void setInboundSAMLMessageAuthenticated(final boolean param) {
         unsupportedMethod("setInboundSAMLMessageAuthenticated");
     }
 
@@ -338,7 +338,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundSAMLMessageId(String param) {
+    public void setInboundSAMLMessageId(final String param) {
         unsupportedMethod("setInboundSAMLMessageId");
     }
 
@@ -347,7 +347,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundSAMLMessageIssueInstant(DateTime param) {
+    public void setInboundSAMLMessageIssueInstant(final DateTime param) {
         unsupportedMethod("setInboundSAMLMessageIssueInstant");
     }
 
@@ -356,7 +356,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundSAMLProtocol(String param) {
+    public void setInboundSAMLProtocol(final String param) {
         unsupportedMethod("setInboundSAMLProtocol");
     }
 
@@ -365,7 +365,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setLocalEntityId(String param) {
+    public void setLocalEntityId(final String param) {
         unsupportedMethod("setLocalEntityId");
     }
 
@@ -374,7 +374,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setLocalEntityMetadata(EntityDescriptor param) {
+    public void setLocalEntityMetadata(final EntityDescriptor param) {
         unsupportedMethod("setLocalEntityMetadata");
     }
 
@@ -383,7 +383,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setLocalEntityRole(QName param) {
+    public void setLocalEntityRole(final QName param) {
         unsupportedMethod("setLocalEntityRole");
     }
 
@@ -392,7 +392,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setLocalEntityRoleMetadata(RoleDescriptor param) {
+    public void setLocalEntityRoleMetadata(final RoleDescriptor param) {
         unsupportedMethod("setLocalEntityRoleMetadata");
     }
 
@@ -401,7 +401,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setMetadataResolver(Object param) {
+    public void setMetadataResolver(final Object param) {
         unsupportedMethod("setMetadataResolver");
 
     }
@@ -411,7 +411,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundMessageArtifactType(byte[] param) {
+    public void setOutboundMessageArtifactType(final byte[] param) {
         unsupportedMethod("setOutboundMessageArtifactType");
 
     }
@@ -421,7 +421,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundSAMLMessage(SAMLObject param) {
+    public void setOutboundSAMLMessage(final SAMLObject param) {
         unsupportedMethod("setOutboundSAMLMessage");
 
     }
@@ -431,7 +431,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundSAMLMessageId(String param) {
+    public void setOutboundSAMLMessageId(final String param) {
         unsupportedMethod("setOutboundSAMLMessageId");
 
     }
@@ -441,7 +441,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundSAMLMessageIssueInstant(DateTime param) {
+    public void setOutboundSAMLMessageIssueInstant(final DateTime param) {
         unsupportedMethod("setOutboundSAMLMessageIssueInstant");
 
     }
@@ -451,7 +451,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundSAMLMessageSigningCredential(Object param) {
+    public void setOutboundSAMLMessageSigningCredential(final Object param) {
         unsupportedMethod("setOutboundSAMLMessageSigningCredential");
 
     }
@@ -461,7 +461,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundSAMLProtocol(String param) {
+    public void setOutboundSAMLProtocol(final String param) {
         unsupportedMethod("setOutboundSAMLProtocol");
 
     }
@@ -471,7 +471,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPeerEntityEndpoint(Endpoint param) {
+    public void setPeerEntityEndpoint(final Endpoint param) {
         unsupportedMethod("setPeerEntityEndpoint");
 
     }
@@ -481,7 +481,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPeerEntityId(String param) {
+    public void setPeerEntityId(final String param) {
         unsupportedMethod("setPeerEntityId");
 
     }
@@ -491,7 +491,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPeerEntityMetadata(EntityDescriptor param) {
+    public void setPeerEntityMetadata(final EntityDescriptor param) {
         unsupportedMethod("setPeerEntityMetadata");
 
     }
@@ -501,7 +501,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPeerEntityRole(QName param) {
+    public void setPeerEntityRole(final QName param) {
         unsupportedMethod("setPeerEntityRole");
 
     }
@@ -511,7 +511,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPeerEntityRoleMetadata(RoleDescriptor param) {
+    public void setPeerEntityRoleMetadata(final RoleDescriptor param) {
         unsupportedMethod("setPeerEntityRoleMetadata");
 
     }
@@ -521,7 +521,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setRelayState(String param) {
+    public void setRelayState(final String param) {
         unsupportedMethod("setRelayState");
 
     }
@@ -531,7 +531,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setSubjectNameIdentifier(SAMLObject param) {
+    public void setSubjectNameIdentifier(final SAMLObject param) {
         unsupportedMethod("setSubjectNameIdentifier");
 
     }
@@ -631,7 +631,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setCommunicationProfileId(String param) {
+    public void setCommunicationProfileId(final String param) {
         unsupportedMethod("setCommunicationProfileId");
     }
 
@@ -640,7 +640,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundMessage(XMLObject param) {
+    public void setInboundMessage(final XMLObject param) {
         unsupportedMethod("setInboundMessage");
     }
 
@@ -649,7 +649,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundMessageIssuer(String param) {
+    public void setInboundMessageIssuer(final String param) {
         unsupportedMethod("setInboundMessageIssuer");
     }
 
@@ -658,7 +658,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setInboundMessageTransport(Object param) {
+    public void setInboundMessageTransport(final Object param) {
         unsupportedMethod("setInboundMessageTransport");
 
     }
@@ -668,7 +668,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundMessage(XMLObject param) {
+    public void setOutboundMessage(final XMLObject param) {
         unsupportedMethod("setOutboundMessage");
     }
 
@@ -677,7 +677,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundMessageIssuer(String param) {
+    public void setOutboundMessageIssuer(final String param) {
         unsupportedMethod("setOutboundMessageIssuer");
     }
 
@@ -686,7 +686,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundMessageTransport(Object param) {
+    public void setOutboundMessageTransport(final Object param) {
         unsupportedMethod("setOutboundMessageTransport");
     }
 
@@ -695,7 +695,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setSecurityPolicyResolver(Object param) {
+    public void setSecurityPolicyResolver(final Object param) {
         unsupportedMethod("setSecurityPolicyResolver");
     }
 
@@ -714,7 +714,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPreSecurityInboundHandlerChainResolver(Object param) {
+    public void setPreSecurityInboundHandlerChainResolver(final Object param) {
         unsupportedMethod("setPreSecurityInboundHandlerChainResolver");
     }
 
@@ -733,7 +733,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPostSecurityInboundHandlerChainResolver(Object param) {
+    public void setPostSecurityInboundHandlerChainResolver(final Object param) {
         unsupportedMethod("setPostSecurityInboundHandlerChainResolver");
     }
 
@@ -752,7 +752,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setOutboundHandlerChainResolver(Object param) {
+    public void setOutboundHandlerChainResolver(final Object param) {
         unsupportedMethod("setOutboundHandlerChainResolver");
     }
 
@@ -791,7 +791,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setProfileConfiguration(Object param) {
+    public void setProfileConfiguration(final Object param) {
         unsupportedMethod("setProfileConfiguration");
     }
 
@@ -800,7 +800,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setRelyingPartyConfiguration(Object param) {
+    public void setRelyingPartyConfiguration(final Object param) {
         unsupportedMethod("setRelyingPartyConfiguration");
     }
 
@@ -809,7 +809,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setUserSession(Object param) {
+    public void setUserSession(final Object param) {
         unsupportedMethod("setUserSession");
     }
 
@@ -828,7 +828,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setReleasedAttributes(Collection param) {
+    public void setReleasedAttributes(final Collection param) {
         unsupportedMethod("setReleasedAttributes");
     }
 
@@ -847,7 +847,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setRequestedAttributes(Collection<String> param) {
+    public void setRequestedAttributes(final Collection<String> param) {
         unsupportedMethod("setRequestedAttributes");
     }
 
@@ -866,7 +866,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setAttributes(Map<String, Object> param) {
+    public void setAttributes(final Map<String, Object> param) {
         unsupportedMethod("setAttributes");
     }
 
@@ -885,7 +885,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPrincipalAuthenticationMethod(String param) {
+    public void setPrincipalAuthenticationMethod(final String param) {
         unsupportedMethod("setPrincipalAuthenticationMethod");
     }
 
@@ -894,7 +894,7 @@ public class V2SAMLProfileRequestContext {
      * 
      * @param param ignored.
      */
-    public void setPrincipalName(String param) {
+    public void setPrincipalName(final String param) {
         unsupportedMethod("setPrincipalName");
 
     }

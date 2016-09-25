@@ -96,7 +96,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      * 
      * @param strategy the mechanism
      */
-    public void setProfileContextStrategy(Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
+    public void setProfileContextStrategy(final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         profileContextStrategy = Constraint.isNotNull(strategy, "Profile Context Strategy cannot be null");
     }
@@ -191,7 +191,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
                 log.debug("Resolver plugin '{}' produced no value.", getId());
             }
             return result;
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             //
             // NOTE - if you change this logic you MUST make changes in any derived classes that
             // depend on our handling of propagateResolutionExceptions.
@@ -230,7 +230,7 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

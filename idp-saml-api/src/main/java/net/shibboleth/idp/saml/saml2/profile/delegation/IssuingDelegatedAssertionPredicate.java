@@ -54,7 +54,7 @@ public class IssuingDelegatedAssertionPredicate implements Predicate<ProfileRequ
     }
     
     /** {@inheritDoc} */
-    public boolean apply(@Nullable ProfileRequestContext input) {
+    public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return false;
         }

@@ -89,7 +89,7 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
         try {
             log.debug("Attempting to retrieve session {}", ticket.getSessionId());
             session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(ticket.getSessionId())));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warn("IdPSession resolution error: {}. Possible sign of misconfiguration.", e.getMessage());
         }
         if (session != null) {
@@ -102,7 +102,7 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
             log.debug("Created SP session {}", sps);
             try {
                 session.addSPSession(sps);
-            } catch (SessionException e) {
+            } catch (final SessionException e) {
                 log.warn("Failed updating IdPSession with CASSPSession", e);
             }
         } else {

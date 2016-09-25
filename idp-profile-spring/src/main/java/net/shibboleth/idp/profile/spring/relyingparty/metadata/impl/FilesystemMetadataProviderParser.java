@@ -45,13 +45,13 @@ public class FilesystemMetadataProviderParser extends AbstractReloadingMetadataP
     private final Logger log = LoggerFactory.getLogger(FilesystemMetadataProviderParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<FilesystemMetadataResolver> getNativeBeanClass(Element element) {
+    @Override protected Class<FilesystemMetadataResolver> getNativeBeanClass(final Element element) {
         return FilesystemMetadataResolver.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(Element element, ParserContext parserContext,
-            BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "maintainExpiredMetadata")) {

@@ -65,7 +65,7 @@ public class SpringStatusMessageLookupFunction implements Function<ProfileReques
 
     /** {@inheritDoc} */
     @Override
-    public void setMessageSource(MessageSource source) {
+    public void setMessageSource(final MessageSource source) {
         messageSource = source;
     }
 

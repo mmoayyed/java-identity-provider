@@ -74,7 +74,7 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         return resolvedDefinition.equals(obj);
     }
 
@@ -133,22 +133,22 @@ public final class ResolvedAttributeDefinition extends AbstractAttributeDefiniti
     }
 
     /** {@inheritDoc} */
-    @Override public void setDependencyOnly(boolean isDependencyOnly) {
+    @Override public void setDependencyOnly(final boolean isDependencyOnly) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override public void setDisplayDescriptions(Map<Locale, String> descriptions) {
+    @Override public void setDisplayDescriptions(final Map<Locale, String> descriptions) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override public void setDisplayNames(Map<Locale, String> names) {
+    @Override public void setDisplayNames(final Map<Locale, String> names) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override public void setPropagateResolutionExceptions(boolean propagate) {
+    @Override public void setPropagateResolutionExceptions(final boolean propagate) {
         return;
     }
 

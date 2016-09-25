@@ -86,8 +86,8 @@ public class ValidateProxyCallbackAction
      * @param ticketService Ticket service component.
      */
     public ValidateProxyCallbackAction(
-            @Nonnull ProxyAuthenticator<TrustEngine<? super X509Credential>> proxyAuthenticator,
-            @Nonnull TicketServiceEx ticketService) {
+            @Nonnull final ProxyAuthenticator<TrustEngine<? super X509Credential>> proxyAuthenticator,
+            @Nonnull final TicketServiceEx ticketService) {
         proxyAuthnticator = Constraint.isNotNull(proxyAuthenticator, "ProxyAuthenticator cannot be null");
         ticketServiceEx = Constraint.isNotNull(ticketService, "TicketService cannot be null");
     }
@@ -121,7 +121,7 @@ public class ValidateProxyCallbackAction
                     .addParameter(ProtocolParam.PgtId.id(), proxyIds.getPgtId())
                     .addParameter(ProtocolParam.PgtIou.id(), proxyIds.getPgtIou())
                     .build();
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new RuntimeException("Error creating proxy callback URL", e);
         }
         try {
@@ -141,7 +141,7 @@ public class ValidateProxyCallbackAction
                 ticketServiceEx.createProxyGrantingTicket(proxyIds.getPgtId(), expiration, (ProxyTicket) ticket);
             }
             response.setPgtIou(proxyIds.getPgtIou());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.info("Proxy authentication failed for " + request.getPgtUrl() + ": " + e);
             return ProtocolError.ProxyCallbackAuthenticationFailure.event(this);
         }

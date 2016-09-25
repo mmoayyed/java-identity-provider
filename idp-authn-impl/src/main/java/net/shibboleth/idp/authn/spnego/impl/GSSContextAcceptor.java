@@ -139,7 +139,7 @@ public class GSSContextAcceptor {
             try {
                 serverCreds.dispose();
                 serverCreds = null;
-            } catch (GSSException e) {
+            } catch (final GSSException e) {
                 log.error("GSS-API credentials disposal failed", e);
             }
         }

@@ -72,7 +72,7 @@ public class LogContextTree extends AbstractProfileAction {
     }
 
     /** {@inheritDoc} */
-    protected void doExecute(ProfileRequestContext profileRequestContext) {
+    protected void doExecute(final ProfileRequestContext profileRequestContext) {
         if (!log.isDebugEnabled()) {
             // short-circuit if not logging at debug
             return;
@@ -103,7 +103,7 @@ public class LogContextTree extends AbstractProfileAction {
      * @param current the current context to log
      * @param indent the amount of leading indent
      */
-    private void logContext(BaseContext current, int indent) {
+    private void logContext(final BaseContext current, final int indent) {
         if (current == null) {
             return;
         }
@@ -154,7 +154,7 @@ public class LogContextTree extends AbstractProfileAction {
      * 
      * @return the leading indent string to print
      */
-    private String getIndent(int indent) {
+    private String getIndent(final int indent) {
         StringBuffer buffer = new StringBuffer();
         for (int i=0; i<indent; i++) {
             buffer.append("----");

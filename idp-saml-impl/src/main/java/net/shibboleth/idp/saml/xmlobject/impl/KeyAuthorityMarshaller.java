@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 public class KeyAuthorityMarshaller extends AbstractXMLObjectMarshaller {
 
     /** {@inheritDoc} */
-    protected void marshallAttributes(XMLObject xmlObject, Element domElement) throws MarshallingException {
+    protected void marshallAttributes(final XMLObject xmlObject, final Element domElement) throws MarshallingException {
         KeyAuthority keyAuthority = (KeyAuthority) xmlObject;
 
         if (keyAuthority.getVerifyDepth() != null) {

@@ -63,7 +63,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
      * @param resolverService the service which will manage the loading.
      */
     public ReloadingRelyingPartyConfigurationResolver(
-            @Nonnull ReloadableService<RelyingPartyConfigurationResolver> resolverService) {
+            @Nonnull final ReloadableService<RelyingPartyConfigurationResolver> resolverService) {
         service = Constraint.isNotNull(resolverService, "RelyingParty Service cannot be null");
     }
 
@@ -120,7 +120,7 @@ public class ReloadingRelyingPartyConfigurationResolver extends AbstractIdentifi
     }
 
     /** {@inheritDoc} */
-    @Override public SecurityConfiguration getDefaultSecurityConfiguration(String profileId) {
+    @Override public SecurityConfiguration getDefaultSecurityConfiguration(final String profileId) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
         ServiceableComponent<RelyingPartyConfigurationResolver> component = null;

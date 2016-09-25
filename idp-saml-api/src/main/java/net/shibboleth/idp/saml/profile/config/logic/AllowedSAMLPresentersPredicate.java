@@ -65,7 +65,7 @@ public class AllowedSAMLPresentersPredicate implements Predicate<ProfileRequestC
     }
 
     /** {@inheritDoc} */
-    public boolean apply(@Nullable ProfileRequestContext input) {
+    public boolean apply(@Nullable final ProfileRequestContext input) {
         if (input == null || input.getInboundMessageContext() == null) {
             log.debug("ProfileRequestContext or inbound MessageContext were null");
             return false;

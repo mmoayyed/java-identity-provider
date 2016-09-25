@@ -77,7 +77,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      *
      * @param newReturnValue the return value
      */
-    public void setReturnValue(@Nonnull @NotEmpty String newReturnValue) {
+    public void setReturnValue(@Nonnull @NotEmpty final String newReturnValue) {
         returnValue =
                 Constraint.isNotNull(StringSupport.trimOrNull(newReturnValue), "ReturnValue must be non null or empty");
     }
@@ -109,7 +109,7 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
      */
     /** {@inheritDoc} */
     @Override
-    @Nullable public Set<StringAttributeValue> apply(@Nullable String attributeValue) {
+    @Nullable public Set<StringAttributeValue> apply(@Nullable final String attributeValue) {
         
         if (attributeValue == null) {
             log.debug("Input value was null, returning empty set");

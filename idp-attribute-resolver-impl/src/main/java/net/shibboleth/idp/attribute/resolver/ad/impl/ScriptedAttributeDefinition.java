@@ -113,7 +113,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(Object object) {
+    @Nullable public void setCustomObject(final Object object) {
         customObject = object;
     }
 

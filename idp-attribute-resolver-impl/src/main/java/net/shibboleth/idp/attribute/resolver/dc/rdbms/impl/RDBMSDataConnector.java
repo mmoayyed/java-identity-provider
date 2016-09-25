@@ -101,7 +101,7 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
      * 
      * @param isReadOnly whether this data connector uses read-only connections
      */
-    public void setConnectionReadOnly(boolean isReadOnly) {
+    public void setConnectionReadOnly(final boolean isReadOnly) {
         readOnlyConnection = isReadOnly;
     }
 

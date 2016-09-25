@@ -41,8 +41,8 @@ public interface Matcher extends IdentifiedComponent {
     public static final Matcher MATCHES_ALL = new Matcher() {
 
         /** {@inheritDoc} */
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
-                @Nonnull AttributeFilterContext filterContext) {
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+                @Nonnull final AttributeFilterContext filterContext) {
             return ImmutableSet.copyOf(attribute.getValues());
         }
 
@@ -56,8 +56,8 @@ public interface Matcher extends IdentifiedComponent {
     public static final Matcher MATCHES_NONE = new Matcher() {
 
         /** {@inheritDoc} */
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
-                @Nonnull AttributeFilterContext filterContext) {
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+                @Nonnull final AttributeFilterContext filterContext) {
             return Collections.emptySet();
         }
 
@@ -71,8 +71,8 @@ public interface Matcher extends IdentifiedComponent {
     public static final Matcher MATCHER_FAILS = new Matcher() {
 
         /** {@inheritDoc} */
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull IdPAttribute attribute,
-                @Nonnull AttributeFilterContext filterContext) {
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+                @Nonnull final AttributeFilterContext filterContext) {
             return null;
         }
 

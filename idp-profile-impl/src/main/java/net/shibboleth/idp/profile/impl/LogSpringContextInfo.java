@@ -76,12 +76,12 @@ public class LogSpringContextInfo extends AbstractProfileAction implements Appli
     }
     
     /** {@inheritDoc} */
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
+    public void setApplicationContext(final ApplicationContext context) throws BeansException {
         applicationContext = context;
     }
 
     /** {@inheritDoc} */
-    protected void doExecute(ProfileRequestContext profileRequestContext) {
+    protected void doExecute(final ProfileRequestContext profileRequestContext) {
         if (!log.isDebugEnabled()) {
             // short-circuit if not logging at debug
             return;

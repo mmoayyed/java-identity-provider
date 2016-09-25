@@ -38,7 +38,7 @@ public class WebFlowCurrentEventLookupFunction implements Function<ProfileReques
 
     /** {@inheritDoc} */
     @Override
-    @Nullable public EventContext apply(@Nullable ProfileRequestContext input) {
+    @Nullable public EventContext apply(@Nullable final ProfileRequestContext input) {
         if (input == null) {
             return null;
         }

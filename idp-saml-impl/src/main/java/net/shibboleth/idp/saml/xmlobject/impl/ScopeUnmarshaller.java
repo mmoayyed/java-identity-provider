@@ -36,7 +36,7 @@ public class ScopeUnmarshaller extends AbstractXMLObjectUnmarshaller {
     private final Logger log = LoggerFactory.getLogger(ScopeUnmarshaller.class);
 
     /** {@inheritDoc} */
-    protected void processAttribute(XMLObject xmlObject, Attr attribute) throws UnmarshallingException {
+    protected void processAttribute(final XMLObject xmlObject, final Attr attribute) throws UnmarshallingException {
         Scope scope = (Scope) xmlObject;
 
         if (attribute.getLocalName().equals(Scope.REGEXP_ATTRIB_NAME)) {
@@ -48,7 +48,7 @@ public class ScopeUnmarshaller extends AbstractXMLObjectUnmarshaller {
     }
 
     /** {@inheritDoc} */
-    protected void processElementContent(XMLObject xmlObject, String elementContent) {
+    protected void processElementContent(final XMLObject xmlObject, final String elementContent) {
         Scope scope = (Scope) xmlObject;
         scope.setValue(elementContent);
     }

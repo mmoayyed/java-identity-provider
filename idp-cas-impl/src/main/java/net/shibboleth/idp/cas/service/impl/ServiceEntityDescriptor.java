@@ -183,7 +183,7 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setOrganization(Organization organization) {
+    @Override public void setOrganization(final Organization organization) {
         throw new UnsupportedOperationException();
     }
 
@@ -213,7 +213,7 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setCacheDuration(Long duration) {
+    @Override public void setCacheDuration(final Long duration) {
         throw new UnsupportedOperationException();
     }
 
@@ -239,7 +239,7 @@ public class ServiceEntityDescriptor implements EntityDescriptor {
      * 
      * {@inheritDoc}
      */
-    @Override public void setSignature(@Nullable Signature newSignature) {
+    @Override public void setSignature(@Nullable final Signature newSignature) {
         throw new UnsupportedOperationException();
     }
 

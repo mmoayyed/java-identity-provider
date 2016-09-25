@@ -135,7 +135,7 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
      * 
      * @param theMappers The mappers to set.
      */
-    public void setMappers(@Nonnull Collection<AttributeMapper<InType,OutType>> theMappers) {
+    public void setMappers(@Nonnull final Collection<AttributeMapper<InType,OutType>> theMappers) {
         mappers = Constraint.isNotNull(theMappers, "mappers list must be non null");
     }
 
@@ -152,7 +152,7 @@ public abstract class AbstractSAMLAttributesMapper<InType extends Attribute, Out
                 final Map<String,OutType> mappedAttributes;
                 try {
                     mappedAttributes = mapper.mapAttribute(prototype); 
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log.error("{} Attempt to map SAML attribute '{}' with mapper '{}' failed: ", getLogPrefix(),
                             prototype.getName(),mapper.getId(), e);
                     throw e;

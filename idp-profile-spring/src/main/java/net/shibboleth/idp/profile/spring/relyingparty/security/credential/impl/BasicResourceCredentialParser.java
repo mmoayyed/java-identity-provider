@@ -45,12 +45,12 @@ public class BasicResourceCredentialParser extends AbstractBasicCredentialParser
     private final Logger log = LoggerFactory.getLogger(BasicResourceCredentialParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return BasicResourceCredentialFactoryBean.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final BeanDefinitionBuilder builder) {
         if (TYPE_NAME_FILESYSTEM.equals(DOMTypeSupport.getXSIType(element))) {
             log.warn("Credential type '{}' has been deprecated; use the compatible Credential type '{}'",
                     TYPE_NAME_FILESYSTEM.getLocalPart(), TYPE_NAME_RESOURCE.getLocalPart());

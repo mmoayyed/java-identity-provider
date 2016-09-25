@@ -38,7 +38,7 @@ public class AttributesMapContainer<OutType extends IdPAttribute> implements Sup
      * 
      * @param value the value to return.
      */
-    public AttributesMapContainer(Multimap<String, OutType> value) {
+    public AttributesMapContainer(final Multimap<String, OutType> value) {
         providedValue = value;
     }
 

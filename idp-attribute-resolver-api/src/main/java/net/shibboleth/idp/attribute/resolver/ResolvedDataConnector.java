@@ -72,7 +72,7 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         return resolvedConnector.equals(obj);
     }
 
@@ -107,12 +107,12 @@ public final class ResolvedDataConnector extends AbstractDataConnector {
     }
 
     /** {@inheritDoc} */
-    @Override public void setFailoverDataConnectorId(String id) {
+    @Override public void setFailoverDataConnectorId(final String id) {
         return;
     }
 
     /** {@inheritDoc} */
-    @Override public void setPropagateResolutionExceptions(boolean propagate) {
+    @Override public void setPropagateResolutionExceptions(final boolean propagate) {
         return;
     }
 

@@ -60,8 +60,8 @@ public class AttributeIssuerNameIdFormatRuleParser extends BasePolicyRuleParser 
     }
 
     /** {@inheritDoc} */
-    @Override protected void doNativeParse(@Nonnull Element element, @Nonnull ParserContext parserContext,
-            @Nonnull BeanDefinitionBuilder builder) {
+    @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
         log.error("Unimplemented Attribute Filter {}.  Consider other implementation methods.", SCHEMA_NAME);
         throw new BeanCreationException("Unimplemented filter " + SCHEMA_NAME);
     }

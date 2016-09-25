@@ -36,7 +36,7 @@ public class ServiceTicketSerializer extends AbstractTicketSerializer<ServiceTic
 
 
     @Override
-    protected void serializeInternal(@Nonnull JsonGenerator generator, @Nonnull ServiceTicket ticket) {
+    protected void serializeInternal(@Nonnull final JsonGenerator generator, @Nonnull final ServiceTicket ticket) {
         generator.write(RENEW_FIELD, ticket.isRenew());
     }
 

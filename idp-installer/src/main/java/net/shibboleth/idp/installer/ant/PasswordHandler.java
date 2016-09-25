@@ -25,7 +25,7 @@ public class PasswordHandler extends SecureInputHandler {
 
     /** {@inheritDoc} */
     @Override
-    public void handleInput(InputRequest arg0) {
+    public void handleInput(final InputRequest arg0) {
         while (true) {
             System.console().printf("%s", arg0.getPrompt());
             System.console().flush();

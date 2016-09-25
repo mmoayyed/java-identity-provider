@@ -112,7 +112,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
         }
 
         /** {@inheritDoc} */
-        public boolean apply(PrincipalSupportingComponent input) {
+        public boolean apply(final PrincipalSupportingComponent input) {
             Set<String> matches = matchingRules.get(principal.getName());
             Set<? extends Principal> inputs = input.getSupportedPrincipals(principal.getClass());
             

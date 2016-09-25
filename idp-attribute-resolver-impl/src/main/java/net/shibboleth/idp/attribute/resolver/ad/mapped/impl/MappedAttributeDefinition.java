@@ -122,7 +122,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newDefaultValue the default return value
      */
-    public void setDefaultValue(@Nullable String newDefaultValue) {
+    public void setDefaultValue(@Nullable final String newDefaultValue) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         String trimmedDefault = StringSupport.trimOrNull(newDefaultValue);
@@ -147,7 +147,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @param newPassThru whether the definition passes unmatched values unchanged or suppresses them.
      */
-    public void setPassThru(boolean newPassThru) {
+    public void setPassThru(final boolean newPassThru) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         passThru = newPassThru;
@@ -160,7 +160,7 @@ public class MappedAttributeDefinition extends AbstractAttributeDefinition {
      * 
      * @return the set of attribute values that the given dependency value maps in to
      */
-    protected List<StringAttributeValue> mapValue(@Nullable String value) {
+    protected List<StringAttributeValue> mapValue(@Nullable final String value) {
         log.debug("Attribute Definition {}: mapping dependency attribute value {}", getId(), value);
 
         final List<StringAttributeValue> mappedValues = new ArrayList<>();

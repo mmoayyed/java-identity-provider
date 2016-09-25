@@ -152,7 +152,7 @@ public class KeystoreResourceCredentialConfig implements CredentialConfig {
                 sslInit.setAuthenticationPassword(keystorePassword != null ? keystorePassword.toCharArray() : null);
                 sslInit.setAuthenticationAliases(keystoreAliases);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new GeneralSecurityException(e);
         }
         return sslInit;

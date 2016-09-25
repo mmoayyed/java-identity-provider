@@ -41,12 +41,12 @@ public class ChainingParser extends AbstractSingleBeanDefinitionParser {
             new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "ChainingFilter");
 
     /** {@inheritDoc} */
-    @Override protected Class<?> getBeanClass(Element element) {
+    @Override protected Class<?> getBeanClass(final Element element) {
         return MetadataFilterChain.class;
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
         List<Element> children =
                 ElementSupport.getChildElements(element, AbstractMetadataProviderParser.METADATA_FILTER_ELEMENT_NAME);
 

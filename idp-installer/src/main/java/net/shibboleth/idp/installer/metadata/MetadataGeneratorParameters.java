@@ -72,7 +72,7 @@ public class MetadataGeneratorParameters {
      * 
      * @param file what to set.
      */
-    public void setEncryptionCert(File file) {
+    public void setEncryptionCert(final File file) {
 
         encryptionCert = file;
     }
@@ -82,11 +82,11 @@ public class MetadataGeneratorParameters {
      * 
      * @param resource what to set.
      */
-    public void setEncryptionCertResource(Resource resource) {
+    public void setEncryptionCertResource(final Resource resource) {
 
         try {
             encryptionCert = resource.getFile();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             encryptionCert = null;
         }
     }
@@ -106,7 +106,7 @@ public class MetadataGeneratorParameters {
      * 
      * @param file what to set.
      */
-    public void setSigningCert(File file) {
+    public void setSigningCert(final File file) {
 
         signingCert = file;
     }
@@ -116,12 +116,12 @@ public class MetadataGeneratorParameters {
      * 
      * @param resource what to set.
      */
-    public void setSigningCertResource(Resource resource) {
+    public void setSigningCertResource(final Resource resource) {
 
 
         try {
             signingCert = resource.getFile();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             signingCert = null;
         }
     }
@@ -141,7 +141,7 @@ public class MetadataGeneratorParameters {
      * 
      * @param file what to set.
      */
-    public void setBackchannelCert(File file) {
+    public void setBackchannelCert(final File file) {
 
         backChannelCert = file;
     }
@@ -153,7 +153,7 @@ public class MetadataGeneratorParameters {
      * @return the contents
      * @throws IOException if badness occurrs.
      */
-    private List<String> getCertificateContents(File file) throws IOException {
+    private List<String> getCertificateContents(final File file) throws IOException {
         if (null == file || !file.exists()) {
             return null;
         }
@@ -183,7 +183,7 @@ public class MetadataGeneratorParameters {
             try {
                 reader.close();
                 fr.close();
-            } catch (IOException e1) {
+            } catch (final IOException e1) {
             }
         }
     }
@@ -202,7 +202,7 @@ public class MetadataGeneratorParameters {
      * 
      * @param id what to set.
      */
-    public void setEntityID(String id) {
+    public void setEntityID(final String id) {
         entityID = id;
     }
 
@@ -220,7 +220,7 @@ public class MetadataGeneratorParameters {
      * 
      * @param name what to set.
      */
-    public void setDnsName(String name) {
+    public void setDnsName(final String name) {
         dnsName = name;
     }
 
@@ -238,7 +238,7 @@ public class MetadataGeneratorParameters {
      * 
      * @param value what to set.
      */
-    public void setScope(String value) {
+    public void setScope(final String value) {
         scope = value;
     }
 

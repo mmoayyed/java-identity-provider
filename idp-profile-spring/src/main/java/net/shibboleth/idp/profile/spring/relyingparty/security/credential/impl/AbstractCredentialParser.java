@@ -84,7 +84,7 @@ public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinit
      * @param keyNameElems the elements to parse
      * @param builder credential build
      */
-    protected void parseKeyNames(List<Element> keyNameElems, BeanDefinitionBuilder builder) {
+    protected void parseKeyNames(final List<Element> keyNameElems, final BeanDefinitionBuilder builder) {
         if (keyNameElems == null || keyNameElems.isEmpty()) {
             return;
         }

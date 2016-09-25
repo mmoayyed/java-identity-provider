@@ -229,7 +229,7 @@ public class RequestedPrincipalContext extends BaseContext {
      */
     public boolean isAcceptable(@Nonnull @NonnullElements final Collection<Principal> principals) {
         return isAcceptable(new PrincipalSupportingComponent() {
-            public <T extends Principal> Set<T> getSupportedPrincipals(Class<T> c) {
+            public <T extends Principal> Set<T> getSupportedPrincipals(final Class<T> c) {
                 final HashSet set = new HashSet<>();
                 for (final Principal p : principals) {
                     if (c.isAssignableFrom(p.getClass())) {
@@ -252,7 +252,7 @@ public class RequestedPrincipalContext extends BaseContext {
      */
     public <T extends Principal> boolean isAcceptable(@Nonnull final T principal) {
         return isAcceptable(new PrincipalSupportingComponent() {
-            public <TT extends Principal> Set<TT> getSupportedPrincipals(Class<TT> c) {
+            public <TT extends Principal> Set<TT> getSupportedPrincipals(final Class<TT> c) {
                 if (c.isAssignableFrom(principal.getClass())) {
                     return Collections.singleton((TT) principal);
                 } else {

@@ -61,7 +61,7 @@ public class ServiceDescriptionTag extends ServiceTagSupport {
                 result = HTMLEncoder.encodeForHTML(result);
                 pageContext.getOut().print(result);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.warn("Error generating Description", e);
             throw new JspException("EndTag", e);
         }

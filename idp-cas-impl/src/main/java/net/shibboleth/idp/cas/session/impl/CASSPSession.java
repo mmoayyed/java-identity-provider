@@ -47,10 +47,10 @@ public class CASSPSession extends BasicSPSession {
      * @param ticketId   ticket ID used to gain access to the service
      */
     public CASSPSession(
-            @Nonnull @NotEmpty String id,
-            @Duration @Positive long creation,
-            @Duration @Positive long expiration,
-            @Nonnull @NotEmpty String ticketId) {
+            @Nonnull @NotEmpty final String id,
+            @Duration @Positive final long creation,
+            @Duration @Positive final long expiration,
+            @Nonnull @NotEmpty final String ticketId) {
         super(id, creation, expiration);
         ticket = Constraint.isNotNull(StringSupport.trimOrNull(ticketId), "Ticket ID cannot be null or empty");
     }
