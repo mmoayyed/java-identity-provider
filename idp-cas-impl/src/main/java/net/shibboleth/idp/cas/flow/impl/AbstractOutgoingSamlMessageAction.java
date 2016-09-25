@@ -52,10 +52,10 @@ public abstract class AbstractOutgoingSamlMessageAction extends
     protected static final String NAMESPACE = "http://www.ja-sig.org/products/cas/";
     
     /** SOAP envelope needed for old/broken CAS clients. */
-    private QName ENVELOPE_NAME = new QName(SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
+    private QName envelopeName = new QName(SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
 
     /** SOAP body needed for old/broken CAS clients. */
-    private QName BODY_NAME = new QName(SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
+    private QName bodyName = new QName(SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, "SOAP-ENV");
 
     /**
      * Build the SAML object.
@@ -88,8 +88,8 @@ public abstract class AbstractOutgoingSamlMessageAction extends
         msgContext.addSubcontext(bindingContext);
 
         // Ensure message uses SOAP-ENV ns prefix required by old/broken CAS clients
-        final Envelope envelope = (Envelope) XMLObjectSupport.buildXMLObject(ENVELOPE_NAME);
-        envelope.setBody((Body) XMLObjectSupport.buildXMLObject(BODY_NAME));
+        final Envelope envelope = (Envelope) XMLObjectSupport.buildXMLObject(envelopeName);
+        envelope.setBody((Body) XMLObjectSupport.buildXMLObject(bodyName));
         final SOAP11Context soapCtx = new SOAP11Context();
         soapCtx.setEnvelope(envelope);
         msgContext.addSubcontext(soapCtx);

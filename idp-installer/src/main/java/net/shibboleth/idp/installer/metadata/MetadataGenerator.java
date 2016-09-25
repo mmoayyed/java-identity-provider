@@ -411,7 +411,7 @@ public class MetadataGenerator {
         closeExtensions();
         writer.newLine();
         writeKeyDescriptors();
-        for (Endpoints endpoint : ARTIFACT_ENDPOINTS) {
+        for (final Endpoints endpoint : ARTIFACT_ENDPOINTS) {
             if (getEndpoints().contains(endpoint)) {
                 outputEndpoint(endpoint);
             }
@@ -421,7 +421,7 @@ public class MetadataGenerator {
             writer.write("        <!--");
             writer.newLine();
         }
-        for (Endpoints endpoint : SLO_ENDPOINTS) {
+        for (final Endpoints endpoint : SLO_ENDPOINTS) {
             if (getEndpoints().contains(endpoint)) {
                 outputEndpoint(endpoint);
             }
