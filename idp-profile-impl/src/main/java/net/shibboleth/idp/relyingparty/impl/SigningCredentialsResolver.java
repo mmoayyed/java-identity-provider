@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.service.ReloadableSpringService;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfigurationResolver;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.IdentifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -42,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class SigningCredentialsResolver implements CredentialResolver, IdentifiableComponent {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(SigningCredentialsResolver.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(SigningCredentialsResolver.class);
     
     /** The reloading resolver which is the source of the credentials. */
     @Nonnull private ReloadableSpringService<RelyingPartyConfigurationResolver> service;
@@ -55,7 +56,8 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
      * 
      * @param resolverService the Spring service exposing the relying party configuration service
      */
-    public SigningCredentialsResolver(final ReloadableSpringService<RelyingPartyConfigurationResolver> resolverService) {
+    public SigningCredentialsResolver(
+            @Nonnull final ReloadableSpringService<RelyingPartyConfigurationResolver> resolverService) {
         service = Constraint.isNotNull(resolverService, 
                 "ReloadableSpringService for RelyingPartyConfigurationResolver cannot be null");
     }
@@ -66,7 +68,7 @@ public class SigningCredentialsResolver implements CredentialResolver, Identifia
     }
 
     /** {@inheritDoc} */
-    public void setId(@Nonnull final String componentId) {
+    public void setId(@Nonnull @NotEmpty final String componentId) {
         id = Constraint.isNotNull(StringSupport.trimOrNull(componentId), "Component ID can not be null or empty");
     }
     
