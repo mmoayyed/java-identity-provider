@@ -41,20 +41,20 @@ public class IdPAttributePrincipalValuesFunction implements Function<Principal, 
      *
      * @param attrName the name to filter on.
      */
-    public IdPAttributePrincipalValuesFunction(final String attrName) {
+    public IdPAttributePrincipalValuesFunction(@Nonnull final String attrName) {
         attributeName = Constraint.isNotNull(attrName, "Attribute Name should be non-null");
     }
 
     /** {@inheritDoc} */
-    @Override
-    @Nullable public List<IdPAttributeValue<?>> apply(@Nullable final Principal principal) {
-        if (principal  instanceof IdPAttributePrincipal) {
+    @Override @Nullable public List<IdPAttributeValue<?>> apply(@Nullable final Principal principal) {
+        
+        if (null != principal && principal  instanceof IdPAttributePrincipal) {
             final IdPAttributePrincipal attributePrincipal = (IdPAttributePrincipal) principal;
             final IdPAttribute attribute = attributePrincipal.getAttribute(); 
             if (null != attribute && attributeName.equals(attribute.getId())) {
                 return attribute.getValues();
             }
         }
-    return null;
+        return null;
     }
 }
