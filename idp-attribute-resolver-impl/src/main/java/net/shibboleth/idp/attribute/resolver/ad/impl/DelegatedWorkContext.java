@@ -36,7 +36,10 @@ import org.opensaml.messaging.context.BaseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** A delegate for {@link AttributeResolverWorkContext}. 
+/** A delegate for {@link AttributeResolverWorkContext}.
+ * This is only here because in a moment of madness we pushed the work context into
+ * the scripted definitions. This preserves the function while making it obvious that
+ * we don't want people to use it.  
  * @deprecated(Deprecated function)*/
 @Deprecated public class DelegatedWorkContext extends BaseContext {
 
