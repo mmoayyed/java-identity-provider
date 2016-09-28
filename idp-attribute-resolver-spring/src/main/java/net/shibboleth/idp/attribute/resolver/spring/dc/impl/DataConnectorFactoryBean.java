@@ -29,7 +29,6 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
-import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AbstractResolverPluginFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -86,15 +85,6 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
 
     /** Data Connector property "noRetryDelay". */
     @Nullable @Duration private Long noRetryDelay;
-
-    /**
-     * Constructor.
-     * 
-     * @param claz what we are making
-     */
-    public DataConnectorFactoryBean(@Nonnull final Class<? extends AbstractDataConnector> claz) {
-        connectorClass = Constraint.isNotNull(claz, "Injected class must be non-null");
-    }
 
     /**
      * Data Connector property "failoverDataConnectorId".
@@ -202,8 +192,15 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
         super.setSingleton(singleton);
     }
 
+    /** Set the class we are going to build.
+     * @param claz the class.
+     */
+    public void setObjectType(@Nonnull final Class<? extends AbstractDataConnector> claz) {
+        connectorClass = Constraint.isNotNull(claz, "Injected class must be non-null");
+    }
+
     /** {@inheritDoc} */
-    @Override public Class<? extends DataConnector> getObjectType() {
+    @Override public Class<? extends AbstractDataConnector> getObjectType() {
         return connectorClass;
     }
 
@@ -234,9 +231,10 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      */
     @Override protected AbstractDataConnector doCreateInstance() throws Exception {
 
-        log.debug("Creating a DataConnector of type {} from resources {}", connectorClass, resources);
+        Constraint.isNotNull(getObjectType(), "Injected class must be non-null");
+        log.debug("Creating a DataConnector of type {} from resources {}", getObjectType(), resources);
 
-        final Constructor<? extends AbstractDataConnector> constructor = connectorClass.getConstructor();
+        final Constructor<? extends AbstractDataConnector> constructor = getObjectType().getConstructor();
         final AbstractDataConnector result = constructor.newInstance();
         if (null != getFailoverDataConnectorId()) {
             result.setFailoverDataConnectorId(getFailoverDataConnectorId());
@@ -251,7 +249,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
                         getBeanPostProcessors(), Collections.EMPTY_LIST, parentContext);
 
         final PropertyDescriptor[] descriptors =
-                Introspector.getBeanInfo(connectorClass, AbstractDataConnector.class).getPropertyDescriptors();
+                Introspector.getBeanInfo(getObjectType(), AbstractDataConnector.class).getPropertyDescriptors();
 
         for (final PropertyDescriptor descriptor : descriptors) {
             log.debug("Parsing property descriptor: {}", descriptor);

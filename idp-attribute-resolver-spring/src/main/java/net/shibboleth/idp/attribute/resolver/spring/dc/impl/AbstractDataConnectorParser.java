@@ -148,7 +148,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
 
         if (isNative(config)) {
             // parse the configuration into a beanfactory and inject the resources as well
-            builder.addConstructorArgValue(getNativeBeanClass());
+            builder.addPropertyValue("objectType", getNativeBeanClass());
             // it's a factory bean so we use the spring lifecycle directly
             builder.setInitMethodName(null);
             builder.setDestroyMethodName(null);
