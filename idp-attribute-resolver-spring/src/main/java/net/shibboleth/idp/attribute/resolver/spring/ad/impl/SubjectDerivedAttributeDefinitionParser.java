@@ -20,19 +20,19 @@ package net.shibboleth.idp.attribute.resolver.spring.ad.impl;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
 public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
@@ -78,7 +78,7 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
             }
             final BeanDefinitionBuilder principalValuesFunctionBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(IdPAttributePrincipalValuesFunction.class);
-            principalValuesFunctionBuilder.addConstructorArgValue(attributeName);
+            principalValuesFunctionBuilder.addPropertyValue("attributeName", attributeName);
             contextFunctionBuilder.addPropertyValue("attributeValuesFunction",
                     principalValuesFunctionBuilder.getBeanDefinition());
         } else if (null != functionRef) {

@@ -26,31 +26,57 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
 
 /** Engine to mine values from {@link IdPAttributePrincipal}s. */
-public class IdPAttributePrincipalValuesFunction implements Function<Principal, List<IdPAttributeValue<?>>> {
-    
+public class IdPAttributePrincipalValuesFunction extends AbstractInitializableComponent implements
+        Function<Principal, List<IdPAttributeValue<?>>> {
+
     /** The Attribute Name to look for. */
-    @Nonnull private final String attributeName;
-    
+    @Nonnull private String attributeName;
+
     /**
      * Constructor.
-     *
+     * 
+     * @param attrName the name to filter on.
+     * @deprecated use the property setter instead
+     */
+    @Deprecated public IdPAttributePrincipalValuesFunction(@Nonnull final String attrName) {
+        attributeName = Constraint.isNotNull(attrName, "Attribute Name should be non-null");
+        LoggerFactory.getLogger(IdPAttributePrincipalValuesFunction.class).warn("Deprecated Constructor called");
+    }
+
+    /**  Constructor.  */
+    public IdPAttributePrincipalValuesFunction() {
+    }
+
+    /**
+     * Set the attribute name.
+     * 
      * @param attrName the name to filter on.
      */
-    public IdPAttributePrincipalValuesFunction(@Nonnull final String attrName) {
+    public void setAttributeName(@Nonnull final String attrName) {
         attributeName = Constraint.isNotNull(attrName, "Attribute Name should be non-null");
     }
 
     /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        Constraint.isNotNull(attributeName, "Attribute Name should be non-null");
+        super.doInitialize();
+    }
+
+    /** {@inheritDoc} */
     @Override @Nullable public List<IdPAttributeValue<?>> apply(@Nullable final Principal principal) {
-        
-        if (null != principal && principal  instanceof IdPAttributePrincipal) {
+
+        if (null != principal && principal instanceof IdPAttributePrincipal) {
             final IdPAttributePrincipal attributePrincipal = (IdPAttributePrincipal) principal;
-            final IdPAttribute attribute = attributePrincipal.getAttribute(); 
+            final IdPAttribute attribute = attributePrincipal.getAttribute();
             if (null != attribute && attributeName.equals(attribute.getId())) {
                 return attribute.getValues();
             }
