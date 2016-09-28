@@ -15,14 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
-
 /**
- * Place holder to cover up the fact that we went a release 
- * with {@link net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser} in the impl package.
- * @deprecated use the {@link net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser}.
+ * Supported base class for the implementation of specific DataConnector parsers.
  */
-@Deprecated
-public abstract class AbstractDataConnectorParser 
-       extends net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser {
-}
+
+package net.shibboleth.idp.attribute.resolver.spring.dc;
