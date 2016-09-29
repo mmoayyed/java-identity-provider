@@ -17,14 +17,17 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
+import javax.annotation.Nonnull;
+
+import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
+import net.shibboleth.idp.attribute.resolver.dc.Validator;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
-import net.shibboleth.idp.attribute.resolver.dc.Validator;
 
 /**
  * Validator implementation that invokes {@link Connection#open()} to determine if the ConnectionFactory is properly
@@ -36,7 +39,7 @@ public class ConnectionFactoryValidator implements Validator {
     private final Logger log = LoggerFactory.getLogger(ConnectionFactoryValidator.class);
 
     /** Connection factory to validate. */
-    private final ConnectionFactory connectionFactory;
+    @Nonnull private final ConnectionFactory connectionFactory;
 
     /** whether validate should throw, default value is {@value} . */
     private final boolean throwOnValidateError;
@@ -46,7 +49,7 @@ public class ConnectionFactoryValidator implements Validator {
      *
      * @param factory to validate
      */
-    public ConnectionFactoryValidator(final ConnectionFactory factory) {
+    public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory) {
         this(factory, true);
     }
 
@@ -56,7 +59,7 @@ public class ConnectionFactoryValidator implements Validator {
      * @param factory to validate
      * @param throwOnError whether {@link #validate()} should throw or log errors
      */
-    public ConnectionFactoryValidator(final ConnectionFactory factory, final boolean throwOnError) {
+    public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory, final boolean throwOnError) {
         connectionFactory = factory;
         throwOnValidateError = throwOnError;
     }
@@ -66,7 +69,8 @@ public class ConnectionFactoryValidator implements Validator {
      *
      * @return connection factory
      */
-    public ConnectionFactory getConnectionFactory() {
+    @Nonnull public ConnectionFactory getConnectionFactory() {
+        Constraint.isNotNull(connectionFactory, "Connection factory must be non-null");
         return connectionFactory;
     }
 
