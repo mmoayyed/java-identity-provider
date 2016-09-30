@@ -171,7 +171,7 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
         
         final TimerContext timerCtx = profileRequestContext.getSubcontext(TimerContext.class);
         if (timerCtx != null) {
-            timerCtx.start(getClass().getName());
+            timerCtx.start(getClass().getSimpleName());
         }
         
         return true;
@@ -179,14 +179,13 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
     
 
     /** {@inheritDoc} */
-    /** {@inheritDoc} */
     @Override
     protected void doPostExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
         
         final TimerContext timerCtx = profileRequestContext.getSubcontext(TimerContext.class);
         if (timerCtx != null) {
-            timerCtx.stop(getClass().getName());
+            timerCtx.stop(getClass().getSimpleName());
         }
         
         super.doPostExecute(profileRequestContext);

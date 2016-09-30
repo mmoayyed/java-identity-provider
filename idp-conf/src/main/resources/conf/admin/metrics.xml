@@ -75,7 +75,6 @@
     If you want to leave a timer in place but disabled to prevent overhead, you can turn off a
     logging category named "metrics.<timername>" in your logging configuration.
     -->
-    
     <!--
     <bean id="shibboleth.metrics.TimerStrategy" parent="shibboleth.ContextFunctions.Scripted"
             factory-method="inlineScript">
@@ -84,8 +83,8 @@
             <![CDATA[
                 timerCtx = input.getSubcontext("net.shibboleth.idp.profile.context.TimerContext");
                 timerCtx.addTimer("idp.attribute.resolution",
-                    "net.shibboleth.idp.profile.impl.ResolveAttributes",
-                    "net.shibboleth.idp.profile.impl.FilterAttributes"
+                    "ResolveAttributes",
+                    "FilterAttributes"
                     );                                
                 true; // Signals success.
             ]]>
