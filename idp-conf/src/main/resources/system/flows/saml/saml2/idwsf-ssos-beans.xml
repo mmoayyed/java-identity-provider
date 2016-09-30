@@ -11,7 +11,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean id="InitializeProfileRequestContext" class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext"
+    <bean id="InitializeProfileRequestContext"
+        class="net.shibboleth.idp.profile.impl.InitializeProfileRequestContext" class="prototype"
         p:profileId="#{T(net.shibboleth.idp.saml.idwsf.profile.config.SSOSProfileConfiguration).PROFILE_ID}"
         p:loggingId="%{idp.service.logging.saml2sso:SSO}"
         p:browserProfile="false" />

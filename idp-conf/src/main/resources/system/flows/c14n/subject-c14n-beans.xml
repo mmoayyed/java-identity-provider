@@ -12,8 +12,8 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
 
-    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <bean class="net.shibboleth.idp.profile.impl.ProfileActionBeanPostProcessor" />
     
     <bean id="SelectSubjectCanonicalizationFlow"
         class="net.shibboleth.idp.authn.impl.SelectSubjectCanonicalizationFlow" scope="prototype" />
