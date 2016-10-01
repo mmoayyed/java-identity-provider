@@ -76,10 +76,14 @@ public final class DuoSupport {
     @Nonnull @NotEmpty public static String validateSignedResponseToken(@Nonnull final DuoIntegration duo,
             @Nonnull @NotEmpty final String signedResponseToken)
         throws DuoWebException, InvalidKeyException, IOException, NoSuchAlgorithmException {
-        
-        final String username = DuoWeb.verifyResponse(duo.getIntegrationKey(), duo.getSecretKey(),
-                duo.getApplicationKey(), signedResponseToken);
-        return username;
+        try {
+            final String username = DuoWeb.verifyResponse(duo.getIntegrationKey(), duo.getSecretKey(),
+                    duo.getApplicationKey(), signedResponseToken);
+            return username;
+        } catch (final ArrayIndexOutOfBoundsException e) {
+            // This guard is to prevent an unusual issue being encountered by at least one deployer.
+            throw new DuoWebException(e.getMessage());
+        }
     }
 // Checkstyle: ThrowsCount ON
     
