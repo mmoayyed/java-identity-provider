@@ -202,7 +202,7 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
                                 // a small number of edge cases.
                                 resultPrincipal.getAuthenticationResult().setLastActivityInstant(
                                         mfaResult.getLastActivityInstant());
-                                processActiveResult(ac, results, resultPrincipal.getAuthenticationResult());
+                                processActiveResult(input, ac, results, resultPrincipal.getAuthenticationResult());
                             }
                             
                             return results;
@@ -217,21 +217,28 @@ public class PopulateMultiFactorAuthenticationContext extends AbstractAuthentica
         /**
          * Check an active result for possible inclusion in the returned collection.
          * 
+         * @param profileRequestContext current profile request context
          * @param authenticationContext current authentication context
          * @param results the collection to add to
          * @param candidate the result to evaluate
          */
-        void processActiveResult(@Nonnull final AuthenticationContext authenticationContext,
+        void processActiveResult(@Nonnull final ProfileRequestContext profileRequestContext,
+                @Nonnull final AuthenticationContext authenticationContext,
                 @Nonnull final Collection<AuthenticationResult> results,
                 @Nonnull final AuthenticationResult candidate) {
             
             final AuthenticationFlowDescriptor descriptor = authenticationContext.getAvailableFlows().get(
                     candidate.getAuthenticationFlowId());
             if (descriptor != null) {
-                if (descriptor.isResultActive(candidate)) {
-                    results.add(candidate);
+                if (descriptor.apply(profileRequestContext)) {
+                    if (descriptor.isResultActive(candidate)) {
+                        results.add(candidate);
+                    } else {
+                        log.debug("{} Result from login flow {} has expired", getLogPrefix(), descriptor.getId());
+                    }
                 } else {
-                    log.debug("{} Result from login flow {} has expired", getLogPrefix(), descriptor.getId());
+                    log.debug("{} Ignoring active result from login flow {} due to activation condition",
+                            getLogPrefix(), candidate.getAuthenticationFlowId());
                 }
             } else {
                 log.warn("{} Ignoring active result from undefined login flow {}", getLogPrefix(),
