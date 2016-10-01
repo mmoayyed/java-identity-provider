@@ -17,18 +17,31 @@
 
 package net.shibboleth.idp.authn.duo;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import java.security.Principal;
+import java.util.Collection;
+import java.util.Set;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.security.auth.Subject;
+
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
 
 /**
  * Wrapper for use of Duo.
  * 
  * @since 3.3.0
  */
-public class BasicDuoIntegration implements DuoIntegration {
+public class BasicDuoIntegration extends AbstractInitializableComponent implements DuoIntegration {
 
     /** API host. */
     @Nonnull @NotEmpty private String apiHost;
@@ -41,6 +54,9 @@ public class BasicDuoIntegration implements DuoIntegration {
     
     /** Secret key. */
     @Nonnull @NotEmpty private String secretKey;
+    
+    /** Container for supported principals. */
+    @Nonnull private final Subject supportedPrincipals;
     
     /**
      * Constructor.
@@ -56,6 +72,7 @@ public class BasicDuoIntegration implements DuoIntegration {
         setApplicationKey(akey);
         setIntegrationKey(ikey);
         setSecretKey(skey);
+        supportedPrincipals = new Subject();
     }
 
     /** {@inheritDoc} */
@@ -69,6 +86,8 @@ public class BasicDuoIntegration implements DuoIntegration {
      * @param host API host
      */
     public void setAPIHost(@Nonnull @NotEmpty final String host) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         apiHost = Constraint.isNotNull(StringSupport.trimOrNull(host), "API host cannot be null or empty");
     }
 
@@ -83,6 +102,8 @@ public class BasicDuoIntegration implements DuoIntegration {
      * @param key application key
      */
     public void setApplicationKey(@Nonnull @NotEmpty final String key) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         applicationKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Application key cannot be null or empty");
     }
 
@@ -97,6 +118,8 @@ public class BasicDuoIntegration implements DuoIntegration {
      * @param key integration key
      */
     public void setIntegrationKey(@Nonnull @NotEmpty final String key) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         integrationKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Integration key cannot be null or empty");
     }
 
@@ -111,7 +134,35 @@ public class BasicDuoIntegration implements DuoIntegration {
      * @param key secret key
      */
     public void setSecretKey(@Nonnull @NotEmpty final String key) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         secretKey = Constraint.isNotNull(StringSupport.trimOrNull(key), "Secret key cannot be null or empty");
     }
+
+    /** {@inheritDoc} */
+    @Nonnull @NonnullElements @Unmodifiable
+    public <T extends Principal> Set<T> getSupportedPrincipals(@Nonnull final Class<T> c) {
+        return supportedPrincipals.getPrincipals(c);
+    }
     
+    /**
+     * Set supported non-user-specific principals that the action will include in the subjects
+     * it generates, in place of any default principals from the flow.
+     * 
+     * <p>Setting to a null or empty collection will maintain the default behavior of relying on the flow.</p>
+     * 
+     * @param <T> a type of principal to add, if not generic
+     * @param principals supported principals to include
+     */
+    public <T extends Principal> void setSupportedPrincipals(
+            @Nullable @NonnullElements final Collection<T> principals) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        supportedPrincipals.getPrincipals().clear();
+        
+        if (principals != null && !principals.isEmpty()) {
+            supportedPrincipals.getPrincipals().addAll(Collections2.filter(principals, Predicates.notNull()));
+        }
+    }
+
 }

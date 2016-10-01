@@ -25,6 +25,7 @@ import javax.servlet.ServletRequest;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 
 import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
@@ -198,6 +199,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
     @Override
     protected Subject populateSubject(@Nonnull final Subject subject) {
         subject.getPrincipals().add(new DuoPrincipal(username));
+        subject.getPrincipals().addAll(duoIntegration.getSupportedPrincipals(Principal.class));
         return subject;
     }
 

@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.authn.duo;
 
+import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import javax.annotation.Nonnull;
@@ -26,7 +27,7 @@ import javax.annotation.Nonnull;
  * 
  * @since 3.3.0
  */
-public interface DuoIntegration {
+public interface DuoIntegration extends PrincipalSupportingComponent {
     
     /**
      * Get the name of the API host to contact.
