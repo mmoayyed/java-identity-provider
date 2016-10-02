@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -47,7 +48,7 @@ public final class ResolverPluginDependency {
      * 
      * @param pluginId ID of the plugin that will produce the attribute, never null or empty
      */
-    public ResolverPluginDependency(@Nonnull @NotEmpty final String pluginId) {
+    public ResolverPluginDependency(@Nonnull @NotEmpty @ParameterName(name="pluginId") final String pluginId) {
         dependencyPluginId =
                 Constraint.isNotNull(StringSupport.trimOrNull(pluginId),
                         "Dependency plugin ID may not be null or empty");
@@ -84,11 +85,13 @@ public final class ResolverPluginDependency {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return Objects.hashCode(dependencyPluginId, dependencyAttributeId);
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
@@ -112,6 +115,7 @@ public final class ResolverPluginDependency {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("pluginId", dependencyPluginId)
                 .add("attributeId", dependencyAttributeId).toString();
