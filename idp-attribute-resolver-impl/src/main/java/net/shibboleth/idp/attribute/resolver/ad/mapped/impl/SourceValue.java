@@ -22,6 +22,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -30,46 +33,29 @@ import com.google.common.base.MoreObjects;
 /**
  * Represents incoming attribute values and rules used for matching them. The value may include regular expressions.
  */
-public class SourceValue {
+public class SourceValue extends AbstractInitializableComponent {
 
     /**
      * Value string. This may contain regular expressions.
      */
-    private final String value;
+    private @Nullable String value;
 
     /**
      * Whether case should be ignored when matching.
      */
-    private final boolean ignoreCase;
+    private boolean ignoreCase;
 
     /** In the regexp case this contains the compiled pattern. */
-    private final Pattern pattern;
+    private @Nullable Pattern pattern;
 
     /**
      * Whether partial matches should be allowed.
      */
-    private final boolean partialMatch;
-
-    /**
-     * Constructor.
-     * 
-     * @param theValue value string
-     * @param theIgnoreCase whether case should be ignored when matching
-     * @param thePartialMatch whether partial matches should be allowed
-     */
-    public SourceValue(@Nullable final String theValue, @Nullable final Boolean theIgnoreCase,
-            @Nullable final Boolean thePartialMatch) {
-        value = StringSupport.trimOrNull(theValue);
-        if (null != theIgnoreCase) {
-            ignoreCase = theIgnoreCase;
-        } else {
-            ignoreCase = false;
-        }
-        if (null != thePartialMatch) {
-            partialMatch = thePartialMatch;
-        } else {
-            partialMatch = false;
-        }
+    private boolean partialMatch;
+    
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
         if (!partialMatch && value != null) {
             int flags = 0;
             if (ignoreCase) {
@@ -80,6 +66,21 @@ public class SourceValue {
             pattern = null;
         }
     }
+    
+    /**
+     * Set whether to ignore the case.
+     *
+     * @param theIgnoreCase whether case should be ignored when matching.  Null defaults to false;
+     */
+    public void setIgnoreCase( @Nullable final Boolean theIgnoreCase) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        if (null != theIgnoreCase) {
+            ignoreCase = theIgnoreCase;
+        } else {
+            ignoreCase = false;
+        }
+    }
+
 
     /**
      * Gets whether case should be ignored when matching.
@@ -91,6 +92,20 @@ public class SourceValue {
     }
 
     /**
+     * Set whether partial matches should be allowed.
+     *
+     * @param thePartialMatch whether partial matches should be allowed.  Null defaults to false;
+     */
+    public void setPartialMatch( @Nullable final Boolean thePartialMatch) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        if (null != thePartialMatch) {
+            partialMatch = thePartialMatch;
+        } else {
+            partialMatch = false;
+        }
+    }
+    
+    /**
      * Gets whether partial matches should be allowed.
      * 
      * @return whether partial matches should be allowed
@@ -98,6 +113,17 @@ public class SourceValue {
     public boolean isPartialMatch() {
         return partialMatch;
     }
+    
+    /**
+     * Set the value string.
+     * 
+     * @param theValue value string This may contain regular expressions.
+     */
+    public void setValue(@Nullable final String theValue) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        value = StringSupport.trimOrNull(theValue);
+    }
+    
 
     /**
      * Gets the value string.
@@ -110,11 +136,12 @@ public class SourceValue {
     }
 
     /**
-     * get the compiled pattern.
+     * get the compiled pattern.  This is compiled in init and hence there is a guard.
      * 
      * @return Returns the pattern.
      */
     @Nonnull public Pattern getPattern() {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         Constraint.isFalse(isPartialMatch(), "getPattern is only meaningful for a non partial Match, use getValue()");
         return pattern;
     }

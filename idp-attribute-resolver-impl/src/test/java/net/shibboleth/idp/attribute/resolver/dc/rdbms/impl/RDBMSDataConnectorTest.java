@@ -85,12 +85,12 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @param strategy to map results
      * @return rdbms data connector
      */
-    protected RDBMSDataConnector createUserRdbmsDataConnector(ExecutableSearchBuilder builder,
-            ResultMappingStrategy strategy) {
-        RDBMSDataConnector connector = new RDBMSDataConnector();
+    protected RDBMSDataConnector createUserRdbmsDataConnector(final ExecutableSearchBuilder builder,
+            final ResultMappingStrategy strategy) {
+        final RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDataSource(datasource);
-        connector.setExecutableSearchBuilder(builder == null ? new FormatExecutableStatementBuilder(USER_QUERY) : builder);
+        connector.setExecutableSearchBuilder(builder == null ? newFormatExecutableStatementBuilder(USER_QUERY) : builder);
         connector.setMappingStrategy(strategy == null ? new StringResultMappingStrategy() : strategy);
         return connector;
     }
@@ -103,25 +103,25 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @param strategy to map results
      * @return rdbms data connector
      */
-    protected RDBMSDataConnector createGroupRdbmsDataConnector(ExecutableSearchBuilder builder,
-            ResultMappingStrategy strategy) {
-        RDBMSDataConnector connector = new RDBMSDataConnector();
+    protected RDBMSDataConnector createGroupRdbmsDataConnector(final ExecutableSearchBuilder builder,
+            final ResultMappingStrategy strategy) {
+        final RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME + "ForGroups");
         connector.setDataSource(datasource);
-        connector.setExecutableSearchBuilder(builder == null ? new FormatExecutableStatementBuilder(GROUP_QUERY) : builder);
+        connector.setExecutableSearchBuilder(builder == null ? newFormatExecutableStatementBuilder(GROUP_QUERY) : builder);
         connector.setMappingStrategy(strategy == null ? new StringResultMappingStrategy() : strategy);
         return connector;
     }
 
     @Test public void initializeAndGetters() throws ComponentInitializationException, ResolutionException {
 
-        RDBMSDataConnector connector = new RDBMSDataConnector();
+        final RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
 
         try {
             connector.initialize();
             Assert.fail("No datasource");
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
 
@@ -129,28 +129,28 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         try {
             connector.initialize();
             Assert.fail("No statement builder");
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
 
-        ExecutableSearchBuilder statementBuilder = new FormatExecutableStatementBuilder(USER_QUERY);
+        final ExecutableSearchBuilder statementBuilder = newFormatExecutableStatementBuilder(USER_QUERY);
         connector.setExecutableSearchBuilder(statementBuilder);
         try {
             connector.initialize();
             Assert.fail("Invalid datasource");
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
 
         connector.setDataSource(datasource);
 
-        StringResultMappingStrategy mappingStrategy = new StringResultMappingStrategy();
+        final StringResultMappingStrategy mappingStrategy = new StringResultMappingStrategy();
         connector.setMappingStrategy(mappingStrategy);
 
         try {
             connector.resolve(null);
             Assert.fail("Need to initialize first");
-        } catch (UninitializedComponentException e) {
+        } catch (final UninitializedComponentException e) {
             // OK
         }
 
@@ -158,7 +158,7 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         try {
             connector.setDataSource(null);
             Assert.fail("Setter after initialize");
-        } catch (UnmodifiableComponentException e) {
+        } catch (final UnmodifiableComponentException e) {
             // OK
         }
         Assert.assertEquals(connector.getDataSource(), datasource);
@@ -167,77 +167,81 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void failFastInitialize() throws ComponentInitializationException {
-        RDBMSDataConnector connector = new RDBMSDataConnector();
+        final RDBMSDataConnector connector = new RDBMSDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        ExecutableSearchBuilder statementBuilder = new FormatExecutableStatementBuilder(USER_QUERY);
+        final ExecutableSearchBuilder statementBuilder = newFormatExecutableStatementBuilder(USER_QUERY);
         connector.setExecutableSearchBuilder(statementBuilder);
         connector.setDataSource(new JDBCDataSource());
 
         try {
             connector.initialize();
             Assert.fail("No failfast");
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
 
-        connector.setValidator(new DataSourceValidator(datasource, false));
+        final DataSourceValidator validator = new DataSourceValidator();
+        validator.setDataSource(datasource);
+        validator.setThrowValidateError(false);
+        validator.initialize();
+        connector.setValidator(validator);
         connector.initialize();
     }
 
     @Test public void resolveTemplateWithDepends() throws ComponentInitializationException, ResolutionException {
-        TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
+        final TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
         builder.setTemplateText("SELECT userid FROM people WHERE userid='${resolutionContext.principal}' AND affiliation='${affiliation[0]}'");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
-        List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
+        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("student"));
         dependsAttributes.put("affiliation", attributeValues);
-        String query = builder.getSQLQuery(context, dependsAttributes);
+        final String query = builder.getSQLQuery(context, dependsAttributes);
         Assert.assertEquals(query, "SELECT userid FROM people WHERE userid='PETER_THE_PRINCIPAL' AND affiliation='student'");
     }
 
     @Test public void resolveTemplateWithMultiValueDepends() throws ComponentInitializationException, ResolutionException {
-        TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
+        final TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
         builder.setTemplateText("SELECT userid FROM people WHERE userid='${resolutionContext.principal}' AND eduPersonEntitlement='${entitlement[0]}' AND eduPersonEntitlement='${entitlement[1]}'");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
-        List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
+        final Map<String, List<IdPAttributeValue<?>>> dependsAttributes = new HashMap<>();
+        final List<IdPAttributeValue<?>> attributeValues = new ArrayList<>();
         attributeValues.add(new StringAttributeValue("entitlement1"));
         attributeValues.add(new StringAttributeValue("entitlement2"));
         dependsAttributes.put("entitlement", attributeValues);
-        String query = builder.getSQLQuery(context, dependsAttributes);
+        final String query = builder.getSQLQuery(context, dependsAttributes);
         Assert.assertEquals(query, "SELECT userid FROM people WHERE userid='PETER_THE_PRINCIPAL' AND eduPersonEntitlement='entitlement1' AND eduPersonEntitlement='entitlement2'");
     }
 
     @Test public void escapeTemplate() throws ComponentInitializationException, ResolutionException {
-        TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
+        final TemplatedExecutableStatementBuilder builder = new TemplatedExecutableStatementBuilder();
         builder.setTemplateText("SELECT userid FROM people WHERE userid='${resolutionContext.principal}'");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext("McHale's Navy", TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        String query = builder.getSQLQuery(context, null);
+        final String query = builder.getSQLQuery(context, null);
         Assert.assertEquals(query, "SELECT userid FROM people WHERE userid='McHale''s Navy'");
     }
 
     @Test public void resolve() throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
+        final RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
         connector.initialize();
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        Map<String, IdPAttribute> attrs = connector.resolve(context);
+        final Map<String, IdPAttribute> attrs = connector.resolve(context);
         // check total attributes: userid, name, homephone, mail
         Assert.assertTrue(attrs.size() == 4);
         // check userid
@@ -260,17 +264,17 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test(expectedExceptions = ResolutionException.class) public void resolveNoStatement()
             throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createUserRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
+        final RDBMSDataConnector connector = createUserRdbmsDataConnector(new ExecutableSearchBuilder<ExecutableStatement>() {
 
             @Override
-            @Nonnull public ExecutableStatement build(@Nonnull AttributeResolutionContext resolutionContext,
-                    @Nonnull Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+            @Nonnull public ExecutableStatement build(@Nonnull final AttributeResolutionContext resolutionContext,
+                    @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
                 return null;
             }
         }, null);
         connector.initialize();
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         connector.resolve(context);
@@ -288,7 +292,7 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
                         TestSources.SP_ENTITY_ID);
         try {
             Assert.assertNotNull(connector.resolve(context));
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("Resolution exception occurred", e);
         }
 
@@ -310,7 +314,7 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
                         TestSources.SP_ENTITY_ID);
         try {
             Assert.assertNull(connector.resolve(context));
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("Resolution exception occurred", e);
         }
 
@@ -321,16 +325,16 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
     }
 
     @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
+        final RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
         final TestCache cache = new TestCache();
         connector.setResultsCache(cache);
         connector.initialize();
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         Assert.assertTrue(cache.size() == 0);
-        Map<String, IdPAttribute> optional = connector.resolve(context);
+        final Map<String, IdPAttribute> optional = connector.resolve(context);
         Assert.assertTrue(cache.size() == 1);
         Assert.assertEquals(cache.iterator().next(), optional);
     }
@@ -339,11 +343,11 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         final RDBMSDataConnector connector = createGroupRdbmsDataConnector(null, null);
         connector.initialize();
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        Map<String, IdPAttribute> attrs = connector.resolve(context);
+        final Map<String, IdPAttribute> attrs = connector.resolve(context);
         // check total attributes: name
         Assert.assertTrue(attrs.size() == 1);
         // check name
@@ -354,14 +358,14 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
     
     /** See IDP-573. */
     @Test public void resolveEmptyAttribute() throws ComponentInitializationException, ResolutionException {
-        RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
+        final RDBMSDataConnector connector = createUserRdbmsDataConnector(null, null);
         connector.initialize();
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext("PHILIP_THE_PRINCIPAL", TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
 
-        Map<String, IdPAttribute> attrs = connector.resolve(context);
+        final Map<String, IdPAttribute> attrs = connector.resolve(context);
         // check total attributes: userid, name, homephone, mail
         Assert.assertTrue(attrs.size() == 4);
         // check userid
@@ -384,4 +388,16 @@ public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertTrue(attrs.get("MAIL").getValues().contains(new StringAttributeValue(" phil.principal@shibboleth.net ")));
     }
     
+    static protected FormatExecutableStatementBuilder newFormatExecutableStatementBuilder(@Nonnull final String query) {
+      final FormatExecutableStatementBuilder builder = new FormatExecutableStatementBuilder();
+      builder.setQuery(query);
+      return builder;
+    }
+
+    static protected FormatExecutableStatementBuilder newFormatExecutableStatementBuilder(@Nonnull final String query, @Nonnull final int timeout) {
+        final FormatExecutableStatementBuilder builder = new FormatExecutableStatementBuilder();
+        builder.setQuery(query);
+        builder.setQueryTimeout(timeout);
+        return builder;
+    }
 }

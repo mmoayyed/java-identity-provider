@@ -699,8 +699,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final BeanDefinitionBuilder validator =
                     BeanDefinitionBuilder.genericBeanDefinition(ConnectionFactoryValidator.class);
 
-            validator.addConstructorArgValue(connectionFactory);
-            validator.addConstructorArgValue(true);
+            validator.addPropertyValue("connectionFactory", connectionFactory);
             return validator.getBeanDefinition();
         }
 

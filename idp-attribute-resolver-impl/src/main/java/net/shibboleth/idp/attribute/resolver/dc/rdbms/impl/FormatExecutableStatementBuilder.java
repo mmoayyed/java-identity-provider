@@ -23,11 +23,13 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder}. It generates the SQL statement to
@@ -37,14 +39,16 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class FormatExecutableStatementBuilder extends AbstractExecutableStatementBuilder {
 
     /** SQL query string. */
-    private final String sqlQuery;
+    private String sqlQuery;
 
     /**
      * Constructor.
      * 
      * @param query to search the database
+     * @deprecated - use the property setters
      */
-    public FormatExecutableStatementBuilder(@Nonnull final String query) {
+    @Deprecated public FormatExecutableStatementBuilder(@Nonnull final String query) {
+        LoggerFactory.getLogger(FormatExecutableStatementBuilder.class).warn("Using Deprecated Constructor");
         sqlQuery = Constraint.isNotNull(query, "SQL query can not be null");
     }
 
@@ -53,9 +57,46 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
      * 
      * @param query to search the database
      * @param timeout search timeout
+     * @deprecated - use the property setters
      */
-    public FormatExecutableStatementBuilder(@Nonnull final String query, @Nonnull final int timeout) {
+    @Deprecated public FormatExecutableStatementBuilder(@Nonnull final String query, @Nonnull final int timeout) {
+        LoggerFactory.getLogger(FormatExecutableStatementBuilder.class).warn("Using Deprecated Constructor");
         sqlQuery = Constraint.isNotNull(query, "SQL query can not be null");
+        setQueryTimeout((int) Constraint.isGreaterThanOrEqual(0, timeout, "Query timeout must be greater than zero"));
+    }
+    
+    /**
+     * Constructor.
+     *
+     */
+    public FormatExecutableStatementBuilder() {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        if (null == sqlQuery) {
+            throw new  ComponentInitializationException(
+                    "FormatExecutableStatementBuilder: SQL query can not be null");
+        }
+        if (getQueryTimeout() <= 0) {
+            throw new ComponentInitializationException(
+                    "FormatExecutableStatementBuilder: Query timeout must be greater than zero");
+        }
+        super.doInitialize();
+    }
+    
+    /** Set the query to search the database. 
+     * @param query query to search the database
+     */
+    public void setQuery(@Nonnull final String query) {
+        sqlQuery = Constraint.isNotNull(query, "SQL query can not be null");        
+    }
+    
+    /** Set the search timeout.
+     * @param timeout search timeout
+     */
+    public void setTimeOut(@Nonnull final int timeout) {
         setQueryTimeout((int) Constraint.isGreaterThanOrEqual(0, timeout, "Query timeout must be greater than zero"));
     }
 

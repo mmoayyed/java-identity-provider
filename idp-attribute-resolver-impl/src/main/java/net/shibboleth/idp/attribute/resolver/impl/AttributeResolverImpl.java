@@ -44,6 +44,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -98,10 +99,11 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param connectors data connectors loaded in to this resolver
      * @param principalResolver code to resolve the principal
      */
-    public AttributeResolverImpl(@Nonnull @NotEmpty final String resolverId,
-            @Nullable @NullableElements final Collection<AttributeDefinition> definitions,
-            @Nullable @NullableElements final Collection<DataConnector> connectors,
-            @Nullable final LegacyPrincipalDecoder principalResolver) {
+    public AttributeResolverImpl(@Nonnull @NotEmpty @ParameterName(name="resolverId") final String resolverId,
+      @Nullable @NullableElements @ParameterName(name="definitions") final Collection<AttributeDefinition> definitions,
+      @Nullable @NullableElements @ParameterName(name="connectors") final Collection<DataConnector> connectors,
+      @Nullable final LegacyPrincipalDecoder principalResolver) {
+
         setId(resolverId);
 
         logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();

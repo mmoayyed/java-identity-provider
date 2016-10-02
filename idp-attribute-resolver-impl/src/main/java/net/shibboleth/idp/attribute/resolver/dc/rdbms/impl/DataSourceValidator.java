@@ -20,36 +20,50 @@ package net.shibboleth.idp.attribute.resolver.dc.rdbms.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.annotation.Nonnull;
 import javax.sql.DataSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Validator implementation that invokes {@link DataSource#getConnection()} to determine if the DataSource is properly
  * configured.
  */
-public class DataSourceValidator implements Validator {
+public class DataSourceValidator extends AbstractInitializableComponent implements Validator {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(DataSourceValidator.class);
 
     /** JDBC data source to validate. */
-    private final DataSource dataSource;
+    @NonnullAfterInit private DataSource dataSource;
 
     /** whether validate should throw, default value is {@value} . */
-    private final boolean throwOnValidateError;
+    private boolean throwOnValidateError = true;
 
     /**
      * Creates a new DataSource validator.
      * 
      * @param source to validate
+     * @deprecated - use the property setters
      */
-    public DataSourceValidator(final DataSource source) {
-        this(source, true);
+    @Deprecated public DataSourceValidator(final DataSource source) {
+        LoggerFactory.getLogger(DataSourceValidator.class).warn("Using Deprecated Constructor");
+        dataSource = source;
+        try {
+            initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
+        }
     }
 
     /**
@@ -57,11 +71,46 @@ public class DataSourceValidator implements Validator {
      * 
      * @param source to validate
      * @param throwOnError whether {@link #validate()} should throw or log errors
+     * @deprecated - use the property setters
      */
-    public DataSourceValidator(final DataSource source, final boolean throwOnError) {
+    @Deprecated public DataSourceValidator(final DataSource source, final boolean throwOnError) {
+        LoggerFactory.getLogger(DataSourceValidator.class).warn("Using Deprecated Constructor");
         dataSource = source;
         throwOnValidateError = throwOnError;
+        try {
+            initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
+        }
     }
+    
+    /**
+     * Constructor.
+     *
+     */
+    public DataSourceValidator() {
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (null == dataSource) {
+            throw new  ComponentInitializationException("DataSourceValidator: Data Source should not be null");
+        }
+    }
+    
+    /**
+     * Sets the data source.
+     *
+     * @param source the data source
+     */
+    public void setDataSource(@Nonnull final DataSource source) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        dataSource =  Constraint.isNotNull(source, "Data Source should not be null");
+    }
+
 
     /**
      * Returns the data source.
@@ -71,6 +120,17 @@ public class DataSourceValidator implements Validator {
     public DataSource getDataSource() {
         return dataSource;
     }
+
+    /**
+     * Sets whether {@link #validate()} should throw or log errors.
+     *
+     * @param value whether {@link #validate()} should throw or log errors
+     */
+    public void setThrowValidateError(final boolean value) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        throwOnValidateError = value;
+    }
+
 
     /**
      * Returns whether {@link #validate()} should throw or log errors.
@@ -83,6 +143,8 @@ public class DataSourceValidator implements Validator {
 
     /** {@inheritDoc} */
     @Override public void validate() throws ValidationException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
         Connection connection = null;
         try {
             connection = dataSource.getConnection();

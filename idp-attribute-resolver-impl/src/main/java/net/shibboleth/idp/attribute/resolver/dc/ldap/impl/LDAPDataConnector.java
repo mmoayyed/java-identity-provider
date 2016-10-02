@@ -130,7 +130,9 @@ public class LDAPDataConnector extends AbstractSearchDataConnector<ExecutableSea
         }
 
         if (defaultValidator) {
-            super.setValidator(new ConnectionFactoryValidator(connectionFactory));
+            final ConnectionFactoryValidator validator = new ConnectionFactoryValidator();
+            validator.setConnectionFactory(connectionFactory);
+            super.setValidator(validator);
         }
         if (defaultMappingStrategy) {
             super.setMappingStrategy(new StringAttributeValueMappingStrategy());

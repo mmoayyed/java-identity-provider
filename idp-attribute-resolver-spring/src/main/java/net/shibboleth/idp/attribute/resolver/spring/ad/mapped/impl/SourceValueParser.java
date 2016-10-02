@@ -21,17 +21,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
+import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AttributeDefinitionNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.SourceValue;
-import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AttributeDefinitionNamespaceHandler;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Bean definition parser for a {@link SourceValue}. */
 public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
@@ -57,23 +57,22 @@ public class SourceValueParser extends AbstractSingleBeanDefinitionParser {
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
+        builder.setInitMethodName("initialize");
+        builder.setDestroyMethodName("destroy");
+        
         final String value = config.getTextContent();
-        builder.addConstructorArgValue(value);
+        builder.addPropertyValue("value", value);
 
         String ignoreCase = null;
         if (config.hasAttributeNS(null, "ignoreCase")) {
             ignoreCase = StringSupport.trimOrNull(config.getAttributeNS(null, "ignoreCase"));
-            builder.addConstructorArgValue(ignoreCase);
-        } else {
-            builder.addConstructorArgValue(null);
+            builder.addPropertyValue("ignoreCase", ignoreCase);
         }
 
         String partialMatch = null;
         if (config.hasAttributeNS(null, "partialMatch")) {
             partialMatch = StringSupport.trimOrNull(config.getAttributeNS(null, "partialMatch"));
-            builder.addConstructorArgValue(partialMatch);
-        } else {
-            builder.addConstructorArgValue(null);
+            builder.addPropertyValue("partialMatch", partialMatch);
         }
 
         log.debug("SourceValue value: {}, ignoreCase: {}, partialMatch: {}", value, ignoreCase, partialMatch);

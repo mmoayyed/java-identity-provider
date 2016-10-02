@@ -88,8 +88,7 @@
             </map>
         </property>
     </bean>
-    <bean id="validator" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator">
-        <constructor-arg index="0" ref="connectionFactory" />
-        <constructor-arg index="1" value="true" />
-    </bean>
+        <bean id="validator" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator"
+              p:connectionFactory-ref="connectionFactory" p:throwValidateError="true" />
+    
 </beans>

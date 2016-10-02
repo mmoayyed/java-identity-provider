@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -32,8 +33,8 @@ import org.testng.annotations.Test;
 public class ValueMapTest {
     
     
-    @Test public void setterGetter() {
-        final SourceValue value = new SourceValue("value", true, true);
+    @Test public void setterGetter() throws ComponentInitializationException {
+        final SourceValue value = SourceValueTest.newSourceValue("value", true, true);
         
         final ValueMap map = new ValueMap();
         
@@ -46,8 +47,8 @@ public class ValueMapTest {
         Assert.assertTrue(map.getSourceValues().contains(value));
     }
     
-    @Test public void subString() {
-        final SourceValue value = new SourceValue("value", true, true);
+    @Test public void subString() throws ComponentInitializationException {
+        final SourceValue value = SourceValueTest.newSourceValue("value", true, true);
         
         final ValueMap map = new ValueMap();
         
@@ -63,11 +64,11 @@ public class ValueMapTest {
         Assert.assertTrue(result.contains(new StringAttributeValue("return")));
     }
 
-    @Test public void regexp() {
+    @Test public void regexp() throws ComponentInitializationException {
         final HashSet<SourceValue> sources = new HashSet<>(3);
         
-        sources.add(new SourceValue("R(.+)", false, false));
-        sources.add(new SourceValue("RE(.+)", true, false));
+        sources.add(SourceValueTest.newSourceValue("R(.+)", false, false));
+        sources.add(SourceValueTest.newSourceValue("RE(.+)", true, false));
         final ValueMap map = new ValueMap();
         map.setSourceValues(sources);
         map.setReturnValue("foo$1");

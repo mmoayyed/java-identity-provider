@@ -124,7 +124,10 @@ public class RDBMSDataConnector extends AbstractSearchDataConnector<ExecutableSt
         }
 
         if (defaultValidator) {
-            super.setValidator(new DataSourceValidator(dataSource));
+            final DataSourceValidator validator = new DataSourceValidator();
+            validator.setDataSource(dataSource);
+            validator.initialize();
+            super.setValidator(validator);
         }
         if (defaultMappingStrategy) {
             super.setMappingStrategy(new StringResultMappingStrategy());

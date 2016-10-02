@@ -249,6 +249,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             
             final BeanDefinitionBuilder mapper =
                     BeanDefinitionBuilder.genericBeanDefinition(StringResultMappingStrategy.class);
+
             final List<Element> columns = ElementSupport.getChildElementsByTagNameNS(configElement,
                     DataConnectorNamespaceHandler.NAMESPACE, "Column");
             columns.addAll(ElementSupport.getChildElementsByTagNameNS(configElement,
@@ -303,12 +304,14 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         @Nullable public BeanDefinition createValidator(final Object dataSource) {            
             final BeanDefinitionBuilder validator =
                     BeanDefinitionBuilder.genericBeanDefinition(DataSourceValidator.class);
+            validator.setInitMethodName("initialize");
+            validator.setDestroyMethodName("destroy");
             if (dataSource instanceof String) {
-                validator.addConstructorArgReference((String) dataSource); 
+                validator.addPropertyReference("dataSource", (String) dataSource); 
             } else {
-                validator.addConstructorArgValue(dataSource);
+                validator.addPropertyValue("dataSource", dataSource);
             }
-            validator.addConstructorArgValue(true);
+            validator.addPropertyValue("throwValidateError", true);
             return validator.getBeanDefinition();
         }
         

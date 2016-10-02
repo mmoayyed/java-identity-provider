@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute.resolver.ad.mapped.impl;
 
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.Assert;
@@ -29,8 +31,8 @@ public class SourceValueTest {
 
     Logger log = LoggerFactory.getLogger(SourceValueTest.class);
 
-    @Test public void sourceValue() {
-        SourceValue value = new SourceValue("value", false,  true);
+    @Test public void sourceValue() throws ComponentInitializationException {
+        SourceValue value = newSourceValue("value", false, true);
 
         Assert.assertEquals(value.getValue(), "value");
         Assert.assertTrue(value.isPartialMatch());
@@ -38,7 +40,7 @@ public class SourceValueTest {
 
         log.info("Value = 'value', ignore = true, partial = false", value.toString());
 
-        value = new SourceValue("eulaV", true,  false);
+        value = newSourceValue("eulaV", true, false);
 
         Assert.assertEquals(value.getPattern().pattern(), "eulaV");
         Assert.assertFalse(value.isPartialMatch());
@@ -46,4 +48,16 @@ public class SourceValueTest {
         log.info("Value = 'eulaV', ignore = false, partial = true", value.toString());
 
     }
+
+    public static SourceValue newSourceValue(final String value, final boolean ignoreCase, final boolean partialMatch)
+            throws ComponentInitializationException {
+
+        final SourceValue sourceValue = new SourceValue();
+        sourceValue.setValue(value);
+        sourceValue.setIgnoreCase(ignoreCase);
+        sourceValue.setPartialMatch(partialMatch);
+        sourceValue.initialize();
+        return sourceValue;
+    }
+
 }

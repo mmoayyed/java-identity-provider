@@ -70,7 +70,7 @@ public class Regressions {
      */
     @BeforeTest public void setupDirectoryServer() throws LDAPException {
 
-        InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
+        final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=shibboleth,dc=net");
         config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", 10390));
         config.addAdditionalBindCredentials("cn=Directory Manager", "password");
         directoryServer = new InMemoryDirectoryServer(config);
@@ -94,27 +94,28 @@ public class Regressions {
      * @param builder to build search requests
      * @param strategy to map search results
      * @return ldap data connector
+     * @throws ComponentInitializationException 
      */
-    protected LDAPDataConnector createLdapDataConnector(ExecutableSearchBuilder builder,
-            SearchResultMappingStrategy strategy) {
-        LDAPDataConnector connector = new LDAPDataConnector();
+    protected LDAPDataConnector createLdapDataConnector(final ExecutableSearchBuilder builder,
+            final SearchResultMappingStrategy strategy) throws ComponentInitializationException {
+        final LDAPDataConnector connector = new LDAPDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
-        ConnectionFactory connectionFactory = new DefaultConnectionFactory("ldap://localhost:10390");
+        final ConnectionFactory connectionFactory = new DefaultConnectionFactory("ldap://localhost:10390");
         connector.setConnectionFactory(connectionFactory);
-        SearchExecutor searchExecutor = new SearchExecutor();
+        final SearchExecutor searchExecutor = new SearchExecutor();
         searchExecutor.setBaseDn(TEST_BASE_DN);
         searchExecutor.setReturnAttributes(TEST_RETURN_ATTRIBUTES);
         connector.setSearchExecutor(searchExecutor);
-        connector.setExecutableSearchBuilder(builder == null ? new ParameterizedExecutableSearchFilterBuilder(
+        connector.setExecutableSearchBuilder(builder == null ? LDAPDataConnectorTest.newParameterizedExecutableSearchFilterBuilder(
                 "(uid={principalName})") : builder);
-        connector.setValidator(new ConnectionFactoryValidator(connectionFactory));
+        connector.setValidator(LDAPDataConnectorTest.newConnectionFactoryValidator(connectionFactory));
         connector.setMappingStrategy(strategy == null ? new StringAttributeValueMappingStrategy() : strategy);
         return connector;
     }
 
     @Test public void idP573() throws ComponentInitializationException, ResolutionException {
-        ParameterizedExecutableSearchFilterBuilder builder =
-                new ParameterizedExecutableSearchFilterBuilder("(uid={principalName})");
+        final ParameterizedExecutableSearchFilterBuilder builder = LDAPDataConnectorTest.
+                newParameterizedExecutableSearchFilterBuilder("(uid={principalName})");
 
         final DataConnector connector = createLdapDataConnector(builder, new StringAttributeValueMappingStrategy());
         connector.initialize();

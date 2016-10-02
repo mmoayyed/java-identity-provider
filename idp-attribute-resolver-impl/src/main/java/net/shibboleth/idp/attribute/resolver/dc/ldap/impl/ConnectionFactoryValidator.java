@@ -21,7 +21,10 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.resolver.dc.ValidationException;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
+import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -33,24 +36,32 @@ import org.slf4j.LoggerFactory;
  * Validator implementation that invokes {@link Connection#open()} to determine if the ConnectionFactory is properly
  * configured.
  */
-public class ConnectionFactoryValidator implements Validator {
+public class ConnectionFactoryValidator extends AbstractInitializableComponent implements Validator {
 
     /** Class logger. */
     private final Logger log = LoggerFactory.getLogger(ConnectionFactoryValidator.class);
 
     /** Connection factory to validate. */
-    @Nonnull private final ConnectionFactory connectionFactory;
-
-    /** whether validate should throw, default value is {@value} . */
-    private final boolean throwOnValidateError;
-
+    @Nonnull private ConnectionFactory connectionFactory;
+    
+    /** whether validate should throw, default value is {@value true}. */
+    private boolean throwOnValidateError = true;
+    
     /**
      * Creates a new connection factory validator.
      *
      * @param factory to validate
+     * @deprecated - use the property setters
      */
-    public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory) {
-        this(factory, true);
+    @Deprecated public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory) {
+        LoggerFactory.getLogger(ConnectionFactoryValidator.class).warn("Using Deprecated Constructor");
+        setConnectionFactory(factory);
+        setThrowValidateError(true);
+        try {
+            initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
+        }
     }
 
     /**
@@ -58,11 +69,43 @@ public class ConnectionFactoryValidator implements Validator {
      * 
      * @param factory to validate
      * @param throwOnError whether {@link #validate()} should throw or log errors
+     * @deprecated - use the property setters
      */
-    public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory, final boolean throwOnError) {
-        connectionFactory = factory;
-        throwOnValidateError = throwOnError;
+    @Deprecated public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory, 
+            final boolean throwOnError) {
+        LoggerFactory.getLogger(ConnectionFactoryValidator.class).warn("Using Deprecated Constructor");
+        setConnectionFactory(factory);
+        setThrowValidateError(throwOnError);
+        try {
+            initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
+        }
     }
+    
+    /**
+     * Constructor.  
+     *
+     */
+    public ConnectionFactoryValidator() {  
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        Constraint.isNotNull(connectionFactory, "Connection factory must be non-null");
+        super.doInitialize();
+    }
+    
+    /**
+     * Sets the connection factory.
+     *
+     * @param factory the connection factory
+     */
+    @Nonnull public void setConnectionFactory(@Nonnull final ConnectionFactory factory) {
+        connectionFactory = Constraint.isNotNull(factory, "Connection factory must be non-null");
+    }
+
 
     /**
      * Returns the connection factory.
@@ -70,8 +113,18 @@ public class ConnectionFactoryValidator implements Validator {
      * @return connection factory
      */
     @Nonnull public ConnectionFactory getConnectionFactory() {
-        Constraint.isNotNull(connectionFactory, "Connection factory must be non-null");
         return connectionFactory;
+    }
+
+    /**
+     * Sets whether {@link #validate()} should throw or log errors.
+     *
+     * @param what whether {@link #validate()} should throw or log errors
+     */
+    public void setThrowValidateError(final Boolean what) {
+        if (null != what) {
+            throwOnValidateError = what;
+        }
     }
 
     /**

@@ -25,9 +25,14 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.ldaptive.SearchFilter;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder} that generates the search filter to
@@ -37,20 +42,51 @@ import org.ldaptive.SearchFilter;
 public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutableSearchFilterBuilder {
 
     /** LDAP search filter. */
-    private final String searchFilter;
+    @NonnullAfterInit private String searchFilter;
 
     /**
      * Constructor.
      * 
      * @param filter used for the LDAP search
+     * @deprecated - use the proerty setters
      */
-    public ParameterizedExecutableSearchFilterBuilder(@Nonnull final String filter) {
+    @Deprecated public ParameterizedExecutableSearchFilterBuilder(@Nonnull final String filter) {
+        LoggerFactory.getLogger(ParameterizedExecutableSearchFilterBuilder.class).warn("Using Deprecated Constructor");
+        setSearchFilter(filter);
+        try {
+            initialize();
+        } catch (final ComponentInitializationException e) {
+            throw new ConstraintViolationException("Invalid parameterization to deprecated structure");
+        }
+    }
+    
+    /**
+     * Constructor.  
+     *
+     */
+    public ParameterizedExecutableSearchFilterBuilder() {
+        
+    }
+    
+    /** Set the filter used for the LDAP search.
+     * @param filter used for the LDAP search
+     */
+    public void setSearchFilter(@Nonnull final String filter) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         searchFilter = Constraint.isNotNull(filter, "Search filter can not be null");
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        Constraint.isNotNull(searchFilter, "Search filter can not be null");
+        super.doInitialize();
     }
 
     /** {@inheritDoc} */
     @Override public ExecutableSearchFilter build(@Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         final SearchFilter sf = new SearchFilter(searchFilter);
         sf.setParameter("principalName", resolutionContext.getPrincipal());
         if (dependencyAttributes != null && !dependencyAttributes.isEmpty()) {

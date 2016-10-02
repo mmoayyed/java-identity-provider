@@ -2,7 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" p:driverClass="%{datasource.driverClass}"
         p:jdbcUrl="%{datasource.jdbcUrl}" p:user="%{datasource.user}" p:password="%{datasource.password}"
         p:acquireIncrement="%{datasource.acquireIncrement}" p:acquireRetryAttempts="%{datasource.acquireRetryAttempts}"
@@ -16,9 +18,8 @@
         <constructor-arg value="%{cache.cacheBuilderSpec}" />
     </bean>
     <bean id="cache" class="com.google.common.cache.Cache" factory-bean="cacheBuilder" factory-method="build" />
-    <bean class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.FormatExecutableStatementBuilder">
-        <constructor-arg index="0" value="%{statementBuilder.selectStatement}" />
-    </bean>
+    <bean class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.FormatExecutableStatementBuilder"
+        p:query="SELECT * FROM people WHERE userid='%s'" />
     <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy"
         p:noResultAnError="true" p:multipleResultsAnError="true">
         <property name="resultRenamingMap">
@@ -27,8 +28,5 @@
             </map>
         </property>
     </bean> 
-    <bean id="validator" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator">
-        <constructor-arg index="0" ref="dataSource" />
-        <constructor-arg index="1" value="true" />
-    </bean> 
+    <bean id="validator" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator" p:dataSource-ref="dataSource" p:throwValidateError="true" />
 </beans>
