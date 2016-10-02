@@ -35,11 +35,10 @@ import net.shibboleth.idp.attribute.resolver.AttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.DataConnector;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
-import net.shibboleth.idp.attribute.resolver.ad.impl.StaticAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -90,7 +89,7 @@ public class TemplateAttributeTest {
                         "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
                 engineSingleton.addProperty("resource.loader", "classpath, string");
                 engineSingleton.init();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail("couldn't create engine", e);
             }
         }
@@ -113,7 +112,7 @@ public class TemplateAttributeTest {
         try {
             attr.initialize();
             Assert.fail("No template");
-        } catch (ComponentInitializationException ex) {
+        } catch (final ComponentInitializationException ex) {
             // OK
         }
         attr = new TemplateAttributeDefinition();
@@ -125,7 +124,7 @@ public class TemplateAttributeTest {
         try {
             attr.initialize();
             Assert.fail("engine");
-        } catch (ComponentInitializationException ex) {
+        } catch (final ComponentInitializationException ex) {
             // OK
         }
 
@@ -136,7 +135,7 @@ public class TemplateAttributeTest {
         try {
             attr.initialize();
             Assert.fail("No dependencies");
-        } catch (ComponentInitializationException ex) {
+        } catch (final ComponentInitializationException ex) {
             // OK
         }
         Assert.assertNotNull(attr.getTemplateText());
@@ -163,7 +162,7 @@ public class TemplateAttributeTest {
         Assert.assertNotNull(attr.getTemplate());
         try {
             attr.resolve(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             // OK
         }
 
@@ -174,7 +173,7 @@ public class TemplateAttributeTest {
         try {
             attr.initialize();
             Assert.fail("No Text or attributes");
-        } catch (ComponentInitializationException ex) {
+        } catch (final ComponentInitializationException ex) {
             // OK
         }
         attr.setSourceAttributes(Collections.singletonList(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
@@ -214,13 +213,13 @@ public class TemplateAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         resolver.resolveAttributes(context);
 
-        IdPAttribute a = context.getResolvedIdPAttributes().get(name);
+        final IdPAttribute a = context.getResolvedIdPAttributes().get(name);
         final Collection results = a.getValues();
         Assert.assertEquals(results.size(), 1, "Templated value count");
         Assert.assertTrue(results.contains(SIMPLE_VALUE_RESULT), "Single value context is correct");
@@ -242,7 +241,7 @@ public class TemplateAttributeTest {
         templateDef.setVelocityEngine(getEngine());
         templateDef.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_CONNECTOR);
 
-        Set<ResolverPluginDependency> ds = new LazySet<>();
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
@@ -258,7 +257,7 @@ public class TemplateAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -283,7 +282,7 @@ public class TemplateAttributeTest {
         templateDef.setVelocityEngine(getEngine());
         templateDef.setTemplateText("Att ${at1}");
 
-        Set<ResolverPluginDependency> ds = new LazySet<>();
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         templateDef.setDependencies(ds);
@@ -293,9 +292,9 @@ public class TemplateAttributeTest {
         final List<IdPAttributeValue<?>> values = new ArrayList<>();
         values.add(EmptyAttributeValue.ZERO_LENGTH);
         values.add(EmptyAttributeValue.NULL);
-        IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        final IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         attr.setValues(values);
-        StaticAttributeDefinition simple = new StaticAttributeDefinition();
+        final StaticAttributeDefinition simple = new StaticAttributeDefinition();
         simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);
         simple.setValue(attr);
         simple.initialize();
@@ -304,7 +303,7 @@ public class TemplateAttributeTest {
         attrDefinitions.add(templateDef);
         attrDefinitions.add(simple);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -327,7 +326,7 @@ public class TemplateAttributeTest {
         final String otherDefName = TestSources.STATIC_ATTRIBUTE_NAME + "2";
         final String otherAttrName = TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR + "2";
 
-        Set<ResolverPluginDependency> ds = new LazySet<>();
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         ds.add(TestSources.makeResolverPluginDependency(otherDefName, otherAttrName));
@@ -340,14 +339,14 @@ public class TemplateAttributeTest {
         attrDefinitions.add(TestSources.populatedStaticAttribute());
         attrDefinitions.add(TestSources.populatedStaticAttribute(otherDefName, otherAttrName, 1));
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
-        } catch (ResolutionException ex) {
+        } catch (final ResolutionException ex) {
             // OK
         }
     }
@@ -360,7 +359,7 @@ public class TemplateAttributeTest {
         templateDef.setVelocityEngine(getEngine());
         templateDef.setTemplateText(TEST_ATTRIBUTES_TEMPLATE_ATTR);
 
-        Set<ResolverPluginDependency> ds = new LazySet<>();
+        final Set<ResolverPluginDependency> ds = new LazySet<>();
         ds.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         templateDef.setDependencies(ds);
@@ -368,9 +367,9 @@ public class TemplateAttributeTest {
         
         templateDef.initialize();
 
-        IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
+        final IdPAttribute attr = new IdPAttribute(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR);
         attr.setValues(Collections.singletonList(new ByteAttributeValue(new byte[] {1, 2, 3})));
-        StaticAttributeDefinition simple = new StaticAttributeDefinition();
+        final StaticAttributeDefinition simple = new StaticAttributeDefinition();
         simple.setId(TestSources.STATIC_ATTRIBUTE_NAME);
         simple.setValue(attr);
         simple.initialize();
@@ -378,14 +377,14 @@ public class TemplateAttributeTest {
         attrDefinitions.add(templateDef);
         attrDefinitions.add(simple);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, Collections.EMPTY_SET, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
-        } catch (ResolutionException ex) {
+        } catch (final ResolutionException ex) {
             // OK
         }
     }

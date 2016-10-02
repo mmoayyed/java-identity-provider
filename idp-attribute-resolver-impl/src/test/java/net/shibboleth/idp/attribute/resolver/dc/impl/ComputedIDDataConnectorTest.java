@@ -38,6 +38,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
 import net.shibboleth.idp.saml.attribute.resolver.impl.AbstractPersistentIdDataConnector;
 import net.shibboleth.idp.saml.attribute.resolver.impl.ComputedIDDataConnector;
 import net.shibboleth.idp.saml.impl.TestSources;
@@ -70,17 +71,17 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     protected static final byte smallSalt[] = {0, 1, 2};
 
-    private static void testInit(AbstractPersistentIdDataConnector connector, String failMessage) {
+    private static void testInit(final AbstractPersistentIdDataConnector connector, final String failMessage) {
         try {
             connector.initialize();
             Assert.fail(failMessage);
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
     }
 
     @Test public void dataConnector() throws ComponentInitializationException, ResolutionException {
-        ComputedIDDataConnector connector = new ComputedIDDataConnector();
+        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
 
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(
@@ -92,18 +93,18 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.initialize();
 
-        SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(OUTPUT_ATTRIBUTE_NAME);
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_ATTRIBUTE_NAME)));
 
-        Set<AttributeDefinition> set = new HashSet<>(2);
+        final Set<AttributeDefinition> set = new HashSet<>(2);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
         final AttributeResolverImpl resolver =
-                new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
+                AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
 
         simple.initialize();
         resolver.initialize();
@@ -115,14 +116,14 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected - two scoped attributes
-        List<IdPAttributeValue<?>> resultValues =
+        final List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(), RESULT);
     }
 
     @Test public void getters() throws ComponentInitializationException {
-        ComputedIDDataConnector connector = new ComputedIDDataConnector();
+        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(
                 TestSources.STATIC_ATTRIBUTE_NAME, TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR)));
@@ -137,20 +138,20 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         try {
             connector.setSalt(smallSalt);
             Assert.fail("setting after init");
-        } catch (UnmodifiableComponentException e) {
+        } catch (final UnmodifiableComponentException e) {
             // OK'
         }
 
         Assert.assertEquals(connector.getSalt(), salt);
     }
 
-    private AttributeResolver constructResolver(int values) throws ComponentInitializationException {
-        ComputedIDDataConnector connector = new ComputedIDDataConnector();
+    private AttributeResolver constructResolver(final int values) throws ComponentInitializationException {
+        final ComputedIDDataConnector connector = new ComputedIDDataConnector();
 
         return constructResolver(connector, values);
     }
 
-    protected static AttributeResolver constructResolver(ComputedIDDataConnector connector, int values)
+    protected static AttributeResolver constructResolver(final ComputedIDDataConnector connector, final int values)
             throws ComponentInitializationException {
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(
@@ -159,47 +160,47 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
         connector.setSalt(salt);
 
-        SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(OUTPUT_ATTRIBUTE_NAME);
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_CONNECTOR_NAME)));
         simple.initialize();
 
-        Set<AttributeDefinition> set = new HashSet<>(2);
+        final Set<AttributeDefinition> set = new HashSet<>(2);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, values));
 
-        return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
+        return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
     }
 
-    private AttributeResolver constructResolverWithNonString(String dependantOn)
+    private AttributeResolver constructResolverWithNonString(final String dependantOn)
             throws ComponentInitializationException {
         return constructResolverWithNonString(new ComputedIDDataConnector(), dependantOn);
     }
 
-    protected static AttributeResolver constructResolverWithNonString(ComputedIDDataConnector connector,
-            String dependantOn) throws ComponentInitializationException {
+    protected static AttributeResolver constructResolverWithNonString(final ComputedIDDataConnector connector,
+            final String dependantOn) throws ComponentInitializationException {
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(dependantOn, null)));
         connector.setSalt(salt);
         connector.setSourceAttributeId(dependantOn);
 
-        SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
+        final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(OUTPUT_ATTRIBUTE_NAME);
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency(TEST_CONNECTOR_NAME,
                 TEST_CONNECTOR_NAME)));
         simple.initialize();
-        Set<AttributeDefinition> set = new HashSet<>(3);
+        final Set<AttributeDefinition> set = new HashSet<>(3);
         set.add(simple);
         set.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
         set.add(TestSources.nonStringAttributeDefiniton(dependantOn));
 
-        return new AttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
+        return AttributeResolverImplTest.newAttributeResolverImpl("atresolver", set, Collections.singleton((DataConnector) connector), null);
     }
 
-    protected static AbstractPersistentIdDataConnector connectorFromResolver(AttributeResolver resolver) {
+    protected static AbstractPersistentIdDataConnector connectorFromResolver(final AttributeResolver resolver) {
         return (AbstractPersistentIdDataConnector) resolver.getDataConnectors().get(TEST_CONNECTOR_NAME);
     }
 
@@ -312,10 +313,10 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         simple.initialize();
 
         final AttributeResolver resolver =
-                new AttributeResolverImpl("atresolver", Collections.singleton((AttributeDefinition) simple), set, null);
+                AttributeResolverImplTest.newAttributeResolverImpl("atresolver", Collections.singleton((AttributeDefinition) simple), set, null);
         ComponentSupport.initialize(resolver);
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
@@ -342,7 +343,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolutionContext.setAttributeRecipientID(TestSources.SP_ENTITY_ID);
         resolutionContext.setPrincipal(TestSources.PRINCIPAL_ID);
 
-        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
 
 
@@ -373,7 +374,7 @@ public class ComputedIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resolutionContext.setAttributeRecipientID(TestSources.SP_ENTITY_ID);
         resolutionContext.setPrincipal(TestSources.PRINCIPAL_ID);
 
-        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
 
 

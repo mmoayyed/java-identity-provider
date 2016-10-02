@@ -44,7 +44,6 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -80,34 +79,26 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeResolverImpl.class);
 
     /** Attribute definitions defined for this resolver. */
-    @Nonnull private final Map<String, AttributeDefinition> attributeDefinitions;
+    @NonnullAfterInit private Map<String, AttributeDefinition> attributeDefinitions;
 
     /** Data connectors defined for this resolver. */
-    @Nonnull private final Map<String, DataConnector> dataConnectors;
+    @NonnullAfterInit private Map<String, DataConnector> dataConnectors;
 
     /** cache for the log prefix - to save multiple recalculations. */
-    @NonnullAfterInit private final String logPrefix;
+    @NonnullAfterInit private String logPrefix;
 
     /** The Principal mapper. */
-    @Nullable private final LegacyPrincipalDecoder principalConnector;
+    @Nullable private LegacyPrincipalDecoder principalConnector;
 
-    /**
-     * Constructor.
-     * 
-     * @param resolverId ID of this resolver
+    /** {@inheritDoc} */
+    @Override public void setId(@Nonnull @NotEmpty final String resolverId) {
+        super.setId(resolverId);
+    }
+    
+    /** Sets the attribute definitions for this resolver.
      * @param definitions attribute definitions loaded in to this resolver
-     * @param connectors data connectors loaded in to this resolver
-     * @param principalResolver code to resolve the principal
      */
-    public AttributeResolverImpl(@Nonnull @NotEmpty @ParameterName(name="resolverId") final String resolverId,
-      @Nullable @NullableElements @ParameterName(name="definitions") final Collection<AttributeDefinition> definitions,
-      @Nullable @NullableElements @ParameterName(name="connectors") final Collection<DataConnector> connectors,
-      @Nullable final LegacyPrincipalDecoder principalResolver) {
-
-        setId(resolverId);
-
-        logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
-
+    public void setAttributeDefinitions(@Nullable @NullableElements final Collection<AttributeDefinition> definitions) {
         final Map<String, AttributeDefinition> checkedDefinitions;
         if (definitions != null) {
             checkedDefinitions = new HashMap<>(definitions.size());
@@ -125,6 +116,22 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
         }
         attributeDefinitions = ImmutableMap.copyOf(checkedDefinitions);
 
+    }
+
+    /**
+     * Gets the collection of attribute definitions for this resolver.
+     * 
+     * @return attribute definitions loaded in to this resolver
+     */
+    @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> 
+        getAttributeDefinitions() {
+        return attributeDefinitions;
+    }
+    
+    /** Sets the data connectors for this resolver.
+     * @param connectors data connectors loaded in to this resolver
+     */
+    public void setDataConnectors( @Nullable @NullableElements final Collection<DataConnector> connectors){
         final Map<String, DataConnector> checkedConnectors;
         if (connectors != null) {
             checkedConnectors = new HashMap<>(connectors.size());
@@ -141,18 +148,6 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             checkedConnectors = Collections.emptyMap();
         }
         dataConnectors = ImmutableMap.copyOf(checkedConnectors);
-
-        principalConnector = principalResolver;
-    }
-
-    /**
-     * Gets the collection of attribute definitions for this resolver.
-     * 
-     * @return attribute definitions loaded in to this resolver
-     */
-    @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, AttributeDefinition> 
-        getAttributeDefinitions() {
-        return attributeDefinitions;
     }
 
     /**
@@ -162,6 +157,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      */
     @Override @Nonnull @NonnullElements @Unmodifiable public Map<String, DataConnector> getDataConnectors() {
         return dataConnectors;
+    }
+    
+    /** Set the Decoder.
+     * @param principalResolver code to resolve the principal
+     */
+    public void setPrincipalDecoder(@Nullable final LegacyPrincipalDecoder principalResolver) {
+        principalConnector = principalResolver;
     }
 
     /**
@@ -461,6 +463,17 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
+        
+        logPrefix = new StringBuilder("Attribute Resolver '").append(getId()).append("':").toString();
+
+        if (null == attributeDefinitions) {
+            throw new ComponentInitializationException("No Attribute Definitions provided");
+        }
+        
+        if (null == dataConnectors) {
+            throw new ComponentInitializationException("No Data Connectors provided");
+        }
+
 
         final HashSet<String> dependencyVerifiedPlugins = new HashSet<>();
         for (final DataConnector plugin : dataConnectors.values()) {

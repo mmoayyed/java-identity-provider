@@ -65,7 +65,11 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
         log.debug("Creating Attribute Resolver {} with {} Attribute Definition(s), {} Data Connector(s)"
                 + " and {} Principal Connector(s)", getId(), definitions.size(), connectors.size(), pcs.size());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl(getId(), definitions, connectors, pcc);
+        final AttributeResolverImpl resolver = new AttributeResolverImpl();
+        resolver.setAttributeDefinitions(definitions);
+        resolver.setDataConnectors(connectors);
+        resolver.setPrincipalDecoder(pcc);
+        resolver.setId(getId());
         resolver.setApplicationContext(appContext);
 
         try {

@@ -35,6 +35,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -60,7 +61,7 @@ public class SimpleAttributeTest {
         try {
             simple.initialize();
             Assert.fail("no dependencies");
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             //OK
         }
         simple.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
@@ -97,13 +98,13 @@ public class SimpleAttributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(simple);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 
@@ -136,13 +137,13 @@ public class SimpleAttributeTest {
         am.add(simple);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
-        AttributeResolutionContext context = new AttributeResolutionContext();
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
         final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
@@ -199,7 +200,7 @@ public class SimpleAttributeTest {
         final SimpleAttributeDefinition simple = new SimpleAttributeDefinition();
         simple.setId(TEST_ATTRIBUTE_NAME);
 
-        Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR));
         dependencySet.add(TestSources.makeResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME,
@@ -215,13 +216,13 @@ public class SimpleAttributeTest {
         final Set<DataConnector> dataDefinitions = new LazySet<>();
         dataDefinitions.add(TestSources.populatedStaticConnector());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attrDefinitions, dataDefinitions, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
 

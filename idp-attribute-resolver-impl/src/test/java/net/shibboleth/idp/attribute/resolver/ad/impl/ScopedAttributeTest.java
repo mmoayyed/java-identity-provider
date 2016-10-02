@@ -39,6 +39,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -86,7 +87,7 @@ public class ScopedAttributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(scoped);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -106,10 +107,10 @@ public class ScopedAttributeTest {
     }
 
     @Test public void invalidValueType() throws ComponentInitializationException {
-        IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
+        final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singletonList(new ByteAttributeValue(new byte[] {1, 2, 3})));
 
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
 
         final ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
@@ -122,7 +123,7 @@ public class ScopedAttributeTest {
         try {
             attrDef.resolve(resolutionContext);
             Assert.fail("Invalid type");
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             //
         }
     }
@@ -137,7 +138,7 @@ public class ScopedAttributeTest {
 
         attr.setValues(values);
 
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
 
         final ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
@@ -147,7 +148,7 @@ public class ScopedAttributeTest {
                 ResolverTestSupport.EPA_ATTRIB_ID))));
         attrDef.initialize();
 
-        IdPAttribute  result = attrDef.resolve(resolutionContext);
+        final IdPAttribute  result = attrDef.resolve(resolutionContext);
         
         final Collection f = result.getValues();
 
@@ -161,7 +162,7 @@ public class ScopedAttributeTest {
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         ScopedAttributeDefinition attrDef = new ScopedAttributeDefinition();
-        Set<ResolverPluginDependency> pluginDependencies =
+        final Set<ResolverPluginDependency> pluginDependencies =
                 new HashSet<>(Arrays.asList(TestSources.makeResolverPluginDependency("connector1",
                         ResolverTestSupport.EPA_ATTRIB_ID)));
         attrDef.setDependencies(pluginDependencies);
@@ -170,7 +171,7 @@ public class ScopedAttributeTest {
         try {
             attrDef.setScope(null);
             Assert.fail("set null delimiter");
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // OK
         }
 
@@ -181,7 +182,7 @@ public class ScopedAttributeTest {
         try {
             attrDef.initialize();
             Assert.fail("no Dependency - should fail");
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
         attrDef = new ScopedAttributeDefinition();
@@ -191,14 +192,14 @@ public class ScopedAttributeTest {
         try {
             attrDef.initialize();
             Assert.fail("no Scope - should fail");
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
 
         try {
             attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("resolve not initialized");
-        } catch (UninitializedComponentException e) {
+        } catch (final UninitializedComponentException e) {
             // OK
         }
 
@@ -210,7 +211,7 @@ public class ScopedAttributeTest {
         try {
             attrDef.resolve(null);
             Assert.fail("Null context not allowed");
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // OK
         }
 
@@ -218,19 +219,19 @@ public class ScopedAttributeTest {
         try {
             attrDef.initialize();
             Assert.fail("Init after destroy");
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("Resolve after destroy");
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.setScope(TEST_SCOPE);
             Assert.fail("Set Delimiter after destroy");
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // OK
         }
     }

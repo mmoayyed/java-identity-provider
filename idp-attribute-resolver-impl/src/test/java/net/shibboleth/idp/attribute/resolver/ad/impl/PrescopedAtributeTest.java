@@ -37,6 +37,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -67,7 +68,7 @@ public class PrescopedAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
+        final ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
         depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
@@ -83,7 +84,7 @@ public class PrescopedAtributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(attrDef);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -105,7 +106,7 @@ public class PrescopedAtributeTest {
 
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
+        final ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
         depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
@@ -121,29 +122,29 @@ public class PrescopedAtributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(attrDef);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
             Assert.fail();
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             // OK
         }
     }
 
     @Test public void invalidValueType() throws ComponentInitializationException {
-        IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
+        final IdPAttribute attr = new IdPAttribute(ResolverTestSupport.EPA_ATTRIB_ID);
         attr.setValues(Collections.singletonList(new ByteAttributeValue(new byte[] {1, 2, 3})));
 
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
 
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
         attrDef.setId(TEST_ATTRIBUTE_NAME);
         attrDef.setScopeDelimiter("@");
-        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
         attrDef.setDependencies(Collections.singleton(depend));
         attrDef.initialize();
@@ -151,7 +152,7 @@ public class PrescopedAtributeTest {
         try {
             attrDef.resolve(resolutionContext);
             Assert.fail("Invalid type");
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             //
         }
     }
@@ -166,9 +167,9 @@ public class PrescopedAtributeTest {
 
         attr.setValues(values);
 
-        AttributeResolutionContext resolutionContext =
+        final AttributeResolutionContext resolutionContext =
                 ResolverTestSupport.buildResolutionContext(ResolverTestSupport.buildDataConnector("connector1", attr));
-        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
 
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
@@ -176,7 +177,7 @@ public class PrescopedAtributeTest {
         attrDef.setScopeDelimiter("@");
         attrDef.setDependencies(Collections.singleton(depend));
         attrDef.initialize();
-        IdPAttribute result = attrDef.resolve(resolutionContext);
+        final IdPAttribute result = attrDef.resolve(resolutionContext);
         
         final Collection f = result.getValues();
 
@@ -190,7 +191,7 @@ public class PrescopedAtributeTest {
     @Test public void emptyValueType() throws ResolutionException, ComponentInitializationException {
         // Set the dependency on the data connector
         final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
-        ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
+        final ResolverPluginDependency depend = new ResolverPluginDependency(TestSources.STATIC_CONNECTOR_NAME);
         depend.setDependencyAttributeId(TestSources.DEPENDS_ON_ATTRIBUTE_NAME_CONNECTOR);
         dependencySet.add(depend);
         final PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
@@ -207,7 +208,7 @@ public class PrescopedAtributeTest {
         final Set<AttributeDefinition> attributeSet = new LazySet<>();
         attributeSet.add(attrDef);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", attributeSet, connectorSet, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", attributeSet, connectorSet, null);
         resolver.initialize();
 
         final AttributeResolutionContext context = new AttributeResolutionContext();
@@ -223,16 +224,16 @@ public class PrescopedAtributeTest {
     @Test public void initDestroyParms() throws ResolutionException, ComponentInitializationException {
 
         PrescopedAttributeDefinition attrDef = new PrescopedAttributeDefinition();
-        ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
+        final ResolverPluginDependency depend = new ResolverPluginDependency("connector1");
         depend.setDependencyAttributeId(ResolverTestSupport.EPA_ATTRIB_ID);
-        Set<ResolverPluginDependency> pluginDependencies = Collections.singleton(depend);
+        final Set<ResolverPluginDependency> pluginDependencies = Collections.singleton(depend);
         attrDef.setDependencies(pluginDependencies);
         attrDef.setId(TEST_ATTRIBUTE_NAME);
 
         try {
             attrDef.setScopeDelimiter(null);
             Assert.fail("set null delimiter");
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // OK
         }
 
@@ -243,7 +244,7 @@ public class PrescopedAtributeTest {
         try {
             attrDef.initialize();
             Assert.fail("no Dependency - should fail");
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
         attrDef.setDependencies(pluginDependencies);
@@ -251,7 +252,7 @@ public class PrescopedAtributeTest {
         try {
             attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("resolve not initialized");
-        } catch (UninitializedComponentException e) {
+        } catch (final UninitializedComponentException e) {
             // OK
         }
         attrDef.initialize();
@@ -261,7 +262,7 @@ public class PrescopedAtributeTest {
         try {
             attrDef.resolve(null);
             Assert.fail("Null context not allowed");
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // OK
         }
 
@@ -269,19 +270,19 @@ public class PrescopedAtributeTest {
         try {
             attrDef.initialize();
             Assert.fail("Init after destroy");
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.resolve(new AttributeResolutionContext());
             Assert.fail("Resolve after destroy");
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // OK
         }
         try {
             attrDef.setScopeDelimiter(DELIMITER);
             Assert.fail("Set Delimiter after destroy");
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // OK
         }
     }

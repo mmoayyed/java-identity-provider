@@ -36,6 +36,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverTestSupport;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
 import net.shibboleth.idp.saml.attribute.resolver.impl.SAML1NameIdentifierAttributeDefinition;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.collection.LazySet;
@@ -89,21 +90,21 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
-        AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
+        final AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
         try {
             resolver.resolveAttributes(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
         final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 2);
-        Collection<String> nameValues = new HashSet<>(2);
-        for (IdPAttributeValue val : values) {
-            NameIdentifier id = (NameIdentifier) val.getValue();
+        final Collection<String> nameValues = new HashSet<>(2);
+        for (final IdPAttributeValue val : values) {
+            final NameIdentifier id = (NameIdentifier) val.getValue();
             Assert.assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
             Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
             nameValues.add(id.getValue());
@@ -134,21 +135,21 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, Collections.singleton((DataConnector)ResolverTestSupport.buildDataConnector("connector1", attr)), null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, Collections.singleton((DataConnector)ResolverTestSupport.buildDataConnector("connector1", attr)), null);
         resolver.initialize();
 
-        AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
+        final AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
         try {
             resolver.resolveAttributes(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
         final Collection<IdPAttributeValue<?>> outValues = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(outValues.size(), 2);
-        Collection<String> nameValues = new HashSet<>(2);
-        for (IdPAttributeValue val : outValues) {
-            NameIdentifier id = (NameIdentifier) val.getValue();
+        final Collection<String> nameValues = new HashSet<>(2);
+        for (final IdPAttributeValue val : outValues) {
+            final NameIdentifier id = (NameIdentifier) val.getValue();
             Assert.assertEquals(id.getFormat(),  "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified");
             Assert.assertEquals(id.getNameQualifier(), IDP_ENTITY_ID);
             nameValues.add(id.getValue());
@@ -171,14 +172,14 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
-        AttributeResolutionContext context = new AttributeResolutionContext();
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         try {
             resolver.resolveAttributes(context);
             Assert.fail("resolution Should have failed");
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             // OK
         }
     }
@@ -191,24 +192,24 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         defn2.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
 
         // Set the dependency on the data connector
-        Set<ResolverPluginDependency> dependencySet = new LazySet<>();
+        final Set<ResolverPluginDependency> dependencySet = new LazySet<>();
         dependencySet.add(new ResolverPluginDependency(TEST_ATTRIBUTE_NAME));
         defn2.setDependencies(dependencySet);
         defn2.initialize();
 
         // And resolve
-        Set<AttributeDefinition> am = new LazySet<>();
+        final Set<AttributeDefinition> am = new LazySet<>();
         am.add(defn);
         am.add(TestSources.populatedStaticAttribute());
         am.add(defn2);
 
-        AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
         //
         // Attribute recipient needed because the nonStringAttributeDefinition needs it
         //
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
         Assert.assertNull(context.getResolvedIdPAttributes().get(SECOND_ATTRIBUTE_NAME));
@@ -234,19 +235,19 @@ public class SAML1NameIdentifierAttributeDefinitionTest extends OpenSAMLInitBase
         am.add(TestSources.populatedStaticAttribute(TestSources.STATIC_ATTRIBUTE_NAME,
                 TestSources.DEPENDS_ON_ATTRIBUTE_NAME_ATTR, 1));
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("foo", am, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("foo", am, null, null);
         resolver.initialize();
 
-        AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
+        final AttributeResolutionContext context = TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, null);
         try {
             resolver.resolveAttributes(context);
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             Assert.fail("resolution failed", e);
         }
         final Collection<IdPAttributeValue<?>> values = context.getResolvedIdPAttributes().get(TEST_ATTRIBUTE_NAME).getValues();
 
         Assert.assertEquals(values.size(), 1);
-        NameIdentifier id = (NameIdentifier) values.iterator().next().getValue();
+        final NameIdentifier id = (NameIdentifier) values.iterator().next().getValue();
         Assert.assertEquals(id.getFormat(), ALTERNATIVE_FORMAT);
         Assert.assertEquals(defn.getNameIdFormat(), id.getFormat());
         Assert.assertEquals(id.getNameQualifier(), ALTERNATE_QUALIFIER);
