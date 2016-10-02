@@ -31,6 +31,7 @@ import net.shibboleth.idp.attribute.resolver.MockAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImpl;
+import net.shibboleth.idp.attribute.resolver.impl.AttributeResolverImplTest;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -69,10 +70,10 @@ public class ResolveAttributesTest {
         attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
+        final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null, null);
         ad1.initialize();
         resolver.initialize();
 
@@ -85,7 +86,7 @@ public class ResolveAttributesTest {
         // The attribute resolution context should be removed by the resolve attributes action.
         Assert.assertNull(prc.getSubcontext(AttributeResolutionContext.class));
 
-        AttributeContext resolvedAttributeCtx =
+        final AttributeContext resolvedAttributeCtx =
                 prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class);
         Assert.assertNotNull(resolvedAttributeCtx);
 
@@ -103,10 +104,10 @@ public class ResolveAttributesTest {
         attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
+        final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", attribute);
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null, null);
         ad1.initialize();
         resolver.initialize();
 
@@ -162,10 +163,10 @@ public class ResolveAttributesTest {
         attribute.setValues(Collections.singleton(new StringAttributeValue("value1")));
 
         final LazySet<AttributeDefinition> definitions = new LazySet<>();
-        AttributeDefinition ad1 = new MockAttributeDefinition("ad1", new ResolutionException());
+        final AttributeDefinition ad1 = new MockAttributeDefinition("ad1", new ResolutionException());
         definitions.add(ad1);
 
-        final AttributeResolverImpl resolver = new AttributeResolverImpl("resolver", definitions, null, null);
+        final AttributeResolverImpl resolver = AttributeResolverImplTest.newAttributeResolverImpl("resolver", definitions, null, null);
         ad1.initialize();
         resolver.initialize();
 
@@ -202,7 +203,7 @@ public class ResolveAttributesTest {
         
         private ServiceableComponent<AttributeResolver> component;
         
-        protected AttributeService(ServiceableComponent<AttributeResolver> what) {
+        protected AttributeService(final ServiceableComponent<AttributeResolver> what) {
             component = what;
         }
 
