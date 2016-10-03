@@ -54,14 +54,14 @@ public class PrinicpalConnectorCanonicalizer implements LegacyPrincipalDecoder  
     @Nonnull private final Logger log = LoggerFactory.getLogger(PrinicpalConnectorCanonicalizer.class);
 
     /** The connectors. */
-    @Nonnull @NonnullElements private final Collection<PrincipalConnector> principalConnectors;
+    @Nonnull @NonnullElements private Collection<PrincipalConnector> principalConnectors = Collections.emptySet();
 
     /**
-     * Constructor.
+     * Set the connectors we care about.
      * 
      * @param connectors the connectors we care about.
      */
-    public PrinicpalConnectorCanonicalizer(
+    public void setConnectors(
             @Nullable @NullableElements final Collection<PrincipalConnector> connectors) {
 
         if (null != connectors) {

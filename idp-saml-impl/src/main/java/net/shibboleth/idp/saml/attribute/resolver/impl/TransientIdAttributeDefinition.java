@@ -29,6 +29,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.saml.nameid.impl.TransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -52,17 +53,24 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
     @Nonnull private final Logger log = LoggerFactory.getLogger(TransientIdAttributeDefinition.class);
 
     /** The actual implementation of the transient generation process. */
-    @Nonnull private final TransientIdGenerationStrategy idGenerator;
+    @Nonnull private TransientIdGenerationStrategy idGenerator;
+ 
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == idGenerator) {
+            throw new ComponentInitializationException("Id generator must be non null");
+        }
+    }
 
-    /**
-     * Constructor.
-     * 
+    /** Set the id generator being used.  
      * @param generator the (crypto or transient) generator to use
      */
-    public TransientIdAttributeDefinition(@Nonnull final TransientIdGenerationStrategy generator) {
+    @Nonnull public void setTransientIdGenerationStrategy(@Nonnull final TransientIdGenerationStrategy generator) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         idGenerator = Constraint.isNotNull(generator, "Id generator must be non null");
     }
-    
+
     /** return the id generator being used.  This is primarily used in testing.
      * @return the generator strategy;
      */

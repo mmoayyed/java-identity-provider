@@ -27,12 +27,14 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
 import net.shibboleth.idp.saml.nameid.NameIDDecoder;
 import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -51,32 +53,39 @@ public class PrincipalConnector extends AbstractIdentifiableInitializableCompone
         NameIDDecoder {
 
     /** The {@link NameID} decoder. */
-    @Nonnull private final NameIDDecoder nameIDDecoder;
+    @NonnullAfterInit private NameIDDecoder nameIDDecoder;
 
     /** The {@link NameIdentifier} decoder. */
-    @Nonnull private final NameIdentifierDecoder nameIdentifierDecoder;
+    @NonnullAfterInit private NameIdentifierDecoder nameIdentifierDecoder;
 
     /** The format we match against. */
-    @Nonnull @NotEmpty private final String format;
+    @NonnullAfterInit @NotEmpty private String format;
 
     /** The relying parties we support. */
-    @Nonnull private Collection<String> relyingParties;
+    @Nonnull private Collection<String> relyingParties = Collections.emptySet();
 
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        if (null == nameIDDecoder) {
+            throw new ComponentInitializationException("NameIDDecoder cannot be null");
+        }
+        if (null == nameIdentifierDecoder) {
+            throw new ComponentInitializationException("NameIdentifierDecoder cannot be null");
+        }
+        if (null == format) {
+            throw new ComponentInitializationException("Name identifier format cannot be empty or null");
+        }
+        super.doInitialize();
+    }
+    
     /**
-     * Constructor.
+     * Set the {@link NameIDDecoder}.
      * 
-     * @param saml2Decoder the decoder for a {@link NameID}
-     * @param saml1Decoder the decoder for a {@link NameIdentifier}
-     * @param theFormat the format to match on
+     * @param saml2Decoder the decoder
      */
-    public PrincipalConnector(@Nonnull final NameIDDecoder saml2Decoder,
-            @Nonnull final NameIdentifierDecoder saml1Decoder, @Nonnull @NotEmpty final String theFormat) {
-        
+    @Nonnull public void setNameIDDecoder(final NameIDDecoder saml2Decoder) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         nameIDDecoder = Constraint.isNotNull(saml2Decoder, "NameIDDecoder cannot be null");
-        nameIdentifierDecoder = Constraint.isNotNull(saml1Decoder, "NameIdentifierDecoder cannot be null");
-        format = Constraint.isNotNull(StringSupport.trimOrNull(theFormat),
-                "Name identifier format cannot be empty or null");
-        relyingParties = Collections.emptySet();
     }
 
     /**
@@ -91,10 +100,31 @@ public class PrincipalConnector extends AbstractIdentifiableInitializableCompone
     /**
      * Get the {@link NameIdentifierDecoder}.
      * 
+     * @param saml1Decoder the decoder for a {@link NameIdentifier}
+     */
+    @Nonnull public void setNameIdentifierDecoder(@Nonnull final NameIdentifierDecoder saml1Decoder) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        nameIdentifierDecoder = Constraint.isNotNull(saml1Decoder, "NameIdentifierDecoder cannot be null");
+    }
+
+    /**
+     * Set the {@link NameIdentifierDecoder}.
+     * 
      * @return the decoder
      */
     @Nonnull public NameIdentifierDecoder getNameIdentifierDecoder() {
         return nameIdentifierDecoder;
+    }
+
+    /**
+     * Set the format we support.
+     * 
+     * @param theFormat the format to match on
+     */
+    @Nonnull public void setFormat(@Nonnull @NotEmpty final String theFormat) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        format = Constraint.isNotNull(StringSupport.trimOrNull(theFormat),
+                "Name identifier format cannot be empty or null");
     }
 
     /**

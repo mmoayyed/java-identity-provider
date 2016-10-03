@@ -96,36 +96,36 @@ public class CryptoTransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTe
     }
 
     @Test public void badVals() throws ComponentInitializationException {
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        final TransientIdAttributeDefinition defn = TransientIdAttributeDefinitionTest.newTransientIdAttributeDefinition(strategy);
         defn.setId(ID);
         defn.initialize();
 
-        AttributeResolutionContext context = new AttributeResolutionContext();
+        final AttributeResolutionContext context = new AttributeResolutionContext();
         context.getSubcontext(AttributeResolverWorkContext.class, true);
         try {
             defn.resolve(context);
             Assert.fail("No SP");
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             // OK
         }
 
         try {
             defn.resolve(TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID, null));
             Assert.fail("No SP");
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             // OK
         }
         try {
             defn.resolve(TestSources.createResolutionContext(null, TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID));
             Assert.fail("No Principal");
-        } catch (ResolutionException e) {
+        } catch (final ResolutionException e) {
             // OK
         }
     }
 
     @Test public void encode() throws ComponentInitializationException, ResolutionException, DataSealerException,
             InterruptedException {
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        final TransientIdAttributeDefinition defn = TransientIdAttributeDefinitionTest.newTransientIdAttributeDefinition(strategy);
         defn.setId(ID);
         defn.initialize();
 
@@ -147,7 +147,7 @@ public class CryptoTransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTe
         try {
             dataSealer.unwrap(code);
             Assert.fail("Timeout not set correctly");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // OK
         }
     }

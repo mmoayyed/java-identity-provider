@@ -19,9 +19,13 @@ package net.shibboleth.idp.saml.attribute.principalconnector.impl;
 
 import java.util.Collections;
 
+import javax.annotation.Nonnull;
+
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
+import net.shibboleth.idp.saml.nameid.NameIDDecoder;
+import net.shibboleth.idp.saml.nameid.NameIdentifierDecoder;
 import net.shibboleth.idp.saml.nameid.impl.TransformingNameIDDecoder;
 import net.shibboleth.idp.saml.nameid.impl.TransformingNameIdentifierDecoder;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -62,14 +66,14 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void format() {
-        final PrincipalConnector connector = new PrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
+        final PrincipalConnector connector = newPrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
         
         Assert.assertEquals(connector.getFormat(), NameID.KERBEROS);
     }
     
     @Test public void relyingParties() throws ComponentInitializationException {
         
-        PrincipalConnector connector = new PrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
+        PrincipalConnector connector = newPrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
         connector.setId("relyingParties");
         connector.initialize();
         
@@ -80,11 +84,11 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
         try {
             connector.setRelyingParties(Collections.singleton(RP1));
             Assert.fail();
-        } catch (UnmodifiableComponentException e) {
+        } catch (final UnmodifiableComponentException e) {
             // OK
         }
 
-        connector = new PrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
+        connector = newPrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
         connector.setId("relyingParties");
         connector.setRelyingParties(Collections.singleton(RP1));
         connector.initialize();
@@ -95,7 +99,7 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void saml1() throws ComponentInitializationException, SubjectCanonicalizationException, NameDecoderException {
-        final PrincipalConnector connector = new PrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
+        final PrincipalConnector connector = newPrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
         connector.setId("saml1");
         connector.initialize();
         
@@ -112,7 +116,7 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test public void saml2() throws ComponentInitializationException, SubjectCanonicalizationException, NameDecoderException {
-        final PrincipalConnector connector = new PrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
+        final PrincipalConnector connector = newPrincipalConnector(nameIDDecoder, nameIdentifierDecoder, NameID.KERBEROS);
         connector.setId("saml1");
         connector.initialize();
         
@@ -128,4 +132,14 @@ public class PrincipalConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(connector.decode(scc, nameID), NAMEID_TEXT);
     }
 
+    public static PrincipalConnector newPrincipalConnector(@Nonnull  final NameIDDecoder saml2Decoder,
+            @Nonnull final NameIdentifierDecoder saml1Decoder,
+            @Nonnull final String theFormat) {
+        
+        final PrincipalConnector pc = new PrincipalConnector();
+        pc.setFormat(theFormat);
+        pc.setNameIDDecoder(saml2Decoder);
+        pc.setNameIdentifierDecoder(saml1Decoder);
+        return pc;
+    }
 }

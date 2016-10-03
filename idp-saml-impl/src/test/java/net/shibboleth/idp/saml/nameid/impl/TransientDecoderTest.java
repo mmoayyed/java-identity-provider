@@ -25,6 +25,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinitionTest;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
@@ -135,7 +136,7 @@ public class TransientDecoderTest extends OpenSAMLInitBaseTestCase {
         strategy.setIdStore(store);        
         strategy.initialize();
         
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        final TransientIdAttributeDefinition defn = TransientIdAttributeDefinitionTest.newTransientIdAttributeDefinition(strategy);
         defn.setId("id");
         defn.setDependencies(Collections.singleton(TestSources.makeResolverPluginDependency("foo", "bar")));
         defn.initialize();

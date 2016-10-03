@@ -58,7 +58,7 @@ public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorPa
         final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         subBuilder.addPropertyValue("id", id);
 
-        builder.addConstructorArgValue(subBuilder.getBeanDefinition());
+        builder.addPropertyValue("nameIDDecoder", subBuilder.getBeanDefinition());
 
         // NameIdentifier
         subBuilder = BeanDefinitionBuilder.genericBeanDefinition(CryptoTransientNameIdentifierDecoder.class);
@@ -67,7 +67,7 @@ public class CryptoTransientConnectorParser extends AbstractPrincipalConnectorPa
         
         subBuilder.addPropertyReference("dataSealer", dataSealer);
         subBuilder.addPropertyValue("id", id);
-        builder.addConstructorArgValue(subBuilder.getBeanDefinition());
+        builder.addPropertyValue("nameIdentifierDecoder", subBuilder.getBeanDefinition());
     }
 
 }

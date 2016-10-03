@@ -64,10 +64,10 @@ public class PrinicpalConnectorCanonicalizerTest extends OpenSAMLInitBaseTestCas
         final Collection<PrincipalConnector> connectors = new HashSet<>(3);
 
         MyDecoder decoder = new MyDecoder(NameID.KERBEROS);
-        connectors.add(new PrincipalConnector(decoder, decoder, NameID.KERBEROS));
+        connectors.add(PrincipalConnectorTest.newPrincipalConnector(decoder, decoder, NameID.KERBEROS));
 
         decoder = new MyDecoder(NameID.UNSPECIFIED);
-        connectors.add(new PrincipalConnector(decoder, decoder, NameIdentifier.UNSPECIFIED));
+        connectors.add(PrincipalConnectorTest.newPrincipalConnector(decoder, decoder, NameIdentifier.UNSPECIFIED));
 
         testCanon = new TestCanonicalizer(connectors);
     }
@@ -190,28 +190,28 @@ public class PrinicpalConnectorCanonicalizerTest extends OpenSAMLInitBaseTestCas
          * 
          * @param connectors
          */
-        public TestCanonicalizer(Collection<PrincipalConnector> connectors) {
-            super(connectors);
+        public TestCanonicalizer(final Collection<PrincipalConnector> connectors) {
+            setConnectors(connectors);
         }
 
-        @Override protected String canonicalize(NameIdentifier nameIdentifier,
-                SubjectCanonicalizationContext c14nContext) throws ResolutionException {
+        @Override protected String canonicalize(final NameIdentifier nameIdentifier,
+                final SubjectCanonicalizationContext c14nContext) throws ResolutionException {
             return "nameIdentifier";
         }
 
         /** Make visible for testing . */
-        public String doCanonicalize(NameIdentifier nameIdentifier, SubjectCanonicalizationContext c14nContext)
+        public String doCanonicalize(final NameIdentifier nameIdentifier, final SubjectCanonicalizationContext c14nContext)
                 throws ResolutionException {
             return super.canonicalize(nameIdentifier, c14nContext);
         }
 
-        @Override protected String canonicalize(NameID nameID, SubjectCanonicalizationContext c14nContext)
+        @Override protected String canonicalize(final NameID nameID, final SubjectCanonicalizationContext c14nContext)
                 throws ResolutionException {
             return "nameID";
         }
 
         /** Make visible for testing . */
-        public String doCanonicalize(NameID nameID, SubjectCanonicalizationContext c14nContext)
+        public String doCanonicalize(final NameID nameID, final SubjectCanonicalizationContext c14nContext)
                 throws ResolutionException {
             return super.canonicalize(nameID, c14nContext);
         }
@@ -221,19 +221,19 @@ public class PrinicpalConnectorCanonicalizerTest extends OpenSAMLInitBaseTestCas
 
         private final String prefix;
 
-        public MyDecoder(String thePrefix) {
+        public MyDecoder(final String thePrefix) {
             prefix = thePrefix;
         }
 
         /** {@inheritDoc} */
         @Override
-        @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext scc, @Nonnull NameIdentifier nameIdentifier)
+        @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext scc, @Nonnull final NameIdentifier nameIdentifier)
                 throws NameDecoderException {
             return prefix + nameIdentifier.getValue() + scc.getRequesterId() + scc.getResponderId();
         }
 
         /** {@inheritDoc} */
-        @Override @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext scc, @Nonnull NameID nameID)
+        @Override @Nonnull public String decode(@Nonnull final SubjectCanonicalizationContext scc, @Nonnull final NameID nameID)
                 throws NameDecoderException {
             return nameID.getValue() + scc.getRequesterId() + scc.getResponderId() + prefix;
         }

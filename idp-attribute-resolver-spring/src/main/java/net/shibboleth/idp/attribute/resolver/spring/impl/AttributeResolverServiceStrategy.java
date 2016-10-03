@@ -55,7 +55,8 @@ public class AttributeResolverServiceStrategy extends AbstractIdentifiableInitia
             @Nullable final ApplicationContext appContext) {
 
         final Collection<PrincipalConnector> pcs = appContext.getBeansOfType(PrincipalConnector.class).values();
-        final PrinicpalConnectorCanonicalizer pcc = new PrinicpalConnectorCanonicalizer(pcs);
+        final PrinicpalConnectorCanonicalizer pcc = new PrinicpalConnectorCanonicalizer();
+        pcc.setConnectors(pcs);
 
         final Collection<AttributeDefinition> definitions =
                 appContext.getBeansOfType(AttributeDefinition.class).values();

@@ -58,10 +58,10 @@ public class StoredIdConnectorParser extends AbstractPrincipalConnectorParser {
         final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         subBuilder.addPropertyValue("id", id);
 
-        builder.addConstructorArgValue(subBuilder.getBeanDefinition());
+        builder.addPropertyValue("nameIDDecoder", subBuilder.getBeanDefinition());
 
         subBuilder = BeanDefinitionBuilder.genericBeanDefinition(NotImplementedNameIdentifierDecoder.class);
-        builder.addConstructorArgValue(subBuilder.getBeanDefinition());
+        builder.addPropertyValue("nameIdentifierDecoder", subBuilder.getBeanDefinition());
     }
 
     /** Helper class to allow us to inject in a StoredIdStore into StoredIdStore. */

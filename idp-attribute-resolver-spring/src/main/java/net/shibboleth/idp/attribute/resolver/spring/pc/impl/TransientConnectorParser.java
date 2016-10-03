@@ -60,7 +60,7 @@ public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
         final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
         subBuilder.addPropertyValue("id", id);
                 
-        builder.addConstructorArgValue(subBuilder.getBeanDefinition());
+        builder.addPropertyValue("nameIDDecoder", subBuilder.getBeanDefinition());
         
         if (config.hasAttributeNS(null, "noResultIsError")) {
             log.warn("Transient PrincipalConnector does not support 'noResultIsError' attribute");
@@ -73,7 +73,7 @@ public class TransientConnectorParser extends AbstractPrincipalConnectorParser {
         
         subBuilder.addPropertyReference("idStore", idStore);
         subBuilder.addPropertyValue("id", id);
-        builder.addConstructorArgValue(subBuilder.getBeanDefinition());
+        builder.addPropertyValue("nameIdentifierDecoder", subBuilder.getBeanDefinition());
     }
 
 }

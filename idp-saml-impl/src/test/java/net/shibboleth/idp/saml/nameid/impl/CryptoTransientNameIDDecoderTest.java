@@ -32,6 +32,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.SubjectCanonicalizationException;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinitionTest;
 import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.nameid.NameDecoderException;
@@ -105,14 +106,14 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         decoder.initialize();
     }
     
-    private String code(String principalName, String attributeRecipientID, long timeout)
+    private String code(final String principalName, final String attributeRecipientID, final long timeout)
             throws DataSealerException {
         final String principalTokenId =
                 new StringBuilder().append(attributeRecipientID).append("!").append(principalName).toString();
         return dataSealer.wrap(principalTokenId, System.currentTimeMillis() + timeout);
     }
 
-    private String code(String principalName, String attributeIssuerID, String attributeRecipientID)
+    private String code(final String principalName, final String attributeIssuerID, final String attributeRecipientID)
             throws DataSealerException {
         return code(principalName, attributeRecipientID, TIMEOUT);
     }
@@ -163,7 +164,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         strategy.setIdLifetime(TIMEOUT);
         strategy.initialize();
 
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        final TransientIdAttributeDefinition defn = TransientIdAttributeDefinitionTest.newTransientIdAttributeDefinition(strategy);
         defn.setId("defn");
         defn.initialize();
 
@@ -185,7 +186,7 @@ public class CryptoTransientNameIDDecoderTest extends OpenSAMLInitBaseTestCase {
         nameID.setSPNameQualifier(TestSources.SP_ENTITY_ID);
         nameID.setValue(code);
 
-        NameIDCanonicalizationFlowDescriptor desc = new NameIDCanonicalizationFlowDescriptor();
+        final NameIDCanonicalizationFlowDescriptor desc = new NameIDCanonicalizationFlowDescriptor();
         desc.setId("C14NDesc");
         desc.setFormats(Collections.singleton("https://example.org/"));
         desc.initialize();

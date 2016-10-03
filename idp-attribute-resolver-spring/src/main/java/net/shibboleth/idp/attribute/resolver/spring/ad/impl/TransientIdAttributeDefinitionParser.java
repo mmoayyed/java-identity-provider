@@ -21,17 +21,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
 import net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /**
  * Spring bean definition parser for {@link TransientIdAttributeDefinition} using a
@@ -79,7 +79,7 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
         log.debug("{} idStore '{}'", getLogPrefix(), idStore);
         strategyBuilder.addPropertyReference("idStore", idStore);
 
-        builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
+        builder.addPropertyValue("transientIdGenerationStrategy", strategyBuilder.getBeanDefinition());
 
         log.warn("{} This feature is DEPRECATED in favor of a TransientSAML2NameIDGenerator", getLogPrefix());
     }

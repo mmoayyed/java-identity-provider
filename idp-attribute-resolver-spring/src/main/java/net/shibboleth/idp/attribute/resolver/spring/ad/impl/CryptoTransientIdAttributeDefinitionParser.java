@@ -74,7 +74,7 @@ public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDef
         strategyBuilder.addPropertyReference("dataSealer",
                 StringSupport.trimOrNull(config.getAttributeNS(null, "dataSealerRef")));
 
-        builder.addConstructorArgValue(strategyBuilder.getBeanDefinition());
+        builder.addPropertyValue("transientIdGenerationStrategy", strategyBuilder.getBeanDefinition());
 
         log.warn("{} This feature is DEPRECATED in favor of a TransientSAML2NameIDGenerator", getLogPrefix());
     }

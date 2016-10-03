@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
+import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinitionTest;
 import net.shibboleth.idp.saml.authn.principal.NameIdentifierPrincipal;
 import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.idp.saml.nameid.NameIDCanonicalizationFlowDescriptor;
@@ -103,7 +104,7 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
         strategy.setIdLifetime(TIMEOUT);
         strategy.initialize();
 
-        final TransientIdAttributeDefinition defn = new TransientIdAttributeDefinition(strategy);
+        final TransientIdAttributeDefinition defn = TransientIdAttributeDefinitionTest.newTransientIdAttributeDefinition(strategy);
         defn.setId("defn");
         defn.initialize();
 
@@ -124,7 +125,7 @@ public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTe
         nameID.setNameQualifier(TestSources.IDP_ENTITY_ID);
         nameID.setValue(code);
 
-        NameIDCanonicalizationFlowDescriptor desc = new NameIDCanonicalizationFlowDescriptor();
+        final NameIDCanonicalizationFlowDescriptor desc = new NameIDCanonicalizationFlowDescriptor();
         desc.setId("C14NDesc");
         desc.setFormats(Collections.singleton("https://example.org/"));
         desc.initialize();

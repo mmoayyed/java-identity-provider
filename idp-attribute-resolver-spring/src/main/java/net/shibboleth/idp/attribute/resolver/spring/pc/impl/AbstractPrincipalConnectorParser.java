@@ -69,7 +69,7 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
         addSAMLDecoders(config, parserContext, builder);
 
         final String format = StringSupport.trimOrNull(config.getAttributeNS(null, "nameIDFormat"));
-        builder.addConstructorArgValue(format);
+        builder.addPropertyValue("format", format);
 
 
         final String id = StringSupport.trimOrNull(config.getAttributeNS(null, "id"));
