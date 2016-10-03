@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -39,7 +40,7 @@ public class XMLObjectAttributeValue implements IdPAttributeValue<XMLObject> {
      * 
      * @param attributeValue value of the attribute
      */
-    public XMLObjectAttributeValue(@Nonnull final XMLObject attributeValue) {
+    public XMLObjectAttributeValue(@Nonnull @ParameterName(name="attributeValue") final XMLObject attributeValue) {
         value = Constraint.isNotNull(attributeValue, "Attribute value cannot be null");
     }
 

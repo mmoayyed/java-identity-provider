@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -41,8 +42,9 @@ public class ScopedStringAttributeValue extends StringAttributeValue {
      * @param attributeValue the value of the attribute
      * @param valueScope scope of the value
      */
-    public ScopedStringAttributeValue(@Nonnull @NotEmpty final String attributeValue,
-            @Nonnull @NotEmpty final String valueScope) {
+    public ScopedStringAttributeValue(
+            @Nonnull @NotEmpty @ParameterName(name="attributeValue") final String attributeValue,
+            @Nonnull @NotEmpty @ParameterName(name="valueScope") final String valueScope) {
         super(attributeValue);
         scope = Constraint.isNotNull(StringSupport.trimOrNull(valueScope), "Scope cannot be null or empty");
     }

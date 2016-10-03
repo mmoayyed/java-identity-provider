@@ -22,6 +22,7 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 import com.google.common.base.MoreObjects;
@@ -39,8 +40,9 @@ public class LocalizedStringAttributeValue extends StringAttributeValue {
      * @param attributeValue the value of the attribute
      * @param attributeValueLocale the locale of the attribute value
      */
-    public LocalizedStringAttributeValue(@Nonnull @NotEmpty final String attributeValue,
-            @Nullable final Locale attributeValueLocale) {
+    public LocalizedStringAttributeValue(
+            @Nonnull @NotEmpty @ParameterName(name="attributeValue") final String attributeValue,
+            @Nullable @ParameterName(name="attributeValueLocale") final Locale attributeValueLocale) {
         super(attributeValue);
         valueLocale = attributeValueLocale;
     }

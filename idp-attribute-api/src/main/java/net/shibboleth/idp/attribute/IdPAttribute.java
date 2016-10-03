@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -74,7 +75,8 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @param attributeId unique identifier of the attribute
      */
-    public IdPAttribute(@Nonnull @NotEmpty final String attributeId) {
+    public IdPAttribute(@Nonnull @NotEmpty @ParameterName(name="attributeId") final String attributeId) {
+
         id = Constraint.isNotNull(StringSupport.trimOrNull(attributeId), "Attribute ID may not be null");
 
         displayNames = Collections.emptyMap();
