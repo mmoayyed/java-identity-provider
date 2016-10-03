@@ -22,10 +22,11 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.MoreObjects;
-
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
+import com.google.common.base.MoreObjects;
 
 /**
  * An {@link IdPAttributeValue} that is empty. This class defines an enum to represent the various types of empty values
@@ -56,7 +57,7 @@ public class EmptyAttributeValue implements IdPAttributeValue<EmptyAttributeValu
      * 
      * @param attributeValue value of the attribute
      */
-    public EmptyAttributeValue(@Nonnull final EmptyType attributeValue) {
+    public EmptyAttributeValue(@Nonnull @ParameterName(name="attributeValue") final EmptyType attributeValue) {
         value = Constraint.isNotNull(attributeValue, "Empty value enumeration cannot be null");
     }
 

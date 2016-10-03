@@ -17,6 +17,8 @@
 
 package net.shibboleth.idp.attribute;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
+
 /**
  * IdP Representation of the SAML2 RequestedAttribute.
  */
@@ -30,7 +32,7 @@ public class IdPRequestedAttribute extends IdPAttribute {
      *
      * @param attributeId the id
      */
-    public IdPRequestedAttribute(final String attributeId) {
+    public IdPRequestedAttribute(final @ParameterName(name="attributeId")  String attributeId) {
         super(attributeId);
     }
 
