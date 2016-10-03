@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.authn.duo;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -44,34 +46,22 @@ import com.google.common.collect.Collections2;
 public class BasicDuoIntegration extends AbstractInitializableComponent implements DuoIntegration {
 
     /** API host. */
-    @Nonnull @NotEmpty private String apiHost;
+    @NonnullAfterInit @NotEmpty private String apiHost;
     
     /** Application key. */
-    @Nonnull @NotEmpty private String applicationKey;
+    @NonnullAfterInit @NotEmpty private String applicationKey;
     
     /** Integration key. */
-    @Nonnull @NotEmpty private String integrationKey;
+    @NonnullAfterInit @NotEmpty private String integrationKey;
     
     /** Secret key. */
-    @Nonnull @NotEmpty private String secretKey;
+    @NonnullAfterInit @NotEmpty private String secretKey;
     
     /** Container for supported principals. */
     @Nonnull private final Subject supportedPrincipals;
     
-    /**
-     * Constructor.
-     * 
-     * @param host API host
-     * @param akey application key
-     * @param ikey integration key
-     * @param skey secret key
-     */
-    public BasicDuoIntegration(@Nonnull @NotEmpty final String host, @Nonnull @NotEmpty final String akey,
-            @Nonnull @NotEmpty final String ikey, @Nonnull @NotEmpty final String skey) {
-        setAPIHost(host);
-        setApplicationKey(akey);
-        setIntegrationKey(ikey);
-        setSecretKey(skey);
+    /** Constructor. */
+    public BasicDuoIntegration() {
         supportedPrincipals = new Subject();
     }
 
@@ -165,4 +155,12 @@ public class BasicDuoIntegration extends AbstractInitializableComponent implemen
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        if (apiHost == null || applicationKey == null || integrationKey == null || secretKey == null) {
+            throw new ComponentInitializationException("API host and integration keys must be set");
+        }
+    }
+    
 }

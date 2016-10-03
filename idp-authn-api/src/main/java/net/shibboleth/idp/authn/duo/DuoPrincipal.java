@@ -20,6 +20,7 @@ package net.shibboleth.idp.authn.duo;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.principal.CloneablePrincipal;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -35,10 +36,10 @@ public class DuoPrincipal implements CloneablePrincipal {
     /**
      * Constructor.
      * 
-     * @param user the username, can not be null or empty
+     * @param name the username
      */
-    public DuoPrincipal(@Nonnull @NotEmpty final String user) {
-        username = Constraint.isNotNull(StringSupport.trimOrNull(user), "Username cannot be null or empty");
+    public DuoPrincipal(@Nonnull @NotEmpty @ParameterName(name="name") final String name) {
+        username = Constraint.isNotNull(StringSupport.trimOrNull(name), "Username cannot be null or empty");
     }
 
     /** {@inheritDoc} */

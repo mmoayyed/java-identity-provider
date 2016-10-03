@@ -16,10 +16,10 @@
 
     <!-- Default static integration. -->
     <bean id="shibboleth.authn.Duo.DuoIntegration" class="net.shibboleth.idp.authn.duo.BasicDuoIntegration"
-        c:_0="%{idp.duo.apiHost:none}"
-        c:_1="%{idp.duo.applicationKey:none}"
-        c:_2="%{idp.duo.integrationKey:none}"
-        c:_3="%{idp.duo.secretKey:none}" />
+        p:APIHost="%{idp.duo.apiHost:none}"
+        p:applicationKey="%{idp.duo.applicationKey:none}"
+        p:integrationKey="%{idp.duo.integrationKey:none}"
+        p:secretKey="%{idp.duo.secretKey:none}" />
     <bean id="shibboleth.authn.Duo.DuoIntegrationStrategy" class="com.google.common.base.Functions"
         factory-method="constant" c:_0-ref="shibboleth.authn.Duo.DuoIntegration" />
 
