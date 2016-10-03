@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
@@ -56,7 +57,8 @@ public class PolicyFromMatcherId extends BaseBridgingClass implements PolicyRequ
      * @param matcher the class we are bridging to
      * @param attribute the Id of the attribute in question.
      */
-    public PolicyFromMatcherId(@Nonnull final Matcher matcher, @Nonnull @NotEmpty final String attribute) {
+    public PolicyFromMatcherId(@Nonnull final @ParameterName(name="matcher") Matcher matcher, 
+            @Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute) {
         super(matcher);
         theMatcher = matcher;
         attributeId = Constraint.isNotNull(StringSupport.trimOrNull(attribute), "attribute must not be null or empty");

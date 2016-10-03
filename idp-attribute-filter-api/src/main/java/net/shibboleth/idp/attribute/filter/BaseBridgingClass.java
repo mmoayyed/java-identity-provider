@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.filter;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -46,7 +47,7 @@ public abstract class BaseBridgingClass extends AbstractIdentifiableInitializabl
      * Constructor.
      * @param base the object we are bridging to.
      */
-    public BaseBridgingClass(@Nonnull final Object base) {
+    public BaseBridgingClass(@Nonnull @ParameterName(name="base") final Object base) {
         bridgedObject = Constraint.isNotNull(base, "base rule can not be null");
     }
 

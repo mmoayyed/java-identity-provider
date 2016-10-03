@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.DestructableComponent;
 import net.shibboleth.utilities.java.support.component.IdentifiedComponent;
 
@@ -49,7 +50,7 @@ public class PolicyFromMatcher extends BaseBridgingClass implements PolicyRequir
      * Constructor.
      * @param theMatcher the class we are bridging to
      */
-    public PolicyFromMatcher(@Nonnull final Matcher theMatcher) {
+    public PolicyFromMatcher(@Nonnull @ParameterName(name="theMatcher") final Matcher theMatcher) {
         super(theMatcher);
         matcher = theMatcher;
     }

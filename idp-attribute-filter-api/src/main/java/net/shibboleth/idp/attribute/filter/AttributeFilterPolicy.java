@@ -30,6 +30,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -78,9 +79,10 @@ public class AttributeFilterPolicy extends AbstractIdentifiedInitializableCompon
      * @param requirementRule criterion used to determine if this policy is active for a given request
      * @param attributeRules value filtering policies employed if this policy is active
      */
-    public AttributeFilterPolicy(@Nonnull @NotEmpty final String policyId,
-            @Nonnull final PolicyRequirementRule requirementRule,
-            @Nullable @NullableElements final Collection<AttributeRule> attributeRules) {
+    public AttributeFilterPolicy(@Nonnull @NotEmpty @ParameterName(name="policyId") final String policyId,
+            @Nonnull final @ParameterName(name="requirementRule") PolicyRequirementRule requirementRule,
+            @Nullable @NullableElements final @ParameterName(name="attributeRules") 
+    Collection<AttributeRule> attributeRules) {
         setId(policyId);
 
         rule = Constraint.isNotNull(requirementRule, "Attribute filter policy activiation criterion can not be null");
