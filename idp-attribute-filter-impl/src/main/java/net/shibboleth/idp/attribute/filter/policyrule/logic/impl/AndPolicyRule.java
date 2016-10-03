@@ -17,16 +17,13 @@
 
 package net.shibboleth.idp.attribute.filter.policyrule.logic.impl;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -44,20 +41,12 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public class AndPolicyRule extends AbstractComposedPolicyRule {
 
     /**
-     * Constructor.
-     * 
-     * @param composedRules rules being composed
-     */
-    public AndPolicyRule(@Nullable @NullableElements final Collection<PolicyRequirementRule> composedRules) {
-        super(composedRules);
-    }
-
-    /**
     * A given rule is considered to have matched if, and only if, TRUE is returned by every composed
     * rule.
     * 
     * {@inheritDoc}
     */
+    @Override
     public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
@@ -76,7 +65,7 @@ public class AndPolicyRule extends AbstractComposedPolicyRule {
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (getComposedRules().isEmpty()) {
             throw new ComponentInitializationException("No policy rules supplied to AND");

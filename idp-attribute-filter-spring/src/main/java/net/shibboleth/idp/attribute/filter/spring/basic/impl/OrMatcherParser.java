@@ -80,7 +80,7 @@ public class OrMatcherParser extends AbstractWarningFilterParser {
         ruleElements.addAll(ruleElementsBasic);
         ruleElements.addAll(ruleElementsAfp);
 
-        builder.addConstructorArgValue(SpringSupport.parseCustomElements(ruleElements, parserContext));
+        builder.addPropertyValue("subsidiaries", SpringSupport.parseCustomElements(ruleElements, parserContext));
 
     }
 }

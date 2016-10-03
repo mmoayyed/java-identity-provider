@@ -130,7 +130,7 @@ public class ScriptedMatcherParser extends AbstractWarningFilterParser {
         }
         builder.addPropertyValue("id", myId);
 
-        builder.addConstructorArgValue(scriptBuilder.getBeanDefinition());
+        builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
     // Checkstyle: CyclomaticComplexity ON
 }

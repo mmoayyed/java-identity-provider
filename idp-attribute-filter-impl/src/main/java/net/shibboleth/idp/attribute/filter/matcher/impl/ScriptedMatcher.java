@@ -83,19 +83,14 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     /** The custom object we inject into all scripts. */
     @Nullable private Object customObject;
 
-    /**
-     * Constructor.
-     * 
-     * @param matchingScript script used to determine matching attribute values
-     */
-    public ScriptedMatcher(@Nonnull final EvaluableScript matchingScript) {
-        setScript(matchingScript);
+    /** Constructor. */
+    public ScriptedMatcher() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         prcLookupStrategy =
                 Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
                         new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
         scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
-        }
+    }
 
     /**
      * Return the custom (externally provided) object.
@@ -129,7 +124,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
      * 
      * @param matcherScript the script to be evaluated
      */
-    protected void setScript(@Nonnull final EvaluableScript matcherScript) {
+    public void setScript(@Nonnull final EvaluableScript matcherScript) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         script = Constraint.isNotNull(matcherScript, "Attribute value matching script can not be null");

@@ -76,13 +76,8 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     /** The custom object we inject into all scripts. */
     @Nullable private Object customObject;
 
-    /**
-     * Constructor.
-     * 
-     * @param matchingScript script used to determine matching attribute values
-     */
-    public ScriptedPolicyRule(@Nonnull final EvaluableScript matchingScript) {
-        setScript(matchingScript);
+    /** Constructor. */
+    public ScriptedPolicyRule() {
         // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeContext.
         prcLookupStrategy =
                 Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
@@ -122,7 +117,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      * 
      * @param matcherScript the script to be evaluated
      */
-    protected void setScript(@Nonnull final EvaluableScript matcherScript) {
+    public void setScript(@Nonnull final EvaluableScript matcherScript) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         script = Constraint.isNotNull(matcherScript, "Attribute value matching script can not be null");

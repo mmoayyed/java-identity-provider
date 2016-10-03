@@ -85,7 +85,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        final ScriptedPolicyRule rule = new ScriptedPolicyRule(trueReturnScript);
+        final ScriptedPolicyRule rule = newScriptedPolicyRule(trueReturnScript);
         rule.setId("Test");
         rule.initialize();
 
@@ -97,7 +97,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         }
 
         try {
-            new ScriptedPolicyRule(null);
+            newScriptedPolicyRule(null);
             Assert.fail();
         } catch (final ConstraintViolationException e) {
             // expected this
@@ -105,7 +105,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullReturnScript() throws Exception {
-        final ScriptedPolicyRule rule = new ScriptedPolicyRule(nullReturnScript);
+        final ScriptedPolicyRule rule = newScriptedPolicyRule(nullReturnScript);
         rule.setId("Test");
         rule.initialize();
 
@@ -113,7 +113,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testInvalidReturnObjectValue() throws Exception {
-        final ScriptedPolicyRule rule = new ScriptedPolicyRule(invalidReturnObjectScript);
+        final ScriptedPolicyRule rule = newScriptedPolicyRule(invalidReturnObjectScript);
         rule.setId("Test");
         rule.initialize();
 
@@ -121,7 +121,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testInitTeardown() throws ComponentInitializationException {
-        final ScriptedPolicyRule rule = new ScriptedPolicyRule(trueReturnScript);
+        final ScriptedPolicyRule rule = newScriptedPolicyRule(trueReturnScript);
 
         boolean thrown = false;
         try {
@@ -163,7 +163,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testEqualsHashToString() {
-        final ScriptedPolicyRule rule = new ScriptedPolicyRule(trueReturnScript);
+        final ScriptedPolicyRule rule = newScriptedPolicyRule(trueReturnScript);
 
         rule.toString();
 
@@ -171,12 +171,12 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertTrue(rule.equals(rule));
         Assert.assertFalse(rule.equals(this));
 
-        ScriptedPolicyRule other = new ScriptedPolicyRule(trueReturnScript);
+        ScriptedPolicyRule other = newScriptedPolicyRule(trueReturnScript);
 
         Assert.assertTrue(rule.equals(other));
         Assert.assertEquals(rule.hashCode(), other.hashCode());
 
-        other = new ScriptedPolicyRule(nullReturnScript);
+        other = newScriptedPolicyRule(nullReturnScript);
 
         Assert.assertFalse(rule.equals(other));
         Assert.assertNotSame(rule.hashCode(), other.hashCode());
@@ -184,27 +184,27 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
     
     @Test public void testPredicate() throws ComponentInitializationException {
-        ScriptedPolicyRule rule = new ScriptedPolicyRule(nullReturnScript);
+        ScriptedPolicyRule rule = newScriptedPolicyRule(nullReturnScript);
         rule.setId("test");
         rule.initialize();
 
-        rule = new ScriptedPolicyRule(trueReturnScript);
+        rule = newScriptedPolicyRule(trueReturnScript);
         rule.setId("test");
         rule.initialize();
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
-        rule = new ScriptedPolicyRule(customReturnScript);
+        rule = newScriptedPolicyRule(customReturnScript);
         rule.setCustomObject(new Boolean(true));
         rule.setId("test");
         rule.initialize();
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
-        rule = new ScriptedPolicyRule(falseReturnScript);
+        rule = newScriptedPolicyRule(falseReturnScript);
         rule.setId("test");
         rule.initialize();
         Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
 
-        rule = new ScriptedPolicyRule(prcReturnScript);
+        rule = newScriptedPolicyRule(prcReturnScript);
         rule.setId("test");
         rule.initialize();
         
@@ -219,7 +219,7 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         
         Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
 
-        final ScriptedPolicyRule scRule = new ScriptedPolicyRule(scReturnScript);
+        final ScriptedPolicyRule scRule = newScriptedPolicyRule(scReturnScript);
         scRule.setId("ScTest");
         scRule.initialize();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("BAR"));
@@ -228,9 +228,13 @@ public class ScriptedPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
         subject.getPrincipals().clear();
         subject.getPrincipals().add(new AuthenticationMethodPrincipal("FOO"));
         Assert.assertEquals(scRule.matches(filterContext), Tristate.TRUE);
-
-
-        
     }
+
+    static public  ScriptedPolicyRule newScriptedPolicyRule(final EvaluableScript script) {
+        final ScriptedPolicyRule what = new ScriptedPolicyRule();
+        what.setScript(script);
+        return what;
+    }
+
 
 }

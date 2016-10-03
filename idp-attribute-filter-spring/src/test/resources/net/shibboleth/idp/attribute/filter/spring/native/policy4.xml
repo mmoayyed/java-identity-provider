@@ -19,7 +19,7 @@
        
                                    
     <bean parent="shibboleth.OrMatcher" id="wobbleMatcher">
-        <constructor-arg name="composedMatchers">
+        <property name="subsidiaries">
             <list>
                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="faculty" id="fac"/>
                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="student" id="stud"/>
@@ -29,7 +29,7 @@
                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="affiliate" id="affilient"/>
                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="employee" id = "emp"/>
             </list>
-        </constructor-arg>
+        </property>
     </bean>
     
     <bean class="net.shibboleth.idp.attribute.filter.AttributeRule" p:isDenyRule="false" id="wobble" p:attributeId="affiliation" p:matcher-ref="wobbleMatcher"/>

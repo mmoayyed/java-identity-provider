@@ -25,11 +25,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.Matcher;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 import com.google.common.base.Predicates;
@@ -44,15 +47,14 @@ public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitia
         Matcher, UnmodifiableComponent {
 
     /** The composed matchers. */
-    private final List<Matcher> matchers;
+    @NonnullAfterInit private List<Matcher> matchers;
 
-    /**
-     * Constructor.
-     * 
-     * @param composedMatchers matchers being composed
+    /** Set the matchers to be composed.
+     * Called "subsidiaries" to allow easier parsing.
+     * @param composedMatchers the matchers to be composed.
      */
-    public AbstractComposedMatcher(@Nullable @NullableElements final 
-            Collection<Matcher> composedMatchers) {
+    public void setSubsidiaries(@Nullable @NullableElements final Collection<Matcher> composedMatchers) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         final ArrayList<Matcher> checkedMatchers = new ArrayList<>();
 
         if (composedMatchers != null) {
@@ -60,6 +62,14 @@ public abstract class AbstractComposedMatcher extends AbstractIdentifiableInitia
         }
 
         matchers = ImmutableList.copyOf(Iterables.filter(checkedMatchers, Predicates.notNull()));
+    }
+
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == matchers) {
+            throw new ComponentInitializationException("No Child Matchers set");
+        }
     }
 
     /**

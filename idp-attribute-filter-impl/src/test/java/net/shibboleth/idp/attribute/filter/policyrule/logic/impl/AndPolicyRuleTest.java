@@ -18,18 +18,23 @@
 package net.shibboleth.idp.attribute.filter.policyrule.logic.impl;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
+import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 
 /** {@link AndPolicyRule} unit test. */
 public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
@@ -39,61 +44,68 @@ public class AndPolicyRuleTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        AndPolicyRule rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL));
+        final AndPolicyRule rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL));
         rule.setId("test");
         rule.initialize();
 
         try {
             rule.matches(null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
     }
 
     @Test(expectedExceptions = {ComponentInitializationException.class}) public void emptyInput()
             throws ComponentInitializationException {
-        AndPolicyRule rule = new AndPolicyRule(Collections.EMPTY_LIST);
+        final AndPolicyRule rule = newAndPolicyRule(Collections.EMPTY_LIST);
         rule.setId("test");
         rule.initialize();
     }
 
     @Test public void testMatches() throws ComponentInitializationException {
-        AndPolicyRule rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_NONE, PolicyRequirementRule.MATCHES_NONE));
+        AndPolicyRule rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_NONE, PolicyRequirementRule.MATCHES_NONE));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
-        rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.MATCHES_NONE));
+        rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.MATCHES_NONE));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
-        rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.MATCHES_ALL));
+        rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.MATCHES_ALL));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
 
-        rule = new AndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
+        rule = newAndPolicyRule(Arrays.asList(PolicyRequirementRule.MATCHES_ALL, PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
     }
     
     @Test public void testSingletons() throws ComponentInitializationException {
-        AndPolicyRule rule = new AndPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_NONE));
+        AndPolicyRule rule = newAndPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_NONE));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FALSE);
 
-        rule = new AndPolicyRule(Collections.singletonList(PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
+        rule = newAndPolicyRule(Collections.singletonList(PolicyRequirementRule.REQUIREMENT_RULE_FAILS));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.FAIL);
 
-        rule = new AndPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_ALL));
+        rule = newAndPolicyRule(Collections.singletonList(PolicyRequirementRule.MATCHES_ALL));
         rule.setId("Test");
         rule.initialize();
         Assert.assertEquals(rule.matches(DataSources.unPopulatedFilterContext()), Tristate.TRUE);
+    }
+    
+    public static AndPolicyRule newAndPolicyRule(@Nullable @NullableElements 
+            final Collection<PolicyRequirementRule> composedRules) {
+        final AndPolicyRule  rule = new AndPolicyRule();
+        rule.setSubsidiaries(composedRules);
+        return rule;
     }
 }

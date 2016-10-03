@@ -22,7 +22,9 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -37,14 +39,12 @@ import com.google.common.base.MoreObjects;
 public final class NotPolicyRule extends AbstractIdentifiableInitializableComponent implements PolicyRequirementRule {
 
     /** The matcher we are negating. */
-    private final PolicyRequirementRule negatedRule;
+    @NonnullAfterInit private PolicyRequirementRule negatedRule;
 
-    /**
-     * Constructor.
-     * 
+    /** Set the attribute value matcher to be negated.
      * @param rule attribute value matcher to be negated
      */
-    public NotPolicyRule(@Nonnull final PolicyRequirementRule rule) {
+    public void setNegation(@Nonnull final PolicyRequirementRule rule) {
         negatedRule = Constraint.isNotNull(rule, "Policy Requirement rule can not be null");
     }
 
@@ -55,6 +55,15 @@ public final class NotPolicyRule extends AbstractIdentifiableInitializableCompon
      */
     @Nonnull public PolicyRequirementRule getNegatedRule() {
         return negatedRule;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == negatedRule) {
+            throw new ComponentInitializationException("Rule to negate not set up");
+        }
     }
 
     /** {@inheritDoc} */

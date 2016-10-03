@@ -29,8 +29,10 @@ import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -46,14 +48,14 @@ import com.google.common.base.MoreObjects;
 public final class NotMatcher extends AbstractIdentifiableInitializableComponent implements Matcher {
 
     /** The matcher we are negating. */
-    private final Matcher negatedMatcher;
+    @NonnullAfterInit private Matcher negatedMatcher;
 
     /**
      * Constructor.
      * 
      * @param valueMatcher attribute value matcher to be negated
      */
-    public NotMatcher(@Nonnull final Matcher valueMatcher) {
+    public void setNegation(@Nonnull final Matcher valueMatcher) {
         negatedMatcher = Constraint.isNotNull(valueMatcher, "Attribute value matcher can not be null");
     }
 
@@ -94,6 +96,14 @@ public final class NotMatcher extends AbstractIdentifiableInitializableComponent
             return Collections.emptySet();
         }
         return Collections.unmodifiableSet(attributeValues);
+    }
+    
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (null == negatedMatcher) {
+            throw new ComponentInitializationException("No matcher supplied to negate");
+        }
     }
 
     /** {@inheritDoc} */

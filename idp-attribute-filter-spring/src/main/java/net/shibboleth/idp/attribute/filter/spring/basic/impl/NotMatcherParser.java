@@ -84,7 +84,7 @@ public class NotMatcherParser extends AbstractWarningFilterParser {
 
         if (ruleElements != null && !ruleElements.isEmpty()) {
 
-            builder.addConstructorArgValue(SpringSupport.parseCustomElements(ruleElements, parserContext).get(0));
+            builder.addPropertyValue("negation", SpringSupport.parseCustomElements(ruleElements, parserContext).get(0));
 
         } else if (ruleReferenceBasic != null && !ruleReferenceBasic.isEmpty()) {
             throw new BeanCreationException(parserContext.getReaderContext().getResource().getDescription(), myId,

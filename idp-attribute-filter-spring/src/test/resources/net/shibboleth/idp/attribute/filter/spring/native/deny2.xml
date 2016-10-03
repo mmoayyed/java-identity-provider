@@ -25,12 +25,12 @@
     <bean id="shibboleth.OrMatcher"  class="net.shibboleth.idp.attribute.filter.matcher.logic.impl.OrMatcher" abstract="true"/>
     
     <bean parent="shibboleth.OrMatcher" id="staffStudentMatcher">
-        <constructor-arg name="composedMatchers">
+        <property name="subsidiaries">
             <list>
                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="staff"/>
                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="student"/>
             </list>
-        </constructor-arg>
+        </property>
     </bean>
     
     <bean class="net.shibboleth.idp.attribute.filter.AttributeRule" p:isDenyRule="true" p:attributeId="affiliation" id="denyStaffStudent" p:matcher-ref="staffStudentMatcher"/>

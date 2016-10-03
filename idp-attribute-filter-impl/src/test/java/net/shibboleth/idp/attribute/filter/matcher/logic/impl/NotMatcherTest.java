@@ -27,8 +27,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AbstractMatcherPolicyRuleTest;
 import net.shibboleth.idp.attribute.filter.matcher.impl.MockValuePredicateMatcher;
-import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcher;
-import net.shibboleth.idp.attribute.filter.matcher.logic.impl.OrMatcher;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.DestroyedComponentException;
 import net.shibboleth.utilities.java.support.component.UninitializedComponentException;
@@ -47,48 +45,48 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testNullArguments() throws Exception {
 
-        Matcher valuePredicate = Matcher.MATCHES_ALL;
-        NotMatcher matcher = new NotMatcher(valuePredicate);
+        final Matcher valuePredicate = Matcher.MATCHES_ALL;
+        final NotMatcher matcher = newNotMatcher(valuePredicate);
         matcher.setId("NullArgs");
         matcher.initialize();
 
         try {
             matcher.getMatchingValues(null, filterContext);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
-            new NotMatcher(null);
+            newNotMatcher(null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
     }
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
-        AbstractComposedMatcherTest.TestMatcher inMatcher = new AbstractComposedMatcherTest.TestMatcher();
-        NotMatcher matcher = new NotMatcher(inMatcher);
+        final AbstractComposedMatcherTest.TestMatcher inMatcher = new AbstractComposedMatcherTest.TestMatcher();
+        final NotMatcher matcher = newNotMatcher(inMatcher);
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
             Assert.fail();
-        } catch (UninitializedComponentException e) {
+        } catch (final UninitializedComponentException e) {
             // expect this
         }
         Assert.assertFalse(inMatcher.isInitialized());
@@ -101,14 +99,14 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         
         try {
             matcher.initialize();
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // OK
         }
 
     }
 
     @Test public void testGetMatchingValues() throws Exception {
-        NotMatcher matcher = new NotMatcher(new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))));
+        NotMatcher matcher = newNotMatcher(new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))));
         matcher.setId("test");
         matcher.initialize();
 
@@ -120,16 +118,16 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
         try {
             matcher.getMatchingValues(attribute, filterContext);
             Assert.fail();
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // expect this
         }
 
-        OrMatcher orMatcher =
-                new OrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(equalTo(value1)),
+        final OrMatcher orMatcher =
+               OrMatcherTest.newOrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(equalTo(value1)),
                         new MockValuePredicateMatcher(equalTo(value2)), new MockValuePredicateMatcher(equalTo(value3))));
 
         orMatcher.setId("or");
-        matcher = new NotMatcher(orMatcher);
+        matcher = newNotMatcher(orMatcher);
 
         matcher.setId("Test");
         matcher.initialize();
@@ -141,11 +139,18 @@ public class NotMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testFails() throws Exception {
-        NotMatcher matcher = new NotMatcher( Matcher.MATCHER_FAILS);
+        final NotMatcher matcher = newNotMatcher( Matcher.MATCHER_FAILS);
         matcher.setId("test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNull(result);
     }
+    
+    public static NotMatcher newNotMatcher(final Matcher m) {
+        final NotMatcher  rule = new NotMatcher();
+        rule.setNegation(m);
+        return rule;
+    }
+
 }

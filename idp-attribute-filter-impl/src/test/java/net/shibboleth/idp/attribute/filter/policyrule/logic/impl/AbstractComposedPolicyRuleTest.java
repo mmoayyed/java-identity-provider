@@ -41,7 +41,7 @@ public class AbstractComposedPolicyRuleTest {
 
     @Test
     public void testInitDestroy() throws ComponentInitializationException {
-        List<PolicyRequirementRule> firstList = new ArrayList<>(2);
+        final List<PolicyRequirementRule> firstList = new ArrayList<>(2);
         ComposedPolicyRule rule = new ComposedPolicyRule(Collections.EMPTY_LIST);
         
         for (int i = 0; i < 2;i++) {
@@ -53,7 +53,7 @@ public class AbstractComposedPolicyRuleTest {
         boolean thrown = false;
         try {
             rule.initialize();
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             thrown = true;
         }
         
@@ -70,7 +70,7 @@ public class AbstractComposedPolicyRuleTest {
         thrown = false;
         try {
             rule.getComposedRules().add(new TestMatcher());
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "Set into the returned list");
@@ -88,7 +88,7 @@ public class AbstractComposedPolicyRuleTest {
         Assert.assertTrue(rule.getComposedRules().isEmpty(), "Initial state - no matchers");
         Assert.assertTrue(rule.getComposedRules().isEmpty(), "Add null - no matchers");
         
-        List<PolicyRequirementRule> list = new ArrayList<>();
+        final List<PolicyRequirementRule> list = new ArrayList<>();
         
         for (int i = 0; i < 30; i++) {
             list.add(null);
@@ -128,12 +128,13 @@ public class AbstractComposedPolicyRuleTest {
          *
          * @param composedMatchers
          */
-        public ComposedPolicyRule(Collection<PolicyRequirementRule> composedMatchers) {
-            super(composedMatchers);
+        public ComposedPolicyRule(final Collection<PolicyRequirementRule> composedMatchers) {
+            super();
+            setSubsidiaries(composedMatchers);
         }
 
         @Override
-        public Tristate matches(@Nullable AttributeFilterContext arg0) {
+        public Tristate matches(@Nullable final AttributeFilterContext arg0) {
             return Tristate.FALSE;
         }
     }
@@ -141,7 +142,7 @@ public class AbstractComposedPolicyRuleTest {
     public static class TestMatcher extends AbstractInitializableComponent implements  PolicyRequirementRule, DestructableComponent, InitializableComponent {
 
         @Override
-        public Tristate matches(@Nullable AttributeFilterContext arg0) {
+        public Tristate matches(@Nullable final AttributeFilterContext arg0) {
             return Tristate.FALSE;
         }
 

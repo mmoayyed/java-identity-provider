@@ -39,7 +39,7 @@
             <bean class="net.shibboleth.idp.attribute.filter.AttributeRule" p:isDenyRule="false" p:attributeId="affiliation">
                 <property name="matcher">
                     <bean parent="shibboleth.OrMatcher">
-                        <constructor-arg name="composedMatchers">
+                        <property name="subsidiaries">
                             <list>
                                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="faculty"/>
                                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="student"/>
@@ -49,7 +49,7 @@
                                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="affiliate"/>
                                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="employee"/>
                             </list>
-                        </constructor-arg>
+                        </property>
                     </bean>
                 </property>
             </bean>

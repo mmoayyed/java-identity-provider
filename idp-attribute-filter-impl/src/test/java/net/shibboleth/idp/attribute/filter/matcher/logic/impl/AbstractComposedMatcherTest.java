@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
 public class AbstractComposedMatcherTest {
 
     @Test public void testInitDestroy() throws ComponentInitializationException {
-        List<Matcher> firstList = new ArrayList<>(2);
+        final List<Matcher> firstList = new ArrayList<>(2);
         ComposedMatcher matcher = new ComposedMatcher(Collections.EMPTY_LIST);
 
         for (int i = 0; i < 2; i++) {
@@ -54,7 +54,7 @@ public class AbstractComposedMatcherTest {
         boolean thrown = false;
         try {
             matcher.initialize();
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             thrown = true;
         }
 
@@ -71,7 +71,7 @@ public class AbstractComposedMatcherTest {
         thrown = false;
         try {
             matcher.getComposedMatchers().add(new TestMatcher());
-        } catch (UnsupportedOperationException e) {
+        } catch (final UnsupportedOperationException e) {
             thrown = true;
         }
         Assert.assertTrue(thrown, "Set into the returned list");
@@ -86,7 +86,7 @@ public class AbstractComposedMatcherTest {
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Initial state - no matchers");
         Assert.assertTrue(matcher.getComposedMatchers().isEmpty(), "Add null - no matchers");
 
-        List<Matcher> list = new ArrayList<>();
+        final List<Matcher> list = new ArrayList<>();
 
         for (int i = 0; i < 30; i++) {
             list.add(null);
@@ -124,12 +124,13 @@ public class AbstractComposedMatcherTest {
          * 
          * @param composedMatchers
          */
-        public ComposedMatcher(Collection<Matcher> composedMatchers) {
-            super(composedMatchers);
+        public ComposedMatcher(final Collection<Matcher> composedMatchers) {
+            super();
+            setSubsidiaries(composedMatchers);
         }
 
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute,
-                AttributeFilterContext filterContext) {
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(final IdPAttribute attribute,
+                final AttributeFilterContext filterContext) {
             return null;
         }
 
@@ -138,12 +139,12 @@ public class AbstractComposedMatcherTest {
     public static class TestMatcher extends AbstractInitializableComponent implements Matcher, DestructableComponent,
             InitializableComponent {
 
-        @Override public Set<IdPAttributeValue<?>> getMatchingValues(IdPAttribute attribute,
-                AttributeFilterContext filterContext) {
+        @Override public Set<IdPAttributeValue<?>> getMatchingValues(final IdPAttribute attribute,
+                final AttributeFilterContext filterContext) {
             return null;
         }
 
-        public boolean matches(@Nullable AttributeFilterContext arg0) {
+        public boolean matches(@Nullable final AttributeFilterContext arg0) {
             return false;
         }
 

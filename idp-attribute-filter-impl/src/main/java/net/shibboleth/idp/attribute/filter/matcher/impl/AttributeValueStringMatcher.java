@@ -38,7 +38,7 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
     @Nonnull private final Logger log = LoggerFactory.getLogger(AttributeValueStringMatcher.class);
 
     /** {@inheritDoc} */
-    public boolean compareAttributeValue(@Nullable final IdPAttributeValue value) {
+    @Override public boolean compareAttributeValue(@Nullable final IdPAttributeValue value) {
 
         if (null == value) {
             return false;
@@ -62,5 +62,4 @@ public class AttributeValueStringMatcher extends AbstractStringMatcher {
             return super.stringCompare(valueAsString);
         }
     }
-
 }

@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.impl.AttributeFilterImpl;
 import net.shibboleth.idp.attribute.filter.matcher.impl.AttributeValueStringMatcher;
 import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcher;
+import net.shibboleth.idp.attribute.filter.matcher.logic.impl.NotMatcherTest;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -56,7 +57,7 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         retVal.setId("Test");
         try {
             retVal.initialize();
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             retVal = null;
         }
 
@@ -104,7 +105,7 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         context.setPrefilteredIdPAttributes(getIdPAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
         Map<String, IdPAttribute> attributes = context.getFilteredIdPAttributes();
-        IdPAttribute attribute = attributes.get("eduPersonAffiliation");
+        final IdPAttribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 3);
 
         context = new AttributeFilterContext();
@@ -141,7 +142,7 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         final AttributeRule attributeValueFilterPolicy = new AttributeRule();
         attributeValueFilterPolicy.setId("test");
         attributeValueFilterPolicy.setAttributeId("eduPersonAffiliation");
-        final NotMatcher notM = new NotMatcher(valueMatcher());
+        final NotMatcher notM = NotMatcherTest.newNotMatcher(valueMatcher());
         notM.setId("notM");
         notM.initialize();
         final PolicyFromMatcherId pfm = new PolicyFromMatcherId(notM, "uid");
@@ -166,7 +167,7 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         context.setPrefilteredIdPAttributes(getIdPAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
         Map<String, IdPAttribute> attributes = context.getFilteredIdPAttributes();
-        IdPAttribute attribute = attributes.get("eduPersonAffiliation");
+        final IdPAttribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 3);
 
         context = new AttributeFilterContext();
@@ -205,7 +206,7 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         attributeValueFilterPolicy.setMatcher(Matcher.MATCHES_ALL);
         attributeValueFilterPolicy.setIsDenyRule(false);
 
-        PolicyFromMatcherId rule = new PolicyFromMatcherId(valueMatcher(), "uid");
+        final PolicyFromMatcherId rule = new PolicyFromMatcherId(valueMatcher(), "uid");
         rule.setId("rule");
         final AttributeFilterPolicy policy =
                 new AttributeFilterPolicy("targettedAtPermit", rule,  Collections.singleton(attributeValueFilterPolicy));
@@ -220,7 +221,7 @@ public class TargettedAttributeValueFilterTest extends BaseComplexAttributeFilte
         context.setPrefilteredIdPAttributes(getIdPAttributes("epa-uidwithjsmith.xml").values());
         engine.filterAttributes(context);
         Map<String, IdPAttribute> attributes = context.getFilteredIdPAttributes();
-        IdPAttribute attribute = attributes.get("eduPersonAffiliation");
+        final IdPAttribute attribute = attributes.get("eduPersonAffiliation");
         Assert.assertEquals(attribute.getValues().size(), 3);
 
         context = new AttributeFilterContext();

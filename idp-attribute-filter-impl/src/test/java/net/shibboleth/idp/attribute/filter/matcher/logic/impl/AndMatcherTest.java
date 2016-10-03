@@ -21,6 +21,7 @@ import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -45,42 +46,42 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        Matcher valuePredicate = Matcher.MATCHES_ALL;
-        AndMatcher matcher = new AndMatcher(Collections.singletonList(valuePredicate));
+        final Matcher valuePredicate = Matcher.MATCHES_ALL;
+        final AndMatcher matcher = newAndMatcher(Collections.singletonList(valuePredicate));
         matcher.setId("test");
         matcher.initialize();
 
         try {
             matcher.getMatchingValues(null, filterContext);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
     }
 
     @Test public void testSingleton() throws Exception {
         final AndMatcher matcher =
-                new AndMatcher(Collections.singletonList((Matcher) new MockValuePredicateMatcher(or(equalTo(value1),
+                newAndMatcher(Collections.singletonList((Matcher) new MockValuePredicateMatcher(or(equalTo(value1),
                         equalTo(value2)))));
 
         matcher.setId("test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value2));
         Assert.assertTrue(result.contains(value1));
@@ -89,21 +90,21 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testGetMatchingValues() throws Exception {
         final AndMatcher matcher =
-                new AndMatcher(Arrays.<Matcher> asList(
+                newAndMatcher(Arrays.<Matcher> asList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(or(equalTo(value2), equalTo(value3)))));
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
             Assert.fail();
-        } catch (UninitializedComponentException e) {
+        } catch (final UninitializedComponentException e) {
             // expect this
         }
 
         matcher.setId("test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 1);
         Assert.assertTrue(result.contains(value2));
@@ -112,20 +113,20 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
         try {
             matcher.getMatchingValues(attribute, filterContext);
             Assert.fail();
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // expect this
         }
     }
 
     @Test public void testFails() throws Exception {
-        AndMatcher matcher = new AndMatcher(Arrays.<Matcher> asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
+        AndMatcher matcher = newAndMatcher(Arrays.<Matcher> asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
         matcher.setId("test");
         matcher.initialize();
 
         Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNull(result);
 
-        matcher = new AndMatcher(Arrays.<Matcher> asList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));
+        matcher = newAndMatcher(Arrays.<Matcher> asList(Matcher.MATCHER_FAILS, Matcher.MATCHES_ALL));
         matcher.setId("test");
         matcher.initialize();
 
@@ -135,19 +136,25 @@ public class AndMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test(expectedExceptions = {ComponentInitializationException.class}) public void emptyInput()
             throws ComponentInitializationException {
-        AndMatcher matcher = new AndMatcher(Collections.EMPTY_LIST);
+        final AndMatcher matcher = newAndMatcher(Collections.EMPTY_LIST);
         matcher.setId("test");
         matcher.initialize();
     }
 
     @Test public void emptyResults() throws ComponentInitializationException {
-        AndMatcher matcher =
-                new AndMatcher(Arrays.<Matcher> asList(
+        final AndMatcher matcher =
+                newAndMatcher(Arrays.<Matcher> asList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(equalTo(value3))));
 
         matcher.setId("Test");
         matcher.initialize();
         Assert.assertTrue(matcher.getMatchingValues(attribute, filterContext).isEmpty());
+    }
+    
+    static public AndMatcher newAndMatcher(final Collection<Matcher> what) {
+        final AndMatcher matcher = new AndMatcher();
+        matcher.setSubsidiaries(what);
+        return matcher;
     }
 }

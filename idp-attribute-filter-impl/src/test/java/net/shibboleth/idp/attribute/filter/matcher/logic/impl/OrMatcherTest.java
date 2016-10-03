@@ -21,6 +21,7 @@ import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.or;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -47,42 +48,42 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNullArguments() throws Exception {
-        Matcher valuePredicate = Matcher.MATCHES_ALL;
-        OrMatcher matcher = new OrMatcher(Collections.singletonList(valuePredicate));
+        final Matcher valuePredicate = Matcher.MATCHES_ALL;
+        final OrMatcher matcher = newOrMatcher(Collections.singletonList(valuePredicate));
         matcher.setId("test");
         matcher.initialize();
 
         try {
             matcher.getMatchingValues(null, filterContext);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(attribute, null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
 
         try {
             matcher.getMatchingValues(null, null);
             Assert.fail();
-        } catch (ConstraintViolationException e) {
+        } catch (final ConstraintViolationException e) {
             // expected this
         }
     }
     
     @Test public void testSingleton() throws Exception {
         final OrMatcher matcher =
-                new OrMatcher(Collections.singletonList((Matcher) new MockValuePredicateMatcher(or(equalTo(value1),
+                newOrMatcher(Collections.singletonList((Matcher) new MockValuePredicateMatcher(or(equalTo(value1),
                         equalTo(value2)))));
 
         matcher.setId("test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value2));
         Assert.assertTrue(result.contains(value1));
@@ -92,21 +93,21 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testGetMatchingValues() throws Exception {
         OrMatcher matcher =
-                new OrMatcher(Arrays.<Matcher>asList(
+                newOrMatcher(Arrays.<Matcher>asList(
                         new MockValuePredicateMatcher(or(equalTo(value1), equalTo(value2))),
                         new MockValuePredicateMatcher(equalTo(value2))));
 
         try {
             matcher.getMatchingValues(attribute, filterContext);
             Assert.fail();
-        } catch (UninitializedComponentException e) {
+        } catch (final UninitializedComponentException e) {
             // expect this
         }
 
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value2) && result.contains(value1));
@@ -115,29 +116,29 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
         try {
             matcher.getMatchingValues(attribute, filterContext);
             Assert.fail();
-        } catch (DestroyedComponentException e) {
+        } catch (final DestroyedComponentException e) {
             // expect this
         }
 
-        matcher = new OrMatcher(Collections.EMPTY_LIST);
+        matcher = newOrMatcher(Collections.EMPTY_LIST);
         matcher.setId("test");
         try {
             matcher.initialize();
             Assert.fail();
-        } catch (ComponentInitializationException ex) {
+        } catch (final ComponentInitializationException ex) {
             // OK
         }
     }
 
     @Test public void testRegressionGetValues() throws ComponentInitializationException {
-        OrMatcher matcher =
-                new OrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(Predicates.alwaysFalse()),
+        final OrMatcher matcher =
+                newOrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(Predicates.alwaysFalse()),
                         new MockValuePredicateMatcher(Predicates.alwaysFalse()), new MockValuePredicateMatcher(
                                 equalTo(value1)), new MockValuePredicateMatcher(equalTo(value2))));
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(value2) && result.contains(value1));
@@ -147,32 +148,39 @@ public class OrMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testNoMatchingValues() throws Exception {
-        OrMatcher matcher =
-                new OrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(equalTo("Nothing")),
+        final OrMatcher matcher =
+                newOrMatcher(Arrays.<Matcher>asList(new MockValuePredicateMatcher(equalTo("Nothing")),
                         new MockValuePredicateMatcher(equalTo("Zippo"))));
 
         matcher.setId("Test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);
         Assert.assertTrue(result.isEmpty());
 
     }
 
     @Test public void testFails() throws Exception {
-        OrMatcher matcher = new OrMatcher(Arrays.<Matcher>asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
+        final OrMatcher matcher = newOrMatcher(Arrays.<Matcher>asList(Matcher.MATCHES_ALL, Matcher.MATCHER_FAILS));
         matcher.setId("test");
         matcher.initialize();
 
-        Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
+        final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNull(result);
     }
     
     @Test(expectedExceptions = {ComponentInitializationException.class}) public void emptyInput()
             throws ComponentInitializationException {
-        OrMatcher matcher = new OrMatcher(null);
+        final OrMatcher matcher = newOrMatcher(null);
         matcher.setId("test");
         matcher.initialize();
     }
+    
+    static public OrMatcher newOrMatcher(final Collection<Matcher> what) {
+        final OrMatcher matcher = new OrMatcher();
+        matcher.setSubsidiaries(what);
+        return matcher;
+    }
+
 }

@@ -33,12 +33,12 @@
             <bean class="net.shibboleth.idp.attribute.filter.AttributeRule" p:isDenyRule="true" p:attributeId="affiliation">
                 <property name="matcher">
                     <bean parent="shibboleth.OrMatcher" >
-                        <constructor-arg name="composedMatchers">
+                        <property name="subsidiaries">
                             <list>
                                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="staff"/>
                                 <bean parent="shibboleth.AttributeValueStringMatcher" p:matchString="student"/>
                             </list>
-                        </constructor-arg>
+                        </property>
                     </bean>
                 </property>
             </bean>

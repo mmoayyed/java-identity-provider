@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.attribute.filter.matcher.logic.impl;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +30,6 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
-import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.collection.LazySet;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -45,17 +43,9 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 @ThreadSafe
 public class OrMatcher extends AbstractComposedMatcher {
 
-    /**
-     * Constructor.
-     * 
-     * @param composedMatchers matchers being composed
-     */
-    public OrMatcher(@Nullable @NullableElements final Collection<Matcher> composedMatchers) {
-        super(composedMatchers);
-    }
-
     /** {@inheritDoc} */
-    @Nullable @NonnullElements public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
+    @Override @Nullable @NonnullElements
+    public Set<IdPAttributeValue<?>> getMatchingValues(@Nonnull final IdPAttribute attribute,
             @Nonnull final AttributeFilterContext filterContext) {
         Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
@@ -79,7 +69,7 @@ public class OrMatcher extends AbstractComposedMatcher {
     }
 
     /** {@inheritDoc} */
-    protected void doInitialize() throws ComponentInitializationException {
+    @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         if (getComposedMatchers().isEmpty()) {
             throw new ComponentInitializationException("No matchers supplied to OR");

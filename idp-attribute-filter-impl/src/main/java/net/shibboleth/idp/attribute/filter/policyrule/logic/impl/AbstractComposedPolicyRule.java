@@ -25,11 +25,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.collection.CollectionSupport;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 
 import com.google.common.base.MoreObjects;
@@ -45,21 +48,28 @@ public abstract class AbstractComposedPolicyRule extends AbstractIdentifiableIni
         PolicyRequirementRule, UnmodifiableComponent {
 
     /** The composed matchers. */
-    private final List<PolicyRequirementRule> rules;
+    private @NonnullAfterInit List<PolicyRequirementRule> rules;
 
-    /**
-     * Constructor.
-     * 
-     * @param theRules matchers being composed
+    /** Set the rules to be composed.
+     * Called "subsidiaries" to allow easier parsing.
+     * @param theRules the rules to be composed.
      */
-    public AbstractComposedPolicyRule(@Nullable @NullableElements final Collection<PolicyRequirementRule> theRules) {
+    public void setSubsidiaries(@Nullable @NullableElements final Collection<PolicyRequirementRule> theRules) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         final ArrayList<PolicyRequirementRule> checkedMatchers = new ArrayList<>();
 
         if (theRules != null) {
             CollectionSupport.addIf(checkedMatchers, theRules, Predicates.notNull());
         }
-
-        rules = ImmutableList.copyOf(Iterables.filter(checkedMatchers, Predicates.notNull()));
+        rules = ImmutableList.copyOf(Iterables.filter(checkedMatchers, Predicates.notNull()));        
+    }
+    
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        if (rules == null) {
+            throw new ComponentInitializationException("Rules not set up"); 
+        }
     }
 
     /**

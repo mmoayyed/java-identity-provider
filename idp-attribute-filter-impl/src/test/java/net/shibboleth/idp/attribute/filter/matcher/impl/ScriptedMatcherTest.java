@@ -128,7 +128,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testGetMatcher() throws Exception {
 
-        final ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        final ScriptedMatcher matcher = newScriptedMatcher(returnOneValueScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -137,7 +137,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testNullArguments() throws Exception {
 
-        ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        ScriptedMatcher matcher = newScriptedMatcher(returnOneValueScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -162,7 +162,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
             // expected this
         }
 
-        matcher = new ScriptedMatcher(returnOneValueScript);
+        matcher = newScriptedMatcher(returnOneValueScript);
         try {
             matcher.setScript(null);
         } catch (final ConstraintViolationException e) {
@@ -170,7 +170,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         }
 
         try {
-            new ScriptedMatcher(null);
+            newScriptedMatcher(null);
             Assert.fail();
         } catch (final ConstraintViolationException e) {
             // expected this
@@ -178,7 +178,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testValidScript() throws Exception {
-        final ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        final ScriptedMatcher matcher = newScriptedMatcher(returnOneValueScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -190,7 +190,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     
     @Test public void custom() throws Exception {
         
-        final ScriptedMatcher matcher = new ScriptedMatcher(new EvaluableScript("custom;"));
+        final ScriptedMatcher matcher = newScriptedMatcher(new EvaluableScript("custom;"));
         final Set<IdPAttributeValue> custom = Collections.singleton((IdPAttributeValue)attribute.getValues().get(0));
         matcher.setId("Test");
         matcher.initialize();
@@ -205,7 +205,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testNullReturnScript() throws Exception {
 
-        final ScriptedMatcher matcher = new ScriptedMatcher(nullReturnScript);
+        final ScriptedMatcher matcher = newScriptedMatcher(nullReturnScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -214,7 +214,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     
     @Test public void testInvalidReturnObjectValue() throws Exception {
 
-        final ScriptedMatcher matcher = new ScriptedMatcher(invalidReturnObjectScript);
+        final ScriptedMatcher matcher = newScriptedMatcher(invalidReturnObjectScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -223,7 +223,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testAddedValuesScript() throws Exception {
 
-        final ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
+        final ScriptedMatcher matcher = newScriptedMatcher(addedValuesScript);
         matcher.setId("Test");
         matcher.initialize();
 
@@ -235,7 +235,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testInitTeardown() throws ComponentInitializationException {
 
-        final ScriptedMatcher matcher = new ScriptedMatcher(returnOneValueScript);
+        final ScriptedMatcher matcher = newScriptedMatcher(returnOneValueScript);
 
         boolean thrown = false;
         try {
@@ -277,7 +277,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
 
     @Test public void testEqualsHashToString() {
 
-        final ScriptedMatcher matcher = new ScriptedMatcher(addedValuesScript);
+        final ScriptedMatcher matcher = newScriptedMatcher(addedValuesScript);
 
         matcher.toString();
 
@@ -285,12 +285,12 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertTrue(matcher.equals(matcher));
         Assert.assertFalse(matcher.equals(this));
 
-        ScriptedMatcher other = new ScriptedMatcher(addedValuesScript);
+        ScriptedMatcher other = newScriptedMatcher(addedValuesScript);
 
         Assert.assertTrue(matcher.equals(other));
         Assert.assertEquals(matcher.hashCode(), other.hashCode());
 
-        other = new ScriptedMatcher(nullReturnScript);
+        other = newScriptedMatcher(nullReturnScript);
 
         Assert.assertFalse(matcher.equals(other));
         Assert.assertNotSame(matcher.hashCode(), other.hashCode());
@@ -298,7 +298,7 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
     }
 
     @Test public void testPrc() throws ComponentInitializationException, CloneNotSupportedException {
-        final ScriptedMatcher matcher = new ScriptedMatcher(prcscScript);
+        final ScriptedMatcher matcher = newScriptedMatcher(prcscScript);
 
         matcher.setId("prc");
         matcher.initialize();
@@ -324,7 +324,11 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         Assert.assertEquals(result.size(), 2);
         Assert.assertTrue(result.contains(new StringAttributeValue(ProfileRequestContext.class.getName())));
         Assert.assertTrue(result.contains(new StringAttributeValue("FOO")));
-
     }
 
+    static public  ScriptedMatcher newScriptedMatcher(final EvaluableScript script) {
+        final ScriptedMatcher what = new ScriptedMatcher();
+        what.setScript(script);
+        return what;
+    }
 }
