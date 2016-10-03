@@ -29,6 +29,8 @@ import javax.servlet.ServletRequest;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -74,7 +76,7 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
      * 
      * @param id ID of the communication profile, never null or empty
      */
-    public AbstractProfileConfiguration(@Nonnull @NotEmpty final String id) {
+    public AbstractProfileConfiguration(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
         profileId = Constraint.isNotNull(StringSupport.trimOrNull(id), "Profile identifier cannot be null or empty");
         inboundFlows = Collections.emptyList();
         outboundFlows = Collections.emptyList();
