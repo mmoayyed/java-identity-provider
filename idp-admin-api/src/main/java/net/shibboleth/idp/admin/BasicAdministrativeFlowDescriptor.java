@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
-
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -109,7 +109,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
      * 
      * @param id profile Id
      */
-    public BasicAdministrativeFlowDescriptor(@Nonnull @NotEmpty final String id) {
+    public BasicAdministrativeFlowDescriptor(@Nonnull @NotEmpty @ParameterName(name="id") final String id) {
         super(id);
         
         supportsNonBrowserPredicate = Predicates.alwaysTrue();
@@ -446,7 +446,7 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
     }
 
     /** {@inheritDoc} */
-    @Override public boolean equals(Object obj) {
+    @Override public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -515,6 +515,4 @@ public class BasicAdministrativeFlowDescriptor extends AbstractProfileConfigurat
         }
     }
 
-    /** {@inheritDoc} */
-    
 }
