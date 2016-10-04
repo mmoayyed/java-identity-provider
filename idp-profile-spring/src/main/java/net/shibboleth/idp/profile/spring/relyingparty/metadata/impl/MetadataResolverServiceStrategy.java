@@ -80,7 +80,8 @@ public class MetadataResolverServiceStrategy extends AbstractIdentifiableInitial
             chain.setResolvers(resolverList);
             chain.setId("MultiFileResolverFor:"+resolvers.size()+":Resources");
             chain.initialize();
-            final RelyingPartyMetadataProvider result = new RelyingPartyMetadataProvider(chain);
+            final RelyingPartyMetadataProvider result = new RelyingPartyMetadataProvider();
+            result.setEmbeddedResolver(chain);
             result.initialize();
             return result;
         } catch (final ResolverException | ComponentInitializationException e) {

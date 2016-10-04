@@ -142,7 +142,7 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
                     BeanDefinitionBuilder.genericBeanDefinition(getNativeBeanClass(element));
             doNativeParse(element, parserContext, childBeanDefinitionBuilder);
 
-            builder.addConstructorArgValue(childBeanDefinitionBuilder.getBeanDefinition());
+            builder.addPropertyValue("embeddedResolver", childBeanDefinitionBuilder.getBeanDefinition());
 
             if (element.hasAttributeNS(null, "sortKey")) {
                 builder.addPropertyValue("sortKey", StringSupport.trimOrNull(element.getAttributeNS(null, "sortKey")));

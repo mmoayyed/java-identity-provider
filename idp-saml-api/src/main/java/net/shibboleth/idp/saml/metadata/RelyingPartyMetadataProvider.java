@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -52,7 +53,7 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     private final Logger log = LoggerFactory.getLogger(RelyingPartyMetadataProvider.class);
 
     /** The embedded resolver. */
-    @Nonnull private final MetadataResolver resolver;
+    @NonnullAfterInit private MetadataResolver resolver;
 
     /** The key by which we sort the provider. */
     @NonnullAfterInit private Integer sortKey;
@@ -61,9 +62,16 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
      * Constructor.
      * 
      * @param child The {@link MetadataResolver} to embed.
+     * @deprecated use properties and {@link #RelyingPartyMetadataProvider()}.
      */
-    public RelyingPartyMetadataProvider(@Nonnull final MetadataResolver child) {
+    @Deprecated public RelyingPartyMetadataProvider(
+            @Nonnull @ParameterName(name="child") final MetadataResolver child) {
+        log.warn("Using deprecated constructor");
         resolver = Constraint.isNotNull(child, "MetadataResolver cannot be null");
+    }
+    
+    /** Constructor. */
+    public RelyingPartyMetadataProvider() {
     }
 
     /**
@@ -74,6 +82,16 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     public void setSortKey(final int key) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         sortKey = new Integer(key);
+    }
+    
+    /**
+     * Set the {@link MetadataResolver} to embed.
+     * 
+     * @param theResolver The {@link MetadataResolver} to embed.
+     */
+    @Nonnull public void setEmbeddedResolver(@Nonnull final MetadataResolver theResolver) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        resolver = Constraint.isNotNull(theResolver, "MetadataResolver cannot be null");
     }
 
     /**
@@ -119,6 +137,10 @@ public class RelyingPartyMetadataProvider extends AbstractServiceableComponent<M
     @Override protected void doInitialize() throws ComponentInitializationException {
         setId(resolver.getId());
         super.doInitialize();
+        if (null == resolver) {
+            throw new ComponentInitializationException("MetadataResolver cannot be null");
+        }
+
         if (null == sortKey) {
             synchronized (this) {
                 sortKeyValue++;
