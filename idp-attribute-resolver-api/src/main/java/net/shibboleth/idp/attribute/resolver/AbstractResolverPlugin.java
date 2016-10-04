@@ -27,6 +27,7 @@ import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
+import net.shibboleth.idp.profile.context.MetricContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
@@ -173,35 +174,44 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
 
         Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
 
-        if (null != activationCondition) {
-            final ProfileRequestContext profileRequestContext = profileContextStrategy.apply(resolutionContext);
-            if (!activationCondition.apply(profileRequestContext)) {
-                log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
-                return null;
-            }
-        }
-
-        final AttributeResolverWorkContext workContext =
-                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
-        Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
-
+        final boolean timerStarted = startTimer(resolutionContext);
+        
         try {
-            final ResolvedType result = doResolve(resolutionContext, workContext);
-            if (null == result) {
-                log.debug("Resolver plugin '{}' produced no value.", getId());
+            if (null != activationCondition) {
+                final ProfileRequestContext profileRequestContext = profileContextStrategy.apply(resolutionContext);
+                if (!activationCondition.apply(profileRequestContext)) {
+                    log.debug("Resolver plugin '{}': activation criteria not met, nothing to do", getId());
+                    return null;
+                }
             }
-            return result;
-        } catch (final ResolutionException e) {
-            //
-            // NOTE - if you change this logic you MUST make changes in any derived classes that
-            // depend on our handling of propagateResolutionExceptions.
-            //
-            if (propagateResolutionExceptions) {
-                throw e;
-            } else {
-                log.debug("Resolver plugin '{}' produced the following error but was configured not to propagate it.",
-                        getId(), e);
-                return null;
+    
+            final AttributeResolverWorkContext workContext =
+                    resolutionContext.getSubcontext(AttributeResolverWorkContext.class, false);
+            Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
+    
+            try {
+                final ResolvedType result = doResolve(resolutionContext, workContext);
+                if (null == result) {
+                    log.debug("Resolver plugin '{}' produced no value.", getId());
+                }
+                return result;
+            } catch (final ResolutionException e) {
+                //
+                // NOTE - if you change this logic you MUST make changes in any derived classes that
+                // depend on our handling of propagateResolutionExceptions.
+                //
+                if (propagateResolutionExceptions) {
+                    throw e;
+                } else {
+                    log.debug(
+                            "Resolver plugin '{}' produced the following error but was configured not to propagate it.",
+                            getId(), e);
+                    return null;
+                }
+            }
+        } finally {
+            if (timerStarted) {
+                stopTimer(resolutionContext);
             }
         }
     }
@@ -260,5 +270,40 @@ public abstract class AbstractResolverPlugin<ResolvedType> extends AbstractIdent
      */
     @Nullable protected abstract ResolvedType doResolve(@Nonnull final AttributeResolutionContext resolutionContext,
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException;
+
+    
+    /**
+     * Conditionally start a timer at the beginning of the resolution process.
+     * 
+     * @param resolutionContext attribute resolution context
+     * 
+     * @return true iff the {@link #stopTimer(AttributeResolutionContext)} method needs to be called
+     */
+    private boolean startTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
+        final ProfileRequestContext prc = profileContextStrategy.apply(resolutionContext);
+        if (prc != null) {
+            final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
+            if (timerCtx != null) {
+                timerCtx.start(getId());
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Conditionally stop a timer at the end of the resolution process.
+     * 
+     * @param resolutionContext attribute resolution context
+     */
+    private void stopTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
+        final ProfileRequestContext prc = profileContextStrategy.apply(resolutionContext);
+        if (prc != null) {
+            final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
+            if (timerCtx != null) {
+                timerCtx.stop(getId());
+            }
+        }
+    }
 
 }
