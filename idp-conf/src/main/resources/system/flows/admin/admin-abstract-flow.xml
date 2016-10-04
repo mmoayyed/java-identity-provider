@@ -11,7 +11,7 @@
     </on-start>
     
     <action-state id="DoAdminPreamble">
-        <evaluate expression="PopulateTimerContext" />
+        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="InitializeAdministrativeProfileContextTree" />
         <evaluate expression="'proceed'" />
         

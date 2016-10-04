@@ -8,7 +8,7 @@
     <!-- Decode / Configuration Lookup / Request Checking -->
 
     <action-state id="DecodeMessage">
-        <evaluate expression="PopulateTimerContext" />
+        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="DecodeMessage" />
         <evaluate expression="PostDecodePopulateAuditContext" />
 

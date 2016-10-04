@@ -34,7 +34,7 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
-import net.shibboleth.idp.profile.context.TimerContext;
+import net.shibboleth.idp.profile.context.MetricContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -230,7 +230,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     private boolean startTimer(@Nonnull final AttributeFilterContext filterContext) {
         final ProfileRequestContext prc = profileContextStrategy.apply(filterContext);
         if (prc != null) {
-            final TimerContext timerCtx = prc.getSubcontext(TimerContext.class);
+            final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
             if (timerCtx != null) {
                 timerCtx.start(getId());
                 return true;
@@ -247,7 +247,7 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     private void stopTimer(@Nonnull final AttributeFilterContext filterContext) {
         final ProfileRequestContext prc = profileContextStrategy.apply(filterContext);
         if (prc != null) {
-            final TimerContext timerCtx = prc.getSubcontext(TimerContext.class);
+            final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
             if (timerCtx != null) {
                 timerCtx.stop(getId());
             }

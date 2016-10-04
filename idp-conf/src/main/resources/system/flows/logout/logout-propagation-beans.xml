@@ -27,8 +27,9 @@
         p:loggingId="%{idp.service.logging.logout-propagation:LogoutPropagation}"
         p:browserProfile="true" />
 
-    <bean id="PopulateTimerContext" class="net.shibboleth.idp.profile.impl.PopulateTimerContext"
-        p:timerStrategy="#{getObject('shibboleth.metrics.TimerStrategy')}" />
+    <bean id="PopulateMetricContext"
+        class="net.shibboleth.idp.profile.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
 
     <bean id="PopulateLogoutPropagationContext"
         class="net.shibboleth.idp.session.impl.PopulateLogoutPropagationContext" scope="prototype"

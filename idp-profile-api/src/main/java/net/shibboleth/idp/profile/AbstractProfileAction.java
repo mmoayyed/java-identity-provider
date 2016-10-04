@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
-import net.shibboleth.idp.profile.context.TimerContext;
+import net.shibboleth.idp.profile.context.MetricContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -55,7 +55,7 @@ import com.google.common.base.Function;
  * <ul>
  * <li>retrieving the {@link ProfileRequestContext} from the current request environment</li>
  * <li>populating the SWF {@link RequestContext} into the profile context tree</li>
- * <li>starting or stopping any timers as instructed by a {@link TimerContext} in the tree</li>
+ * <li>starting or stopping any timers as instructed by a {@link MetricContext} in the tree</li>
  * </ul>
  * </p>
  * 
@@ -169,9 +169,9 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
             return false;
         }
         
-        final TimerContext timerCtx = profileRequestContext.getSubcontext(TimerContext.class);
-        if (timerCtx != null) {
-            timerCtx.start(getClass().getSimpleName());
+        final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
+        if (metricCtx != null) {
+            metricCtx.start(getClass().getSimpleName());
         }
         
         return true;
@@ -183,9 +183,11 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
     protected void doPostExecute(
             @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
         
-        final TimerContext timerCtx = profileRequestContext.getSubcontext(TimerContext.class);
-        if (timerCtx != null) {
-            timerCtx.stop(getClass().getSimpleName());
+        final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
+        if (metricCtx != null) {
+            final String name = getClass().getSimpleName();
+            metricCtx.stop(name);
+            metricCtx.inc(name);
         }
         
         super.doPostExecute(profileRequestContext);

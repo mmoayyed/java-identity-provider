@@ -65,9 +65,9 @@
     <!-- System Timing Configuration -->
     
     <!--
-    A bean named shibboleth.metrics.TimerStrategy of type Function<ProfileRequestContext,Boolean>
-    can be defined to add timers to a large number of objects in the system. Each timer is defined
-    by a triple (timer name, start object, stop object).
+    A bean named shibboleth.metrics.MetricStrategy of type Function<ProfileRequestContext,Boolean>
+    can be defined to add timers and counters to a large number of objects in the system. Each timer is
+    defined by a triple (timer name, start object, stop object). Counters are just object/counter pairs.
     
     The most common example is to start a timer when a particular flow action bean starts and
     stop it when the same or different action bean stops, to measure how long the execution takes.
@@ -76,13 +76,13 @@
     logging category named "metrics.<timername>" in your logging configuration.
     -->
     <!--
-    <bean id="shibboleth.metrics.TimerStrategy" parent="shibboleth.ContextFunctions.Scripted"
+    <bean id="shibboleth.metrics.MetricStrategy" parent="shibboleth.ContextFunctions.Scripted"
             factory-method="inlineScript">
         <constructor-arg>
             <value>
             <![CDATA[
-                timerCtx = input.getSubcontext("net.shibboleth.idp.profile.context.TimerContext");
-                timerCtx.addTimer("idp.attribute.resolution",
+                metricCtx = input.getSubcontext("net.shibboleth.idp.profile.context.MetricContext");
+                metricCtx.addTimer("idp.attribute.resolution",
                     "ResolveAttributes",
                     "FilterAttributes"
                     );                                

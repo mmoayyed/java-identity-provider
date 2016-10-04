@@ -44,7 +44,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.profile.context.TimerContext;
+import net.shibboleth.idp.profile.context.MetricContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -587,7 +587,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     private boolean startTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
         final ProfileRequestContext prc = profileContextStrategy.apply(resolutionContext);
         if (prc != null) {
-            final TimerContext timerCtx = prc.getSubcontext(TimerContext.class);
+            final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
             if (timerCtx != null) {
                 timerCtx.start(getId());
                 return true;
@@ -604,7 +604,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     private void stopTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
         final ProfileRequestContext prc = profileContextStrategy.apply(resolutionContext);
         if (prc != null) {
-            final TimerContext timerCtx = prc.getSubcontext(TimerContext.class);
+            final MetricContext timerCtx = prc.getSubcontext(MetricContext.class);
             if (timerCtx != null) {
                 timerCtx.stop(getId());
             }

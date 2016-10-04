@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.TimerContext;
+import net.shibboleth.idp.profile.context.MetricContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -34,9 +34,9 @@ import com.google.common.base.Function;
 
 
 /**
- * An action that populates a {@link TimerContext} child of the {@link ProfileRequestContext} with
- * a set of rules for activating timer measurements of associated objects during the execution of
- * a profile request.
+ * An action that populates a {@link MetricContext} child of the {@link ProfileRequestContext} with
+ * a set of rules for activating timer measurements and counters on associated objects during the execution
+ * of a profile request.
  * 
  * <p>Unlike a more typical "lookup strategy" design used in most other places, the strategy function
  * supplied is free, and indeed expected, to directly manipulate the created child context directly
@@ -45,23 +45,23 @@ import com.google.common.base.Function;
  * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  */
-public class PopulateTimerContext extends AbstractProfileAction {
+public class PopulateMetricContext extends AbstractProfileAction {
 
     /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateTimerContext.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(PopulateMetricContext.class);
     
-    /** Strategy function for establishing timer mappings to apply. */
-    @NonnullAfterInit private Function<ProfileRequestContext,Boolean> timerStrategy;
+    /** Strategy function for establishing metric mappings to apply. */
+    @NonnullAfterInit private Function<ProfileRequestContext,Boolean> metricStrategy;
     
     /**
-     * Set strategy to establish the timer mappings to use.
+     * Set strategy to establish the metric mappings to use.
      * 
      * @param strategy  timer mapping strategy
      */
-    public void setTimerStrategy(@Nullable final Function<ProfileRequestContext,Boolean> strategy) {
+    public void setMetricStrategy(@Nullable final Function<ProfileRequestContext,Boolean> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
-        timerStrategy = strategy;
+        metricStrategy = strategy;
     }
     
     /** {@inheritDoc} */
@@ -69,8 +69,8 @@ public class PopulateTimerContext extends AbstractProfileAction {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        if (timerStrategy == null) {
-            timerStrategy = new NullFunction();
+        if (metricStrategy == null) {
+            metricStrategy = new NullFunction();
         }
     }
 
@@ -78,21 +78,21 @@ public class PopulateTimerContext extends AbstractProfileAction {
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
 
-        final TimerContext timerCtx = new TimerContext();
-        profileRequestContext.addSubcontext(timerCtx, true);
-        if (!timerStrategy.apply(profileRequestContext)) {
-            log.warn("{} Configuration of timer mappings by supplied strategy function failed", getLogPrefix());
+        final MetricContext metricCtx = new MetricContext();
+        profileRequestContext.addSubcontext(metricCtx, true);
+        if (!metricStrategy.apply(profileRequestContext)) {
+            log.warn("{} Configuration of metric mappings by supplied strategy function failed", getLogPrefix());
         }
     }
 
     /**
-     * Default function to remove the context from the tree when no timers are installed.
+     * Default function to remove the context from the tree when no metrics are installed.
      */
     private class NullFunction implements Function<ProfileRequestContext,Boolean> {
 
         /** {@inheritDoc} */
         public Boolean apply(final ProfileRequestContext input) {
-            input.removeSubcontext(TimerContext.class);
+            input.removeSubcontext(MetricContext.class);
             return true;
         }
         

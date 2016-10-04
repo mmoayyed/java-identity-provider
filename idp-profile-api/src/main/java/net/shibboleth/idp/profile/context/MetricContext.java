@@ -18,7 +18,9 @@
 package net.shibboleth.idp.profile.context;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +44,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
  * Child context that supplies instructions to the runtime actions
  * about timers to start and stop to measure performance.
  */
-public class TimerContext extends BaseContext {
+public class MetricContext extends BaseContext {
     
     /** Name of metric registry to access. */
     @Nullable @NotEmpty private String metricRegistryName;
@@ -57,10 +59,14 @@ public class TimerContext extends BaseContext {
     /** Map of objects to contexts to perform a stop signal. */
     @Nonnull @NonnullElements private Multimap<String,Timer.Context> timerContextMap;
     
+    /** Map of objects to counter names. */
+    @Nonnull @NonnullElements private Map<String,String> counterMap;
+    
     /** Constructor. */
-    public TimerContext() {
+    public MetricContext() {
         timerMap = ArrayListMultimap.create();
         timerContextMap = ArrayListMultimap.create();
+        counterMap = new HashMap<>();
     }
     
     /**
@@ -70,7 +76,7 @@ public class TimerContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public TimerContext setMetricRegistryName(@Nullable @NotEmpty final String name) {
+    @Nonnull public MetricContext setMetricRegistryName(@Nullable @NotEmpty final String name) {
         metricRegistryName = StringSupport.trimOrNull(name);
         
         return this;
@@ -85,7 +91,7 @@ public class TimerContext extends BaseContext {
      * 
      * @return this context
      */
-    @Nonnull public TimerContext addTimer(@Nonnull @NotEmpty final String timerName,
+    @Nonnull public MetricContext addTimer(@Nonnull @NotEmpty final String timerName,
             @Nonnull @NotEmpty final String startId, @Nonnull @NotEmpty final String stopId) {
         
         final String key = Constraint.isNotNull(StringSupport.trimOrNull(startId),
@@ -110,6 +116,34 @@ public class TimerContext extends BaseContext {
     @Nonnull @NonnullElements @Live public Collection<Pair<String,String>> getTimerMappings(
             @Nonnull @NotEmpty final String objectId) {
         return timerMap.get(objectId);
+    }
+    
+    /**
+     * Add an object/counter mapping.
+     * 
+     * @param counterName name of counter
+     * @param objectId object ID
+     * 
+     * @return this context
+     */
+    @Nonnull public MetricContext addCounter(@Nonnull @NotEmpty final String counterName,
+            @Nonnull @NotEmpty final String objectId) {
+        final String key = Constraint.isNotNull(StringSupport.trimOrNull(objectId),
+                "Starting object ID cannot be null or empty");
+        final String name = Constraint.isNotNull(StringSupport.trimOrNull(counterName),
+                "Counter name cannot be null or empty");
+        counterMap.put(key, name);
+        
+        return this;
+    }
+    
+    /**
+     * Get a modifiable map of object/counter associations.
+     * 
+     * @return map of counters
+     */
+    @Nonnull @NonnullElements @Live public Map<String,String> getCounterMappings() {
+        return counterMap;
     }
     
     /**
@@ -150,4 +184,34 @@ public class TimerContext extends BaseContext {
         }
     }
     
+    /**
+     * Increment a counter associated with an object, if any.
+     * 
+     * @param objectId ID of object
+     */
+    public void inc(@Nonnull @NotEmpty final String objectId) {
+        final String name = counterMap.get(objectId);
+        if (name != null) {
+            final MetricRegistry reg = metricRegistryName != null
+                    ? MetricsSupport.getNamedMetricRegistry(metricRegistryName) :
+                        MetricsSupport.getDefaultMetricRegistry();
+            reg.counter(name).inc();
+        }
+    }
+
+    /**
+     * Decrement a counter associated with an object, if any.
+     * 
+     * @param objectId ID of object
+     */
+    public void dec(@Nonnull @NotEmpty final String objectId) {
+        final String name = counterMap.get(objectId);
+        if (name != null) {
+            final MetricRegistry reg = metricRegistryName != null
+                    ? MetricsSupport.getNamedMetricRegistry(metricRegistryName) :
+                        MetricsSupport.getDefaultMetricRegistry();
+            reg.counter(name).dec();
+        }
+    }
+
 }
