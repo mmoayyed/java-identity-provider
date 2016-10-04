@@ -228,10 +228,13 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * @return true iff the {@link #stopTimer(AttributeFilterContext)} method needs to be called
      */
     private boolean startTimer(@Nonnull final AttributeFilterContext filterContext) {
-        final TimerContext timerCtx = profileContextStrategy.apply(filterContext).getSubcontext(TimerContext.class);
-        if (timerCtx != null) {
-            timerCtx.start(getId());
-            return true;
+        final ProfileRequestContext prc = profileContextStrategy.apply(filterContext);
+        if (prc != null) {
+            final TimerContext timerCtx = prc.getSubcontext(TimerContext.class);
+            if (timerCtx != null) {
+                timerCtx.start(getId());
+                return true;
+            }
         }
         return false;
     }
@@ -242,9 +245,12 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
      * @param filterContext attribute filtering context
      */
     private void stopTimer(@Nonnull final AttributeFilterContext filterContext) {
-        final TimerContext timerCtx = profileContextStrategy.apply(filterContext).getSubcontext(TimerContext.class);
-        if (timerCtx != null) {
-            timerCtx.stop(getId());
+        final ProfileRequestContext prc = profileContextStrategy.apply(filterContext);
+        if (prc != null) {
+            final TimerContext timerCtx = prc.getSubcontext(TimerContext.class);
+            if (timerCtx != null) {
+                timerCtx.stop(getId());
+            }
         }
     }
 

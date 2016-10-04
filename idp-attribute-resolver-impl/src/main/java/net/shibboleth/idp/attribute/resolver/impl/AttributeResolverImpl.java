@@ -585,10 +585,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @return true iff the {@link #stopTimer(AttributeResolutionContext)} method needs to be called
      */
     private boolean startTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
-        final TimerContext timerCtx = profileContextStrategy.apply(resolutionContext).getSubcontext(TimerContext.class);
-        if (timerCtx != null) {
-            timerCtx.start(getId());
-            return true;
+        final ProfileRequestContext prc = profileContextStrategy.apply(resolutionContext);
+        if (prc != null) {
+            final TimerContext timerCtx = prc.getSubcontext(TimerContext.class);
+            if (timerCtx != null) {
+                timerCtx.start(getId());
+                return true;
+            }
         }
         return false;
     }
@@ -599,9 +602,12 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
      * @param resolutionContext attribute resolution context
      */
     private void stopTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
-        final TimerContext timerCtx = profileContextStrategy.apply(resolutionContext).getSubcontext(TimerContext.class);
-        if (timerCtx != null) {
-            timerCtx.stop(getId());
+        final ProfileRequestContext prc = profileContextStrategy.apply(resolutionContext);
+        if (prc != null) {
+            final TimerContext timerCtx = prc.getSubcontext(TimerContext.class);
+            if (timerCtx != null) {
+                timerCtx.stop(getId());
+            }
         }
     }
     
