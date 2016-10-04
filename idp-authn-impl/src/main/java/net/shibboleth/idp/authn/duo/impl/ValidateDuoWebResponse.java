@@ -65,10 +65,13 @@ import com.google.common.base.Function;
  * @since 3.3.0
  */
 public class ValidateDuoWebResponse extends AbstractValidationAction {
-    
+
     /** Signed response parameter name. */
     @Nonnull @NotEmpty public static final String RESPONSE_PARAM = "sig_response";
-    
+
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.duo";
+        
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateDuoWebResponse.class);
     
@@ -91,6 +94,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
     public ValidateDuoWebResponse() {
         duoIntegrationLookupStrategy = FunctionSupport.constant(null);
         usernameLookupStrategy = new CanonicalUsernameLookupStrategy();
+        setMetricName(DEFAULT_METRIC_NAME);
     }
 
     /**
@@ -141,6 +145,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
         if (duoIntegration == null) {
             log.warn("{} No DuoIntegration returned by lookup strategy", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            recordFailure();
             return false;
         }
 
@@ -155,6 +160,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
         if (servletRequest == null) {
             log.error("{} No ServletRequest available", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            recordFailure();
             return false;
         }
         
@@ -162,6 +168,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
         if (signedResponse == null || signedResponse.isEmpty()) {
             log.warn("{} No signed Duo response in the request", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_CREDENTIALS);
+            recordFailure();
             return false;
         }
                         
@@ -181,6 +188,7 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
         } catch (final InvalidKeyException | NoSuchAlgorithmException | DuoWebException | IOException e) {
             log.warn("{} Error validating signed Duo response for username '{}'", getLogPrefix(), username, e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
             return;
         }
         
@@ -189,8 +197,10 @@ public class ValidateDuoWebResponse extends AbstractValidationAction {
                     getLogPrefix(), usernameFromDuo, username);
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                     AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
         } else {
             log.info("{} Duo authentication succeeded for '{}'", getLogPrefix(), usernameFromDuo);
+            recordSuccess();
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         }
     }

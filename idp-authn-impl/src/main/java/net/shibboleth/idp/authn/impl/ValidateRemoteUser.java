@@ -59,6 +59,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidateRemoteUser extends AbstractValidationAction {
 
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.remoteuser";
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateRemoteUser.class);
     
@@ -78,6 +81,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
     public ValidateRemoteUser() {
         whitelistedUsernames = Collections.emptySet();
         blacklistedUsernames = Collections.emptySet();
+        setMetricName(DEFAULT_METRIC_NAME);
     }
     
     /**
@@ -125,6 +129,7 @@ public class ValidateRemoteUser extends AbstractValidationAction {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            recordFailure();
             return false;
         }
         
@@ -150,13 +155,14 @@ public class ValidateRemoteUser extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
                 
         if (!isAuthenticated(usernameContext.getUsername())) {
-            log.debug("{} User '{}' was not valid", getLogPrefix(), usernameContext.getUsername());
+            log.info("{} User '{}' was not valid", getLogPrefix(), usernameContext.getUsername());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
             return;
         }
 
-        log.debug("{} Validated user '{}'", getLogPrefix(), usernameContext.getUsername());
-        
+        log.info("{} Validated user '{}'", getLogPrefix(), usernameContext.getUsername());
+        recordSuccess();
         buildAuthenticationResult(profileRequestContext, authenticationContext);
     }
     

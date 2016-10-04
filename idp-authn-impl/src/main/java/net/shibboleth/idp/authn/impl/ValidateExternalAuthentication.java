@@ -30,6 +30,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.ExternalAuthenticationContext;
 import net.shibboleth.idp.authn.principal.UsernamePrincipal;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -57,6 +58,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidateExternalAuthentication extends AbstractValidationAction {
 
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.external"; 
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateExternalAuthentication.class);
 
@@ -65,6 +69,11 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
     
     /** Context containing the result to validate. */
     @Nullable private ExternalAuthenticationContext extContext;
+    
+    /** Constructor. */
+    public ValidateExternalAuthentication() {
+        setMetricName(DEFAULT_METRIC_NAME);
+    }
     
     /**
      * Set a matching expression to apply for username acceptance. 
@@ -89,6 +98,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            recordFailure();
             return false;
         }
         
@@ -96,6 +106,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         if (extContext == null) {
             log.debug("{} No ExternalAuthenticationContext available within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+            recordFailure();
             return false;
         }
         
@@ -109,15 +120,17 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
 
         if (extContext.getAuthnException() != null) {
-            log.warn("{} External authentication produced exception", getLogPrefix(), extContext.getAuthnException());
+            log.info("{} External authentication produced exception", getLogPrefix(), extContext.getAuthnException());
             handleError(profileRequestContext, authenticationContext, extContext.getAuthnException(),
                     AuthnEventIds.AUTHN_EXCEPTION);
+            recordFailure();
             return;
         } else if (extContext.getAuthnError() != null) {
-            log.warn("{} External authentication produced error message: {}", getLogPrefix(),
+            log.info("{} External authentication produced error message: {}", getLogPrefix(),
                     extContext.getAuthnError());
             handleError(profileRequestContext, authenticationContext, extContext.getAuthnError(),
                     AuthnEventIds.AUTHN_EXCEPTION);
+            recordFailure();
             return;
         }
         
@@ -146,8 +159,11 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
         if (!checkUsername(extContext.getSubject())) {
             handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                     AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
             return;
         }
+        
+        recordSuccess();
         
         if (extContext.doNotCache()) {
             log.debug("{} Disabling caching of authentication result", getLogPrefix());

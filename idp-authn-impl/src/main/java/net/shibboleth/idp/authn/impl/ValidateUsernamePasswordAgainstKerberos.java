@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
 public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePasswordValidationAction {
     
     /** Default prefix for metrics. */
-    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.krb5"; 
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.krb5";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstKerberos.class);

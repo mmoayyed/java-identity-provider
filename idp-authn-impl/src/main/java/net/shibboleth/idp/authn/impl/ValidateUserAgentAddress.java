@@ -39,6 +39,7 @@ import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.net.IPRange;
 
@@ -64,6 +65,9 @@ import com.google.common.collect.Collections2;
  */
 public class ValidateUserAgentAddress extends AbstractValidationAction {
 
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.address";
+    
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUserAgentAddress.class);
 
@@ -78,6 +82,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
     
     /** Constructor. */
     public ValidateUserAgentAddress() {
+        setMetricName(DEFAULT_METRIC_NAME);
         mappings = Collections.emptyMap();
     }
     
@@ -109,6 +114,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.debug("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            recordFailure();
             return false;
         }
         
@@ -136,16 +142,18 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         for (final Map.Entry<String,Collection<IPRange>> e : mappings.entrySet()) {
             if (isAuthenticated(uaContext.getAddress(), e.getValue())) {
                 principalName = e.getKey();
-                log.debug("{} Authenticated user agent with address {} as {}",
+                log.info("{} Authenticated user agent with address {} as {}",
                         getLogPrefix(), uaContext.getAddress().getHostAddress(), principalName);
+                recordSuccess();
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 return;
             }
         }
-            
+
         log.debug("{} User agent with address {} was not authenticated", getLogPrefix(),
                 uaContext.getAddress().getHostAddress());
         ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_CREDENTIALS);
+        recordFailure();
     }
 
     /**

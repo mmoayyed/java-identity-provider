@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
 public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswordValidationAction {
 
     /** Default prefix for metrics. */
-    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.ldap"; 
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.ldap";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstLDAP.class);

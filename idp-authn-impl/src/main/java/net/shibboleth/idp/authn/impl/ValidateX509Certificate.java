@@ -28,6 +28,7 @@ import net.shibboleth.idp.authn.AbstractValidationAction;
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.CertificateContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
@@ -59,6 +60,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidateX509Certificate extends AbstractValidationAction {
 
+    /** Default prefix for metrics. */
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn.x509";
+
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateX509Certificate.class);
 
@@ -67,6 +71,11 @@ public class ValidateX509Certificate extends AbstractValidationAction {
     
     /** CertificateContext containing the credentials to validate. */
     @Nullable private CertificateContext certContext;
+    
+    /** Constructor. */
+    public ValidateX509Certificate() {
+        setMetricName(DEFAULT_METRIC_NAME);
+    }
     
     /**
      * Set a {@link TrustEngine} to use.
@@ -91,6 +100,7 @@ public class ValidateX509Certificate extends AbstractValidationAction {
         if (authenticationContext.getAttemptedFlow() == null) {
             log.info("{} No attempted flow within authentication context", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            recordFailure();
             return false;
         }
         
@@ -135,19 +145,22 @@ public class ValidateX509Certificate extends AbstractValidationAction {
                     log.warn("{} Trust engine failed to validate X.509 certificate", getLogPrefix());
                     handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                             AuthnEventIds.INVALID_CREDENTIALS);
+                    recordFailure();
                     return;
                 }
             } catch (final SecurityException e) {
                 log.error("{} Exception raised by trust engine", getLogPrefix(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
+                recordFailure();
                 return;
             }
+        } else {
+            log.debug("{} No trust engine configured, certificate will be trusted", getLogPrefix());
         }
-        
-        log.debug("{} No trust engine configured, certificate will be trusted", getLogPrefix());
 
         log.info("{} Login by '{}' succeeded", getLogPrefix(),
                 ((X509Certificate) certContext.getCertificate()).getSubjectX500Principal().getName());
+        recordSuccess();
         buildAuthenticationResult(profileRequestContext, authenticationContext);
         ActionSupport.buildProceedEvent(profileRequestContext);
     }

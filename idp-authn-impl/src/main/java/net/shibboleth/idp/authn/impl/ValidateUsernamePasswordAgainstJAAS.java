@@ -75,7 +75,7 @@ import com.google.common.base.Function;
 public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswordValidationAction {
 
     /** Default prefix for metrics. */
-    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn"; 
+    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp.authn";
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ValidateUsernamePasswordAgainstJAAS.class);
