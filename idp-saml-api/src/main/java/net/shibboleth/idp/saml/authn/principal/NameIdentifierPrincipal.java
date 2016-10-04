@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.authn.principal;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.principal.CloneablePrincipal;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.SerializeSupport;
@@ -45,7 +46,8 @@ public class NameIdentifierPrincipal implements CloneablePrincipal {
     /** Constructor. 
      * @param theNameIdentifier the NameIdentifier which is wrapped.
      */
-    public NameIdentifierPrincipal(@Nonnull final NameIdentifier theNameIdentifier) {
+    public NameIdentifierPrincipal(
+            @Nonnull @ParameterName(name="theNameIdentifier") final NameIdentifier theNameIdentifier) {
         nameIdentifier = Constraint.isNotNull(theNameIdentifier, "Supplied NameIdentifier cannot be null");
         try {
             name = SerializeSupport.nodeToString(Constraint.isNotNull(XMLObjectSupport.getMarshaller(theNameIdentifier),

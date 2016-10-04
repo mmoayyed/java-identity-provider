@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.authn.principal;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.principal.CloneablePrincipal;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -37,12 +38,13 @@ public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
      * 
      * @param method the method URI
      */
-    public AuthenticationMethodPrincipal(@Nonnull @NotEmpty final String method) {
+    public AuthenticationMethodPrincipal(@Nonnull @NotEmpty @ParameterName(name="method") final String method) {
         authnMethod = Constraint.isNotNull(
                 StringSupport.trimOrNull(method), "AuthenticationMethod cannot be null or empty");
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getName() {
         return authnMethod;
     }
@@ -78,6 +80,7 @@ public final class AuthenticationMethodPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public AuthenticationMethodPrincipal clone() throws CloneNotSupportedException {
         final AuthenticationMethodPrincipal copy = (AuthenticationMethodPrincipal) super.clone();
         copy.authnMethod = authnMethod;

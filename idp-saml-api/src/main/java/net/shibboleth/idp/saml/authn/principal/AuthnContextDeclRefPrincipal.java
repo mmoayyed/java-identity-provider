@@ -19,13 +19,14 @@ package net.shibboleth.idp.saml.authn.principal;
 
 import javax.annotation.Nonnull;
 
-import org.opensaml.core.xml.util.XMLObjectSupport;
-import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
-
 import net.shibboleth.idp.authn.principal.CloneablePrincipal;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 
 import com.google.common.base.MoreObjects;
 
@@ -40,12 +41,13 @@ public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
      * 
      * @param declRef the decl ref URI
      */
-    public AuthnContextDeclRefPrincipal(@Nonnull @NotEmpty final String declRef) {
+    public AuthnContextDeclRefPrincipal(@Nonnull @NotEmpty @ParameterName(name="declRef") final String declRef) {
         authnContextDeclRef = Constraint.isNotNull(
                 StringSupport.trimOrNull(declRef), "AuthnContextDeclRef cannot be null or empty");
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getName() {
         return authnContextDeclRef;
     }
@@ -94,6 +96,7 @@ public final class AuthnContextDeclRefPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public AuthnContextDeclRefPrincipal clone() throws CloneNotSupportedException {
         final AuthnContextDeclRefPrincipal copy = (AuthnContextDeclRefPrincipal) super.clone();
         copy.authnContextDeclRef = authnContextDeclRef;

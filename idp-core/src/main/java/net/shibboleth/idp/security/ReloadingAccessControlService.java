@@ -20,6 +20,7 @@ package net.shibboleth.idp.security;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.service.AbstractServiceableComponent;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.AccessControl;
@@ -40,7 +41,7 @@ public class ReloadingAccessControlService extends AbstractServiceableComponent<
      * 
      * @param svc the embedded service
      */
-    public ReloadingAccessControlService(@Nonnull final AccessControlService svc) {
+    public ReloadingAccessControlService(@Nonnull @ParameterName(name="svc") final AccessControlService svc) {
         service = Constraint.isNotNull(svc, "AccessControlService cannot be null");
     }
 

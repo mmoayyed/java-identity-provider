@@ -19,17 +19,18 @@ package net.shibboleth.idp.saml.authn.principal;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.idp.authn.principal.CloneablePrincipal;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
+
 import org.opensaml.core.xml.XMLRuntimeException;
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.io.UnmarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.core.xml.util.XMLObjectSupport.CloneOutputOption;
 import org.opensaml.saml.saml2.core.AuthnContextDecl;
-
-import net.shibboleth.idp.authn.principal.CloneablePrincipal;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 import com.google.common.base.MoreObjects;
 
@@ -49,13 +50,15 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
      * 
      * @throws MarshallingException if an error occurs marshalling the declaration into string form
      */
-    public AuthnContextDeclPrincipal(@Nonnull final AuthnContextDecl decl) throws MarshallingException {
+    public AuthnContextDeclPrincipal(@Nonnull @ParameterName(name="decl") final AuthnContextDecl decl)
+            throws MarshallingException {
         authnContextDecl = Constraint.isNotNull(decl, "AuthnContextDeclRef cannot be null");
         name = SerializeSupport.nodeToString(Constraint.isNotNull(XMLObjectSupport.getMarshaller(decl),
                 "No marshaller for AuthnContextDecl").marshall(decl));
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getName() {
         return name;
     }
@@ -100,6 +103,7 @@ public final class AuthnContextDeclPrincipal implements CloneablePrincipal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public AuthnContextDeclPrincipal clone() throws CloneNotSupportedException {
         final AuthnContextDeclPrincipal copy = (AuthnContextDeclPrincipal) super.clone();
         try {
