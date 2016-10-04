@@ -44,6 +44,7 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.profile.context.TimerContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -55,9 +56,12 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -89,7 +93,15 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
     /** The Principal mapper. */
     @Nullable private LegacyPrincipalDecoder principalConnector;
+    
+    /** Strategy to get the {@link ProfileRequestContext}. */
+    @Nonnull private Function<AttributeResolutionContext,ProfileRequestContext> profileContextStrategy;
 
+    /** Constructor. */
+    public AttributeResolverImpl() {
+        profileContextStrategy = new ParentContextLookup<>();
+    }
+    
     /** {@inheritDoc} */
     @Override public void setId(@Nonnull @NotEmpty final String resolverId) {
         super.setId(resolverId);
@@ -167,7 +179,19 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     }
 
     /**
-     * Resolves the attribute for the give request. Note, if attributes are requested,
+     * Set the mechanism to obtain the {@link ProfileRequestContext}.
+     * 
+     * @param strategy lookup strategy
+     */
+    public void setProfileContextLookupStrategy(
+            @Nonnull final Function<AttributeResolutionContext,ProfileRequestContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        profileContextStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
+    }
+    
+    /**
+     * Resolves the attribute for the given request. Note, if attributes are requested,
      * {@link AttributeResolutionContext#getRequestedIdPAttributeNames()}, the resolver will <strong>not</strong> fail
      * if they can not be resolved. This information serves only as a hint to the resolver to, potentially, optimize the
      * resolution of attributes.
@@ -184,31 +208,38 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         Constraint.isNotNull(resolutionContext, "Attribute resolution context cannot be null");
 
-        log.debug("{} Initiating attribute resolution", logPrefix);
-
-        if (attributeDefinitions.size() == 0) {
-            log.debug("{} No attribute definition available, no attributes were resolved", logPrefix);
-            return;
+        final boolean timerStarted = startTimer(resolutionContext);
+        try {
+            log.debug("{} Initiating attribute resolution", logPrefix);
+    
+            if (attributeDefinitions.size() == 0) {
+                log.debug("{} No attribute definition available, no attributes were resolved", logPrefix);
+                return;
+            }
+    
+            final Collection<String> attributeIds = getToBeResolvedAttributeIds(resolutionContext);
+            log.debug("{} Attempting to resolve the following attribute definitions {}", logPrefix, attributeIds);
+    
+            // Create work context to hold intermediate results.
+            final AttributeResolverWorkContext workContext =
+                    resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
+    
+            for (final String attributeId : attributeIds) {
+                resolveAttributeDefinition(attributeId, resolutionContext);
+            }
+    
+            log.debug("{} Finalizing resolved attributes", logPrefix);
+            finalizeResolvedAttributes(resolutionContext);
+    
+            resolutionContext.removeSubcontext(workContext);
+    
+            log.debug("{} Final resolved attribute collection: {}", logPrefix,
+                    resolutionContext.getResolvedIdPAttributes().keySet());
+        } finally {
+            if (timerStarted) {
+                stopTimer(resolutionContext);
+            }
         }
-
-        final Collection<String> attributeIds = getToBeResolvedAttributeIds(resolutionContext);
-        log.debug("{} Attempting to resolve the following attribute definitions {}", logPrefix, attributeIds);
-
-        // Create work context to hold intermediate results.
-        final AttributeResolverWorkContext workContext =
-                resolutionContext.getSubcontext(AttributeResolverWorkContext.class, true);
-
-        for (final String attributeId : attributeIds) {
-            resolveAttributeDefinition(attributeId, resolutionContext);
-        }
-
-        log.debug("{} Finalizing resolved attributes", logPrefix);
-        finalizeResolvedAttributes(resolutionContext);
-
-        resolutionContext.removeSubcontext(workContext);
-
-        log.debug("{} Final resolved attribute collection: {}", logPrefix, resolutionContext.getResolvedIdPAttributes()
-                .keySet());
     }
 
     /**
@@ -545,4 +576,33 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
     @Override public boolean hasValidConnectors() {
         return principalConnector.hasValidConnectors();
     }
+    
+    /**
+     * Conditionally start a timer at the beginning of the resolution process.
+     * 
+     * @param resolutionContext attribute resolution context
+     * 
+     * @return true iff the {@link #stopTimer(AttributeResolutionContext)} method needs to be called
+     */
+    private boolean startTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
+        final TimerContext timerCtx = profileContextStrategy.apply(resolutionContext).getSubcontext(TimerContext.class);
+        if (timerCtx != null) {
+            timerCtx.start(getId());
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Conditionally stop a timer at the end of the resolution process.
+     * 
+     * @param resolutionContext attribute resolution context
+     */
+    private void stopTimer(@Nonnull final AttributeResolutionContext resolutionContext) {
+        final TimerContext timerCtx = profileContextStrategy.apply(resolutionContext).getSubcontext(TimerContext.class);
+        if (timerCtx != null) {
+            timerCtx.stop(getId());
+        }
+    }
+    
 }

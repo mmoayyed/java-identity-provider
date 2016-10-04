@@ -33,6 +33,8 @@ import net.shibboleth.idp.attribute.filter.AttributeFilterException;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterWorkContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.idp.profile.context.TimerContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
@@ -42,9 +44,13 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
+import org.opensaml.messaging.context.navigate.ParentContextLookup;
+import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -62,6 +68,9 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     /** Log prefix. */
     private String logPrefix;
 
+    /** Strategy to get the {@link ProfileRequestContext}. */
+    @Nonnull private Function<AttributeFilterContext,ProfileRequestContext> profileContextStrategy;
+
     /**
      * Constructor.
      * 
@@ -75,6 +84,11 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
         final ArrayList<AttributeFilterPolicy> checkedPolicies = new ArrayList<>();
         CollectionSupport.addIf(checkedPolicies, policies, Predicates.notNull());
         filterPolicies = ImmutableList.copyOf(Iterables.filter(checkedPolicies, Predicates.notNull()));
+        
+        // Defaults to ProfileRequestContext -> RelyingPartyContext -> AttributeFilterContext.
+        profileContextStrategy =
+                Functions.compose(new ParentContextLookup<RelyingPartyContext, ProfileRequestContext>(),
+                        new ParentContextLookup<AttributeFilterContext, RelyingPartyContext>());
     }
 
     /**
@@ -100,30 +114,38 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
-        final Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredIdPAttributes();
-
-        // Create work context to hold intermediate results.
-        filterContext.getSubcontext(AttributeFilterWorkContext.class, true);
-
-        log.debug("{} Beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
-                prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
-
-        final List<AttributeFilterPolicy> policies = getFilterPolicies();
-        for (final AttributeFilterPolicy policy : policies) {
-            policy.apply(filterContext);
-        }
-
-        IdPAttribute filteredAttribute;
-        for (final String attributeId : filterContext.getPrefilteredIdPAttributes().keySet()) {
-            final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
-            if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
-                try {
-                    filteredAttribute = prefilteredAttributes.get(attributeId).clone();
-                } catch (final CloneNotSupportedException e) {
-                    throw new AttributeFilterException(e);
+        
+        final boolean timerStarted = startTimer(filterContext);
+        try {        
+            final Map<String, IdPAttribute> prefilteredAttributes = filterContext.getPrefilteredIdPAttributes();
+    
+            // Create work context to hold intermediate results.
+            filterContext.getSubcontext(AttributeFilterWorkContext.class, true);
+    
+            log.debug("{} Beginning process of filtering the following {} attributes: {}", new Object[] {getLogPrefix(),
+                    prefilteredAttributes.size(), prefilteredAttributes.keySet(),});
+    
+            final List<AttributeFilterPolicy> policies = getFilterPolicies();
+            for (final AttributeFilterPolicy policy : policies) {
+                policy.apply(filterContext);
+            }
+    
+            IdPAttribute filteredAttribute;
+            for (final String attributeId : filterContext.getPrefilteredIdPAttributes().keySet()) {
+                final Collection filteredAttributeValues = getFilteredValues(attributeId, filterContext);
+                if (null != filteredAttributeValues && !filteredAttributeValues.isEmpty()) {
+                    try {
+                        filteredAttribute = prefilteredAttributes.get(attributeId).clone();
+                    } catch (final CloneNotSupportedException e) {
+                        throw new AttributeFilterException(e);
+                    }
+                    filteredAttribute.setValues(filteredAttributeValues);
+                    filterContext.getFilteredIdPAttributes().put(filteredAttribute.getId(), filteredAttribute);
                 }
-                filteredAttribute.setValues(filteredAttributeValues);
-                filterContext.getFilteredIdPAttributes().put(filteredAttribute.getId(), filteredAttribute);
+            }
+        } finally {
+            if (timerStarted) {
+                stopTimer(filterContext);
             }
         }
     }
@@ -197,4 +219,33 @@ public class AttributeFilterImpl extends AbstractServiceableComponent<AttributeF
     @Override @Nonnull public AttributeFilter getComponent() {
         return this;
     }
+
+    /**
+     * Conditionally start a timer at the beginning of the filtering process.
+     * 
+     * @param filterContext attribute filtering context
+     * 
+     * @return true iff the {@link #stopTimer(AttributeFilterContext)} method needs to be called
+     */
+    private boolean startTimer(@Nonnull final AttributeFilterContext filterContext) {
+        final TimerContext timerCtx = profileContextStrategy.apply(filterContext).getSubcontext(TimerContext.class);
+        if (timerCtx != null) {
+            timerCtx.start(getId());
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Conditionally stop a timer at the end of the filtering process.
+     * 
+     * @param filterContext attribute filtering context
+     */
+    private void stopTimer(@Nonnull final AttributeFilterContext filterContext) {
+        final TimerContext timerCtx = profileContextStrategy.apply(filterContext).getSubcontext(TimerContext.class);
+        if (timerCtx != null) {
+            timerCtx.stop(getId());
+        }
+    }
+
 }
