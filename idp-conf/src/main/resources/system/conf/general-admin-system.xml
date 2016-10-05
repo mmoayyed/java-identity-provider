@@ -62,5 +62,11 @@
         class="org.springframework.beans.factory.config.MethodInvokingBean"
         p:targetObject-ref="shibboleth.metrics.MetricRegistry"
         p:targetMethod="register" />
+    
+    <!-- Some predefined metric sets, only created if used. -->
+    <bean id="shibboleth.metrics.CoreGaugeSet" class="net.shibboleth.idp.metrics.CoreGaugeSet" lazy-init="true" />
+
+    <!-- Some predefined metric sets, only created if used. -->
+    <bean id="shibboleth.metrics.IdPGaugeSet" class="net.shibboleth.idp.metrics.IdPGaugeSet" lazy-init="true" />
         
 </beans>
