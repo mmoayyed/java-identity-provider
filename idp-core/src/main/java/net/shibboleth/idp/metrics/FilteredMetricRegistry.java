@@ -32,6 +32,10 @@ import com.codahale.metrics.Timer;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
+import net.shibboleth.idp.metrics.impl.DisabledCounter;
+import net.shibboleth.idp.metrics.impl.DisabledHistogram;
+import net.shibboleth.idp.metrics.impl.DisabledMeter;
+import net.shibboleth.idp.metrics.impl.DisabledTimer;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.metrics;
+package net.shibboleth.idp.metrics.impl;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;

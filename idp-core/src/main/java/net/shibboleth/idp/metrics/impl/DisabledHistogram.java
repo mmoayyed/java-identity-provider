@@ -15,15 +15,43 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.metrics;
+package net.shibboleth.idp.metrics.impl;
 
-import com.codahale.metrics.Metric;
+import com.codahale.metrics.Histogram;
+import com.codahale.metrics.Snapshot;
 
 /**
- * A marker interface for any stubbed/disabled implementation of a {@link Metric}.
+ * A stubbed out histogram implementation.
  * 
  * @since 3.3.0
  */
-public interface DisabledMetric extends Metric {
+public class DisabledHistogram extends Histogram implements DisabledMetric {
+
+    /**
+     * Constructor.
+     */
+    public DisabledHistogram() {
+        super(null);
+    }
+
+    /** {@inheritDoc} */
+    @Override public void update(final int value) {
+        
+    }
+
+    /** {@inheritDoc} */
+    @Override public void update(final long value) {
+        
+    }
+
+    /** {@inheritDoc} */
+    @Override public long getCount() {
+        return 0;
+    }
+
+    /** {@inheritDoc} */
+    @Override public Snapshot getSnapshot() {
+        return null;
+    }
     
 }

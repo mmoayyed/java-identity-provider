@@ -15,32 +15,24 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.metrics;
+package net.shibboleth.idp.metrics.impl;
 
-import com.codahale.metrics.Histogram;
-import com.codahale.metrics.Snapshot;
+import com.codahale.metrics.Meter;
 
 /**
- * A stubbed out histogram implementation.
+ * A stubbed out meter implementation.
  * 
  * @since 3.3.0
  */
-public class DisabledHistogram extends Histogram implements DisabledMetric {
-
-    /**
-     * Constructor.
-     */
-    public DisabledHistogram() {
-        super(null);
-    }
+public class DisabledMeter extends Meter implements DisabledMetric {
 
     /** {@inheritDoc} */
-    @Override public void update(final int value) {
+    @Override public void mark() {
         
     }
 
     /** {@inheritDoc} */
-    @Override public void update(final long value) {
+    @Override public void mark(final long n) {
         
     }
 
@@ -50,8 +42,23 @@ public class DisabledHistogram extends Histogram implements DisabledMetric {
     }
 
     /** {@inheritDoc} */
-    @Override public Snapshot getSnapshot() {
-        return null;
+    @Override public double getFifteenMinuteRate() {
+        return 0;
     }
-    
+
+    /** {@inheritDoc} */
+    @Override public double getFiveMinuteRate() {
+        return 0;
+    }
+
+    /** {@inheritDoc} */
+    @Override public double getMeanRate() {
+        return 0;
+    }
+
+    /** {@inheritDoc} */
+    @Override public double getOneMinuteRate() {
+        return 0;
+    }
+
 }

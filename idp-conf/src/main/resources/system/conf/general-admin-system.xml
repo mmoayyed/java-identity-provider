@@ -65,9 +65,9 @@
     
     <!-- Some predefined metric sets, only created if installed by user. -->
     
-    <bean id="shibboleth.metrics.CoreGaugeSet" class="net.shibboleth.idp.metrics.CoreGaugeSet" lazy-init="true" />
+    <bean id="shibboleth.metrics.CoreGaugeSet" class="net.shibboleth.idp.metrics.impl.CoreGaugeSet" lazy-init="true" />
     
-    <bean id="shibboleth.metrics.IdPGaugeSet" class="net.shibboleth.idp.metrics.IdPGaugeSet" lazy-init="true" />
+    <bean id="shibboleth.metrics.IdPGaugeSet" class="net.shibboleth.idp.metrics.impl.IdPGaugeSet" lazy-init="true" />
     
     <bean id="shibboleth.metrics.LoggingGaugeSet"
         class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"

@@ -15,40 +15,15 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.metrics;
+package net.shibboleth.idp.metrics.impl;
 
-import com.codahale.metrics.Counter;
+import com.codahale.metrics.Metric;
 
 /**
- * A stubbed out counter implementation.
+ * A marker interface for any stubbed/disabled implementation of a {@link Metric}.
  * 
  * @since 3.3.0
  */
-public class DisabledCounter extends Counter implements DisabledMetric {
-
-    /** {@inheritDoc} */
-    @Override public void inc() {
-        
-    }
-
-    /** {@inheritDoc} */
-    @Override public void inc(final long n) {
-        
-    }
-
-    /** {@inheritDoc} */
-    @Override public void dec() {
-        
-    }
-
-    /** {@inheritDoc} */
-    @Override public void dec(final long n) {
-        
-    }
-
-    /** {@inheritDoc} */
-    @Override public long getCount() {
-        return 0;
-    }
-
+public interface DisabledMetric extends Metric {
+    
 }

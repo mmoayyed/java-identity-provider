@@ -15,50 +15,8 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.metrics;
-
-import com.codahale.metrics.Meter;
-
 /**
- * A stubbed out meter implementation.
- * 
- * @since 3.3.0
+ * Implementation classes supporting code instrumentation.
  */
-public class DisabledMeter extends Meter implements DisabledMetric {
 
-    /** {@inheritDoc} */
-    @Override public void mark() {
-        
-    }
-
-    /** {@inheritDoc} */
-    @Override public void mark(final long n) {
-        
-    }
-
-    /** {@inheritDoc} */
-    @Override public long getCount() {
-        return 0;
-    }
-
-    /** {@inheritDoc} */
-    @Override public double getFifteenMinuteRate() {
-        return 0;
-    }
-
-    /** {@inheritDoc} */
-    @Override public double getFiveMinuteRate() {
-        return 0;
-    }
-
-    /** {@inheritDoc} */
-    @Override public double getMeanRate() {
-        return 0;
-    }
-
-    /** {@inheritDoc} */
-    @Override public double getOneMinuteRate() {
-        return 0;
-    }
-
-}
+package net.shibboleth.idp.metrics.impl;
