@@ -47,7 +47,7 @@ import org.joda.time.DateTime;
 public class ReloadableServiceGaugeSet extends AbstractInitializableComponent implements MetricSet, MetricFilter {
 
     /** Default prefix for metrics. */
-    @Nonnull @NotEmpty private static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp";
+    @Nonnull @NotEmpty protected static final String DEFAULT_METRIC_NAME = "net.shibboleth.idp";
 
     /** The map of gauges. */
     @Nonnull @NonnullElements private final Map<String,Metric> gauges;

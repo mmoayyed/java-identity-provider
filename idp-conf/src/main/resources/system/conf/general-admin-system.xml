@@ -80,7 +80,7 @@
         p:service-ref="shibboleth.ReloadableAccessControlService" />
 
     <bean id="shibboleth.metrics.MetadataGaugeSet"
-        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.idp.saml.metadata.impl.MetadataResolverServiceGaugeSet" lazy-init="true"
         c:metricName="metadata"
         p:service-ref="shibboleth.MetadataResolverService" />
 
