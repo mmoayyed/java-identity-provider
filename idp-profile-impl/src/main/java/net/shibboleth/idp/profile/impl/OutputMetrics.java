@@ -18,6 +18,7 @@
 package net.shibboleth.idp.profile.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.joda.time.DateTime;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -50,6 +52,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.json.MetricsModule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 /**
  * Action that outputs one or more {@link Metric} objects.
@@ -68,6 +71,9 @@ public class OutputMetrics extends AbstractProfileAction {
     /** Flow variable indicating ID of metric or group of metrics to output. */
     @Nonnull @NotEmpty public static final String METRIC_ID = "metricId";
     
+    /** Default date/time format string. */
+    @Nonnull @NotEmpty public static final String DEFAULT_DT_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSSZZ";
+    
     /** Class logger. */
     @Nonnull private Logger log = LoggerFactory.getLogger(OutputMetrics.class);
     
@@ -82,6 +88,9 @@ public class OutputMetrics extends AbstractProfileAction {
     
     /** Name of JSONP callback function, if any. */
     @Nullable private String jsonpCallbackName;
+
+    /** Formatting string for {@link DateTime} fields. */
+    @Nullable private String dateTimeFormat;
 
     /** Map of custom metric groups to filters. */
     @Nonnull @NonnullElements private Map<String,MetricFilter> metricFilterMap;
@@ -136,6 +145,17 @@ public class OutputMetrics extends AbstractProfileAction {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         jsonpCallbackName = StringSupport.trimOrNull(callbackName);
+    }
+    
+    /**
+     * Set the {@link DateTime} formatting string to apply when writing {@link DateTime}-valued fields.
+     * 
+     * @param format formatting string
+     */
+    public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        dateTimeFormat = StringSupport.trimOrNull(format);
     }
     
     /**
@@ -234,6 +254,9 @@ public class OutputMetrics extends AbstractProfileAction {
             
             final ObjectMapper mapper = new ObjectMapper().registerModule(
                     new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, true, filter));
+            mapper.registerModule(new JodaModule());
+            mapper.setDateFormat(new SimpleDateFormat(dateTimeFormat != null ? dateTimeFormat : DEFAULT_DT_FORMAT));
+            
             if (jsonpCallbackName != null) {
                 response.setContentType("application/javascript");
                 mapper.writer().writeValue(response.getOutputStream(),
