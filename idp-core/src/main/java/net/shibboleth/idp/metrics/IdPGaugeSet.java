@@ -46,7 +46,6 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
     /** The map of gauges. */
     @Nonnull @NonnullElements private final Map<String,Metric> gauges;
     
-// Checkstyle: MethodLength OFF    
     /** Constructor. */
     public IdPGaugeSet() {
         gauges = new HashMap<>();
@@ -83,7 +82,6 @@ public class IdPGaugeSet extends ApplicationObjectSupport implements MetricSet, 
                     }
                 });
     }
-// Checkstyle: MethodLength ON
     
     /** {@inheritDoc} */
     public Map<String,Metric> getMetrics() {

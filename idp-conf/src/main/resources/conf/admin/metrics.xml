@@ -13,43 +13,32 @@
     <!-- Metrics enablement / activation. -->
 
     <!--
-    Uncomment to register one or more of the built-in system metric sets available.
-    Each bean can register only one metric set at a time (artifact of the metrics API).
+    Register one or more of the built-in system metric sets available.
     -->
 
-    <!--
-    <bean parent="shibboleth.metrics.RegisterMetricSet">
+    <bean parent="shibboleth.metrics.RegisterMetricSets">
         <property name="arguments">
-            <ref bean="shibboleth.metrics.CoreGaugeSet" />
+            <list>
+                <ref bean="shibboleth.metrics.CoreGaugeSet" />
+                <ref bean="shibboleth.metrics.IdPGaugeSet" />
+                <ref bean="shibboleth.metrics.LoggingGaugeSet" />
+                <ref bean="shibboleth.metrics.AccessControlGaugeSet" />
+                <ref bean="shibboleth.metrics.MetadataGaugeSet" />
+                <ref bean="shibboleth.metrics.NameIdentifierGaugeSet" />
+                <ref bean="shibboleth.metrics.RelyingPartyGaugeSet" />
+                <ref bean="shibboleth.metrics.AttributeResolverGaugeSet" />
+                <ref bean="shibboleth.metrics.AttributeFilterGaugeSet" />
+
+                <!--
+                <bean class="com.codahale.metrics.jvm.CachedThreadStatesGaugeSet"
+                    c:_0="1" c:_1="#{T(java.util.concurrent.TimeUnit).MINUTES}" />
+                <bean class="com.codahale.metrics.jvm.ClassLoadingGaugeSet" />
+                <bean class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
+                <bean class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
+                -->
+            </list>
         </property>
     </bean>
-    <bean parent="shibboleth.metrics.RegisterMetricSet">
-        <property name="arguments">
-            <ref bean="shibboleth.metrics.IdPGaugeSet" />
-        </property>
-    </bean>
-    <bean parent="shibboleth.metrics.RegisterMetricSet">
-        <property name="arguments">
-            <bean class="com.codahale.metrics.jvm.CachedThreadStatesGaugeSet"
-                c:_0="1" c:_1="#{T(java.util.concurrent.TimeUnit).MINUTES}" />
-        </property>
-    </bean>
-    <bean parent="shibboleth.metrics.RegisterMetricSet">
-        <property name="arguments">
-            <bean class="com.codahale.metrics.jvm.ClassLoadingGaugeSet" />
-        </property>
-    </bean>
-    <bean parent="shibboleth.metrics.RegisterMetricSet">
-        <property name="arguments">
-            <bean class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
-        </property>
-    </bean>
-    <bean parent="shibboleth.metrics.RegisterMetricSet">
-        <property name="arguments">
-            <bean class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
-        </property>
-    </bean>
-    -->
 
     <!-- Metrics REST API Configuration -->
 
@@ -59,10 +48,15 @@
     com.codahale.metrics.MetricFilter interface to specify which metrics to include.
     -->
     <util:map id="shibboleth.metrics.MetricGroups">
-        <!--
         <entry key="core" value-ref="shibboleth.metrics.CoreGaugeSet" />
         <entry key="idp" value-ref="shibboleth.metrics.IdPGaugeSet" />
-        -->
+        <entry key="logging" value-ref="shibboleth.metrics.LoggingGaugeSet" />
+        <entry key="access" value-ref="shibboleth.metrics.AccessControlGaugeSet" />
+        <entry key="metadata" value-ref="shibboleth.metrics.MetadataGaugeSet" />
+        <entry key="nameid" value-ref="shibboleth.metrics.NameIdentifierGaugeSet" />
+        <entry key="relyingparty" value-ref="shibboleth.metrics.RelyingPartyGaugeSet" />
+        <entry key="resolver" value-ref="shibboleth.metrics.AttributeResolverGaugeSet" />
+        <entry key="filter" value-ref="shibboleth.metrics.AttributeFilterGaugeSet" />
     </util:map>
         
     <!-- If you don't specify an alternate access policy, this named policy will be enforced. -->

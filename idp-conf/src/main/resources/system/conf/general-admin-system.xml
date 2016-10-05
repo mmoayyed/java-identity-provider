@@ -38,7 +38,7 @@
     <!-- Metric registry and a call to register it with the Metrics runtime. -->
 
     <bean id="shibboleth.metrics.MetricRegistry" class="net.shibboleth.idp.metrics.FilteredMetricRegistry"
-        c:_0-ref="shibboleth.metrics.LoggerDrivenMetricFilter" /> 
+        p:metricFilter-ref="shibboleth.metrics.LoggerDrivenMetricFilter" /> 
     
     <bean class="com.codahale.metrics.SharedMetricRegistries" factory-method="add"
         c:_0="#{T(net.shibboleth.idp.metrics.MetricsSupport).DEFAULT_METRIC_REGISTRY}"
@@ -53,20 +53,55 @@
 
     <!-- Parent beans for registering MetricSets and Metrics. -->
     
-    <bean id="shibboleth.metrics.RegisterMetricSet" abstract="true"
+    <bean id="shibboleth.metrics.RegisterMetricSets" abstract="true"
         class="org.springframework.beans.factory.config.MethodInvokingBean"
         p:targetObject-ref="shibboleth.metrics.MetricRegistry"
-        p:targetMethod="registerAll" />
+        p:targetMethod="registerMultiple" />
 
     <bean id="shibboleth.metrics.RegisterMetric" abstract="true"
         class="org.springframework.beans.factory.config.MethodInvokingBean"
         p:targetObject-ref="shibboleth.metrics.MetricRegistry"
         p:targetMethod="register" />
     
-    <!-- Some predefined metric sets, only created if used. -->
+    <!-- Some predefined metric sets, only created if installed by user. -->
+    
     <bean id="shibboleth.metrics.CoreGaugeSet" class="net.shibboleth.idp.metrics.CoreGaugeSet" lazy-init="true" />
-
-    <!-- Some predefined metric sets, only created if used. -->
+    
     <bean id="shibboleth.metrics.IdPGaugeSet" class="net.shibboleth.idp.metrics.IdPGaugeSet" lazy-init="true" />
+    
+    <bean id="shibboleth.metrics.LoggingGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="logging"
+        p:service-ref="shibboleth.LoggingService" />
+    
+    <bean id="shibboleth.metrics.AccessControlGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="accesscontrol"
+        p:service-ref="shibboleth.ReloadableAccessControlService" />
+
+    <bean id="shibboleth.metrics.MetadataGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="metadata"
+        p:service-ref="shibboleth.MetadataResolverService" />
+
+    <bean id="shibboleth.metrics.RelyingPartyGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="relyingparty"
+        p:service-ref="shibboleth.RelyingPartyResolverService" />
+
+    <bean id="shibboleth.metrics.NameIdentifierGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="nameid"
+        p:service-ref="shibboleth.NameIdentifierGenerationService" />
+
+    <bean id="shibboleth.metrics.AttributeResolverGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="attribute.resolver"
+        p:service-ref="shibboleth.AttributeResolverService" />
+
+    <bean id="shibboleth.metrics.AttributeFilterGaugeSet"
+        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        c:metricName="attribute.filter"
+        p:service-ref="shibboleth.AttributeFilterService" />
         
 </beans>
