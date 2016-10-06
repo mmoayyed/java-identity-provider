@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.MetricContext;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -139,15 +140,32 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     }
     
     /** {@inheritDoc} */
-//CheckStyle: ReturnCount OFF
-    @Override public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+    @Override
+    protected boolean doPreExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+
         if (handler == null) {
             handler = handlerLookupStrategy.apply(profileRequestContext);
             if (handler == null) {
                 log.debug("{} No message handler returned by lookup function, nothing to do", getLogPrefix());
-                return;
+                return false;
             }
         }
+        
+        final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
+        if (metricCtx != null) {
+            metricCtx.start(handler.getClass().getSimpleName());
+        }
+        
+        return true;
+    }
+    
+    /** {@inheritDoc} */
+//CheckStyle: ReturnCount OFF
+    @Override public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         MessageContext target = null;
         switch (direction) {
@@ -190,5 +208,20 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
         }
     }
   //CheckStyle: ReturnCount ON
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doPostExecute(
+            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
+        
+        final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
+        if (metricCtx != null) {
+            final String name = handler.getClass().getSimpleName();
+            metricCtx.stop(name);
+            metricCtx.inc(name);
+        }
+        
+        super.doPostExecute(profileRequestContext);
+    }
 
  }
