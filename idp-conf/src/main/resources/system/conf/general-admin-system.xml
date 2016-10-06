@@ -95,7 +95,7 @@
         p:service-ref="shibboleth.NameIdentifierGenerationService" />
 
     <bean id="shibboleth.metrics.AttributeResolverGaugeSet"
-        class="net.shibboleth.idp.metrics.ReloadableServiceGaugeSet" lazy-init="true"
+        class="net.shibboleth.idp.attribute.resolver.impl.AttributeResolverServiceGaugeSet" lazy-init="true"
         c:metricName="attribute.resolver"
         p:service-ref="shibboleth.AttributeResolverService" />
 
