@@ -43,7 +43,9 @@
     <!-- Metrics REST API Configuration -->
 
     <!--
-    By default any requests are assumed to be for specific named metrics. You can
+    The global metric set is available by default at /idp/profile/admin/metrics
+    
+    Any pathinfo after that is assumed to identify specific named metrics. You can
     create mappings here between a logical "group" name and an implementation of the
     com.codahale.metrics.MetricFilter interface to specify which metrics to include.
     -->
