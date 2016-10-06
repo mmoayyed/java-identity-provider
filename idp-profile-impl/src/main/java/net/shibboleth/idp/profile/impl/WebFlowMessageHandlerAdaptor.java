@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -95,7 +95,8 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
      *
      * @param executionDirection the direction of execution
      */
-    private WebFlowMessageHandlerAdaptor(@Nonnull final Direction executionDirection) {
+    private WebFlowMessageHandlerAdaptor(
+            @Nonnull @ParameterName(name="executionDirection") final Direction executionDirection) {
         direction = Constraint.isNotNull(executionDirection, "Execution direction cannot be null");
     }
     
@@ -105,8 +106,9 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
      * @param messageHandler the adapted message handler
      * @param executionDirection the direction of execution
      */
-    public WebFlowMessageHandlerAdaptor(@Nonnull final MessageHandler messageHandler,
-            @Nonnull final Direction executionDirection) {
+    public WebFlowMessageHandlerAdaptor(
+            @Nonnull @ParameterName(name="messageHandler") final MessageHandler messageHandler,
+            @Nonnull @ParameterName(name="executionDirection") final Direction executionDirection) {
         this(executionDirection);
         
         handler = Constraint.isNotNull(messageHandler, "MessageHandler cannot be null");
@@ -118,8 +120,10 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
      * @param lookupStrategy lookup function for message handler to run 
      * @param executionDirection the direction of execution
      */
-    public WebFlowMessageHandlerAdaptor(@Nonnull final Function<ProfileRequestContext,MessageHandler> lookupStrategy,
-            @Nonnull final Direction executionDirection) {
+    public WebFlowMessageHandlerAdaptor(
+            @Nonnull @ParameterName(name="lookupStrategy")
+                final Function<ProfileRequestContext,MessageHandler> lookupStrategy,
+            @Nonnull @ParameterName(name="executionDirection") final Direction executionDirection) {
         this(executionDirection);
         
         handlerLookupStrategy = Constraint.isNotNull(lookupStrategy, "MessageHandler lookup strategy cannot be null");
@@ -137,8 +141,6 @@ public class WebFlowMessageHandlerAdaptor<InboundMessageType, OutboundMessageTyp
     /** {@inheritDoc} */
 //CheckStyle: ReturnCount OFF
     @Override public void doExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
-        ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
-        
         if (handler == null) {
             handler = handlerLookupStrategy.apply(profileRequestContext);
             if (handler == null) {
