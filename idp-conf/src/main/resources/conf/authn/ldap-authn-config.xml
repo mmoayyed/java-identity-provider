@@ -21,8 +21,8 @@
     <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig" abstract="true" p:ldapUrl="%{idp.authn.LDAP.ldapURL}"
         p:useStartTLS="%{idp.authn.LDAP.useStartTLS:true}"
         p:useSSL="%{idp.authn.LDAP.useSSL:false}"
-        p:connectTimeout="%{idp.authn.LDAP.connectTimeout:3000}"
-        p:responseTimeout="%{idp.authn.LDAP.responseTimeout:3000}"
+        p:connectTimeoutDuration="%{idp.authn.LDAP.connectTimeout:PT3S}"
+        p:responseTimeoutDuration="%{idp.authn.LDAP.responseTimeout:PT3S}"
         p:sslConfig-ref="sslConfig" />
 
     <alias name="%{idp.authn.LDAP.sslConfig:certificateTrust}" alias="sslConfig" />
@@ -52,7 +52,7 @@
 
     <!-- Pool Configuration -->
     <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool" abstract="true"
-        p:blockWaitTime="%{idp.pool.LDAP.blockWaitTime:3000}"
+        p:blockWaitTimeDuration="%{idp.pool.LDAP.blockWaitTime:PT3S}"
         p:poolConfig-ref="poolConfig"
         p:pruneStrategy-ref="pruneStrategy"
         p:validator-ref="searchValidator"
@@ -62,10 +62,10 @@
         p:maxPoolSize="%{idp.pool.LDAP.maxSize:10}"
         p:validateOnCheckOut="%{idp.pool.LDAP.validateOnCheckout:false}"
         p:validatePeriodically="%{idp.pool.LDAP.validatePeriodically:true}"
-        p:validatePeriod="%{idp.pool.LDAP.validatePeriod:300}" />
+        p:validatePeriodDuration="%{idp.pool.LDAP.validatePeriod:PT5M}" />
     <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
-        p:prunePeriod="%{idp.pool.LDAP.prunePeriod:300}"
-        p:idleTime="%{idp.pool.LDAP.idleTime:600}" />
+        p:prunePeriodDuration="%{idp.pool.LDAP.prunePeriod:PT5M}"
+        p:idleTimeDuration="%{idp.pool.LDAP.idleTime:PT10M}" />
     <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 
     <!-- Anonymous Search Configuration -->
