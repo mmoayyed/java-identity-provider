@@ -24,12 +24,10 @@ import javax.annotation.Nullable;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
-import org.opensaml.core.metrics.FilteredMetricRegistry;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
@@ -50,8 +48,8 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
     /** Optional {@link ParserPool} to configure. */
     @Nullable private ParserPool parserPool;
     
-    /** Optional {@link MetricFilter} to configure. */
-    @Nullable private MetricFilter metricFilter;
+    /** Optional {@link MetricRegistry} to configure. */
+    @Nullable private MetricRegistry metricRegistry;
     
     /**
      * Get the global {@link ParserPool} to configure.
@@ -74,25 +72,25 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
     }
     
     /**
-     * Get the global {@link MetricFilter} to configure.
+     * Get the global {@link MetricRegistry} to configure.
      * 
-     * @return the metric filter to use
+     * @return the metric registry to use
      * 
      * @since 3.3.0
      */
-    @Nullable public MetricFilter getMetricFilter() {
-        return metricFilter;
+    @Nullable public MetricRegistry getMetricRegistry() {
+        return metricRegistry;
     }
     
     /**
-     * Set the global {@link MetricFilter} to configure.
+     * Set the global {@link MetricRegistry} to configure.
      * 
-     * @param filter the metric filter to use
+     * @param registry the metric registry to use
      * 
      * @since 3.3.0
      */
-    public void setMetricFilter(@Nullable final MetricFilter filter) {
-        metricFilter = filter;
+    public void setMetricRegistry(@Nullable final MetricRegistry registry) {
+        metricRegistry = registry;
     }
     
     /** {@inheritDoc} */
@@ -105,15 +103,12 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
             throw new ComponentInitializationException("Exception initializing OpenSAML", e);
         }
         
-        if (metricFilter != null) {
-            final MetricRegistry metricRegistry = ConfigurationService.get(MetricRegistry.class);
-            if (metricRegistry != null && metricRegistry instanceof FilteredMetricRegistry) {
-                ((FilteredMetricRegistry) metricRegistry).setMetricFilter(metricFilter);
-            }
-        }
-        
         XMLObjectProviderRegistry registry = null;
         synchronized(ConfigurationService.class) {
+            if (metricRegistry != null) {
+                ConfigurationService.register(MetricRegistry.class, metricRegistry);
+            }
+            
             registry = ConfigurationService.get(XMLObjectProviderRegistry.class);
             if (registry == null) {
                 log.debug("XMLObjectProviderRegistry did not exist in ConfigurationService, will be created");
