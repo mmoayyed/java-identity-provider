@@ -90,6 +90,14 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-core</artifactId>
+            <version>${opensaml.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>${opensaml.groupId}</groupId>
             <artifactId>opensaml-profile-api</artifactId>
             <version>${opensaml.version}</version>
             <scope>test</scope>

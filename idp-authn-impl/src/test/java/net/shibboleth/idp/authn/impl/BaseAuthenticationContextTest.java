@@ -22,13 +22,14 @@ import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 
+import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.collect.ImmutableList;
 
 /** Base class for further action tests. */
-public class BaseAuthenticationContextTest {
+public class BaseAuthenticationContextTest extends OpenSAMLInitBaseTestCase {
 
     protected RequestContext src;
     protected ProfileRequestContext prc;
