@@ -25,7 +25,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.context.SpringRequestContext;
-import net.shibboleth.idp.profile.context.MetricContext;
 import net.shibboleth.idp.profile.context.navigate.WebflowRequestContextProfileRequestContextLookup;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -160,39 +159,6 @@ public abstract class AbstractProfileAction<InboundMessageType,OutboundMessageTy
         
         return getResult(this, profileRequestContext);
     }
-    
-    /** {@inheritDoc} */
-    @Override
-    protected boolean doPreExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
-        if (!super.doPreExecute(profileRequestContext)) {
-            return false;
-        }
-        
-        final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
-        if (metricCtx != null) {
-            metricCtx.start(getClass().getSimpleName());
-        }
-        
-        return true;
-    }
-    
-
-    /** {@inheritDoc} */
-    @Override
-    protected void doPostExecute(
-            @Nonnull final ProfileRequestContext<InboundMessageType,OutboundMessageType> profileRequestContext) {
-        
-        final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
-        if (metricCtx != null) {
-            final String name = getClass().getSimpleName();
-            metricCtx.stop(name);
-            metricCtx.inc(name);
-        }
-        
-        super.doPostExecute(profileRequestContext);
-    }
-    
 
     /**
      * Examines the profile context for an event to return, or signals a successful outcome if

@@ -91,7 +91,7 @@
         <constructor-arg>
             <value>
             <![CDATA[
-                metricCtx = input.getSubcontext("net.shibboleth.idp.profile.context.MetricContext");
+                metricCtx = input.getSubcontext("org.opensaml.profile.context.MetricContext");
                 metricCtx.addTimer("idp.attribute.resolution",
                     "ResolveAttributes",
                     "FilterAttributes"

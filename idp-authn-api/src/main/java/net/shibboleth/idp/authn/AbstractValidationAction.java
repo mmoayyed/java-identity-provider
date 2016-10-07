@@ -36,7 +36,6 @@ import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
-import net.shibboleth.idp.metrics.MetricsSupport;
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
 import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
@@ -47,6 +46,7 @@ import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.core.metrics.MetricsSupport;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -384,7 +384,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * @since 3.3.0
      */
     protected void recordSuccess() {
-        MetricsSupport.getDefaultMetricRegistry().counter(getMetricName() + ".successes").inc();
+        MetricsSupport.getMetricRegistry().counter(getMetricName() + ".successes").inc();
     }
     
     /**
@@ -393,7 +393,7 @@ public abstract class AbstractValidationAction<InboundMessageType, OutboundMessa
      * @since 3.3.0
      */
     protected void recordFailure() {
-        MetricsSupport.getDefaultMetricRegistry().counter(getMetricName() + ".failures").inc();
+        MetricsSupport.getMetricRegistry().counter(getMetricName() + ".failures").inc();
     }
     
     /**

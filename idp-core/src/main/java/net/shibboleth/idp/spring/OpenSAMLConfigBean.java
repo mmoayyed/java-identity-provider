@@ -24,45 +24,75 @@ import javax.annotation.Nullable;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.metrics.FilteredMetricRegistry;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.MetricRegistry;
+
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 
 
 /**
- * A simple bean that may be used with Spring to initialize the OpenSAML library.
+ * A simple bean that may be used with Spring to initialize the OpenSAML library
+ * with injected instances of some critical objects.
  */
 public class OpenSAMLConfigBean extends AbstractInitializableComponent {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(OpenSAMLConfigBean.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(OpenSAMLConfigBean.class);
     
-    /** Optional ParserPool to configure. */
-    private ParserPool parserPool;
+    /** Optional {@link ParserPool} to configure. */
+    @Nullable private ParserPool parserPool;
+    
+    /** Optional {@link MetricFilter} to configure. */
+    @Nullable private MetricFilter metricFilter;
     
     /**
-     * Get the global ParserPool to configure.
+     * Get the global {@link ParserPool} to configure.
      * 
-     * @return Returns the parserPool.
+     * @return the parser pool
      */
     @Nullable public ParserPool getParserPool() {
         return parserPool;
     }
 
     /**
-     * Set the global ParserPool to configure.
+     * Set the global {@link ParserPool} to configure.
      * 
-     * @param newParserPool The parserPool to set.
+     * @param newParserPool the parser pool to set
      */
-    public void setParserPool(@Nonnull final ParserPool newParserPool) {
+    public void setParserPool(@Nullable final ParserPool newParserPool) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
-        parserPool = Constraint.isNotNull(newParserPool, "ParserPool cannot be null");
+        
+        parserPool = newParserPool;
+    }
+    
+    /**
+     * Get the global {@link MetricFilter} to configure.
+     * 
+     * @return the metric filter to use
+     * 
+     * @since 3.3.0
+     */
+    @Nullable public MetricFilter getMetricFilter() {
+        return metricFilter;
+    }
+    
+    /**
+     * Set the global {@link MetricFilter} to configure.
+     * 
+     * @param filter the metric filter to use
+     * 
+     * @since 3.3.0
+     */
+    public void setMetricFilter(@Nullable final MetricFilter filter) {
+        metricFilter = filter;
     }
     
     /** {@inheritDoc} */
@@ -75,6 +105,13 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
             throw new ComponentInitializationException("Exception initializing OpenSAML", e);
         }
         
+        if (metricFilter != null) {
+            final MetricRegistry metricRegistry = ConfigurationService.get(MetricRegistry.class);
+            if (metricRegistry != null && metricRegistry instanceof FilteredMetricRegistry) {
+                ((FilteredMetricRegistry) metricRegistry).setMetricFilter(metricFilter);
+            }
+        }
+        
         XMLObjectProviderRegistry registry = null;
         synchronized(ConfigurationService.class) {
             registry = ConfigurationService.get(XMLObjectProviderRegistry.class);
@@ -85,6 +122,9 @@ public class OpenSAMLConfigBean extends AbstractInitializableComponent {
             }
         }
         
-        registry.setParserPool(parserPool);
+        if (parserPool != null) {
+            registry.setParserPool(parserPool);
+        }
     }
+    
 }

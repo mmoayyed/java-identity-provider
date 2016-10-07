@@ -21,7 +21,7 @@
     <!-- These are beans that are common to most or all SAML profile flows, regardless of version. -->
 
     <bean id="PopulateMetricContext"
-        class="net.shibboleth.idp.profile.impl.PopulateMetricContext" scope="prototype"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
 
     <!-- Declares audit field extractor functions injected into beans that populate the audit context. -->

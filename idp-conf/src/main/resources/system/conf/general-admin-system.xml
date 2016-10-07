@@ -35,19 +35,10 @@
         </property>
     </bean>
     
-    <!-- Metric registry and a call to register it with the Metrics runtime. -->
-
-    <bean id="shibboleth.metrics.MetricRegistry" class="net.shibboleth.idp.metrics.FilteredMetricRegistry"
-        p:metricFilter-ref="shibboleth.metrics.LoggerDrivenMetricFilter" /> 
-    
-    <bean class="com.codahale.metrics.SharedMetricRegistries" factory-method="add"
-        c:_0="#{T(net.shibboleth.idp.metrics.MetricsSupport).DEFAULT_METRIC_REGISTRY}"
-        c:_1-ref="shibboleth.metrics.MetricRegistry" />
-
     <!-- MetricFilter we can control with logging categories. -->
 
     <bean id="shibboleth.metrics.LoggerDrivenMetricFilter"
-        class="net.shibboleth.idp.metrics.LoggerDrivenMetricFilter"
+        class="org.opensaml.core.metrics.LoggerDrivenMetricFilter"
         c:_0="metrics."
         c:_1="#{getObject('shibboleth.metrics.MetricLevelMap')}" />
 

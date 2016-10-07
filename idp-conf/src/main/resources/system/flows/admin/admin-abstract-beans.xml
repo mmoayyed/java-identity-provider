@@ -23,7 +23,7 @@
         p:profileId-ref="shibboleth.AdminProfileId" />
 
     <bean id="PopulateMetricContext"
-        class="net.shibboleth.idp.profile.impl.PopulateMetricContext" scope="prototype"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
         p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
     
     <!--

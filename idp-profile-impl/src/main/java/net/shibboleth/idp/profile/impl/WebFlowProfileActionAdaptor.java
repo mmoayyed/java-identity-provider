@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.MetricContext;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.profile.action.ProfileAction;
@@ -55,23 +54,7 @@ public class WebFlowProfileActionAdaptor<InboundMessageType, OutboundMessageType
     @Override
     @Nonnull public void execute(
             @Nonnull final ProfileRequestContext<InboundMessageType, OutboundMessageType> profileRequestContext) {
-
-        // The doPre/doPost hooks on the base class don't run for wrapped actions, so we do this inline.
-        // This can go away if we move the metric support down into the OpenSAML action base class.
-        final MetricContext metricCtx = profileRequestContext.getSubcontext(MetricContext.class);
-        if (metricCtx != null) {
-            metricCtx.start(action.getClass().getSimpleName());
-        }
-
-        try {
-            action.execute(profileRequestContext);
-        } finally {
-            if (metricCtx != null) {
-                final String name = action.getClass().getSimpleName();
-                metricCtx.stop(name);
-                metricCtx.inc(name);
-            }
-        }
+        action.execute(profileRequestContext);
     }
 
 }
