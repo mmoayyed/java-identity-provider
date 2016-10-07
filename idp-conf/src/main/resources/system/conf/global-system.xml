@@ -51,9 +51,9 @@
     <import resource="utilities.xml" />
 
     <bean id="shibboleth.OpenSAMLConfig" class="net.shibboleth.idp.spring.OpenSAMLConfigBean"
-        depends-on="shibboleth.LoggingService,shibboleth.ParserPool,shibboleth.metrics.LoggerDrivenMetricFilter"
+        depends-on="shibboleth.LoggingService,shibboleth.ParserPool,shibboleth.metrics.MetricRegistry"
         p:parserPool-ref="shibboleth.ParserPool"
-        p:metricFilter-ref="shibboleth.metrics.LoggerDrivenMetricFilter" />
+        p:metricRegistry-ref="shibboleth.metrics.MetricRegistry" />
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
             depends-on="shibboleth.LoggingService">

@@ -35,17 +35,16 @@
         </property>
     </bean>
     
-    <!-- MetricFilter we can control with logging categories. -->
+    <!-- MetricRegistry we can control with logging categories. -->
+    <bean id="shibboleth.metrics.MetricRegistry"
+        class="org.opensaml.core.metrics.FilteredMetricRegistry"
+        p:metricFilter-ref="shibboleth.metrics.LoggerDrivenMetricFilter" />
+        
     <bean id="shibboleth.metrics.LoggerDrivenMetricFilter"
         class="org.opensaml.core.metrics.LoggerDrivenMetricFilter"
         c:_0="metrics."
         c:_1="#{getObject('shibboleth.metrics.MetricLevelMap')}" />
         
-    <!-- Pull MetricRegistry out of OpenSAML Configuration. -->
-    <bean id="shibboleth.metrics.MetricRegistry"
-        class="org.opensaml.core.config.ConfigurationService" factory-method="get"
-        c:_0="#{T(com.codahale.metrics.MetricRegistry)}" />
-
     <!-- Parent beans for registering MetricSets and Metrics. -->
     
     <bean id="shibboleth.metrics.RegisterMetricSets" abstract="true"
