@@ -175,7 +175,7 @@ public class AuthenticationResult implements PrincipalSupportingComponent {
     }
     
     /**
-     * Get whether this result was loaded from a session as the product of a previous request.
+     * Set whether this result was loaded from a session as the product of a previous request.
      * 
      * @param flag flag to set
      * 

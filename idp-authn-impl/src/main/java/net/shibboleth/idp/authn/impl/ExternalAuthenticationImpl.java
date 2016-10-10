@@ -174,6 +174,11 @@ public class ExternalAuthenticationImpl extends ExternalAuthentication {
         if (attr != null && attr instanceof Boolean) {
             extContext.setDoNotCache((Boolean) attr);
         }
+
+        attr = request.getAttribute(PREVIOUSRESULT_KEY);
+        if (attr != null && attr instanceof Boolean) {
+            extContext.setPreviousResult((Boolean) attr);
+        }
         
         attr = request.getAttribute(REVOKECONSENT_KEY);
         if (attr != null && attr instanceof Boolean && ((Boolean) attr).booleanValue()) {

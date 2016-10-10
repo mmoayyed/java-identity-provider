@@ -64,6 +64,14 @@ public class ExternalAuthentication {
      */
     @Nonnull @NotEmpty public static final String REVOKECONSENT_KEY = "revokeConsent";
 
+    /**
+     * Request attribute to which a signal to set
+     * {@link net.shibboleth.idp.authn.AuthenticationResult#setPreviousResult(boolean)} may be bound.
+     * 
+     * @since 3.3.0
+     */
+    @Nonnull @NotEmpty public static final String PREVIOUSRESULT_KEY = "previousResult";
+    
     /** Request attribute that indicates whether the authentication request requires forced authentication. */
     @Nonnull @NotEmpty public static final String FORCE_AUTHN_PARAM = "forceAuthn";
 

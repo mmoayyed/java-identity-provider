@@ -114,7 +114,7 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
     }
     
     /** {@inheritDoc} */
- // Checkstyle: ReturnCount OFF
+ // Checkstyle: ReturnCount|CyclomaticComplexity OFF
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
@@ -170,12 +170,18 @@ public class ValidateExternalAuthentication extends AbstractValidationAction {
             authenticationContext.setResultCacheable(false);
         }
         buildAuthenticationResult(profileRequestContext, authenticationContext);
-        if (extContext.getAuthnInstant() != null && authenticationContext.getAuthenticationResult() != null) {
-            authenticationContext.getAuthenticationResult().setAuthenticationInstant(
-                    extContext.getAuthnInstant().getMillis());
+        
+        if (authenticationContext.getAuthenticationResult() != null) {
+            if (extContext.getAuthnInstant() != null) {
+                authenticationContext.getAuthenticationResult().setAuthenticationInstant(
+                        extContext.getAuthnInstant().getMillis());
+            }
+            if (extContext.isPreviousResult()) {
+                authenticationContext.getAuthenticationResult().setPreviousResult(true);
+            }
         }
     }
- // Checkstyle: ReturnCount ON
+ // Checkstyle: ReturnCount|CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override

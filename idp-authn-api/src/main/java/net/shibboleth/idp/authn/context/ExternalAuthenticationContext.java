@@ -58,6 +58,9 @@ public final class ExternalAuthenticationContext extends BaseContext {
     /** Flag preventing caching of result for SSO. */
     private boolean doNotCache;
     
+    /** Flag indicating this "new" result is really "old". */
+    private boolean previousResult;
+    
     /**
      * Get the flow execution URL to return control to.
      * 
@@ -203,4 +206,27 @@ public final class ExternalAuthenticationContext extends BaseContext {
         doNotCache = flag;
     }
     
+    /**
+     * Get whether this result is the product of an external SSO event and not
+     * a new act of authentication.
+     * 
+     * @return true iff this result was produced as part of an earlier request
+     * 
+     * @since 3.3.0
+     */
+    public boolean isPreviousResult() {
+        return previousResult;
+    }
+    
+    /**
+     * Set whether this result is the product of an external SSO event and not
+     * a new act of authentication.
+     * 
+     * @param flag flag to set
+     * 
+     * @since 3.3.0
+     */
+    public void setPreviousResult(final boolean flag) {
+        previousResult = flag;
+    }
 }

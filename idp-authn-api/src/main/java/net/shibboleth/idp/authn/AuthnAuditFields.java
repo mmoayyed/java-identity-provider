@@ -28,6 +28,9 @@ public final class AuthnAuditFields {
 
     /** Authentication flow ID field. */
     @Nonnull @NotEmpty public static final String AUTHN_FLOW_ID = "AF";
+
+    /** SSO indicator signaling authentication was not "freshly" performed. */
+    @Nonnull @NotEmpty public static final String SSO = "SSO";
     
     /** Constructor. */
     private AuthnAuditFields() {

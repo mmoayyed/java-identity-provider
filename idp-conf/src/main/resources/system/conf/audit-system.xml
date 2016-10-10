@@ -317,6 +317,19 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.SSO"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <bean class="net.shibboleth.idp.authn.context.navigate.PreviousResultLookupFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.ChildLookup.AuthenticationContext" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -560,6 +573,19 @@
                 </entry>
                 <entry>
                     <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.SSO"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <bean class="net.shibboleth.idp.authn.context.navigate.PreviousResultLookupFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.ChildLookup.AuthenticationContext" />
+                        </constructor-arg>
+                    </bean>
+                </entry>
+                <entry>
+                    <key>
                         <util:constant static-field="net.shibboleth.idp.profile.IdPAuditFields.USERNAME"/>
                     </key>
                     <bean class="com.google.common.base.Functions" factory-method="compose"
@@ -598,6 +624,19 @@
                         <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.AUTHN_FLOW_ID"/>
                     </key>
                     <bean class="net.shibboleth.idp.authn.audit.impl.AuthenticationFlowAuditExtractor" />
+                </entry>
+                <entry>
+                    <key>
+                        <util:constant static-field="net.shibboleth.idp.authn.AuthnAuditFields.SSO"/>
+                    </key>
+                    <bean class="com.google.common.base.Functions" factory-method="compose">
+                        <constructor-arg name="g">
+                            <bean class="net.shibboleth.idp.authn.context.navigate.PreviousResultLookupFunction" />
+                        </constructor-arg>
+                        <constructor-arg name="f">
+                            <ref bean="shibboleth.ChildLookup.AuthenticationContext" />
+                        </constructor-arg>
+                    </bean>
                 </entry>
                 <entry>
                     <key>

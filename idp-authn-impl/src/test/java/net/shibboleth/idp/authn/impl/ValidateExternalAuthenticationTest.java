@@ -79,6 +79,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
                 UsernamePrincipal.class).iterator().next().getName(), "foo");
     }
@@ -91,6 +92,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
                 TestPrincipal.class).iterator().next().getName(), "foo");
     }
@@ -105,6 +107,7 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertFalse(ac.getAuthenticationResult().isPreviousResult());
         Assert.assertEquals(ac.getAuthenticationResult().getSubject().getPrincipals(
                 TestPrincipal.class).iterator().next().getName(), "foo");
     }
@@ -115,13 +118,15 @@ public class ValidateExternalAuthenticationTest extends BaseAuthenticationContex
         eac.setPrincipalName("foo");
         final DateTime ts = DateTime.now().minus(3600);
         eac.setAuthnInstant(ts);
+        eac.setPreviousResult(true);
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
         Assert.assertNotNull(ac.getAuthenticationResult());
+        Assert.assertTrue(ac.getAuthenticationResult().isPreviousResult());
         Assert.assertEquals(ts.getMillis(), ac.getAuthenticationResult().getAuthenticationInstant());
     }
-
+    
     @Test public void testException() {
         final AuthenticationContext ac = prc.getSubcontext(AuthenticationContext.class);
         final ExternalAuthenticationContext eac = ac.getSubcontext(ExternalAuthenticationContext.class, true);
