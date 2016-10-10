@@ -70,7 +70,6 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
             Assert.assertEquals(idpsso.getArtifactResolutionServices().size(), 2);
             Assert.assertEquals(idpsso.getSingleLogoutServices().size(), 4);
             Assert.assertEquals(idpsso.getSingleSignOnServices().size(), 4);
-            Assert.assertEquals(idpsso.getNameIDFormats().size(), 2);
             List<XMLObject> exts = idpsso.getExtensions().getUnknownXMLObjects();
             Assert.assertEquals(exts.size(), 1);
             Assert.assertEquals(idpsso.getKeyDescriptors().size(), 3);
@@ -112,7 +111,6 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
             Assert.assertEquals(idpsso.getArtifactResolutionServices().size(), 2);
             Assert.assertEquals(idpsso.getSingleLogoutServices().size(), 0);
             Assert.assertEquals(idpsso.getSingleSignOnServices().size(), 4);
-            Assert.assertEquals(idpsso.getNameIDFormats().size(), 2);
             List<XMLObject> exts = idpsso.getExtensions().getUnknownXMLObjects();
             Assert.assertEquals(exts.size(), 1);
             Assert.assertEquals(idpsso.getKeyDescriptors().size(), 3);
