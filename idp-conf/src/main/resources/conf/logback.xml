@@ -24,10 +24,6 @@
     <variable name="idp.loglevel.spring" value="ERROR" />
     <variable name="idp.loglevel.container" value="ERROR" />
     <variable name="idp.loglevel.xmlsec" value="INFO" />
-    
-    <!-- Syslog address for F-TICKS (see FTICKSLoggingConfiguration). -->
-    <variable name="idp.fticks.loghost" value="localhost" />
-    <variable name="idp.fticks.logport" value="514" />
 
     <!--
     If you want to use custom properties in this config file,
