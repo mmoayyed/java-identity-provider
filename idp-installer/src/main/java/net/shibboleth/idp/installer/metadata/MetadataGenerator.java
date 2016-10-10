@@ -44,14 +44,12 @@ import org.opensaml.saml.ext.saml2mdui.DisplayName;
 import org.opensaml.saml.ext.saml2mdui.Logo;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.core.Extensions;
-import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.metadata.ArtifactResolutionService;
 import org.opensaml.saml.saml2.metadata.AttributeAuthorityDescriptor;
 import org.opensaml.saml.saml2.metadata.AttributeService;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
-import org.opensaml.saml.saml2.metadata.NameIDFormat;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
 import org.opensaml.xmlsec.signature.KeyInfo;
@@ -430,11 +428,8 @@ public class MetadataGenerator {
             writer.write("        -->");
             writer.newLine();
         }
+        
         writer.newLine();
-        writeNameIdFormat(net.shibboleth.idp.saml.xml.SAMLConstants.SAML1_NAMEID_TRANSIENT);
-        writeNameIdFormat(NameIDType.TRANSIENT);
-        writer.newLine();
-
         for (final Endpoints endpoint : SSO_ENDPOINTS) {
             if (getEndpoints().contains(endpoint)) {
                 outputEndpoint(endpoint);
@@ -445,24 +440,6 @@ public class MetadataGenerator {
         writer.write(IDPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME);
         writer.write(">");
         writer.newLine();
-    }
-
-    /**
-     * write out support for a specific name format.
-     * 
-     * @param format what to support
-     * @throws IOException when badness occurrs
-     */
-    protected void writeNameIdFormat(final String format) throws IOException {
-        writer.write("        <");
-        writer.write(NameIDFormat.DEFAULT_ELEMENT_LOCAL_NAME);
-        writer.write('>');
-        writer.write(format);
-        writer.write("</");
-        writer.write(NameIDFormat.DEFAULT_ELEMENT_LOCAL_NAME);
-        writer.write('>');
-        writer.newLine();
-
     }
 
     /**
