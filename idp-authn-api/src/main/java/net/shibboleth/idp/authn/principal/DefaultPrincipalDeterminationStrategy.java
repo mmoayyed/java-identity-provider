@@ -29,6 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.context.AuthenticationContext;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -72,7 +73,8 @@ public class DefaultPrincipalDeterminationStrategy<T extends Principal> implemen
      * @param type class type for Principal type
      * @param principal default Principal to return
      */
-    public DefaultPrincipalDeterminationStrategy(@Nonnull final Class<T> type, @Nonnull final T principal) {
+    public DefaultPrincipalDeterminationStrategy(@Nonnull @ParameterName(name="type") final Class<T> type,
+            @Nonnull  @ParameterName(name="principal") final T principal) {
         principalType = Constraint.isNotNull(type, "Class type cannot be null");
         defaultPrincipal = Constraint.isNotNull(principal, "Default Principal cannot be null");
         weightMap = Collections.emptyMap();

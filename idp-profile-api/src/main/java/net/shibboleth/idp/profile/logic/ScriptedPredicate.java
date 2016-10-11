@@ -26,6 +26,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
@@ -69,7 +70,8 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @param theScript the script we will evaluate.
      * @param extraInfo debugging information.
      */
-    public ScriptedPredicate(@Nonnull final EvaluableScript theScript, @Nullable final String extraInfo) {
+    public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
+            @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
         script = Constraint.isNotNull(theScript, "Supplied script should not be null");
         logPrefix = "Scripted Predicate from " + extraInfo + " :";
     }
@@ -79,7 +81,7 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * 
      * @param theScript the script we will evaluate.
      */
-    public ScriptedPredicate(@Nonnull final EvaluableScript theScript) {
+    public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
         script = Constraint.isNotNull(theScript, "Supplied script should not be null");
         logPrefix = "Anonymous Scripted Predicate :";
     }

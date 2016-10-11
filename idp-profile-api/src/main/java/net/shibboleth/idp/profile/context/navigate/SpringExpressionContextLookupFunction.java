@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.context.navigate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -66,8 +67,8 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
      * @param inClass the class we accept as input.
      * @param expression the expression to evaluate.
      */
-    public SpringExpressionContextLookupFunction(@Nonnull final Class<T> inClass,
-            @Nonnull @NotEmpty final String expression) {
+    public SpringExpressionContextLookupFunction(@Nonnull @ParameterName(name="inClass") final Class<T> inClass,
+            @Nonnull @NotEmpty @ParameterName(name="expression") final String expression) {
         inputClass = Constraint.isNotNull(inClass, "Supplied inputClass cannot be null");
         springExpression = Constraint.isNotNull(expression, "Supplied expression cannot be null");
     }
@@ -79,8 +80,9 @@ public class SpringExpressionContextLookupFunction<T extends BaseContext>
      * @param expression the expression to evaluate.
      * @param outputType the type to test against.
      */
-    public SpringExpressionContextLookupFunction(@Nonnull final Class<T> inClass,
-            @Nonnull @NotEmpty final String expression, @Nullable final Class outputType) {
+    public SpringExpressionContextLookupFunction(@Nonnull @ParameterName(name="inClass") final Class<T> inClass,
+            @Nonnull @NotEmpty @ParameterName(name="expression") final String expression, 
+            @ParameterName(name="outputType") @Nullable final Class outputType) {
         this(inClass, expression);
         outputClass = outputType;
     }

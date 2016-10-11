@@ -24,14 +24,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A registry of mappings between a custom {@link Principal} subtype with a matching operator
@@ -57,7 +58,7 @@ public final class PrincipalEvalPredicateFactoryRegistry {
      * 
      * @param fromMap  map to populate registry with
      */
-    public PrincipalEvalPredicateFactoryRegistry(@Nonnull @NonnullElements final
+    public PrincipalEvalPredicateFactoryRegistry(@Nonnull @NonnullElements @ParameterName(name="fromMap") final
             Map<Pair<Class<? extends Principal>, String>, PrincipalEvalPredicateFactory> fromMap) {
         registry = new ConcurrentHashMap(Constraint.isNotNull(fromMap, "Source map cannot be null"));
     }

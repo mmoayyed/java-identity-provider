@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.saml.security.KeyAuthoritySupport;
 import net.shibboleth.idp.saml.xmlobject.KeyAuthority;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceMultiMap;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -84,7 +85,8 @@ public class MetadataPKIXValidationInformationResolver extends AbstractInitializ
      * 
      * @param resolver role descriptor resolver
      */
-    public MetadataPKIXValidationInformationResolver(@Nonnull final RoleDescriptorResolver resolver) {
+    public MetadataPKIXValidationInformationResolver(
+            @Nonnull @ParameterName(name="resolver") final RoleDescriptorResolver resolver) {
         roleDescriptorResolver = Constraint.isNotNull(resolver, "RoleDescriptor resolver cannot be null");
     }
 

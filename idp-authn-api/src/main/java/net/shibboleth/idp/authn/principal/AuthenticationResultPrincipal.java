@@ -22,6 +22,7 @@ import java.security.Principal;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -38,11 +39,12 @@ public class AuthenticationResultPrincipal implements Principal {
      * 
      * @param result the result to wrap
      */
-    public AuthenticationResultPrincipal(@Nonnull final AuthenticationResult result) {
+    public AuthenticationResultPrincipal(@Nonnull @ParameterName(name="result") final AuthenticationResult result) {
         authnResult = Constraint.isNotNull(result, "AuthenticationResult cannot be null");
     }
 
     /** {@inheritDoc} */
+    @Override
     @Nonnull @NotEmpty public String getName() {
         return authnResult.getAuthenticationFlowId();
     }
@@ -57,11 +59,13 @@ public class AuthenticationResultPrincipal implements Principal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public int hashCode() {
         return authnResult.hashCode();
     }
 
     /** {@inheritDoc} */
+    @Override
     public boolean equals(final Object other) {
         if (other == null) {
             return false;
@@ -79,6 +83,7 @@ public class AuthenticationResultPrincipal implements Principal {
     }
 
     /** {@inheritDoc} */
+    @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("authnResult", authnResult).toString();
     }

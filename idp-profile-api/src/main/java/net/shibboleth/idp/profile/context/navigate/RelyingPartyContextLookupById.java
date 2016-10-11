@@ -20,14 +20,15 @@ package net.shibboleth.idp.profile.context.navigate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-
 import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.collection.Pair;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import com.google.common.base.Function;
 
 /**
  * A function that returns a {@link RelyingPartyContext} based on ID.
@@ -50,7 +51,7 @@ public class RelyingPartyContextLookupById
      * 
      * @param theLabel indicates context should be created if not present, using this label
      */
-    public RelyingPartyContextLookupById(@Nonnull @NotEmpty final String theLabel) {
+    public RelyingPartyContextLookupById(@Nonnull @NotEmpty @ParameterName(name="theLabel") final String theLabel) {
         label = Constraint.isNotNull(StringSupport.trimOrNull(theLabel), "Label cannot be null or empty");
     }
 

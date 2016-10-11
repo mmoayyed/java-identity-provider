@@ -22,6 +22,7 @@ import java.security.Principal;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -38,7 +39,7 @@ public class IdPAttributePrincipal implements Principal {
      * 
      * @param attr the attribute
      */
-    public IdPAttributePrincipal(@Nonnull final IdPAttribute attr) {
+    public IdPAttributePrincipal(@Nonnull @ParameterName(name="attr") final IdPAttribute attr) {
         attribute = Constraint.isNotNull(attr, "IdPAttribute cannot be null");
     }
 

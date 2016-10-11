@@ -17,17 +17,20 @@
 
 package net.shibboleth.idp.cas.ticket.impl;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.security.IdentifierGenerationStrategy;
-import org.cryptacular.generator.RandomIdGenerator;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import org.cryptacular.generator.RandomIdGenerator;
 
 /**
  * Generates CAS protocol ticket identifiers of the form:
@@ -63,8 +66,8 @@ public class TicketIdentifierGenerationStrategy implements IdentifierGenerationS
      * @param randomLength Length in characters of random part of the ticket.
      */
     public TicketIdentifierGenerationStrategy(
-            @Nonnull @NotEmpty final String prefix,
-            @Positive final int randomLength) {
+            @Nonnull @NotEmpty @ParameterName(name="prefix") final String prefix,
+            @Positive @ParameterName(name="randomLength") final int randomLength) {
         ticketLength = (int) Constraint.isGreaterThan(0, randomLength, "Random length must be positive");
         ticketPrefix = Constraint.isNotNull(StringSupport.trimOrNull(prefix), "Prefix cannot be null or empty");
         if (!isUrlSafe(this.ticketPrefix)) {

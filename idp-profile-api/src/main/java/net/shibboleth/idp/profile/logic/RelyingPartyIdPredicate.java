@@ -23,6 +23,7 @@ import java.util.Collections;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.StrategyIndirectedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
@@ -43,7 +44,8 @@ public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<Profile
      * 
      * @param candidates hardwired set of values to check against
      */
-    public RelyingPartyIdPredicate(@Nonnull @NonnullElements final Collection<String> candidates) {
+    public RelyingPartyIdPredicate(@Nonnull @NonnullElements @ParameterName(name="candidates")
+                                                         final Collection<String> candidates) {
         super(new RelyingPartyIdLookupFunction(), StringSupport.normalizeStringCollection(candidates));
     }
 

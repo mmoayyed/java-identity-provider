@@ -19,6 +19,7 @@ package net.shibboleth.idp.authn.principal;
 
 import javax.annotation.Nonnull;
 
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -35,7 +36,7 @@ public class PasswordPrincipal implements CloneablePrincipal {
      * 
      * @param pw the password
      */
-    public PasswordPrincipal(@Nonnull @NotEmpty final String pw) {
+    public PasswordPrincipal(@Nonnull @NotEmpty @ParameterName(name="pw") final String pw) {
         password = Constraint.isNotEmpty(pw, "Password cannot be null or empty");
     }
 

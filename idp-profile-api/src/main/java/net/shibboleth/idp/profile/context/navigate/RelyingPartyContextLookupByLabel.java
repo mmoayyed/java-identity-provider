@@ -22,13 +22,14 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-
 import net.shibboleth.idp.profile.context.MultiRelyingPartyContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
+import com.google.common.base.Function;
 
 /**
  * A function that returns a collection of {@link RelyingPartyContext}s based on a label.
@@ -44,7 +45,7 @@ public class RelyingPartyContextLookupByLabel
      * 
      * @param theLabel indicates context should be created if not present, using this label
      */
-    public RelyingPartyContextLookupByLabel(@Nonnull @NotEmpty final String theLabel) {
+    public RelyingPartyContextLookupByLabel(@Nonnull @NotEmpty @ParameterName(name="theLabel") final String theLabel) {
         label = Constraint.isNotNull(StringSupport.trimOrNull(theLabel), "Label cannot be null or empty");
     }
 

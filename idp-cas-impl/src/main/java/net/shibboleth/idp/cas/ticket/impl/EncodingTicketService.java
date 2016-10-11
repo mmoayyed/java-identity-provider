@@ -25,9 +25,11 @@ import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.Ticket;
 import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.security.DataSealer;
+
 import org.joda.time.Instant;
 import org.opensaml.storage.StorageService;
 import org.slf4j.Logger;
@@ -88,7 +90,8 @@ public class EncodingTicketService extends AbstractTicketService {
      * @param service Storage service to which tickets are persisted.
      * @param sealer data sealer
      */
-    public EncodingTicketService(@Nonnull final StorageService service, @Nonnull final DataSealer sealer) {
+    public EncodingTicketService(@Nonnull @ParameterName(name="service") final StorageService service, 
+            @Nonnull @ParameterName(name="sealer") final DataSealer sealer) {
         super(service);
         dataSealer = Constraint.isNotNull(sealer, "DataSealer cannot be null");
     }

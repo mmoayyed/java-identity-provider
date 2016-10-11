@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.logic;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -63,7 +64,7 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      *
      * @param attribute Attribute name that provides candidate date values to test.
      */
-    public DateAttributePredicate(@Nonnull @NotEmpty final String attribute) {
+    public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute) {
         this(attribute, ISODateTimeFormat.dateOptionalTimeParser());
     }
 
@@ -74,8 +75,8 @@ public class DateAttributePredicate extends AbstractAttributePredicate {
      * @param attribute Attribute name that provides candidate date values to test.
      * @param formatter Date/time parser.
      */
-    public DateAttributePredicate(@Nonnull @NotEmpty final String attribute,
-            @Nonnull final DateTimeFormatter formatter) {
+    public DateAttributePredicate(@Nonnull @NotEmpty @ParameterName(name="attribute") final String attribute,
+            @Nonnull @ParameterName(name="formatter") final DateTimeFormatter formatter) {
         attributeName = Constraint.isNotNull(attribute, "Attribute cannot be null");
         dateTimeFormatter = Constraint.isNotNull(formatter, "Formatter cannot be null");
         systemTimeOffset = Duration.ZERO;

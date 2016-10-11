@@ -24,7 +24,9 @@ import net.shibboleth.idp.cas.ticket.ProxyGrantingTicket;
 import net.shibboleth.idp.cas.ticket.ProxyTicket;
 import net.shibboleth.idp.cas.ticket.ServiceTicket;
 import net.shibboleth.idp.cas.ticket.TicketState;
+import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+
 import org.joda.time.Instant;
 import org.opensaml.storage.StorageService;
 
@@ -40,7 +42,7 @@ public class SimpleTicketService extends AbstractTicketService {
      *
      * @param service Storage service to which tickets are persisted.
      */
-    public SimpleTicketService(@Nonnull final StorageService service) {
+    public SimpleTicketService(@Nonnull @ParameterName(name="service") final StorageService service) {
         super(service);
     }
 
