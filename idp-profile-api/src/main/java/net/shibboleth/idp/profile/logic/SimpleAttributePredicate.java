@@ -58,7 +58,6 @@ public class SimpleAttributePredicate extends AbstractAttributePredicate {
     
     /** Constructor. */
     public SimpleAttributePredicate() {
-        super();
         attributeValueMap = ArrayListMultimap.create();
     }
 
