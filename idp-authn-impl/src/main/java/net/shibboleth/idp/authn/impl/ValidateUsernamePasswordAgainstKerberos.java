@@ -207,26 +207,26 @@ public class ValidateUsernamePasswordAgainstKerberos extends AbstractUsernamePas
             }
             
             log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
-            recordSuccess();
+            recordSuccess(profileRequestContext);
             buildAuthenticationResult(profileRequestContext, authenticationContext);
         } catch (final InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             log.error("{} Unable to instantiate JAAS module for Kerberos", getLogPrefix(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
-            recordFailure();
+            recordFailure(profileRequestContext, false);
         } catch (final LoginException e) {
             log.info("{} Login by {} failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
-            recordFailure();
+            recordFailure(profileRequestContext, true);
         } catch(final GSSException e) {
             log.warn("{} Login by {} failed during GSS context establishment to verify KDC", getLogPrefix(),
                     getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
-            recordFailure();
+            recordFailure(profileRequestContext, false);
         } catch (final Exception e) {
             log.warn("{} Login by {} produced unknown exception", getLogPrefix(),
                     getUsernamePasswordContext().getUsername(), e);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
-            recordFailure();
+            recordFailure(profileRequestContext, false);
         }
     }
 

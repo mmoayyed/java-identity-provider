@@ -47,7 +47,10 @@ public final class AuthnEventIds {
     
     /** ID of event returned if the given credentials are invalid. */
     @Nonnull @NotEmpty public static final String INVALID_CREDENTIALS = "InvalidCredentials";
-    
+
+    /** ID of event returned if the subject's account is locked. */
+    @Nonnull @NotEmpty public static final String ACCOUNT_LOCKED = "AccountLocked";
+
     /** ID of event returned if the subject's account is in an invalid state. */
     @Nonnull @NotEmpty public static final String ACCOUNT_ERROR = "AccountError";
 

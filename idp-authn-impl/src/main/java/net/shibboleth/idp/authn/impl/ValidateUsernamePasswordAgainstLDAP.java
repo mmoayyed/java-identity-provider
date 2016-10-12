@@ -150,7 +150,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
             log.trace("{} Authentication response {}", getLogPrefix(), response);
             if (response.getResult()) {
                 log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
-                recordSuccess();
+                recordSuccess(profileRequestContext);
                 authenticationContext.getSubcontext(LDAPResponseContext.class, true)
                         .setAuthenticationResponse(response);
                 if (response.getAccountState() != null) {
@@ -171,18 +171,18 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
                     handleError(profileRequestContext, authenticationContext,
                             String.format("%s:%s", response.getAuthenticationResultCode(), response.getMessage()),
                             AuthnEventIds.INVALID_CREDENTIALS);
-                    recordFailure();
+                    recordFailure(profileRequestContext, true);
                 } else if (response.getAccountState() != null) {
                     final AccountState state = response.getAccountState();
                     handleError(profileRequestContext, authenticationContext, String.format("%s:%s:%s",
                             state.getError(), response.getResultCode(), response.getMessage()),
                             AuthnEventIds.ACCOUNT_ERROR);
-                    recordFailure();
+                    recordFailure(profileRequestContext, true);
                 } else if (response.getResultCode() == ResultCode.INVALID_CREDENTIALS) {
                     handleError(profileRequestContext, authenticationContext,
                             String.format("%s:%s", response.getResultCode(), response.getMessage()),
                             AuthnEventIds.INVALID_CREDENTIALS);
-                    recordFailure();
+                    recordFailure(profileRequestContext, true);
                 } else {
                     throw new LdapException(response.getMessage(), response.getResultCode(), response.getMatchedDn(),
                             response.getControls(), response.getReferralURLs(), response.getMessageId());
@@ -191,7 +191,7 @@ public class ValidateUsernamePasswordAgainstLDAP extends AbstractUsernamePasswor
         } catch (final LdapException e) {
             log.warn("{} Login by {} produced exception", getLogPrefix(), getUsernamePasswordContext().getUsername(),
                     e);
-            recordFailure();
+            recordFailure(profileRequestContext, false);
             handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
         }
     }

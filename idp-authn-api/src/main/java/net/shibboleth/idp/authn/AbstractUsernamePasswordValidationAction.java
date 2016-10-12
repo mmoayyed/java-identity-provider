@@ -39,9 +39,12 @@ import org.slf4j.LoggerFactory;
  * {@link net.shibboleth.idp.authn.AuthenticationResult} based on that identity by invoking
  * a subclass method.
  *  
+ * <p>Lockout behavior can be enabled by injecting an {@link AccountLockoutManager}</p>
+ *  
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link AuthnEventIds#INVALID_CREDENTIALS}
  * @event {@link AuthnEventIds#NO_CREDENTIALS}
+ * @event {@link AuthnEventIds#ACCOUNT_LOCKED}
  * @post If AuthenticationContext.getSubcontext(UsernamePasswordContext.class) != null, then
  * an {@link net.shibboleth.idp.authn.AuthenticationResult} is saved to the {@link AuthenticationContext} on a
  * successful login. On a failed login, the
@@ -64,6 +67,9 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
     
     /** A regular expression to apply for acceptance testing. */
     @Nullable private Pattern matchExpression;
+    
+    /** Optional lockout management interface. */
+    @Nullable private AccountLockoutManager lockoutManager;
     
     /** UsernamePasswordContext containing the credentials to validate. */
     @Nullable private UsernamePasswordContext upContext;
@@ -134,6 +140,26 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
     }
     
     /**
+     * Get an account lockout management component.
+     * 
+     * @return lockout manager
+     */
+    @Nullable public AccountLockoutManager getLockoutManager() {
+        return lockoutManager;
+    }
+    
+    /**
+     * Set an account lockout management component.
+     * 
+     * @param manager lockout manager
+     */
+    public void setLockoutManager(@Nullable final AccountLockoutManager manager) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        lockoutManager = manager;
+    }
+    
+    /**
      * Get the {@link UsernamePasswordContext} to validate. 
      * 
      * @return context to validate
@@ -164,7 +190,7 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
             return false;
         } else if (upContext.getPassword() == null) {
             log.info("{} No password available within UsernamePasswordContext", getLogPrefix());
-            handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                     AuthnEventIds.INVALID_CREDENTIALS);
             recordFailure();
             return false;
@@ -172,8 +198,17 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
         
         if (matchExpression != null && !matchExpression.matcher(upContext.getUsername()).matches()) {
             log.debug("{} Username '{}' did not match expression", getLogPrefix(), upContext.getUsername());
-            handleError(profileRequestContext, authenticationContext, "InvalidCredentials",
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.INVALID_CREDENTIALS,
                     AuthnEventIds.INVALID_CREDENTIALS);
+            recordFailure();
+            return false;
+        }
+        
+        if (lockoutManager != null && lockoutManager.check(profileRequestContext)) {
+            log.info("{} Account for '{}' is locked out, aborting authentication", getLogPrefix(), 
+                    upContext.getUsername());
+            handleError(profileRequestContext, authenticationContext, AuthnEventIds.ACCOUNT_LOCKED,
+                    AuthnEventIds.ACCOUNT_LOCKED);
             recordFailure();
             return false;
         }
@@ -198,4 +233,35 @@ public abstract class AbstractUsernamePasswordValidationAction extends AbstractV
         return subject;
     }
     
+    /**
+     * Record a successful authentication attempt against the configured counter,
+     * optionally clearing account lockout state.
+     * 
+     * @param profileRequestContext current profile request context
+     * 
+     * @since 3.3.0
+     */
+    protected void recordSuccess(@Nonnull final ProfileRequestContext profileRequestContext) {
+        recordSuccess();
+        if (lockoutManager != null) {
+            lockoutManager.clear(profileRequestContext);
+        }
+    }
+
+    /**
+     * Record a failed authentication attempt against the configured counter,
+     * optionally incrementing the account lockout counter.
+     * 
+     * @param profileRequestContext current profile request context
+     * @param inc true iff lockout counter should be incremented
+     * 
+     * @since 3.3.0
+     */
+    protected void recordFailure(@Nonnull final ProfileRequestContext profileRequestContext, final boolean inc) {
+        recordFailure();
+        if (inc && lockoutManager != null) {
+            lockoutManager.increment(profileRequestContext);
+        }
+    }
+
 }

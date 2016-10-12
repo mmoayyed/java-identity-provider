@@ -244,7 +244,7 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                         getUsernamePasswordContext().getUsername(), currentLoginConfigName);
                 authenticate(currentLoginConfigName);
                 log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
-                recordSuccess();
+                recordSuccess(profileRequestContext);
                 derivedSubject = loginConfig.getSecond();
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 ActionSupport.buildProceedEvent(profileRequestContext);
@@ -252,13 +252,13 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
             } catch (final LoginException e){ 
                 log.info("{} Login by '{}' failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
-                recordFailure();
+                recordFailure(profileRequestContext, true);
                 eventSignaled = true;
             } catch (final Exception e) {
                 log.warn("{} Login by '{}' produced exception", getLogPrefix(),
                         getUsernamePasswordContext().getUsername(), e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
-                recordFailure();
+                recordFailure(profileRequestContext, false);
                 eventSignaled = true;
             }
         }
