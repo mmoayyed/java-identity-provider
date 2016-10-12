@@ -70,6 +70,12 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
 
     /** The security configuration for this profile. */
     @Nullable private SecurityConfiguration securityConfiguration;
+    
+    /** Lookup function to return a bitmask of request features to disallow. */
+    @Nullable private Function<ProfileRequestContext,Integer> disallowedFeaturesLookupStrategy;
+    
+    /** Bitmask of request features to disallow. */
+    private int disallowedFeatures;
 
     /**
      * Constructor.
@@ -188,6 +194,54 @@ public abstract class AbstractProfileConfiguration implements ProfileConfigurati
         outboundFlowsLookupStrategy = strategy;
     }
 
+    /**
+     * Return true iff the input feature constant is disallowed.
+     * 
+     * @param feature a bit constant
+     * 
+     * @return true iff the input feature constant is disallowed
+     * 
+     * @since 3.3.0
+     */
+    public boolean isFeatureDisallowed(final int feature) {
+        return (getDisallowedFeatures() & feature) == feature;
+    }
+    
+    /**
+     * Get a bitmask of disallowed features to block.
+     * 
+     * <p>Individual profiles define their own feature constants.</p>
+     * 
+     * @return bitmask of features to block
+     * 
+     * @since 3.3.0
+     */
+    public int getDisallowedFeatures() {
+        return getIndirectProperty(disallowedFeaturesLookupStrategy, disallowedFeatures);
+    }
+    
+    /**
+     * Set a bitmask of disallowed features to block.
+     * 
+     * @param mask a bitmask of features to block
+     * 
+     * @since 3.3.0
+     */
+    public void setDisallowedFeatures(final int mask) {
+        disallowedFeatures = mask;
+    }
+    
+    /**
+     * Set a lookup strategy for the bitmask of disallowed features to block. 
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 3.3.0
+     */
+    public void setDisallowedFeaturesLookupStrategy(@Nullable final Function<ProfileRequestContext,Integer> strategy) {
+        disallowedFeaturesLookupStrategy = strategy;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public int hashCode() {

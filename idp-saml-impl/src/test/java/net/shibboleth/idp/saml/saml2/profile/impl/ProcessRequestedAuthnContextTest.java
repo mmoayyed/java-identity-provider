@@ -20,11 +20,14 @@ package net.shibboleth.idp.saml.saml2.profile.impl;
 import org.opensaml.profile.action.EventIds;
 import org.opensaml.profile.context.ProfileRequestContext;
 
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
 import net.shibboleth.idp.profile.ActionTestingSupport;
 import net.shibboleth.idp.profile.RequestContextBuilder;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.saml2.profile.SAML2ActionTestingSupport;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
 import java.util.Collections;
@@ -75,6 +78,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         src = (MockRequestContext) new RequestContextBuilder().buildRequestContext();
         prc = (ProfileRequestContext) src.getConversationScope().get(ProfileRequestContext.BINDING_KEY);
         ac = prc.getSubcontext(AuthenticationContext.class, true);
+        prc.getSubcontext(RelyingPartyContext.class, true).setProfileConfig(new BrowserSSOProfileConfiguration());
         
         action = new ProcessRequestedAuthnContext();
         action.initialize();
@@ -90,7 +94,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class, false));
+        Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class));
     }
     
     @Test public void testEmptyRef() {
@@ -102,9 +106,24 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class, false));
+        Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class));
     }
 
+    @Test public void testDisallowed() {
+        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
+        final RequestedAuthnContext rac = racBuilder.buildObject();
+        prc.getInboundMessageContext().getMessage().setRequestedAuthnContext(rac);
+        final AuthnContextClassRef ref = classBuilder.buildObject();
+        rac.getAuthnContextClassRefs().add(ref);
+        
+        ((BrowserSSOProfileConfiguration) prc.getSubcontext(RelyingPartyContext.class).getProfileConfig()).setDisallowedFeatures(
+                BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT);
+        
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, AuthnEventIds.INVALID_AUTHN_CTX);
+        Assert.assertNull(ac.getSubcontext(RequestedPrincipalContext.class));
+    }
+    
     @Test public void testNoOperator() {
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildAuthnRequest());
         final RequestedAuthnContext rac = racBuilder.buildObject();
@@ -115,7 +134,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, false); 
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class); 
         Assert.assertNotNull(rpc);
         Assert.assertEquals(rpc.getOperator(), AuthnContextComparisonTypeEnumeration.EXACT.toString());
         Assert.assertEquals(rpc.getRequestedPrincipals().size(), 1);
@@ -136,7 +155,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, false); 
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class); 
         Assert.assertNotNull(rpc);
         Assert.assertEquals(rpc.getOperator(), AuthnContextComparisonTypeEnumeration.MINIMUM.toString());
         Assert.assertEquals(rpc.getRequestedPrincipals().size(), 2);
@@ -156,7 +175,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, false); 
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class); 
         Assert.assertNotNull(rpc);
         Assert.assertEquals(rpc.getOperator(), AuthnContextComparisonTypeEnumeration.MINIMUM.toString());
         Assert.assertEquals(rpc.getRequestedPrincipals().size(), 2);
@@ -172,7 +191,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, false); 
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class); 
         Assert.assertNull(rpc);
     }
 
@@ -190,7 +209,7 @@ public class ProcessRequestedAuthnContextTest extends OpenSAMLInitBaseTestCase {
         
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class, false); 
+        final RequestedPrincipalContext rpc = ac.getSubcontext(RequestedPrincipalContext.class); 
         Assert.assertNull(rpc);
     }
 }

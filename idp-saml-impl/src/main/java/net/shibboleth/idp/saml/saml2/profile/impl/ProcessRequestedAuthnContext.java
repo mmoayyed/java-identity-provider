@@ -29,15 +29,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.authn.AbstractAuthenticationAction;
+import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.idp.authn.context.RequestedPrincipalContext;
+import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextClassRefPrincipal;
 import net.shibboleth.idp.saml.authn.principal.AuthnContextDeclRefPrincipal;
+import net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.messaging.context.navigate.MessageLookup;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.action.EventIds;
@@ -59,6 +63,8 @@ import com.google.common.base.Functions;
  * An authentication action that processes the {@link RequestedAuthnContext} in a SAML 2 {@link AuthnRequest},
  * and populates a {@link RequestedPrincipalContext} with the corresponding information.
  * 
+ * <p>If this feature is disallowed by profile configuration, then an error event is signaled.</p>
+ * 
  * <p>Each requested context class or declaration reference is translated into a custom {@link Principal}
  * for use by the authentication subsystem to drive flow selection.</p>
  * 
@@ -71,7 +77,10 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ProcessRequestedAuthnContext.class);
-    
+
+    /** Strategy used to look up a {@link RelyingPartyContext} for configuration options. */
+    @Nonnull private Function<ProfileRequestContext,RelyingPartyContext> relyingPartyContextLookupStrategy;
+
     /** Lookup strategy function for obtaining {@link AuthnRequest}. */
     @Nonnull private Function<ProfileRequestContext,AuthnRequest> authnRequestLookupStrategy;
 
@@ -83,9 +92,25 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
     
     /** Constructor. */
     public ProcessRequestedAuthnContext() {
+        relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
         authnRequestLookupStrategy =
                 Functions.compose(new MessageLookup<>(AuthnRequest.class), new InboundMessageContextLookup());
         ignoredContexts = Collections.singleton(AuthnContext.UNSPECIFIED_AUTHN_CTX);
+    }
+
+    /**
+     * Set the strategy used to return the {@link RelyingPartyContext} for configuration options.
+     * 
+     * @param strategy lookup strategy
+     * 
+     * @since 3.3.0
+     */
+    public void setRelyingPartyContextLookupStrategy(
+            @Nonnull final Function<ProfileRequestContext,RelyingPartyContext> strategy) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        relyingPartyContextLookupStrategy =
+                Constraint.isNotNull(strategy, "RelyingPartyContext lookup strategy cannot be null");
     }
 
     /**
@@ -125,6 +150,10 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
 
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        }
+        
         authnRequest = authnRequestLookupStrategy.apply(profileRequestContext);
         if (authnRequest == null) {
             log.debug("{} AuthnRequest message was not returned by lookup strategy", getLogPrefix());
@@ -132,7 +161,7 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
 
 // Checkstyle: CyclomaticComplexity|ReturnCount OFF
@@ -144,6 +173,18 @@ public class ProcessRequestedAuthnContext extends AbstractAuthenticationAction {
         if (requestedCtx == null) {
             log.debug("{} AuthnRequest did not contain a RequestedAuthnContext, nothing to do", getLogPrefix());
             return;
+        }
+        
+        // Check if permitted.
+        final RelyingPartyContext rpContext = relyingPartyContextLookupStrategy.apply(profileRequestContext);
+        if (rpContext != null && rpContext.getProfileConfig() != null
+                && rpContext.getProfileConfig() instanceof BrowserSSOProfileConfiguration) {
+            if (((BrowserSSOProfileConfiguration) rpContext.getProfileConfig()).isFeatureDisallowed(
+                    BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT)) {
+                log.warn("{} Incoming RequestedAuthnContext disallowed by profile configuration", getLogPrefix());
+                ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.INVALID_AUTHN_CTX);
+                return;
+            }
         }
 
         final List<Principal> principals = new ArrayList<>();

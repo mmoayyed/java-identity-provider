@@ -76,6 +76,9 @@
         p:artifactConfiguration-ref="shibboleth.DefaultArtifactConfiguration"
         p:inboundInterceptorFlows="security-policy/saml2-sso"
         p:encryptionOptionalPredicate="%{idp.encryption.optional:false}" />
+        
+    <util:constant id="SAML2.SSO.FEATURE_AUTHNCONTEXT"
+        static-field="net.shibboleth.idp.saml.saml2.profile.config.BrowserSSOProfileConfiguration.FEATURE_AUTHNCONTEXT"/>
 
     <bean id="SAML2.ECP"
         class="net.shibboleth.idp.saml.saml2.profile.config.ECPProfileConfiguration"

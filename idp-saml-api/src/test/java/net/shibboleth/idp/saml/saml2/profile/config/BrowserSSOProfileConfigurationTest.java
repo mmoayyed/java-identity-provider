@@ -300,4 +300,5 @@ public class BrowserSSOProfileConfigurationTest {
                 FunctionSupport.<ProfileRequestContext,Collection<String>>constant(formats));
         Assert.assertEquals(config.getNameIDFormatPrecedence(), formats);
     }
+
 }

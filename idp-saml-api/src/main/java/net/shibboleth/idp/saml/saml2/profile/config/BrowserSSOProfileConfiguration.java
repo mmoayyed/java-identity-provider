@@ -53,10 +53,13 @@ import com.google.common.collect.ImmutableSet;
 /** Configuration support for SAML 2 Browser SSO. */
 public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfiguration
         implements SAMLArtifactAwareProfileConfiguration, AuthenticationProfileConfiguration {
-
+    
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml2/sso/browser";
-
+        
+    /** Bit constant for RequestedAuthnContext feature. */
+    public static final int FEATURE_AUTHNCONTEXT = 0x1;
+    
     /** Lookup function to supply {@link #artifactConfig} property. */
     @Nullable private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
 
@@ -116,7 +119,7 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
     
     /** Precedence of name identifier formats to use for requests. */
     @Nonnull @NonnullElements private List<String> nameIDFormatPrecedence;
-
+    
     /** Constructor. */
     public BrowserSSOProfileConfiguration() {
         this(PROFILE_ID);
@@ -562,5 +565,5 @@ public class BrowserSSOProfileConfiguration extends AbstractSAML2ProfileConfigur
             @Nullable final Function<ProfileRequestContext,Collection<String>> strategy) {
         nameIDFormatPrecedenceLookupStrategy = strategy;
     }
-
+    
 }

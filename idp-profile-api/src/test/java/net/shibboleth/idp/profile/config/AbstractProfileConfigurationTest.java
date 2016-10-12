@@ -102,4 +102,27 @@ public class AbstractProfileConfigurationTest {
         config.setOutboundFlowsLookupStrategy(FunctionSupport.<ProfileRequestContext,List<String>>constant(flows));
         Assert.assertEquals(config.getOutboundInterceptorFlows(), flows);
     }
+
+    @Test
+    public void testDisallowedFeatures() {
+        final MockProfileConfiguration config = new MockProfileConfiguration("mock");
+        Assert.assertEquals(config.getDisallowedFeatures(), 0);
+
+        config.setDisallowedFeatures(0x1 | 0x4);
+        Assert.assertTrue(config.isFeatureDisallowed(0x1));
+        Assert.assertFalse(config.isFeatureDisallowed(0x2));
+        Assert.assertTrue(config.isFeatureDisallowed(0x4));
+    }
+
+    @Test
+    public void testIndirectDisallowedFeatures() {
+        final MockProfileConfiguration config = new MockProfileConfiguration("mock");
+        Assert.assertEquals(config.getDisallowedFeatures(), 0);
+
+        config.setDisallowedFeaturesLookupStrategy(FunctionSupport.<ProfileRequestContext,Integer>constant(0x1 | 0x4));
+        Assert.assertTrue(config.isFeatureDisallowed(0x1));
+        Assert.assertFalse(config.isFeatureDisallowed(0x2));
+        Assert.assertTrue(config.isFeatureDisallowed(0x4));
+    }
+
 }
