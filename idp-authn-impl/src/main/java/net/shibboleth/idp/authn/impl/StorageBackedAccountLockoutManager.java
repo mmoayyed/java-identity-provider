@@ -147,6 +147,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * 
      * @param window counter window
      */
+    @Duration
     public void setCounterInterval(@Duration @Positive final long window) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
@@ -175,6 +176,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
      * 
      * @param duration lockout duration
      */
+    @Duration
     public void setLockoutDuration(@Duration @Positive final long duration) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
@@ -243,7 +245,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         try {
             // Read counter and check if we've exceeded the limit.
             final int counter = Integer.parseInt(sr.getValue());
-            if (counter > maxAttemptsLookupStrategy.apply(profileRequestContext)) {
+            if (counter >= maxAttemptsLookupStrategy.apply(profileRequestContext)) {
                 // Recover time of last attempt from the record expiration and find the time elapsed since.
                 // If that's under the lockout duration, we're locked out.
                 final long lastAttempt =
