@@ -175,11 +175,8 @@ public class EncodingTicketService extends AbstractTicketService {
     private <T extends Ticket> T encode(final Class<T> ticketClass, final T ticket, final String prefix) {
         final String opaque;
         try {
-            final String y = serializer(ticketClass).serialize(ticket);
-            log.debug("encode y [{}]", y);
             opaque = dataSealer.wrap(
-                    y, ticket.getExpirationInstant().getMillis());
-            log.debug("encode opaque [{}]", opaque);
+                    serializer(ticketClass).serialize(ticket), ticket.getExpirationInstant().getMillis());
         } catch (final Exception e) {
             throw new RuntimeException("Ticket encoding failed", e);
         }
@@ -198,11 +195,7 @@ public class EncodingTicketService extends AbstractTicketService {
      */
     private <T extends Ticket> T decode(final Class<T> ticketClass, final String id, final String prefix) {
         try {
-            final String x = id.substring(prefix.length() + 1);
-            log.debug("decode x [{}]", x);
-            log.debug("decode unwrapping");
-            final String decrypted = dataSealer.unwrap(x);
-            log.debug("decrypted [{}]", decrypted);
+            final String decrypted = dataSealer.unwrap(id.substring(prefix.length() + 1));
             return serializer(ticketClass).deserialize(0, null, id, decrypted, 0L);
         } catch (final Exception e) {
             log.warn("Ticket decoding failed with error: " + e.getMessage());
