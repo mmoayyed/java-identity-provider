@@ -248,10 +248,11 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             if (counter >= maxAttemptsLookupStrategy.apply(profileRequestContext)) {
                 // Recover time of last attempt from the record expiration and find the time elapsed since.
                 // If that's under the lockout duration, we're locked out.
-                final long lastAttempt =
-                        sr.getExpiration() - counterIntervalLookupStrategy.apply(profileRequestContext);
+                final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext);
+                final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext);
+                final long lastAttempt = sr.getExpiration() - Math.max(lockoutDuration, counterInterval);
                 final long timeDifference = System.currentTimeMillis() - lastAttempt;
-                if (timeDifference < lockoutDurationLookupStrategy.apply(profileRequestContext)) {
+                if (timeDifference <= lockoutDuration) {
                     log.info("Lockout threshold reached for '{}', invalid count is {}", key, counter);
                     if (extendLockoutDuration) {
                         doIncrement(profileRequestContext, key, 10);
@@ -299,6 +300,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         return false;
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Implement invalid login attempt counter via storage service, retrying as necessary.
      * 
@@ -317,9 +319,7 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         }
         
         // Read back account record, initializing counter to zero otherwise.
-        // If the last attempt was older than the counter interval, the record
-        // will be expired and thus invisible.
-        
+
         log.debug("Reading account lockout data for '{}'", key);
         
         int counter = 0;
@@ -339,8 +339,24 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
             log.error("Error converting lockout data for '{}' into integer", key, e);
         }
         
+        final long now = System.currentTimeMillis();
+        final long lockoutDuration = lockoutDurationLookupStrategy.apply(profileRequestContext);
+        final long counterInterval = counterIntervalLookupStrategy.apply(profileRequestContext);
+        
+        // Compute last access time by backing off from record expiration.
+        long lastAccess = now;
+        if (sr != null) {
+            lastAccess = sr.getExpiration() - Math.max(lockoutDuration, counterInterval);
+        }
+        
+        // If difference between now and last access exceeds the counter interval, zero it.
+        if (now - lastAccess > counterInterval) {
+            counter = 0;
+        }
+            
+        // Increment, and set expiration to longer of the two settings to ensure it hangs around.
         ++counter;
-        final long expiration = System.currentTimeMillis() + counterIntervalLookupStrategy.apply(profileRequestContext);
+        final long expiration = System.currentTimeMillis() + Math.max(lockoutDuration, counterInterval);
 
         log.debug("Invalid login count for '{}' will be {}, expiring at {}", key, counter, new DateTime(expiration));
 
@@ -365,7 +381,8 @@ public class StorageBackedAccountLockoutManager extends AbstractIdentifiableInit
         
         return doIncrement(profileRequestContext, key, retries-1);
     }
-
+// Checkstyle: CyclomaticComplexity ON
+    
     /**
      * A function to generate a key for lockout storage. This effectively defines
      * the scope of the lockout; e.g. if the key depends on the supplied username and
