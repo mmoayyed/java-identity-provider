@@ -49,7 +49,7 @@ public class StorageBackedAccountLockoutManagerTest extends BaseAuthenticationCo
         manager.setId("test");
         manager.setStorageService(ss);
         manager.setLockoutKeyStrategy(keyStrategy);
-        manager.setMaxAttempts(2);
+        manager.setMaxAttempts(3);
         manager.setCounterInterval(3000);
         manager.setLockoutDuration(5000);
         manager.initialize();
