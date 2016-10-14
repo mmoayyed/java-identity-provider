@@ -112,6 +112,13 @@
         </dependency>
 
         <dependency>
+            <groupId>${opensaml.groupId}</groupId>
+            <artifactId>opensaml-storage-impl</artifactId>
+            <version>${opensaml.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>idp-profile-api</artifactId>
             <version>${project.version}</version>
