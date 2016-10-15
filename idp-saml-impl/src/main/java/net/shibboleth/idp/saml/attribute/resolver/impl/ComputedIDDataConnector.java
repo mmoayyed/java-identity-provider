@@ -47,7 +47,7 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
     @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedIDDataConnector.class);
 
     /** Generation strategy for IDs. */
-    @Nonnull private final ComputedPersistentIdGenerationStrategy idStrategy;
+    @Nullable private ComputedPersistentIdGenerationStrategy idStrategy;
     
     /** Constructor. */
     public ComputedIDDataConnector() {
@@ -59,16 +59,28 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
      * 
      * @return strategy for computing IDs
      */
-    @Nonnull public ComputedPersistentIdGenerationStrategy getComputedIdStrategy() {
+    @Nullable public ComputedPersistentIdGenerationStrategy getComputedIdStrategy() {
         return idStrategy;
     }
     
+    /**
+     * Clear the strategy plugin that generates computed IDs.  This is needed
+     * to allow the {@link StoredIDDataConnector}to work if no salt is configured.
+     */
+    @Nullable protected void clearComputedIdStrategy() {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        idStrategy = null;
+    }
+
     /**
      * Get the salt used when computing the ID.
      * 
      * @return salt used when computing the ID
      */
     @Nullable public byte[] getSalt() {
+        if (null == idStrategy) {
+            return null;
+        }
         return idStrategy.getSalt();
     }
 
@@ -121,13 +133,17 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
     protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
         
-        idStrategy.initialize();
+        if (null != idStrategy) {
+            idStrategy.initialize();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     protected void doDestroy() {
-        idStrategy.destroy();
+        if (null != idStrategy) {
+            idStrategy.destroy();
+        }
         
         super.doDestroy();
     }
@@ -139,6 +155,11 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
             @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
 
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
+        
+        if (null == idStrategy) {
+            log.error("{} Resolve called for seedless stored ID", getLogPrefix());
+            throw new ResolutionException(getLogPrefix() +  " Resolve called for seedless stored ID");
+        }
 
         final String principalName = resolutionContext.getPrincipal();
         if (Strings.isNullOrEmpty(principalName)) {

@@ -199,7 +199,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="salt" type="string" use="required">
+                <attribute name="salt" type="string" >
                     <annotation>
                         <documentation>
                             A salt, of at least 16 bytes, used in the computed ID.

@@ -62,7 +62,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     private DataSource testSource;
 
-    public static String convertStreamToString(java.io.InputStream is) throws IOException {
+    public static String convertStreamToString(final java.io.InputStream is) throws IOException {
         return CharStreams.toString(new InputStreamReader(is));
     }
 
@@ -75,11 +75,11 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         DatabaseTestingSupport.InitializeDataSource(DELETE_FILE, testSource);
     }
 
-    private void tryInitialize(StoredIDDataConnector connector, String failMessage) {
+    private void tryInitialize(final StoredIDDataConnector connector, final String failMessage) {
         try {
             connector.initialize();
             Assert.fail(failMessage);
-        } catch (ComponentInitializationException e) {
+        } catch (final ComponentInitializationException e) {
             // OK
         }
 
@@ -87,7 +87,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void initializeAndGetters() throws ComponentInitializationException, SQLException, ResolutionException {
 
-        StoredIDDataConnector connector = new StoredIDDataConnector();
+        final StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
@@ -106,7 +106,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         try {
             connector.resolve(null);
             Assert.fail("need to initialize first");
-        } catch (UninitializedComponentException e) {
+        } catch (final UninitializedComponentException e) {
             // OK
         }
 
@@ -114,26 +114,30 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         try {
             connector.setDataSource(null);
             Assert.fail("work after initialize");
-        } catch (UnmodifiableComponentException e) {
+        } catch (final UnmodifiableComponentException e) {
             // OK
         }
         connector.initialize();
         try {
             connector.setQueryTimeout(0);
             Assert.fail("work after initialize");
-        } catch (UnmodifiableComponentException e) {
+        } catch (final UnmodifiableComponentException e) {
             // OK
         }
         Assert.assertEquals(connector.getDataSource(), testSource);
         Assert.assertEquals(connector.getStoredIDStore().getDataSource(), testSource);
         Assert.assertEquals(connector.getQueryTimeout(), 1);
     }
-
-    private AttributeResolver constructResolver(int values) throws ComponentInitializationException {
-        StoredIDDataConnector connector = new StoredIDDataConnector();
+    
+    private AttributeResolver constructResolver(final int values) throws ComponentInitializationException {
+        return constructResolver(values, false);
+    }
+    
+    private AttributeResolver constructResolver(final int values, final boolean noSalt) throws ComponentInitializationException {
+        final StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setDataSource(testSource);
 
-        return ComputedIDDataConnectorTest.constructResolver(connector, values);
+        return ComputedIDDataConnectorTest.constructResolver(connector, values, noSalt);
     }
 
     /**
@@ -145,31 +149,59 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @throws ResolutionException if badness happens
      */
     @Test public void storeEntry() throws ComponentInitializationException, SQLException, ResolutionException {
-        AttributeResolver resolver = constructResolver(1);
+        final AttributeResolver resolver = constructResolver(1);
 
         ComponentSupport.initialize(resolver);
         ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
         // Now test that we got exactly what we expected
-        List<IdPAttributeValue<?>> resultValues =
+        final List<IdPAttributeValue<?>> resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
         Assert.assertEquals(((StringAttributeValue) resultValues.iterator().next()).getValue(),
                 ComputedIDDataConnectorTest.RESULT);
 
     }
+    
+    /**
+     * Test Trivial case. Starting with an empty store do a resolve. Make sure that the
+     * value *is* a UID.
+     * 
+     * @throws ComponentInitializationException if badness happens
+     * @throws SQLException if badness happens
+     * @throws ResolutionException if badness happens
+     */
+    @Test public void noSalt() throws ComponentInitializationException, SQLException, ResolutionException {
+        final AttributeResolver resolver = constructResolver(1, true);
+
+        ComponentSupport.initialize(resolver);
+        ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
+
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        resolver.resolveAttributes(context);
+
+        // Now test that we got exactly what we expected
+        final List<IdPAttributeValue<?>> resultValues =
+                context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
+        Assert.assertEquals(resultValues.size(), 1);
+        assertIsUUID(((StringAttributeValue) resultValues.iterator().next()).getValue());
+
+    }
+
 
     /**
      * Do we look like a guid 01234567-9ABC-EFGH-JKLM-......
      * 
      * @param value what to check.
      */
-    private void assertIsUUID(String value) {
+    private void assertIsUUID(final String value) {
         Assert.assertEquals(value.charAt(8), '-');
         Assert.assertEquals(value.charAt(13), '-');
         Assert.assertEquals(value.charAt(18), '-');
@@ -227,17 +259,17 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         resultValues =
                 context.getResolvedIdPAttributes().get(ComputedIDDataConnectorTest.OUTPUT_ATTRIBUTE_NAME).getValues();
         Assert.assertEquals(resultValues.size(), 1);
-        String val = ((StringAttributeValue) resultValues.iterator().next()).getValue();
+        final String val = ((StringAttributeValue) resultValues.iterator().next()).getValue();
         Assert.assertNotEquals(val, ComputedIDDataConnectorTest.RESULT);
         assertIsUUID(val);
     }
 
     @Test(dependsOnMethods = {"retrieveEntry"}) void badEntry() throws ComponentInitializationException,
             IOException, ResolutionException {
-        StoredIDDataConnector connector = new StoredIDDataConnector();
+        final StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setDataSource(testSource);
 
-        AttributeResolver resolver = ComputedIDDataConnectorTest.constructResolverWithNonString(connector, "nonString");
+        final AttributeResolver resolver = ComputedIDDataConnectorTest.constructResolverWithNonString(connector, "nonString");
 
         ComponentSupport.initialize(resolver);
         ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
@@ -245,7 +277,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         connector.getStoredIDStore().deactivate(TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID,
                 ComputedIDDataConnectorTest.RESULT, null);
 
-        AttributeResolutionContext context =
+        final AttributeResolutionContext context =
                 TestSources.createResolutionContext(" ", TestSources.IDP_ENTITY_ID, TestSources.SP_ENTITY_ID);
 
         resolver.resolveAttributes(context);

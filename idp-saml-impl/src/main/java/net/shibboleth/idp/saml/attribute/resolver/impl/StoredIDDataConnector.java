@@ -179,6 +179,9 @@ public class StoredIDDataConnector extends ComputedIDDataConnector {
     
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
+        if (getSalt() == null) {
+            clearComputedIdStrategy();
+        }
         super.doInitialize();
 
         idStore.initialize();

@@ -59,24 +59,6 @@ public class ComputedIDDataConnectorParserTest extends BaseAttributeDefinitionPa
         connector.initialize();
     }
 
-
-    @Test(enabled=false) public void withoutSalt()  { 
-        // Needs schema change
-        final ComputedIDDataConnector connector = getDataConnector("computedNoSalt.xml", ComputedIDDataConnector.class);
-        
-        Assert.assertEquals(connector.getId(), "computedNoSalt");
-        Assert.assertEquals(connector.getSourceAttributeId(), "theSourceRemainsDifferent");
-        Assert.assertEquals(connector.getGeneratedAttributeId(), "computedId");
-        Assert.assertNull(connector.getSalt());
-
-        try {
-            connector.initialize();
-            Assert.fail();
-        } catch (final ComponentInitializationException e) {
-            // OK
-        }
-    }
-
     @Test public void propertySalt()  {
         final String salt = "0123456789ABCDEF ";
 
