@@ -87,16 +87,32 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void initializeAndGetters() throws ComponentInitializationException, SQLException, ResolutionException {
 
-        final StoredIDDataConnector connector = new StoredIDDataConnector();
+        StoredIDDataConnector connector = new StoredIDDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
         connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
 
         tryInitialize(connector, "No DataSource");
+        connector = new StoredIDDataConnector();
+        connector.setId(TEST_CONNECTOR_NAME);
+        connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
+        connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
         connector.setDataSource(testSource);
 
+        connector = new StoredIDDataConnector();
+        connector.setId(TEST_CONNECTOR_NAME);
+        connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
+        connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
+        connector.setDataSource(testSource);
         connector.setSalt(ComputedIDDataConnectorTest.smallSalt);
         tryInitialize(connector, "salt too small");
+
+        connector = new StoredIDDataConnector();
+        connector.setId(TEST_CONNECTOR_NAME);
+        connector.setSourceAttributeId(TestSources.STATIC_ATTRIBUTE_NAME);
+        connector.setGeneratedAttributeId(TEST_ATTRIBUTE_NAME);
+        connector.setDataSource(testSource);
+        connector.setSalt(ComputedIDDataConnectorTest.smallSalt);
         connector.setSalt(ComputedIDDataConnectorTest.salt);
 
         Assert.assertEquals(connector.getDataSource(), testSource);
@@ -148,7 +164,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
      * @throws SQLException if badness happens
      * @throws ResolutionException if badness happens
      */
-    @Test public void storeEntry() throws ComponentInitializationException, SQLException, ResolutionException {
+    @Test(dependsOnMethods={"noSalt",}) public void storeEntry() throws ComponentInitializationException, SQLException, ResolutionException {
         final AttributeResolver resolver = constructResolver(1);
 
         ComponentSupport.initialize(resolver);
@@ -183,7 +199,7 @@ public class StoredIDDataConnectorTest extends OpenSAMLInitBaseTestCase {
         ComputedIDDataConnectorTest.connectorFromResolver(resolver).initialize();
 
         final AttributeResolutionContext context =
-                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID+1,
                         TestSources.SP_ENTITY_ID);
         resolver.resolveAttributes(context);
 
