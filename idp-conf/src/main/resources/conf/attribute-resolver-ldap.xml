@@ -81,7 +81,6 @@
                 %{idp.attribute.resolver.LDAP.searchFilter}
             ]]>
         </FilterTemplate>
-        <ReturnAttributes>eduPersonPrincipalName,mail,uid</ReturnAttributes>
 	<ConnectionPool
             minPoolSize="%{idp.pool.LDAP.minSize:3}"
             maxPoolSize="%{idp.pool.LDAP.maxSize:10}"
