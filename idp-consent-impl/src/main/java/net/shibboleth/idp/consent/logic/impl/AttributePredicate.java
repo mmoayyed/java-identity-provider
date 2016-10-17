@@ -26,7 +26,9 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.idp.attribute.EmptyAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
@@ -95,6 +97,10 @@ public class AttributePredicate extends AbstractInitializableComponent implement
             return false;
         }
 
+        if (isEmpty(input)) {
+            return false;
+        }
+
         final String attributeId = input.getId();
 
         if (!whitelistedAttributeIds.isEmpty() && !whitelistedAttributeIds.contains(attributeId)) {
@@ -109,5 +115,22 @@ public class AttributePredicate extends AbstractInitializableComponent implement
             return !blacklistedAttributeIds.contains(attributeId)
                     && (matchExpression == null || matchExpression.matcher(attributeId).matches());
         }
+    }
+
+    /**
+     * Whether the IdP attribute is empty.
+     * 
+     * @param input the IdP Attribute
+     * @return true if the IdP attribute has no values or empty values, false otherwise
+     */
+    private boolean isEmpty(@Nonnull final IdPAttribute input) {
+
+        for (final IdPAttributeValue value : input.getValues()) {
+            if (!(value instanceof EmptyAttributeValue)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

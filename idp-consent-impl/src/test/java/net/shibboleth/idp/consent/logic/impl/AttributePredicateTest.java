@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -37,7 +38,9 @@ public class AttributePredicateTest {
 
     @BeforeMethod public void setUp() {
         attribute1 = new IdPAttribute("attribute1");
+        attribute1.setValues(Arrays.asList(new StringAttributeValue("value1")));
         attribute2 = new IdPAttribute("attribute2");
+        attribute2.setValues(Arrays.asList(new StringAttributeValue("value2"), new StringAttributeValue("value3")));
         p = new AttributePredicate();
     }
 
@@ -121,5 +124,19 @@ public class AttributePredicateTest {
     @Test public void testNullInput() {
         p = new AttributePredicate();
         Assert.assertFalse(p.apply(null));
+    }
+
+    @Test public void testEmptyAttribute() {
+        // no values
+        final IdPAttribute emptyAttribute = new IdPAttribute("emptyAttribute");
+        Assert.assertFalse(p.apply(emptyAttribute));
+
+        // empty values
+        emptyAttribute.setValues(Arrays.asList(StringAttributeValue.valueOf(""), StringAttributeValue.valueOf(null)));
+        Assert.assertFalse(p.apply(emptyAttribute));
+
+        // empty and non-empty values
+        emptyAttribute.setValues(Arrays.asList(StringAttributeValue.valueOf("1"), StringAttributeValue.valueOf("")));
+        Assert.assertTrue(p.apply(emptyAttribute));
     }
 }

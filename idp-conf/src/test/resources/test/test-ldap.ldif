@@ -48,3 +48,14 @@ cn: myservice
 sn: myservice
 uid: myservice
 userpassword: myServicePassword
+
+dn: cn=IDP-1026,ou=people,dc=example,dc=org
+objectclass: inetOrgPerson
+cn: idp-1026
+givenName: IDP-1026
+sn: Doe
+uid: IDP-1026
+userpassword: changeit
+homephone: 555-111-2222
+mail:
+description: IDP-1026
