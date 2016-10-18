@@ -18,6 +18,7 @@
         <property name="sourceList">
             <list>
                 <value>admin/metrics</value>
+                <value>admin/storage</value>
             </list>
         </property>
     </bean>
@@ -48,7 +49,12 @@
     <!-- HandlerAdapters: These aren't ordered. Add our WebFlow one, then the standard Spring MVC default ones. 
          Have to enumerate them all explicitly b/c we're overriding the built-in defaults. -->
     
-    <bean class="net.shibboleth.idp.profile.support.RethrowingFlowHandlerAdapter" p:flowExecutor-ref="flowExecutor" />
+    <bean class="net.shibboleth.idp.profile.support.RethrowingFlowHandlerAdapter"
+            p:flowExecutor-ref="flowExecutor">
+        <property name="supportedMethods">
+            <null/>
+        </property>
+    </bean>
     
     <bean class="org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter" />
     
