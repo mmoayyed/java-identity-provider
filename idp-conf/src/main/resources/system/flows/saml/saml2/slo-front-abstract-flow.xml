@@ -35,8 +35,16 @@
     <decision-state id="CheckAsync1">
         <!-- If parent DoInboundInterceptSubflow transition changes on 'proceed', the else clause needs to also change. -->
         <if test="opensamlProfileRequestContext.getInboundMessageContext().getMessage() instanceof T(org.opensaml.saml.saml2.core.LogoutRequest) and opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions() != null and !opensamlProfileRequestContext.getInboundMessageContext().getMessage().getExtensions().getUnknownXMLObjects(T(org.opensaml.saml.ext.saml2aslo.Asynchronous).DEFAULT_ELEMENT_NAME).isEmpty()"
-            then="ExtractSubject" else="OutboundContextsAndSecurityParameters" />
+            then="AsyncDecryptionParameters" else="OutboundContextsAndSecurityParameters" />
     </decision-state>
+    
+    <!-- This is the one action inside "OutboundContextsAndSecurityParameters" that we can't skip. -->
+    <action-state id="AsyncDecryptionParameters">
+        <evaluate expression="PopulateDecryptionParameters" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="ExtractSubject" />
+    </action-state>
     
 
     <!-- LogoutRequest handling starts by loading client storage if needed. -->
