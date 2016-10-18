@@ -87,12 +87,16 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientRef")));
             if (element.hasAttributeNS(null, "requestTimeout")
+                    || element.hasAttributeNS(null, "connectionTimeout")
+                    || element.hasAttributeNS(null, "connectionRequestTimeout")
+                    || element.hasAttributeNS(null, "socketTimeout")
                     || element.hasAttributeNS(null, "disregardSslCertificate")
                     || element.hasAttributeNS(null, "disregardTLSCertificate")
                     || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
                     || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
-                log.warn("httpClientRef overrides settings for requestTimeout, disregardSslCertificate, "
-                        + "disregardTLSCertificate, proxyHost, proxyPort, proxyUser and proxyPassword");
+                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, connectionRequestTimeout, " 
+                        + "socketTimeout disregardSslCertificate, disregardTLSCertificate, proxyHost, proxyPort, " 
+                        + "proxyUser and proxyPassword");
             }
         } else {
             builder.addConstructorArgValue(buildHttpClient(element, parserContext, haveTLSTrustEngine));
@@ -177,9 +181,22 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
         clientBuilder.setLazyInit(true);
 
+        //Note: 'requestTimeout' is deprecated in favor of 'connectionTimeout'.
         if (element.hasAttributeNS(null, "requestTimeout")) {
             clientBuilder.addPropertyValue("connectionTimeout",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "requestTimeout")));
+        }
+        if (element.hasAttributeNS(null, "connectionTimeout")) {
+            clientBuilder.addPropertyValue("connectionTimeout",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "connectionTimeout")));
+        }
+        if (element.hasAttributeNS(null, "connectionRequestTimeout")) {
+            clientBuilder.addPropertyValue("connectionRequestTimeout",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "connectionRequestTimeout")));
+        }
+        if (element.hasAttributeNS(null, "socketTimeout")) {
+            clientBuilder.addPropertyValue("socketTimeout",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "socketTimeout")));
         }
 
         if (haveTLSTrustEngine) {

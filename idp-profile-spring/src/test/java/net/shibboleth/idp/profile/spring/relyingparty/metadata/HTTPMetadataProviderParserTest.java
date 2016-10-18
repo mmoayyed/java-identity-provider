@@ -162,4 +162,13 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         
     }
     
+    @Test public void timeouts() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-timeouts.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPSEntityWithTimeouts");
+        
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+    }
+    
 }

@@ -185,7 +185,32 @@
                 <attribute name="requestTimeout" type="string">
                     <annotation>
                         <documentation>
+                            DEPRECATED: Use connectionTimeout.
                             The maximum length of time to wait for the remote server to response.
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="connectionTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time to wait for the remote server to response.
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="connectionRequestTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time to wait for a connection to be returned from the connection manager.
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="socketTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum period inactivity between two consecutive data packets.
                             Timeout is expressed in ISO8601 duration notation.
                         </documentation>
                     </annotation>
@@ -457,7 +482,32 @@
                 <attribute name="requestTimeout" type="string">
                     <annotation>
                         <documentation>
-                            The maximum length of time to wait for the remote server to respond.
+                            DEPRECATED: Use connectionTimeout.
+                            The maximum length of time to wait for the remote server to response.
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="connectionTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time to wait for the remote server to response.
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="connectionRequestTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum length of time to wait for a connection to be returned from the connection manager.
+                            Timeout is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="socketTimeout" type="string">
+                    <annotation>
+                        <documentation>
+                            The maximum period inactivity between two consecutive data packets.
                             Timeout is expressed in ISO8601 duration notation.
                         </documentation>
                     </annotation>
