@@ -320,6 +320,26 @@
         </constructor-arg>
     </bean>
     
+    <!-- Default Jackson ObjectMapper with JodaTime support. -->
+    
+    <bean id="shibboleth.JSONObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+    
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+            p:targetObject-ref="shibboleth.JSONObjectMapper"
+            p:targetMethod="registerModule">
+        <property name="arguments">
+            <bean class="com.fasterxml.jackson.datatype.joda.JodaModule" />
+        </property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+            p:targetObject-ref="shibboleth.JSONObjectMapper"
+            p:targetMethod="setDateFormat">
+        <property name="arguments">
+            <bean class="java.text.SimpleDateFormat" c:_0="YYYY-MM-dd'T'HH:mm:ss.SSSZZ" />
+        </property>
+    </bean>
+    
     <!-- Action bean templates. -->
     
     <bean id="shibboleth.AbstractPopulateAuditContext" abstract="true"
