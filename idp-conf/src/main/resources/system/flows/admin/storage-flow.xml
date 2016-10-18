@@ -1,0 +1,52 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd"
+    parent="admin.abstract">
+
+    <on-start>
+        <!-- Extract PATH_INFO containing account key and operation. -->
+        <evaluate expression="flowRequestContext.getActiveFlow().getId()" result="flowScope.flowId" />
+        <evaluate expression="externalContext.getNativeRequest().getPathInfo().length() gt flowId.length() + 2 ? externalContext.getNativeRequest().getPathInfo().substring(flowId.length() + 2) : 'all'" result="flowScope.pathInfo" />
+        <evaluate expression="pathInfo.split('/')" result="flowScope.pathInfoArray" />
+        <evaluate expression="pathInfoArray.length gt 0 ? T(net.shibboleth.utilities.java.support.net.URISupport).doURLDecode(pathInfoArray[0]) : null" result="flowScope.storageServiceId" />
+        <evaluate expression="pathInfoArray.length gt 1 ? T(net.shibboleth.utilities.java.support.net.URISupport).doURLDecode(pathInfoArray[1]) : null" result="flowScope.context" />
+        <evaluate expression="pathInfoArray.length gt 2 ? T(net.shibboleth.utilities.java.support.net.URISupport).doURLDecode(pathInfoArray[2]) : null" result="flowScope.key" />
+    </on-start>
+
+    <!-- Start action. -->
+        
+    <action-state id="InitializeProfileRequestContext">
+        <evaluate expression="InitializeProfileRequestContext" />
+        <evaluate expression="'proceed'" />
+        
+        <!-- Branch to determine if authentication is required. -->
+        <transition on="proceed" to="DoAdminPreamble" />
+    </action-state>
+
+    <!-- Resume actual flow processing. -->
+
+    <action-state id="DoProfileWork">
+        <evaluate expression="CheckAccess" />
+        <evaluate expression="'proceed'" />
+        
+        <transition on="proceed" to="StorageView" />
+    </action-state>
+    
+    <!-- Terminus -->
+
+    <end-state id="StorageView" view="storage">
+        <on-entry>
+            <evaluate expression="WriteAuditLog" />
+            <evaluate expression="environment" result="requestScope.environment" />
+            <evaluate expression="opensamlProfileRequestContext" result="requestScope.profileRequestContext" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.JSONObjectMapper')" result="requestScope.jsonMapper" />
+            <evaluate expression="externalContext.getNativeRequest()" result="requestScope.request" />
+            <evaluate expression="externalContext.getNativeResponse()" result="requestScope.response" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean('shibboleth.CustomViewContext') ? flowRequestContext.getActiveFlow().getApplicationContext().getBean('shibboleth.CustomViewContext') : null" result="requestScope.custom" />
+            <evaluate expression="flowRequestContext.getActiveFlow().getApplicationContext().containsBean(storageServiceId) ? flowRequestContext.getActiveFlow().getApplicationContext().getBean(storageServiceId) : null" result="requestScope.storageService" />
+        </on-entry>
+    </end-state>
+
+    <bean-import resource="storage-beans.xml" />
+
+</flow>

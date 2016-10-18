@@ -35,6 +35,12 @@
             c:id="http://shibboleth.net/ns/profiles/resolvertest"
             p:loggingId="%{idp.service.logging.resolvertest:ResolverTest}"
             p:policyName="%{idp.resolvertest.accessPolicy:AccessByIPAddress}" />
+
+        <!-- REST StorageService Access -->
+        <bean parent="shibboleth.AdminFlow"
+            c:id="http://shibboleth.net/ns/profiles/storage"
+            p:loggingId="Storage"
+            p:policyName="AccessByIPAddress" />
     
         <!-- REST Interface to Metrics -->
         <bean parent="shibboleth.AdminFlow"
