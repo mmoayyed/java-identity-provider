@@ -31,6 +31,8 @@ import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.resolver.ResolverException;
+
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,8 +91,8 @@ public class UpdateIdPSessionWithSPSessionAction extends AbstractCASProtocolActi
         try {
             log.debug("Attempting to retrieve session {}", ticket.getSessionId());
             session = sessionResolver.resolveSingle(new CriteriaSet(new SessionIdCriterion(ticket.getSessionId())));
-        } catch (final Exception e) {
-            log.warn("IdPSession resolution error: {}. Possible sign of misconfiguration.", e.getMessage());
+        } catch (final ResolverException e) {
+            log.warn("Possible sign of misconfiguration, IdPSession resolution error: {}", e);
         }
         if (session != null) {
             final long now = System.currentTimeMillis();
