@@ -26,6 +26,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.Entit
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.EntityAttributesFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.EntityRoleFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.KeyAuthorityParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.NameIDFormatFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.NodeProcessingParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.PredicateFilterParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl.RequiredValidUntilParser;
@@ -69,6 +70,7 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
         registerBeanDefinitionParser(RequiredValidUntilParser.TYPE_NAME, new RequiredValidUntilParser());
         registerBeanDefinitionParser(ChainingParser.TYPE_NAME, new ChainingParser());
         registerBeanDefinitionParser(EntityAttributesFilterParser.TYPE_NAME, new EntityAttributesFilterParser());
+        registerBeanDefinitionParser(NameIDFormatFilterParser.TYPE_NAME, new NameIDFormatFilterParser());
         registerBeanDefinitionParser(EntityRoleFilterParser.TYPE_NAME, new EntityRoleFilterParser());
         registerBeanDefinitionParser(PredicateFilterParser.TYPE_NAME, new PredicateFilterParser());
         registerBeanDefinitionParser(SchemaValidationParser.TYPE_NAME, new SchemaValidationParser());
