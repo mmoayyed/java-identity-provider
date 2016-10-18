@@ -512,6 +512,22 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="maxConnectionsTotal" type="string">
+                    <annotation>
+                        <documentation>
+                            Max total simultaneous connections allowed by the pooling connection manager.
+                            Defaults to: 100.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxConnectionsPerRoute" type="string">
+                    <annotation>
+                        <documentation>
+                            Max simultaneous connections per route allowed by the pooling connection manager.
+                            Defaults to: 100.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="proxyHost" type="string">
                     <annotation>
                         <documentation>Hostname of the HTTP proxy through which connections will be made.</documentation>

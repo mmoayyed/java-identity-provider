@@ -61,6 +61,12 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
     /** Default caching type . */
     private static final String DEFAULT_CACHING = "memory";
+    
+    /** Default max total connections. */
+    private static final Integer DEFAULT_MAX_CONNECTIONS_TOTAL = 100;
+    
+    /** Default max connections per route. */
+    private static final Integer DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 100;
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractDynamicHTTPMetadataProviderParser.class);
@@ -90,12 +96,15 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                     || element.hasAttributeNS(null, "connectionTimeout")
                     || element.hasAttributeNS(null, "connectionRequestTimeout")
                     || element.hasAttributeNS(null, "socketTimeout")
+                    || element.hasAttributeNS(null, "maxConnectionsTotal")
+                    || element.hasAttributeNS(null, "maxConnectionsPerRoute")
                     || element.hasAttributeNS(null, "disregardSslCertificate")
                     || element.hasAttributeNS(null, "disregardTLSCertificate")
                     || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
                     || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
-                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, connectionRequestTimeout, " 
-                        + "socketTimeout disregardSslCertificate, disregardTLSCertificate, proxyHost, proxyPort, " 
+                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, " 
+                        + "connectionRequestTimeout, socketTimeout, maxConnectionsTotal, maxConnectionsPerRoute, " 
+                        + "disregardSslCertificate, disregardTLSCertificate, proxyHost, proxyPort, " 
                         + "proxyUser and proxyPassword");
             }
         } else {
@@ -197,6 +206,19 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         if (element.hasAttributeNS(null, "socketTimeout")) {
             clientBuilder.addPropertyValue("socketTimeout",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "socketTimeout")));
+        }
+        
+        if (element.hasAttributeNS(null, "maxConnectionsTotal")) {
+            clientBuilder.addPropertyValue("maxConnectionsTotal",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maxConnectionsTotal")));
+        } else {
+            clientBuilder.addPropertyValue("maxConnectionsTotal", DEFAULT_MAX_CONNECTIONS_TOTAL);
+        }
+        if (element.hasAttributeNS(null, "maxConnectionsPerRoute")) {
+            clientBuilder.addPropertyValue("maxConnectionsPerRoute",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "maxConnectionsPerRoute")));
+        } else {
+            clientBuilder.addPropertyValue("maxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
         }
 
         if (haveTLSTrustEngine) {

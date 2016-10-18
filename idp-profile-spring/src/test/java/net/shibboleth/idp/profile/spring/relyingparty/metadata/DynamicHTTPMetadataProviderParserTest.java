@@ -64,6 +64,14 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     }
     
     @Test
+    public void testMaxConnectionsParams() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamicMaxConnections.xml", "beans.xml", "httpClient.xml");
+        
+        // We can't really test the actual max values, this is just to test that parser, factory bean, etc are ok.
+    }
+    
+    @Test
     public void testBasicParams() throws Exception {
         FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicBasicParams.xml", "beans.xml", "httpClient.xml");
