@@ -71,6 +71,7 @@ import com.google.common.base.Predicates;
  * 
  * @event {@link EventIds#PROCEED_EVENT_ID}
  * @event {@link EventIds#INVALID_PROFILE_CTX}
+ * @event {@link EventIds#INVALID_MESSAGE}
  * @event {@link EventIds#IO_ERROR}
  * @event {@link SAMLEventIds#SESSION_NOT_FOUND}
  * @post The matching session(s) are destroyed.
@@ -238,6 +239,10 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
         if (logoutRequest == null) {
             log.warn("{} No LogoutRequest found to process", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_PROFILE_CTX);
+            return false;
+        } else if (logoutRequest.getNameID() == null) {
+            log.warn("{} LogoutRequest did not contain NameID", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
         }
         

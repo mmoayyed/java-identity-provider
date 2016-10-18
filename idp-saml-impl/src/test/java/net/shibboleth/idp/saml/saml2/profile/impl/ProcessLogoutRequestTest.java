@@ -107,7 +107,17 @@ public class ProcessLogoutRequestTest extends SessionManagerBaseTestCase {
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, EventIds.INVALID_PROFILE_CTX);
     }
-    
+
+    @Test public void testNoNameID() {
+        prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(null));
+        HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), new MockHttpServletResponse());
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, EventIds.INVALID_MESSAGE);
+        Assert.assertNull(prc.getSubcontext(SessionContext.class));
+        Assert.assertNull(prc.getSubcontext(SubjectContext.class));
+        Assert.assertNull(prc.getSubcontext(LogoutContext.class));
+    }
+
     @Test public void testNoSession() {
         final NameID nameId = SAML2ActionTestingSupport.buildNameID("jdoe");
         prc.getInboundMessageContext().setMessage(SAML2ActionTestingSupport.buildLogoutRequest(nameId));
