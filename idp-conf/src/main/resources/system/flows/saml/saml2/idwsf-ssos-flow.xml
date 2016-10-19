@@ -61,13 +61,14 @@
         <evaluate expression="EvaluateDelegationPolicy" />
         <evaluate expression="DecryptDelegatedAssertionNameID" />
         <evaluate expression="ProcessDelegatedAssertion" />
+        <evaluate expression="PopulateSubjectCanonicalizationContext" />
         
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="CallSAMLSubjectCanonicalization" />
     </action-state>
     
-    <subflow-state id="CallSAMLSubjectCanonicalization" subflow="c14n/saml">
+    <subflow-state id="CallSAMLSubjectCanonicalization" subflow="c14n">
         <input name="calledAsSubflow" value="true" />
         <transition on="proceed" to="FinalizeSAMLTokenProcessing" />
     </subflow-state>
