@@ -28,6 +28,7 @@ import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorPars
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -104,7 +105,13 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
 
         final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
 
-        final String salt = StringSupport.trimOrNull(config.getAttributeNS(null, "salt"));
+        final String salt;
+        if (AttributeSupport.hasAttribute(config, new QName("salt"))) {
+            salt = config.getAttributeNS(null, "salt");
+        } else {
+            salt = null;
+        }
+            
         if (null == salt) {
             log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', no salt provided", 
                     getLogPrefix(), generatedAttribute, sourceAttribute);
