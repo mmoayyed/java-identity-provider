@@ -21,17 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.Subject;
 
-import net.shibboleth.idp.authn.AuthnEventIds;
-import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
-import net.shibboleth.idp.profile.AbstractProfileAction;
-import net.shibboleth.idp.profile.context.navigate.RelyingPartyIdLookupFunction;
-import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
-import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
-import net.shibboleth.utilities.java.support.annotation.Prototype;
-import net.shibboleth.utilities.java.support.component.ComponentSupport;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.xml.SerializeSupport;
-
 import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.profile.action.ActionSupport;
@@ -43,6 +32,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+
+import net.shibboleth.idp.authn.AuthnEventIds;
+import net.shibboleth.idp.authn.context.SubjectCanonicalizationContext;
+import net.shibboleth.idp.profile.AbstractProfileAction;
+import net.shibboleth.idp.profile.context.navigate.ResponderIdLookupFunction;
+import net.shibboleth.idp.saml.authn.principal.NameIDPrincipal;
+import net.shibboleth.utilities.java.support.annotation.Prototype;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.xml.SerializeSupport;
 
 
 /**
@@ -85,7 +84,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
      * Constructor.
      */
     public ProcessDelegatedAssertion() {
-        requesterLookupStrategy = new SAMLPresenterLookupFunction();
+        requesterLookupStrategy = new DefaultC14NRequesterLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
         assertionTokenStrategy = new DelegatedAssertionLookupStrategy();
     }
@@ -175,22 +174,15 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
         c14n.setSubject(subject);
         
         String requesterEntityID = null;
-        if (nameID.getSPNameQualifier() != null) {
-            requesterEntityID = nameID.getSPNameQualifier();
-            log.debug("Saw NameID SPNameQualifier: {}", requesterEntityID);
-        } else {
-            if (requesterLookupStrategy != null) {
-                requesterEntityID = requesterLookupStrategy.apply(profileRequestContext);
-                log.debug("Resolved SAML requester entityID from context: {}", requesterEntityID);
-            }
+        if (requesterLookupStrategy != null) {
+            requesterEntityID = requesterLookupStrategy.apply(profileRequestContext);
         }
-        
         if (requesterEntityID != null) {
             log.debug("Resolved effective SAML requester entityID for Subject c14n: {}", requesterEntityID);
             c14n.setRequesterId(requesterEntityID);
         } else {
-            log.warn("Unable to determine effective SAML requester for c14n purposes, " 
-                    + "Subject c14n may fail, depending on NameID type");
+            log.warn("Unable to determine effective SAML requester for c14n, Subject c14n may fail, " 
+                    + "depending on NameID type");
         }
         
         if (responderLookupStrategy != null) {
@@ -200,23 +192,33 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
     }
     
     /**
-     * Default strategy for resolving the SAML presenter entityID.
+     * Default strategy for resolving the requester entityID for SAML subject c14n.
      */
-    public static class SAMLPresenterLookupFunction implements Function<ProfileRequestContext, String> {
+    public class DefaultC14NRequesterLookupFunction implements Function<ProfileRequestContext, String> {
 
         /** {@inheritDoc} */
         public String apply(final ProfileRequestContext input) {
-            if (input == null || input.getInboundMessageContext() == null) {
-                return null;
+            // First attempt to resolve SPNameQualifier from delegated Assertion's Subject NameID, if present
+            if (nameID.getSPNameQualifier() != null) {
+                log.debug("Saw delegated Assertion Subject NameID SPNameQualifier: {}", nameID.getSPNameQualifier());
+                return nameID.getSPNameQualifier();
             }
-            final SAMLPresenterEntityContext presenterContext = 
-                    input.getInboundMessageContext().getSubcontext(SAMLPresenterEntityContext.class);
-            if (presenterContext != null) {
-                return presenterContext.getEntityId();
-            } else {
-                return null;
+            
+            // Second attempt to resolve entityID of entity in SAML presenter role
+            if (input != null && input.getInboundMessageContext() != null) {
+                final SAMLPresenterEntityContext presenterContext = 
+                        input.getInboundMessageContext().getSubcontext(SAMLPresenterEntityContext.class);
+                if (presenterContext != null) {
+                    log.debug("Saw SAML presenter entityID: {}", presenterContext.getEntityId());
+                    return presenterContext.getEntityId();
+                } else {
+                    return null;
+                }
             }
+            
+            return null;
         }
+        
     }
     
 }
