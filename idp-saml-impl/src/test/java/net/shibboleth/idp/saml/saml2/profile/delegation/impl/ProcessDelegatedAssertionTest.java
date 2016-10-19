@@ -35,6 +35,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.webflow.execution.Event;
@@ -89,7 +90,9 @@ public class ProcessDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
     }
     
     @Test
-    public void testSuccess() throws ComponentInitializationException {
+    public void testSuccessWithSPNameQualifer() throws ComponentInitializationException {
+        delegatedAssertion.getSubject().getNameID().setSPNameQualifier("https://portal.example.edu/saml");
+        
         action.initialize();
         final Event result = action.execute(rc);
         ActionTestingSupport.assertProceedEvent(result);
@@ -102,7 +105,45 @@ public class ProcessDelegatedAssertionTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(nameIdPrincipals.size(), 1);
         Assert.assertSame(nameIdPrincipals.iterator().next().getNameID(), delegatedAssertion.getSubject().getNameID());
         
-        Assert.assertEquals(c14nContext.getRequesterId(), ActionTestingSupport.INBOUND_MSG_ISSUER);
+        Assert.assertEquals(c14nContext.getRequesterId(), "https://portal.example.edu/saml");
+        Assert.assertEquals(c14nContext.getResponderId(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+    }
+    
+    @Test
+    public void testSuccessWithSAMLPresenter() throws ComponentInitializationException {
+        prc.getInboundMessageContext().getSubcontext(SAMLPresenterEntityContext.class, true).setEntityId("https://portal.example.edu/saml");
+        
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
+        
+        SubjectCanonicalizationContext c14nContext = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        Assert.assertNotNull(c14nContext);
+        Assert.assertNotNull(c14nContext.getSubject());
+        Set<NameIDPrincipal> nameIdPrincipals = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
+        Assert.assertNotNull(nameIdPrincipals);
+        Assert.assertEquals(nameIdPrincipals.size(), 1);
+        Assert.assertSame(nameIdPrincipals.iterator().next().getNameID(), delegatedAssertion.getSubject().getNameID());
+        
+        Assert.assertEquals(c14nContext.getRequesterId(), "https://portal.example.edu/saml");
+        Assert.assertEquals(c14nContext.getResponderId(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
+    }
+
+    @Test
+    public void testSuccessNoC14NRequester() throws ComponentInitializationException {
+        action.initialize();
+        final Event result = action.execute(rc);
+        ActionTestingSupport.assertProceedEvent(result);
+        
+        SubjectCanonicalizationContext c14nContext = prc.getSubcontext(SubjectCanonicalizationContext.class);
+        Assert.assertNotNull(c14nContext);
+        Assert.assertNotNull(c14nContext.getSubject());
+        Set<NameIDPrincipal> nameIdPrincipals = c14nContext.getSubject().getPrincipals(NameIDPrincipal.class);
+        Assert.assertNotNull(nameIdPrincipals);
+        Assert.assertEquals(nameIdPrincipals.size(), 1);
+        Assert.assertSame(nameIdPrincipals.iterator().next().getNameID(), delegatedAssertion.getSubject().getNameID());
+        
+        Assert.assertNull(c14nContext.getRequesterId());
         Assert.assertEquals(c14nContext.getResponderId(), ActionTestingSupport.OUTBOUND_MSG_ISSUER);
     }
 

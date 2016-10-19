@@ -36,6 +36,7 @@ import org.opensaml.core.xml.io.MarshallingException;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.profile.action.ActionSupport;
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.common.messaging.context.SAMLPresenterEntityContext;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.NameID;
 import org.slf4j.Logger;
@@ -65,10 +66,10 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
     private Logger log = LoggerFactory.getLogger(ProcessDelegatedAssertion.class);
     
 
-    /** Function used to obtain the requester ID. */
+    /** Function used to obtain the requester ID, for purposes of Subject c14n. */
     @Nullable private Function<ProfileRequestContext,String> requesterLookupStrategy;
 
-    /** Function used to obtain the responder ID. */
+    /** Function used to obtain the responder ID, for purposes of Subject c14n. */
     @Nullable private Function<ProfileRequestContext,String> responderLookupStrategy;
     
     /** Function used to resolve the assertion token to process. */
@@ -84,7 +85,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
      * Constructor.
      */
     public ProcessDelegatedAssertion() {
-        requesterLookupStrategy = new RelyingPartyIdLookupFunction();
+        requesterLookupStrategy = new SAMLPresenterLookupFunction();
         responderLookupStrategy = new ResponderIdLookupFunction();
         assertionTokenStrategy = new DelegatedAssertionLookupStrategy();
     }
@@ -102,7 +103,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
     }
     
     /**
-     * Set the strategy used to locate the requester ID for canonicalization.
+     * Set the strategy used to locate the requester ID for subject canonicalization.
      * 
      * @param strategy lookup strategy
      */
@@ -114,7 +115,7 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
     }
 
     /**
-     * Set the strategy used to locate the responder ID for canonicalization.
+     * Set the strategy used to locate the responder ID for subject canonicalization.
      * 
      * @param strategy lookup strategy
      */
@@ -172,13 +173,50 @@ public class ProcessDelegatedAssertion extends AbstractProfileAction {
         
         final SubjectCanonicalizationContext c14n = new SubjectCanonicalizationContext();
         c14n.setSubject(subject);
-        if (requesterLookupStrategy != null) {
-            c14n.setRequesterId(requesterLookupStrategy.apply(profileRequestContext));
+        
+        String requesterEntityID = null;
+        if (nameID.getSPNameQualifier() != null) {
+            requesterEntityID = nameID.getSPNameQualifier();
+            log.debug("Saw NameID SPNameQualifier: {}", requesterEntityID);
+        } else {
+            if (requesterLookupStrategy != null) {
+                requesterEntityID = requesterLookupStrategy.apply(profileRequestContext);
+                log.debug("Resolved SAML requester entityID from context: {}", requesterEntityID);
+            }
         }
+        
+        if (requesterEntityID != null) {
+            log.debug("Resolved effective SAML requester entityID for Subject c14n: {}", requesterEntityID);
+            c14n.setRequesterId(requesterEntityID);
+        } else {
+            log.warn("Unable to determine effective SAML requester for c14n purposes, " 
+                    + "Subject c14n may fail, depending on NameID type");
+        }
+        
         if (responderLookupStrategy != null) {
             c14n.setResponderId(responderLookupStrategy.apply(profileRequestContext));
         }
         profileRequestContext.addSubcontext(c14n, true);
+    }
+    
+    /**
+     * Default strategy for resolving the SAML presenter entityID.
+     */
+    public static class SAMLPresenterLookupFunction implements Function<ProfileRequestContext, String> {
+
+        /** {@inheritDoc} */
+        public String apply(final ProfileRequestContext input) {
+            if (input == null || input.getInboundMessageContext() == null) {
+                return null;
+            }
+            final SAMLPresenterEntityContext presenterContext = 
+                    input.getInboundMessageContext().getSubcontext(SAMLPresenterEntityContext.class);
+            if (presenterContext != null) {
+                return presenterContext.getEntityId();
+            } else {
+                return null;
+            }
+        }
     }
     
 }
