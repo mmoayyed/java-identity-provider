@@ -1019,6 +1019,46 @@
         </complexContent>
     </complexType>
 
+    <complexType name="NameIDFormat">
+        <annotation>
+            <documentation>
+                A filter that adds NameIDFormat content to metadata in order to drive software
+                behavior based on them. Sequences of NameIDFormat elements are supplied, and when an Entity or
+                ConditionRef is encountered, the preceding formats are applied to the supporting roles of the
+                corresponding entities.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:MetadataFilterType">
+                <choice minOccurs="0" maxOccurs="unbounded">
+                    <element name="Format" type="string">
+                        <annotation>
+                            <documentation>
+                                A format to add. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="Entity" type="string">
+                        <annotation>
+                            <documentation>
+                                An entityID to identify an EntityDescriptor to add all the preceding
+                                formats to.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="ConditionRef" type="string">
+                        <annotation>
+                            <documentation>
+                                The ID of a Spring bean to inject as a condition Predicate to identify one
+                                or more EntityDescriptors to add all the preceding NameIDFormat elements to. 
+                            </documentation>
+                        </annotation>
+                    </element>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
     <complexType name="Predicate">
         <annotation>
             <documentation>
