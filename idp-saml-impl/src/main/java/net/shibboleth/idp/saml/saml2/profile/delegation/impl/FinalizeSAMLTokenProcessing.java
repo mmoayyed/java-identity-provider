@@ -68,7 +68,7 @@ public class FinalizeSAMLTokenProcessing extends AbstractProfileAction {
         }
         
         log.debug("{} Subject c14n from inbound delegated Assertion token produced principal name: {}",
-                principalName, getLogPrefix());
+                getLogPrefix(), principalName);
         
         return true;
     }
