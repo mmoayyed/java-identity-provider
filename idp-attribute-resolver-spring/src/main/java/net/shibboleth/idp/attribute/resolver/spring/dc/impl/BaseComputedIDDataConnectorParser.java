@@ -104,13 +104,14 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
 
         final String sourceAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "sourceAttributeID"));
 
-        final String salt = config.getAttributeNS(null, "salt");
+        final String salt = StringSupport.trimOrNull(config.getAttributeNS(null, "salt"));
         if (null == salt) {
             log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', no salt provided", 
                     getLogPrefix(), generatedAttribute, sourceAttribute);
         } else {
-            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', salt (or property): '{}'", 
-                    getLogPrefix(), generatedAttribute, sourceAttribute, salt);
+            log.debug("{} Generated Attribute: '{}', sourceAttribute = '{}', see TRACE log for its value", 
+                    getLogPrefix(), generatedAttribute, sourceAttribute);
+            log.trace("{} salt: '{}'", getLogPrefix(), salt);
         }
 
         builder.addPropertyValue("generatedAttributeId", generatedAttribute);
