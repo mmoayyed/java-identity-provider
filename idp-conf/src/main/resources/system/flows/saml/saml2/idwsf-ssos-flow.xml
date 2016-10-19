@@ -80,6 +80,11 @@
         
         <transition on="proceed" to="ResolveAttributes" />
     </action-state>
+    
+    <action-state id="EncryptAndSign">
+        <!-- Here we override and "splice in" ReturnToParentFlow to run after the this action defined in the parent flow -->
+        <transition on="proceed" to="ReturnToParentFlow" />
+    </action-state>
 
     <bean-import resource="idwsf-ssos-beans.xml" />
 
