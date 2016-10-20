@@ -678,9 +678,55 @@
                 <attribute name="cleanupTaskInterval" type="string">
                     <annotation>
                         <documentation>
-                            The interval at which the intern cleanup task should run.  This task performs
+                            The interval at which the internal cleanup task should run.  This task performs
                             background maintenance tasks, such as the removal of expired and idle metadata.
                             This value is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="persistentCacheManagerRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The manager for the persistent cache store for resolved metadata.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="persistentCacheManagerDirectory" type="string">
+                    <annotation>
+                        <documentation>
+                            The directory used for an internally-constructed filesystem-based persistent cache.
+                            This is a convenience parameter to avoid specifying a full bean via persistentCacheManagerRef.
+                            This option will be ignored if persistentCacheManagerRef is specified.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="persistentCacheKeyGeneratorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Function for generating the string key used with the cache manager.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="initializeFromPersistentCacheInBackground" type="string">
+                    <annotation>
+                        <documentation>
+                            A boolean flag indicating whether should initialize from the persistent cache in the background.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="backgroundInitializatonFromCacheDelay" type="string">
+                    <annotation>
+                        <documentation>
+                            The delay after which to schedule the background initialization from the persistent cache. 
+                            This value is expressed in ISO8601 duration notation.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="initializationFromCachePredicateRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Predicate which determines whether a given entity should be loaded from the
+                            persistent cache at resolver initialization time.
                         </documentation>
                     </annotation>
                 </attribute>

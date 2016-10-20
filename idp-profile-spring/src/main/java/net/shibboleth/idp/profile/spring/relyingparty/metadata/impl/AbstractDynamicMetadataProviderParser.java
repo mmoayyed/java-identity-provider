@@ -20,6 +20,11 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -28,9 +33,12 @@ import org.w3c.dom.Element;
  * Parser for {@link org.opensaml.saml.metadata.resolver.impl.AbstractDynamicMetadataResolver}.
  */
 public abstract class AbstractDynamicMetadataProviderParser extends AbstractMetadataProviderParser {
-
+    
     /** The reference to the system parser pool that we set up. */
     private static final String DEFAULT_PARSER_POOL_REF = "shibboleth.ParserPool";
+    
+    /** Logger. */
+    private Logger log = LoggerFactory.getLogger(AbstractDynamicMetadataProviderParser.class);
 
     /**
      * 
@@ -81,6 +89,61 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
         }
 
         builder.addPropertyReference("parserPool", getParserPoolRef(element));
+        
+        processPersistentCachingProperties(element, parserContext, builder);
+    }
+    
+    /**
+     * Process options related to persistent caching support.
+     * 
+     * @param element current element
+     * @param parserContext current parser context
+     * @param builder current builder
+     */
+    protected void processPersistentCachingProperties(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
+        
+        if (element.hasAttributeNS(null, "persistentCacheManagerRef")) {
+            builder.addPropertyReference("persistentCacheManager",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "persistentCacheManagerRef")));
+            
+            if (element.hasAttributeNS(null, "persistentCacheManagerDirectory")) {
+                log.warn("{} Element contained both persistentCacheManagerRef and persistentCacheManagerDirectory, " 
+                        + "persistentCacheManagerDirectory will be ignored", 
+                        parserContext.getReaderContext().getResource().getDescription());
+            }
+            
+        } else if (element.hasAttributeNS(null, "persistentCacheManagerDirectory")) {
+            final String cacheDirectory = 
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "persistentCacheManagerDirectory"));
+            log.debug("{} Building internally-constructed FilesystemLoadSaveManager with base directory: {}", 
+                    parserContext.getReaderContext().getResource().getDescription(), cacheDirectory);
+            final BeanDefinitionBuilder cacheManagerBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(FilesystemLoadSaveManager.class);
+            cacheManagerBuilder.addConstructorArgValue(cacheDirectory);
+            builder.addPropertyValue("persistentCacheManager", cacheManagerBuilder.getBeanDefinition());
+        }
+        
+        if (element.hasAttributeNS(null, "persistentCacheKeyGeneratorRef")) {
+            builder.addPropertyReference("persistentCacheKeyGenerator",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "persistentCacheKeyGeneratorRef")));
+        }
+        
+        if (element.hasAttributeNS(null, "initializeFromPersistentCacheInBackground")) {
+            builder.addPropertyValue("initializeFromPersistentCacheInBackground",
+                    StringSupport.trimOrNull(
+                            element.getAttributeNS(null, "initializeFromPersistentCacheInBackground")));
+        }
+        
+        if (element.hasAttributeNS(null, "backgroundInitializatonFromCacheDelay")) {
+            builder.addPropertyValue("backgroundInitializatonFromCacheDelay",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "backgroundInitializatonFromCacheDelay")));
+        }
+        
+        if (element.hasAttributeNS(null, "initializationFromCachePredicateRef")) {
+            builder.addPropertyReference("initializationFromCachePredicate",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "initializationFromCachePredicateRef")));
+        }
     }
 
     /**

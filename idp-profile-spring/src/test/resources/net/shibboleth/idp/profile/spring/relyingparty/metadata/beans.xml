@@ -66,5 +66,9 @@
             </util:list>
         </property>
     </bean>
+    
+    <bean id="predicate.AlwaysFalse" class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
+    
+    <bean id="metadata.persistentCacheManager" class="org.opensaml.core.xml.persist.MapLoadSaveManager" />
             
 </beans>

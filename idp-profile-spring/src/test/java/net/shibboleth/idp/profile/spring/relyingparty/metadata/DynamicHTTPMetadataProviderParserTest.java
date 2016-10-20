@@ -20,14 +20,22 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.util.Arrays;
 import java.util.Collections;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
+import org.opensaml.core.xml.persist.XMLObjectLoadSaveManager;
+import org.opensaml.saml.metadata.resolver.impl.AbstractDynamicMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.HTTPEntityIDRequestURLBuilder;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
@@ -52,6 +60,20 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertEquals(resolver.getSupportedContentTypes(), 
                 Arrays.asList("application/samlmetadata+xml", "application/xml", "text/xml"));
         
+        Assert.assertFalse(resolver.isPersistentCachingEnabled());
+        
+        Assert.assertNull(resolver.getPersistentCacheManager());
+        
+        Assert.assertNotNull(resolver.getPersistentCacheKeyGenerator());
+        Assert.assertTrue(resolver.getPersistentCacheKeyGenerator() instanceof AbstractDynamicMetadataResolver.DefaultCacheKeyGenerator);
+        
+        Assert.assertNotNull(resolver.getInitializationFromCachePredicate());
+        Assert.assertTrue(resolver.getInitializationFromCachePredicate().apply(null));  // always true predicate
+        
+        Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
+        
+        Assert.assertEquals(resolver.getBackgroundInitializatonFromCacheDelay(), new Long(2*1000));
+        
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
     }
     
@@ -69,6 +91,64 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
                 "dynamicMaxConnections.xml", "beans.xml", "httpClient.xml");
         
         // We can't really test the actual max values, this is just to test that parser, factory bean, etc are ok.
+    }
+    
+    @Test
+    public void testPersistentCacheParamsViaDirectory() throws Exception {
+        ApplicationContext appContext = getApplicationContext("dynamicResolverContext",
+                "dynamicPersistentCacheDirectory.xml", "beans.xml", "httpClient.xml");
+        
+        RelyingPartyMetadataProvider rpProvider = 
+                appContext.getBean("dynamicPersistentCacheParams", RelyingPartyMetadataProvider.class);
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = 
+                FunctionDrivenDynamicHTTPMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
+        Assert.assertNotNull(resolver);
+        
+        Assert.assertTrue(resolver.isInitialized());
+        
+        Assert.assertTrue(resolver.isPersistentCachingEnabled());
+        
+        Assert.assertNotNull(resolver.getPersistentCacheManager());
+        Assert.assertTrue(resolver.getPersistentCacheManager() instanceof FilesystemLoadSaveManager);
+        
+        Assert.assertNotNull(resolver.getPersistentCacheKeyGenerator());
+        Assert.assertSame(resolver.getPersistentCacheKeyGenerator(), appContext.getBean("digester.SHA1HexLower", Function.class));
+        
+        Assert.assertNotNull(resolver.getInitializationFromCachePredicate());
+        Assert.assertSame(resolver.getInitializationFromCachePredicate(), appContext.getBean("predicate.AlwaysFalse", Predicate.class));
+        
+        Assert.assertFalse(resolver.isInitializeFromPersistentCacheInBackground());
+        
+        Assert.assertEquals(resolver.getBackgroundInitializatonFromCacheDelay(), new Long(30*1000));
+    }
+    
+    @Test
+    public void testPersistentCacheParamsViaManagerBeanRef() throws Exception {
+        ApplicationContext appContext = getApplicationContext("dynamicResolverContext",
+                "dynamicPersistentCacheBean.xml", "beans.xml", "httpClient.xml");
+        
+        RelyingPartyMetadataProvider rpProvider = 
+                appContext.getBean("dynamicPersistentCacheParams", RelyingPartyMetadataProvider.class);
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = 
+                FunctionDrivenDynamicHTTPMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
+        Assert.assertNotNull(resolver);
+        
+        Assert.assertTrue(resolver.isInitialized());
+        
+        Assert.assertTrue(resolver.isPersistentCachingEnabled());
+        
+        Assert.assertNotNull(resolver.getPersistentCacheManager());
+        Assert.assertSame(resolver.getPersistentCacheManager(), appContext.getBean("metadata.persistentCacheManager", XMLObjectLoadSaveManager.class));
+        
+        Assert.assertNotNull(resolver.getPersistentCacheKeyGenerator());
+        Assert.assertSame(resolver.getPersistentCacheKeyGenerator(), appContext.getBean("digester.SHA1HexLower", Function.class));
+        
+        Assert.assertNotNull(resolver.getInitializationFromCachePredicate());
+        Assert.assertSame(resolver.getInitializationFromCachePredicate(), appContext.getBean("predicate.AlwaysFalse", Predicate.class));
+        
+        Assert.assertFalse(resolver.isInitializeFromPersistentCacheInBackground());
+        
+        Assert.assertEquals(resolver.getBackgroundInitializatonFromCacheDelay(), new Long(30*1000));
     }
     
     @Test
