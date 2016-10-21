@@ -81,6 +81,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");
+        request.setContentType("text/xml");
         request.setContent(requestBody.getBytes("UTF-8"));
         externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
         overrideEndStateOutput(FLOW_ID, "ValidateSuccess");
@@ -103,6 +104,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
     public void testFailureTicketExpired() throws Exception {
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", "ST-123-abcdefg");
         request.setMethod("POST");
+        request.setContentType("text/xml");
         request.setContent(requestBody.getBytes("UTF-8"));
         externalContext.getMockRequestParameterMap().put("TARGET", "https://test.example.org/");
 
@@ -126,6 +128,7 @@ public class SamlValidateFlowTest extends AbstractFlowTest {
                 false);
         final String requestBody = SAML_REQUEST_TEMPLATE.replace("@@TICKET@@", ticket.getId());
         request.setMethod("POST");
+        request.setContentType("text/xml");
         request.setContent(requestBody.getBytes("UTF-8"));
         externalContext.getMockRequestParameterMap().put("TARGET", ticket.getService());
         overrideEndStateOutput(FLOW_ID, "ValidateSuccess");

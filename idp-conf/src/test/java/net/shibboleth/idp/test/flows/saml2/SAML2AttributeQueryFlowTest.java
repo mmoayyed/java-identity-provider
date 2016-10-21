@@ -184,6 +184,8 @@ public class SAML2AttributeQueryFlowTest extends AbstractSAML2FlowTest {
                         parserPool.newDocument()));
 
         request.setMethod("POST");
+        
+        request.setContentType("text/xml");
 
         request.setContent(requestContent.getBytes("UTF-8"));
     }
