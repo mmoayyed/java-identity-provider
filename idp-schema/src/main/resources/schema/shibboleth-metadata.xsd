@@ -157,6 +157,14 @@
                        </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="httpClientSecurityParametersRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally defined Spring bean which specifies an
+                            org.opensaml.security.httpclient.HttpClientSecurityParameters object.
+                       </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="metadataURL" type="string" use="required">
                     <annotation>
                         <documentation>The URL from which to retrieve the metadata.</documentation>
@@ -458,6 +466,14 @@
                             
                             This attribute conflicts with and overrides the other HttpClient-related properties: 
                             disregardSslCertificate, disregardTLSCertificate, requestTimeout, proxyHost, proxyPort, proxyUser, proxyPassword.
+                       </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpClientSecurityParametersRef" type="string">
+                    <annotation>
+                        <documentation>
+                            A reference to an externally defined Spring bean which specifies an
+                            org.opensaml.security.httpclient.HttpClientSecurityParameters object.
                        </documentation>
                     </annotation>
                 </attribute>
