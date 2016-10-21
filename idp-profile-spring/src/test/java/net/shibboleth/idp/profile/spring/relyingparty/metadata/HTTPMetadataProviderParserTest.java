@@ -171,4 +171,13 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
     }
     
+    @Test public void clientSecurityParameters() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-client-security-params.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPSEntityWithClientSecurityParams");
+        
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+    }
+    
 }

@@ -78,6 +78,14 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     }
     
     @Test
+    public void testClientSecurityParamsParams() throws Exception {
+        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+                "dynamicClientSecurityParams.xml", "beans.xml", "httpClient.xml");
+        
+        // We can't really test the actual timeout values, this is just to test that parser, factory bean, etc are ok.
+    }
+    
+    @Test
     public void testTimeoutParams() throws Exception {
         FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicTimeouts.xml", "beans.xml", "httpClient.xml");

@@ -107,6 +107,11 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
                 haveTLSTrustEngine = true;
             }
         }
+        
+        if (element.hasAttributeNS(null, "httpClientSecurityParametersRef")) {
+            builder.addPropertyReference("httpClientSecurityParameters",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef")));
+        }
 
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientRef")));
@@ -118,9 +123,9 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
                     || element.hasAttributeNS(null, "disregardTLSCertificate")
                     || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
                     || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
-                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, connectionRequestTimeout, " 
-                        + "socketTimeout, disregardSslCertificate, disregardTLSCertificate, proxyHost, proxyPort, "
-                        + "proxyUser and proxyPassword");
+                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, " 
+                    + "connectionRequestTimeout, socketTimeout, disregardSslCertificate, disregardTLSCertificate, "
+                    + " proxyHost, proxyPort, proxyUser and proxyPassword");
             }
         } else {
             builder.addConstructorArgValue(buildHttpClient(element, parserContext, haveTLSTrustEngine));

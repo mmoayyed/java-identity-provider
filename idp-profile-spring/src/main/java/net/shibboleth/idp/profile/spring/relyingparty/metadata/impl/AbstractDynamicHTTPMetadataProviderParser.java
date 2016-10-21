@@ -89,6 +89,11 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                 haveTLSTrustEngine = true;
             }
         }
+        
+        if (element.hasAttributeNS(null, "httpClientSecurityParametersRef")) {
+            builder.addPropertyReference("httpClientSecurityParameters",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef")));
+        }
 
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientRef")));

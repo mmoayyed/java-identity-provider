@@ -70,5 +70,7 @@
     <bean id="predicate.AlwaysFalse" class="com.google.common.base.Predicates" factory-method="alwaysFalse" />
     
     <bean id="metadata.persistentCacheManager" class="org.opensaml.core.xml.persist.MapLoadSaveManager" />
+    
+    <bean id="metadata.HttpClientSecurityParameters" class="org.opensaml.security.httpclient.HttpClientSecurityParameters" />
             
 </beans>
