@@ -761,6 +761,14 @@
                         <documentation>ID of the parser pool used to parse incoming metadata.</documentation>
                     </annotation>
                 </attribute>
+                <attribute name="indexesRef" type="string">
+                    <annotation>
+                        <documentation>
+                            ID of a Set of MetadataIndex instances used to support resolution of metadata based on
+                            criteria other than an entityID.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="taskTimerRef" type="string">
                     <annotation>
                         <documentation>ID of the task timer used to schedule background refresh jobs.</documentation>

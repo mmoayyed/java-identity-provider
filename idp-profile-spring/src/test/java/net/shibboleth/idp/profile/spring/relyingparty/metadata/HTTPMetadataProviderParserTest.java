@@ -180,4 +180,16 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
     }
     
+    @Test public void indexes() throws Exception {
+
+        HTTPMetadataResolver resolver = getBean(HTTPMetadataResolver.class, "https-indexes.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "HTTPSEntityWithIndexes");
+        
+        Assert.assertNotNull(resolver.resolveSingle(criteriaFor(IDP_ID)));
+        
+        Assert.assertNotNull(resolver.getIndexes());
+        Assert.assertEquals(resolver.getIndexes().size(), 3);
+    }
+    
 }

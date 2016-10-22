@@ -50,6 +50,11 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
             builder.addConstructorArgReference(timerRef);
         }
 
+        if (element.hasAttributeNS(null, "indexesRef")) {
+            builder.addPropertyReference("indexes",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "indexesRef")));
+        }
+
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
             builder.addPropertyValue("refreshDelayFactor",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "refreshDelayFactor")));

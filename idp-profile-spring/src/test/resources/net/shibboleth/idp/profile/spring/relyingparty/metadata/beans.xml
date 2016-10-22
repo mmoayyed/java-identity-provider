@@ -73,4 +73,10 @@
     
     <bean id="metadata.HttpClientSecurityParameters" class="org.opensaml.security.httpclient.HttpClientSecurityParameters" />
             
+    <util:set id="metadata.Indexes">
+        <bean class="org.opensaml.saml.metadata.resolver.index.impl.RoleMetadataIndex" />
+        <bean class="org.opensaml.saml.metadata.resolver.index.impl.EndpointMetadataIndex" />
+        <bean class="org.opensaml.saml.metadata.resolver.index.impl.SAMLArtifactMetadataIndex" />
+    </util:set>
+            
 </beans>
