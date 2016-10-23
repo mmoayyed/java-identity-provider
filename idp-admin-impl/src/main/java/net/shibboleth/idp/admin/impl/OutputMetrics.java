@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.impl;
+package net.shibboleth.idp.admin.impl;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

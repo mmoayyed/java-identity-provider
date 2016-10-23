@@ -335,6 +335,14 @@
     <!-- Default Jackson ObjectMapper with JodaTime support. -->
     
     <bean id="shibboleth.JSONObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+            p:targetObject-ref="shibboleth.JSONObjectMapper"
+            p:targetMethod="setSerializationInclusion">
+        <property name="arguments">
+            <util:constant static-field="com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL" />
+        </property>
+    </bean>
     
     <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
             p:targetObject-ref="shibboleth.JSONObjectMapper"

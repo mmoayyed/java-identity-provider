@@ -28,5 +28,15 @@
     <bean id="shibboleth.AdminResourceLookupStrategy" parent="shibboleth.ContextFunctions.Expression"
         c:outputType="#{T(java.lang.String)}"
         c:expression="#input.getSubcontext(T(net.shibboleth.idp.profile.context.SpringRequestContext)).getRequestContext().getFlowScope().get('context')" />
+    
+    <!--  Work beans. -->
+    
+    <bean id="DoStorageOperation" class="net.shibboleth.idp.admin.impl.DoStorageOperation" scope="prototype"
+        p:httpServletRequest-ref="shibboleth.HttpServletRequest"
+        p:httpServletResponse-ref="shibboleth.HttpServletResponse"
+        p:objectMapper-ref="shibboleth.JSONObjectMapper" />
         
+    <bean id="RecordResponseComplete" class="net.shibboleth.idp.profile.impl.RecordResponseComplete" scope="prototype" />
+    
+    
 </beans>
