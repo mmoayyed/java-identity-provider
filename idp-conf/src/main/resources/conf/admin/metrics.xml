@@ -103,4 +103,27 @@
     </bean>
     -->
     
+    <!--
+    In addition to the "pull" REST API for accessing metrics, a "push" reporter is also
+    available to upload a JSON feed to a URL. The example shown relies on standard JVM
+    trust configuration for TLS server verification.
+    
+    The "start" method triggers the timer thread; the example pushes every 30 minutes.
+    -->
+    <!--
+    <bean id="PushReporter" parent="shibboleth.metrics.HTTPReporter" c:name="MyCollector"
+        p:collectorURL="https://log.example.org/cgi-bin/collector.cgi" />
+                
+    <bean class="org.springframework.beans.factory.config.MethodInvokingBean"
+            p:targetObject-ref="PushReporter"
+            p:targetMethod="start">
+        <property name="arguments">
+            <list>
+                <value>30</value>
+                <util:constant static-field="java.util.concurrent.TimeUnit.MINUTES" />
+            </list>
+        </property>
+    </bean>
+    -->
+    
 </beans>
