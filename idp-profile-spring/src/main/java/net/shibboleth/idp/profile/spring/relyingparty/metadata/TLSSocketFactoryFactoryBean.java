@@ -21,9 +21,8 @@ import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
-import org.apache.http.conn.ssl.StrictHostnameVerifier;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
-import org.opensaml.security.httpclient.impl.SecurityEnhancedTLSSocketFactory;
+import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
@@ -78,10 +77,12 @@ public class TLSSocketFactoryFactoryBean extends AbstractFactoryBean {
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        if (tlsTrustEngine != null 
-                || (httpClientSecurityParameters != null && httpClientSecurityParameters.getTLSTrustEngine() != null)) {
-            return  new SecurityEnhancedTLSSocketFactory(HttpClientSupport.buildNoTrustTLSSocketFactory(), 
-                    new StrictHostnameVerifier());
+        final boolean haveTrustEngine = (tlsTrustEngine != null 
+                || (httpClientSecurityParameters != null && httpClientSecurityParameters.getTLSTrustEngine() != null));
+        final boolean haveClientTLSCred = 
+                (httpClientSecurityParameters != null && httpClientSecurityParameters.getClientTLSCredential() != null);
+        if (haveTrustEngine || haveClientTLSCred) {
+            return SecurityEnhancedHttpClientSupport.buildTLSSocketFactory(haveTrustEngine, haveClientTLSCred);
         } else if (connectionDisregardTLSCertificate) {
             return HttpClientSupport.buildNoTrustTLSSocketFactory();
         } else {
