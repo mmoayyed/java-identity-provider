@@ -26,14 +26,12 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataP
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean;
-import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.TLSSocketFactoryFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.conn.ssl.StrictHostnameVerifier;
-import org.opensaml.security.httpclient.impl.SecurityEnhancedTLSSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -77,22 +75,22 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
             final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
-        boolean haveTLSTrustEngine = false;
+        Object tlsTrustEngineRefOrBean = null;
         if (element.hasAttributeNS(null, "tlsTrustEngineRef")) {
-            builder.addPropertyReference("tLSTrustEngine",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef")));
-            haveTLSTrustEngine = true;
+            tlsTrustEngineRefOrBean = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
+            builder.addPropertyReference("tLSTrustEngine", (String) tlsTrustEngineRefOrBean);
         } else {
-            final BeanDefinition tlsTrustEngine = parseTLSTrustEngine(element, parserContext);
-            if (tlsTrustEngine != null) {
-                builder.addPropertyValue("tLSTrustEngine", tlsTrustEngine);
-                haveTLSTrustEngine = true;
+            tlsTrustEngineRefOrBean = parseTLSTrustEngine(element, parserContext);
+            if (tlsTrustEngineRefOrBean != null) {
+                builder.addPropertyValue("tLSTrustEngine", tlsTrustEngineRefOrBean);
             }
         }
         
+        String httpClientSecurityParametersRef = null;
         if (element.hasAttributeNS(null, "httpClientSecurityParametersRef")) {
-            builder.addPropertyReference("httpClientSecurityParameters",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef")));
+            httpClientSecurityParametersRef = 
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
+            builder.addPropertyReference("httpClientSecurityParameters", httpClientSecurityParametersRef);
         }
 
         if (element.hasAttributeNS(null, "httpClientRef")) {
@@ -113,7 +111,8 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                         + "proxyUser and proxyPassword");
             }
         } else {
-            builder.addConstructorArgValue(buildHttpClient(element, parserContext, haveTLSTrustEngine));
+            builder.addConstructorArgValue(buildHttpClient(element, parserContext, tlsTrustEngineRefOrBean, 
+                    httpClientSecurityParametersRef));
         }
 
         if (element.hasAttributeNS(null, "credentialsProviderRef")) {
@@ -145,13 +144,14 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      * 
      * @param element the HTTPMetadataProvider parser.
      * @param parserContext thee context
-     * @param haveTLSTrustEngine whether have a TLS TrustEngine configured
+     * @param tlsTrustEngineRefOrBean the bean ref or definition for a TLS TrustEngine
+     * @param httpClientSecurityParametersRef the client security parameters ref to be used
      * @return the bean definition with the parameters.
      */
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
     private BeanDefinition buildHttpClient(final Element element, final ParserContext parserContext,
-            final boolean haveTLSTrustEngine) {
+            final Object tlsTrustEngineRefOrBean, final String httpClientSecurityParametersRef) {
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
             caching = StringSupport.trimOrNull(element.getAttributeNS(null, "httpCaching"));
@@ -225,21 +225,9 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         } else {
             clientBuilder.addPropertyValue("maxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
         }
-
-        if (haveTLSTrustEngine) {
-            clientBuilder.addPropertyValue("tLSSocketFactory",
-                    new SecurityEnhancedTLSSocketFactory(HttpClientSupport.buildNoTrustTLSSocketFactory(),
-                            new StrictHostnameVerifier()));
-        }
-
-        if (element.hasAttributeNS(null, "disregardTLSCertificate")) {
-            clientBuilder.addPropertyValue("connectionDisregardTLSCertificate",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "disregardTLSCertificate")));
-        } else if (element.hasAttributeNS(null, "disregardSslCertificate")) {
-            log.warn("disregardSslCertificate is deprecated, please switch to disregardTLSCertificate");
-            clientBuilder.addPropertyValue("connectionDisregardTLSCertificate",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "disregardSslCertificate")));
-        }
+        
+        clientBuilder.addPropertyValue("tLSSocketFactory", buildTLSSocketFactory(element, parserContext, 
+                tlsTrustEngineRefOrBean, httpClientSecurityParametersRef));
 
         if (element.hasAttributeNS(null, "proxyHost")) {
             clientBuilder.addPropertyValue("connectionProxyHost",
@@ -265,6 +253,46 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
     // Checkstyle: CyclomaticComplexity ON
     // Checkstyle: MethodLength ON
+    
+    /**
+     * Build the definition of the HTTPClientBuilder which contains all our configuration.
+     * 
+     * @param element the HTTPMetadataProvider parser.
+     * @param parserContext context
+     * @param tlsTrustEngineRefOrBean the bean ref or definition for a TLS TrustEngine
+     * @param httpClientSecurityParametersRef 
+     * @return the bean definition with the parameters.
+     */
+    private BeanDefinition buildTLSSocketFactory(final Element element, final ParserContext parserContext,
+            final Object tlsTrustEngineRefOrBean, final String httpClientSecurityParametersRef) {
+        
+        final BeanDefinitionBuilder tlsSocketFactoryBuilder = 
+                BeanDefinitionBuilder.genericBeanDefinition(TLSSocketFactoryFactoryBean.class);
+        
+        if (tlsTrustEngineRefOrBean != null) {
+            if (tlsTrustEngineRefOrBean instanceof String) {
+                tlsSocketFactoryBuilder.addPropertyReference("tLSTrustEngine", (String) tlsTrustEngineRefOrBean);
+            } else {
+                tlsSocketFactoryBuilder.addPropertyValue("tLSTrustEngine", tlsTrustEngineRefOrBean);
+            }
+        }
+        
+        if (element.hasAttributeNS(null, "disregardTLSCertificate")) {
+            tlsSocketFactoryBuilder.addPropertyValue("connectionDisregardTLSCertificate",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "disregardTLSCertificate")));
+        } else if (element.hasAttributeNS(null, "disregardSslCertificate")) {
+            log.warn("disregardSslCertificate is deprecated, please switch to disregardTLSCertificate");
+            tlsSocketFactoryBuilder.addPropertyValue("connectionDisregardTLSCertificate",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "disregardSslCertificate")));
+        }
+        
+        if (httpClientSecurityParametersRef != null) {
+            tlsSocketFactoryBuilder.addPropertyReference("httpClientSecurityParameters", 
+                    httpClientSecurityParametersRef);
+        }
+        
+        return tlsSocketFactoryBuilder.getBeanDefinition();
+    }
 
     /**
      * Build the POJO with the username and password.
