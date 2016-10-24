@@ -332,6 +332,9 @@
         </constructor-arg>
     </bean>
     
+    <bean id="shibboleth.StaticTrustEngine" abstract="true"
+        class="net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticExplicitKeyFactoryBean" />
+    
     <!-- Default Jackson ObjectMapper with JodaTime support. -->
     
     <bean id="shibboleth.JSONObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
