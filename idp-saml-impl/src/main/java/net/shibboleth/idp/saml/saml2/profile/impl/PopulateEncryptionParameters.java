@@ -42,6 +42,7 @@ import org.opensaml.xmlsec.EncryptionParameters;
 import org.opensaml.xmlsec.EncryptionParametersResolver;
 import org.opensaml.xmlsec.SecurityConfigurationSupport;
 import org.opensaml.xmlsec.criterion.EncryptionConfigurationCriterion;
+import org.opensaml.xmlsec.criterion.EncryptionOptionalCriterion;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
@@ -369,6 +370,8 @@ public class PopulateEncryptionParameters extends AbstractProfileAction {
     @Nonnull private CriteriaSet buildCriteriaSet(@Nonnull final ProfileRequestContext profileRequestContext) {
         
         final CriteriaSet criteria = new CriteriaSet(new EncryptionConfigurationCriterion(encryptionConfigurations));
+        
+        criteria.add(new EncryptionOptionalCriterion(encryptionOptional));
 
         if (peerContextLookupStrategy != null) {
             final SAMLPeerEntityContext peerCtx = peerContextLookupStrategy.apply(profileRequestContext);
