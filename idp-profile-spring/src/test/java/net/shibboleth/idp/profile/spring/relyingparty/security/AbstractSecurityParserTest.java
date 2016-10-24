@@ -91,6 +91,10 @@ public class AbstractSecurityParserTest {
     }
     
     protected <T> T getBean(final Class<T> claz,  final boolean validating, final String... files) throws IOException{
+        return getBean(null, claz, validating, files);
+    }
+
+    protected <T> T getBean(final String name, final Class<T> claz,  final boolean validating, final String... files) throws IOException{
         final Resource[] resources = new Resource[files.length];
        
         for (int i = 0; i < files.length; i++) {
@@ -116,7 +120,10 @@ public class AbstractSecurityParserTest {
         configReader.loadBeanDefinitions(resources);
         context.refresh();
         
-        return context.getBean(claz);
+        if (name != null) {
+            return context.getBean(name, claz);
+        } else {
+            return context.getBean(claz);
+        }
     }
-
 }
