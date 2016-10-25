@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.authn.impl;
 
+import java.security.Principal;
+import java.util.List;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -44,6 +47,9 @@ import com.google.common.base.Function;
  * with an {@link AuthenticationProfileConfiguration} containing one or more default authentication
  * methods.
  * 
+ * <p>If such a context already exists, it is left in place unless the {@link #replaceExistingContext} property
+ * is set.</p>
+ * 
  * @event {@link org.opensaml.profile.action.EventIds#PROCEED_EVENT_ID}
  * @event {@link IdPEventIds#INVALID_RELYING_PARTY_CTX}
  * @event {@link IdPEventIds#INVALID_PROFILE_CONFIG}
@@ -54,6 +60,9 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(InitializeRequestedPrincipalContext.class);
 
+    /** Whether to replace an existing subcontext, if any. */
+    private boolean replaceExistingContext;
+    
     /**
      * Strategy used to locate the {@link RelyingPartyContext} associated with a given {@link ProfileRequestContext}.
      */
@@ -65,6 +74,20 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     /** Constructor. */
     public InitializeRequestedPrincipalContext() {
         relyingPartyContextLookupStrategy = new ChildContextLookup<>(RelyingPartyContext.class);
+    }
+    
+    /**
+     * Whether any existing {@link RequestedPrincipalContext} should be replaced, defaults to "false".
+     * 
+     * <p>Normally an existing context would indicate requirements that shouldn't be circumvented to comply with
+     * expected profile behavior.</p>
+     * 
+     * @param flag flag to set
+     */
+    public void setReplaceExistingContext(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        replaceExistingContext = flag;
     }
     
     /**
@@ -86,6 +109,15 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
+        
+        if (!super.doPreExecute(profileRequestContext, authenticationContext)) {
+            return false;
+        } else if (authenticationContext.getSubcontext(RequestedPrincipalContext.class) != null
+                && !replaceExistingContext) {
+            log.debug("{} Leaving existing RequestedPrincipalContext in place", getLogPrefix());
+            return false;
+        }
+        
         final RelyingPartyContext rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpCtx == null) {
             log.debug("{} No relying party context", getLogPrefix());
@@ -107,12 +139,7 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
         }
         
         authenticationProfileConfig = (AuthenticationProfileConfiguration) config;
-        if (authenticationProfileConfig.getDefaultAuthenticationMethods().isEmpty()) {
-            log.debug("{} Profile configuration does not include any default authentication methods", getLogPrefix());
-            return false;
-        }
-        
-        return super.doPreExecute(profileRequestContext, authenticationContext);
+        return true;
     }
     
     /** {@inheritDoc} */
@@ -120,12 +147,20 @@ public class InitializeRequestedPrincipalContext extends AbstractAuthenticationA
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AuthenticationContext authenticationContext) {
 
+        final List<Principal> principals = authenticationProfileConfig.getDefaultAuthenticationMethods();
+        if (authenticationProfileConfig.getDefaultAuthenticationMethods().isEmpty()) {
+            log.debug("{} Profile configuration did not supply any default authentication methods", getLogPrefix());
+            return;
+        }
+
         final RequestedPrincipalContext principalCtx = new RequestedPrincipalContext();
         principalCtx.setOperator("exact");
-        principalCtx.setRequestedPrincipals(authenticationProfileConfig.getDefaultAuthenticationMethods());
-        authenticationContext.addSubcontext(principalCtx);
+        principalCtx.setRequestedPrincipals(principals);
+        principalCtx.setPrincipalEvalPredicateFactoryRegistry(
+                authenticationContext.getPrincipalEvalPredicateFactoryRegistry());
+        authenticationContext.addSubcontext(principalCtx, true);
         
-        log.debug("{} Created requested principal context with {} methods", getLogPrefix(),
+        log.debug("{} Established RequestedPrincipalContext with {} methods", getLogPrefix(),
                 principalCtx.getRequestedPrincipals().size());
     }
     

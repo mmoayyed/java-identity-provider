@@ -224,9 +224,6 @@
         <constructor-arg value="#{ '%{idp.authn.flows.initial:}'.trim().length() gt 0 }" type="boolean" />
     </bean>
 
-    <bean id="InitializeRequestedPrincipalContext"
-        class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext" scope="prototype" />
-
     <bean id="ResolveAttributes" class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
         c:resolverService-ref="shibboleth.AttributeResolverService"
         p:maskFailures="%{idp.service.attribute.resolver.maskFailures:true}" />

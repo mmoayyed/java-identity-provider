@@ -58,24 +58,34 @@ public class InitializeRequestedPrincipalContextTest {
         action = new InitializeRequestedPrincipalContext();
         action.initialize();
     }
+
+    /** Test that the action bails if set not to replace. */
+    @Test public void testNoReplace() throws Exception {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        authCtx.getSubcontext(RequestedPrincipalContext.class, true).setOperator("foo");
+
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
+        Assert.assertEquals(authCtx.getSubcontext(RequestedPrincipalContext.class).getOperator(), "foo");
+    }
     
     /** Test that the action errors out properly if there is no relying party context. */
     @Test public void testNoRelyingPartyContext() throws Exception {
         prc.removeSubcontext(RelyingPartyContext.class);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_RELYING_PARTY_CTX);
-        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
+        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
     /** Test that the action errors out properly if there is no relying party configuration. */
     @Test public void testNoProfileConfiguration() throws Exception {
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
-        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
+        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
     /** Test that the action errors out properly if the desired profile configuration is not configured. */
@@ -83,36 +93,48 @@ public class InitializeRequestedPrincipalContextTest {
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(new MockProfileConfiguration("mock"))).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertEvent(event, IdPEventIds.INVALID_PROFILE_CONFIG);
-        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
+        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class));
     }
 
     /** Test that the action works with no methods supplied. */
     @Test public void testNoMethods() throws Exception {
-        MockAuthenticationProfileConfiguration mock =
+        final MockAuthenticationProfileConfiguration mock =
                 new MockAuthenticationProfileConfiguration("mock", Collections.<Principal>emptyList());
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        
+        authCtx.getSubcontext(RequestedPrincipalContext.class, true).setOperator("foo");
+
+        action = new InitializeRequestedPrincipalContext();
+        action.setReplaceExistingContext(true);
+        action.initialize();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);
-        Assert.assertNull(authCtx.getSubcontext(RequestedPrincipalContext.class, false));
+        Assert.assertEquals(authCtx.getSubcontext(RequestedPrincipalContext.class).getOperator(), "foo");
     }
     
     /** Test that the action works with methods supplied. */
     @Test public void testWithMethods() throws Exception {
-        Principal method = new TestPrincipal("test");
-        MockAuthenticationProfileConfiguration mock =
+        final Principal method = new TestPrincipal("test");
+        final MockAuthenticationProfileConfiguration mock =
                 new MockAuthenticationProfileConfiguration("mock", Collections.singletonList(method));
         src = new RequestContextBuilder().setRelyingPartyProfileConfigurations(
                 Collections.<ProfileConfiguration>singleton(mock)).buildRequestContext();
         prc = new WebflowRequestContextProfileRequestContextLookup().apply(src);
-        AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class, true);
+
+        authCtx.getSubcontext(RequestedPrincipalContext.class, true).setOperator("foo");
+
+        action = new InitializeRequestedPrincipalContext();
+        action.setReplaceExistingContext(true);
+        action.initialize();
 
         final Event event = action.execute(src);
         ActionTestingSupport.assertProceedEvent(event);

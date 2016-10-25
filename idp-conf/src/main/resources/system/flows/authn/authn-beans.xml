@@ -49,6 +49,10 @@
         class="%{idp.session.activeResultExtraction:net.shibboleth.idp.session.impl.ExtractActiveAuthenticationResults}"
         scope="prototype" />
 
+    <bean id="InitializeRequestedPrincipalContext"
+        class="net.shibboleth.idp.authn.impl.InitializeRequestedPrincipalContext" scope="prototype"
+        p:replaceExistingContext="%{idp.authn.overrideRequestedAuthnContext:false}" />
+
     <bean id="ResolveAttributes"
             class="net.shibboleth.idp.profile.impl.ResolveAttributes" scope="prototype"
             c:resolverService-ref="shibboleth.AttributeResolverService"

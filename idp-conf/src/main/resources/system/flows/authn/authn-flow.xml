@@ -38,6 +38,7 @@
     </action-state>
    
     <action-state id="FilterFlows">
+        <evaluate expression="InitializeRequestedPrincipalContext" />
         <evaluate expression="FilterFlowsByForcedAuthn" />
         <evaluate expression="FilterFlowsByPassivity" />
         <evaluate expression="FilterFlowsByNonBrowserSupport" />

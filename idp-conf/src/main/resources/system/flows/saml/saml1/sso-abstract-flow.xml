@@ -47,7 +47,6 @@
     
     <action-state id="PostInitialSetup">
         <evaluate expression="InitializeAuthenticationContext" />
-        <evaluate expression="InitializeRequestedPrincipalContext" />
         <evaluate expression="'proceed'" />
         
         <transition on="proceed" to="DoAuthenticationSubflow" />

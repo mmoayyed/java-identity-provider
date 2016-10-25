@@ -51,7 +51,6 @@
     
     <action-state id="PostInitialSetup">
         <evaluate expression="InitializeAuthenticationContext" />
-        <evaluate expression="InitializeRequestedPrincipalContext" />
         <evaluate expression="ProcessRequestedAuthnContext" />
         <evaluate expression="'proceed'" />
         
