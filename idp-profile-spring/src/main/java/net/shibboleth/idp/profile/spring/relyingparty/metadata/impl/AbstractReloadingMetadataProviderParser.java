@@ -55,6 +55,11 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
                     StringSupport.trimOrNull(element.getAttributeNS(null, "indexesRef")));
         }
 
+        if (element.hasAttributeNS(null, "resolveViaPredicatesOnly")) {
+            builder.addPropertyValue("resolveViaPredicatesOnly",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "resolveViaPredicatesOnly")));
+        }
+
         if (element.hasAttributeNS(null, "refreshDelayFactor")) {
             builder.addPropertyValue("refreshDelayFactor",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "refreshDelayFactor")));
@@ -71,6 +76,7 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
         }
 
         builder.addPropertyReference("parserPool", getParserPoolRef(element));
+        
     }
 
     /**

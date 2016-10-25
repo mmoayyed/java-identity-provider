@@ -809,6 +809,14 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="resolveViaPredicatesOnly" type="string">
+                    <annotation>
+                        <documentation>
+                            Flag indicating whether resolution may be performed solely by applying predicates to the
+                            entire metadata collection. Defaults to false.
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="taskTimerRef" type="string">
                     <annotation>
                         <documentation>ID of the task timer used to schedule background refresh jobs.</documentation>
@@ -874,6 +882,29 @@
                 <documentation>
                     Determines if the metadata provider "fails fast" during initialization. This means that
                     if there is a problem initializing the metadata provider it will stop the IdP from starting.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="satisfyAnyPredicates" type="string">
+            <annotation>
+                <documentation>
+                    Flag which determines whether predicates used in filtering are connected by 
+                    a logical 'OR' (true) or by logical 'AND' (false). Defaults to false.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="criterionPredicateRegistryRef" type="string">
+            <annotation>
+                <documentation>
+                    Reference to bean for the predicate registry used in resolving predicates from criteria.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="useDefaultPredicateRegistry" type="string">
+            <annotation>
+                <documentation>
+                    Flag which determines whether the default predicate registry will be used if one is not supplied explicitly.
+                    Defaults to true.
                 </documentation>
             </annotation>
         </attribute>

@@ -17,12 +17,16 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.opensaml.saml.metadata.resolver.impl.FilesystemMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
 
 public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
     
@@ -64,4 +68,45 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
 
         Assert.assertNotNull(resolver.resolveSingle(criteriaFor(SP_ID)));
     }
+    
+    @Test public void predicatesDefaults() throws IOException {
+        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, "filePredicatesDefaults.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "filePredicatesDefaults");
+        
+        Assert.assertFalse(resolver.isSatisfyAnyPredicates());
+        Assert.assertTrue(resolver.isUseDefaultPredicateRegistry());
+        Assert.assertNotNull(resolver.getCriterionPredicateRegistry());
+        Assert.assertFalse(resolver.isResolveViaPredicatesOnly());
+    }
+    
+    @Test public void predicatesNoDefaultRegistry() throws IOException {
+        FilesystemMetadataResolver resolver = getBean(FilesystemMetadataResolver.class, "filePredicatesNoDefaultRegistry.xml", "beans.xml");
+        
+        Assert.assertEquals(resolver.getId(), "filePredicatesNoDefaultRegistry");
+        
+        Assert.assertFalse(resolver.isSatisfyAnyPredicates());
+        Assert.assertFalse(resolver.isUseDefaultPredicateRegistry());
+        Assert.assertNull(resolver.getCriterionPredicateRegistry());
+        Assert.assertFalse(resolver.isResolveViaPredicatesOnly());
+    }
+    
+    @Test public void predicatesOptions() throws IOException {
+        ApplicationContext appContext = getApplicationContext("filesystemResolverContext",
+                "filePredicatesOptions.xml", "beans.xml");
+        
+        RelyingPartyMetadataProvider rpProvider = 
+                appContext.getBean("filePredicatesOptions", RelyingPartyMetadataProvider.class);
+        FilesystemMetadataResolver resolver = 
+                FilesystemMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
+        
+        Assert.assertEquals(resolver.getId(), "filePredicatesOptions");
+        
+        Assert.assertTrue(resolver.isSatisfyAnyPredicates());
+        Assert.assertTrue(resolver.isUseDefaultPredicateRegistry());
+        Assert.assertNotNull(resolver.getCriterionPredicateRegistry());
+        Assert.assertSame(resolver.getCriterionPredicateRegistry(), appContext.getBean("metadata.CriterionPredicateRegistry"));
+        Assert.assertTrue(resolver.isResolveViaPredicatesOnly());
+    }
+    
 }

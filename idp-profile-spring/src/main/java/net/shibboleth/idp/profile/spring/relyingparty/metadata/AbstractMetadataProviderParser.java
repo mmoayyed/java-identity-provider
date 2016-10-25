@@ -185,6 +185,8 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
                     StringSupport.trimOrNull(element.getAttributeNS(null, "requireValidMetadata")));
         }
 
+        processPredicateOptions(element, parserContext, builder);
+
         final List<Element> filters =
                 ElementSupport.getChildElements(element, METADATA_FILTER_ELEMENT_NAME);
 
@@ -208,6 +210,32 @@ public abstract class AbstractMetadataProviderParser extends AbstractSingleBeanD
                     + "Place inside the relevant filter", parserContext.getReaderContext().getResource()
                     .getDescription());
             SpringSupport.parseCustomElements(trustEngines, parserContext);
+        }
+    }
+
+    /**
+     * Process predicate-related options.
+     * 
+     * @param element the current element being processed
+     * @param parserContext the current parser context
+     * @param builder the current bean definition builder
+     */
+    private void processPredicateOptions(final Element element, final ParserContext parserContext, 
+            final BeanDefinitionBuilder builder) {
+        
+        if (isPresentNotChaining(element, "satisfyAnyPredicates")) {
+            builder.addPropertyValue("satisfyAnyPredicates",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "satisfyAnyPredicates")));
+        }
+
+        if (isPresentNotChaining(element, "useDefaultPredicateRegistry")) {
+            builder.addPropertyValue("useDefaultPredicateRegistry",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "useDefaultPredicateRegistry")));
+        }
+
+        if (isPresentNotChaining(element, "criterionPredicateRegistryRef")) {
+            builder.addPropertyReference("criterionPredicateRegistry",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "criterionPredicateRegistryRef")));
         }
     }
 }

@@ -82,5 +82,7 @@
     <bean id="metadata.LocalDynamicSourceManager" class="org.opensaml.core.xml.persist.MapLoadSaveManager" />
     
     <bean id="metadata.LocalDynamicSourceKeyGenerator" class="org.opensaml.saml.metadata.resolver.impl.IdentityEntityIDGenerator" />
+    
+    <bean id="metadata.CriterionPredicateRegistry" class="org.opensaml.saml.metadata.criteria.entity.impl.EntityDescriptorCriterionPredicateRegistry" />
             
 </beans>
