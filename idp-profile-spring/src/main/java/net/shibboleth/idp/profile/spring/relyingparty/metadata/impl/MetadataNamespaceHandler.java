@@ -61,6 +61,8 @@ public class MetadataNamespaceHandler extends BaseSpringNamespaceHandler {
                 new ResourceBackedMetadataProviderParser());
         registerBeanDefinitionParser(DynamicHTTPMetadataProviderParser.ELEMENT_NAME,
                 new DynamicHTTPMetadataProviderParser());
+        registerBeanDefinitionParser(LocalDynamicMetadataProviderParser.ELEMENT_NAME,
+                new LocalDynamicMetadataProviderParser());
 
         // Resources
         registerBeanDefinitionParser(ClasspathResourceParser.ELEMENT_NAME, new ClasspathResourceParser());

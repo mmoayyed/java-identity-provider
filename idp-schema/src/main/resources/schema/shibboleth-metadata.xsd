@@ -634,6 +634,46 @@
         </complexContent>
     </complexType>
     
+    <complexType name="LocalDynamicMetadataProvider">
+        <annotation>
+            <documentation>A metadata provider that dynamically fetches metadata from 
+            a local source provided by an instance of XMLObjectLoadSaveManager.</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="shibmd:DynamicMetadataProviderType"> 
+                <attribute name="sourceManagerRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Bean reference to the XMLObjectLoadSaveManager which serves as the local source of metadata.
+                       </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceKeyGeneratorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Bean reference to the function which generates the source key from criteria at runtime.
+                       </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="sourceDirectory" type="string">
+                    <annotation>
+                        <documentation>
+                            Convenience mechanism for wiring a FilesystemLoadSaveManager loading from the specified
+                            source directory in the local filesystem. This attribute will be ignored if 
+                            'sourceManagerRef' is also specified.
+                            
+                            The source key generator function, if otherwise unspecified, will default to generating
+                            the SHA-1 digest (encoded as lower-case hexadecimal) of the input criteria entityID, 
+                            suffixed with ".xml". Example:  The metadata for the entity with entityID
+                            "urn:test:foobar" will be resolved from the source directory with filename
+                            "d278c9975472a6b4827b1a8723192b4e99aa969c.xml".
+                       </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
+    
     <simpleType name="MIMETypeListType">
         <list itemType="string"/>
     </simpleType>
