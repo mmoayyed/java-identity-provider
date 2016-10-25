@@ -21,6 +21,10 @@
 
     <!-- These are beans that are common to all CAS protocol flows. -->
 
+    <bean id="PopulateMetricContext"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
+        
     <bean id="BuildRelyingPartyContext"
           class="net.shibboleth.idp.cas.flow.impl.BuildRelyingPartyContextAction"
           c:registry-ref="shibboleth.CASServiceRegistry"/>

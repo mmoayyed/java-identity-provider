@@ -11,6 +11,7 @@
 
     <action-state id="InitializeProxy">
         <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="InitializeProxy" />
         <evaluate expression="BuildRelyingPartyContext" />
         <evaluate expression="BuildSAMLMetadataContext" />

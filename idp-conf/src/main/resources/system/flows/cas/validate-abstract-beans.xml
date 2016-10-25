@@ -15,6 +15,10 @@
           p:loggingId="%{idp.service.logging.cas:SSO}"
           p:browserProfile="false" />
 
+    <bean id="PopulateMetricContext"
+        class="org.opensaml.profile.action.impl.PopulateMetricContext" scope="prototype"
+        p:metricStrategy="#{getObject('shibboleth.metrics.MetricStrategy')}" />
+
     <bean id="InitializeValidate"
           class="net.shibboleth.idp.cas.flow.impl.InitializeValidateAction" />
 

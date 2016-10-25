@@ -10,6 +10,7 @@
             <evaluate result="flowScope.hasAuthenticationContext" expression="false" />
         </on-entry>
         <evaluate expression="InitializeProfileRequestContext"/>
+        <evaluate expression="PopulateMetricContext" />
         <evaluate expression="InitializeLogin" />
         <evaluate expression="PopulateClientStorageLoadContext" />
         <evaluate expression="'proceed'" />
