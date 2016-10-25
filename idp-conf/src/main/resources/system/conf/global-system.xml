@@ -322,15 +322,13 @@
         
     <bean id="shibboleth.SecurityEnhancedTLSSocketFactory" name="shibboleth.TrustEngineTLSSocketFactory" 
         lazy-init="true"
-        class="org.opensaml.security.httpclient.impl.SecurityEnhancedTLSSocketFactory">
-        <constructor-arg>
-            <bean class="net.shibboleth.utilities.java.support.httpclient.HttpClientSupport"
-                factory-method="buildNoTrustTLSSocketFactory" />
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="org.apache.http.conn.ssl.StrictHostnameVerifier" />
-        </constructor-arg>
-    </bean>
+        class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
+        factory-method="buildTLSSocketFactory" />
+    
+    <bean id="shibboleth.SecurityEnhancedTLSSocketFactoryWithClientTLS"
+        lazy-init="true"
+        class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
+        factory-method="buildTLSSocketFactoryWithClientTLS" />
     
     <bean id="shibboleth.StaticTrustEngine" abstract="true"
         class="net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticExplicitKeyFactoryBean" />
