@@ -176,12 +176,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- override parent, remove when 1.0.8 is released -->
-            <dependency>
-                <groupId>org.ldaptive</groupId>
-                <artifactId>ldaptive</artifactId>
-                <version>1.0.8-SNAPSHOT</version>
-            </dependency>
 
             <!-- Provided Dependencies -->
 
