@@ -290,6 +290,7 @@ public class HTTPReporter extends ScheduledReporter implements InitializableComp
     @Nonnull private HttpClientContext buildHttpContext(@Nonnull final HttpUriRequest request) {
         final HttpClientContext clientContext = HttpClientContext.create();
         HttpClientSecuritySupport.marshalSecurityParameters(clientContext, httpClientSecurityParameters, false);
+        HttpClientSecuritySupport.addDefaultTLSTrustEngineCriteria(clientContext, request);
         return clientContext;
     }
 
