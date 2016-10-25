@@ -44,6 +44,7 @@ public class BaseAuthenticationContextTest extends OpenSAMLInitBaseTestCase {
                 new AuthenticationFlowDescriptor(), new AuthenticationFlowDescriptor());
         authenticationFlows.get(0).setId("test1");
         authenticationFlows.get(1).setId("test2");
+        authenticationFlows.get(1).setPassiveAuthenticationSupported(true);
         authenticationFlows.get(2).setId("test3");
     }
 

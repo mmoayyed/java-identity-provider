@@ -81,9 +81,6 @@
 
     <bean id="FilterFlowsByForcedAuthn"
         class="net.shibboleth.idp.authn.impl.FilterFlowsByForcedAuthn" scope="prototype" />
-
-    <bean id="FilterFlowsByPassivity"
-        class="net.shibboleth.idp.authn.impl.FilterFlowsByPassivity" scope="prototype" />
     
     <bean id="FilterFlowsByNonBrowserSupport"
         class="net.shibboleth.idp.authn.impl.FilterFlowsByNonBrowserSupport" scope="prototype" />

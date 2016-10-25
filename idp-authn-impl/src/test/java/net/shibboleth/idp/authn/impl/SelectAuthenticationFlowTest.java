@@ -61,6 +61,17 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test1");
     }
 
+    @Test public void testNoRequestNoneActivePassive() {
+        final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
+        authCtx.setIsPassive(true);
+        
+        final Event event = action.execute(src);
+        
+        Assert.assertNull(authCtx.getAuthenticationResult());
+        Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
+        Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test2");
+    }
+
     @Test public void testNoRequestNoneActiveIntermediate() {
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         authCtx.getIntermediateFlows().put("test1", authCtx.getPotentialFlows().get("test1"));

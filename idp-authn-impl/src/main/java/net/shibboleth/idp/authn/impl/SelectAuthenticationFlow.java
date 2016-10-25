@@ -160,7 +160,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         
         // See if flow exists.
-        final AuthenticationFlowDescriptor flow = authenticationContext.getAvailableFlows().get(
+        final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
                 authenticationContext.getSignaledFlowId());
         if (flow == null) {
             log.error("{} Signaled flow {} is not available", getLogPrefix(),
@@ -212,7 +212,12 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         
         // Try and use the inactive flow.
 
-        if (requestedPrincipalCtx != null) {
+        // Check for IsPassive compatibility.
+        if (authenticationContext.isPassive() && !flow.isPassiveAuthenticationSupported()) {
+            log.error("{} Signaled flow {} does not support passive authentication", getLogPrefix(), flow.getId());
+            ActionSupport.buildEvent(profileRequestContext, AuthnEventIds.NO_PASSIVE);
+            return;
+        } else if (requestedPrincipalCtx != null) {
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
                 if (predicate != null) {
@@ -250,7 +255,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         log.debug("{} No specific Principals requested", getLogPrefix());
         
         // Check for initial authentication (valid even in presence of forced authentication).
-        if (authenticationContext.getInitialAuthenticationResult() != null) {
+        if (authenticationContext.getInitialAuthenticationResult() != null
+                && authenticationContext.getPotentialFlows().containsKey(
+                        authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId())) {
             selectActiveResult(profileRequestContext, authenticationContext,
                     authenticationContext.getInitialAuthenticationResult());
             return;
@@ -271,10 +278,13 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         }
 
         // Pick a result to reuse if possible.
-        if (!authenticationContext.getActiveResults().isEmpty()) {
-            selectActiveResult(profileRequestContext, authenticationContext,
-                    authenticationContext.getActiveResults().values().iterator().next());
-            return;
+        for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
+            final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
+                    activeResult.getAuthenticationFlowId());
+            if (flow != null) {
+                selectActiveResult(profileRequestContext, authenticationContext, activeResult);
+                return;
+            }
         }
         
         log.debug("{} No usable active results available, selecting an inactive flow", getLogPrefix());
@@ -303,8 +313,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
             @Nonnull final AuthenticationContext authenticationContext) {
         for (final AuthenticationFlowDescriptor flow : authenticationContext.getPotentialFlows().values()) {
             if (!authenticationContext.getIntermediateFlows().containsKey(flow.getId())) {
-                if (flow.apply(profileRequestContext)) {
-                    return flow;
+                if (!authenticationContext.isPassive() || flow.isPassiveAuthenticationSupported()) {
+                    if (flow.apply(profileRequestContext)) {
+                        return flow;
+                    }
                 }
             }
         }
@@ -399,8 +411,10 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 for (final AuthenticationFlowDescriptor descriptor : potentialFlows.values()) {
                     if (!authenticationContext.getIntermediateFlows().containsKey(descriptor.getId())
                             && predicate.apply(descriptor) && descriptor.apply(profileRequestContext)) {
-                        selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
-                        return;
+                        if (!authenticationContext.isPassive() || descriptor.isPassiveAuthenticationSupported()) {
+                            selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
+                            return;
+                        }
                     }
                 }
             } else {
@@ -473,11 +487,15 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                             // will necessarily match the request just because the flow might.
                             final AuthenticationResult result = activeResults.get(descriptor.getId());
                             if (result == null || !predicate.apply(result)) {
-                                selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
+                                if (!authenticationContext.isPassive()
+                                        || descriptor.isPassiveAuthenticationSupported()) {
+                                    selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);
+                                    return;
+                                }
                             } else {
                                 selectActiveResult(profileRequestContext, authenticationContext, result);
+                                return;
                             }
-                            return;
                         }
                     }
                 } else {
