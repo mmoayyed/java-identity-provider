@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl;
+package net.shibboleth.idp.profile.spring.factory;
 
 import java.io.IOException;
 import java.io.InputStream;

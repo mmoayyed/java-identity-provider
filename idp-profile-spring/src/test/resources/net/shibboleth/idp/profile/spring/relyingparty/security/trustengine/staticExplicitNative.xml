@@ -12,19 +12,19 @@
 		location="classpath:/net/shibboleth/idp/profile/spring/relyingparty/file.properties" />
 
     <bean id="staticKeySingle"
-        class="net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticExplicitKeyFactoryBean"
+        class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean"
         p:publicKeys="classpath:/net/shibboleth/idp/profile/spring/relyingparty/security/credential/publicKey.pem" />
 
     <bean id="staticX509Single"
-        class="net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticExplicitKeyFactoryBean"
+        class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean"
         p:certificates="classpath:/net/shibboleth/idp/profile/spring/relyingparty/security/credential/cert.pem" />
 
     <bean id="staticX509Multiple"
-        class="net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticExplicitKeyFactoryBean"
+        class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean"
         p:certificates="classpath:/net/shibboleth/idp/profile/spring/relyingparty/security/credential/certificate.pem" />
 
     <bean id="staticMixed"
-        class="net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl.StaticExplicitKeyFactoryBean"
+        class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean"
         p:publicKeys="classpath:/net/shibboleth/idp/profile/spring/relyingparty/security/credential/publicKey.pem"
         p:certificates="classpath:/net/shibboleth/idp/profile/spring/relyingparty/security/credential/cert.pem" />
 
