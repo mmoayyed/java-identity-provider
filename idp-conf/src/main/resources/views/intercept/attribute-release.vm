@@ -22,6 +22,7 @@
 #set ($privacyStatementURL = $rpUIContext.privacyStatementURL)
 #set ($rpOrganizationLogo = $rpUIContext.getLogo())
 #set ($rpOrganizationName = $rpUIContext.organizationName)
+#set ($replaceDollarWithNewline = true)
 ##
 <!DOCTYPE html>
 <html>
@@ -76,7 +77,11 @@
                                     <td>$encoder.encodeForHTML($attributeDisplayNameFunction.apply($attribute))</td>
                                     <td>
                                         #foreach ($value in $attribute.values)
-                                            <strong>$encoder.encodeForHTML($value.getDisplayValue())</strong>
+                                            #if ($replaceDollarWithNewline)
+                                                <strong>$encoder.encodeForHTML($value.getDisplayValue()).replaceAll($encoder.encodeForHTML("$"),"<br>")</strong>
+                                            #else
+                                                <strong>$encoder.encodeForHTML($value.getDisplayValue())</strong>
+                                            #end
                                             <br>
                                         #end
                                     </td>
