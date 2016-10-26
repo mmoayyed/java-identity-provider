@@ -40,18 +40,18 @@ import org.opensaml.security.x509.X509Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.FatalBeanException;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 
+import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**
  * Factory bean for simple use cases involving the {@link ExplicitKeyTrustEngine} and static credentials.
  */
-public class StaticExplicitKeyFactoryBean extends AbstractFactoryBean<ExplicitKeyTrustEngine> {
+public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryBean<ExplicitKeyTrustEngine> {
 
     /** log. */
     private Logger log = LoggerFactory.getLogger(StaticExplicitKeyFactoryBean.class);
@@ -127,7 +127,7 @@ public class StaticExplicitKeyFactoryBean extends AbstractFactoryBean<ExplicitKe
 
     /** {@inheritDoc} */
     @Override
-    protected ExplicitKeyTrustEngine createInstance() throws Exception {
+    protected ExplicitKeyTrustEngine doCreateInstance() throws Exception {
         return new ExplicitKeyTrustEngine(new StaticCredentialResolver(getCredentials()));
     }
     

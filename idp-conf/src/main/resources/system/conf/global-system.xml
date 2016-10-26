@@ -330,8 +330,11 @@
         class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
         factory-method="buildTLSSocketFactoryWithClientTLS" />
     
-    <bean id="shibboleth.StaticTrustEngine" abstract="true"
+    <bean id="shibboleth.StaticExplicitTrustEngine" abstract="true"
         class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean" />
+    
+    <bean id="shibboleth.StaticPKIXTrustEngine" abstract="true"
+        class="net.shibboleth.idp.profile.spring.factory.StaticPKIXFactoryBean" />
     
     <!-- Default Jackson ObjectMapper with JodaTime support. -->
     
