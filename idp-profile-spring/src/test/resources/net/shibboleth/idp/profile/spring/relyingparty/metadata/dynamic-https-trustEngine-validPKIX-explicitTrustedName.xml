@@ -7,7 +7,7 @@
                         urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd
                         urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
-	id="dynamicTemplate" xsi:type="metadata:DynamicHTTPMetadataProvider" >
+	id="dynamicHttpsTrustEngineValidPKIXWithNames" xsi:type="metadata:DynamicHTTPMetadataProvider" >
     
     <metadata:TLSTrustEngine>
         <security:TrustEngine id="trustEngine" xsi:type="security:StaticPKIXX509Credential">

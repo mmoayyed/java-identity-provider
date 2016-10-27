@@ -45,7 +45,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
     @Test
     public void testDefaults() throws Exception {
         LocalDynamicMetadataResolver resolver = getBean(LocalDynamicMetadataResolver.class, 
-                "localDynamicWithManagerAndGenerator.xml", "beans.xml");
+                "localDynamicDefaults.xml", "beans.xml");
         
         Assert.assertTrue(resolver.isInitialized());
         Assert.assertTrue(resolver.isFailFastInitialization());
@@ -89,7 +89,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         XMLObjectLoadSaveManager<XMLObject> sourceManager = 
                 appContext.getBean("metadata.LocalDynamicSourceManager", XMLObjectLoadSaveManager.class);
 
-        RelyingPartyMetadataProvider rpProvider = appContext.getBean("localDynamic", RelyingPartyMetadataProvider.class);
+        RelyingPartyMetadataProvider rpProvider = appContext.getBean("localDynamicWithManagerAndGenerator", RelyingPartyMetadataProvider.class);
         LocalDynamicMetadataResolver resolver = (LocalDynamicMetadataResolver) rpProvider.getEmbeddedResolver(); 
         
         CriteriaSet criteria = new CriteriaSet(new EntityIdCriterion(entityID));

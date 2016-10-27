@@ -107,7 +107,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
                 "dynamicPersistentCacheDirectory.xml", "beans.xml", "httpClient.xml");
         
         RelyingPartyMetadataProvider rpProvider = 
-                appContext.getBean("dynamicPersistentCacheParams", RelyingPartyMetadataProvider.class);
+                appContext.getBean("dynamicPersistentCacheParamsDirectory", RelyingPartyMetadataProvider.class);
         FunctionDrivenDynamicHTTPMetadataResolver resolver = 
                 FunctionDrivenDynamicHTTPMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
         Assert.assertNotNull(resolver);
@@ -136,7 +136,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
                 "dynamicPersistentCacheBean.xml", "beans.xml", "httpClient.xml");
         
         RelyingPartyMetadataProvider rpProvider = 
-                appContext.getBean("dynamicPersistentCacheParams", RelyingPartyMetadataProvider.class);
+                appContext.getBean("dynamicPersistentCacheParamsBean", RelyingPartyMetadataProvider.class);
         FunctionDrivenDynamicHTTPMetadataResolver resolver = 
                 FunctionDrivenDynamicHTTPMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
         Assert.assertNotNull(resolver);

@@ -4,7 +4,7 @@
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
-	id="dynamicBasicParams" xsi:type="metadata:DynamicHTTPMetadataProvider" 
+	id="dynamicMaxConns" xsi:type="metadata:DynamicHTTPMetadataProvider" 
     maxConnectionsTotal="500"
     maxConnectionsPerRoute="250"
     >
