@@ -216,7 +216,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void resolveMulti() throws ComponentInitializationException, ResolutionException {
         final ParameterizedExecutableSearchFilterBuilder builder =
-                newParameterizedExecutableSearchFilterBuilder("(objectclass=inetOrgPerson)");
+                newParameterizedExecutableSearchFilterBuilder("(uid=P*)");
         resolveMulti(builder);
     }
 
@@ -341,21 +341,21 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         final Map<String, IdPAttribute> attrs = connector.resolve(context);
         Assert.assertNotNull(attrs);
         // check total attributes: uid, cn, sn, mail
-        Assert.assertTrue(attrs.size() == 4);
+        Assert.assertEquals(attrs.size(), 4);
         // check uid
-        Assert.assertTrue(attrs.get("uid").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("uid").getValues().size(), 1);
         Assert.assertEquals(new StringAttributeValue(TestSources.PRINCIPAL_ID), attrs.get("uid").getValues().iterator()
                 .next());
         // check cn
-        Assert.assertTrue(attrs.get("cn").getValues().size() == 3);
+        Assert.assertEquals(attrs.get("cn").getValues().size(), 3);
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Peter Principal")));
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Peter J Principal")));
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("pete principal")));
         // check sn
-        Assert.assertTrue(attrs.get("sn").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("sn").getValues().size(), 1);
         Assert.assertEquals(new StringAttributeValue("Principal"), attrs.get("sn").getValues().iterator().next());
         // check mail
-        Assert.assertTrue(attrs.get("mail").getValues().size() == 2);
+        Assert.assertEquals(attrs.get("mail").getValues().size(), 2);
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peter.principal@shibboleth.net")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
     }
@@ -371,24 +371,24 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         final Map<String, IdPAttribute> attrs = connector.resolve(context);
         Assert.assertNotNull(attrs);
         // check total attributes: uid, cn, sn, mail
-        Assert.assertTrue(attrs.size() == 4);
+        Assert.assertEquals(attrs.size(), 4);
         // check uid
-        Assert.assertTrue(attrs.get("uid").getValues().size() == 3);
+        Assert.assertEquals(attrs.get("uid").getValues().size(), 3);
         Assert.assertTrue(attrs.get("uid").getValues().contains(new StringAttributeValue(TestSources.PRINCIPAL_ID)));
         Assert.assertTrue(attrs.get("uid").getValues().contains(new StringAttributeValue("PAUL_THE_PRINCIPAL")));
         Assert.assertTrue(attrs.get("uid").getValues().contains(new StringAttributeValue("PHILIP_THE_PRINCIPAL")));
         // check cn
-        Assert.assertTrue(attrs.get("cn").getValues().size() == 5);
+        Assert.assertEquals(attrs.get("cn").getValues().size(), 5);
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Peter Principal")));
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Peter J Principal")));
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("pete principal")));
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Paul Principal")));
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Philip Principal")));
         // check sn
-        Assert.assertTrue(attrs.get("sn").getValues().size() == 3);
+        Assert.assertEquals(attrs.get("sn").getValues().size(), 3);
         Assert.assertTrue(attrs.get("sn").getValues().contains(new StringAttributeValue("Principal")));
         // check mail
-        Assert.assertTrue(attrs.get("mail").getValues().size() == 8);
+        Assert.assertEquals(attrs.get("mail").getValues().size(), 8);
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peter.principal@shibboleth.net")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("peterprincipal@shibboleth.net")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("paul.principal@shibboleth.net")));
@@ -472,12 +472,33 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         final AttributeResolutionContext context =
                 TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
                         TestSources.SP_ENTITY_ID);
-        Assert.assertTrue(cache.size() == 0);
+        Assert.assertEquals(cache.size(), 0);
         final Map<String, IdPAttribute> optional = connector.resolve(context);
-        Assert.assertTrue(cache.size() == 1);
+        Assert.assertEquals(cache.size(), 1);
         Assert.assertEquals(cache.iterator().next(), optional);
     }
     
+    /** See IDP-1077. */
+    @Test public void resolveWithCacheCollison() throws ComponentInitializationException, ResolutionException {
+        final LDAPDataConnector connector = createLdapDataConnector(null, null);
+        final TestCache cache = new TestCache();
+        connector.setResultsCache(cache);
+        connector.initialize();
+
+        Assert.assertEquals(cache.size(), 0);
+        final AttributeResolutionContext context1 =
+                TestSources.createResolutionContext("dlo1", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        connector.resolve(context1);
+        Assert.assertEquals(cache.size(), 1);
+
+        final AttributeResolutionContext context2 =
+                TestSources.createResolutionContext("dn11", TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        connector.resolve(context2);
+        Assert.assertEquals(cache.size(), 2);
+    }
+
     /** See IDP-573. */
     @Test public void resolveEmptyAttribute() throws ComponentInitializationException, ResolutionException {
         final ParameterizedExecutableSearchFilterBuilder builder =
@@ -492,19 +513,19 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         final Map<String, IdPAttribute> attrs = connector.resolve(context);
         Assert.assertNotNull(attrs);
         // check total attributes: uid, cn, sn, mail
-        Assert.assertTrue(attrs.size() == 4);
+        Assert.assertEquals(attrs.size(), 4);
         // check uid
-        Assert.assertTrue(attrs.get("uid").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("uid").getValues().size(), 1);
         Assert.assertEquals(attrs.get("uid").getValues().iterator().next(), new StringAttributeValue(
                 "PHILIP_THE_PRINCIPAL"));
         // check cn
-        Assert.assertTrue(attrs.get("cn").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("cn").getValues().size(), 1);
         Assert.assertTrue(attrs.get("cn").getValues().contains(new StringAttributeValue("Philip Principal")));
         // check sn
-        Assert.assertTrue(attrs.get("sn").getValues().size() == 1);
+        Assert.assertEquals(attrs.get("sn").getValues().size(), 1);
         Assert.assertEquals(attrs.get("sn").getValues().iterator().next(), new StringAttributeValue("Principal"));
         // check mail
-        Assert.assertTrue(attrs.get("mail").getValues().size() == 4);
+        Assert.assertEquals(attrs.get("mail").getValues().size(), 4);
         Assert.assertTrue(attrs.get("mail").getValues().contains(new EmptyAttributeValue(EmptyType.ZERO_LENGTH_VALUE)));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("\"\"")));
         Assert.assertTrue(attrs.get("mail").getValues().contains(new StringAttributeValue("  ")));
@@ -526,15 +547,11 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         validator.initialize();
         return validator;
     }
-    
 
-    
     public static ConnectionFactoryValidator newConnectionFactoryValidator(final ConnectionFactory connectionFactory) throws ComponentInitializationException {
         final ConnectionFactoryValidator validator = new ConnectionFactoryValidator();
         validator.setConnectionFactory(connectionFactory);
         validator.initialize();
         return validator;
     }
-
-
 }

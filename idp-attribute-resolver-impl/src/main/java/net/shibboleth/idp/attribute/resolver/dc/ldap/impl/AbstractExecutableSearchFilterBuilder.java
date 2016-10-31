@@ -52,7 +52,7 @@ public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInit
 
             /** {@inheritDoc} */
             @Nonnull public String getResultCacheKey() {
-                return String.valueOf(searchFilter.hashCode());
+                return searchFilter.format();
             }
 
             /** {@inheritDoc} */

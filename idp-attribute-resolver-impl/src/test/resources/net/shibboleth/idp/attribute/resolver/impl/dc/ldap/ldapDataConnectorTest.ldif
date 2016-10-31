@@ -46,3 +46,23 @@ mail: ""
 mail:: ICA=
 # philip.principal@shibboleth.net with leading and trailing space
 mail:: IHBoaWxpcC5wcmluY2lwYWxAc2hpYmJvbGV0aC5uZXQg
+
+dn: cn=Collision 1,ou=people,dc=shibboleth,dc=net
+objectclass: inetOrgPerson
+cn: Collision Principal
+sn: Principal
+uid: dn11
+userpassword: changeit
+homephone: 555-222-1234
+mail: dn11@shibboleth.net
+description: test principal
+
+dn: cn=Collision 2,ou=people,dc=shibboleth,dc=net
+objectclass: inetOrgPerson
+cn: Collision Principal
+sn: Principal
+uid: dlo1
+userpassword: changeit
+homephone: 555-222-5678
+mail: dlo1@shibboleth.net
+description: test principal
