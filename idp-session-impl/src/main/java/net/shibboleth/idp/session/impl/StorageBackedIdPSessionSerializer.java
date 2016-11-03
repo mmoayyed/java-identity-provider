@@ -25,13 +25,13 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonString;
 import javax.json.JsonStructure;
+import javax.json.spi.JsonProvider;
 import javax.json.stream.JsonGenerator;
 
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -82,6 +82,8 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
     /** Object instance to overwrite with deserialization method. */
     @Nullable private final StorageBackedIdPSession targetObject;
 
+    /** JsonProvider to be used for session serialization. */
+    @Nonnull private final JsonProvider jsonProvider;
     /**
      * Constructor.
      * 
@@ -92,6 +94,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
             @Nullable final StorageBackedIdPSession target) {
         sessionManager = Constraint.isNotNull(manager, "SessionManager cannot be null");
         targetObject = target;
+        jsonProvider = JsonProvider.provider();
     }
 
     /** {@inheritDoc} */
@@ -100,7 +103,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
 
         try {
             final StringWriter sink = new StringWriter(128);
-            final JsonGenerator gen = Json.createGenerator(sink);
+            final JsonGenerator gen = jsonProvider.createGenerator(sink);
             gen.writeStartObject().write(CREATION_INSTANT_FIELD, instance.getCreationInstant())
                     .write(PRINCIPAL_NAME_FIELD, instance.getPrincipalName());
 
@@ -156,7 +159,7 @@ public class StorageBackedIdPSessionSerializer extends AbstractInitializableComp
         }
 
         try {
-            final JsonReader reader = Json.createReader(new StringReader(value));
+            final JsonReader reader = jsonProvider.createReader(new StringReader(value));
             final JsonStructure st = reader.read();
             if (!(st instanceof JsonObject)) {
                 throw new IOException("Found invalid data structure while parsing IdPSession");
