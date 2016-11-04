@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonNumber;
@@ -37,6 +36,7 @@ import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+import javax.json.spi.JsonProvider;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 
@@ -86,8 +86,9 @@ public class ConsentSerializer extends AbstractInitializableComponent implements
 
     /** Constructor. */
     public ConsentSerializer() {
-        generatorFactory = Json.createGeneratorFactory(null);
-        readerFactory = Json.createReaderFactory(null);
+        final JsonProvider provider = JsonProvider.provider();
+        generatorFactory = provider.createGeneratorFactory(null);
+        readerFactory = provider.createReaderFactory(null);
         symbolics = ImmutableBiMap.of();
     }
 

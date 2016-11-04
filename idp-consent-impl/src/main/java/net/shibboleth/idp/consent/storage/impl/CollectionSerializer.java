@@ -25,7 +25,6 @@ import java.util.Collection;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
@@ -33,6 +32,7 @@ import javax.json.JsonString;
 import javax.json.JsonStructure;
 import javax.json.JsonValue;
 import javax.json.JsonValue.ValueType;
+import javax.json.spi.JsonProvider;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 
@@ -64,8 +64,9 @@ public class CollectionSerializer extends AbstractInitializableComponent impleme
 
     /** Constructor. */
     public CollectionSerializer() {
-        generatorFactory = Json.createGeneratorFactory(null);
-        readerFactory = Json.createReaderFactory(null);
+        final JsonProvider provider = JsonProvider.provider();
+        generatorFactory = provider.createGeneratorFactory(null);
+        readerFactory = provider.createReaderFactory(null);
     }
 
     /** {@inheritDoc} */

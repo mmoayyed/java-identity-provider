@@ -22,9 +22,9 @@ import java.io.Writer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.json.Json;
 import javax.json.JsonReader;
 import javax.json.JsonReaderFactory;
+import javax.json.spi.JsonProvider;
 import javax.json.stream.JsonGenerator;
 import javax.json.stream.JsonGeneratorFactory;
 
@@ -49,8 +49,9 @@ public abstract class AbstractPrincipalSerializer<Type> extends AbstractInitiali
      * Constructor.
      */
     public AbstractPrincipalSerializer() {
-        generatorFactory = Json.createGeneratorFactory(null);
-        readerFactory = Json.createReaderFactory(null);
+        final JsonProvider provider = JsonProvider.provider();
+        generatorFactory = provider.createGeneratorFactory(null);
+        readerFactory = provider.createReaderFactory(null);
     }
 
     /**
