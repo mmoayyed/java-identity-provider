@@ -233,6 +233,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         dependsAttributes.put("affiliation", attributeValues);
         final ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
         Assert.assertEquals(filter.getSearchFilter().format(), "(&(cn=PETER_THE_PRINCIPAL)(eduPersonAffiliation=student))");
+        Assert.assertEquals(filter.getResultCacheKey(), "(&(cn=PETER_THE_PRINCIPAL)(eduPersonAffiliation=student))");
     }
 
     @Test public void resolveWithMultiValueDepends() throws ComponentInitializationException, ResolutionException {
@@ -252,6 +253,9 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(
                 filter.getSearchFilter().format(),
                 "(&(cn=PETER_THE_PRINCIPAL)(eduPersonEntitlement=entitlement1)(eduPersonEntitlement=entitlement\\2a))");
+        Assert.assertEquals(
+                filter.getResultCacheKey(),
+                "(&(cn=PETER_THE_PRINCIPAL)(eduPersonEntitlement=entitlement1)(eduPersonEntitlement=entitlement\\2a))");
     }
 
     @Test public void escape() throws ComponentInitializationException, ResolutionException {
@@ -263,6 +267,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
                         TestSources.SP_ENTITY_ID);
         final ExecutableSearchFilter filter = builder.build(context, null);
         Assert.assertEquals(filter.getSearchFilter().format(), "(cn=domain\\5cuser\\2a)");
+        Assert.assertEquals(filter.getResultCacheKey(), "(cn=domain\\5cuser\\2a)");
     }
 
     @Test public void resolveTemplate() throws ComponentInitializationException, ResolutionException {
@@ -296,6 +301,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         dependsAttributes.put("affiliation", attributeValues);
         final ExecutableSearchFilter filter = builder.build(context, dependsAttributes);
         Assert.assertEquals(filter.getSearchFilter().format(), "(&(cn=PETER_THE_PRINCIPAL)(eduPersonAffiliation=student))");
+        Assert.assertEquals(filter.getResultCacheKey(), "(&(cn=PETER_THE_PRINCIPAL)(eduPersonAffiliation=student))");
     }
 
     @Test public void resolveTemplateWithMultiValueDepends() throws ComponentInitializationException, ResolutionException {
@@ -316,6 +322,9 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
         Assert.assertEquals(
                 filter.getSearchFilter().format(),
                 "(&(cn=PETER_THE_PRINCIPAL)(eduPersonEntitlement=entitlement1)(eduPersonEntitlement=entitlement\\2a))");
+        Assert.assertEquals(
+                filter.getResultCacheKey(),
+                "(&(cn=PETER_THE_PRINCIPAL)(eduPersonEntitlement=entitlement1)(eduPersonEntitlement=entitlement\\2a))");
     }
 
     @Test public void escapeTemplate() throws ComponentInitializationException, ResolutionException {
@@ -328,6 +337,7 @@ public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
                         TestSources.SP_ENTITY_ID);
         final ExecutableSearchFilter filter = builder.build(context, null);
         Assert.assertEquals(filter.getSearchFilter().format(), "(cn=domain\\5cuser\\2a)");
+        Assert.assertEquals(filter.getResultCacheKey(), "(cn=domain\\5cuser\\2a)");
     }
 
     protected void resolve(final ExecutableSearchBuilder builder) throws ComponentInitializationException,
