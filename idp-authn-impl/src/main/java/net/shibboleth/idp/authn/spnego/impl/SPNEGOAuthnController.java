@@ -177,7 +177,8 @@ public class SPNEGOAuthnController {
                 final GSSName clientGSSName = acceptor.getContext().getSrcName();
                 if (clientGSSName == null) {
                     // This case should never happen, but we observed it. Handle it as authentication failure.
-                    log.error("Error extracting principal name from security context");
+                    log.error("Error extracting principal name from security context, " +
+                            "check for hostname mismatch or other causes of a missing service ticket");
                     acceptor.logout();
                     finishWithException(conversationKey, httpRequest, httpResponse,
                             new ExternalAuthenticationException(SPNEGO_NOT_AVAILABLE));
