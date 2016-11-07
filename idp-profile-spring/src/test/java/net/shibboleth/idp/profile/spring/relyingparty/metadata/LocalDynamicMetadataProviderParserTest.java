@@ -72,7 +72,7 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         
         Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializatonFromCacheDelay(), new Long(2*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), new Long(2*1000));
         
     }
         

@@ -72,14 +72,14 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertTrue(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializatonFromCacheDelay(), new Long(2*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), new Long(2*1000));
         
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
     }
     
     @Test
     public void testClientSecurityParamsParams() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicClientSecurityParams.xml", "beans.xml", "httpClient.xml");
         
         // We can't really test the actual timeout values, this is just to test that parser, factory bean, etc are ok.
@@ -87,7 +87,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testTimeoutParams() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicTimeouts.xml", "beans.xml", "httpClient.xml");
         
         // We can't really test the actual timeout values, this is just to test that parser, factory bean, etc are ok.
@@ -95,7 +95,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testMaxConnectionsParams() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicMaxConnections.xml", "beans.xml", "httpClient.xml");
         
         // We can't really test the actual max values, this is just to test that parser, factory bean, etc are ok.
@@ -127,7 +127,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertFalse(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializatonFromCacheDelay(), new Long(30*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), new Long(30*1000));
     }
     
     @Test
@@ -156,7 +156,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         
         Assert.assertFalse(resolver.isInitializeFromPersistentCacheInBackground());
         
-        Assert.assertEquals(resolver.getBackgroundInitializatonFromCacheDelay(), new Long(30*1000));
+        Assert.assertEquals(resolver.getBackgroundInitializationFromCacheDelay(), new Long(30*1000));
     }
     
     @Test

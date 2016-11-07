@@ -135,9 +135,9 @@ public abstract class AbstractDynamicMetadataProviderParser extends AbstractMeta
                             element.getAttributeNS(null, "initializeFromPersistentCacheInBackground")));
         }
         
-        if (element.hasAttributeNS(null, "backgroundInitializatonFromCacheDelay")) {
-            builder.addPropertyValue("backgroundInitializatonFromCacheDelay",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "backgroundInitializatonFromCacheDelay")));
+        if (element.hasAttributeNS(null, "backgroundInitializationFromCacheDelay")) {
+            builder.addPropertyValue("backgroundInitializationFromCacheDelay",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "backgroundInitializationFromCacheDelay")));
         }
         
         if (element.hasAttributeNS(null, "initializationFromCachePredicateRef")) {

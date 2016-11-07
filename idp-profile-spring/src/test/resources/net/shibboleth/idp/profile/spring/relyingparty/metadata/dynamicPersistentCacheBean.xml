@@ -9,7 +9,7 @@
     persistentCacheKeyGeneratorRef="digester.SHA1HexLower"
     initializationFromCachePredicateRef="predicate.AlwaysFalse"
     initializeFromPersistentCacheInBackground="false"
-    backgroundInitializatonFromCacheDelay="PT30S"
+    backgroundInitializationFromCacheDelay="PT30S"
     >
 
 </metadata:MetadataProvider>

@@ -770,7 +770,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="backgroundInitializatonFromCacheDelay" type="string">
+                <attribute name="backgroundInitializationFromCacheDelay" type="string">
                     <annotation>
                         <documentation>
                             The delay after which to schedule the background initialization from the persistent cache. 
