@@ -65,6 +65,15 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
     
     /** Default max connections per route. */
     private static final Integer DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 100;
+        
+    /** Default request connection timeout. */
+    private static final String DEFAULT_CONNECTION_REQUEST_TIMEOUT = "PT5S";
+    
+    /** Default connection timeout. */
+    private static final String DEFAULT_CONNECTION_TIMEOUT = "PT5S";
+    
+    /** Default socket timeout. */
+    private static final String DEFAULT_SOCKET_TIMEOUT = "PT5S";
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractDynamicHTTPMetadataProviderParser.class);
@@ -196,21 +205,30 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         clientBuilder.setLazyInit(true);
 
         //Note: 'requestTimeout' is deprecated in favor of 'connectionTimeout'.
-        if (element.hasAttributeNS(null, "requestTimeout")) {
-            clientBuilder.addPropertyValue("connectionTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "requestTimeout")));
+        if (element.hasAttributeNS(null, "requestTimeout") || element.hasAttributeNS(null, "connectionTimeout")) {
+            if (element.hasAttributeNS(null, "requestTimeout")) {
+                clientBuilder.addPropertyValue("connectionTimeout",
+                        StringSupport.trimOrNull(element.getAttributeNS(null, "requestTimeout")));
+            }
+            if (element.hasAttributeNS(null, "connectionTimeout")) {
+                clientBuilder.addPropertyValue("connectionTimeout",
+                        StringSupport.trimOrNull(element.getAttributeNS(null, "connectionTimeout")));
+            }
+        } else {
+            clientBuilder.addPropertyValue("connectionTimeout", DEFAULT_CONNECTION_TIMEOUT);
         }
-        if (element.hasAttributeNS(null, "connectionTimeout")) {
-            clientBuilder.addPropertyValue("connectionTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "connectionTimeout")));
-        }
+        
         if (element.hasAttributeNS(null, "connectionRequestTimeout")) {
             clientBuilder.addPropertyValue("connectionRequestTimeout",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "connectionRequestTimeout")));
+        } else {
+            clientBuilder.addPropertyValue("connectionRequestTimeout", DEFAULT_CONNECTION_REQUEST_TIMEOUT);
         }
         if (element.hasAttributeNS(null, "socketTimeout")) {
             clientBuilder.addPropertyValue("socketTimeout",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "socketTimeout")));
+        } else {
+            clientBuilder.addPropertyValue("socketTimeout", DEFAULT_SOCKET_TIMEOUT);
         }
         
         if (element.hasAttributeNS(null, "maxConnectionsTotal")) {
