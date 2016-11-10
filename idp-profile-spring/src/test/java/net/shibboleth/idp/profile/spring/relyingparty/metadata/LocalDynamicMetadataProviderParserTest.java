@@ -30,6 +30,8 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.security.crypto.JCAConstants;
 import org.springframework.context.ApplicationContext;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
@@ -41,6 +43,23 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
  *
  */
 public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataParserTest {
+    
+    private File sourceDirectory;
+    
+    @BeforeMethod
+    public void setUp() {
+        sourceDirectory = new File(System.getProperty("java.io.tmpdir"), "localDynamicMD");
+    }
+    
+    @AfterMethod
+    public void tearDown() {
+        if (sourceDirectory.exists()) {
+            for (File child : sourceDirectory.listFiles()) {
+                child.delete();
+            }
+            sourceDirectory.delete();
+        }
+    }
     
     @Test
     public void testDefaults() throws Exception {
@@ -109,7 +128,6 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         EntityDescriptor entity = (EntityDescriptor) XMLObjectSupport.buildXMLObject(EntityDescriptor.DEFAULT_ELEMENT_NAME);
         entity.setEntityID(entityID);
         
-        File sourceDirectory = new File(System.getProperty("java.io.tmpdir"), "localDynamicMD");
         if (!sourceDirectory.exists()) {
             Assert.assertTrue(sourceDirectory.mkdirs());
         }
@@ -137,4 +155,6 @@ public class LocalDynamicMetadataProviderParserTest extends AbstractMetadataPars
         Assert.assertNotNull(resolved);
         Assert.assertEquals(resolved.getEntityID(), entityID);
     }
+    
+
 }
