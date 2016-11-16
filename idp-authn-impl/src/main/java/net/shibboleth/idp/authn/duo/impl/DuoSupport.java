@@ -52,8 +52,14 @@ public final class DuoSupport {
     @Nonnull @NotEmpty public static String generateSignedRequestToken(@Nonnull final DuoIntegration duo,
             @Nonnull @NotEmpty final String username)
             throws DuoWebException {
-        final String signedRequestToken = DuoWeb.signRequest(duo.getIntegrationKey(), duo.getSecretKey(),
-                duo.getApplicationKey(), username);
+        final String signedRequestToken;
+        
+        if (username == null) {
+            signedRequestToken = DuoWeb.ERR_USER;
+        } else {
+            signedRequestToken = DuoWeb.signRequest(duo.getIntegrationKey(), duo.getSecretKey(),
+                    duo.getApplicationKey(), username);
+        }
         if (signedRequestToken.startsWith("ERR|")) {
             throw new DuoWebException(signedRequestToken);
         }
