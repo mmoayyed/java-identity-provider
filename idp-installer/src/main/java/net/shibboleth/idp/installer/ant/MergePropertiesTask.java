@@ -73,22 +73,22 @@ public class MergePropertiesTask extends Task {
     public void execute() {
         if (null == inFile) {
             log("Input file not provided", Project.MSG_ERR);
-            throw new BuildException("Non existant input file");
+            throw new BuildException("Non-existent input file");
         }
         if (!inFile.exists()) {
             log("Input file " + inFile.getAbsolutePath() + " does not exist");
-            throw new BuildException("Non existant input file");
+            throw new BuildException("Non-existent input file");
         }
         if (null == outFile) {
             log("Output file not provided, input taken", Project.MSG_INFO);
         }
         if (null == mergeFile) {
             log("Merge file not provided", Project.MSG_ERR);
-            throw new BuildException("Non existant input file");
+            throw new BuildException("Non-existent input file");
         }
         if (!mergeFile.exists()) {
             log("Input file " + mergeFile.getAbsolutePath() + " does not exist");
-            throw new BuildException("Non existant merge file");
+            throw new BuildException("Non-existent merge file");
         }
         
         final PropertiesWithComments in = new PropertiesWithComments(); 
