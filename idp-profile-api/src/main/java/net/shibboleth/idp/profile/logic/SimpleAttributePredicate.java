@@ -88,7 +88,7 @@ public class SimpleAttributePredicate extends AbstractAttributePredicate {
 
             final IdPAttribute attribute = attributeMap.get(id);
             if (attribute == null) {
-                log.info("Attribute {} not found in context", id);
+                log.debug("Attribute {} not found in context", id);
                 return false;
             }
 
@@ -102,7 +102,7 @@ public class SimpleAttributePredicate extends AbstractAttributePredicate {
             }
 
             if (!matched) {
-                log.info("Attribute {} values not matched", id);
+                log.debug("Attribute {} values not matched", id);
                 return false;
             }
         }
