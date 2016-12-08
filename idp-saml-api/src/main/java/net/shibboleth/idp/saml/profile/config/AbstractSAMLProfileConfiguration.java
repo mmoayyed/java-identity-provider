@@ -46,8 +46,8 @@ import com.google.common.collect.ImmutableSet;
 public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileConfiguration implements
         SAMLProfileConfiguration {
 
-    /** Predicate used to determine if the received request should be signed. Default returns false. */
-    @Nonnull private Predicate<ProfileRequestContext> signedRequestsPredicate;
+    /** Predicate used to determine if the generated request should be signed. Default returns false. */
+    @Nonnull private Predicate<ProfileRequestContext> signRequestsPredicate;
 
     /** Predicate used to determine if the generated response should be signed. Default returns true. */
     @Nonnull private Predicate<ProfileRequestContext> signResponsesPredicate;
@@ -78,7 +78,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
     public AbstractSAMLProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
 
-        signedRequestsPredicate = Predicates.alwaysFalse();
+        signRequestsPredicate = Predicates.alwaysFalse();
         signResponsesPredicate = Predicates.alwaysFalse();
         signAssertionsPredicate = Predicates.alwaysFalse();
         includeNotBeforePredicate = Predicates.alwaysTrue();
@@ -103,7 +103,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
 
     /** {@inheritDoc} */
     @Override @Nonnull public Predicate<ProfileRequestContext> getSignRequests() {
-        return signedRequestsPredicate;
+        return signRequestsPredicate;
     }
 
     /**
@@ -112,9 +112,9 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * @param predicate predicate used to determine if generated requests should be signed
      */
     public void setSignRequests(@Nonnull final Predicate<ProfileRequestContext> predicate) {
-        signedRequestsPredicate =
+        signRequestsPredicate =
                 Constraint.isNotNull(predicate,
-                        "Predicate to determine if received requests should be signed cannot be null");
+                        "Predicate to determine if requests should be signed cannot be null");
     }
 
     /** {@inheritDoc} */
