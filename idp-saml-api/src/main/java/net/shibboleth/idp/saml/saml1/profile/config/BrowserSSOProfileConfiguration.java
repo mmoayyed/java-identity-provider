@@ -40,9 +40,6 @@ import com.google.common.collect.ImmutableSet;
 
 import net.shibboleth.idp.authn.config.AuthenticationProfileConfiguration;
 import net.shibboleth.idp.saml.authn.principal.AuthenticationMethodPrincipal;
-import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
@@ -51,18 +48,11 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Configuration for SAML 1 Browser SSO profile requests. */
-public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfiguration
-        implements SAML1ProfileConfiguration, SAMLArtifactAwareProfileConfiguration,
-            AuthenticationProfileConfiguration {
+public class BrowserSSOProfileConfiguration extends AbstractSAML1ArtifactAwareProfileConfiguration
+        implements AuthenticationProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/sso/browser";
-
-    /** Lookup function to supply {@link #artifactConfig} property. */
-    @Nullable private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
-
-    /** SAML artifact configuration. */
-    @Nullable private SAMLArtifactConfiguration artifactConfig;
 
     /** Whether attributes should be resolved in the course of the profile. */
     @Nonnull private Predicate<ProfileRequestContext> resolveAttributesPredicate;
@@ -114,32 +104,6 @@ public class BrowserSSOProfileConfiguration extends AbstractSAMLProfileConfigura
         authenticationFlows = Collections.emptySet();
         postAuthenticationFlows = Collections.emptyList();
         nameIDFormatPrecedence = Collections.emptyList();
-    }
-
-    /** {@inheritDoc} */
-    @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
-        return getIndirectProperty(artifactConfigurationLookupStrategy, artifactConfig);
-    }
-
-    /**
-     * Set the SAML artifact configuration, if any.
-     * 
-     * @param config configuration to set
-     */
-    public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
-        artifactConfig = config;
-    }
-
-    /**
-     * Set a lookup strategy for the {@link #artifactConfig} property.
-     *
-     * @param strategy  lookup strategy
-     * 
-     * @since 3.3.0
-     */
-    public void setArtifactConfigurationLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
-        artifactConfigurationLookupStrategy = strategy;
     }
 
     /**

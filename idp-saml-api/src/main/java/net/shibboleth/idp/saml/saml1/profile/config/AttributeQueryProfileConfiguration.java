@@ -18,30 +18,17 @@
 package net.shibboleth.idp.saml.saml1.profile.config;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.logic.NoIntegrityMessageChannelPredicate;
 
-import net.shibboleth.idp.saml.profile.config.AbstractSAMLProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactAwareProfileConfiguration;
-import net.shibboleth.idp.saml.profile.config.SAMLArtifactConfiguration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Configuration support for SAML 1 attribute query requests. */
 public class AttributeQueryProfileConfiguration
-        extends AbstractSAMLProfileConfiguration
-        implements SAML1ProfileConfiguration, SAMLArtifactAwareProfileConfiguration {
+        extends AbstractSAML1ArtifactAwareProfileConfiguration {
 
     /** ID for this profile configuration. */
     public static final String PROFILE_ID = "http://shibboleth.net/ns/profiles/saml1/query/attribute";
-
-    /** Lookup function to supply {@link #artifactConfig} property. */
-    @Nullable private Function<ProfileRequestContext,SAMLArtifactConfiguration> artifactConfigurationLookupStrategy;
-
-    /** SAML artifact configuration. */
-    @Nullable private SAMLArtifactConfiguration artifactConfig;
     
     /** Constructor. */
     public AttributeQueryProfileConfiguration() {
@@ -56,32 +43,6 @@ public class AttributeQueryProfileConfiguration
     protected AttributeQueryProfileConfiguration(@Nonnull @NotEmpty final String profileId) {
         super(profileId);
         setSignResponses(new NoIntegrityMessageChannelPredicate());
-    }
-    
-    /** {@inheritDoc} */
-    @Override @Nullable public SAMLArtifactConfiguration getArtifactConfiguration() {
-        return getIndirectProperty(artifactConfigurationLookupStrategy, artifactConfig);
-    }
-
-    /**
-     * Set the SAML artifact configuration, if any.
-     * 
-     * @param config configuration to set
-     */
-    public void setArtifactConfiguration(@Nullable final SAMLArtifactConfiguration config) {
-        artifactConfig = config;
-    }
-
-    /**
-     * Set a lookup strategy for the {@link #artifactConfig} property.
-     *
-     * @param strategy  lookup strategy
-     * 
-     * @since 3.3.0
-     */
-    public void setArtifactConfigurationLookupStrategy(
-            @Nullable final Function<ProfileRequestContext,SAMLArtifactConfiguration> strategy) {
-        artifactConfigurationLookupStrategy = strategy;
     }
 
 }
