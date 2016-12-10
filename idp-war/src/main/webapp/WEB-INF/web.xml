@@ -45,6 +45,15 @@
         <filter-name>CookieBufferingFilter</filter-name>
         <filter-class>net.shibboleth.utilities.java.support.net.CookieBufferingFilter</filter-class>
     </filter>
+    <!-- Allows control of response headers from within Spring beans. -->
+    <filter>
+        <filter-name>DynamicResponseHeaderFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>shibboleth.ResponseHeaderFilter</param-value>
+        </init-param>
+    </filter>
     <!-- Automates TLS-based propagation of HttpServletRequest/Response into beans. -->
     <filter>
         <filter-name>RequestResponseContextFilter</filter-name>
@@ -67,6 +76,10 @@
         <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
         <url-pattern>/profile/cas/login</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>DynamicResponseHeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
