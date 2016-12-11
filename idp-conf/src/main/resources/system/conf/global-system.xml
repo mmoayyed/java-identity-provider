@@ -137,6 +137,7 @@
         <property name="sourceMap">
             <map>
                 <entry key="Strict-Transport-Security" value="max-age=%{idp.hsts.maxAge:0}" />
+                <entry key="X-Frame-Options" value="%{idp.frameoptions:}" />
             </map>
         </property>
     </bean>
