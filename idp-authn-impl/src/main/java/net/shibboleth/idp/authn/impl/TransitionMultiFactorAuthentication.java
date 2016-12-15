@@ -169,7 +169,9 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         
         return true;
     }
-    
+
+
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     protected void doExecute(@Nonnull final ProfileRequestContext profileRequestContext,
@@ -177,13 +179,23 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         
         // Swap MFA flow back into top-level context so that other components see only MFA flow.
         authenticationContext.setAttemptedFlow(mfaContext.getAuthenticationFlowDescriptor());
-        
+
+        // Event transitions require normalizing empty/null events into "proceed".
+        final EventContext eventCtx = eventContextLookupStrategy.apply(profileRequestContext);
+        final String previousEvent = eventCtx != null && eventCtx.getEvent() != null
+                ? eventCtx.getEvent().toString() : EventIds.PROCEED_EVENT_ID;
+
         // Check for an authentication result and move it into the MFA context.
         final AuthenticationResult result = authenticationContext.getAuthenticationResult();
         if (result != null) {
-            log.debug("{} Preserving authentication result from '{}' flow", getLogPrefix(),
-                    result.getAuthenticationFlowId());
-            mfaContext.getActiveResults().put(result.getAuthenticationFlowId(), result);
+            if (EventIds.PROCEED_EVENT_ID.equals(previousEvent)) {                
+                log.debug("{} Preserving authentication result from '{}' flow", getLogPrefix(),
+                        result.getAuthenticationFlowId());
+                mfaContext.getActiveResults().put(result.getAuthenticationFlowId(), result);
+            } else {
+                log.debug("{} Discarding incomplete authentication result from '{}' flow", getLogPrefix(),
+                        result.getAuthenticationFlowId());
+            }
             authenticationContext.setAuthenticationResult(null);
         }
 
@@ -197,11 +209,6 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
             log.debug("{} Applying MFA transition rule to exit state '{}'", getLogPrefix(), prevFlowId);
         }
 
-        // Event transitions require normalizing empty/null events into "proceed".
-        final EventContext eventCtx = eventContextLookupStrategy.apply(profileRequestContext);
-        final String previousEvent = eventCtx != null && eventCtx.getEvent() != null
-                ? eventCtx.getEvent().toString() : EventIds.PROCEED_EVENT_ID;
-                
         String flowId = null;
         final MultiFactorAuthenticationTransition transition = mfaContext.getTransitionMap().get(prevFlowId);
         if (transition != null) {
@@ -224,6 +231,7 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
             }
         }
     }
+// Checkstyle: CyclomaticComplexity ON
 
 // Checkstyle: CyclomaticComplexity|ReturnCount OFF
     /**
