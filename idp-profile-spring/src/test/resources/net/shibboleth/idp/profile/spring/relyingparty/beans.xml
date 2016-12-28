@@ -80,7 +80,7 @@
     
     <!-- These are hacked to use static resolvers to avoid a dependency on metadata, just so the tests load. -->
 
-    <bean id="shibboleth.KeyInfoCredentialResolver" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
+    <bean id="shibboleth.KeyInfoCredentialResolver" class="org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap"
         factory-method="buildBasicInlineKeyInfoCredentialResolver" />
 
     <bean id="shibboleth.StaticCredentialResolver" class="org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver">

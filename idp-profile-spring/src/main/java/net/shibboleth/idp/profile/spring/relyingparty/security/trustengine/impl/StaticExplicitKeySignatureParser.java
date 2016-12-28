@@ -27,7 +27,7 @@ import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.A
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
-import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
+import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;

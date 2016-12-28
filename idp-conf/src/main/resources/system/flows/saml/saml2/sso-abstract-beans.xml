@@ -99,7 +99,7 @@
             p:httpServletRequest-ref="shibboleth.HttpServletRequest"
             p:libertySSOSEndpointURL="%{idp.delegation.saml2.libertySSOSEndpointURL:#{null}}">
         <property name="keyInfoGeneratorManager">
-            <bean factory-method="buildBasicKeyInfoGeneratorManager" class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap" />
+            <bean factory-method="buildBasicKeyInfoGeneratorManager" class="org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap" />
         </property>
     </bean>
 

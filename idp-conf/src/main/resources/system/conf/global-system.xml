@@ -292,7 +292,7 @@
     </bean>
 
     <bean id="shibboleth.KeyInfoCredentialResolver"
-        class="org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap"
+        class="org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap"
         factory-method="buildBasicInlineKeyInfoCredentialResolver" />
         
     <!--  These are the common HttpClients wired to by multiple components, such as HTTPResources. -->
