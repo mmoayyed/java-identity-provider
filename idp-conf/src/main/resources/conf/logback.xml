@@ -19,6 +19,7 @@
     <variable name="idp.loglevel.encryption" value="INFO" />
     <variable name="idp.loglevel.opensaml" value="INFO" />
     <variable name="idp.loglevel.props" value="INFO" />
+    <variable name="idp.loglevel.httpclient" value="INFO" />
     
     <!-- Don't turn these up unless you want a *lot* of noise. -->
     <variable name="idp.loglevel.spring" value="ERROR" />
@@ -43,6 +44,9 @@
     
     <!-- Logs LDAP related messages -->
     <logger name="org.ldaptive" level="${idp.loglevel.ldap:-WARN}"/>
+
+    <!-- Logs embedded HTTP client messages -->
+    <logger name="org.apache.http" level="${idp.loglevel.httpclient:-INFO}"/>
     
     <!-- Logs inbound and outbound protocols messages at DEBUG level -->
     <logger name="PROTOCOL_MESSAGE" level="${idp.loglevel.messages:-INFO}" />
