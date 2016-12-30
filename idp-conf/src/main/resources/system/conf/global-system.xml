@@ -350,6 +350,9 @@
     
     <bean id="shibboleth.StaticPKIXTrustEngine" abstract="true"
         class="net.shibboleth.idp.profile.spring.factory.StaticPKIXFactoryBean" />
+        
+    <bean id="shibboleth.HTTPResource" abstract="true"
+        class="net.shibboleth.idp.profile.spring.resource.impl.HTTPResourceFactoryBean" />
     
     <!-- Default Jackson ObjectMapper with JodaTime support. -->
     
