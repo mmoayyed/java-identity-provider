@@ -44,7 +44,9 @@ import net.shibboleth.ext.spring.factory.AbstractComponentAwareFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 
 /**
- * File system specific bean for PKIXValidationInfo.
+ * File system specific bean for PKIXX509CredentialTrustEngine.
+ * 
+ * @since 3.3.0
  */
 public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKIXX509CredentialTrustEngine> {
 
@@ -108,6 +110,8 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
      * that is already checking names.
      * 
      * @param flag flag to set
+     * 
+     * @since 3.4.0
      */
     public void setCheckNames(final boolean flag) {
         checkNames = flag;

@@ -50,6 +50,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 
 /**
  * Factory bean for simple use cases involving the {@link ExplicitKeyTrustEngine} and static credentials.
+ * 
+ * @since 3.3.0
  */
 public class StaticExplicitKeyFactoryBean extends AbstractComponentAwareFactoryBean<ExplicitKeyTrustEngine> {
 

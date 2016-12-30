@@ -65,6 +65,8 @@ import net.shibboleth.utilities.java.support.httpclient.HttpClientContextHandler
 /**
  * Factory bean for simple use cases that auto-configure PKIX or key pinning for
  * an {@link HTTPResource}.
+ * 
+ * @since 3.4.0
  */
 public class HTTPResourceFactoryBean extends AbstractFactoryBean<HTTPResource> {
 
