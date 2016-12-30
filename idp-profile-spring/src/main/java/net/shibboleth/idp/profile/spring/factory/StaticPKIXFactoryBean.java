@@ -60,6 +60,14 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
     /** Verification depth. */
     @Nullable private Integer verifyDepth;
     
+    /** Whether to enable name checking. */
+    private boolean checkNames;
+    
+    /** Constructor. */
+    public StaticPKIXFactoryBean() {
+        checkNames = true;
+    }
+    
     /** {@inheritDoc} */
     @Override
     public Class<?> getObjectType() {
@@ -91,6 +99,18 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
      */
     public void setVerifyDepth(final int depth) {
         verifyDepth = depth;
+    }
+
+    /**
+     * Set whether the perform name checking in the PKIX layer.
+     * 
+     * Defaults to "true", should generally be disabled when used with an HTTP client
+     * that is already checking names.
+     * 
+     * @param flag flag to set
+     */
+    public void setCheckNames(final boolean flag) {
+        checkNames = flag;
     }
     
     /**
@@ -145,8 +165,13 @@ public class StaticPKIXFactoryBean extends AbstractComponentAwareFactoryBean<PKI
         
         final StaticPKIXValidationInformationResolver resolver =
                 new StaticPKIXValidationInformationResolver(
-                        Collections.<PKIXValidationInformation>singletonList(info), null, true);
-        return new PKIXX509CredentialTrustEngine(resolver);
+                        Collections.<PKIXValidationInformation>singletonList(info), null, checkNames);
+        
+        if (checkNames) {
+            return new PKIXX509CredentialTrustEngine(resolver);
+        } else {
+            return new PKIXX509CredentialTrustEngine(resolver, null);
+        }
     }
     
 }
