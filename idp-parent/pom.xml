@@ -68,7 +68,7 @@
         <java-support.version>7.4.0-SNAPSHOT</java-support.version>
         <opensaml.groupId>org.opensaml</opensaml.groupId>
         <opensaml.version>3.4.0-SNAPSHOT</opensaml.version>
-        <spring-extensions.version>5.3.1-SNAPSHOT</spring-extensions.version>
+        <spring-extensions.version>5.4.0-SNAPSHOT</spring-extensions.version>
         <checkstyle.configLocation>${project.basedir}/../idp-parent/resources/checkstyle/checkstyle.xml</checkstyle.configLocation>
         <idp-parent.site.url>${shibboleth.site.url}java-identity-provider/${project.version}/</idp-parent.site.url>
         <idp-module.site.url>${idp-parent.site.url}${project.artifactId}</idp-module.site.url>
