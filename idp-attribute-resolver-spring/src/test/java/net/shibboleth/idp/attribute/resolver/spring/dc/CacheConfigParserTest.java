@@ -48,12 +48,56 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         
         final GenericApplicationContext context = new GenericApplicationContext();
         
-        context.registerBeanDefinition("name1", ccp.createCache());
+        context.registerBeanDefinition("ElementTTL", ccp.createCache());
         context.refresh();
-        @SuppressWarnings("unused")
-        final Cache foo = context.getBean("name1", Cache.class);
+        context.getBean("ElementTTL", Cache.class);
         
         context.close();
     }
-    
+
+    @Test public void access() throws XMLParserException, IOException {
+        final ParserPool parserPool = XMLObjectProviderRegistrySupport.getParserPool();
+        final Resource resource= new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/ResultCacheExpireAfterAccess.xml");
+        final Document doc = parserPool.parse(resource.getInputStream());
+            final CacheConfigParser ccp = new CacheConfigParser(doc.getDocumentElement());
+        
+        final GenericApplicationContext context = new GenericApplicationContext();
+        
+        context.registerBeanDefinition("Access", ccp.createCache());
+        context.refresh();
+        context.getBean("Access", Cache.class);
+        
+        context.close();
+    }
+
+    @Test public void write() throws XMLParserException, IOException {
+        final ParserPool parserPool = XMLObjectProviderRegistrySupport.getParserPool();
+        final Resource resource= new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/ResultCacheExpireAfterWrite.xml");
+        final Document doc = parserPool.parse(resource.getInputStream());
+            final CacheConfigParser ccp = new CacheConfigParser(doc.getDocumentElement());
+        
+        final GenericApplicationContext context = new GenericApplicationContext();
+        
+        context.registerBeanDefinition("Write", ccp.createCache());
+        context.refresh();
+        context.getBean("Write", Cache.class);
+        
+        context.close();
+    }
+
+    @Test public void both() throws XMLParserException, IOException {
+        final ParserPool parserPool = XMLObjectProviderRegistrySupport.getParserPool();
+        final Resource resource= new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/ResultCacheExpireBoth.xml");
+        final Document doc = parserPool.parse(resource.getInputStream());
+            final CacheConfigParser ccp = new CacheConfigParser(doc.getDocumentElement());
+        
+        final GenericApplicationContext context = new GenericApplicationContext();
+        
+        context.registerBeanDefinition("Write", ccp.createCache());
+        context.refresh();
+        context.getBean("Write", Cache.class);
+        
+        context.close();
+    }
+
 }

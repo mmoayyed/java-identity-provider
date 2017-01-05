@@ -1540,7 +1540,29 @@
         <attribute name="elementTimeToLive" type="string">
         <annotation>
                 <documentation>
-                    Length of time a result will be cached.
+                    Length of time a result will be cached since last access.
+                    Deprecated.  expireAfterAccess replaces.
+
+                    Duration is expressed in ISO8601 duration notation.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="expireAfterAccess" type="string">
+        <annotation>
+                <documentation>
+                    Length of time a result will be cached after the last access.
+                    Incompatible with expireAfterWrite.
+
+                    Duration is expressed in ISO8601 duration notation.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="expireAfterWrite" type="string">
+        <annotation>
+                <documentation>
+                    Length of time a result will be cached from the time 
+                    it is inserted into the cache.
+                    Incompatible with expireAfterAccess.
 
                     Duration is expressed in ISO8601 duration notation.
                 </documentation>

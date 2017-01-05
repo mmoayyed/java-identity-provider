@@ -60,6 +60,14 @@ public class CacheConfigParser {
     /** ResultCacheBean name - resolver:. */
     @Nonnull public static final QName RESULT_CACHE_BEAN_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ResultCacheBean");
+
+    /** Documented maximumCachedElements maximum (500).  Unfortunately it has to be here since
+     * we do not own the implemented class */
+    private static final long DEFAULT_CACHE_ENTRIES = 500;
+
+    /** Documented cache lifetime (4 hours).  Unfortunately it has to be here since
+     * we do not own the implemented class */
+    private static final long DEFAULT_TTL_MS = 4 * 60 * 60 * 1000;
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(CacheConfigParser.class);
@@ -101,29 +109,98 @@ public class CacheConfigParser {
         }
         
         final Element cacheElement = cacheElements.get(0);
+        final String elementTimeToLive = AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive"));
+        if (null != elementTimeToLive) {
+            log.warn("ResultCache: Attribute 'elementTimeToLive' is deprecated, consider using 'expireAfterAccess'");
+        }
+        final String expireAfterWrite = AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterWrite"));
+        final String expireAfterAccess = AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterAccess"));
+
+        if (null != expireAfterAccess && null != expireAfterWrite) {
+            log.warn("ResultCache:  Attribute 'expireAfterAccess' is mututally exclusive with 'expireAfterWrite'");
+        }
         
-        final BeanDefinitionBuilder cache =
-                BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCache");
-        cache.addConstructorArgValue(AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive")));
+        final BeanDefinitionBuilder cache;
+        if (expireAfterAccess != null) {
+            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheAccess");            
+            cache.addConstructorArgValue(expireAfterAccess);
+        } else if (elementTimeToLive != null) {
+            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheAccess");            
+            cache.addConstructorArgValue(elementTimeToLive);
+        } else if (expireAfterWrite != null) {
+            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheWrite");            
+            cache.addConstructorArgValue(expireAfterWrite);            
+        } else {
+            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheWrite");            
+            cache.addConstructorArgValue(null);                        
+        }
         cache.addConstructorArgValue(
                 AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements")));
         return cache.getBeanDefinition();
     }
-
+    
+    /** Helper function to return size provided with a suitable default/
+     * @param maximumSize long string
+     * @return the input as a long, or DEFAULT_CACHE_ENTRIES
+     */
+    private static long getMaxSize(@Nullable final String maximumSize) {
+        if (maximumSize != null) {
+            return Long.parseLong(maximumSize);
+        }  else {
+            return  DEFAULT_CACHE_ENTRIES;   
+        }
+    }
+    
+    /** Helper function to return the TTL with a suitable default.
+     * @param timeToLive duration string
+     * @return the input as a long, or DEFAULT_TTL_MS
+     */
+    private static long getTimeToLiveMs(@Nullable final String timeToLive) {
+        if (timeToLive != null) {
+            return DOMTypeSupport.durationToLong(timeToLive);
+        }  else {
+            return  DEFAULT_TTL_MS;   
+        }
+    }
+    
     /**
      * Factory method to leverage spring property replacement functionality. The default settings are a max size
-     * of 500 and an expiration time of 4 hours.
+     * of {@link #DEFAULT_CACHE_ENTRIES} and an expiration time {@link #DEFAULT_TTL_MS}.
+     * 
+     * The Cache is set to reset the timer on Access
      * 
      * @param timeToLive duration string
      * @param maximumSize long string
      * 
      * @return cache
      */
-    @Nullable public static Cache<String, Map<String, IdPAttribute>> buildCache(@Nullable final String timeToLive,
+    @Nullable public static Cache<String, Map<String, IdPAttribute>> buildCacheAccess(@Nullable final String timeToLive,
             @Nullable final String maximumSize) {
-        return CacheBuilder.newBuilder().maximumSize(maximumSize != null ? Long.parseLong(maximumSize) : 500)
-                .expireAfterAccess(timeToLive != null ? DOMTypeSupport.durationToLong(timeToLive)
-                        : 4 * 60 * 60 * 1000L, TimeUnit.MILLISECONDS).build();
+        
+        return CacheBuilder.newBuilder()
+                    .maximumSize(getMaxSize(maximumSize))
+                    .expireAfterAccess(getTimeToLiveMs(timeToLive), TimeUnit.MILLISECONDS)
+                    .build();
+    }
+    
+    /**
+     * Factory method to leverage spring property replacement functionality. The default settings are a max size
+     * of {@link #DEFAULT_CACHE_ENTRIES} and an expiration time {@link #DEFAULT_TTL_MS}.
+     * 
+     * The Cache is set to set the timer on Populate
+     * 
+     * @param timeToLive duration string
+     * @param maximumSize long string
+     * 
+     * @return cache
+     */
+    @Nullable public static Cache<String, Map<String, IdPAttribute>> buildCacheWrite(@Nullable final String timeToLive,
+            @Nullable final String maximumSize) {
+        
+        return CacheBuilder.newBuilder()
+                    .maximumSize(getMaxSize(maximumSize))
+                    .expireAfterWrite(getTimeToLiveMs(timeToLive), TimeUnit.MILLISECONDS)
+                    .build();
     }
     
     /**
