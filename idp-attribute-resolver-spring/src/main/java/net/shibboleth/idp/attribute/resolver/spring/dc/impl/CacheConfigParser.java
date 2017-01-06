@@ -115,25 +115,21 @@ public class CacheConfigParser {
         }
         final String expireAfterWrite = AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterWrite"));
         final String expireAfterAccess = AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterAccess"));
-
-        if (null != expireAfterAccess && null != expireAfterWrite) {
-            log.warn("ResultCache:  Attribute 'expireAfterAccess' is mututally exclusive with 'expireAfterWrite'");
-        }
         
         final BeanDefinitionBuilder cache;
-        if (expireAfterAccess != null) {
-            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheAccess");            
-            cache.addConstructorArgValue(expireAfterAccess);
+        if (expireAfterWrite != null) {
+            if (null != expireAfterAccess || null != elementTimeToLive) {
+                log.warn("ResultCache:  Attribute 'expireAfterAccess' is mututally exclusive with 'expireAfterWrite'. Used 'expireAfterWrite'.");
+            }
+            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheWrite");            
+            cache.addConstructorArgValue(expireAfterWrite);            
         } else if (elementTimeToLive != null) {
             cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheAccess");            
             cache.addConstructorArgValue(elementTimeToLive);
-        } else if (expireAfterWrite != null) {
-            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheWrite");            
-            cache.addConstructorArgValue(expireAfterWrite);            
         } else {
-            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheWrite");            
-            cache.addConstructorArgValue(null);                        
-        }
+            cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheAccess");            
+            cache.addConstructorArgValue(expireAfterAccess);
+        } 
         cache.addConstructorArgValue(
                 AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements")));
         return cache.getBeanDefinition();
