@@ -353,6 +353,9 @@
         
     <bean id="shibboleth.HTTPResource" abstract="true"
         class="net.shibboleth.idp.profile.spring.resource.impl.HTTPResourceFactoryBean" />
+
+    <bean id="shibboleth.X509TrustManager" abstract="true"
+        class="org.opensaml.security.trust.impl.TrustEngineX509TrustManager" />
     
     <!-- Default Jackson ObjectMapper with JodaTime support. -->
     
