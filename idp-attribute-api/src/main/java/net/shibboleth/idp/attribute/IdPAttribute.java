@@ -32,6 +32,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.NullableElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -56,19 +57,19 @@ import com.google.common.collect.ImmutableSet;
 public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
 
     /** ID of this attribute. */
-    private final String id;
+    @Nonnull private final String id;
 
     /** Localized human intelligible attribute names. */
-    private Map<Locale, String> displayNames;
+    @Nonnull private Map<Locale, String> displayNames;
 
     /** Localized human readable descriptions of attribute. */
-    private Map<Locale, String> displayDescriptions;
+    @Nonnull private Map<Locale, String> displayDescriptions;
 
     /** Values for this attribute. */
-    private List<IdPAttributeValue<?>> values;
+    @Nonnull private List<IdPAttributeValue<?>> values;
 
     /** Encoders that may be used to encode this attribute. */
-    private Set<AttributeEncoder<?>> encoders;
+    @Nonnull private Set<AttributeEncoder<?>> encoders;
 
     /**
      * Constructor.
@@ -161,7 +162,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @return values of the attribute
      */
-    @Nonnull @NonnullElements @Unmodifiable public List<IdPAttributeValue<?>> getValues() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public List<IdPAttributeValue<?>> getValues() {
         return values;
     }
 
@@ -171,11 +172,11 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * @param newValues the new values for this attribute
      */
     public void setValues(@Nullable @NullableElements final Collection<? extends IdPAttributeValue<?>> newValues) {
-        final ImmutableList.Builder<IdPAttributeValue<?>> builder = ImmutableList.builder();
         if (newValues != null) {
-            builder.addAll(Collections2.filter(newValues, Predicates.notNull()));
+            values = ImmutableList.copyOf(Collections2.filter(newValues, Predicates.notNull()));
+        } else {
+            values = ImmutableList.of();
         }
-        values = builder.build();
     }
 
     /**
@@ -183,7 +184,7 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * 
      * @return attribute encoders usable with this attribute
      */
-    @Nonnull @NonnullElements @Unmodifiable public Set<AttributeEncoder<?>> getEncoders() {
+    @Nonnull @NonnullElements @Unmodifiable @NotLive public Set<AttributeEncoder<?>> getEncoders() {
         return encoders;
     }
 
@@ -193,11 +194,11 @@ public class IdPAttribute implements Comparable<IdPAttribute>, Cloneable {
      * @param newEncoders the new encoders for this attribute
      */
     public void setEncoders(@Nullable @NullableElements final Collection<AttributeEncoder<?>> newEncoders) {
-        final ImmutableSet.Builder<AttributeEncoder<?>> builder = ImmutableSet.builder();
         if (newEncoders != null) {
-            builder.addAll(Collections2.filter(newEncoders, Predicates.notNull()));
+            encoders = ImmutableSet.copyOf(Collections2.filter(newEncoders, Predicates.notNull()));
+        } else {
+            encoders = ImmutableSet.of();
         }
-        encoders = builder.build();
     }
 
     /** {@inheritDoc} */

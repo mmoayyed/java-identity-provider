@@ -24,6 +24,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -77,7 +78,7 @@ public class CertificateContext extends BaseContext {
      * 
      * @return any additional certificates
      */
-    @Nonnull @NonnullElements public Collection<Certificate> getIntermediates() {
+    @Nonnull @NonnullElements @Live public Collection<Certificate> getIntermediates() {
         return intermediates;
     }
 

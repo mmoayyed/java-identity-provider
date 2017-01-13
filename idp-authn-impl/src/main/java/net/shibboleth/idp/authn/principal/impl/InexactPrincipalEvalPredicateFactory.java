@@ -19,7 +19,6 @@ package net.shibboleth.idp.authn.principal.impl;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +28,7 @@ import javax.annotation.Nullable;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicate;
 import net.shibboleth.idp.authn.principal.PrincipalEvalPredicateFactory;
 import net.shibboleth.idp.authn.principal.PrincipalSupportingComponent;
+import net.shibboleth.utilities.java.support.annotation.constraint.Live;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 
@@ -66,7 +66,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
      * 
      * @return  a mutable multimap of the matching rules to apply
      */
-    @Nonnull @NonnullElements Multimap<String,String> getMatchingRules() {
+    @Nonnull @NonnullElements @Live Multimap<String,String> getMatchingRules() {
         return matchingRules;
     }
     
@@ -83,7 +83,7 @@ public class InexactPrincipalEvalPredicateFactory implements PrincipalEvalPredic
         
         for (final Map.Entry<String,Collection<String>> e : rules.entrySet()) {
             if (!Strings.isNullOrEmpty(e.getKey()) && e.getValue() != null) {
-                matchingRules.putAll(e.getKey(), new HashSet(Collections2.filter(e.getValue(), Predicates.notNull())));
+                matchingRules.putAll(e.getKey(), Collections2.filter(e.getValue(), Predicates.notNull()));
             }
         }
     }

@@ -271,7 +271,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     }
 
     /** {@inheritDoc} */
-    @Override public boolean apply(final ProfileRequestContext input) {
+    @Override public boolean apply(@Nullable final ProfileRequestContext input) {
         return activationCondition.apply(input);
     }
     

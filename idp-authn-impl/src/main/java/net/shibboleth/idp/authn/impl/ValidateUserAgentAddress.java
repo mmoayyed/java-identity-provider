@@ -97,7 +97,7 @@ public class ValidateUserAgentAddress extends AbstractValidationAction {
         mappings = new HashMap(newMappings.size());
         for (final Map.Entry<String,Collection<IPRange>> e : newMappings.entrySet()) {
             if (!Strings.isNullOrEmpty(e.getKey())) {
-                mappings.put(e.getKey(), new ArrayList(Collections2.filter(e.getValue(), Predicates.notNull())));
+                mappings.put(e.getKey(), new ArrayList<>(Collections2.filter(e.getValue(), Predicates.notNull())));
             }
         }
     }

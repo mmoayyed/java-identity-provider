@@ -20,6 +20,7 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,6 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 /**
  * A factory bean to collect the parameterization that goes onto a {@link AbstractDataConnector}.
@@ -148,7 +148,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      */
     public void setBeanFactoryPostProcessors(@Nonnull @NonnullElements 
             final List<BeanFactoryPostProcessor> processors) {
-        factoryPostProcessors = Lists.newArrayList(Collections2.filter(processors, Predicates.notNull()));
+        factoryPostProcessors = new ArrayList<>(Collections2.filter(processors, Predicates.notNull()));
     }
 
     /**
@@ -166,7 +166,7 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
      * @param processors bean post processors to apply
      */
     public void setBeanPostProcessors(@Nonnull @NonnullElements final List<BeanPostProcessor> processors) {
-        postProcessors = Lists.newArrayList(Collections2.filter(processors, Predicates.notNull()));
+        postProcessors = new ArrayList<>(Collections2.filter(processors, Predicates.notNull()));
     }
 
     /**

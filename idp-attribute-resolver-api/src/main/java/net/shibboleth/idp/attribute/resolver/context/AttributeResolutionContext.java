@@ -70,13 +70,13 @@ public class AttributeResolutionContext extends BaseContext {
     private boolean allowCachedResults;
 
     /** Attributes which were resolved and released by the attribute resolver. */
-    @Nonnull @NonnullElements private Map<String, IdPAttribute> resolvedAttributes;
+    @Nonnull @NonnullElements private Map<String,IdPAttribute> resolvedAttributes;
     
     /** Constructor. */
     public AttributeResolutionContext() {
         allowCachedResults = true;
         requestedAttributeNames = new HashSet<>();
-        resolvedAttributes = new HashMap<String, IdPAttribute>();
+        resolvedAttributes = new HashMap<String,IdPAttribute>();
     }
     
     /**
@@ -190,7 +190,8 @@ public class AttributeResolutionContext extends BaseContext {
     public void setRequestedIdPAttributeNames(@Nonnull @NonnullElements final Collection<String> names) {
         Constraint.isNotNull(names, "Requested IdPAttribute collection cannot be null");
 
-        requestedAttributeNames = new HashSet<>(Collections2.filter(names, Predicates.notNull()));
+        requestedAttributeNames.clear();
+        requestedAttributeNames.addAll(Collections2.filter(names, Predicates.notNull()));
     }
 
     /**

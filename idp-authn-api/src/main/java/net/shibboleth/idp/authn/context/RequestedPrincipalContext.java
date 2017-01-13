@@ -18,7 +18,6 @@
 package net.shibboleth.idp.authn.context;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -140,7 +139,7 @@ public class RequestedPrincipalContext extends BaseContext {
      * @return  immutable list of principals 
      */
     @Nonnull @NonnullElements @Unmodifiable @NotLive public List<Principal> getRequestedPrincipals() {
-        return ImmutableList.copyOf(requestedPrincipals);
+        return requestedPrincipals;
     }
     
     /**
@@ -154,7 +153,7 @@ public class RequestedPrincipalContext extends BaseContext {
             @Nonnull @NonnullElements final List<Principal> principals) {
         Constraint.isNotNull(principals, "Principal list cannot be null");
         
-        requestedPrincipals = new ArrayList<>(Collections2.filter(principals, Predicates.notNull()));
+        requestedPrincipals = ImmutableList.copyOf(Collections2.filter(principals, Predicates.notNull()));
         return this;
     }
     
