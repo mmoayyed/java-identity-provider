@@ -237,7 +237,8 @@ public abstract class AbstractFlowTest extends AbstractTestNGSpringContextTests 
      * @throws IOException if the LDIF resource cannot be imported
      */
     @BeforeTest public void setupDirectoryServer() throws LDAPException, IOException {
-        directoryServer = new InMemoryDirectory(new ClassPathResource(LDIF_FILE), new ClassPathResource(KEYSTORE_FILE));
+        directoryServer =
+                new InMemoryDirectory(new ClassPathResource(LDIF_FILE), 10389, new ClassPathResource(KEYSTORE_FILE));
         directoryServer.start();
     }
 

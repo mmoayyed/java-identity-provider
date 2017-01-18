@@ -19,8 +19,13 @@ package net.shibboleth.idp.test;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
 
 import javax.annotation.Nonnull;
+
+import org.ldaptive.ssl.CredentialConfigFactory;
+import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.ssl.TLSSocketFactory;
 
 import org.springframework.core.io.Resource;
 
@@ -29,8 +34,6 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
-import com.unboundid.util.ssl.KeyStoreKeyManager;
-import com.unboundid.util.ssl.SSLUtil;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -77,21 +80,27 @@ public class InMemoryDirectory {
      * Constructor with STARTTLS support.
      * 
      * @param ldif the LDIF resource to be imported
+     * @param port port to listen on
      * @param keystore to use for startTLS
      * 
      * @throws LDAPException if the in-memory directory server cannot be created
      * @throws IOException if the LDIF resource cannot be imported
      */
-    public InMemoryDirectory(@Nonnull final Resource ldif, @Nonnull final Resource keystore) throws LDAPException,
+    public InMemoryDirectory(@Nonnull final Resource ldif, @Positive final int port, @Nonnull final Resource keystore) throws LDAPException,
             IOException {
         Constraint.isNotNull(ldif, "LDIF resource cannot be null");
         final InMemoryDirectoryServerConfig config =
                 new InMemoryDirectoryServerConfig("dc=example,dc=org", "ou=system");
         try {
-            final SSLUtil sslUtil =
-                    new SSLUtil(new KeyStoreKeyManager(keystore.getFile(), "changeit".toCharArray()), null);
-            config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, 10389,
-                    sslUtil.createSSLSocketFactory()));
+            final KeyStore ks = KeyStore.getInstance("JKS");
+            final String ksPass = "changeit";
+            ks.load(keystore.getInputStream(), ksPass.toCharArray());
+            final TLSSocketFactory socketFactory = new TLSSocketFactory();
+            socketFactory.setSslConfig(new SslConfig(CredentialConfigFactory.createKeyStoreCredentialConfig(ks, ksPass)));
+            socketFactory.initialize();
+            
+            config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", null, port,
+                    socketFactory));
         } catch (GeneralSecurityException e) {
             throw new IOException("Error reading keystore", e);
         }
