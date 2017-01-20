@@ -28,6 +28,7 @@ import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.RequestContextBuilder;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.idp.saml.nameid.impl.ComputedPersistentIdGenerationStrategy.Encoding;
 import net.shibboleth.idp.testing.DatabaseTestingSupport;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -51,6 +52,8 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
 
     /** Value calculated using V2 version. DO NOT CHANGE WITHOUT TESTING AGAINST 2.0 */
     private static final String RESULT = "Vl6z6K70iLc4AuBoNeb59Dj1rGw=";
+    
+    private static final String B32RESULT = "KZPLH2FO6SELOOAC4BUDLZXZ6Q4PLLDM";
 
     private static final byte salt[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
 
@@ -164,6 +167,32 @@ public class PersistentSAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase
         final NameID id = generator.generate(prc, NameID.PERSISTENT);
         Assert.assertNotNull(id);
         Assert.assertEquals(id.getValue(), RESULT);
+        Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
+        Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
+        Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);
+    }
+
+    @Test
+    public void testBase32ComputedId() throws Exception {
+        final ComputedPersistentIdGenerationStrategy strategy = new ComputedPersistentIdGenerationStrategy();
+        strategy.setSalt(salt);
+        strategy.setEncoding(Encoding.BASE32);
+        strategy.initialize();
+
+        generator.setPersistentIdGenerator(strategy);
+        generator.setAttributeSourceIds(Collections.singletonList("SOURCE"));
+        generator.initialize();
+        
+        prc.getSubcontext(SubjectContext.class, true).setPrincipalName("foo");
+        Assert.assertNull(generator.generate(prc, NameID.PERSISTENT));
+        
+        final IdPAttribute source = new IdPAttribute("SOURCE");
+        source.setValues(Collections.singleton(new StringAttributeValue(TestSources.COMMON_ATTRIBUTE_VALUE_STRING)));
+        prc.getSubcontext(RelyingPartyContext.class).getSubcontext(AttributeContext.class, true).setUnfilteredIdPAttributes(
+                Collections.singleton(source));
+        final NameID id = generator.generate(prc, NameID.PERSISTENT);
+        Assert.assertNotNull(id);
+        Assert.assertEquals(id.getValue(), B32RESULT);
         Assert.assertEquals(id.getFormat(), NameID.PERSISTENT);
         Assert.assertEquals(id.getNameQualifier(), TestSources.IDP_ENTITY_ID);
         Assert.assertEquals(id.getSPNameQualifier(), TestSources.SP_ENTITY_ID);

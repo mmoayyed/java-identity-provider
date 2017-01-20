@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.codec.Base32Support;
 import net.shibboleth.utilities.java.support.codec.Base64Support;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -39,6 +40,10 @@ import org.slf4j.LoggerFactory;
 /**
  * The basis of a {@link PersistentIdGenerationStrategy} that generates a unique ID by computing the hash of
  * a given attribute value, the entity ID of the inbound message issuer, and a provided salt.
+ * 
+ * <p>The original implementation and values in common use relied on base64 encoding of the result,
+ * but due to discovery of the lack of appropriate case handling of identifiers by applications, the
+ * ability to use base32 has been added to eliminate the possibility of case conflicts.</p> 
  */
 public class ComputedPersistentIdGenerationStrategy extends AbstractInitializableComponent
         implements PersistentIdGenerationStrategy {
@@ -46,15 +51,28 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ComputedPersistentIdGenerationStrategy.class);
 
+    /** Post-digest encoding types. */
+    public enum Encoding {
+        /** Use Base64 encoding. */
+        BASE64,
+        
+        /** Use Base32 encoding. */
+        BASE32,
+    };
+
     /** Salt used when computing the ID. */
     @NonnullAfterInit private byte[] salt;
 
     /** JCE digest algorithm name to use. */
     @Nonnull @NotEmpty private String algorithm;
+
+    /** The encoding to apply to the digest. */
+    @Nonnull private Encoding encoding;
     
     /** Constructor. */
     public ComputedPersistentIdGenerationStrategy() {
         algorithm = "SHA";
+        encoding = Encoding.BASE64;
     }
     
     /**
@@ -108,6 +126,17 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
         
         algorithm = Constraint.isNotNull(StringSupport.trimOrNull(alg), "Digest algorithm cannot be null or empty");
     }
+    
+    /**
+     * Set the post-digest encoding to use.
+     * 
+     * @param enc encoding
+     */
+    public void setEncoding(@Nonnull final Encoding enc) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        encoding = Constraint.isNotNull(enc, "Encoding cannot be null");
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -138,7 +167,13 @@ public class ComputedPersistentIdGenerationStrategy extends AbstractInitializabl
             md.update(sourceId.getBytes());
             md.update((byte) '!');
 
-            return Base64Support.encode(md.digest(salt), Base64Support.UNCHUNKED);
+            if (encoding == Encoding.BASE32) {
+                return Base32Support.encode(md.digest(salt), Base32Support.UNCHUNKED);
+            } else if (encoding == Encoding.BASE64) {
+                return Base64Support.encode(md.digest(salt), Base64Support.UNCHUNKED);
+            } else {
+                throw new SAMLException("Desired encoding was not recognized, unable to compute ID");
+            }
         } catch (final NoSuchAlgorithmException e) {
             log.error("Digest algorithm {} is not supported", algorithm);
             throw new SAMLException("Digest algorithm was not supported, unable to compute ID", e);
