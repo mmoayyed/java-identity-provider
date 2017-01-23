@@ -44,6 +44,8 @@
         idp.jetty.config: Copy jetty configuration from distribution (Unsupported)
         ldap.merge.properties:  The name of a property file to merge with ldap.properties
         idp.conf.filemode (default "600"): The permissions to mark the files in conf with (UNIX only).
+        idp.conf.credentials.filemode (default "600"): The permissions to mark the files in conf with (UNIX only).
+        
 
         The property idp.noprompt will cause a failure rather than a prompt.
     -->
@@ -119,7 +121,7 @@
         <input message="Source (Distribution) Directory (press &lt;enter&gt; to accept default):" addproperty="idp.src.dir" defaultvalue="${basedir}" />
     </target>
 
-    <target name="gettarget" depends="target-properties, setmerge, setservicemerge, target-src-default, target-nosrc-default, prompttarget, settarget, setfilemode" />
+    <target name="gettarget" depends="target-properties, setmerge, setservicemerge, target-src-default, target-nosrc-default, prompttarget, settarget, setfilemode, setcredentialsfilemode" />
 
     <target name="setmerge" unless="idp.merge.properties.present">
         <property name="idp.merge.properties" value="replace.properties" />
@@ -131,6 +133,10 @@
 
     <target name="setfilemode" unless="idp.conf.filemode.present">
         <property name="idp.conf.filemode" value="600" />
+    </target>
+
+    <target name="setcredentialsfilemode" unless="idp.conf.credentials.filemode.present">
+        <property name="idp.conf.credentials.filemode" value="600" />
     </target>
 
     <target name="setnameidmerge" unless="nameid.merge.properties.present">
@@ -370,6 +376,10 @@
 
         <condition property="idp.conf.filemode.present">
             <isset property="idp.conf.filemode"/>
+        </condition>
+
+        <condition property="idp.conf.credentials.filemode.present">
+            <isset property="idp.conf.credentials.filemode"/>
         </condition>
     </target>
 
@@ -683,7 +693,7 @@ A V2 Installation has been detected. Configuration will be preserved into
     <target name="reprotect" depends="gettarget">
         <!-- See IDP-487 -->
         <chmod perm="755" dir="${idp.target.dir}/bin" includes="**/*.sh"/>
-        <chmod perm="600" dir="${idp.target.dir}/credentials" includes="**/*.key"/>
+        <chmod perm="${idp.conf.credentials.filemode}" dir="${idp.target.dir}/credentials" includes="**/*.key"/>
         <chmod perm="${idp.conf.filemode}" dir="${idp.target.dir}/conf" includes="**/*"/>
         <chmod perm="444" dir="${idp.target.dir}/system" includes="**/*"/>
         <attrib readonly="true">
