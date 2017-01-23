@@ -38,6 +38,7 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(final Element element) {
+        // IDP-693 maxValidityInterval is a duration or a value in seconds - se we need a factory
         return RequiredValidUntilFactoryBean.class;
     }
 
