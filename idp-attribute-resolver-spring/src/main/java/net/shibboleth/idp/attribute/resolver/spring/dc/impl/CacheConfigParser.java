@@ -109,17 +109,21 @@ public class CacheConfigParser {
         }
         
         final Element cacheElement = cacheElements.get(0);
-        final String elementTimeToLive = AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive"));
+        final String elementTimeToLive =
+                AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive"));
         if (null != elementTimeToLive) {
             log.warn("ResultCache: Attribute 'elementTimeToLive' is deprecated, consider using 'expireAfterAccess'");
         }
-        final String expireAfterWrite = AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterWrite"));
-        final String expireAfterAccess = AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterAccess"));
+        final String expireAfterWrite =
+                AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterWrite"));
+        final String expireAfterAccess =
+                AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterAccess"));
         
         final BeanDefinitionBuilder cache;
         if (expireAfterWrite != null) {
             if (null != expireAfterAccess || null != elementTimeToLive) {
-                log.warn("ResultCache:  Attribute 'expireAfterAccess' is mututally exclusive with 'expireAfterWrite'. Used 'expireAfterWrite'.");
+                log.warn("ResultCache: Attribute 'expireAfterAccess' is mututally exclusive with 'expireAfterWrite'."
+                        + " Used 'expireAfterWrite'.");
             }
             cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheWrite");            
             cache.addConstructorArgValue(expireAfterWrite);            
@@ -135,7 +139,8 @@ public class CacheConfigParser {
         return cache.getBeanDefinition();
     }
     
-    /** Helper function to return size provided with a suitable default/
+    /** Helper function to return size provided with a suitable default.
+     * 
      * @param maximumSize long string
      * @return the input as a long, or DEFAULT_CACHE_ENTRIES
      */
