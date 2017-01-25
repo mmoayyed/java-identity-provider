@@ -125,7 +125,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         }
 
         if (element.hasAttributeNS(null, "credentialsProviderRef")) {
-            builder.addPropertyReference("credentialsProviderRef",
+            builder.addPropertyReference("credentialsProvider",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "credentialsProviderRef")));
             if (element.hasAttributeNS(null, BASIC_AUTH_USER) || element.hasAttributeNS(null, BASIC_AUTH_PASSWORD)) {
                 log.warn("credentialsProviderRef overrides settings for basicAuthUser and basicAuthPassword");
