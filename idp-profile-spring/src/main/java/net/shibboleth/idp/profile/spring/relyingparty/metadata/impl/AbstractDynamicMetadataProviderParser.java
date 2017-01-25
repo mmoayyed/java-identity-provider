@@ -20,9 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
-import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
-import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

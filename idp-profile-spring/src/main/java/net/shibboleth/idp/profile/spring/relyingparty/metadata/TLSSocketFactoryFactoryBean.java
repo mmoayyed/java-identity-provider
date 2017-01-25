@@ -77,10 +77,10 @@ public class TLSSocketFactoryFactoryBean extends AbstractFactoryBean {
 
     /** {@inheritDoc} */
     protected Object createInstance() throws Exception {
-        final boolean haveTrustEngine = (tlsTrustEngine != null 
-                || (httpClientSecurityParameters != null && httpClientSecurityParameters.getTLSTrustEngine() != null));
+        final boolean haveTrustEngine = tlsTrustEngine != null 
+                || (httpClientSecurityParameters != null && httpClientSecurityParameters.getTLSTrustEngine() != null);
         final boolean haveClientTLSCred = 
-                (httpClientSecurityParameters != null && httpClientSecurityParameters.getClientTLSCredential() != null);
+                httpClientSecurityParameters != null && httpClientSecurityParameters.getClientTLSCredential() != null;
         if (haveTrustEngine || haveClientTLSCred) {
             return SecurityEnhancedHttpClientSupport.buildTLSSocketFactory(haveTrustEngine, haveClientTLSCred);
         } else if (connectionDisregardTLSCertificate) {
