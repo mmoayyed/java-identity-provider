@@ -5,7 +5,8 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
 	id="dynamicClientSecurityParams" xsi:type="metadata:DynamicHTTPMetadataProvider"
-	credentialsProviderRef="metadata.CredentialsProvider"
+    // TODO
+	tlsTrustEngineRef="tlsEngine"
     >
 
 </metadata:MetadataProvider>

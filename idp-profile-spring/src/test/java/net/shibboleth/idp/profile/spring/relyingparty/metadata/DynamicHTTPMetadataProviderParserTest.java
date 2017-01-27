@@ -20,6 +20,9 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 import java.util.Arrays;
 import java.util.Collections;
 
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.core.xml.persist.XMLObjectLoadSaveManager;
@@ -34,14 +37,11 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-
 public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
     
     @Test
     public void testDefaults() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicDefaults.xml", "beans.xml");
         
         Assert.assertTrue(resolver.isInitialized());
@@ -77,7 +77,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
         Assert.assertEquals(resolver.getRequestURLBuilder().getClass(), HTTPEntityIDRequestURLBuilder.class);
     }
 
-    @Test
+    @Test(enabled=false)
     public void testDeprecated() throws Exception {
         getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicDeprecated.xml", "beans.xml", "httpClient.xml");
@@ -111,12 +111,12 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testPersistentCacheParamsViaDirectory() throws Exception {
-        ApplicationContext appContext = getApplicationContext("dynamicResolverContext",
+        final ApplicationContext appContext = getApplicationContext("dynamicResolverContext",
                 "dynamicPersistentCacheDirectory.xml", "beans.xml", "httpClient.xml");
         
-        RelyingPartyMetadataProvider rpProvider = 
+        final RelyingPartyMetadataProvider rpProvider = 
                 appContext.getBean("dynamicPersistentCacheParamsDirectory", RelyingPartyMetadataProvider.class);
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = 
                 FunctionDrivenDynamicHTTPMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
         Assert.assertNotNull(resolver);
         
@@ -140,12 +140,12 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testPersistentCacheParamsViaManagerBeanRef() throws Exception {
-        ApplicationContext appContext = getApplicationContext("dynamicResolverContext",
+        final ApplicationContext appContext = getApplicationContext("dynamicResolverContext",
                 "dynamicPersistentCacheBean.xml", "beans.xml", "httpClient.xml");
         
-        RelyingPartyMetadataProvider rpProvider = 
+        final RelyingPartyMetadataProvider rpProvider = 
                 appContext.getBean("dynamicPersistentCacheParamsBean", RelyingPartyMetadataProvider.class);
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = 
                 FunctionDrivenDynamicHTTPMetadataResolver.class.cast(rpProvider.getEmbeddedResolver());
         Assert.assertNotNull(resolver);
         
@@ -169,7 +169,7 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testBasicParams() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicBasicParams.xml", "beans.xml", "httpClient.xml");
         
         Assert.assertTrue(resolver.isInitialized());
@@ -192,182 +192,182 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testWellKnown() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicWellKnown.xml", "beans.xml");
         
         //TODO update with permanent test target, if there is a better one.
-        String entityID = "https://issues.shibboleth.net/shibboleth";
+        final String entityID = "https://issues.shibboleth.net/shibboleth";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
 
     @Test
     public void testTemplate() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicTemplate.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
 
     @Test
     public void testMDQ() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicMetadataQueryProtocol.xml", "beans.xml");
         
-        String entityID = "https://foo1.example.org/idp/shibboleth";
+        final String entityID = "https://foo1.example.org/idp/shibboleth";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
     
     @Test
     public void testRegex() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamicRegex.xml", "beans.xml");
         
-        String entityID = "https://idp.example.org/idp/shibboleth";
+        final String entityID = "https://idp.example.org/idp/shibboleth";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
     
     @Test
     public void testHttpCachingNone() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-httpCaching-none.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
 
     @Test
     public void testHttpCachingMemory() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-httpCaching-memory.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
 
     @Test
     public void testHttpCachingFile() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-httpCaching-file.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
     
     @Test
     public void testHTTPSNoTrustEngine() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-https-noTrustEngine.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
     
     @Test
     public void testHTTPSTrustEngineExplicitKey() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-https-trustEngine-explicitKey.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
     
     @Test
     public void testHTTPSTrustEngineInvalidKey() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-https-trustEngine-invalidKey.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNull(ed);
     }
     
     @Test
     public void testHTTPSTrustEngineValidPKIX() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-https-trustEngine-validPKIX.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
     
     @Test
     public void testHTTPSTrustEngineValidPKIXExplicitTrustedName() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-https-trustEngine-validPKIX-explicitTrustedName.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNotNull(ed);
         Assert.assertEquals(ed.getEntityID(), entityID);
     }
     
     @Test
     public void testHTTPSTrustEngineInvalidPKIX() throws Exception {
-        FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
+        final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
                 "dynamic-https-trustEngine-invalidPKIX.xml", "beans.xml");
         
-        String entityID = "https://www.example.org/sp";
+        final String entityID = "https://www.example.org/sp";
         
-        CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
+        final CriteriaSet criteriaSet = new CriteriaSet( new EntityIdCriterion(entityID));
         
-        EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
+        final EntityDescriptor ed = resolver.resolveSingle(criteriaSet);
         Assert.assertNull(ed);
     }
 

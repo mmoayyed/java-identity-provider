@@ -124,16 +124,8 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                     httpClientSecurityParametersRef));
         }
 
-        if (element.hasAttributeNS(null, "credentialsProviderRef")) {
-            builder.addPropertyReference("credentialsProvider",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "credentialsProviderRef")));
-            if (element.hasAttributeNS(null, BASIC_AUTH_USER) || element.hasAttributeNS(null, BASIC_AUTH_PASSWORD)) {
-                log.warn("credentialsProviderRef overrides settings for basicAuthUser and basicAuthPassword");
-            }
-        } else {
-            if (element.hasAttributeNS(null, BASIC_AUTH_USER) || element.hasAttributeNS(null, BASIC_AUTH_PASSWORD)) {
-                builder.addPropertyValue("basicCredentials", buildBasicCredentials(element));
-            }
+        if (element.hasAttributeNS(null, BASIC_AUTH_USER) || element.hasAttributeNS(null, BASIC_AUTH_PASSWORD)) {
+            builder.addPropertyValue("basicCredentials", buildBasicCredentials(element));
         }
 
         if (element.hasAttributeNS(null, "supportedContentTypes")) {

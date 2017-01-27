@@ -582,15 +582,6 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="credentialsProviderRef" type="string">
-                    <annotation>
-                        <documentation>
-                            A reference to an externally defined Spring bean which specifies an instance of
-                            org.apache.http.client.CredentialsProvider.  Setting a credential provider here overrides
-                            the single credential implied by the attributes basicAuthUser and basicAuthPassword.
-                        </documentation>
-                    </annotation>
-                </attribute>
                 <attribute name="httpCaching" type="shibmd:HttpClientCachingType">
                     <annotation>
                         <documentation>
