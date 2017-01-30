@@ -19,19 +19,15 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import java.util.List;
 
-import javax.xml.namespace.QName;
+import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.TLSSocketFactoryFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -46,16 +42,6 @@ import org.w3c.dom.Element;
  * Parser for abstract dynamic HTTP metadata resolvers.
  */
 public abstract class AbstractDynamicHTTPMetadataProviderParser extends AbstractDynamicMetadataProviderParser {
-
-    /** TLSTrustEngine element name. */
-    public static final QName TLS_TRUST_ENGINE_ELEMENT_NAME = new QName(
-            AbstractMetadataProviderParser.METADATA_NAMESPACE, "TLSTrustEngine");
-
-    /** BASIC auth username. */
-    private static final String BASIC_AUTH_USER = "basicAuthUser";
-
-    /** BASIC auth password. */
-    private static final String BASIC_AUTH_PASSWORD = "basicAuthPassword";
 
     /** Default caching type . */
     private static final String DEFAULT_CACHING = "memory";
@@ -84,24 +70,21 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
             final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
-        Object tlsTrustEngineRefOrBean = null;
-        if (element.hasAttributeNS(null, "tlsTrustEngineRef")) {
-            tlsTrustEngineRefOrBean = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
-            builder.addPropertyReference("tLSTrustEngine", (String) tlsTrustEngineRefOrBean);
-        } else {
-            tlsTrustEngineRefOrBean = parseTLSTrustEngine(element, parserContext);
-            if (tlsTrustEngineRefOrBean != null) {
-                builder.addPropertyValue("tLSTrustEngine", tlsTrustEngineRefOrBean);
-            }
-        }
+        final String tlsTrustEngineRef = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
+        final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);
+        final String httpClientSecurityParametersRef = StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
+        BeanDefinition httpClientSecurityParameters = null;
         
-        String httpClientSecurityParametersRef = null;
-        if (element.hasAttributeNS(null, "httpClientSecurityParametersRef")) {
-            httpClientSecurityParametersRef = 
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
+        if (httpClientSecurityParametersRef != null) {
+            if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
+                log.warn("httpClientSecurityParametersRef overrides setting of tlsTrustEngineRef or of <TrustEngine> subelement");
+            }
             builder.addPropertyReference("httpClientSecurityParameters", httpClientSecurityParametersRef);
+        } else if (tlsTrustEngine != null || tlsTrustEngineRef != null)  {
+            httpClientSecurityParameters =  HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngineRef, tlsTrustEngine, parserContext);
+            builder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityParameters);
         }
-
+      
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientRef")));
             if (element.hasAttributeNS(null, "requestTimeout")
@@ -120,12 +103,13 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                         + "proxyUser and proxyPassword");
             }
         } else {
-            builder.addConstructorArgValue(buildHttpClient(element, parserContext, tlsTrustEngineRefOrBean, 
-                    httpClientSecurityParametersRef));
+            builder.addConstructorArgValue(buildHttpClient(element, parserContext,
+                    httpClientSecurityParametersRef, httpClientSecurityParameters));
         }
 
-        if (element.hasAttributeNS(null, BASIC_AUTH_USER) || element.hasAttributeNS(null, BASIC_AUTH_PASSWORD)) {
-            builder.addPropertyValue("basicCredentials", buildBasicCredentials(element));
+        if (element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_USER) ||
+           element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_PASSWORD)) {
+            builder.addPropertyValue("basicCredentials", HTTPMetadataProvidersParserSupport.buildBasicCredentials(element));
         }
 
         if (element.hasAttributeNS(null, "supportedContentTypes")) {
@@ -144,15 +128,20 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      * Build the definition of the HTTPClientBuilder which contains all our configuration.
      * 
      * @param element the HTTPMetadataProvider parser.
-     * @param parserContext thee context
-     * @param tlsTrustEngineRefOrBean the bean ref or definition for a TLS TrustEngine
+     * @param parserContext the context
      * @param httpClientSecurityParametersRef the client security parameters ref to be used
+     * @param httpClientSecurityParameters the client security parameters to be used
      * @return the bean definition with the parameters.
+     * 
+     * Either httpClientSecurityParametersRef or httpClientSecurityParameters can be present, not both.
      */
     // Checkstyle: CyclomaticComplexity OFF
     // Checkstyle: MethodLength OFF
-    private BeanDefinition buildHttpClient(final Element element, final ParserContext parserContext,
-            final Object tlsTrustEngineRefOrBean, final String httpClientSecurityParametersRef) {
+    private BeanDefinition buildHttpClient(final Element element,
+            final ParserContext parserContext,
+            @Nullable final String httpClientSecurityParametersRef,
+            @Nullable final BeanDefinition httpClientSecurityParameters) {
+
         String caching = DEFAULT_CACHING;
         if (element.hasAttributeNS(null, "httpCaching")) {
             caching = StringSupport.trimOrNull(element.getAttributeNS(null, "httpCaching"));
@@ -236,8 +225,8 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
             clientBuilder.addPropertyValue("maxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
         }
         
-        clientBuilder.addPropertyValue("tLSSocketFactory", buildTLSSocketFactory(element, parserContext, 
-                tlsTrustEngineRefOrBean, httpClientSecurityParametersRef));
+        clientBuilder.addPropertyValue("tLSSocketFactory", HTTPMetadataProvidersParserSupport.buildTLSSocketFactory(element, parserContext, 
+                httpClientSecurityParametersRef, httpClientSecurityParameters));
 
         if (element.hasAttributeNS(null, "proxyHost")) {
             clientBuilder.addPropertyValue("connectionProxyHost",
@@ -259,93 +248,6 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         }
 
         return clientBuilder.getBeanDefinition();
-    }
-
-    // Checkstyle: CyclomaticComplexity ON
-    // Checkstyle: MethodLength ON
-    
-    /**
-     * Build the definition of the HTTPClientBuilder which contains all our configuration.
-     * 
-     * @param element the HTTPMetadataProvider parser.
-     * @param parserContext context
-     * @param tlsTrustEngineRefOrBean the bean ref or definition for a TLS TrustEngine
-     * @param httpClientSecurityParametersRef 
-     * @return the bean definition with the parameters.
-     */
-    private BeanDefinition buildTLSSocketFactory(final Element element, final ParserContext parserContext,
-            final Object tlsTrustEngineRefOrBean, final String httpClientSecurityParametersRef) {
-        
-        final BeanDefinitionBuilder tlsSocketFactoryBuilder = 
-                BeanDefinitionBuilder.genericBeanDefinition(TLSSocketFactoryFactoryBean.class);
-        
-        if (tlsTrustEngineRefOrBean != null) {
-            if (tlsTrustEngineRefOrBean instanceof String) {
-                tlsSocketFactoryBuilder.addPropertyReference("tLSTrustEngine", (String) tlsTrustEngineRefOrBean);
-            } else {
-                tlsSocketFactoryBuilder.addPropertyValue("tLSTrustEngine", tlsTrustEngineRefOrBean);
-            }
-        }
-        
-        if (element.hasAttributeNS(null, "disregardTLSCertificate")) {
-            tlsSocketFactoryBuilder.addPropertyValue("connectionDisregardTLSCertificate",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "disregardTLSCertificate")));
-        } else if (element.hasAttributeNS(null, "disregardSslCertificate")) {
-            log.warn("disregardSslCertificate is deprecated, please switch to disregardTLSCertificate");
-            tlsSocketFactoryBuilder.addPropertyValue("connectionDisregardTLSCertificate",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "disregardSslCertificate")));
-        }
-        
-        if (httpClientSecurityParametersRef != null) {
-            tlsSocketFactoryBuilder.addPropertyReference("httpClientSecurityParameters", 
-                    httpClientSecurityParametersRef);
-        }
-        
-        return tlsSocketFactoryBuilder.getBeanDefinition();
-    }
-
-    /**
-     * Build the POJO with the username and password.
-     * 
-     * @param element the HTTPMetadataProvider parser.
-     * @return the bean definition with the username and password.
-     */
-    private BeanDefinition buildBasicCredentials(final Element element) {
-        final BeanDefinitionBuilder builder =
-                BeanDefinitionBuilder.genericBeanDefinition(UsernamePasswordCredentials.class);
-
-        builder.setLazyInit(true);
-
-        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, BASIC_AUTH_USER)));
-        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, BASIC_AUTH_PASSWORD)));
-
-        return builder.getBeanDefinition();
-    }
-
-    /**
-     * Build the definition of the HTTPClientBuilder which contains all our configuration.
-     * 
-     * @param element the HTTPMetadataProvider element
-     * @param parserContext the context
-     * @return the bean definition
-     */
-    private BeanDefinition parseTLSTrustEngine(final Element element, final ParserContext parserContext) {
-        final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, TLS_TRUST_ENGINE_ELEMENT_NAME);
-        if (tlsTrustEngine != null) {
-            final Element trustEngine =
-                    ElementSupport.getFirstChildElement(tlsTrustEngine,
-                            AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
-            if (trustEngine != null) {
-                return SpringSupport.parseCustomElement(trustEngine, parserContext);
-            } else {
-                // This should be schema-invalid, but log a warning just in case.
-                log.warn("{}:, Element {} did not contain a {} child element", parserContext.getReaderContext()
-                        .getResource().getDescription(), TLS_TRUST_ENGINE_ELEMENT_NAME,
-                        AbstractMetadataProviderParser.TRUST_ENGINE_ELEMENT_NAME);
-            }
-        }
-
-        return null;
     }
 
 }

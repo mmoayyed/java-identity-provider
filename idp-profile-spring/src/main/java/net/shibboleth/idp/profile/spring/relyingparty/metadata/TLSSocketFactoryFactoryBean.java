@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
@@ -26,8 +28,6 @@ import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
 import org.opensaml.security.trust.TrustEngine;
 import org.opensaml.security.x509.X509Credential;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
-
-import net.shibboleth.utilities.java.support.httpclient.HttpClientSupport;
 
 /**
  * A factory bean for producing instances of {@link LayeredConnectionSocketFactory} for use in {@link HttpClient}.
@@ -45,10 +45,10 @@ public class TLSSocketFactoryFactoryBean extends AbstractFactoryBean {
     
     /**
      * Sets the optional trust engine used in evaluating server TLS credentials.
-     * 
+     * @deprecated use setHttpClientSecurityParameters instead
      * @param engine the trust engine instance to use, or null
      */
-    public void setTLSTrustEngine(@Nullable final TrustEngine<? super X509Credential> engine) {
+    @Deprecated public void setTLSTrustEngine(@Nullable final TrustEngine<? super X509Credential> engine) {
         tlsTrustEngine = engine;
     }
     
@@ -71,12 +71,12 @@ public class TLSSocketFactoryFactoryBean extends AbstractFactoryBean {
     }
 
     /** {@inheritDoc} */
-    public Class getObjectType() {
+    @Override public Class getObjectType() {
         return LayeredConnectionSocketFactory.class;
     }
 
     /** {@inheritDoc} */
-    protected Object createInstance() throws Exception {
+    @Override protected Object createInstance() throws Exception {
         final boolean haveTrustEngine = tlsTrustEngine != null 
                 || (httpClientSecurityParameters != null && httpClientSecurityParameters.getTLSTrustEngine() != null);
         final boolean haveClientTLSCred = 
