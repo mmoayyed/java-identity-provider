@@ -86,18 +86,18 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     @Nullable private RequestedPrincipalContext requestedPrincipalCtx; 
     
     /**
-     * Get whether SSO should trump explicit relying party flow preference.
+     * Get whether SSO should trump explicit relying party requirements preference.
      * 
-     * @return whether SSO should trump explicit relying party flow preference
+     * @return whether SSO should trump explicit relying party requirements preference
      */
     public boolean getFavorSSO() {
         return favorSSO;
     }
 
     /**
-     * Set whether SSO should trump explicit relying party flow preference.
+     * Set whether SSO should trump explicit relying party requirements preference.
      * 
-     * @param flag whether SSO should trump explicit relying party flow preference
+     * @param flag whether SSO should trump explicit relying party requirements preference
      */
     public void setFavorSSO(final boolean flag) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -179,7 +179,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         // If not forced, or we just did it, check for an active result for that flow.
 
         final AuthenticationResult activeResult;
-        if (!authenticationContext.isForceAuthn()) {
+        if (!authenticationContext.isForceAuthn() && flow.getReuseCondition().apply(profileRequestContext)) {
             activeResult = authenticationContext.getActiveResults().get(flow.getId());
         } else if (authenticationContext.getInitialAuthenticationResult() != null
                 && authenticationContext.getInitialAuthenticationResult().getAuthenticationFlowId().equals(
@@ -242,7 +242,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
     }
 // Checkstyle: MethodLength|CyclomaticComplexity|ReturnCount ON
     
-// Checkstyle: ReturnCount OFF
+// Checkstyle: ReturnCount|CyclomaticComplexity OFF
     /**
      * Executes the selection process in the absence of specific requested principals.
      * 
@@ -281,7 +281,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         for (final AuthenticationResult activeResult : authenticationContext.getActiveResults().values()) {
             final AuthenticationFlowDescriptor flow = authenticationContext.getPotentialFlows().get(
                     activeResult.getAuthenticationFlowId());
-            if (flow != null) {
+            if (flow != null && flow.getReuseCondition().apply(profileRequestContext)) {
                 selectActiveResult(profileRequestContext, authenticationContext, activeResult);
                 return;
             }
@@ -298,7 +298,7 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         }
         selectInactiveFlow(profileRequestContext, authenticationContext, flow);
     }
- // Checkstyle: ReturnCount ON
+// Checkstyle: ReturnCount|CyclomaticComplexity ON
 
     /**
      * Return the first inactive potential flow not found in the intermediate flows collection that applies
@@ -444,6 +444,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
         if (favorSSO) {
             log.debug("{} Giving priority to active results that meet request requirements");
             
+            final Map<String,AuthenticationFlowDescriptor> availableFlows = authenticationContext.getAvailableFlows();
+            
             // Check each active result for compatibility with request.
             for (final Principal p : requestedPrincipalCtx.getRequestedPrincipals()) {
                 log.debug("{} Checking for an active result compatible with operator '{}' and principal '{}'",
@@ -451,7 +453,9 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                 final PrincipalEvalPredicate predicate = requestedPrincipalCtx.getPredicate(p);
                 if (predicate != null) {
                     for (final AuthenticationResult result : activeResults.values()) {
-                        if (predicate.apply(result)) {
+                        final AuthenticationFlowDescriptor flow = availableFlows.get(result.getAuthenticationFlowId());
+                        if (flow != null && flow.getReuseCondition().apply(profileRequestContext)
+                                && predicate.apply(result)) {
                             selectActiveResult(profileRequestContext, authenticationContext, result);
                             return;
                         }
@@ -486,7 +490,8 @@ public class SelectAuthenticationFlow extends AbstractAuthenticationAction {
                             // Now check for an active result we can use from this flow. Not all results from a flow
                             // will necessarily match the request just because the flow might.
                             final AuthenticationResult result = activeResults.get(descriptor.getId());
-                            if (result == null || !predicate.apply(result)) {
+                            if (result == null || !descriptor.getReuseCondition().apply(profileRequestContext)
+                                    || !predicate.apply(result)) {
                                 if (!authenticationContext.isPassive()
                                         || descriptor.isPassiveAuthenticationSupported()) {
                                     selectInactiveFlow(profileRequestContext, authenticationContext, descriptor);

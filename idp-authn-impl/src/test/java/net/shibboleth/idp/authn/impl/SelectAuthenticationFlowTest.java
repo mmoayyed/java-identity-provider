@@ -55,6 +55,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         final AuthenticationContext authCtx = prc.getSubcontext(AuthenticationContext.class);
         
         final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test1");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
@@ -66,6 +67,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.setIsPassive(true);
         
         final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test2");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
@@ -77,6 +79,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.getIntermediateFlows().put("test1", authCtx.getPotentialFlows().get("test1"));
         
         final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test2");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get(event.getId()));
@@ -127,7 +130,7 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.addSubcontext(rpc, true);
         
         final Event event = action.execute(src);
-        
+
         ActionTestingSupport.assertEvent(event, AuthnEventIds.REQUEST_UNSUPPORTED);
     }
 
@@ -142,7 +145,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.addSubcontext(rpc, true);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
-        action.execute(src);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test3");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
@@ -162,7 +166,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.getPotentialFlows().get("test2").setSupportedPrincipals(principals);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(principals);
         
-        action.execute(src);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test3");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow().getId(), "test3");
@@ -183,7 +188,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.setActiveResults(Arrays.asList(active));
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
-        action.execute(src);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test3");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get("test3"));
@@ -206,7 +212,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         authCtx.setForceAuthn(true);
         authCtx.getPotentialFlows().get("test3").setSupportedPrincipals(ImmutableList.of(principals.get(0)));
         
-        action.execute(src);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertEvent(event, "test3");
         
         Assert.assertNull(authCtx.getAuthenticationResult());
         Assert.assertEquals(authCtx.getAttemptedFlow(), authCtx.getPotentialFlows().get("test3"));
@@ -232,7 +239,8 @@ public class SelectAuthenticationFlowTest extends BaseAuthenticationContextTest 
         action = new SelectAuthenticationFlow();
         action.setFavorSSO(true);
         action.initialize();
-        action.execute(src);
+        final Event event = action.execute(src);
+        ActionTestingSupport.assertProceedEvent(event);
         
         Assert.assertEquals(active, authCtx.getAuthenticationResult());
     }

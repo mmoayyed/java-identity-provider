@@ -72,6 +72,9 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
 
     /** Whether this flow supports forced authentication. */
     private boolean supportsForced;
+    
+    /** Whether this flow allows reuse of its results. */
+    @Nonnull private Predicate<ProfileRequestContext> reuseCondition;
 
     /** Maximum amount of time in milliseconds, since first usage, a flow should be considered active. */
     @Duration @NonNegative private long lifetime;
@@ -94,6 +97,7 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** Constructor. */
     public AuthenticationFlowDescriptor() {
         supportsNonBrowser = true;
+        reuseCondition = Predicates.alwaysTrue();
         supportedPrincipals = new Subject();
         activationCondition = Predicates.alwaysTrue();
         inactivityTimeout = 30 * 60 * 1000;
@@ -157,6 +161,32 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
         supportsForced = isSupported;
+    }
+    
+    /**
+     * Get condition controlling whether results from this flow should be reused for SSO.
+     * 
+     * @return whether results from this flow should be reused for SSO
+     * 
+     * @since 3.4.0
+     */
+    @Nonnull public Predicate<ProfileRequestContext> getReuseCondition() {
+        return reuseCondition;
+    }
+    
+    /**
+     * Set condition controlling whether results from this flow should be reused for SSO.
+     * 
+     * <p>Defaults to {@link Predicates#alwaysTrue()}.</p>
+     * 
+     * @param condition condition to set
+     * 
+     * @since 3.4.0
+     */
+    public void setReuseCondition(@Nonnull final Predicate<ProfileRequestContext> condition) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+
+        reuseCondition = Constraint.isNotNull(condition, "Predicate cannot be null");
     }
 
     /**
@@ -340,8 +370,8 @@ public class AuthenticationFlowDescriptor extends AbstractIdentifiableInitializa
     /** {@inheritDoc} */
     @Override public String toString() {
         return MoreObjects.toStringHelper(this).add("flowId", getId()).add("supportsPassive", supportsPassive)
-                .add("supportsForcedAuthentication", supportsForced).add("lifetime", lifetime)
-                .add("inactivityTimeout", inactivityTimeout).toString();
+                .add("supportsForcedAuthentication", supportsForced)
+                .add("lifetime", lifetime).add("inactivityTimeout", inactivityTimeout).toString();
     }
 
     static {
