@@ -339,11 +339,15 @@ public class MetadataGenerator {
         writeNameSpace(XMLConstants.XML_PREFIX, XMLConstants.XML_NS);
         writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
 
+        writer.write(" validUntil=\"2001-01-02T13:14:15Z\"");
+        
         writer.write(" entityID=\"");
         writer.write(getEntityID());
         writer.write("\">");
         writer.newLine();
         writer.newLine();
+        
+        
 
         writeIDPSSO();
         writer.newLine();
