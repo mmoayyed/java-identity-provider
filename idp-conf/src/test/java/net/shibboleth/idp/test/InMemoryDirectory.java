@@ -47,36 +47,6 @@ public class InMemoryDirectory {
     @Nonnull private final InMemoryDirectoryServer directoryServer;
 
     /**
-     * Constructor without STARTTLS support. Listens on port 10389.
-     * 
-     * @param ldif the LDIF resource to be imported
-     * 
-     * @throws LDAPException if the in-memory directory server cannot be created
-     * @throws IOException if the LDIF resource cannot be imported
-     */
-    public InMemoryDirectory(@Nonnull final Resource ldif) throws LDAPException, IOException {
-       this(ldif, 10389);
-    }
-    
-    /**
-     * Constructor without STARTTLS support.
-     *
-     * @param ldif the LDIF resource to be imported
-     * @param port port to listen on
-     * @throws LDAPException if the in-memory directory server cannot be created
-     * @throws IOException if the LDIF resource cannot be imported
-     */
-    public InMemoryDirectory(@Nonnull final Resource ldif, @Positive final int port) throws LDAPException, IOException {
-        Constraint.isNotNull(ldif, "LDIF resource cannot be null");
-        Constraint.isGreaterThan(-1, port, "Port must be greater than -1");
-        final InMemoryDirectoryServerConfig config = new InMemoryDirectoryServerConfig("dc=example,dc=org", "ou=system");
-        config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("default", port));
-        config.addAdditionalBindCredentials("cn=Directory Manager", "password");
-        directoryServer = new InMemoryDirectoryServer(config);
-        directoryServer.importFromLDIF(true, new LDIFReader(ldif.getInputStream()));
-    }
-    
-    /**
      * Constructor with STARTTLS support.
      * 
      * @param ldif the LDIF resource to be imported
