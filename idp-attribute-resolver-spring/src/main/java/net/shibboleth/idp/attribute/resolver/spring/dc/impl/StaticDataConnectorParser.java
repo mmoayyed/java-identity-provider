@@ -99,4 +99,8 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
         builder.addPropertyValue("values", attributes);
     }
 
+    /** {@inheritDoc} */
+    @Override protected boolean warnOnDependencies() {
+        return true;
+    }
 }
