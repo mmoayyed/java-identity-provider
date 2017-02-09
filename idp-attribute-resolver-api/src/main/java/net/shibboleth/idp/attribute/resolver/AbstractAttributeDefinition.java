@@ -213,7 +213,13 @@ public abstract class AbstractAttributeDefinition extends AbstractResolverPlugin
         // will correctly rehash the dependencies.
         if (null != getSourceAttributeId()) {
             for (final ResolverPluginDependency depends : getDependencies()) {
-                depends.setDependencyAttributeId(getSourceAttributeId());
+                if (depends instanceof ResolverAttributeDefinitionDependency) {
+                    // No work needed.  The name is the reference 
+                } else if (depends instanceof ResolverDataConnectorDependency) {
+                    // No work needed.  The names are stored elsewhere 
+                } else {
+                    depends.setDependencyAttributeId(getSourceAttributeId());
+                }
             }
         }
         super.doInitialize();

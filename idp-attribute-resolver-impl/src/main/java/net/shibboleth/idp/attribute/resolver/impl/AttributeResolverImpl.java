@@ -39,6 +39,8 @@ import net.shibboleth.idp.attribute.resolver.DataConnectorEx;
 import net.shibboleth.idp.attribute.resolver.LegacyPrincipalDecoder;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.ResolvedAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.ResolverAttributeDefinitionDependency;
+import net.shibboleth.idp.attribute.resolver.ResolverDataConnectorDependency;
 import net.shibboleth.idp.attribute.resolver.ResolverPlugin;
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
@@ -410,10 +412,13 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
 
         log.debug("{} Resolving dependencies for '{}'", logPrefix, plugin.getId());
 
-        String pluginId;
         for (final ResolverPluginDependency dependency : plugin.getDependencies()) {
-            pluginId = dependency.getDependencyPluginId();
-            if (attributeDefinitions.containsKey(pluginId)) {
+            final String pluginId = dependency.getDependencyPluginId();
+            if (dependency instanceof ResolverAttributeDefinitionDependency) {
+                resolveAttributeDefinition(pluginId, resolutionContext);                
+            } else if (dependency instanceof ResolverDataConnectorDependency) {
+                resolveDataConnector(pluginId, resolutionContext);
+            } else if (attributeDefinitions.containsKey(pluginId)) {
                 resolveAttributeDefinition(pluginId, resolutionContext);
             } else if (dataConnectors.containsKey(pluginId)) {
                 resolveDataConnector(pluginId, resolutionContext);
@@ -542,14 +547,23 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                         + "' and plugin '" + dependency.getDependencyPluginId()
                         + "' have a circular dependecy on each other.");
             }
-
-            dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
-            if (dependencyPlugin == null) {
-                dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());
+            final String dependencyType;
+            if (dependency instanceof ResolverAttributeDefinitionDependency) {
+                dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
+                dependencyType = "Attribute Definition";
+            } else if (dependency instanceof ResolverDataConnectorDependency) {
+                dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());                
+                dependencyType = "Data Connector";
+            } else {
+                dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
+                if (dependencyPlugin == null) {
+                    dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());
+                }
+                dependencyType = "Deprecated ";
             }
             if (dependencyPlugin == null) {
                 throw new ComponentInitializationException(logPrefix + " Plugin '" + plugin.getId()
-                        + "' has a dependency on plugin '" + dependency.getDependencyPluginId()
+                        + "' has a " + dependencyType + " dependency on plugin '" + dependency.getDependencyPluginId()
                         + "' which doesn't exist");
             }
 
