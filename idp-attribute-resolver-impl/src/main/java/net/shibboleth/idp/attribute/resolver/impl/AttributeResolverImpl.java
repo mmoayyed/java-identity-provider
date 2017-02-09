@@ -543,9 +543,9 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                         + "' have a circular dependecy on each other.");
             }
 
-            dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());
+            dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
             if (dependencyPlugin == null) {
-                dependencyPlugin = attributeDefinitions.get(dependency.getDependencyPluginId());
+                dependencyPlugin = dataConnectors.get(dependency.getDependencyPluginId());
             }
             if (dependencyPlugin == null) {
                 throw new ComponentInitializationException(logPrefix + " Plugin '" + plugin.getId()
