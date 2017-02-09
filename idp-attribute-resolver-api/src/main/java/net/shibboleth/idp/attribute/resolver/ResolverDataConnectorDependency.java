@@ -17,8 +17,12 @@
 
 package net.shibboleth.idp.attribute.resolver;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 /**
  *
@@ -27,7 +31,7 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
 
     private boolean allAttributes = false;
     
-    private List<String> attributeNames = Collections.EMPTY_LIST;
+    private Set<String> attributeNames = Collections.EMPTY_SET;
     
     /**
      * Constructor.
@@ -55,16 +59,24 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
     /**
      * @return Returns the attributeNames.
      */
-    public List<String> getAttributeNames() {
+    public Collection<String> getAttributeNames() {
         return attributeNames;
     }
 
     /**
      * @param names The attributeNames to set.
      */
-    public void setAttributeNames(final List<String> names) {
-        attributeNames = names;
+    public void setAttributeNames(final Collection<String> names) {
+        attributeNames = new HashSet(names);
     }
    
+    /**
+     * {@inheritDoc}
+     * @deprecated("Used SetAttributeNames instead")
+     */
+    @Override @Deprecated public void setDependencyAttributeId(@Nullable final String attributeId) {
+        super.setDependencyAttributeId(attributeId);
+    }
+
 
 }

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -103,39 +104,61 @@ public final class PluginDependencySupport {
 
             final String pluginId = dependency.getDependencyPluginId();
 
-            final ResolvedAttributeDefinition attributeDefinition =
-                    workContext.getResolvedIdPAttributeDefinitions().get(pluginId);
-            final String dependencyAttributeId = dependency.getDependencyAttributeId();
-            if (attributeDefinition != null) {
-                if (null == dependencyAttributeId) {
-                    LOG.warn("Plugin '{}' was defined without a sourceAttributeID,  but attribute '{}', specified "
-                            + "" + "as a <Dependency> will be used.", attributeDefinitionId, pluginId);
-                } else if (!dependencyAttributeId.equals(pluginId)) {
-                    LOG.warn("Plugin '{}' was defined with a sourceAttributeID '{}',"
-                            + " but the attribute definition '{}', specified as a <Dependency> will be used as well.",
-                            attributeDefinitionId, dependencyAttributeId, pluginId);
-                }
-
+            if (dependency instanceof ResolverAttributeDefinitionDependency) {
+                final ResolvedAttributeDefinition attributeDefinition =
+                        workContext.getResolvedIdPAttributeDefinitions().get(pluginId);
                 final IdPAttribute resolvedAttribute = attributeDefinition.getResolvedAttribute();
                 mergeAttributeValues(resolvedAttribute, values);
-                continue;
-            }
-
-            final ResolvedDataConnector dataConnector =
-                    workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
-            if (dataConnector != null) {
-                if (dependency.getDependencyAttributeId() == null) {
-                    LOG.error("Attribute definition '{}' has a data connector"
-                            + " dependency '{}' but no sourceAttributeID.", attributeDefinitionId,
-                            dataConnector.getId());
-                    return Collections.EMPTY_LIST;
+            } else if (dependency instanceof ResolverDataConnectorDependency) {
+                // Merge all specified attribute values.
+                final ResolverDataConnectorDependency dataConnectorDependency = (ResolverDataConnectorDependency) dependency;
+                final ResolvedDataConnector dataConnector =
+                        workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
+                if (dataConnector != null) { 
+                    final Map<String, IdPAttribute> resolvedAttrs = dataConnector.getResolvedAttributes();
+                    if (null != resolvedAttrs) {
+                        for (final Entry<String, IdPAttribute> entry : resolvedAttrs.entrySet()) {
+                            if (dataConnectorDependency.isAllAttributes() || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
+                                mergeAttributeValues(entry.getValue(), values);
+                            }
+                        }
+                    }
                 }
-
-                if (null != dataConnector.getResolvedAttributes()) {
-                    final IdPAttribute resolvedAttribute =
-                            dataConnector.getResolvedAttributes().get(dependency.getDependencyAttributeId());
+            } else {
+                final ResolvedAttributeDefinition attributeDefinition =
+                        workContext.getResolvedIdPAttributeDefinitions().get(pluginId);
+                final String dependencyAttributeId = dependency.getDependencyAttributeId();
+                if (attributeDefinition != null) {
+                    if (null == dependencyAttributeId) {
+                        LOG.warn("Plugin '{}' was defined without a sourceAttributeID,  but attribute '{}', specified "
+                                + "" + "as a <Dependency> will be used.", attributeDefinitionId, pluginId);
+                    } else if (!dependencyAttributeId.equals(pluginId)) {
+                        LOG.warn("Plugin '{}' was defined with a sourceAttributeID '{}',"
+                                + " but the attribute definition '{}', specified as a <Dependency> will be used as well.",
+                                attributeDefinitionId, dependencyAttributeId, pluginId);
+                    }
+    
+                    final IdPAttribute resolvedAttribute = attributeDefinition.getResolvedAttribute();
                     mergeAttributeValues(resolvedAttribute, values);
                     continue;
+                }
+    
+                final ResolvedDataConnector dataConnector =
+                        workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
+                if (dataConnector != null) {
+                    if (dependency.getDependencyAttributeId() == null) {
+                        LOG.error("Attribute definition '{}' has a data connector"
+                                + " dependency '{}' but no sourceAttributeID.", attributeDefinitionId,
+                                dataConnector.getId());
+                        return Collections.EMPTY_LIST;
+                    }
+    
+                    if (null != dataConnector.getResolvedAttributes()) {
+                        final IdPAttribute resolvedAttribute =
+                                dataConnector.getResolvedAttributes().get(dependency.getDependencyAttributeId());
+                        mergeAttributeValues(resolvedAttribute, values);
+                        continue;
+                    }
                 }
             }
         }
@@ -169,19 +192,42 @@ public final class PluginDependencySupport {
         for (final ResolverPluginDependency dependency : dependencies) {
             Constraint.isNotNull(dependency, "Resolver dependency cannot be null");
 
-            final ResolvedAttributeDefinition attributeDefinition =
-                    workContext.getResolvedIdPAttributeDefinitions().get(dependency.getDependencyPluginId());
-            if (attributeDefinition != null) {
-                addAttribute(attributeDefinition.getResolvedAttribute(), result);
-                continue;
-            }
-
-            final ResolvedDataConnector dataConnector =
-                    workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
-            if (dataConnector != null) {
-                if (null != dataConnector.getResolvedAttributes()) {
-                    mergeAttributes(dataConnector.getResolvedAttributes(), result);
+            if (dependency instanceof ResolverAttributeDefinitionDependency) {
+                final ResolvedAttributeDefinition attributeDefinition =
+                        workContext.getResolvedIdPAttributeDefinitions().get(dependency.getDependencyPluginId());
+                if (attributeDefinition != null) {
+                    addAttribute(attributeDefinition.getResolvedAttribute(), result);
+                }
+            } else if (dependency instanceof ResolverDataConnectorDependency) {
+                // Just add those attributes specified
+                final ResolverDataConnectorDependency dataConnectorDependency = (ResolverDataConnectorDependency) dependency;
+                final ResolvedDataConnector dataConnector =
+                        workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
+                if (dataConnector != null) { 
+                    final Map<String, IdPAttribute> resolvedAttrs = dataConnector.getResolvedAttributes();
+                    if (null != resolvedAttrs) {
+                        for (final Entry<String, IdPAttribute> entry : resolvedAttrs.entrySet()) {
+                            if (dataConnectorDependency.isAllAttributes() || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
+                                addAttribute(entry.getValue(), result);
+                            }
+                        }
+                    }
+                }
+            } else {
+                // deprecated behavior
+                final ResolvedAttributeDefinition attributeDefinition =
+                        workContext.getResolvedIdPAttributeDefinitions().get(dependency.getDependencyPluginId());
+                if (attributeDefinition != null) {
+                    addAttribute(attributeDefinition.getResolvedAttribute(), result);
                     continue;
+                }
+    
+                final ResolvedDataConnector dataConnector =
+                        workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
+                if (dataConnector != null) {
+                    if (null != dataConnector.getResolvedAttributes()) {
+                        mergeAttributes(dataConnector.getResolvedAttributes(), result);
+                    }
                 }
             }
         }
