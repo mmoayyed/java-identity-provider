@@ -74,6 +74,8 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
         registerBeanDefinitionParser(AttributeResolverParser.ELEMENT_NAME, parser);
         registerBeanDefinitionParser(DirectConnectorParser.TYPE_NAME, new DirectConnectorParser());
         registerBeanDefinitionParser(ResolverPluginDependencyParser.ELEMENT_NAME, new ResolverPluginDependencyParser());
+        registerBeanDefinitionParser(InputDataConnectorParser.ELEMENT_NAME, new InputDataConnectorParser());
+        registerBeanDefinitionParser(InputAttributeDefinitionParser.ELEMENT_NAME, new InputAttributeDefinitionParser());
 
         // Attribute Resolvers
         registerBeanDefinitionParser(CryptoTransientIdAttributeDefinitionParser.TYPE_NAME_RESOLVER,

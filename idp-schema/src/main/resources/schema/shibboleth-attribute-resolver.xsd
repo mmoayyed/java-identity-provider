@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:sec="urn:mace:shibboleth:2.0:security" 
-    targetNamespace="urn:mace:shibboleth:2.0:resolver" elementFormDefault="qualified"
-    version="3.0">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:sec="urn:mace:shibboleth:2.0:security"
+    targetNamespace="urn:mace:shibboleth:2.0:resolver" elementFormDefault="qualified" version="3.0">
 
     <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
@@ -307,6 +306,28 @@
             </documentation>
         </annotation>
     </element>
+    <element name="InputAttributeDefinition" type="resolver:PluginDependencyType">
+        <annotation>
+            <documentation>
+                Defines a dependency on a specific Attribute Definition.
+            </documentation>
+        </annotation>
+    </element>
+    <element name="InputDataConnector">
+        <annotation>
+            <documentation>
+                Defines a dependency on a specific Data Connector.
+            </documentation>
+        </annotation>
+        <complexType>
+            <complexContent>
+                <extension base="resolver:PluginDependencyType">
+                    <attribute name="allAttributes" type="boolean"/>
+                    <attribute name="attributeNames" type="string"/>
+                </extension>
+            </complexContent>
+        </complexType>
+    </element>
     <element name="FailoverDataConnector" type="resolver:PluginDependencyType">
         <annotation>
             <documentation>
@@ -434,7 +455,9 @@
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
-                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -479,7 +502,9 @@
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
-                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />               
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -538,6 +563,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -569,6 +596,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -598,6 +627,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -632,6 +663,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -665,6 +698,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -711,6 +746,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -763,6 +800,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />                
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" /> 
                         <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
                         <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
@@ -835,6 +874,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element ref="resolver:FailoverDataConnector" minOccurs="0" />
                     </choice>
                 </sequence>
@@ -874,6 +915,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element ref="resolver:FailoverDataConnector" minOccurs="0" />
                         <element name="FilterTemplate" type="string" minOccurs="0">
                             <annotation>
@@ -1069,7 +1112,7 @@
         </complexContent>
     </complexType>
     
-        <complexType name="RelationalDatabase">
+    <complexType name="RelationalDatabase">
         <annotation>
             <documentation>
                 A data connector definition that uses JDBC version 3 to connect to and pull information from a
@@ -1081,6 +1124,8 @@
                 <sequence>
                     <choice maxOccurs="unbounded" minOccurs="0">
                         <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                        <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                         <element ref="resolver:FailoverDataConnector" minOccurs="0" />
                         <element ref="resolver:ContainerManagedConnection">
                             <annotation>
@@ -1190,6 +1235,8 @@
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                     <element ref="resolver:FailoverDataConnector" minOccurs="0" />
                     <element name="Script" type="string" minOccurs="0">
                         <annotation>
@@ -1235,6 +1282,8 @@
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
                     <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />                                        
                     <element ref="resolver:FailoverDataConnector" minOccurs="0" />
                     <element name="Attribute" minOccurs="0" maxOccurs="unbounded">
                         <annotation>

@@ -22,6 +22,8 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -77,6 +79,10 @@ public abstract class BaseResolverPluginParser extends AbstractSingleBeanDefinit
 
         final List<Element> dependencyElements =
                 ElementSupport.getChildElements(config, ResolverPluginDependencyParser.ELEMENT_NAME);
+        dependencyElements.addAll(
+                ElementSupport.getChildElements(config, InputAttributeDefinitionParser.ELEMENT_NAME));
+        dependencyElements.addAll(
+                ElementSupport.getChildElements(config, InputDataConnectorParser.ELEMENT_NAME));
         if (null != dependencyElements && !dependencyElements.isEmpty()) {
             if (failOnDependencies()) {
                 log.error("{} Dependencies are not allowed.", getLogPrefix());

@@ -1,0 +1,11 @@
+ <AttributeDefinition 
+    xmlns="urn:mace:shibboleth:2.0:resolver"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:type="Simple" id="simplePopulated" sourceAttributeID="flibble"
+    xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+ 
+    <InputDataConnector ref="dep2" allAttributes="true"/>
+    <Dependency ref="dep1"/>
+    <InputAttributeDefinition ref="dep3"/>
+
+ </AttributeDefinition>

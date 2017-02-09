@@ -35,7 +35,7 @@ import com.google.common.base.Objects;
  * attributes. The dependency analysis stages is aware of this difference and relies on it.
  */
 @ThreadSafe
-public final class ResolverPluginDependency {
+public class ResolverPluginDependency {
 
     /** ID of the plugin that will produce the attribute. */
     private final String dependencyPluginId;

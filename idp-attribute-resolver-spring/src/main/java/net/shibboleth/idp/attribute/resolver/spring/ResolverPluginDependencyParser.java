@@ -23,6 +23,8 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.slf4j.Logger;
@@ -43,7 +45,9 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
     @Nonnull private final Logger log = LoggerFactory.getLogger(ResolverPluginDependencyParser.class);
 
     /** {@inheritDoc} */
-    @Override protected Class<ResolverPluginDependency> getBeanClass(@Nullable final Element element) {
+    @Override protected Class<? extends ResolverPluginDependency> getBeanClass(@Nullable final Element element) {
+        log.warn("<Dependency> is deprecated, replace with " + InputDataConnectorParser.ELEMENT_NAME.getLocalPart() 
+                + " or " + InputAttributeDefinitionParser.ELEMENT_NAME.getLocalPart());
         return ResolverPluginDependency.class;
     }
 
