@@ -7,7 +7,7 @@
 	failFastInitialization="false" requireValidMetadata="false"
 
 	id="requiredValidUntil" xsi:type="metadata:InlineMetadataProvider">
-	<metadata:MetadataFilter xsi:type="metadata:RequiredValidUntil" maxValidityInterval="P2D"/>
+	<metadata:MetadataFilter xsi:type="metadata:RequiredValidUntil" maxValidity="P2D"/>
 	
 	<EntityDescriptor ID="uk001502"
 		entityID="https://sp.example.org/sp/shibboleth">

@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
@@ -34,17 +35,28 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
 
     /** Where the (property replaced) value of maxValidityInterval goes. */
     @Nullable private String maxValidityIntervalDuration;
+    
+    /** The maxmimum validity.  */
+    @Nullable @Duration private Long maxValidity;
 
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(RequiredValidUntilFactoryBean.class);
 
     /**
-     * setter for {@link #maxValidityIntervalDuration}.
+     * Setter for {@link #maxValidityIntervalDuration}.
      * 
      * @param s what to set.
+     * @deprecated use {@link RequiredValidUntilFactoryBean#setMaxValidity(long)}.
      */
-    public void setMaxValidityInterval(final String s) {
+    @Deprecated public void setMaxValidityInterval(final String s) {
         maxValidityIntervalDuration = s;
+    }
+    
+    /** Set the maxmimum validity as a {@Duration}
+     * @param max what to set.
+     */
+    @Duration public void setMaxValidity(@Duration final long max) {
+        maxValidity = max;
     }
 
     /** {@inheritDoc} */
@@ -56,7 +68,9 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
     @Override protected RequiredValidUntilFilter createInstance() throws Exception {
         final RequiredValidUntilFilter value = new RequiredValidUntilFilter();
 
-        if (null != maxValidityIntervalDuration) {
+        if (null != maxValidity) {
+            value.setMaxValidityInterval(maxValidity);
+        } else if (null != maxValidityIntervalDuration) {
             if (maxValidityIntervalDuration.startsWith("P")) {
                 value.setMaxValidityInterval(DOMTypeSupport.durationToLong(maxValidityIntervalDuration));
             } else if (maxValidityIntervalDuration.startsWith("-P")) {
