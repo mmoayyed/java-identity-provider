@@ -129,7 +129,7 @@
                                     <artifactId>idp-war</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
-                                    <outputDirectory>${idp.assemblyDirectory}/webapp/</outputDirectory>
+                                    <outputDirectory>${idp.assemblyDirectory}/dist/webapp/</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -209,7 +209,7 @@
                                     <artifactId>jcl-over-slf4j</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${idp.assemblyDirectory}/webapp/WEB-INF/lib/</outputDirectory>
+                            <outputDirectory>${idp.assemblyDirectory}/dist/webapp/WEB-INF/lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -246,7 +246,6 @@
                                         <include name="messages/**/*.*" />
                                         <include name="views/**/*.*" />
                                     </fileset>
-                                    <globmapper from="*" to="*.dist" />
                                 </copy>
                             </target>
                         </configuration>

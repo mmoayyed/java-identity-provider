@@ -246,7 +246,7 @@
         </condition>
 
         <condition property="idp.ask.scope">
-            <!-- We ask for scope if there is no scope and we allow user input and there is no idp properties file -->
+            <!-- We ask for scope if there is no scope and we allow user input and there is no idp.properties file -->
             <and>
                 <not>
                     <isset property="idp.scope" />
@@ -259,7 +259,7 @@
         </condition>
 
         <condition property="idp.set.scope">
-            <!-- We set scope if there is no scope and we do not allow user input and there is no idp properties file -->
+            <!-- We set scope if there is no scope and we do not allow user input and there is no idp.properties file -->
             <and>
                 <not>
                     <isset property="idp.scope" />
@@ -270,7 +270,7 @@
         </condition>
 
         <condition property="idp.write.scope">
-            <!-- We write the scope if we set it, ask for it, or if its supplied -->
+            <!-- We write the scope if we set it, ask for it, or if it's supplied -->
             <or>
                 <isset property="idp.scope" />
                 <isset property="idp.ask.scope" />
@@ -426,44 +426,32 @@
         <mkdir dir="${idp.target.dir}/conf" />
         <copy todir="${idp.target.dir}/conf">
             <fileset dir="${idp.target.dir}/dist/conf" includes="**/*">
-                <present present="srconly" targetdir="${idp.target.dir}/conf">
-                    <mapper type="glob" from="*.dist" to="*" />
-                </present>
+                <present present="srconly" targetdir="${idp.target.dir}/conf" />
             </fileset>
-            <mapper type="glob" from="*.dist" to="*" />
         </copy>
 
         <!-- flows: copy from dist if not already present -->
         <mkdir dir="${idp.target.dir}/flows" />
         <copy todir="${idp.target.dir}/flows">
             <fileset dir="${idp.target.dir}/dist/flows" includes="**/*">
-                <present present="srconly" targetdir="${idp.target.dir}/flows">
-                    <mapper type="glob" from="*.dist" to="*" />
-                </present>
+                <present present="srconly" targetdir="${idp.target.dir}/flows" />
             </fileset>
-            <mapper type="glob" from="*.dist" to="*" />
         </copy>
 
         <!-- messages: copy from dist if not already present -->
         <mkdir dir="${idp.target.dir}/messages" />
         <copy todir="${idp.target.dir}/messages">
             <fileset dir="${idp.target.dir}/dist/messages" includes="**/*">
-                <present present="srconly" targetdir="${idp.target.dir}/messages">
-                    <mapper type="glob" from="*.dist" to="*" />
-                </present>
+                <present present="srconly" targetdir="${idp.target.dir}/messages" />
             </fileset>
-            <mapper type="glob" from="*.dist" to="*" />
         </copy>
 
         <!-- views: copy from dist if not already present -->
         <mkdir dir="${idp.target.dir}/views" />
         <copy todir="${idp.target.dir}/views">
             <fileset dir="${idp.target.dir}/dist/views" includes="**/*">
-                <present present="srconly" targetdir="${idp.target.dir}/views">
-                    <mapper type="glob" from="*.dist" to="*" />
-                </present>
+                <present present="srconly" targetdir="${idp.target.dir}/views" />
             </fileset>
-            <mapper type="glob" from="*.dist" to="*" />
         </copy>
 
         <!-- Other dirs -->
@@ -473,25 +461,25 @@
     <target name="editproperties" depends="gettarget, getentityid" unless="idp.properties.present">
         <TGT>editproperties</TGT>
         <mkdir dir="${idp.target.dir}/conf" />
-        <mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties.dist" outFile="${idp.target.dir}/conf/idp.properties" mergeFile="${idp.merge.properties}" />
+        <mergeproperties inFile="${idp.target.dir}/dist/conf/idp.properties" outFile="${idp.target.dir}/conf/idp.properties" mergeFile="${idp.merge.properties}" />
     </target>
 
     <target name="editservicesproperties" depends="gettarget" if="idp.is.V2" unless="services.properties.present">
         <TGT>editservicesproperties</TGT>
         <mkdir dir="${idp.target.dir}/conf" />
-        <mergeproperties inFile="${idp.target.dir}/dist/conf/services.properties.dist" outFile="${idp.target.dir}/conf/services.properties" mergeFile="${services.merge.properties}" />
+        <mergeproperties inFile="${idp.target.dir}/dist/conf/services.properties" outFile="${idp.target.dir}/conf/services.properties" mergeFile="${services.merge.properties}" />
     </target>
 
     <target name="editnameidproperties" depends="gettarget" if="idp.is.V2" unless="nameid.properties.present">
         <TGT>editnameidproperties</TGT>
         <mkdir dir="${idp.target.dir}/conf" />
-        <mergeproperties inFile="${idp.target.dir}/dist/conf/saml-nameid.properties.dist" outFile="${idp.target.dir}/conf/saml-nameid.properties" mergeFile="${nameid.merge.properties}" />
+        <mergeproperties inFile="${idp.target.dir}/dist/conf/saml-nameid.properties" outFile="${idp.target.dir}/conf/saml-nameid.properties" mergeFile="${nameid.merge.properties}" />
     </target>
 
     <target name="editldapproperties" depends="gettarget" if="idp.merge.ldap.properties" unless="ldap.properties.present">
         <TGT>editldapproperties</TGT>
         <mkdir dir="${idp.target.dir}/conf" />
-        <mergeproperties inFile="${idp.target.dir}/dist/conf/ldap.properties.dist" outFile="${idp.target.dir}/conf/ldap.properties" mergeFile="${ldap.merge.properties}" />
+        <mergeproperties inFile="${idp.target.dir}/dist/conf/ldap.properties" outFile="${idp.target.dir}/conf/ldap.properties" mergeFile="${ldap.merge.properties}" />
     </target>
 
     <target name="metadata-gen" depends="gettarget, getentityid, gethostname, genkeys, upgrade"  unless="idp.metadata.present">
@@ -516,10 +504,10 @@
     <target name="populateeditwebapp" unless="idp.properties.present">
         <TGT>populateeditwebapp</TGT>
         <copy todir="${idp.target.dir}/edit-webapp/css" failonerror="false">
-            <fileset dir="${idp.target.dir}/webapp/css" />
+            <fileset dir="${idp.target.dir}/dist/webapp/css" />
         </copy>
         <copy todir="${idp.target.dir}/edit-webapp/images" failonerror="false">
-            <fileset dir="${idp.target.dir}/webapp/images" />
+            <fileset dir="${idp.target.dir}/dist/webapp/images" />
         </copy>
     </target>
 
@@ -529,12 +517,17 @@
     <target name="build-war" depends="gettarget">
         <!-- no logging -->
         <echo>Rebuilding ${idp.target.dir}/war/idp.war ...</echo>
-        <copy todir="${idp.target.dir}/webapp" overwrite="true" failonerror="false">
+        <mkdir dir="${idp.target.dir}/webapp" />
+        <copy todir="${idp.target.dir}/webapp" preservelastmodified="true" failonerror="true">
+            <fileset dir="${idp.target.dir}/dist/webapp" />
+        </copy>
+        <copy todir="${idp.target.dir}/webapp" overwrite="true" preservelastmodified="true" failonerror="true">
             <fileset dir="${idp.target.dir}/edit-webapp" />
         </copy>
         <!-- build a jar, not war, since it is already fully populated -->
-        <delete file="${idp.target.dir}/war/idp.war" failonerror="false" />
+        <delete file="${idp.target.dir}/war/idp.war" failonerror="true" />
         <jar destfile="${idp.target.dir}/war/idp.war" basedir="${idp.target.dir}/webapp" />
+    	<delete dir="${idp.target.dir}/webapp" failonerror="true" />
         <echo>...done</echo>
     </target>
 
@@ -553,6 +546,9 @@
         <copy todir="${target}/bin" failonerror="false">
             <fileset dir="${idp.target.dir}/bin" />
         </copy>
+        <copy todir="${target}/edit-webapp" failonerror="false">
+            <fileset dir="${idp.target.dir}/edit-webapp" />
+        </copy>
         <copy todir="${target}/dist" failonerror="false">
             <fileset dir="${idp.target.dir}/dist" />
         </copy>
@@ -561,9 +557,6 @@
         </copy>
         <copy todir="${target}/system" failonerror="false">
             <fileset dir="${idp.target.dir}/system" />
-        </copy>
-        <copy todir="${target}/webapp" failonerror="false">
-            <fileset dir="${idp.target.dir}/webapp" />
         </copy>
 
         <!-- Do not delete bin, this preserves user scripts.
@@ -576,7 +569,6 @@
             <fileset dir="${idp.target.dir}/system" includes="**/*"/>
         </attrib>
         <delete dir="${idp.target.dir}/system" failonerror="false" />
-        <delete dir="${idp.target.dir}/webapp" failonerror="false" />
 
         <!-- Now copy or create empty as required.
         Creating an existing file is benign, bin gets updated -->
@@ -603,10 +595,6 @@
         </copy>
         <mkdir dir="${idp.target.dir}/views" />
         <mkdir dir="${idp.target.dir}/war" />
-        <mkdir dir="${idp.target.dir}/webapp" />
-        <copy todir="${idp.target.dir}/webapp">
-            <fileset dir="${idp.src.dir}/webapp" />
-        </copy>
     </target>
 
     <target name="copy-jetty-distribution" depends="copy-distribution" if="idp.jetty.config">

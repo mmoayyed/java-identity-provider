@@ -29,6 +29,6 @@ if not exist %JAVACMD% (
 )
 
 REM add in the dependency .jar files
-set LOCALCLASSPATH=%ANT_HOME%\..\bin\lib\*;%ANT_HOME%\..\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
+set LOCALCLASSPATH=%ANT_HOME%\..\bin\lib\*;%ANT_HOME%\..\dist\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\tools.jar;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
 
 %JAVACMD% -cp "%LOCALCLASSPATH%" -Dant.home="%ANT_HOME%" %ANT_OPTS% org.apache.tools.ant.Main -e -q -f "%ANT_HOME%/build.xml" %*

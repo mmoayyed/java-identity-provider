@@ -22,7 +22,7 @@ if not exist %JAVACMD% (
 )
 
 REM add in the dependency .jar files
-set LOCALCLASSPATH=%~dp0lib\*;%~dp0..\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
+set LOCALCLASSPATH=%~dp0lib\*;%~dp0..\edit-webapp\WEB-INF\lib\*;%~dp0..\webapp\WEB-INF\lib\*;%JAVA_HOME%\lib\classes.zip;%CLASSPATH%
 
 REM Go to it !
 
