@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
@@ -36,9 +35,6 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
     /** Where the (property replaced) value of maxValidityInterval goes. */
     @Nullable private String maxValidityIntervalDuration;
     
-    /** The maxmimum validity.  */
-    @Nullable @Duration private Long maxValidity;
-
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(RequiredValidUntilFactoryBean.class);
 
@@ -52,12 +48,6 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
         maxValidityIntervalDuration = s;
     }
     
-    /** Set the maxmimum validity as a {@Duration}
-     * @param max what to set.
-     */
-    @Duration public void setMaxValidity(@Duration final long max) {
-        maxValidity = max;
-    }
 
     /** {@inheritDoc} */
     @Override public Class<RequiredValidUntilFilter> getObjectType() {
@@ -68,9 +58,7 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
     @Override protected RequiredValidUntilFilter createInstance() throws Exception {
         final RequiredValidUntilFilter value = new RequiredValidUntilFilter();
 
-        if (null != maxValidity) {
-            value.setMaxValidityInterval(maxValidity);
-        } else if (null != maxValidityIntervalDuration) {
+        if (null != maxValidityIntervalDuration) {
             if (maxValidityIntervalDuration.startsWith("P")) {
                 value.setMaxValidityInterval(DOMTypeSupport.durationToLong(maxValidityIntervalDuration));
             } else if (maxValidityIntervalDuration.startsWith("-P")) {

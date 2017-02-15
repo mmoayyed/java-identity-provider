@@ -50,18 +50,11 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
-        if (element.hasAttributeNS(null, "maxValidity")) {
-            if (element.hasAttributeNS(null, "maxValidityInterval")) {
-                log.warn("Only one of maxValidity and maxValidityInterval can be supplied");
-            }
-            builder.addPropertyValue("maxValidity",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "maxValidity")));
-        } else if (element.hasAttributeNS(null, "maxValidityInterval")) {
-            log.warn("maxValidityInterval is deprecated, used maxValidity");
+        if (element.hasAttributeNS(null, "maxValidityInterval")) {
             builder.addPropertyValue("maxValidityInterval",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "maxValidityInterval")));
         } else {
-            log.warn("Metadata filter " + TYPE_NAME.getLocalPart() + " without maxValdity is a no-op.");
+            log.warn("Metadata filter " + TYPE_NAME.getLocalPart() + " without maxValidityInterval is a no-op.");
         }
     }
 
