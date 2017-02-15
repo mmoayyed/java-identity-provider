@@ -159,7 +159,14 @@ if ERRORLEVEL 1 (
   goto done;
 )
 
-rem The file names gets too big....
+rd/s/q %idpex%\webapp
+if ERRORLEVEL 1 (
+  cd ..
+  echo Webapp directory not found?
+  goto done;
+)
+
+rem The file name gets too big....
 rename %idpex% IdPEx
 set idpex=IdPEx
 
