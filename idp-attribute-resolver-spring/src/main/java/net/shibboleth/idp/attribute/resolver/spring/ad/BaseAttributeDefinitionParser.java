@@ -27,6 +27,8 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
+import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
@@ -115,12 +117,9 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
             final String sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
             log.debug("{} Setting sourceAttributeID {}", getLogPrefix(), sourceAttributeId);
             builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
-            if (!needsAttributeSourceID()) {
-                log.warn("{} sourceAttributeID was specified but is meaningless, add {} as a <Dependency> instead",
-                        getLogPrefix(), sourceAttributeId);
-            }
-        } else if (needsAttributeSourceID()) {
-            log.warn("{} sourceAttributeID was not specified but is required", getLogPrefix());
+            log.warn("{} sourceAttributeID was specified.  It is no longer required.  Use "+
+                    InputAttributeDefinitionParser.ELEMENT_NAME.getLocalPart() +" or " + 
+                    InputDataConnectorParser.ELEMENT_NAME.getLocalPart() + ">");
         }
 
         final List<Element> attributeEncoders =
@@ -165,10 +164,13 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
     }
 
     /**
-     * Ask the specific parser of it needs attributeSourceID. We use this to log several misconfiguration possibilities.
+     * Ask the specific parser of it needs attributeSourceID. We used to use this to log several misconfiguration possibilities,
+     * These days the attribute is irrelevant if you avoid <Dependency> so this is here purely for backwards API compatibility.
      * 
      * @return Whether the attribute definition for this parser meeds attributeSourceID.
      */
-    protected abstract boolean needsAttributeSourceID();
+    protected boolean needsAttributeSourceID() {
+        return false;
+    }
     
 }
