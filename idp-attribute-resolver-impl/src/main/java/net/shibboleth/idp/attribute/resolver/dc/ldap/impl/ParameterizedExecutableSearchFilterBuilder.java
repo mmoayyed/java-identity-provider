@@ -48,7 +48,7 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
      * Constructor.
      * 
      * @param filter used for the LDAP search
-     * @deprecated - use the proerty setters
+     * @deprecated - use the property setters
      */
     @Deprecated public ParameterizedExecutableSearchFilterBuilder(@Nonnull final String filter) {
         LoggerFactory.getLogger(ParameterizedExecutableSearchFilterBuilder.class).warn("Using Deprecated Constructor");
