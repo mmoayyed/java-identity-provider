@@ -605,23 +605,40 @@
         <copy todir="${idp.target.dir}/bin" overwrite="true">
             <fileset dir="${idp.src.dir}/bin"  excludes="**/ant-jetty.xml **/install.*"/>
         </copy>
-        <mkdir dir="${idp.target.dir}/conf" />
-        <mkdir dir="${idp.target.dir}/credentials" />
-        <copy todir="${idp.target.dir}/dist">
-            <fileset dir="${idp.src.dir}/dist" />
+
+    	<!-- Create dist folder and copy in the unmodified user configuration. -->
+    	<mkdir dir="${idp.target.dir}/dist" />
+    	<copy todir="${idp.target.dir}/dist/conf">
+            <fileset dir="${idp.src.dir}/conf" />
         </copy>
-        <mkdir dir="${idp.target.dir}/doc" />
+        <copy todir="${idp.target.dir}/dist/flows">
+            <fileset dir="${idp.src.dir}/flows" />
+        </copy>
+        <copy todir="${idp.target.dir}/dist/messages">
+            <fileset dir="${idp.src.dir}/messages" />
+        </copy>
+        <copy todir="${idp.target.dir}/dist/views">
+            <fileset dir="${idp.src.dir}/views" />
+        </copy>
+        <copy todir="${idp.target.dir}/dist/webapp">
+            <fileset dir="${idp.src.dir}/webapp" />
+        </copy>
+
+        <!-- Create doc/system folders and copy in from distribution. -->
         <copy todir="${idp.target.dir}/doc">
             <fileset dir="${idp.src.dir}/doc" />
         </copy>
+        <copy todir="${idp.target.dir}/system">
+            <fileset dir="${idp.src.dir}/system" />
+        </copy>
 
+    	<!-- Create user-modifiable folders. -->
+        <mkdir dir="${idp.target.dir}/conf" />
+        <mkdir dir="${idp.target.dir}/credentials" />
         <mkdir dir="${idp.target.dir}/flows" />
         <mkdir dir="${idp.target.dir}/logs" />
         <mkdir dir="${idp.target.dir}/messages" />
         <mkdir dir="${idp.target.dir}/metadata" />
-        <copy todir="${idp.target.dir}/system">
-            <fileset dir="${idp.src.dir}/system" />
-        </copy>
         <mkdir dir="${idp.target.dir}/views" />
         <mkdir dir="${idp.target.dir}/war" />
     </target>
@@ -713,6 +730,9 @@ A V2 Installation has been detected. Configuration will be preserved into
         <chmod perm="${idp.conf.credentials.filemode}" dir="${idp.target.dir}/credentials" includes="**/*.key"/>
         <chmod perm="${idp.conf.filemode}" dir="${idp.target.dir}/conf" includes="**/*"/>
         <chmod perm="444" dir="${idp.target.dir}/system" includes="**/*"/>
+        <attrib readonly="true">
+            <fileset dir="${idp.target.dir}/dist" includes="**/*"/>
+        </attrib>
         <attrib readonly="true">
             <fileset dir="${idp.target.dir}/system" includes="**/*"/>
         </attrib>

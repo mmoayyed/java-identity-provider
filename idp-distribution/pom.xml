@@ -129,7 +129,7 @@
                                     <artifactId>idp-war</artifactId>
                                     <version>${project.version}</version>
                                     <type>war</type>
-                                    <outputDirectory>${idp.assemblyDirectory}/dist/webapp/</outputDirectory>
+                                    <outputDirectory>${idp.assemblyDirectory}/webapp/</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -209,7 +209,7 @@
                                     <artifactId>jcl-over-slf4j</artifactId>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${idp.assemblyDirectory}/dist/webapp/WEB-INF/lib/</outputDirectory>
+                            <outputDirectory>${idp.assemblyDirectory}/webapp/WEB-INF/lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -228,25 +228,6 @@
                         <configuration>
                             <target>
                                 <chmod dir="${idp.assemblyDirectory}/bin" perm="755" includes="**/*.sh" />
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-dist-files</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <copy todir="${idp.assemblyDirectory}/dist">
-                                    <fileset dir="${idp.assemblyDirectory}">
-                                        <include name="conf/**/*.*" />
-                                        <include name="flows/**/*.*" />
-                                        <include name="messages/**/*.*" />
-                                        <include name="views/**/*.*" />
-                                    </fileset>
-                                </copy>
                             </target>
                         </configuration>
                     </execution>

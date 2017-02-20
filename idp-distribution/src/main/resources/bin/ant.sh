@@ -36,6 +36,7 @@ if [ -n "$CLASSPATH" ] ; then
 fi
 
 # add in the dependency .jar files
+LOCALCLASSPATH="${ANT_HOME}/../webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 LOCALCLASSPATH="${ANT_HOME}/../dist/webapp/WEB-INF/lib/*":$LOCALCLASSPATH
 LOCALCLASSPATH="${ANT_HOME}/../bin/lib/*":$LOCALCLASSPATH
 
