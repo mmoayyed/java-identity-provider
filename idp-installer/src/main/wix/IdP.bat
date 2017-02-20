@@ -62,12 +62,12 @@ if not exist "%JARCMD%" (
 REM Test and extract
 
 if not exist %1% (
-   echo Error: Could not locate idp zip %1%
+   echo Error: Could not locate IdP zip %1%
    goto done
 )
 
 if not exist %1.asc (
-   echo Error: Could not locate signature for Idp zip %1%.asc
+   echo Error: Could not locate signature for IdP zip %1%.asc
    goto noIdPSig
 )
 
@@ -131,40 +131,14 @@ rename %jettyBaseEx% JettyBase
 cd ..\idp-extract
 for /D %%X in (*) do set idpex=%%X
 
-rem we do not want to populate conf/flows/view/messages
-rem we will populate them from the dist directory
-
-rd/s/q %idpex%\conf
-if ERRORLEVEL 1 (
-  cd ..
-  echo Conf directory not found?
-  goto done;
-)
-rd/s/q %idpex%\flows
-if ERRORLEVEL 1 (
-  cd ..
-  echo Flows directory not found?
-  goto done;
-)
-rd/s/q %idpex%\views
-if ERRORLEVEL 1 (
-  cd ..
-  echo Views directory not found?
-  goto done;
-)
-rd/s/q %idpex%\messages
-if ERRORLEVEL 1 (
-  cd ..
-  echo Messages directory not found?
-  goto done;
-)
-
-rd/s/q %idpex%\webapp
-if ERRORLEVEL 1 (
-  cd ..
-  echo Webapp directory not found?
-  goto done;
-)
+rem we need to create the dist tree ourselves
+rem (used to be done by maven, now left to us)
+md %idpex%\dist
+move %idpex%\conf %idpex%\dist
+move %idpex%\flows %idpex%\dist
+move %idpex%\messages %idpex%\dist
+move %idpex%\views %idpex%\dist
+move %idpex%\webapp %idpex%\dist
 
 rem The file name gets too big....
 rename %idpex% IdPEx
