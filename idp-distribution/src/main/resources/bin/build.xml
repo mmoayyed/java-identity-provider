@@ -165,17 +165,21 @@
         <TGT>settarget</TGT>
         <property name="idp.target.dir" value="${basedir}" />
     </target>
-
-    <target name="getentityid" if="idp.ask.entityid" depends="checkproperties">
-        <TGT>getentityid</TGT>
+	
+	<target name="askentityId" if="idp.ask.entityid" depends="checkproperties">
+        <TGT>askentityId</TGT>
         <fail if="idp.noprompt">Input needed, silence demanded</fail>
-        <local name="entityid" />
-        <input message="SAML EntityID:" addproperty="entityid" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
-        <property name="idp.uri.subject.alt.name" value="${entityid}" />
+        <input message="SAML EntityID:" addproperty="idp.entityID" defaultvalue="https://${idp.host.name}/idp/shibboleth" />
+        <property name="idp.uri.subject.alt.name" value="${idp.entityID}" />
+	</target>
+	
+    <target name="writeentityId" if="idp.write.entityid" depends="askentityId, checkproperties">
         <echo file="${idp.merge.properties}" append="yes">
-            idp.entityID=${entityid}
+            idp.entityID=${idp.entityID}
         </echo>
     </target>
+	
+    <target name="getentityid" depends="checkproperties, askentityId, writeentityId"/>
 
     <target name="setscope" if="idp.set.scope" depends="checkproperties">
         <TGT>setscope</TGT>
@@ -221,7 +225,11 @@
         </condition>
 
         <condition property="idp.ask.entityid">
-            <!-- Ask for EntityID if this is not an upgrade and the property file wasn't provided -->
+            <!-- Ask for EntityID if 
+                         - The merge properties file (which has to contain
+                                            it if it is present) wasn't provided   AND
+                         - This is not an upgrade                                  AND
+                         - It wasn'r provided on the command line -->
             <and>
                 <not>
                     <istrue value="${idp.merge.properties.present}" />
@@ -229,8 +237,24 @@
                 <not>
                     <istrue value="${idp.properties.present}" />
                 </not>
+            	<not>
+            		<istrue value="${idp.entityID.present}" />
+            	</not>
             </and>
         </condition>
+    	
+    	<condition property="idp.write.entityid">
+    		<!-- Do we write it to merge properties?  If
+                         - The merge properties file (which has to contain
+                                            it if it is present) wasn't provided   AND
+                         - This is not an upgrade                                  AND
+                         - It was provided on the command line
+                 This is the same as saying "all the cases where we ould ask, plus if its present" -->
+    		<or>
+    			<istrue value="${idp.ask.entityid}" />
+                <istrue value="${idp.entityID.present}" />
+    		</or>
+    	</condition>
 
         <condition property="idp.ask.hostname">
             <!-- We ask for host name if there is no host name and we will call certgen or ask for entityID -->
@@ -361,7 +385,12 @@
         <condition property="idp.src.dir.present">
             <isset property="idp.src.dir" />
         </condition>
-
+    		
+        <condition property="idp.entityid.present">
+            <!-- capture now before it is overwritten -->
+            <isset property="idp.entityID" />
+        </condition>
+    	
         <condition property="idp.merge.properties.present">
             <isset property="idp.merge.properties" />
         </condition>
