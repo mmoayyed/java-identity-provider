@@ -44,8 +44,8 @@ public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<Profile
      * 
      * @param candidates hardwired set of values to check against
      */
-    public RelyingPartyIdPredicate(@Nonnull @NonnullElements @ParameterName(name="candidates")
-                                                         final Collection<String> candidates) {
+    public RelyingPartyIdPredicate(
+            @Nonnull @NonnullElements @ParameterName(name="candidates") final Collection<String> candidates) {
         super(new RelyingPartyIdLookupFunction(), StringSupport.normalizeStringCollection(candidates));
     }
 
@@ -54,7 +54,7 @@ public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<Profile
      * 
      * @param candidate a single value to check against
      */
-    public RelyingPartyIdPredicate(@Nonnull @NonnullElements final String candidate) {
+    public RelyingPartyIdPredicate(@Nonnull @NonnullElements @ParameterName(name="candidate") final String candidate) {
         this(Collections.singleton(candidate));
     }
 
@@ -63,7 +63,7 @@ public class RelyingPartyIdPredicate extends StrategyIndirectedPredicate<Profile
      * 
      * @param pred generalized predicate
      */
-    public RelyingPartyIdPredicate(@Nonnull final Predicate<String> pred) {
+    public RelyingPartyIdPredicate(@Nonnull @ParameterName(name="pred") final Predicate<String> pred) {
         super(new RelyingPartyIdLookupFunction(), pred);
     }
     
