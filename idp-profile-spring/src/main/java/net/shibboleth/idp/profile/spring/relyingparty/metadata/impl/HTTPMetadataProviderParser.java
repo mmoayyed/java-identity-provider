@@ -21,9 +21,6 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -46,7 +43,7 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
     /** Element name. */
     public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "HTTPMetadataProvider");
-    
+
     /** Default caching type. */
     private static final String DEFAULT_CACHING = "none";
 
@@ -77,19 +74,19 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
             throw new BeanDefinitionParsingException(new Problem("maintainExpiredMetadata is not supported",
                     new Location(parserContext.getReaderContext().getResource())));
         }
-        
+
         final String tlsTrustEngineRef = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
         final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);
         final String httpClientSecurityParametersRef = StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
         BeanDefinition httpClientSecurityParameters = null;
-        
+
         if (httpClientSecurityParametersRef != null) {
             if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
                 log.warn("httpClientSecurityParametersRef overrides setting of tlsTrustEngineRef or of <TrustEngine> subelement");
             }
             builder.addPropertyReference("httpClientSecurityParameters", httpClientSecurityParametersRef);
         } else if (tlsTrustEngine != null || tlsTrustEngineRef != null)  {
-            httpClientSecurityParameters =  HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngineRef, tlsTrustEngine, parserContext);
+            httpClientSecurityParameters =  HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngineRef, tlsTrustEngine,                             parserContext);
             builder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityParameters);
         }
 
@@ -108,13 +105,14 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
                     + " proxyHost, proxyPort, proxyUser and proxyPassword");
             }
         } else {
-            builder.addConstructorArgValue(buildHttpClient(element, parserContext, 
-                    httpClientSecurityParametersRef, httpClientSecurityParameters));
+            builder.addConstructorArgValue(buildHttpClient(element, parserContext,
+            	    httpClientSecurityParametersRef, httpClientSecurityParameters));
         }
         builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, HTTPMetadataProvidersParserSupport.METADATA_URL)));
 
         if (element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_USER) || element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_PASSWORD)) {
-            builder.addPropertyValue("basicCredentials", HTTPMetadataProvidersParserSupport.buildBasicCredentials(element));
+            builder.addPropertyValue("basicCredentials",
+                    HTTPMetadataProvidersParserSupport.buildBasicCredentials(element));
         }
 
     }
@@ -132,95 +130,12 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
      * 
      * Either httpClientSecurityParametersRef or httpClientSecurityParameters can be present, not both.
      */
-    // Checkstyle: CyclomaticComplexity OFF
-    // Checkstyle: MethodLength OFF
-    private BeanDefinition buildHttpClient(final Element element,
-            final ParserContext parserContext,
+    private BeanDefinition buildHttpClient(final Element element, final ParserContext parserContext,
             @Nullable final String httpClientSecurityParametersRef,
             @Nullable final BeanDefinition httpClientSecurityParameters) {
-        String caching = HTTPMetadataProviderParser.DEFAULT_CACHING;
-        if (element.hasAttributeNS(null, "httpCaching")) {
-            caching = StringSupport.trimOrNull(element.getAttributeNS(null, "httpCaching"));
-        }
 
-        BeanDefinitionBuilder clientBuilder = null;
-        switch (caching) {
-            case "none":
-                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
-                break;
-            case "file":
-                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(FileCachingHttpClientFactoryBean.class);
-                if (element.hasAttributeNS(null, "httpCacheDirectory")) {
-                    clientBuilder.addPropertyValue("cacheDirectory",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpCacheDirectory")));
-                }
-                if (element.hasAttributeNS(null, "httpMaxCacheEntries")) {
-                    clientBuilder.addPropertyValue("maxCacheEntries",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntries")));
-                }
-                if (element.hasAttributeNS(null, "httpMaxCacheEntrySize")) {
-                    clientBuilder.addPropertyValue("maxCacheEntrySize",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntrySize")));
-                }
-                break;
-            case "memory":
-                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(InMemoryCachingHttpClientFactoryBean.class);
-                if (element.hasAttributeNS(null, "httpMaxCacheEntries")) {
-                    clientBuilder.addPropertyValue("maxCacheEntries",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntries")));
-                }
-                if (element.hasAttributeNS(null, "httpMaxCacheEntrySize")) {
-                    clientBuilder.addPropertyValue("maxCacheEntrySize",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntrySize")));
-                }
-                break;
-            default:
-                throw new BeanDefinitionParsingException(new Problem(String.format("Caching value '%s' is unsupported",
-                        caching), new Location(parserContext.getReaderContext().getResource())));
-        }
-
-        clientBuilder.setLazyInit(true);
-
-        //Note: 'requestTimeout' is deprecated in favor of 'connectionTimeout'.
-        if (element.hasAttributeNS(null, "requestTimeout")) {
-            clientBuilder.addPropertyValue("connectionTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "requestTimeout")));
-        }
-        if (element.hasAttributeNS(null, "connectionTimeout")) {
-            clientBuilder.addPropertyValue("connectionTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "connectionTimeout")));
-        }
-        if (element.hasAttributeNS(null, "connectionRequestTimeout")) {
-            clientBuilder.addPropertyValue("connectionRequestTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "connectionRequestTimeout")));
-        }
-        if (element.hasAttributeNS(null, "socketTimeout")) {
-            clientBuilder.addPropertyValue("socketTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "socketTimeout")));
-        }
-
-        clientBuilder.addPropertyValue("tLSSocketFactory", HTTPMetadataProvidersParserSupport.buildTLSSocketFactory(element, parserContext, 
-                httpClientSecurityParametersRef, httpClientSecurityParameters));
-
-        if (element.hasAttributeNS(null, "proxyHost")) {
-            clientBuilder.addPropertyValue("connectionProxyHost",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "proxyHost")));
-        }
-
-        if (element.hasAttributeNS(null, "proxyPort")) {
-            clientBuilder.addPropertyValue("connectionProxyPort",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "proxyPort")));
-        }
-
-        if (element.hasAttributeNS(null, "proxyUser")) {
-            clientBuilder.addPropertyValue("connectionProxyUsername",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "proxyUser")));
-        }
-
-        if (element.hasAttributeNS(null, "proxyPassword")) {
-            clientBuilder.addPropertyValue("connectionProxyPassword", element.getAttributeNS(null, "proxyPassword"));
-        }
-
-        return clientBuilder.getBeanDefinition();
+        return HTTPMetadataProvidersParserSupport.buildCommonClientBuilder(element, parserContext,
+                HTTPMetadataProviderParser.DEFAULT_CACHING, httpClientSecurityParametersRef,
+                httpClientSecurityParameters).getBeanDefinition();
     }
 }

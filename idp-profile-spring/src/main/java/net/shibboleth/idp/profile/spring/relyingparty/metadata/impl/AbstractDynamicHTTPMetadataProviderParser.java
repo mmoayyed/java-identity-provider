@@ -21,9 +21,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
@@ -31,9 +28,6 @@ import net.shibboleth.utilities.java.support.xml.XMLConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.parsing.BeanDefinitionParsingException;
-import org.springframework.beans.factory.parsing.Location;
-import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -45,19 +39,19 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
     /** Default caching type . */
     private static final String DEFAULT_CACHING = "memory";
-    
+
     /** Default max total connections. */
     private static final Integer DEFAULT_MAX_CONNECTIONS_TOTAL = 100;
-    
+
     /** Default max connections per route. */
     private static final Integer DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 100;
-        
+
     /** Default request connection timeout. */
     private static final String DEFAULT_CONNECTION_REQUEST_TIMEOUT = "PT5S";
-    
+
     /** Default connection timeout. */
     private static final String DEFAULT_CONNECTION_TIMEOUT = "PT5S";
-    
+
     /** Default socket timeout. */
     private static final String DEFAULT_SOCKET_TIMEOUT = "PT5S";
 
@@ -66,7 +60,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
     /** {@inheritDoc} */
     // Checkstyle: CyclomaticComplexity OFF -- more readable not split up
-    @Override protected void doNativeParse(final Element element, final ParserContext parserContext, 
+    @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
@@ -74,17 +68,17 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);
         final String httpClientSecurityParametersRef = StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
         BeanDefinition httpClientSecurityParameters = null;
-        
+
         if (httpClientSecurityParametersRef != null) {
             if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
                 log.warn("httpClientSecurityParametersRef overrides setting of tlsTrustEngineRef or of <TrustEngine> subelement");
             }
             builder.addPropertyReference("httpClientSecurityParameters", httpClientSecurityParametersRef);
-        } else if (tlsTrustEngine != null || tlsTrustEngineRef != null)  {
-            httpClientSecurityParameters =  HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngineRef, tlsTrustEngine, parserContext);
+        } else if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
+            httpClientSecurityParameters = HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngineRef, tlsTrustEngine, parserContext);
             builder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityParameters);
         }
-      
+
         if (element.hasAttributeNS(null, "httpClientRef")) {
             builder.addConstructorArgReference(StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientRef")));
             if (element.hasAttributeNS(null, "requestTimeout")
@@ -97,10 +91,10 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
                     || element.hasAttributeNS(null, "disregardTLSCertificate")
                     || element.hasAttributeNS(null, "proxyHost") || element.hasAttributeNS(null, "proxyPort")
                     || element.hasAttributeNS(null, "proxyUser") || element.hasAttributeNS(null, "proxyPassword")) {
-                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, " 
-                        + "connectionRequestTimeout, socketTimeout, maxConnectionsTotal, maxConnectionsPerRoute, " 
-                        + "disregardSslCertificate, disregardTLSCertificate, proxyHost, proxyPort, " 
-                        + "proxyUser and proxyPassword");
+                log.warn("httpClientRef overrides settings for requestTimeout, connectionTimeout, "
+                    + "connectionRequestTimeout, socketTimeout, maxConnectionsTotal, maxConnectionsPerRoute, "
+                    + "disregardSslCertificate, disregardTLSCertificate, proxyHost, proxyPort, "
+                    + "proxyUser and proxyPassword");
             }
         } else {
             builder.addConstructorArgValue(buildHttpClient(element, parserContext,
@@ -135,116 +129,40 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
      * 
      * Either httpClientSecurityParametersRef or httpClientSecurityParameters can be present, not both.
      */
-    // Checkstyle: CyclomaticComplexity OFF
-    // Checkstyle: MethodLength OFF
-    private BeanDefinition buildHttpClient(final Element element,
-            final ParserContext parserContext,
+    private BeanDefinition buildHttpClient(final Element element, final ParserContext parserContext,
             @Nullable final String httpClientSecurityParametersRef,
             @Nullable final BeanDefinition httpClientSecurityParameters) {
 
-        String caching = DEFAULT_CACHING;
-        if (element.hasAttributeNS(null, "httpCaching")) {
-            caching = StringSupport.trimOrNull(element.getAttributeNS(null, "httpCaching"));
-        }
+        final BeanDefinitionBuilder clientBuilder = 
+                HTTPMetadataProvidersParserSupport.buildCommonClientBuilder(element, parserContext, DEFAULT_CACHING,
+                        httpClientSecurityParametersRef, httpClientSecurityParameters);
 
-        BeanDefinitionBuilder clientBuilder = null;
-        switch (caching) {
-            case "none":
-                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientFactoryBean.class);
-                break;
-            case "file":
-                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(FileCachingHttpClientFactoryBean.class);
-                if (element.hasAttributeNS(null, "httpCacheDirectory")) {
-                    clientBuilder.addPropertyValue("cacheDirectory",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpCacheDirectory")));
-                }
-                if (element.hasAttributeNS(null, "httpMaxCacheEntries")) {
-                    clientBuilder.addPropertyValue("maxCacheEntries",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntries")));
-                }
-                if (element.hasAttributeNS(null, "httpMaxCacheEntrySize")) {
-                    clientBuilder.addPropertyValue("maxCacheEntrySize",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntrySize")));
-                }
-                break;
-            case "memory":
-                clientBuilder = BeanDefinitionBuilder.genericBeanDefinition(InMemoryCachingHttpClientFactoryBean.class);
-                if (element.hasAttributeNS(null, "httpMaxCacheEntries")) {
-                    clientBuilder.addPropertyValue("maxCacheEntries",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntries")));
-                }
-                if (element.hasAttributeNS(null, "httpMaxCacheEntrySize")) {
-                    clientBuilder.addPropertyValue("maxCacheEntrySize",
-                            StringSupport.trimOrNull(element.getAttributeNS(null, "httpMaxCacheEntrySize")));
-                }
-                break;
-            default:
-                throw new BeanDefinitionParsingException(new Problem(String.format("Caching value '%s' is unsupported",
-                        caching), new Location(parserContext.getReaderContext().getResource())));
-        }
-
-        clientBuilder.setLazyInit(true);
-
-        //Note: 'requestTimeout' is deprecated in favor of 'connectionTimeout'.
-        if (element.hasAttributeNS(null, "requestTimeout") || element.hasAttributeNS(null, "connectionTimeout")) {
-            if (element.hasAttributeNS(null, "requestTimeout")) {
-                clientBuilder.addPropertyValue("connectionTimeout",
-                        StringSupport.trimOrNull(element.getAttributeNS(null, "requestTimeout")));
-            }
-            if (element.hasAttributeNS(null, "connectionTimeout")) {
-                clientBuilder.addPropertyValue("connectionTimeout",
-                        StringSupport.trimOrNull(element.getAttributeNS(null, "connectionTimeout")));
-            }
-        } else {
+        // Set up non standard defaults
+        // Note: 'requestTimeout' is deprecated in favor of 'connectionTimeout'.
+        if (!element.hasAttributeNS(null, "requestTimeout") && !element.hasAttributeNS(null, "connectionTimeout")) {
             clientBuilder.addPropertyValue("connectionTimeout", DEFAULT_CONNECTION_TIMEOUT);
         }
-        
-        if (element.hasAttributeNS(null, "connectionRequestTimeout")) {
-            clientBuilder.addPropertyValue("connectionRequestTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "connectionRequestTimeout")));
-        } else {
+
+        if (!element.hasAttributeNS(null, "connectionRequestTimeout")) {
             clientBuilder.addPropertyValue("connectionRequestTimeout", DEFAULT_CONNECTION_REQUEST_TIMEOUT);
         }
-        if (element.hasAttributeNS(null, "socketTimeout")) {
-            clientBuilder.addPropertyValue("socketTimeout",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "socketTimeout")));
-        } else {
+        if (!element.hasAttributeNS(null, "socketTimeout")) {
             clientBuilder.addPropertyValue("socketTimeout", DEFAULT_SOCKET_TIMEOUT);
         }
-        
+
         if (element.hasAttributeNS(null, "maxConnectionsTotal")) {
             clientBuilder.addPropertyValue("maxConnectionsTotal",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "maxConnectionsTotal")));
         } else {
             clientBuilder.addPropertyValue("maxConnectionsTotal", DEFAULT_MAX_CONNECTIONS_TOTAL);
         }
+
+        // set up non-common attributes
         if (element.hasAttributeNS(null, "maxConnectionsPerRoute")) {
             clientBuilder.addPropertyValue("maxConnectionsPerRoute",
                     StringSupport.trimOrNull(element.getAttributeNS(null, "maxConnectionsPerRoute")));
         } else {
             clientBuilder.addPropertyValue("maxConnectionsPerRoute", DEFAULT_MAX_CONNECTIONS_PER_ROUTE);
-        }
-        
-        clientBuilder.addPropertyValue("tLSSocketFactory", HTTPMetadataProvidersParserSupport.buildTLSSocketFactory(element, parserContext, 
-                httpClientSecurityParametersRef, httpClientSecurityParameters));
-
-        if (element.hasAttributeNS(null, "proxyHost")) {
-            clientBuilder.addPropertyValue("connectionProxyHost",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "proxyHost")));
-        }
-
-        if (element.hasAttributeNS(null, "proxyPort")) {
-            clientBuilder.addPropertyValue("connectionProxyPort",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "proxyPort")));
-        }
-
-        if (element.hasAttributeNS(null, "proxyUser")) {
-            clientBuilder.addPropertyValue("connectionProxyUsername",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "proxyUser")));
-        }
-
-        if (element.hasAttributeNS(null, "proxyPassword")) {
-            clientBuilder.addPropertyValue("connectionProxyPassword", element.getAttributeNS(null, "proxyPassword"));
         }
 
         return clientBuilder.getBeanDefinition();
