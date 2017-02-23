@@ -178,7 +178,7 @@
 
             <!-- Work -->
 
-            <Custom Action="SetWriteConfigFiles" Before="CostInitialize">NOT Installed</Custom>
+            <Custom Action="SetWriteConfigFiles" After="CostFinalize">NOT Installed</Custom>
             <Custom Action="WriteConfigFiles" After="InstallFiles">NOT Installed</Custom>
             <Custom Action="SetIdpAnt" After="WriteConfigFiles">NOT Installed</Custom>
             <Custom Action="RunIdpAnt" After="SetIdpAnt">(NOT Installed) AND DEBUG_INSTALL</Custom>
