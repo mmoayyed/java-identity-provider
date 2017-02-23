@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.attribute.resolver.AbstractDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AbstractResolverPluginFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.Duration;
@@ -244,10 +244,13 @@ public class DataConnectorFactoryBean extends AbstractResolverPluginFactoryBean<
         }
         setValues(result);
 
-        appContext =
-                SpringSupport.newContext("HybridSpringDataConnector", getResources(), getBeanFactoryPostProcessors(),
-                        getBeanPostProcessors(), Collections.EMPTY_LIST, parentContext);
-
+        appContext = new ApplicationContextBuilder()
+                .setName("HybridSpringDataConnector")
+                .setServiceConfigurations(getResources())
+                .setBeanFactoryPostProcessors(getBeanFactoryPostProcessors())
+                .setBeanPostProcessors(getBeanPostProcessors())
+                .setParentContext(getParentContext()).build();
+        
         final PropertyDescriptor[] descriptors =
                 Introspector.getBeanInfo(getObjectType(), AbstractDataConnector.class).getPropertyDescriptors();
 
