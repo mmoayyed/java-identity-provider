@@ -54,7 +54,8 @@
 
     <global-transitions>
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
+        <transition on="InvalidProfileContext" to="InvalidProfileContext" />
+        <transition on="RuntimeException" to="RuntimeException" />
     </global-transitions>
 
     <bean-import resource="client-storage-write-beans.xml" />

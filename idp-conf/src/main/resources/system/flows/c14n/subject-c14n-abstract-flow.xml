@@ -26,11 +26,18 @@
         <transition to="RuntimeException" />
     </action-state>
 
-    <!-- Default is to turn any error event into its own end-state, except InvalidSubject, which triggers a Reselect. -->
+    <!-- Default is to turn known error events into end-state, except InvalidSubject, which triggers a Reselect. -->
     <global-transitions>
         <transition on-exception="java.lang.RuntimeException" to="LogRuntimeException" />
         <transition on="InvalidSubject" to="ReselectFlow" />
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="#{currentEvent.id}" />
+        
+        <transition on="InvalidProfileContext" to="InvalidProfileContext" />
+        <transition on="InvalidSubjectContext" to="InvalidSubjectContext" />
+        <transition on="InvalidSubjectCanonicalizationContext" to="InvalidSubjectCanonicalizationContext" />
+        <transition on="NoPotentialFlow" to="NoPotentialFlow" />
+        <transition on="ReselectFlow" to="ReselectFlow" />
+        <transition on="RuntimeException" to="RuntimeException" />
+        <transition on="SubjectCanonicalizationError" to="SubjectCanonicalizationError" />
     </global-transitions>
 
 </flow>
