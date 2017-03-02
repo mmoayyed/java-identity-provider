@@ -1,79 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
-	xmlns:c="http://www.springframework.org/schema/c" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:c="http://www.springframework.org/schema/c" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
-	default-init-method="initialize" default-destroy-method="destroy">
+    default-init-method="initialize" default-destroy-method="destroy">
 
-	<context:property-placeholder
-		location="classpath:/net/shibboleth/idp/profile/spring/relyingparty/file.properties" />
+    <context:property-placeholder
+        location="classpath:/net/shibboleth/idp/profile/spring/relyingparty/file.properties" />
 
-	<!-- This BeanPostProcessor auto-sets identifiable beans with the bean name 
-		(if not already set). -->
-	<bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
+    <!-- This BeanPostProcessor auto-sets identifiable beans with the bean name 
+        (if not already set). -->
+    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" />
 
-	<!-- The profile defaults. Firstly the artifact and InbouldFlowId parameters -->
+    <!-- The profile defaults. Firstly the artifact and InbouldFlowId parameters -->
 
     <!--  SAML2 -->
+    <alias alias="shibboleth.SAML2.Artifact.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.Artifact.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml-soap" />
-		
-	<bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
-		c:_0="3214" />
+    
+    <alias alias="shibboleth.SAML2.Logout.ServletRequest" name="shibboleth.HttpServletRequest" />
+    <bean id="shibboleth.SAML2.Logout.ArtifactServiceIndex" class="java.lang.String"
+        c:_0="3214" />
     <bean id="shibboleth.SAML2.Logout.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-slo" />
 
+    <alias alias="shibboleth.SAML2.AttributeQuery.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
         c:_0="2143" />
     <bean id="shibboleth.SAML2.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml-soap" />
 
-	<bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
-		c:_0="1111" />
+    <alias alias="shibboleth.SAML2.BrowserSSO.ServletRequest" name="shibboleth.HttpServletRequest" />
+    <bean id="shibboleth.SAML2.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
+        c:_0="1111" />
     <bean id="shibboleth.SAML2.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-sso" />
-		
+    
+    <alias alias="shibboleth.SAML2.ECP.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.ECP.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-ecp" />
 
     <!--  SAML2 - Liberty -->
+    <alias alias="shibboleth.SAML2.SSOS.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML2.SSOS.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml2-ssos" />
 
     <!--  SAML1 -->
+    <alias alias="shibboleth.SAML1.Artifact.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML1.Artifact.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml-soap" />
-		
+    
+    <alias alias="shibboleth.SAML1.AttributeQuery.ServletRequest" name="shibboleth.HttpServletRequest" />
     <bean id="shibboleth.SAML1.AttributeQuery.ArtifactServiceIndex" class="java.lang.String"
         c:_0="432100" />
     <bean id="shibboleth.SAML1.AttributeQuery.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/saml-soap" />
-		
-	<bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
-		c:_0="1111" />
+    
+    <alias alias="shibboleth.SAML1.BrowserSSO.ServletRequest" name="shibboleth.HttpServletRequest" />
+    <bean id="shibboleth.SAML1.BrowserSSO.ArtifactServiceIndex" class="java.lang.String"
+        c:_0="1111" />
     <bean id="shibboleth.SAML1.BrowserSSO.InboundFlowId" class="java.lang.String"
         c:_0="security-policy/shibboleth-sso" />
-		
-	<bean id="shibboleth.ParserPool"
-		class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
-		p:maxPoolSize="100" p:coalescing="true" p:ignoreComments="true"
-		p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
+        
+    <bean id="shibboleth.ParserPool"
+        class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+        p:maxPoolSize="100" p:coalescing="true" p:ignoreComments="true"
+        p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
 
 
-	<bean id="myParserPool"
-		class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
-		p:maxPoolSize="1000" p:coalescing="true" p:ignoreComments="true"
-		p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
+    <bean id="myParserPool"
+        class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
+        p:maxPoolSize="1000" p:coalescing="true" p:ignoreComments="true"
+        p:ignoreElementContentWhitespace="true" p:namespaceAware="true" />
 
-	<bean id="shibboleth.SchemaBuilder" class="org.opensaml.saml.common.xml.SAMLSchemaBuilder"
-		c:ver="SAML_11" />
+    <bean id="shibboleth.SchemaBuilder" class="org.opensaml.saml.common.xml.SAMLSchemaBuilder"
+        c:ver="SAML_11" />
 
     <!--  for SSOS -->
     <bean id="jimmy" factory-method="alwaysTrue" class="com.google.common.base.Predicates"/>
     
+    <bean id="shibboleth.HttpServletRequest"
+        class="org.springframework.mock.web.MockHttpServletRequest" />
     <bean id="dummyPredicate" class="net.shibboleth.idp.profile.spring.logic.DummyPredicate"/>
 
     <!-- Trust Engines -->

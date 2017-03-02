@@ -241,6 +241,9 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
         // Install a defaulted flow ID for inbound security policy handling.
         // TODO: is there a better way to install a list containing a bean reference?
         builder.addPropertyReference("inboundInterceptorFlows", getProfileBeanNamePrefix() + "InboundFlowId");
+        
+        // Inject aliased servlet request to avoid warnings in newer versions.
+        builder.addPropertyReference("servletRequest", getProfileBeanNamePrefix() + "ServletRequest");
 
         if (element.hasAttributeNS(null, "signAssertions")) {
             builder.addPropertyValue("signAssertions",
@@ -265,8 +268,8 @@ public abstract class BaseSAMLProfileConfigurationParser extends AbstractSingleB
     }
 
     /**
-     * Get the prefix for the default beans. This prefix will have on of "ArtifactServiceURL", "ArtifactServiceId" or
-     * "InboundFlowId" appended as a bean name.
+     * Get the prefix for the default beans. This prefix will have one of servlet hard-wired default property names
+     * appended as a bean name.
      * 
      * @return the prefix
      */
