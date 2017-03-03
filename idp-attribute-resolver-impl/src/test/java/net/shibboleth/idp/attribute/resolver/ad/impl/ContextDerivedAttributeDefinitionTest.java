@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.ad.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -82,4 +83,37 @@ public class ContextDerivedAttributeDefinitionTest {
         Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE)));
         Assert.assertTrue(foo.contains(new StringAttributeValue(SIMPLE_VALUE + "2")));
     }
+    
+    @Test public void empty() throws ComponentInitializationException, ResolutionException {
+        final List<IdPAttributeValue<String>> list = Collections.EMPTY_LIST;
+        
+        final IdPAttribute attr = new IdPAttribute("wibble");
+        attr.setValues(list);
+
+        final SubjectDerivedAttributeValuesFunction ctxValueFunction = new SubjectDerivedAttributeValuesFunction();
+        ctxValueFunction.setId("pDaD");
+        final IdPAttributePrincipalValuesFunction fn = new IdPAttributePrincipalValuesFunction();
+        fn.setAttributeName("wibble");
+        fn.doInitialize();
+        ctxValueFunction.setAttributeValuesFunction(fn);
+        
+        final ContextDerivedAttributeDefinition defn = new ContextDerivedAttributeDefinition();
+        defn.setAttributeValuesFunction(ctxValueFunction);
+        defn.setId("pDAD");
+        defn.initialize();
+
+        final AttributeResolutionContext ctx =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        final SubjectContext sc = ctx.getParent().getSubcontext(SubjectContext.class, true);
+        final Map<String, AuthenticationResult> authnResults = sc.getAuthenticationResults();
+        final Subject subject = new Subject();
+        subject.getPrincipals().add(new IdPAttributePrincipal(attr));
+        subject.getPrincipals().add(new AuthenticationMethodPrincipal(SIMPLE_VALUE + "2"));
+        authnResults.put("one", new AuthenticationResult("1", subject));
+        
+        final IdPAttribute result = defn.resolve(ctx);
+        Assert.assertNull(result);
+    }
+
 }
