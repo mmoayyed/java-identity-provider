@@ -32,7 +32,7 @@
     <end-state id="SubjectCanonicalizationError" />
 
     <action-state id="LogRuntimeException">
-        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', flowExecutionException.getCause())" />
+        <evaluate expression="T(org.slf4j.LoggerFactory).getLogger('net.shibboleth.idp.authn').error('Uncaught runtime exception', flowExecutionException.getCause() ?: flowExecutionException)" />
         <transition to="RuntimeException" />
     </action-state>
 
