@@ -28,6 +28,7 @@ import java.util.List;
 import net.shibboleth.idp.installer.ant.MetadataGeneratorTask;
 import net.shibboleth.utilities.java.support.xml.XMLParserException;
 
+import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBaseTestCase;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -62,6 +63,12 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
             task.execute();
 
             final EntityDescriptor entity = (EntityDescriptor) unmarshallElement(out.getAbsolutePath());
+            
+            final DateTime validUntil = entity.getValidUntil();
+            Assert.assertTrue(validUntil.isBefore(1000 + System.currentTimeMillis()));
+            Assert.assertTrue(validUntil.isAfter(System.currentTimeMillis()-1000));
+            
+            
             final IDPSSODescriptor idpsso = entity.getIDPSSODescriptor(SAMLConstants.SAML20P_NS);
             Assert.assertNotNull(idpsso);
             Assert.assertSame(entity.getIDPSSODescriptor(SAMLConstants.SAML11P_NS), idpsso);
@@ -130,14 +137,14 @@ public class TestMetadataGenerator extends XMLObjectBaseTestCase {
 
     /** Version to look at the filesystem of {@inheritDoc} */
     @Override
-    protected Document parseXMLDocument(String xmlFilename) throws XMLParserException {
+    protected Document parseXMLDocument(final String xmlFilename) throws XMLParserException {
         InputStream is;
         try {
             is = new BufferedInputStream(new FileInputStream(new File(xmlFilename)));
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
            throw new XMLParserException(e);
         }
-        Document doc = parserPool.parse(is);
+        final Document doc = parserPool.parse(is);
         return doc;
         }
 }

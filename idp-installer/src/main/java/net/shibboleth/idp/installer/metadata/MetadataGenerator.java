@@ -35,6 +35,7 @@ import net.shibboleth.idp.saml.xmlobject.ExtensionsConstants;
 import net.shibboleth.idp.saml.xmlobject.Scope;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 import org.opensaml.core.xml.LangBearing;
@@ -339,7 +340,7 @@ public class MetadataGenerator {
         writeNameSpace(XMLConstants.XML_PREFIX, XMLConstants.XML_NS);
         writeNameSpace(SAMLConstants.SAML20MDUI_PREFIX, SAMLConstants.SAML20MDUI_NS);
 
-        writer.write(" validUntil=\"2001-01-02T13:14:15Z\"");
+        writer.write(" validUntil=\"" + DOMTypeSupport.longToDateTime(System.currentTimeMillis()) + "\"");
         
         writer.write(" entityID=\"");
         writer.write(getEntityID());
