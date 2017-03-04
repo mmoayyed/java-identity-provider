@@ -67,6 +67,8 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         builder.setLazyInit(true);
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
+        
+        log.warn("<{}> is deprecated and will be removed in a future version.", AbstractMetadataProviderParser.RELYING_PARTY_GROUP_ELEMENT_NAME.getLocalPart());
 
         builder.addPropertyValue("id", "RelyingPartyGroup["
                 + parserContext.getReaderContext().getResource().getFilename() + "]");
