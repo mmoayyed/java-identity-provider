@@ -93,7 +93,8 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (null != salt) {
-            log.debug("{} Salt set as bytes to {}", getLogPrefix(), Arrays.toString(salt));
+            log.debug("{} Salt set (secret is logged a TRACE)");
+            log.trace("{} Salt set as bytes to {}", getLogPrefix(), Arrays.toString(salt));
             idStrategy.setSalt(salt);
         } else {
             log.debug("{} Null salt passed, nothing set", getLogPrefix());
@@ -109,8 +110,7 @@ public class ComputedIDDataConnector extends AbstractPersistentIdDataConnector {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         
         if (null != salt) {
-            log.debug("{} Salt set as bytes to {}", getLogPrefix(), Arrays.toString(salt.getBytes()));
-            idStrategy.setSalt(salt.getBytes());
+            setSalt(salt.getBytes());
         } else {
             log.debug("{} Null salt passed, nothing set", getLogPrefix());
         }
