@@ -62,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -788,7 +789,12 @@ public class StorageBackedSessionManager extends AbstractIdentifiableInitializab
      * @return the IdPSession object, or null
      * @throws ResolverException if an error occurs during lookup
      */
-    @Nullable private IdPSession lookupBySessionId(@Nonnull @NotEmpty final String sessionId) throws ResolverException {
+    @Nullable private IdPSession lookupBySessionId(@Nullable final String sessionId) throws ResolverException {
+        if (Strings.isNullOrEmpty(sessionId)) {
+            log.debug("Lookup of null/empty session ID");
+            return null;
+        }
+        
         log.debug("Performing primary lookup on session ID {}", sessionId);
 
         try {

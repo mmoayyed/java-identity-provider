@@ -27,6 +27,7 @@ import java.util.Map;
 
 import javax.json.JsonObject;
 import javax.json.stream.JsonGenerator;
+import javax.servlet.http.Cookie;
 
 import net.shibboleth.idp.authn.AuthenticationFlowDescriptor;
 import net.shibboleth.idp.authn.AuthenticationResult;
@@ -38,6 +39,7 @@ import net.shibboleth.idp.session.IdPSession;
 import net.shibboleth.idp.session.SPSession;
 import net.shibboleth.idp.session.SPSessionSerializerRegistry;
 import net.shibboleth.idp.session.SessionException;
+import net.shibboleth.idp.session.criterion.HttpServletRequestCriterion;
 import net.shibboleth.idp.session.criterion.SPSessionCriterion;
 import net.shibboleth.idp.session.criterion.SessionIdCriterion;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -102,10 +104,23 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
         sessionManager.setSPSessionSerializerRegistry(serializerRegistry);
     }
     
+    @Test
+    public void testEmptyCookie() throws ResolverException, SessionException, InterruptedException {
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        HttpServletRequestResponseContext.loadCurrent(mockRequest, new MockHttpServletResponse());
+
+        final Cookie cookie = new Cookie(StorageBackedSessionManager.DEFAULT_COOKIE_NAME, "");
+        mockRequest.setCookies(cookie);
+        
+        // Do a lookup.
+        Assert.assertNull(sessionManager.resolveSingle(new CriteriaSet(new HttpServletRequestCriterion())));
+    }
+    
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
     public void testSimpleSession() throws ResolverException, SessionException, InterruptedException {
 
-        MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         HttpServletRequestResponseContext.loadCurrent(new MockHttpServletRequest(), mockResponse);
         
         // Test a failed lookup.
@@ -153,7 +168,7 @@ public class StorageBackedSessionManagerTest extends SessionManagerBaseTestCase 
     @Test(threadPoolSize = 10, invocationCount = 10,  timeOut = 10000)
     public void testAddress() throws SessionException, ResolverException {
         
-        MockHttpServletRequest mockRequest = new MockHttpServletRequest();
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
         mockRequest.setRemoteAddr("192.168.1.1");
         HttpServletRequestResponseContext.loadCurrent(mockRequest, new MockHttpServletResponse());
         
