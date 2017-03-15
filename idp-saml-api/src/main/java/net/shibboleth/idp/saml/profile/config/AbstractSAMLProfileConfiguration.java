@@ -20,6 +20,7 @@ package net.shibboleth.idp.saml.profile.config;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -31,10 +32,12 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElemen
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
 import net.shibboleth.utilities.java.support.annotation.constraint.Positive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
@@ -46,6 +49,9 @@ import com.google.common.collect.ImmutableSet;
 public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileConfiguration implements
         SAMLProfileConfiguration {
 
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSAMLProfileConfiguration.class);
+    
     /** Predicate used to determine if the generated request should be signed. Default returns false. */
     @Nonnull private Predicate<ProfileRequestContext> signRequestsPredicate;
 
@@ -86,6 +92,17 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
         assertionAudiences = Collections.emptySet();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public List<String> getInboundInterceptorFlows() {
+        
+        final List<String> flows = super.getInboundInterceptorFlows();
+        if (flows.isEmpty()) {
+            log.warn("Inbound interceptor collection is empty, this disables default inbound message security checks");
+        }
+        return flows;
+    }
+    
     /** {@inheritDoc} */
     @Override @Nonnull public Predicate<ProfileRequestContext> getSignAssertions() {
         return signAssertionsPredicate;
