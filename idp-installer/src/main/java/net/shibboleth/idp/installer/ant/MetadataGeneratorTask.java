@@ -25,7 +25,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.installer.metadata.MetadataGenerator;
 import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
 import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
@@ -33,9 +33,6 @@ import net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
@@ -208,13 +205,12 @@ public class MetadataGeneratorTask extends Task {
 
             final Resource resource = new ClassPathResource("net/shibboleth/idp/installer/metadata-generator.xml");
 
-            final ApplicationContextInitializer initializer = new Initializer();
-
-            final GenericApplicationContext context =
-                    SpringSupport.newContext(MetadataGeneratorTask.class.getName(),
-                            Collections.singletonList(resource), Collections.<BeanFactoryPostProcessor> emptyList(),
-                            Collections.<BeanPostProcessor> emptyList(), Collections.singletonList(initializer), null);
-
+            final GenericApplicationContext context = new ApplicationContextBuilder()
+                    .setName(MetadataGeneratorTask.class.getName())
+                    .setServiceConfigurations(Collections.singletonList(resource))
+                    .setContextInitializer(new Initializer())
+                    .build();
+            
             parameters = context.getBean("IdPConfiguration", MetadataGeneratorParameters.class);
 
             if (encryptionCert != null) {

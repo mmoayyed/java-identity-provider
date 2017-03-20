@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor;
-import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.ext.spring.util.ApplicationContextBuilder;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.filter.AttributeFilter;
@@ -33,9 +33,6 @@ import net.shibboleth.idp.attribute.filter.spring.impl.AttributeFilterServiceStr
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ServiceException;
 
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -78,11 +75,13 @@ public class AttributeFilterServiceTest {
         if (null != testContext) {
             tearDownTestContext();
         }
+        
         final GenericApplicationContext context =
-                SpringSupport.newContext(name, Collections.singletonList(resource),
-                        Collections.<BeanFactoryPostProcessor> emptyList(),
-                        Collections.<BeanPostProcessor> singletonList(new IdentifiableBeanPostProcessor()),
-                        Collections.<ApplicationContextInitializer> emptyList(), null);
+                new ApplicationContextBuilder().setName(name)
+                    .setServiceConfiguration(resource)
+                    .setBeanPostProcessor(new IdentifiableBeanPostProcessor())
+                    .build();
+
         testContext = context;
         final AttributeFilterServiceStrategy strategy = new AttributeFilterServiceStrategy();
         strategy.setId("ID");
