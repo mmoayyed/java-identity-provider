@@ -120,7 +120,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
      * @param context the context
      * @throws IOException
      */
-    protected void setDirectoryPlaceholder(final GenericApplicationContext context) throws IOException {
+    protected void setDirectoryPlaceholder(final GenericApplicationContext context, final String svnDir) throws IOException {
         final PropertySourcesPlaceholderConfigurer placeholderConfig = new PropertySourcesPlaceholderConfigurer();
         placeholderConfig.setPlaceholderPrefix("%{");
         placeholderConfig.setPlaceholderSuffix("}");
@@ -129,6 +129,9 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         final MockPropertySource mockEnvVars = new MockPropertySource();
         mockEnvVars.setProperty("DIR", workspaceDirName);
         mockEnvVars.setProperty("TMPDIR", tempDirName);
+        if (null != svnDir) {
+            mockEnvVars.setProperty("SVNDIR", svnDir);            
+        }
 
         propertySources.replace(StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, mockEnvVars);
         placeholderConfig.setPropertySources(propertySources);
@@ -137,7 +140,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
     }
     
-    protected ApplicationContext getApplicationContext(final String contextName, final String... files) throws IOException {
+    protected ApplicationContext getApplicationContext2(final String contextName, final String svnDir, final String... files) throws IOException {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -147,7 +150,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         registerContext(context);
         
-        setDirectoryPlaceholder(context);
+        setDirectoryPlaceholder(context, svnDir);
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + contextName);
@@ -165,9 +168,13 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         
         return context;
     }
+    
+    protected ApplicationContext getApplicationContext(final String contextName, final String... files) throws IOException {
+        return getApplicationContext2(contextName, null, files);
+    }
 
-    protected <T> T getBean(final Class<T> claz, final String... files) throws IOException {
-        final ApplicationContext context = getApplicationContext(claz.getCanonicalName(), files);
+    protected <T> T getBean2(final Class<T> claz, final String svnDir, final String... files) throws IOException {
+        final ApplicationContext context = getApplicationContext2(claz.getCanonicalName(), svnDir, files);
 
         if (context.containsBean("shibboleth.ParserPool")) {
             parserPool = context.getBean("shibboleth.ParserPool");
@@ -184,6 +191,11 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
         return claz.cast(rpProvider.getEmbeddedResolver());
     }
+    
+    protected <T> T getBean(final Class<T> claz, final String... files) throws IOException {
+        return getBean2(claz, null, files);
+    }
+
 
     static public CriteriaSet criteriaFor(final String entityId) {
         final EntityIdCriterion criterion = new EntityIdCriterion(entityId);
