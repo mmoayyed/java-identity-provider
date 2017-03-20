@@ -71,16 +71,16 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
         pendingTeardownContext = null;
     }
     
-    protected void setTestContext(GenericApplicationContext context) {
+    protected void setTestContext(final GenericApplicationContext context) {
         tearDownTestContext();
         pendingTeardownContext = context;
     }
 
-    protected void assertEquals(IdPAttributeValue<?> value, String[] expected) {
+    protected void assertEquals(final IdPAttributeValue<?> value, final String[] expected) {
         if (value instanceof StringAttributeValue) {
-            StringAttributeValue stringValue = (StringAttributeValue) value;
+            final StringAttributeValue stringValue = (StringAttributeValue) value;
 
-            for (String s : expected) {
+            for (final String s : expected) {
                 if (s.equals(stringValue.getValue())) {
                     // OK
                     return;
@@ -94,12 +94,12 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
     }
     
     @BeforeMethod public void makeDir() throws IOException {
-        Path p = Files.createTempDirectory("SVNResourceTest");
+        final Path p = Files.createTempDirectory("SVNResourceTest");
         theDir = p.toFile();
     }
 
-    private void emptyDir(File dir) {
-        for (File f : dir.listFiles()) {
+    private void emptyDir(final File dir) {
+        for (final File f : dir.listFiles()) {
             if (f.isDirectory()) {
                 emptyDir(f);
             }
@@ -113,7 +113,7 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
         theDir = null;
     }
 
-    @Test public void attributesTest() throws ResolutionException, SVNException {
+    @Test public void attributesTest() throws ResolutionException, SVNException, IOException {
         final GenericApplicationContext context = new GenericApplicationContext();
         setTestContext(context);
         context.setDisplayName("ApplicationContext: " + AttributeResolverTest.class);
@@ -122,12 +122,11 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
                 new SchemaTypeAwareXMLBeanDefinitionReader(context);
 
         final ISVNAuthenticationManager authnManager = new SVNBasicAuthenticationManager(Collections.EMPTY_LIST);
-        SVNClientManager clientManager = SVNClientManager.newInstance();
+        final SVNClientManager clientManager = SVNClientManager.newInstance();
         clientManager.setAuthenticationManager(authnManager);
-
-        SVNURL url =  SVNURL.create( "https", null, "svn.shibboleth.net",
-                        -1,
-                        "/java-identity-provider/trunk/idp-attribute-resolver-spring/src/test/resources/net/shibboleth/idp/attribute/resolver/spring/",
+        
+        final SVNURL url =  SVNURL.create( "file", null, "", -1,
+                        new ClassPathResource("/net/shibboleth/idp/attribute/resolver/spring/SVN").getFile().getAbsolutePath(),
                         false);
 
         beanDefinitionReader.loadBeanDefinitions(new ClassPathResource(
@@ -138,7 +137,7 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
 
         final AttributeResolver resolver = BaseAttributeDefinitionParserTest.getResolver(context);
 
-        AttributeResolutionContext attributeContext = new AttributeResolutionContext();
+        final AttributeResolutionContext attributeContext = new AttributeResolutionContext();
         resolver.resolveAttributes(attributeContext);
 
         final Map<String, IdPAttribute> attributes = attributeContext.getResolvedIdPAttributes();
@@ -149,7 +148,7 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(attribute);
         List<IdPAttributeValue<?>> values = attribute.getValues();
         Assert.assertEquals(values.size(), 3);
-        for (IdPAttributeValue<?> value : values) {
+        for (final IdPAttributeValue<?> value : values) {
             assertEquals(value, EXPECTED_EPA);
         }
 
@@ -157,7 +156,7 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(attribute);
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 1);
-        for (IdPAttributeValue<?> value : values) {
+        for (final IdPAttributeValue<?> value : values) {
             assertEquals(value, EXPECTED_UID);
         }
 
@@ -165,7 +164,7 @@ public class SVNAndPropertiesTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(attribute);
         values = attribute.getValues();
         Assert.assertEquals(values.size(), 2);
-        for (IdPAttributeValue<?> value : values) {
+        for (final IdPAttributeValue<?> value : values) {
             assertEquals(value, EXPECTED_EPE);
         }
     }
