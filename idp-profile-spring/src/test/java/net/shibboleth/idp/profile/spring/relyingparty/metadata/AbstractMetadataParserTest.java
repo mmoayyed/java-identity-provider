@@ -27,14 +27,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-
 import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.springframework.context.ApplicationContext;
@@ -42,12 +34,21 @@ import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 /**
  * Base class for testing metadata providers.
@@ -140,7 +141,7 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
     }
     
-    protected ApplicationContext getApplicationContext2(final String contextName, final String svnDir, final String... files) throws IOException {
+    protected ApplicationContext getApplicationContext2(final String contextName, final PropertySource propSource, final String svnDir, final String... files) throws IOException {
         final Resource[] resources = new Resource[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -149,6 +150,10 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
         final GenericApplicationContext context = new FilesystemGenericApplicationContext();
         registerContext(context);
+        
+        if (propSource != null) {
+            context.getEnvironment().getPropertySources().addFirst(propSource);
+        }
         
         setDirectoryPlaceholder(context, svnDir);
 
@@ -169,12 +174,16 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         return context;
     }
     
+    protected ApplicationContext getApplicationContext2(final String contextName, final String svnDir, final String... files) throws IOException {
+        return getApplicationContext2(contextName, null, svnDir, files);
+    }
+    
     protected ApplicationContext getApplicationContext(final String contextName, final String... files) throws IOException {
         return getApplicationContext2(contextName, null, files);
     }
 
-    protected <T> T getBean2(final Class<T> claz, final String svnDir, final String... files) throws IOException {
-        final ApplicationContext context = getApplicationContext2(claz.getCanonicalName(), svnDir, files);
+    protected <T> T getBean2(final Class<T> claz, final PropertySource propSource, final String svnDir, final String... files) throws IOException {
+        final ApplicationContext context = getApplicationContext2(claz.getCanonicalName(), propSource, svnDir, files);
 
         if (context.containsBean("shibboleth.ParserPool")) {
             parserPool = context.getBean("shibboleth.ParserPool");
@@ -192,11 +201,24 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
         return claz.cast(rpProvider.getEmbeddedResolver());
     }
     
-    protected <T> T getBean(final Class<T> claz, final String... files) throws IOException {
-        return getBean2(claz, null, files);
+    protected <T> T getBean2(final Class<T> claz, final String svnDir, final String... files) throws IOException {
+        return getBean2(claz, null, svnDir, files);
     }
-
-
+    
+    protected <T> T getBean(final Class<T> claz, final PropertySource propSource, final String... files) throws IOException {
+        return getBean2(claz, propSource, null, files);
+    }
+    
+    protected <T> T getBean(final Class<T> claz, final String... files) throws IOException {
+        return getBean2(claz, null, null, files);
+    }
+    
+    protected MockPropertySource singletonPropertySource(final String name, final String value) {
+        MockPropertySource propSource = new MockPropertySource("localProperties");
+        propSource.setProperty(name, value);
+        return propSource;
+    }
+   
     static public CriteriaSet criteriaFor(final String entityId) {
         final EntityIdCriterion criterion = new EntityIdCriterion(entityId);
         return new CriteriaSet(criterion);

@@ -10,7 +10,7 @@
     httpCacheDirectory="#{systemProperties['java.io.tmpdir']}/httpProviderCacheTest"
     httpMaxCacheEntries="100"
     httpMaxCacheEntrySize="104857600"
-    metadataURL="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml?revision=5634&amp;view=co"> 
+    metadataURL="%{metadataURL}"> 
 
 </metadata:MetadataProvider>
                                    

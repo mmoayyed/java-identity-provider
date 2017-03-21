@@ -22,17 +22,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import net.shibboleth.ext.spring.resource.HTTPResource;
-import net.shibboleth.ext.spring.resource.ResourceTestHelper;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.mock.env.MockPropertySource;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
+
+import net.shibboleth.ext.spring.resource.HTTPResource;
+import net.shibboleth.ext.spring.resource.ResourceTestHelper;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 
 /**
  * This test mirrors the online documentation for the HTTPResource as well as the inline example in services.xml.
@@ -40,15 +42,27 @@ import org.testng.annotations.Test;
  */
 public class HTTPResourceConfigurationTests {
     
+    private static final String PROP_RESOURCE_URL = "resourceURL";
+    
+    private static final String REPO_IDP = "java-identity-provider";
+    
+    private static final String DOC_XML = "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/document.xml";
+    
     private File theDir = null;
     private GenericApplicationContext theContext = null;
     private GenericApplicationContext globalContext = null;
     
     @BeforeSuite public void setup() throws IOException {
+        MockPropertySource propSource = new MockPropertySource("localProperties");
+        propSource.setProperty(PROP_RESOURCE_URL, RepositorySupport.buildHTTPResourceURL(REPO_IDP, DOC_XML, false));
+        
         final Path p = Files.createTempDirectory("HTTPResourceTest");
         theDir = p.toFile();
         
         globalContext = new GenericApplicationContext();
+        
+        globalContext.getEnvironment().getPropertySources().addFirst(propSource);
+        
         final XmlBeanDefinitionReader globalContextDefinitionReader =
                 new SchemaTypeAwareXMLBeanDefinitionReader(globalContext);
         

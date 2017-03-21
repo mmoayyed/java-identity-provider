@@ -12,7 +12,7 @@
         xsi:type="resource:FileBackedHttpResource" 
         file="%{DIR}/spoolResourceEntity.xml"
         
-        url="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml?revision=5634&amp;view=co"/>
+        url="%{metadataURL}"/>
 
 </metadata:MetadataProvider>
                                    

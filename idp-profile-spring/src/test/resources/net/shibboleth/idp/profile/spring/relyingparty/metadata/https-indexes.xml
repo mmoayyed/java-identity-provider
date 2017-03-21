@@ -9,7 +9,7 @@
 
 	id="HTTPSEntityWithIndexes" 
     xsi:type="metadata:HTTPMetadataProvider" 
-    metadataURL="https://svn.shibboleth.net/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml"
+    metadataURL="%{metadataURL}"
     indexesRef="metadata.Indexes"
     > 
 

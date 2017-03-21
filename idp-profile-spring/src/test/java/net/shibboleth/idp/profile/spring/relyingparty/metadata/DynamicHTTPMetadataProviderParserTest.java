@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider;
+import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -31,6 +32,7 @@ import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadat
 import org.opensaml.saml.metadata.resolver.impl.HTTPEntityIDRequestURLBuilder;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -38,6 +40,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
+    
+    private static final String PROP_MDURL = "metadataURL";
+    
+    private static final String REPO_IDP = "java-identity-provider";
+    
+    private static final String REPO_OPENSAML = "java-opensaml";
+    
+    private static final String TEMPLATE_URL = "opensaml-saml-impl/src/test/resources/org/opensaml/saml/metadata/resolver/impl/${entityID}.xml";
     
     @Test
     public void testDefaults() throws Exception {
@@ -207,8 +217,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
 
     @Test
     public void testTemplate() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamicTemplate.xml", "beans.xml");
+                propSource, "dynamicTemplate.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -235,8 +248,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testRegex() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/$1.xml", false));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamicRegex.xml", "beans.xml");
+                propSource, "dynamicRegex.xml", "beans.xml");
         
         final String entityID = "https://idp.example.org/idp/shibboleth";
         
@@ -249,8 +265,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testHttpCachingNone() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-httpCaching-none.xml", "beans.xml");
+                propSource, "dynamic-httpCaching-none.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -263,8 +282,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
 
     @Test
     public void testHttpCachingMemory() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-httpCaching-memory.xml", "beans.xml");
+                propSource, "dynamic-httpCaching-memory.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -277,8 +299,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
 
     @Test
     public void testHttpCachingFile() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_OPENSAML, TEMPLATE_URL, false));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-httpCaching-file.xml", "beans.xml");
+                propSource, "dynamic-httpCaching-file.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -291,8 +316,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testHTTPSNoTrustEngine() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPSResourceURL(REPO_OPENSAML, TEMPLATE_URL));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-https-noTrustEngine.xml", "beans.xml");
+                propSource, "dynamic-https-noTrustEngine.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -305,8 +333,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testHTTPSTrustEngineExplicitKey() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPSResourceURL(REPO_OPENSAML, TEMPLATE_URL));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-https-trustEngine-explicitKey.xml", "beans.xml");
+                propSource, "dynamic-https-trustEngine-explicitKey.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -319,8 +350,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testHTTPSTrustEngineInvalidKey() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPSResourceURL(REPO_OPENSAML, TEMPLATE_URL));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-https-trustEngine-invalidKey.xml", "beans.xml");
+                propSource, "dynamic-https-trustEngine-invalidKey.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -332,8 +366,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testHTTPSTrustEngineValidPKIX() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPSResourceURL(REPO_OPENSAML, TEMPLATE_URL));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-https-trustEngine-validPKIX.xml", "beans.xml");
+                propSource, "dynamic-https-trustEngine-validPKIX.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -346,8 +383,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testHTTPSTrustEngineValidPKIXExplicitTrustedName() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPSResourceURL(REPO_OPENSAML, TEMPLATE_URL));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-https-trustEngine-validPKIX-explicitTrustedName.xml", "beans.xml");
+                propSource, "dynamic-https-trustEngine-validPKIX-explicitTrustedName.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         
@@ -360,8 +400,11 @@ public class DynamicHTTPMetadataProviderParserTest extends AbstractMetadataParse
     
     @Test
     public void testHTTPSTrustEngineInvalidPKIX() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPSResourceURL(REPO_OPENSAML, TEMPLATE_URL));
+        
         final FunctionDrivenDynamicHTTPMetadataResolver resolver = getBean(FunctionDrivenDynamicHTTPMetadataResolver.class, 
-                "dynamic-https-trustEngine-invalidPKIX.xml", "beans.xml");
+                propSource, "dynamic-https-trustEngine-invalidPKIX.xml", "beans.xml");
         
         final String entityID = "https://www.example.org/sp";
         

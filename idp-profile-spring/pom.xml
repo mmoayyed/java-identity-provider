@@ -116,6 +116,13 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>net.shibboleth.utilities</groupId>
+            <artifactId>java-support</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Managed Dependencies -->
     </dependencies>

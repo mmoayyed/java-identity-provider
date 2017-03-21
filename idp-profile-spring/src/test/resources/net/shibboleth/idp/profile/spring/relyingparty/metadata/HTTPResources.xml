@@ -4,6 +4,10 @@
 	xmlns:c="http://www.springframework.org/schema/c"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
     
+   <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
+        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+    
    <bean id="clientBuilder"
 		class="net.shibboleth.utilities.java.support.httpclient.FileCachingHttpClientBuilder"
 		p:maxCacheEntries="3" p:cacheDirectory-ref="theDir" />
@@ -12,7 +16,7 @@
 		factory-method="buildClient" />
 
 	<bean id="basic" class="net.shibboleth.ext.spring.resource.HTTPResource"
-		c:client-ref="basicClient" c:url="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/document.xml?view=co" />
+		c:client-ref="basicClient" c:url="%{resourceURL}" />
 
     <bean id="inMemoryClient" 
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.InMemoryCachingHttpClientFactoryBean"
@@ -20,7 +24,7 @@
         p:connectionTimeout="PT3M" />
         
     <bean id="inMemory" class="net.shibboleth.ext.spring.resource.HTTPResource"
-        c:client-ref="inMemoryClient" c:url="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/document.xml?view=co" />
+        c:client-ref="inMemoryClient" c:url="%{resourceURL}" />
 
     <bean id="fileClient" 
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.FileCachingHttpClientFactoryBean"
@@ -32,7 +36,7 @@
     <bean id="thefile" factory-bean="theParent" factory-method="createRelative" c:relativePath="wibble"/>
         
     <bean id="fileResource" class="net.shibboleth.ext.spring.resource.FileBackedHTTPResource"
-        c:client-ref="fileClient" c:url="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/document.xml?view=co" 
+        c:client-ref="fileClient" c:url="%{resourceURL}"
         c:resource-ref="thefile"/>
 
 

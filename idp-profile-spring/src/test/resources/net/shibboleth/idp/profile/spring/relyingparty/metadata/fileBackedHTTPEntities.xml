@@ -6,7 +6,7 @@
 
 	id="fileBackedHTTPEntities" xsi:type="metadata:FileBackedHTTPMetadataProvider"
 	backingFile="%{DIR}/spoolFileEntities.xml"
-	metadataURL="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entities.xml?revision=5634&amp;view=co"> 
+	metadataURL="%{metadataURL}">
 
 </metadata:MetadataProvider>
                                    

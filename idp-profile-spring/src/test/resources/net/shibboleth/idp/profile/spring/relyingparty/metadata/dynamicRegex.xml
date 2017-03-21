@@ -8,7 +8,7 @@
     
         <!-- Attempt to pluck out the domain name and return in match group $1. -->
         <metadata:Regex match="^https?://([a-zA-Z0-9\\.]+).*$">
-           http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/$1.xml?view=co
+           %{metadataURL}
         </metadata:Regex>
 
 </metadata:MetadataProvider>

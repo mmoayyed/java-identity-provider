@@ -5,7 +5,7 @@
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
     proxyHost="localhost" proxyUser="user" proxyPassword="pass" proxyPort="123"
-	id="HTTPProxy" xsi:type="metadata:HTTPMetadataProvider" metadataURL="http://svn.shibboleth.net/view/java-identity-provider/trunk/idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml?revision=5634&amp;view=co"> 
+	id="HTTPProxy" xsi:type="metadata:HTTPMetadataProvider" metadataURL="%{metadataURL}"> 
 
 </metadata:MetadataProvider>
                                    

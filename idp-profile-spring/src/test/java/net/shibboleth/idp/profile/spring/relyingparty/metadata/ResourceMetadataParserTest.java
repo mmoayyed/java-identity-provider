@@ -27,10 +27,21 @@ import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import net.shibboleth.utilities.java.support.repository.RepositorySupport;
+
 public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
+    
+    private static final String PROP_MDURL = "metadataURL";
+    
+    private static final String REPO_IDP = "java-identity-provider";
+
+    private static final String ENTITY_XML = "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entity.xml";
+    
+    private static final String ENTITIES_XML = "idp-profile-spring/src/test/resources/net/shibboleth/idp/profile/spring/relyingparty/metadata/entities.xml";
     
     @Test public void fileEntity() throws Exception {
 
@@ -92,8 +103,10 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     }
 
     @Test public void httpEntity() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
-        final MetadataResolver resolver = getBean(HTTPMetadataResolver.class, "resourceHTTPEntity.xml", "beans.xml");
+        final MetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "resourceHTTPEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceHTTPEntity");
    
@@ -102,8 +115,10 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     }
 
     @Test public void httpEntities() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITIES_XML, false));
 
-        final MetadataResolver resolver = getBean(HTTPMetadataResolver.class, "resourceHTTPEntities.xml", "beans.xml");
+        final MetadataResolver resolver = getBean(HTTPMetadataResolver.class, propSource, "resourceHTTPEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceHTTPEntities");
 
@@ -112,8 +127,10 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     }
     
     @Test public void fileHttpEntity() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITY_XML, false));
 
-        final MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, "resourceFileBackedHTTPEntity.xml", "beans.xml");
+        final MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, propSource, "resourceFileBackedHTTPEntity.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceFileBackedHTTPEntity");
    
@@ -122,8 +139,10 @@ public class ResourceMetadataParserTest extends AbstractMetadataParserTest {
     }
 
     @Test public void fileHttpEntities() throws Exception {
+        MockPropertySource propSource = singletonPropertySource(PROP_MDURL, 
+                RepositorySupport.buildHTTPResourceURL(REPO_IDP, ENTITIES_XML, false));
 
-        final MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, "resourceFileBackedHTTPEntities.xml", "beans.xml");
+        final MetadataResolver resolver = getBean(FileBackedHTTPMetadataResolver.class, propSource, "resourceFileBackedHTTPEntities.xml", "beans.xml");
         
         Assert.assertEquals(resolver.getId(), "resourceFileBackedHTTPEntities");
 
