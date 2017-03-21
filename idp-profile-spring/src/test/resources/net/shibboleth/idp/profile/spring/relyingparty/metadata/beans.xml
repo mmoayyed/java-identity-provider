@@ -7,7 +7,7 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
 
-	default-init-method="initialize" default-destroy-method="destroy">
+	default-init-method="initialize" default-destroy-method="destroy" default-lazy-init="true">
 
 	<bean id="shibboleth.ParserPool"
 		class="net.shibboleth.utilities.java.support.xml.BasicParserPool"
