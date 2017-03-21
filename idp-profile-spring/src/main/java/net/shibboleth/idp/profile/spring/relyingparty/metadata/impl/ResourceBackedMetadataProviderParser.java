@@ -19,6 +19,8 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.resource.ResourceHelper;
@@ -28,6 +30,7 @@ import net.shibboleth.idp.profile.spring.resource.impl.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.impl.ResourceNamespaceHandler;
 import net.shibboleth.idp.profile.spring.resource.impl.SVNResourceParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -60,6 +63,10 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
     /** Element name for the resource elements. */
     public static final QName RESOURCES_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "MetadataResource");
+    
+    /** For direct injection of a Spring bean **/
+    public static final QName RESOURCE_REF = new QName("resourceRef");
+
 
     /** Log. */
     private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
@@ -69,6 +76,10 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
 
         final List<Element> resources = ElementSupport.getChildElements(element, RESOURCES_NAME);
         if (null == resources || resources.isEmpty()) {
+            if (AttributeSupport.hasAttribute(element, RESOURCE_REF)) {
+                return ResourceBackedMetadataResolver.class;
+            }
+            
             throw new BeanCreationException("No <Resource> specified for ResourceBackedMetadataProvider");
         }
         final QName qName = DOMTypeSupport.getXSIType(resources.get(0));
@@ -109,6 +120,11 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         }
 
         final List<Element> resources = ElementSupport.getChildElements(element, RESOURCES_NAME);
+        if (resources.isEmpty()) {
+            parseResource(StringSupport.trimOrNull(AttributeSupport.getAttributeValue(element, RESOURCE_REF)), parserContext, builder);
+            return;
+        }
+        
         if (resources.size() != 1) {
             log.error("{}: Only one Resource may be supplied to a ResourceBackedMetadataProvider", parserContext
                     .getReaderContext().getResource().getDescription());
@@ -152,7 +168,32 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
             parseFilesystemResource(resources.get(0), parserContext, builder);
         }
     }
+    
+    /**
+     * Parse the provided Attribute and populate an appropriate {@link ResourceBackedMetadataResolver}.
+     * 
+     * @param beanReference the reference
+     * @param parserContext the parser context
+     * @param builder the builder for the {@link ResourceBackedMetadataResolver}.
+     */
+    private void parseResource(@Nullable final String beanReference, final ParserContext parserContext, @Nonnull final BeanDefinitionBuilder builder) {
 
+        if (null == beanReference) {
+            log.error("{} must not be empty", RESOURCE_REF.getLocalPart());
+            throw new BeanDefinitionParsingException(new Problem(
+                    "Empty bean reference for a ResourceBackedMetadataProvider", new Location(parserContext
+                            .getReaderContext().getResource())));
+        }
+        
+        final BeanDefinitionBuilder resourceConverter =
+                BeanDefinitionBuilder.genericBeanDefinition(ResourceHelper.class);
+        resourceConverter.setLazyInit(true);
+        resourceConverter.setFactoryMethod("of");
+        resourceConverter.addConstructorArgReference(beanReference);
+        builder.addConstructorArgValue(resourceConverter.getBeanDefinition());
+    }
+
+    
     /**
      * Parse the provided &lt;Resource&gt; and populate an appropriate {@link ResourceBackedMetadataResolver}.
      * 
