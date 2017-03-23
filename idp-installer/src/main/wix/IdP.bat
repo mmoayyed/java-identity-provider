@@ -166,6 +166,11 @@ if ERRORLEVEL 1 (
   echo jetty-base/start.d directory not found?
   goto done;
 )
+
+rem IDP-1149 make doubley sure that we have a jetty-base\tmp dir
+mkdir %idpex%\jetty-base\tmp\
+echo "keeper" > %idpex%\jetty-base\tmp\.keep
+
 cd ..
 
 "%WIX%/BIN/HEAT" dir idp-extract\%idpex% -platform -gg -dr INSTALLDIR -var var.idpSrc -cg IdPGroup -out idp_contents.wxs -srd
