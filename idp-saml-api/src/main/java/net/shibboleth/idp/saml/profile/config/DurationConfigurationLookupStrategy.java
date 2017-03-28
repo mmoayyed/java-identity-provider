@@ -90,7 +90,7 @@ public class DurationConfigurationLookupStrategy extends AbstractMetadataDrivenC
             }
         } else if (object instanceof XSInteger) {
             final Integer value = ((XSInteger) object).getValue();
-            return value != null ? Integer.toUnsignedLong(value) : null;
+            return value != null ? value.longValue() : null;
         } else if (object instanceof XSAny) {
             final XSAny wc = (XSAny) object;
             if (wc.getUnknownAttributes().isEmpty() && wc.getUnknownXMLObjects().isEmpty()) {
