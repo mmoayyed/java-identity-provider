@@ -30,56 +30,23 @@
 
     <!-- Default configuration, with default settings applied for all profiles. -->
 
-    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
+    <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty.MDDriven">
         <property name="profileConfigurations">
             <util:list>
-                <ref bean="Shibboleth.SSO" />
-                <ref bean="SAML1.AttributeQuery" />
-                <ref bean="SAML1.ArtifactResolution" />
-                <ref bean="SAML2.SSO" />
-                <ref bean="SAML2.ECP" />
-                <ref bean="SAML2.Logout" />
-                <ref bean="SAML2.AttributeQuery" />
-                <ref bean="SAML2.ArtifactResolution" />
+                <ref bean="Shibboleth.SSO.MDDriven" />
+                <ref bean="SAML1.AttributeQuery.MDDriven" />
+                <ref bean="SAML1.ArtifactResolution.MDDriven" />
+                <ref bean="SAML2.SSO.MDDriven" />
+                <ref bean="SAML2.ECP.MDDriven" />
+                <ref bean="SAML2.Logout.MDDriven" />
+                <ref bean="SAML2.AttributeQuery.MDDriven" />
+                <ref bean="SAML2.ArtifactResolution.MDDriven" />
             </util:list>
         </property>
     </bean>
 
     <util:list id="shibboleth.RelyingPartyOverrides">
-    
-        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://sp.example.org">
-            <property name="profileConfigurations">
-                <util:list>
-                    <bean parent="Shibboleth.SSO" p:includeAttributeStatement="true">
-                        <!--
-                        <property name="defaultAuthenticationMethods">
-                            <list>
-                                <bean parent="shibboleth.SAML1AuthenticationMethod"
-                                    c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
-                            </list>
-                        </property>
-                        -->
-                    </bean>
-                    <ref bean="SAML1.AttributeQuery" />
-                    <ref bean="SAML1.ArtifactResolution" />
-                    <bean parent="SAML2.SSO">
-                        <!--
-                        <property name="defaultAuthenticationMethods">
-                            <list>
-                                <bean parent="shibboleth.SAML2AuthnContextClassRef"
-                                    c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
-                            </list>
-                        </property>
-                        -->
-                    </bean>
-                    <ref bean="SAML2.ECP" />
-                    <ref bean="SAML2.Logout" />
-                    <ref bean="SAML2.AttributeQuery" />
-                    <ref bean="SAML2.ArtifactResolution" />
-                </util:list>
-            </property>
-        </bean>
-        
+
     </util:list>
 
 </beans>

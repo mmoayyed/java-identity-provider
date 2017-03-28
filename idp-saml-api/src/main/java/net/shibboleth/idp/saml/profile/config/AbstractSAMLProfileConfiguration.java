@@ -210,7 +210,7 @@ public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileCo
      * 
      * @since 3.3.0
      */
-    public void setIncludeConditionsNotBeforePredicate(@Nullable final Predicate<ProfileRequestContext> condition) {
+    public void setIncludeConditionsNotBeforePredicate(@Nonnull final Predicate<ProfileRequestContext> condition) {
         includeNotBeforePredicate = Constraint.isNotNull(condition, "NotBefore predicate cannot be null");
     }
 
