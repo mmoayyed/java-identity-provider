@@ -20,6 +20,4 @@
 
     <import resource="../../../conf/intercept/context-check-intercept-config.xml" />
 
-    <alias name="shibboleth.context-check.Condition" alias="ContextCheckPredicate"/>
-    
 </beans>

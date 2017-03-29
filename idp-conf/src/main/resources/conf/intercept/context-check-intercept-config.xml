@@ -39,4 +39,25 @@
         </constructor-arg>
     </bean>
 
+    <!--
+    More general purpose approach using a Function that returns either "proceed" or a custom error Event.
+    This is a cleaner way of applying multiple conditions in different cases or triggering different events.
+    -->
+    <!--
+    <bean id="shibboleth.context-check.Function" parent="shibboleth.ContextFunctions.Scripted" factory-method="inlineScript"
+	        p:customObject-ref="shibboleth.context-check.Condition">
+        <constructor-arg>
+            <value>
+            <![CDATA[
+            var event = "proceed";
+            if (!custom.apply(input)) {
+                event = "ContextCheckDenied";
+            }
+            event;
+            ]]>
+            </value>
+        </constructor-arg>
+    </bean>
+    -->
+    
 </beans>
