@@ -12,6 +12,7 @@
     <end-state id="proceed" />
 
     <!-- Error events to reflect back from this subflow. -->
+    <end-state id="InvalidEvent" />
     <end-state id="InvalidProfileContext" />
     <end-state id="MessageExpired" />
     <end-state id="MessageReplay" />
@@ -38,6 +39,7 @@
         <transition on="ContextCheckDenied" to="ContextCheckDenied" />
         <transition on="RestartAuthentication" to="RestartAuthentication" />
         <transition on="RuntimeException" to="RuntimeException" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="InvalidEvent" />
     </global-transitions>
 
 </flow>

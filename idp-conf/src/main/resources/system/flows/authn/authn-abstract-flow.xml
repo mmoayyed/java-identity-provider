@@ -19,6 +19,7 @@
     <end-state id="IdentitySwitch" />
     <end-state id="InputOutputError" />
     <end-state id="InvalidCredentials" />
+    <end-state id="InvalidEvent" />
     <end-state id="InvalidProfileContext" />
     <end-state id="InvalidSubjectContext" />
     <end-state id="InvalidSubjectCanonicalizationContext" />
@@ -56,6 +57,7 @@
         <transition on="RestartAuthentication" to="RestartAuthentication" />
         <transition on="RuntimeException" to="RuntimeException" />
         <transition on="SubjectCanonicalizationError" to="SubjectCanonicalizationError" />
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="InvalidEvent" />
     </global-transitions>
 
 </flow>
