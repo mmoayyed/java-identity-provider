@@ -39,7 +39,6 @@
         <transition on="ReselectFlow" to="ReselectFlow" />
         <transition on="RuntimeException" to="RuntimeException" />
         <transition on="SubjectCanonicalizationError" to="SubjectCanonicalizationError" />
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="InvalidEvent" />
     </global-transitions>
 
 </flow>

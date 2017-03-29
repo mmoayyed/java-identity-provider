@@ -11,12 +11,12 @@
     -->
 
     <!-- Custom error events to reflect back from user-supplied c14n subflows. -->
-    <!--
-    <end-state id="MyCustomEvent" />
+    
+    <!-- <end-state id="MyCustomEvent" /> -->
 
     <global-transitions>
-        <transition on="MyCustomEvent" to="MyCustomEvent" />
+        <!-- <transition on="MyCustomEvent" to="MyCustomEvent" /> -->
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="InvalidEvent" />
     </global-transitions>
-    -->
 
 </flow>

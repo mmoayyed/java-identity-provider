@@ -10,12 +10,11 @@
     report custom events in response to unusual conditions.
     -->
 
-    <!--
-    <end-state id="MyCustomEvent" />
+    <!-- <end-state id="MyCustomEvent" /> -->
 
     <global-transitions>
-        <transition on="MyCustomEvent" to="MyCustomEvent" />
+        <!-- <transition on="MyCustomEvent" to="MyCustomEvent" /> -->
+        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="InvalidEvent" />
     </global-transitions>
-    -->
 
 </flow>

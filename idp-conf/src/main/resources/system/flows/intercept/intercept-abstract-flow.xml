@@ -39,7 +39,6 @@
         <transition on="ContextCheckDenied" to="ContextCheckDenied" />
         <transition on="RestartAuthentication" to="RestartAuthentication" />
         <transition on="RuntimeException" to="RuntimeException" />
-        <transition on="#{!'proceed'.equals(currentEvent.id)}" to="InvalidEvent" />
     </global-transitions>
 
 </flow>
