@@ -39,13 +39,13 @@
     
     <!-- Parent beans for metadata-driven RelyingParty helpers. -->
 
-    <bean id="RelyingPartyByName" parent="RelyingParty.MDDriven" abstract="true"
+    <bean id="RelyingPartyByName.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName" />
 
-    <bean id="RelyingPartyByGroup" parent="RelyingParty.MDDriven" abstract="true"
+    <bean id="RelyingPartyByGroup.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup" />
 
-    <bean id="RelyingPartyByTag" parent="RelyingParty.MDDriven" abstract="true"
+    <bean id="RelyingPartyByTag.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"
         c:trim="false" c:matchAll="false" />
     
