@@ -22,9 +22,9 @@
     
     <bean id="shibboleth.UnverifiedRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
-            <util:list>
+            <list>
             <!-- <bean parent="SAML2.SSO" p:encryptAssertions="false" /> -->
-            </util:list>
+            </list>
         </property>
     </bean>
 
@@ -32,7 +32,7 @@
 
     <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty.MDDriven">
         <property name="profileConfigurations">
-            <util:list>
+            <list>
                 <ref bean="Shibboleth.SSO.MDDriven" />
                 <ref bean="SAML1.AttributeQuery.MDDriven" />
                 <ref bean="SAML1.ArtifactResolution.MDDriven" />
@@ -41,7 +41,7 @@
                 <ref bean="SAML2.Logout.MDDriven" />
                 <ref bean="SAML2.AttributeQuery.MDDriven" />
                 <ref bean="SAML2.ArtifactResolution.MDDriven" />
-            </util:list>
+            </list>
         </property>
     </bean>
 
