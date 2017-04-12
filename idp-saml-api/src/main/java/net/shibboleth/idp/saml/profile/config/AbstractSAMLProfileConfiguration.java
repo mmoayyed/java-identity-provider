@@ -26,7 +26,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -46,7 +46,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
 /** Base class for SAML profile configurations. */
-public abstract class AbstractSAMLProfileConfiguration extends AbstractProfileConfiguration implements
+public abstract class AbstractSAMLProfileConfiguration extends AbstractConditionalProfileConfiguration implements
         SAMLProfileConfiguration {
 
     /** Class logger. */

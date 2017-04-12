@@ -23,7 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.idp.cas.ticket.impl.TicketIdentifierGenerationStrategy;
-import net.shibboleth.idp.profile.config.AbstractProfileConfiguration;
+import net.shibboleth.idp.profile.config.AbstractConditionalProfileConfiguration;
 import net.shibboleth.idp.profile.config.SecurityConfiguration;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -43,7 +43,7 @@ import com.google.common.base.Predicates;
  * 
  * @author Marvin S. Addison
  */
-public abstract class AbstractProtocolConfiguration extends AbstractProfileConfiguration implements
+public abstract class AbstractProtocolConfiguration extends AbstractConditionalProfileConfiguration implements
         InitializableComponent {
 
     /** CAS base protocol URI. */

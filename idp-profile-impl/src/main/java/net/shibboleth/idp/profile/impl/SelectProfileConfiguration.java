@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.profile.AbstractProfileAction;
 import net.shibboleth.idp.profile.IdPEventIds;
+import net.shibboleth.idp.profile.config.ConditionalProfileConfiguration;
 import net.shibboleth.idp.profile.config.ProfileConfiguration;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.relyingparty.RelyingPartyConfiguration;
@@ -83,6 +84,11 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
     /** {@inheritDoc} */
     @Override
     protected boolean doPreExecute(@Nonnull final ProfileRequestContext profileRequestContext) {
+        
+        if (!super.doPreExecute(profileRequestContext)) {
+            return false;
+        }
+        
         rpCtx = relyingPartyContextLookupStrategy.apply(profileRequestContext);
         if (rpCtx == null) {
             log.debug("{} No relying party context associated with this profile request", getLogPrefix());
@@ -96,7 +102,7 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
             return false;
         }
         
-        return super.doPreExecute(profileRequestContext);
+        return true;
     }
     
     /** {@inheritDoc} */
@@ -111,10 +117,15 @@ public class SelectProfileConfiguration extends AbstractProfileAction {
             log.warn("{} Profile {} is not available for RP configuration {} (RPID {})",
                     new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
             ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
-            return;
+        } else if (profileConfiguration instanceof ConditionalProfileConfiguration
+                && !((ConditionalProfileConfiguration) profileConfiguration).getActivationCondition().apply(
+                        profileRequestContext)) {
+            log.warn("{} Profile {} is not active for RP configuration {} (RPID {})",
+                    new Object[] {getLogPrefix(), profileId, rpConfig.getId(), rpCtx.getRelyingPartyId(),});
+            ActionSupport.buildEvent(profileRequestContext, IdPEventIds.INVALID_PROFILE_CONFIG);
+        } else {
+            rpCtx.setProfileConfig(profileConfiguration);
         }
-
-        rpCtx.setProfileConfig(profileConfiguration);
     }
     
 }
