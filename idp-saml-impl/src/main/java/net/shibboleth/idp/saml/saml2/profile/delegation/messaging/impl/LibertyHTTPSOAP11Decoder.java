@@ -165,7 +165,7 @@ public class LibertyHTTPSOAP11Decoder extends BaseHttpServletRequestXMLMessageDe
         populateBindingContext(getMessageContext());
         
         final SAMLObject samlMessage = getMessageContext().getMessage();
-        log.debug("Decoded SOAP messaged which included SAML message of type {}", samlMessage.getElementQName());
+        log.debug("Decoded SOAP message which included SAML message of type {}", samlMessage.getElementQName());
     }
     
     /**
