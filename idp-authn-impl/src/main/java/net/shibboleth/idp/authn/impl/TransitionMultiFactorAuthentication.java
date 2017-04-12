@@ -267,11 +267,16 @@ public class TransitionMultiFactorAuthentication extends AbstractAuthenticationA
         // infinite recursion is the configuration of transitions supplied by the deployer.
         final AuthenticationResult activeResult = mfaContext.getActiveResults().get(flowId);
         if (activeResult != null) {
-            log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
-            activeResult.setLastActivityInstantToNow();
-            ActionSupport.buildProceedEvent(profileRequestContext);
-            doExecute(profileRequestContext, authenticationContext);
-            return;
+            if (flow.getReuseCondition().apply(profileRequestContext)) {
+                log.debug("{} Reusing active result for '{}' flow", getLogPrefix(), flowId);
+                activeResult.setLastActivityInstantToNow();
+                ActionSupport.buildProceedEvent(profileRequestContext);
+                doExecute(profileRequestContext, authenticationContext);
+                return;
+            } else {
+                log.debug("{} Condition blocked reuse of active result for '{}' flow", getLogPrefix(), flowId);
+                mfaContext.getActiveResults().remove(flowId);
+            }
         }
      
         if (validateLoginTransitions) {
