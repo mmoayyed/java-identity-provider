@@ -41,7 +41,7 @@ import com.google.common.base.Function;
 
 /**
  * A Function which returns {@link IdPAttributeValue}s derived from the {@link java.security.Principal}s
- * associated with the request.  The precise values are determined by an injected {@link Functio 
+ * associated with the request.  The precise values are determined by an injected {@link Function}.
  */
 public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableInitializableComponent implements
         Function<ProfileRequestContext, List<IdPAttributeValue<?>>> {
