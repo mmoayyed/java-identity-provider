@@ -697,7 +697,7 @@ public class StorageBackedIdPSession extends AbstractIdPSession {
             
             return success;
         } catch (final IOException e) {
-            log.error("OPException saving SPSession for service {} to storage", session.getId(), e);
+            log.error("IOException saving SPSession for service {} to storage", session.getId(), e);
             throw e;
         }
     }
