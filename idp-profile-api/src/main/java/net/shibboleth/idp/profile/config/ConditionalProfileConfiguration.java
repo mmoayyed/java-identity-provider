@@ -31,9 +31,9 @@ import com.google.common.base.Predicate;
 public interface ConditionalProfileConfiguration extends ProfileConfiguration {
 
     /**
-     * Get the {@link SecurityConfiguration} to use with this profile.
+     * Get the condition controlling enablement of this profile.
      * 
-     * @return security configuration to use with this profile
+     * @return condition controlling enablement of this profile
      */
     @Nonnull Predicate<ProfileRequestContext> getActivationCondition();
     
