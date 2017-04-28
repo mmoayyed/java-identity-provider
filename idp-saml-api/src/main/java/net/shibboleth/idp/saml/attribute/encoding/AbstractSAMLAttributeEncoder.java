@@ -25,8 +25,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.AttributeEncoder;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -170,8 +170,8 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
             }
 
             if (!canEncodeValue(attribute, o)) {
-                log.debug("Skipping value of attribute {}; Type {} cannot be encoded by this encoder.", attributeId,
-                        o.getClass().getName());
+                log.warn("Skipping value of attribute '{}'; Type {} cannot be encoded by this encoder ({}).", attributeId,
+                        o.getClass().getName(), this.getClass().getName());
                 continue;
             }
 
