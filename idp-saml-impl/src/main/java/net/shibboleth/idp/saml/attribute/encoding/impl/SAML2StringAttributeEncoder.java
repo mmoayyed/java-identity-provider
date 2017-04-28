@@ -24,6 +24,8 @@ import net.shibboleth.idp.attribute.AttributeEncodingException;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.IdPRequestedAttribute;
+import net.shibboleth.idp.attribute.LocalizedStringAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML2AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.AttributeMapperProcessor;
@@ -34,6 +36,8 @@ import net.shibboleth.idp.saml.attribute.mapping.impl.StringAttributeValueMapper
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.metadata.RequestedAttribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces a SAML 2 Attribute from an {@link IdPAttribute}
@@ -41,6 +45,9 @@ import org.opensaml.saml.saml2.metadata.RequestedAttribute;
  */
 public class SAML2StringAttributeEncoder extends AbstractSAML2AttributeEncoder<StringAttributeValue> implements
         AttributeMapperProcessor<RequestedAttribute, IdPRequestedAttribute> {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML2StringAttributeEncoder.class);
 
     /** {@inheritDoc} */
     @Override protected boolean canEncodeValue(@Nonnull final IdPAttribute attribute,
@@ -51,6 +58,10 @@ public class SAML2StringAttributeEncoder extends AbstractSAML2AttributeEncoder<S
     /** {@inheritDoc} */
     @Override @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final StringAttributeValue value) throws AttributeEncodingException {
+        if (value instanceof LocalizedStringAttributeValue || value instanceof ScopedStringAttributeValue) {
+            log.warn("Attribute '{}': Lossy encoding of attribute value of type {} to SAML2 String Attribute",
+                    attribute.getId(), value.getClass().getName());
+        }
         return SAMLEncoderSupport.encodeStringValue(attribute,
                 AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue(), encodeType());
     }

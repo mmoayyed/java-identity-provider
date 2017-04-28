@@ -20,21 +20,28 @@ package net.shibboleth.idp.saml.attribute.encoding.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.AttributeEncodingException;
+import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.LocalizedStringAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.AbstractSAML1AttributeEncoder;
 import net.shibboleth.idp.saml.attribute.encoding.SAMLEncoderSupport;
 
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml1.core.AttributeValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link net.shibboleth.idp.attribute.AttributeEncoder} that produces SAML 1 attributes from an
  * {@link net.shibboleth.idp.attribute.IdPAttribute} that contains <code>String</code> values.
  */
 public class SAML1StringAttributeEncoder extends AbstractSAML1AttributeEncoder<StringAttributeValue> {
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SAML1StringAttributeEncoder.class);
 
     /** {@inheritDoc} */
     @Override
@@ -46,6 +53,10 @@ public class SAML1StringAttributeEncoder extends AbstractSAML1AttributeEncoder<S
     @Override
     @Nullable protected XMLObject encodeValue(@Nonnull final IdPAttribute attribute,
             @Nonnull final StringAttributeValue value) throws AttributeEncodingException {
+        if (value instanceof LocalizedStringAttributeValue || value instanceof ScopedStringAttributeValue) {
+            log.warn("Attribute '{}': Lossy encoding of attribute value of type {} to SAML1 String Attribute",
+                    attribute.getId(), value.getClass().getName());
+        }
         return SAMLEncoderSupport.encodeStringValue(attribute,
                 AttributeValue.DEFAULT_ELEMENT_NAME, value.getValue(), encodeType());
     }

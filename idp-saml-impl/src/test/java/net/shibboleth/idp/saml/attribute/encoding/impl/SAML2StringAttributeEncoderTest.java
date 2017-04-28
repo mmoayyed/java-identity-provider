@@ -22,9 +22,10 @@ import java.util.Collection;
 import java.util.List;
 
 import net.shibboleth.idp.attribute.AttributeEncodingException;
-import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.ByteAttributeValue;
 import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.IdPAttributeValue;
+import net.shibboleth.idp.attribute.ScopedStringAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 
@@ -74,9 +75,11 @@ public class SAML2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         final int[] intArray = {1, 2, 3, 4};
         final Collection<? extends IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}), new IdPAttributeValue<Object>() {
+                    @Override
                     public Object getValue() {
                         return intArray;
                     }
+                    @Override
                     public String getDisplayValue() {
                         return intArray.toString();
                     }
@@ -118,7 +121,9 @@ public class SAML2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
     @Test public void multi() throws Exception {
         final Collection<? extends IdPAttributeValue<?>> values =
                 Arrays.asList(new ByteAttributeValue(new byte[] {1, 2, 3,}),
-                        new StringAttributeValue(STRING_1), new StringAttributeValue(STRING_2));
+                        new StringAttributeValue(STRING_1),
+                        new StringAttributeValue(STRING_2),
+                        new ScopedStringAttributeValue(STRING_1, STRING_2));
 
         final IdPAttribute inputAttribute = new IdPAttribute(ATTR_NAME);
         inputAttribute.setValues(values);
@@ -128,31 +133,12 @@ public class SAML2StringAttributeEncoderTest extends OpenSAMLInitBaseTestCase {
         Assert.assertNotNull(outputAttribute);
 
         final List<XMLObject> children = outputAttribute.getOrderedChildren();
-        Assert.assertEquals(children.size(), 2, "Encoding two entries");
+        Assert.assertEquals(children.size(), 3, "Encoding three entries");
 
-        Assert.assertTrue(children.get(0) instanceof XSString && children.get(1) instanceof XSString,
-                "Child of result attribute should be a string");
-
-        final XSString child1 = (XSString) children.get(0);
-        Assert.assertEquals(child1.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
-                "Attribute Value not inside <AttributeValue/>");
-
-        final XSString child2 = (XSString) children.get(1);
-        Assert.assertEquals(child2.getElementQName(), AttributeValue.DEFAULT_ELEMENT_NAME,
-                "Attribute Value not inside <AttributeValue/>");
-        //
-        // order of results is not guaranteed so sense the result from the length
-        //
-        if (child1.getValue().length() == STRING_1.length()) {
-            Assert.assertEquals(child1.getValue(), STRING_1, "Input matches output");
-            Assert.assertEquals(child2.getValue(), STRING_2, "Input matches output");
-        } else if (child1.getValue().length() == STRING_2.length()) {
-            Assert.assertEquals(child2.getValue(), STRING_1, "Input matches output");
-            Assert.assertEquals(child1.getValue(), STRING_2, "Input matches output");
-        } else {
-            Assert.assertTrue(
-                    child1.getValue().length() == STRING_1.length() || child1.getValue().length() == STRING_2.length(),
-                    "One of the output's size should match an input size");
+        for (final XMLObject child: children) {
+            Assert.assertTrue(child instanceof XSString, "Child of result attribute should be a string");
+            final String childAsString = ((XSString) children.get(0)).getValue();
+            Assert.assertTrue(STRING_1.equals(childAsString)||STRING_2.equals(childAsString));
         }
     }
 
