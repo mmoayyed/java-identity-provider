@@ -1154,6 +1154,14 @@
                         </annotation>
                     </element>
                 </choice>
+                <attribute name="attributeFilterRef" type="string">
+                    <annotation>
+                        <documentation>
+                            The ID of a Spring bean to inject as a condition Predicate to determine whether
+                            pre-existing EntityAttributes child Attributes should be retained.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

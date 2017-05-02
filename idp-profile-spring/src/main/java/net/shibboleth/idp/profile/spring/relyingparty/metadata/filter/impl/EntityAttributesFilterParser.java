@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.core.xml.XMLObject;
@@ -102,6 +103,11 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
         }
 
         builder.addPropertyValue("rules", ruleMap);
+        
+        if (element.hasAttributeNS(null, "attributeFilterRef")) {
+            builder.addPropertyReference("attributeFilter",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "attributeFilterRef")));
+        }
     }
 
     /** {@inheritDoc} */
