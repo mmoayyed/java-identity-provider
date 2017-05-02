@@ -244,6 +244,10 @@ public class ProcessLogoutRequest extends AbstractProfileAction {
             log.warn("{} LogoutRequest did not contain NameID", getLogPrefix());
             ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
             return false;
+        } else if (logoutRequest.getNameID().getValue() == null) {
+            log.warn("{} LogoutRequest contained an empty (therefore invalid) NameID", getLogPrefix());
+            ActionSupport.buildEvent(profileRequestContext, EventIds.INVALID_MESSAGE);
+            return false;
         }
         
         if (log.isDebugEnabled() && logoutRequest.getExtensions() != null
