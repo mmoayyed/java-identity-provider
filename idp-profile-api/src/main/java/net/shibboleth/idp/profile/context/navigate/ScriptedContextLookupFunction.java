@@ -24,18 +24,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.context.navigate.ContextDataLookupFunction;
 import org.opensaml.profile.context.ProfileRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 /**
@@ -43,31 +41,11 @@ import org.springframework.core.io.Resource;
  * 
  * @param <T> the specific type of context
  */
-public class ScriptedContextLookupFunction<T extends BaseContext> implements ContextDataLookupFunction<T, Object> {
-
-    /** The default language is Javascript. */
-    @Nonnull @NotEmpty public static final String DEFAULT_ENGINE = "JavaScript";
-
-    /** Class logger. */
-    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedContextLookupFunction.class);
-
-    /** The script we care about. */
-    @Nonnull private final EvaluableScript script;
-
-    /** Debugging info. */
-    @Nullable private final String logPrefix;
-
-    /** What class we want the output to test against. */
-    @Nullable private Class outputClass;
+public class ScriptedContextLookupFunction<T extends BaseContext> extends AbstractScriptEvaluator
+        implements ContextDataLookupFunction<T,Object> {
 
     /** What class we want the input to test against. */
     @Nonnull private final Class<T> inputClass;
-
-    /** The custom object we can be injected into the script. */
-    @Nullable private Object customObject;
-    
-    /** Whether to raise runtime exceptions if a script fails. */
-    private boolean hideExceptions;
 
     /**
      * Constructor.
@@ -78,9 +56,9 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      */
     protected ScriptedContextLookupFunction(@Nonnull final Class<T> inClass, @Nonnull final EvaluableScript theScript,
             @Nullable final String extraInfo) {
+        super(theScript);
         inputClass = Constraint.isNotNull(inClass, "Supplied inputClass cannot be null");
-        script = Constraint.isNotNull(theScript, "Supplied script cannot be null");
-        logPrefix = "Scripted Function from " + extraInfo + ":";
+        setLogPrefix("Scripted Function from " + extraInfo + ":");
     }
 
     /**
@@ -90,9 +68,9 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @param theScript the script we will evaluate.
      */
     protected ScriptedContextLookupFunction(@Nonnull final Class<T> inClass, @Nonnull final EvaluableScript theScript) {
+        super(theScript);
         inputClass = Constraint.isNotNull(inClass, "Supplied inputClass cannot be null");
-        script = Constraint.isNotNull(theScript, "Supplied script should not be null");
-        logPrefix = "Anonymous Scripted Function:";
+        setLogPrefix("Anonymous Scripted Function:");
     }
 
     /**
@@ -106,68 +84,36 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
     protected ScriptedContextLookupFunction(@Nonnull final Class<T> inClass, @Nonnull final EvaluableScript theScript,
             @Nullable final String extraInfo, @Nullable final Class outputType) {
         this(inClass, theScript, extraInfo);
-        outputClass = outputType;
-    }
-
-    /**
-     * Return the custom (externally provided) object.
-     * 
-     * @return the custom object
-     */
-    @Nullable public Object getCustomObject() {
-        return customObject;
-    }
-
-    /**
-     * Set the custom (externally provided) object.
-     * 
-     * @param object the custom object
-     */
-    @Nullable public void setCustomObject(final Object object) {
-        customObject = object;
-    }
-
-    /**
-     * Set whether to hide exceptions in script execution (default is false).
-     * 
-     * @param flag flag to set
-     */
-    public void setHideExceptions(final boolean flag) {
-        hideExceptions = flag;
+        setOutputType(outputType);
     }
 
     /** {@inheritDoc} */
-    @Override public Object apply(@Nullable final T context) {
-
-        if (null != context && !inputClass.isInstance(context)) {
-            throw new ClassCastException(logPrefix + " Input was type " + context.getClass()
-                    + " which is not an instance of " + inputClass);
-        }
-
-        final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        // We don't actually know that the context is a PRC, but we'll keep this for compatibility.
-        // We can't use the variable name "context" because Rhino appears to reserve that name.
-        scriptContext.setAttribute("profileContext", context, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("input", context, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
-
-        try {
-            final Object output = script.eval(scriptContext);
-            if (null != outputClass && null != output && !outputClass.isInstance(output)) {
-                log.error("{} Output of type {} was not of type {}", logPrefix, output.getClass(), outputClass);
-                return null;
-            }
-            return output;
-
-        } catch (final ScriptException e) {
-            log.error("{} Error while executing Function script", logPrefix, e);
-            if (hideExceptions) {
-                return null;
-            }
-            throw new RuntimeException(e);
-        }
+    @Override
+    @Nullable public Object getCustomObject() {
+        return super.getCustomObject();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Object apply(@Nullable final T context) {
+
+        if (null != context && !inputClass.isInstance(context)) {
+            throw new ClassCastException(getLogPrefix() + " Input was type " + context.getClass()
+                    + " which is not an instance of " + inputClass);
+        }
+        
+        return evaluate(context);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
+        // We don't actually know that the context is a PRC, but we'll keep this for compatibility.
+        // We can't use the variable name "context" because Rhino appears to reserve that name.
+        scriptContext.setAttribute("profileContext", input[0], ScriptContext.ENGINE_SCOPE);
+        scriptContext.setAttribute("input", input[0], ScriptContext.ENGINE_SCOPE);
+    }
+    
     /**
      * Factory to create {@link ScriptedContextLookupFunction} for {@link ProfileRequestContext}s from a
      * {@link Resource}.
@@ -178,7 +124,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(
+    @Nonnull static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource) throws ScriptException,
             IOException {
         return resourceScript(engineName, resource, null);
@@ -195,7 +141,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(
+    @Nonnull static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource,
             @Nullable final Class outputType) throws ScriptException, IOException {
         try (InputStream is = resource.getInputStream()) {
@@ -213,7 +159,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(final Resource resource)
+    @Nonnull static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(final Resource resource)
             throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource, null);
     }
@@ -228,7 +174,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(final Resource resource,
+    @Nonnull static ScriptedContextLookupFunction<ProfileRequestContext> resourceScript(final Resource resource,
             @Nullable final Class outputType) throws ScriptException, IOException {
         return resourceScript(DEFAULT_ENGINE, resource, outputType);
     }
@@ -241,7 +187,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @return the function
      * @throws ScriptException if the compile fails
      */
-    static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
+    @Nonnull static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
@@ -257,7 +203,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @return the function
      * @throws ScriptException if the compile fails
      */
-    static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
+    @Nonnull static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource,
             @Nullable final Class outputType) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
@@ -271,7 +217,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @return the function
      * @throws ScriptException if the compile fails
      */
-    static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
+    @Nonnull static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedContextLookupFunction(ProfileRequestContext.class, script, "Inline");
@@ -285,7 +231,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @return the function
      * @throws ScriptException if the compile fails
      */
-    static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
+    @Nonnull static ScriptedContextLookupFunction<ProfileRequestContext> inlineScript(
             @Nonnull @NotEmpty final String scriptSource, @Nullable final Class outputType) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedContextLookupFunction(ProfileRequestContext.class, script, "Inline", outputType);
@@ -300,7 +246,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(
+    @Nonnull static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource) throws ScriptException,
             IOException {
         return resourceMessageContextScript(engineName, resource, null);
@@ -316,7 +262,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(
+    @Nonnull static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource,
             @Nullable final Class outputType) throws ScriptException, IOException {
         try (InputStream is = resource.getInputStream()) {
@@ -334,8 +280,8 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedContextLookupFunction resourceMessageContextScript(final Resource resource) throws ScriptException,
-            IOException {
+    @Nonnull static ScriptedContextLookupFunction resourceMessageContextScript(final Resource resource)
+            throws ScriptException, IOException {
         return resourceMessageContextScript(DEFAULT_ENGINE, resource, null);
     }
 
@@ -348,7 +294,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(final Resource resource,
+    @Nonnull static ScriptedContextLookupFunction<MessageContext> resourceMessageContextScript(final Resource resource,
             @Nullable final Class outputType) throws ScriptException, IOException {
         return resourceMessageContextScript(DEFAULT_ENGINE, resource, outputType);
     }
@@ -361,7 +307,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @return the function
      * @throws ScriptException if the compile fails
      */
-    static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
+    @Nonnull static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource)
             throws ScriptException {
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
@@ -377,7 +323,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @return the function
      * @throws ScriptException if the compile fails
      */
-    static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
+    @Nonnull static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
             @Nonnull @NotEmpty final String engineName, @Nonnull @NotEmpty final String scriptSource,
             @Nullable final Class outputType) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
@@ -391,7 +337,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @return the function
      * @throws ScriptException if the compile fails
      */
-    static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
+    @Nonnull static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedContextLookupFunction(MessageContext.class, script, "Inline");
@@ -405,7 +351,7 @@ public class ScriptedContextLookupFunction<T extends BaseContext> implements Con
      * @return the function
      * @throws ScriptException if the compile fails
      */
-    static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
+    @Nonnull static ScriptedContextLookupFunction<MessageContext> inlineMessageContextScript(
             @Nonnull @NotEmpty final String scriptSource, @Nullable final Class outputType) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
         return new ScriptedContextLookupFunction(MessageContext.class, script, "Inline", outputType);
