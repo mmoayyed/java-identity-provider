@@ -24,10 +24,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
+import net.shibboleth.utilities.java.support.component.ComponentSupport;
+import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.profile.action.ActionSupport;
@@ -55,34 +56,28 @@ public class ScriptedAction extends AbstractProfileAction {
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedAction.class);
 
-    /** The script we care about. */
-    @Nonnull private final EvaluableScript script;
-
-    /** Debugging info. */
-    @Nullable private final String logPrefix;
-
-    /** The custom object we can inject. */
-    @Nullable private Object customObject;
+    /** Evaluator. */
+    @Nonnull private final ActionScriptEvaluator scriptEvaluator;
 
     /**
      * Constructor.
      * 
-     * @param theScript the script we will evaluate.
-     * @param extraInfo debugging information.
+     * @param theScript the script we will evaluate
+     * @param extraInfo debugging information
+     * 
+     * @deprecated
      */
     public ScriptedAction(@Nonnull final EvaluableScript theScript, @Nullable final String extraInfo) {
-        script = Constraint.isNotNull(theScript, "Supplied script should not be null");
-        logPrefix = "Scripted Action from " + extraInfo + " :";
+        scriptEvaluator = new ActionScriptEvaluator(theScript);
     }
 
     /**
      * Constructor.
      * 
-     * @param theScript the script we will evaluate.
+     * @param theScript the script we will evaluate
      */
     public ScriptedAction(@Nonnull final EvaluableScript theScript) {
-        script = Constraint.isNotNull(theScript, "Supplied script should not be null");
-        logPrefix = "Anonymous Scripted Action :";
+        scriptEvaluator = new ActionScriptEvaluator(theScript);
     }
 
     /**
@@ -91,7 +86,7 @@ public class ScriptedAction extends AbstractProfileAction {
      * @return the custom object
      */
     @Nullable public Object getCustomObject() {
-        return customObject;
+        return scriptEvaluator.getCustomObject();
     }
 
     /**
@@ -99,31 +94,42 @@ public class ScriptedAction extends AbstractProfileAction {
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(final Object object) {
-        customObject = object;
+    @Nullable public void setCustomObject(@Nullable final Object object) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        scriptEvaluator.setCustomObject(object);
+    }
+
+    /**
+     * Set whether to hide exceptions in script execution (default is false).
+     * 
+     * @param flag flag to set
+     * 
+     * @since 3.4.0
+     */
+    public void setHideExceptions(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        scriptEvaluator.setHideExceptions(flag);
+    }
+    
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        scriptEvaluator.setLogPrefix(getLogPrefix());
     }
 
     /** {@inheritDoc} */
     @Override public void doExecute(@Nullable final ProfileRequestContext profileContext) {
-        final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        scriptContext.setAttribute("profileContext", profileContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
 
-        try {
-            final Object result = script.eval(scriptContext);
-            if (null == result) {
-                ActionSupport.buildProceedEvent(profileContext);
-                return;
-            } else if (result instanceof String) {
-                log.debug("{} signaled Event: {}", logPrefix, result);
-                ActionSupport.buildEvent(profileContext, (String) result);
-            } else {
-                log.error("{} returned a {}, not a java.lang.String", logPrefix, result.getClass().toString());
-                ActionSupport.buildEvent(profileContext, EventIds.INVALID_PROFILE_CTX);
-            }
-        } catch (final ScriptException e) {
-            log.error("{} Error while executing Action script", logPrefix, e);
-            ActionSupport.buildEvent(profileContext, EventIds.INVALID_PROFILE_CTX);
+        final String result = scriptEvaluator.execute(profileContext);
+        if (result == null) {
+            log.debug("{} signaled proceed event", getLogPrefix());
+            ActionSupport.buildProceedEvent(profileContext);
+        } else {
+            log.debug("{} signaled event: {}", getLogPrefix(), result);
+            ActionSupport.buildEvent(profileContext, (String) result);
         }
     }
 
@@ -138,9 +144,9 @@ public class ScriptedAction extends AbstractProfileAction {
      */
     static ScriptedAction resourceScript(@Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource)
             throws ScriptException, IOException {
-        try (InputStream is = resource.getInputStream()) {
+        try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript(engineName, is);
-            return new ScriptedAction(script, resource.getDescription());
+            return new ScriptedAction(script);
         }
     }
 
@@ -167,7 +173,7 @@ public class ScriptedAction extends AbstractProfileAction {
     static ScriptedAction inlineScript(@Nonnull @NotEmpty final String engineName,
             @Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(engineName, scriptSource);
-        return new ScriptedAction(script, "Inline");
+        return new ScriptedAction(script);
     }
 
     /**
@@ -179,7 +185,47 @@ public class ScriptedAction extends AbstractProfileAction {
      */
     static ScriptedAction inlineScript(@Nonnull @NotEmpty final String scriptSource) throws ScriptException {
         final EvaluableScript script = new EvaluableScript(DEFAULT_ENGINE, scriptSource);
-        return new ScriptedAction(script, "Inline");
+        return new ScriptedAction(script);
     }
 
+    /**
+     * Evaluator bound to the Action semantic.
+     */
+    private class ActionScriptEvaluator extends AbstractScriptEvaluator {
+
+        /**
+         * Constructor.
+         * 
+         * @param theScript the script we will evaluate.
+         */
+        public ActionScriptEvaluator(@Nonnull final EvaluableScript theScript) {
+            super(theScript);
+            setOutputType(String.class);
+            setReturnOnError(EventIds.INVALID_PROFILE_CTX);
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public Object getCustomObject() {
+            return super.getCustomObject();
+        }
+        
+        /**
+         * Execution hook for the script.
+         * 
+         * @param profileContext profile request context
+         * 
+         * @return the resulting event
+         */
+        @Nullable public String execute(@Nullable final ProfileRequestContext profileContext) {
+            return (String) evaluate(profileContext);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
+            scriptContext.setAttribute("profileContext", input[0], ScriptContext.ENGINE_SCOPE);
+        }
+    }
+    
 }
