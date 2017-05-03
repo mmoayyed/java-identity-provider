@@ -54,9 +54,10 @@ public class ScriptedPredicate extends AbstractScriptEvaluator implements Predic
      */
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
             @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
-        super(theScript, extraInfo);
+        super(theScript);
         setOutputType(Boolean.class);
         setReturnOnError(false);
+        setLogPrefix("Scripted Predicate from " + extraInfo + ":");
     }
 
     /**
@@ -66,6 +67,7 @@ public class ScriptedPredicate extends AbstractScriptEvaluator implements Predic
      */
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
         super(theScript);
+        setLogPrefix("Anonymous Scripted Predicate:");
         setOutputType(Boolean.class);
         setReturnOnError(false);
     }
