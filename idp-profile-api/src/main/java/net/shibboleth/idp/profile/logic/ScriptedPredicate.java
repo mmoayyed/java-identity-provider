@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.logic;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -24,11 +25,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -41,29 +41,11 @@ import com.google.common.base.Predicate;
 /**
  * A {@link Predicate} which calls out to a supplied script.
  */
-public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
-
-    /** The default language is Javascript. */
-    public static final String DEFAULT_ENGINE = "JavaScript";
-
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(ScriptedPredicate.class);
-
-    /** The script we care about. */
-    @Nonnull private final EvaluableScript script;
-
-    /** Debugging info. */
-    @Nullable private final String logPrefix;
-
-    /** A custom object to inject into the script. */
-    @Nullable private Object customObject;
+public class ScriptedPredicate extends AbstractScriptEvaluator implements Predicate<ProfileRequestContext> {
     
-    /** Whether to raise runtime exceptions if a script fails. */
-    private boolean hideExceptions;
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedPredicate.class);
     
-    /** Value to return from predicate when an error occurs. */
-    private boolean returnOnError;
-
     /**
      * Constructor.
      * 
@@ -72,8 +54,9 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      */
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
             @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
-        script = Constraint.isNotNull(theScript, "Supplied script should not be null");
-        logPrefix = "Scripted Predicate from " + extraInfo + " :";
+        super(theScript, extraInfo);
+        setOutputType(Boolean.class);
+        setReturnOnError(false);
     }
 
     /**
@@ -82,74 +65,33 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @param theScript the script we will evaluate.
      */
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
-        script = Constraint.isNotNull(theScript, "Supplied script should not be null");
-        logPrefix = "Anonymous Scripted Predicate :";
+        super(theScript);
+        setOutputType(Boolean.class);
+        setReturnOnError(false);
     }
-
+    
     /**
-     * Return the custom (externally provided) object.
+     * Set value to return if an error occurs.
      * 
-     * @return the custom object
-     */
-    @Nullable public Object getCustomObject() {
-        return customObject;
-    }
-
-    /**
-     * Set the custom (externally provided) object.
-     * 
-     * @param object the custom object
-     */
-    public void setCustomObject(final Object object) {
-        customObject = object;
-    }
-
-    /**
-     * Set whether to hide exceptions in script execution (default is false).
-     * 
-     * @param flag flag to set
-     */
-    public void setHideExceptions(final boolean flag) {
-        hideExceptions = flag;
-    }
-
-    /**
-     * Set value to return if an error occurs (default is false).
-     * 
-     * @param flag flag to set
+     * @param flag value to return
      */
     public void setReturnOnError(final boolean flag) {
-        returnOnError = flag;
+        setReturnOnError(Boolean.valueOf(flag));
     }
-
+    
     /** {@inheritDoc} */
-    @Override public boolean apply(@Nullable final ProfileRequestContext profileContext) {
-        final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        scriptContext.setAttribute("profileContext", profileContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
-
-        try {
-            final Object result = script.eval(scriptContext);
-            if (null == result) {
-                log.error("{} No result returned", logPrefix);
-                return returnOnError;
-            }
-
-            if (result instanceof Boolean) {
-                log.debug("{} returned {}", logPrefix, result);
-                return ((Boolean) result).booleanValue();
-            } else {
-                log.error("{} returned a {}, not a java.lang.Boolean", logPrefix, result.getClass().toString());
-                return returnOnError;
-            }
-        } catch (final ScriptException e) {
-            if (hideExceptions) {
-                return returnOnError;
-            }
-            throw new RuntimeException(e);
-        }
+    public boolean apply(@Nullable final ProfileRequestContext input) {
+        
+        final Object result = evaluate(input);
+        return (boolean) (result != null ? result : getReturnOnError());
     }
-
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
+        scriptContext.setAttribute("profileContext", input[0], ScriptContext.ENGINE_SCOPE);
+    }
+    
     /**
      * Factory to create {@link ScriptedPredicate} from a {@link Resource}.
      * 
@@ -159,10 +101,9 @@ public class ScriptedPredicate implements Predicate<ProfileRequestContext> {
      * @throws ScriptException if the compile fails
      * @throws IOException if the file doesn't exist.
      */
-    static ScriptedPredicate
-            resourceScript(@Nonnull @NotEmpty final String engineName, @Nonnull final Resource resource)
-                    throws ScriptException, IOException {
-        try (InputStream is = resource.getInputStream()) {
+    static ScriptedPredicate resourceScript(@Nonnull @NotEmpty final String engineName,
+            @Nonnull final Resource resource) throws ScriptException, IOException {
+        try (final InputStream is = resource.getInputStream()) {
             final EvaluableScript script = new EvaluableScript(engineName, is);
             return new ScriptedPredicate(script, resource.getDescription());
         }
