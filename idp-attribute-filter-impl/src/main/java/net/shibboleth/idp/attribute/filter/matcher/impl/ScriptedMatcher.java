@@ -26,8 +26,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -44,6 +42,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -68,20 +67,20 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedMatcher.class);
 
-    /** Script to be evaluated. */
+    /** The script to evaluate. */
     @NonnullAfterInit private EvaluableScript script;
 
+    /** Evaluator. */
+    @NonnullAfterInit private MatcherScriptEvaluator scriptEvaluator;
+
+    /** Custom object for script. */
+    @Nullable private Object customObject;
+    
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
-    @Nonnull private Function<AttributeFilterContext, ProfileRequestContext> prcLookupStrategy;
+    @Nonnull private Function<AttributeFilterContext,ProfileRequestContext> prcLookupStrategy;
 
     /** Strategy used to locate the {@link SubjectContext} to use. */
-    @Nonnull private Function<ProfileRequestContext, SubjectContext> scLookupStrategy;
-
-    /** Log prefix. */
-    private String logPrefix;
-
-    /** The custom object we inject into all scripts. */
-    @Nullable private Object customObject;
+    @Nonnull private Function<ProfileRequestContext,SubjectContext> scLookupStrategy;
 
     /** Constructor. */
     public ScriptedMatcher() {
@@ -106,7 +105,9 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(final Object object) {
+    public void setCustomObject(@Nullable final Object object) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         customObject = object;
     }
 
@@ -115,7 +116,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
      * 
      * @return the script to be evaluated
      */
-    @Nonnull public EvaluableScript getScript() {
+    @NonnullAfterInit public EvaluableScript getScript() {
         return script;
     }
 
@@ -127,7 +128,7 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     public void setScript(@Nonnull final EvaluableScript matcherScript) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
 
-        script = Constraint.isNotNull(matcherScript, "Attribute value matching script can not be null");
+        script = Constraint.isNotNull(matcherScript, "Attribute value matching script cannot be null");
     }
 
     /**
@@ -158,7 +159,21 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
         scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
 
-
+    /** {@inheritDoc} */
+    @Override protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        if (null == script) {
+            throw new ComponentInitializationException("No script has been provided");
+        }
+        
+        scriptEvaluator = new MatcherScriptEvaluator(script);
+        scriptEvaluator.setCustomObject(customObject);
+        
+        final StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
+        scriptEvaluator.setLogPrefix(builder.toString());
+    }
+    
     /**
      * Perform the AttributeValueMatching.
      * <p>
@@ -174,69 +189,13 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
      */
     @Override @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> getMatchingValues(
             @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
-        Constraint.isNotNull(attribute, "Attribute to be filtered can not be null");
-        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
+        Constraint.isNotNull(attribute, "Attribute to be filtered cannot be null");
+        Constraint.isNotNull(filterContext, "AttributeFilterContext cannot be null");
+        
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final EvaluableScript currentScript = script;
-        final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
-        final ProfileRequestContext prc = prcLookupStrategy.apply(filterContext);
-        scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("attribute", attribute, ScriptContext.ENGINE_SCOPE);
-
-        final SubjectContext sc;
-        if (null == prc) {
-            log.error("{} Could not locate ProfileRequestContext", getLogPrefix());
-            sc = null;
-        }  else {
-            sc = scLookupStrategy.apply(prc);            
-        }
         
-        if (null == sc) {
-            log.warn("{} Could not locate SubjectContext", getLogPrefix());
-        } else {
-            final List<Subject> subjects = sc.getSubjects();
-            if (null == subjects) {
-                log.warn("{} Could not locate Subjects", getLogPrefix());
-            } else {
-                scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]), 
-                        ScriptContext.ENGINE_SCOPE);
-            }
-        }
-
-        try {
-            final Object result = currentScript.eval(scriptContext);
-            if (null == result) {
-                log.error("{} Matcher script did not return a result.", getLogPrefix());
-                return null;
-            }
-
-            if (result instanceof Set) {
-                final HashSet<IdPAttributeValue<?>> returnValues = new HashSet<>(attribute.getValues());
-                returnValues.retainAll((Set) result);
-                return Collections.unmodifiableSet(returnValues);
-            } else {
-                log.error("{} Matcher script did not return a Set.", getLogPrefix());
-                return null;
-            }
-        } catch (final ScriptException e) {
-            log.error("{} Error while executing value matching script", getLogPrefix(), e);
-            return null;
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override protected void doInitialize() throws ComponentInitializationException {
-        super.doInitialize();
-        // Clear name cache now that the name is definitive
-        logPrefix = null;
-
-        if (null == script) {
-            throw new ComponentInitializationException("No script has been provided");
-        }
+        return scriptEvaluator.execute(attribute, filterContext);
     }
 
     /** {@inheritDoc} */
@@ -269,20 +228,81 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
     }
 
     /**
-     * return a string which is to be prepended to all log messages.
-     * 
-     * @return "Scripted Attribute Filter '<filterID>' :"
+     * Evaluator bound to the Matcher semantic.
      */
-    protected String getLogPrefix() {
-        // local cache of cached entry to allow unsynchronised clearing.
-        String prefix = logPrefix;
-        if (null == prefix) {
-            final StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
-            prefix = builder.toString();
-            if (null == logPrefix) {
-                logPrefix = prefix;
+    private class MatcherScriptEvaluator extends AbstractScriptEvaluator {
+
+        /**
+         * Constructor.
+         * 
+         * @param theScript the script we will evaluate.
+         */
+        public MatcherScriptEvaluator(@Nonnull final EvaluableScript theScript) {
+            super(theScript);
+            // Guarantee result is a Set or null.
+            setOutputType(Set.class);
+            // Turn ScriptException result into default "error" result, which is left at null.
+            setHideExceptions(true);
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public Object getCustomObject() {
+            return super.getCustomObject();
+        }
+
+        /**
+         * Execution hook.
+         * 
+         * @param attribute attribute to be filtered
+         * @param filterContext filter context
+         * 
+         * @return script result
+         */
+        @Nullable @NonnullElements @Unmodifiable public Set<IdPAttributeValue<?>> execute(
+                @Nonnull final IdPAttribute attribute, @Nonnull final AttributeFilterContext filterContext) {
+            final Object result = evaluate(attribute, filterContext);
+            if (null == result) {
+                log.error("{} Matcher script did not return a result", getLogPrefix());
+                return null;
+            }
+
+            final HashSet<IdPAttributeValue<?>> returnValues = new HashSet<>(attribute.getValues());
+            returnValues.retainAll((Set) result);
+            return Collections.unmodifiableSet(returnValues);
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
+
+            scriptContext.setAttribute("attribute", input[0], ScriptContext.ENGINE_SCOPE);
+            scriptContext.setAttribute("filterContext", input[1], ScriptContext.ENGINE_SCOPE);
+            scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
+            
+            final ProfileRequestContext prc = prcLookupStrategy.apply((AttributeFilterContext) input[1]);
+            scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
+            
+            final SubjectContext sc;
+            if (null == prc) {
+                log.error("{} Could not locate ProfileRequestContext", getLogPrefix());
+                sc = null;
+            }  else {
+                sc = scLookupStrategy.apply(prc);
+            }
+            
+            if (null == sc) {
+                log.warn("{} Could not locate SubjectContext", getLogPrefix());
+            } else {
+                final List<Subject> subjects = sc.getSubjects();
+                if (null == subjects) {
+                    log.warn("{} Could not locate Subjects", getLogPrefix());
+                } else {
+                    scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]), 
+                            ScriptContext.ENGINE_SCOPE);
+                }
             }
         }
-        return prefix;
     }
+    
 }

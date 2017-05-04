@@ -193,8 +193,8 @@ public class ScriptedMatcherTest extends AbstractMatcherPolicyRuleTest {
         final ScriptedMatcher matcher = newScriptedMatcher(new EvaluableScript("custom;"));
         final Set<IdPAttributeValue> custom = Collections.singleton((IdPAttributeValue)attribute.getValues().get(0));
         matcher.setId("Test");
-        matcher.initialize();
         matcher.setCustomObject(custom);
+        matcher.initialize();
 
         final Set<IdPAttributeValue<?>> result = matcher.getMatchingValues(attribute, filterContext);
         Assert.assertNotNull(result);

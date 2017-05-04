@@ -23,19 +23,19 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
 import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
 import net.shibboleth.idp.authn.context.SubjectContext;
 import net.shibboleth.idp.profile.context.RelyingPartyContext;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.component.UnmodifiableComponent;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -59,19 +59,19 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
         UnmodifiableComponent {
 
     /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(ScriptedPolicyRule.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedPolicyRule.class);
 
     /** Script to be evaluated. */
-    @Nonnull private EvaluableScript script;
+    @NonnullAfterInit private EvaluableScript script;
 
-    /** Log prefix. */
-    private String logPrefix;
+    /** Evaluator. */
+    @NonnullAfterInit private PolicyRuleScriptEvaluator scriptEvaluator;
 
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
-    @Nonnull private Function<AttributeFilterContext, ProfileRequestContext> prcLookupStrategy;
+    @Nonnull private Function<AttributeFilterContext,ProfileRequestContext> prcLookupStrategy;
 
     /** Strategy used to locate the {@link SubjectContext} to use. */
-    @Nonnull private Function<ProfileRequestContext, SubjectContext> scLookupStrategy;
+    @Nonnull private Function<ProfileRequestContext,SubjectContext> scLookupStrategy;
 
     /** The custom object we inject into all scripts. */
     @Nullable private Object customObject;
@@ -99,7 +99,9 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      * 
      * @param object the custom object
      */
-    @Nullable public void setCustomObject(final Object object) {
+    public void setCustomObject(@Nullable final Object object) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
         customObject = object;
     }
 
@@ -108,7 +110,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      * 
      * @return the script to be evaluated
      */
-    @Nonnull public EvaluableScript getScript() {
+    @NonnullAfterInit public EvaluableScript getScript() {
         return script;
     }
 
@@ -162,71 +164,30 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      * </p>
      * {@inheritDoc}
      */
-    @Override public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
-        Constraint.isNotNull(filterContext, "Attribute filter context can not be null");
+    @Override
+    @Nonnull public Tristate matches(@Nonnull final AttributeFilterContext filterContext) {
+        Constraint.isNotNull(filterContext, "Attribute filter context cannot be null");
 
-        final EvaluableScript currentScript = script;
         ComponentSupport.ifNotInitializedThrowUninitializedComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
-
-        final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        scriptContext.setAttribute("filterContext", filterContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
-        final ProfileRequestContext prc = prcLookupStrategy.apply(filterContext);
-        final SubjectContext sc;
-        if (null == prc) {
-            log.error("{} Could not locate ProfileRequestContext", getLogPrefix());
-            sc = null;
-        } else {
-            sc = scLookupStrategy.apply(prc);
-        }
-
-        scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
-        if (null == sc) {
-            log.warn("{} Could not locate SubjectContext", getLogPrefix());
-        } else {
-            final List<Subject> subjects = sc.getSubjects();
-            if (null == subjects) {
-                log.warn("{} Could not locate Subjects", getLogPrefix());
-            } else {
-                scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]),
-                        ScriptContext.ENGINE_SCOPE);
-            }
-        }
-
-        try {
-            final Object result = currentScript.eval(scriptContext);
-            if (null == result) {
-                log.error("{} Matcher script did not return a result", getLogPrefix());
-                return Tristate.FAIL;
-            }
-
-            if (result instanceof Boolean) {
-                if (((Boolean) result).booleanValue()) {
-                    return Tristate.TRUE;
-                }
-                return Tristate.FALSE;
-            } else {
-                log.error("{} Matcher script returned a {}, not a java.lang.Boolean", getLogPrefix(), result.getClass()
-                        .toString());
-                return Tristate.FAIL;
-            }
-        } catch (final ScriptException e) {
-            log.error("{} Error while executing value matching script", getLogPrefix(), e);
-            return Tristate.FAIL;
-        }
+        
+        return scriptEvaluator.execute(filterContext);
     }
 
     /** {@inheritDoc} */
     @Override protected void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
-        // clear cached name
-        logPrefix = null;
 
         if (null == script) {
             // never met so long as we have the assert in the constructor
             throw new ComponentInitializationException("No script has been provided");
         }
+
+        scriptEvaluator = new PolicyRuleScriptEvaluator(script);
+        scriptEvaluator.setCustomObject(customObject);
+        
+        final StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
+        scriptEvaluator.setLogPrefix(builder.toString());
     }
 
     /** {@inheritDoc} */
@@ -259,20 +220,84 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     }
 
     /**
-     * return a string which is to be prepended to all log messages.
-     * 
-     * @return "Scripted Attribute Filter '<filterID>' :"
+     * Evaluator bound to the Matcher semantic.
      */
-    protected String getLogPrefix() {
-        // local cache of cached entry to allow unsynchronised clearing.
-        String prefix = logPrefix;
-        if (null == prefix) {
-            final StringBuilder builder = new StringBuilder("Scripted Attribute Filter '").append(getId()).append("':");
-            prefix = builder.toString();
-            if (null == logPrefix) {
-                logPrefix = prefix;
+    private class PolicyRuleScriptEvaluator extends AbstractScriptEvaluator {
+
+        /**
+         * Constructor.
+         * 
+         * @param theScript the script we will evaluate.
+         */
+        public PolicyRuleScriptEvaluator(@Nonnull final EvaluableScript theScript) {
+            super(theScript);
+            // Guarantee result is a Boolean.
+            setOutputType(Boolean.class);
+            // Return a FAIL result on errors.
+            setReturnOnError(Tristate.FAIL);
+            // Turn ScriptException into default error result (FAIL).
+            setHideExceptions(true);
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        @Nullable public Object getCustomObject() {
+            return super.getCustomObject();
+        }
+
+        /**
+         * Execution hook.
+         * 
+         * @param filterContext filter context
+         * 
+         * @return script result
+         */
+        @Nonnull public Tristate execute(@Nonnull final AttributeFilterContext filterContext) {
+
+            final Object result = evaluate(filterContext);
+            if (null == result) {
+                log.error("{} Matcher script did not return a result", getLogPrefix());
+                return Tristate.FAIL;
+            }
+
+            // Non-null result can only be a Boolean or Tristate.
+            if (result instanceof Boolean) {
+                return ((Boolean) result).booleanValue() ? Tristate.TRUE : Tristate.FALSE;
+            } else {
+                return (Tristate) result;
             }
         }
-        return prefix;
+
+        /** {@inheritDoc} */
+        @Override
+        protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
+
+            scriptContext.setAttribute("filterContext", input[0], ScriptContext.ENGINE_SCOPE);
+            scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
+            
+            final ProfileRequestContext prc = prcLookupStrategy.apply((AttributeFilterContext) input[0]);
+            scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
+
+            final SubjectContext sc;
+            if (null == prc) {
+                log.error("{} Could not locate ProfileRequestContext", getLogPrefix());
+                sc = null;
+            } else {
+                sc = scLookupStrategy.apply(prc);
+            }
+
+            if (null == sc) {
+                log.warn("{} Could not locate SubjectContext", getLogPrefix());
+            } else {
+                final List<Subject> subjects = sc.getSubjects();
+                if (null == subjects) {
+                    log.warn("{} Could not locate Subjects", getLogPrefix());
+                } else {
+                    scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]),
+                            ScriptContext.ENGINE_SCOPE);
+                }
+            }
+        }
     }
+
 }
