@@ -64,6 +64,21 @@ public class ScriptedDataConnectorTest {
         return StringSupport.inputStreamToString(getClass().getResourceAsStream(name), null);
     }
 
+    @Test(expectedExceptions=ResolutionException.class)
+    public void error() throws ComponentInitializationException, ScriptException, IOException, ResolutionException {
+        final ScriptedDataConnector connector = new ScriptedDataConnector();
+        connector.setId("Scripted");
+        final EvaluableScript definitionScript = new EvaluableScript("javascript", getScript("error.js"));
+        connector.setScript(definitionScript);
+
+        connector.initialize();
+
+        final AttributeResolutionContext context = new ProfileRequestContext<>().getSubcontext(AttributeResolutionContext.class,  true);
+        context.getSubcontext(AttributeResolverWorkContext.class, true);
+        
+        connector.resolve(context);
+    }
+    
     @Test public void simple() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
 
         final ScriptedDataConnector connector = new ScriptedDataConnector();

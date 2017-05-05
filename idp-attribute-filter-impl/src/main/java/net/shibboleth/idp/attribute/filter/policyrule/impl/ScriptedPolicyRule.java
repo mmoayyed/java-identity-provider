@@ -101,6 +101,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      */
     public void setCustomObject(@Nullable final Object object) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
         
         customObject = object;
     }
@@ -121,6 +122,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
      */
     public void setScript(@Nonnull final EvaluableScript matcherScript) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         script = Constraint.isNotNull(matcherScript, "Attribute value matching script can not be null");
     }
@@ -135,6 +137,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     public void setProfileRequestContextLookupStrategy(
             @Nonnull final Function<AttributeFilterContext, ProfileRequestContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
     }
@@ -149,6 +152,7 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
     public void
             setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
@@ -239,12 +243,6 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
             setHideExceptions(true);
         }
         
-        /** {@inheritDoc} */
-        @Override
-        @Nullable public Object getCustomObject() {
-            return super.getCustomObject();
-        }
-
         /**
          * Execution hook.
          * 

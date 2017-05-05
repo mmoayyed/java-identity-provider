@@ -1,0 +1,1 @@
+connectorResult.add(custom);

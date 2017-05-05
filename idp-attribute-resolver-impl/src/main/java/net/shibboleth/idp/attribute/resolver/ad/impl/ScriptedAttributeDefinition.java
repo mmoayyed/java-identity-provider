@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.script.ScriptContext;
 import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 import javax.security.auth.Subject;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -41,6 +40,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterI
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -82,6 +82,9 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
 
     /** Script to be evaluated. */
     @NonnullAfterInit private EvaluableScript script;
+    
+    /** Evaluator. */
+    @NonnullAfterInit private AttributeDefinitionScriptEvaluator scriptEvaluator;
 
     /** Strategy used to locate the {@link ProfileRequestContext} to use. */
     @Nonnull private Function<AttributeResolutionContext, ProfileRequestContext> prcLookupStrategy;
@@ -96,7 +99,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     public ScriptedAttributeDefinition() {
         // Defaults to ProfileRequestContext -> AttributeContext.
         prcLookupStrategy = new ParentContextLookup<>();
-        scLookupStrategy = new ChildContextLookup<ProfileRequestContext, SubjectContext>(SubjectContext.class);
+        scLookupStrategy = new ChildContextLookup<>(SubjectContext.class);
     }
 
     /**
@@ -114,6 +117,9 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
      * @param object the custom object
      */
     @Nullable public void setCustomObject(final Object object) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
         customObject = object;
     }
 
@@ -148,6 +154,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     public void setProfileRequestContextLookupStrategy(
             @Nonnull final Function<AttributeResolutionContext, ProfileRequestContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         prcLookupStrategy = Constraint.isNotNull(strategy, "ProfileRequestContext lookup strategy cannot be null");
     }
@@ -162,6 +169,7 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
     public void
             setSubjectContextLookupStrategy(@Nonnull final Function<ProfileRequestContext, SubjectContext> strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
         scLookupStrategy = Constraint.isNotNull(strategy, "SubjectContext lookup strategy cannot be null");
     }
@@ -173,6 +181,10 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         if (null == script) {
             throw new ComponentInitializationException(getLogPrefix() + " no script was configured");
         }
+        
+        scriptEvaluator = new AttributeDefinitionScriptEvaluator(script);
+        scriptEvaluator.setCustomObject(customObject);
+        scriptEvaluator.setLogPrefix(getLogPrefix());
     }
 
     /** {@inheritDoc} */
@@ -182,97 +194,123 @@ public class ScriptedAttributeDefinition extends AbstractAttributeDefinition {
         Constraint.isNotNull(resolutionContext, "AttributeResolutionContext cannot be null");
         Constraint.isNotNull(workContext, "AttributeResolverWorkContext cannot be null");
 
-        final ScriptContext context = getScriptContext(resolutionContext, workContext);
-
-        try {
-            script.eval(context);
-        } catch (final ScriptException e) {
-            throw new ResolutionException(getLogPrefix() + " unable to execute script", e);
-        }
-        final Object result = context.getAttribute(getId());
-
-        if (null == result) {
-            log.info("{} no value returned", getLogPrefix());
-            return null;
-        }
-
-        if (result instanceof ScriptedIdPAttributeImpl) {
-
-            final ScriptedIdPAttributeImpl scriptedAttribute = (ScriptedIdPAttributeImpl) result;
-            return scriptedAttribute.getResultingAttribute();
-
-        } else {
-
-            throw new ResolutionException(getLogPrefix() + " returned variable was of wrong type ("
-                    + result.getClass().toString() + ")");
-        }
-
+        return scriptEvaluator.execute(resolutionContext, workContext);
     }
 
     /**
-     * Constructs the {@link ScriptContext} used when evaluating the script.
-     * 
-     * @param resolutionContext current resolution context
-     * @param workContext current work context
-     * 
-     * @return constructed script context
-     * @throws ResolutionException thrown if dependent data connectors or attribute definitions can not be resolved
+     * Evaluator bound to the AttributeDefinition semantic.
      */
-    @SuppressWarnings("deprecation") @Nonnull private ScriptContext getScriptContext(
-            @Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+    private class AttributeDefinitionScriptEvaluator extends AbstractScriptEvaluator {
 
-        final SimpleScriptContext scriptContext = new SimpleScriptContext();
-        final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
-                PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
-
-        if (dependencyAttributes.containsKey(getId())) {
-            log.debug("{} to-be-populated attribute is a dependency.  Not created", getLogPrefix());
-        } else {
-            log.debug("{} adding to-be-populated attribute to script context", getLogPrefix());
-            final IdPAttribute newAttribute = new IdPAttribute(getId());
-            scriptContext.setAttribute(getId(), new ScriptedIdPAttributeImpl(newAttribute, getLogPrefix()),
-                    ScriptContext.ENGINE_SCOPE);
+        /**
+         * Constructor.
+         * 
+         * @param theScript the script we will evaluate.
+         */
+        public AttributeDefinitionScriptEvaluator(@Nonnull final EvaluableScript theScript) {
+            super(theScript);
         }
 
-        log.debug("{} adding contexts to script context", getLogPrefix());
-        scriptContext.setAttribute("resolutionContext", resolutionContext, ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("workContext", new DelegatedWorkContext(workContext, getLogPrefix()),
-                ScriptContext.ENGINE_SCOPE);
-        scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
-        final ProfileRequestContext prc = prcLookupStrategy.apply(resolutionContext);
-        if (null == prc) {
-            log.error("{} ProfileRequestContext could not be located", getLogPrefix());
-        }
-        scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
-
-        final SubjectContext sc = scLookupStrategy.apply(prc);
-        if (null == sc) {
-            log.debug("{} Could not locate SubjectContext", getLogPrefix());
-        } else {
-            final List<Subject> subjects = sc.getSubjects();
-            if (null == subjects) {
-                log.debug("{} Could not locate Subjects", getLogPrefix());
-            } else {
-                scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]),
-                        ScriptContext.ENGINE_SCOPE);
+        /**
+         * Execution hook.
+         * 
+         * @param resolutionContext resolution context
+         * @param workContext work context
+         * 
+         * @return script result
+         * @throws ResolutionException if the script fails
+         */
+        @Nullable protected IdPAttribute execute(@Nonnull final AttributeResolutionContext resolutionContext,
+                @Nonnull final AttributeResolverWorkContext workContext) throws ResolutionException {
+            try {
+                return (IdPAttribute) evaluate(resolutionContext, workContext);
+            } catch (final RuntimeException e) {
+                throw new ResolutionException(getLogPrefix() + "Script did not run successfully", e);
             }
         }
 
-        log.debug("{} adding emulated V2 request context to script context", getLogPrefix());
-        scriptContext.setAttribute("requestContext", new V2SAMLProfileRequestContext(resolutionContext, getId()),
-                ScriptContext.ENGINE_SCOPE);
+        /** {@inheritDoc} */
+        @Override
+        protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
 
-        for (final Entry<String, List<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
-            log.debug("{} adding dependent attribute '{}' with the following values to the script context: {}",
-                    new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
-            final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());
-            pseudoAttribute.setValues(dependencyAttribute.getValue());
+            final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes =
+                    PluginDependencySupport.getAllAttributeValues(
+                            (AttributeResolverWorkContext) input[1], getDependencies());
 
-            scriptContext.setAttribute(dependencyAttribute.getKey(), new ScriptedIdPAttributeImpl(pseudoAttribute,
-                    getLogPrefix()), ScriptContext.ENGINE_SCOPE);
+            if (dependencyAttributes.containsKey(getId())) {
+                log.debug("{} The attribute ID to be populated is a dependency, not created", getLogPrefix());
+            } else {
+                log.debug("{} Adding to-be-populated attribute to script context", getLogPrefix());
+                final IdPAttribute newAttribute = new IdPAttribute(getId());
+                scriptContext.setAttribute(getId(), new ScriptedIdPAttributeImpl(newAttribute, getLogPrefix()),
+                        ScriptContext.ENGINE_SCOPE);
+            }
+
+            log.debug("{} Adding contexts to script context", getLogPrefix());
+            scriptContext.setAttribute("resolutionContext", input[0], ScriptContext.ENGINE_SCOPE);
+            scriptContext.setAttribute("workContext",
+                    new DelegatedWorkContext((AttributeResolverWorkContext) input[1], getLogPrefix()),
+                    ScriptContext.ENGINE_SCOPE);
+            scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
+            
+            final ProfileRequestContext prc = prcLookupStrategy.apply((AttributeResolutionContext) input[0]);
+            if (null == prc) {
+                log.error("{} ProfileRequestContext could not be located", getLogPrefix());
+            }
+            scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
+
+            final SubjectContext sc = scLookupStrategy.apply(prc);
+            if (null == sc) {
+                log.debug("{} Could not locate SubjectContext", getLogPrefix());
+            } else {
+                final List<Subject> subjects = sc.getSubjects();
+                if (null == subjects) {
+                    log.debug("{} Could not locate Subjects", getLogPrefix());
+                } else {
+                    scriptContext.setAttribute("subjects", subjects.toArray(new Subject[subjects.size()]),
+                            ScriptContext.ENGINE_SCOPE);
+                }
+            }
+
+            log.debug("{} Adding emulated V2 request context to script context", getLogPrefix());
+            scriptContext.setAttribute("requestContext",
+                    new V2SAMLProfileRequestContext((AttributeResolutionContext) input[0], getId()),
+                    ScriptContext.ENGINE_SCOPE);
+
+            for (final Entry<String,List<IdPAttributeValue<?>>> dependencyAttribute : dependencyAttributes.entrySet()) {
+                log.trace("{} Adding dependent attribute '{}' with the following values to the script context: {}",
+                        new Object[] {getLogPrefix(), dependencyAttribute.getKey(), dependencyAttribute.getValue(),});
+                final IdPAttribute pseudoAttribute = new IdPAttribute(dependencyAttribute.getKey());
+                pseudoAttribute.setValues(dependencyAttribute.getValue());
+
+                scriptContext.setAttribute(dependencyAttribute.getKey(),
+                        new ScriptedIdPAttributeImpl(pseudoAttribute, getLogPrefix()), ScriptContext.ENGINE_SCOPE);
+            }
         }
 
-        return scriptContext;
+        /** {@inheritDoc} */
+        @Override
+        @Nullable protected Object finalizeContext(@Nonnull final ScriptContext scriptContext,
+                @Nullable final Object scriptResult) throws ScriptException {
+            
+            final Object result = scriptContext.getAttribute(getId());
+            if (null == result) {
+                log.info("{} No value returned", getLogPrefix());
+                return null;
+            }
+
+            if (result instanceof ScriptedIdPAttributeImpl) {
+                final ScriptedIdPAttributeImpl scriptedAttribute = (ScriptedIdPAttributeImpl) result;
+                try {
+                    return scriptedAttribute.getResultingAttribute();
+                } catch (final ResolutionException e) {
+                    throw new ScriptException(e);
+                }
+            } else {
+                throw new ScriptException(getLogPrefix() + " returned variable was of wrong type ("
+                        + result.getClass().toString() + ")");
+            }
+        }
     }
+
 }
