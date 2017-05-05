@@ -276,7 +276,6 @@ public class ScriptedMatcher extends AbstractIdentifiableInitializableComponent 
 
             scriptContext.setAttribute("attribute", input[0], ScriptContext.ENGINE_SCOPE);
             scriptContext.setAttribute("filterContext", input[1], ScriptContext.ENGINE_SCOPE);
-            scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
             
             final ProfileRequestContext prc = prcLookupStrategy.apply((AttributeFilterContext) input[1]);
             scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);

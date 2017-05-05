@@ -271,7 +271,6 @@ public class ScriptedPolicyRule extends AbstractIdentifiableInitializableCompone
         protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
 
             scriptContext.setAttribute("filterContext", input[0], ScriptContext.ENGINE_SCOPE);
-            scriptContext.setAttribute("custom", getCustomObject(), ScriptContext.ENGINE_SCOPE);
             
             final ProfileRequestContext prc = prcLookupStrategy.apply((AttributeFilterContext) input[0]);
             scriptContext.setAttribute("profileContext", prc, ScriptContext.ENGINE_SCOPE);
