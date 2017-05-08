@@ -28,7 +28,6 @@ import javax.script.ScriptException;
 
 import net.shibboleth.utilities.java.support.annotation.ParameterName;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
-import net.shibboleth.utilities.java.support.scripting.AbstractScriptEvaluator;
 import net.shibboleth.utilities.java.support.scripting.EvaluableScript;
 
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -41,7 +40,8 @@ import com.google.common.base.Predicate;
 /**
  * A {@link Predicate} which calls out to a supplied script.
  */
-public class ScriptedPredicate extends AbstractScriptEvaluator implements Predicate<ProfileRequestContext> {
+public class ScriptedPredicate
+        extends net.shibboleth.utilities.java.support.logic.ScriptedPredicate<ProfileRequestContext> {
     
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(ScriptedPredicate.class);
@@ -54,10 +54,7 @@ public class ScriptedPredicate extends AbstractScriptEvaluator implements Predic
      */
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript,
             @Nullable @NotEmpty @ParameterName(name="extraInfo") final String extraInfo) {
-        super(theScript);
-        setOutputType(Boolean.class);
-        setReturnOnError(false);
-        setLogPrefix("Scripted Predicate from " + extraInfo + ":");
+        super(theScript, extraInfo);
     }
 
     /**
@@ -67,30 +64,12 @@ public class ScriptedPredicate extends AbstractScriptEvaluator implements Predic
      */
     public ScriptedPredicate(@Nonnull @NotEmpty @ParameterName(name="theScript") final EvaluableScript theScript) {
         super(theScript);
-        setLogPrefix("Anonymous Scripted Predicate:");
-        setOutputType(Boolean.class);
-        setReturnOnError(false);
-    }
-    
-    /**
-     * Set value to return if an error occurs.
-     * 
-     * @param flag value to return
-     */
-    public void setReturnOnError(final boolean flag) {
-        setReturnOnError(Boolean.valueOf(flag));
-    }
-    
-    /** {@inheritDoc} */
-    public boolean apply(@Nullable final ProfileRequestContext input) {
-        
-        final Object result = evaluate(input);
-        return (boolean) (result != null ? result : getReturnOnError());
     }
     
     /** {@inheritDoc} */
     @Override
     protected void prepareContext(@Nonnull final ScriptContext scriptContext, @Nullable final Object... input) {
+        super.prepareContext(scriptContext, input);
         scriptContext.setAttribute("profileContext", input[0], ScriptContext.ENGINE_SCOPE);
     }
     
