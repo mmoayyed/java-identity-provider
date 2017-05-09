@@ -24,6 +24,8 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
+import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.common.profile.logic.EntityIdPredicate;
@@ -83,6 +85,12 @@ public class NameIDFormatFilterParser extends AbstractSingleBeanDefinitionParser
                 final ManagedList<String> forRule = new ManagedList(accumulator.size());
                 forRule.addAll(accumulator);
                 ruleMap.put(new RuntimeBeanReference(ElementSupport.getElementContentAsString(child)), forRule);
+            } else if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                    "ConditionScript")) {
+                final ManagedList<String> forRule = new ManagedList(accumulator.size());
+                forRule.addAll(accumulator);
+                ruleMap.put(ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, child).getBeanDefinition(),
+                        forRule);
             }
             child = ElementSupport.getNextSiblingElement(child);
         }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata:MetadataProvider xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+	xmlns:metadata="urn:mace:shibboleth:2.0:metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
+                       urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
+
+	failFastInitialization="false" requireValidMetadata="false"
+
+	id="nameIDFormat" xsi:type="metadata:InlineMetadataProvider">
+	<metadata:MetadataFilter xsi:type="metadata:NameIDFormat">
+        <metadata:Format>foo</metadata:Format>
+        <metadata:ConditionScript language="javascript">
+            <metadata:Script>input.getEntityID().equals("https://sp.example.org/sp/shibboleth");</metadata:Script>
+        </metadata:ConditionScript>
+        <metadata:Format>bar</metadata:Format>
+        <metadata:ConditionScript language="javascript">
+            <metadata:Script>input.getEntityID().equals("https://sp2.example.org/sp/shibboleth");</metadata:Script>
+        </metadata:ConditionScript>
+    </metadata:MetadataFilter>
+
+    <EntitiesDescriptor Name="ukgroup">
+    	<EntityDescriptor ID="uk001502"
+    		entityID="https://sp.example.org/sp/shibboleth">
+    
+    		<SPSSODescriptor
+    			protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+    
+    			<AssertionConsumerService
+    				Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+    				Location="https://sp.example.org/Shibboleth.sso/SAML2/POST-SimpleSign"
+    				index="5" />
+    		</SPSSODescriptor>
+    	</EntityDescriptor>
+
+        <EntityDescriptor ID="uk001503"
+            entityID="https://sp2.example.org/sp/shibboleth">
+    
+            <SPSSODescriptor
+                protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+    
+                <AssertionConsumerService
+                    Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign"
+                    Location="https://sp2.example.org/Shibboleth.sso/SAML2/POST-SimpleSign"
+                    index="5" />
+            </SPSSODescriptor>
+        </EntityDescriptor>
+    </EntitiesDescriptor>
+</metadata:MetadataProvider>

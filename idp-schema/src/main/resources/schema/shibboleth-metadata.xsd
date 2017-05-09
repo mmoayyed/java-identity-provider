@@ -1221,6 +1221,14 @@
                             </documentation>
                         </annotation>
                     </element>
+                    <element name="ConditionScript" type="shibmd:ScriptType">
+                        <annotation>
+                            <documentation>
+                                A script implementing Predicate&lt;EntityDescriptor&gt; to identify one
+                                or more EntityDescriptors to add all the preceding Attribute elements to. 
+                            </documentation>
+                        </annotation>
+                    </element>
                 </choice>
             </extension>
         </complexContent>

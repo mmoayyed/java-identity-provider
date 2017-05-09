@@ -36,8 +36,18 @@ import org.testng.annotations.Test;
  */
 public class NameIDFormatFilterParserTest extends AbstractMetadataParserTest {
 
-    @Test public void test() throws ResolverException, IOException {
-        final MetadataResolver resolver = getBean(MetadataResolver.class, "filter/nameIDFormat.xml");
+    @Test
+    public void test() throws ResolverException, IOException {
+        doTest("filter/nameIDFormat.xml");
+    }
+
+    @Test
+    public void testWithScript() throws ResolverException, IOException {
+        doTest("filter/nameIDFormatWithScript.xml");
+    }
+    
+    private void doTest(final String... files) throws ResolverException, IOException {
+        final MetadataResolver resolver = getBean(MetadataResolver.class, files);
 
         final NameIDFormatFilter filter = (NameIDFormatFilter) resolver.getMetadataFilter();
         Assert.assertNotNull(filter);
