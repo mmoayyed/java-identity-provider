@@ -13,14 +13,18 @@
 	id="entityAttributes" xsi:type="metadata:InlineMetadataProvider">
     
 	<metadata:MetadataFilter xsi:type="metadata:EntityAttributes">
-        <metadata:AttributeFilterRef>predicate.AlwaysFalse</metadata:AttributeFilterRef>
+        <metadata:AttributeFilterScript>
+            <metadata:ScriptFile>classpath:/net/shibboleth/idp/profile/spring/relyingparty/metadata/filter/entityAttributesAttributeFilterScript.js</metadata:ScriptFile>
+        </metadata:AttributeFilterScript>
         <saml:Attribute Name="foo">
             <saml:AttributeValue>fooValue</saml:AttributeValue>        
         </saml:Attribute>
         <saml:Attribute Name="bar">
             <saml:AttributeValue>barValue</saml:AttributeValue>        
         </saml:Attribute>
-        <metadata:Entity>https://sp.example.org/sp/shibboleth</metadata:Entity>
+        <metadata:ConditionScript language="javascript">
+            <metadata:ScriptFile>classpath:/net/shibboleth/idp/profile/spring/relyingparty/metadata/filter/entityAttributesConditionScript.js</metadata:ScriptFile>
+        </metadata:ConditionScript>
     </metadata:MetadataFilter>
 
     <EntitiesDescriptor Name="ukgroup">

@@ -24,7 +24,8 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
+import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.core.xml.XMLObject;
@@ -60,6 +61,7 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
         return EntityAttributesFilter.class;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
@@ -75,6 +77,19 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
         final ManagedMap<Object, ManagedList<Attribute>> ruleMap = new ManagedMap();
 
         Element child = ElementSupport.getFirstChildElement(element);
+        
+        // Check for Predicate at the top.
+        if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                "AttributeFilterRef")) {
+            builder.addPropertyReference("attributeFilter", ElementSupport.getElementContentAsString(child));
+            child = ElementSupport.getNextSiblingElement(child);
+        } else if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                "AttributeFilterScript")) {
+            builder.addPropertyValue("attributeFilter",
+                    ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, child).getBeanDefinition());
+        }
+        
+        // Loop over remaining children.
         while (child != null) {
             if (ElementSupport.isElementNamed(child, Attribute.DEFAULT_ELEMENT_NAME)) {
                 try {
@@ -98,17 +113,19 @@ public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionPa
                 final ManagedList<Attribute> forRule = new ManagedList(accumulator.size());
                 forRule.addAll(accumulator);
                 ruleMap.put(new RuntimeBeanReference(ElementSupport.getElementContentAsString(child)), forRule);
+            } else if (ElementSupport.isElementNamed(child, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                    "ConditionScript")) {
+                final ManagedList<Attribute> forRule = new ManagedList(accumulator.size());
+                forRule.addAll(accumulator);
+                ruleMap.put(ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, child).getBeanDefinition(),
+                        forRule);
             }
             child = ElementSupport.getNextSiblingElement(child);
         }
 
         builder.addPropertyValue("rules", ruleMap);
-        
-        if (element.hasAttributeNS(null, "attributeFilterRef")) {
-            builder.addPropertyReference("attributeFilter",
-                    StringSupport.trimOrNull(element.getAttributeNS(null, "attributeFilterRef")));
-        }
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /** {@inheritDoc} */
     @Override protected boolean shouldGenerateId() {

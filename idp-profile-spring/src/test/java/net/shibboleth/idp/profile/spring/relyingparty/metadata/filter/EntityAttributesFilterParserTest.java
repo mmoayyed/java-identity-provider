@@ -38,9 +38,22 @@ public class EntityAttributesFilterParserTest extends AbstractMetadataParserTest
     
     @Test
     public void test() throws ResolverException, IOException {
+        doTest("filter/entityAttributes.xml", "filter/entityAttributesBeans.xml");
+    }
 
-        final MetadataResolver resolver = getBean(MetadataResolver.class,
-                "filter/entityAttributes.xml", "filter/entityAttributesBeans.xml");
+    @Test
+    public void testFilterScript() throws ResolverException, IOException {
+        doTest("filter/entityAttributesWithScript.xml");
+    }
+
+    @Test
+    public void testFilterScriptResource() throws ResolverException, IOException {
+        doTest("filter/entityAttributesWithScriptResource.xml");
+    }
+
+    private void doTest(final String... files) throws ResolverException, IOException {
+
+        final MetadataResolver resolver = getBean(MetadataResolver.class, files);
 
         final EntityAttributesFilter filter = (EntityAttributesFilter) resolver.getMetadataFilter();
         Assert.assertNotNull(filter);
@@ -73,5 +86,4 @@ public class EntityAttributesFilterParserTest extends AbstractMetadataParserTest
             }
         }
     }
-
 }

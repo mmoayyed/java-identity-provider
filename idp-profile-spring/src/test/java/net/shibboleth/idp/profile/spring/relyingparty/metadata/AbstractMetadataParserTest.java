@@ -44,6 +44,7 @@ import org.testng.annotations.BeforeSuite;
 
 import net.shibboleth.ext.spring.config.DurationToLongConverter;
 import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.config.StringToResourceConverter;
 import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 import net.shibboleth.ext.spring.util.SpringSupport;
@@ -159,7 +160,10 @@ public class AbstractMetadataParserTest extends OpenSAMLInitBaseTestCase {
 
         final ConversionServiceFactoryBean service = new ConversionServiceFactoryBean();
         context.setDisplayName("ApplicationContext: " + contextName);
-        service.setConverters(new HashSet<>(Arrays.asList(new DurationToLongConverter(), new StringToIPRangeConverter())));
+        service.setConverters(new HashSet<>(Arrays.asList(
+                new DurationToLongConverter(),
+                new StringToIPRangeConverter(),
+                new StringToResourceConverter())));
         service.afterPropertiesSet();
 
         context.getBeanFactory().setConversionService(service.getObject());
