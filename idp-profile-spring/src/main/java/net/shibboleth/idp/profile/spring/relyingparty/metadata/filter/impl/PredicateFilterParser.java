@@ -25,6 +25,8 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
+import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -84,7 +86,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
         }
     }
 
-    // Checkstyle: CyclomaticComplexity OFF
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Parser custom element content into a {@link com.google.common.base.Predicate} to pass to the filter constructor.
      * 
@@ -98,6 +100,7 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
         final BeanDefinitionBuilder entityIdPredicateBuilder = parseEntityPredicate(element);
         final BeanDefinitionBuilder groupPredicateBuilder = parseGroupPredicate(element);
         final BeanDefinitionBuilder tagPredicateBuilder = parseTagPredicate(element);
+        final BeanDefinitionBuilder scriptPredicateBuilder = parseScripts(element);
 
         int count = 0;
         if (entityIdPredicateBuilder != null) {
@@ -109,16 +112,21 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
         if (tagPredicateBuilder != null) {
             count++;
         }
+        if (scriptPredicateBuilder != null) {
+            count++;
+        }
 
         if (count == 0) {
-            throw new BeanCreationException("No Entity, Group, or Tag element found");
+            throw new BeanCreationException("No Entity, Group, Tag, or ConditionScript element found");
         } else if (count == 1) {
             if (entityIdPredicateBuilder != null) {
                 return entityIdPredicateBuilder.getBeanDefinition();
             } else if (groupPredicateBuilder != null) {
                 return groupPredicateBuilder.getBeanDefinition();
-            } else {
+            } else if (tagPredicateBuilder != null) {
                 return tagPredicateBuilder.getBeanDefinition();
+            } else {
+                return scriptPredicateBuilder.getBeanDefinition();
             }
         } else {
             final BeanDefinitionBuilder orBuilder = BeanDefinitionBuilder.rootBeanDefinition(Predicates.class, "or");
@@ -132,12 +140,15 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
             if (tagPredicateBuilder != null) {
                 managedList.add(tagPredicateBuilder.getBeanDefinition());
             }
+            if (scriptPredicateBuilder != null) {
+                managedList.add(scriptPredicateBuilder.getBeanDefinition());
+            }
             orBuilder.addConstructorArgValue(managedList);
             return orBuilder.getBeanDefinition();
         }
     }
 
-    // Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Parse Entity elements into a builder for an {@link EntityIdPredicate}.
@@ -219,9 +230,37 @@ public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
 
         return null;
     }
+    
 
+    /**
+     * Parse ConditionScript elements into a builder, wrapped in an OR as necessary.
+     * 
+     * @param element root element to parse under
+     * 
+     * @return builder for the predicate, or null if none needed
+     */
+    @Nullable public BeanDefinitionBuilder parseScripts(@Nonnull final Element element) {
+        final List<Element> scriptList =
+                ElementSupport.getChildElementsByTagNameNS(element, AbstractMetadataProviderParser.METADATA_NAMESPACE,
+                        "ConditionScript");
+        if (scriptList.isEmpty()) {
+            return null;
+        } else if (scriptList.size() == 1) {
+            return ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, scriptList.get(0));
+        } else {
+            final BeanDefinitionBuilder orBuilder = BeanDefinitionBuilder.rootBeanDefinition(Predicates.class, "or");
+            final ManagedList<BeanDefinition> managedList = new ManagedList<>(scriptList.size());
+            for (final Element e : scriptList) {
+                managedList.add(ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, e).getBeanDefinition());
+            }
+            orBuilder.addConstructorArgValue(managedList);
+            return orBuilder;
+        }
+    }
+    
     /** {@inheritDoc} */
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+    
 }

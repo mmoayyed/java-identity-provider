@@ -1277,6 +1277,14 @@
                             <attribute name="nameFormat" type="string"/>
                         </complexType>
                     </element>
+                    <element name="ConditionScript" type="shibmd:ScriptType">
+                        <annotation>
+                            <documentation>
+                                A script implementing Predicate&lt;EntityDescriptor&gt; to identify one
+                                or more EntityDescriptors to which to apply the filter.
+                            </documentation>
+                        </annotation>
+                    </element>
                 </choice>
                 <attribute name="direction" type="string" use="required">
                     <annotation>

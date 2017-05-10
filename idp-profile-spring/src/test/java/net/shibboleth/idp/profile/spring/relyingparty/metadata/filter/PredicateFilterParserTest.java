@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter;
 import java.io.IOException;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataParserTest;
+import net.shibboleth.utilities.java.support.logic.ScriptedPredicate;
 
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
@@ -31,6 +32,8 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 /**
  * Test for parser for PredicateFilter filter.
@@ -93,14 +96,31 @@ public class PredicateFilterParserTest extends AbstractMetadataParserTest {
     }
 
     @Test
+    public void script() throws IOException {
+        final PredicateFilter filter = getBean(PredicateFilter.class, "filter/predicateScript.xml");
+        Assert.assertNotNull(filter);
+        Assert.assertEquals(filter.getDirection(), Direction.INCLUDE);
+        
+        Assert.assertTrue(filter.getCondition() instanceof ScriptedPredicate);
+        Assert.assertTrue(filter.getCondition().apply(null));
+    }
+
+    @Test
+    public void script2() throws IOException {
+        final PredicateFilter filter = getBean(PredicateFilter.class, "filter/predicateScriptOr.xml");
+        Assert.assertNotNull(filter);
+        Assert.assertEquals(filter.getDirection(), Direction.INCLUDE);
+        Assert.assertSame(filter.getCondition().getClass(), Predicates.or(Predicates.alwaysTrue()).getClass());
+        Assert.assertTrue(filter.getCondition().apply(null));
+    }
+
+    @Test
     public void or() throws IOException {
         final PredicateFilter filter = getBean(PredicateFilter.class, "filter/predicateOr.xml");
         Assert.assertNotNull(filter);
         Assert.assertEquals(filter.getDirection(), Direction.EXCLUDE);
         Assert.assertNotNull(filter.getCondition());
-        Assert.assertFalse(filter.getCondition() instanceof EntityIdPredicate);
-        Assert.assertFalse(filter.getCondition() instanceof EntityGroupNamePredicate);
-        Assert.assertFalse(filter.getCondition() instanceof EntityAttributesPredicate);
+        Assert.assertSame(filter.getCondition().getClass(), Predicates.or(Predicates.alwaysTrue()).getClass());
     }
 
 }
