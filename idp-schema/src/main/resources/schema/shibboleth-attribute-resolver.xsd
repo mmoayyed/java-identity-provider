@@ -130,10 +130,20 @@
     <complexType name="BaseAttributeEncoderType">
         <annotation>
             <documentation>
-                An attribute encoder is responsible for converting an attribute, and it's values,
-                into a protocol specific representation such as a SAML 1 Attribute or a SAML 2 NameID.
+                An attribute encoder is responsible for converting an attribute, and its values,
+                into a protocol specific representation such as a SAML 1 or SAML 2 Attribute.
+                The use of them to produce a SAML NameIdentifier/NameID is DEPRECATED.
             </documentation>
         </annotation>
+        <sequence>
+            <element name="ActivationConditionScript" type="resolver:ScriptType" minOccurs="0">
+	            <annotation>
+	                <documentation>
+	                    A scripted predicate which controls whether this encoder will run
+	                </documentation>
+	            </annotation>
+            </element>
+        </sequence>
         <attribute name="name" type="string" />
         <attribute name="encodeType" type="string">
             <annotation>
@@ -146,7 +156,7 @@
         <attribute name="activationConditionRef" type="string">
             <annotation>
                 <documentation>
-                    The reference to a Predicate which controls whether this encoder will run
+                    A reference to a Predicate which controls whether this encoder will run
                 </documentation>
             </annotation>
         </attribute>
@@ -1983,4 +1993,45 @@
             </extension>
         </complexContent>
     </complexType>
+
+    <!-- Reusable type for inline scripting. -->
+    
+    <complexType name="ScriptType">
+        <annotation>
+            <documentation>
+                A type for elements that allow for scripts to be declared inline or via a resource.
+            </documentation>
+        </annotation>
+        <choice>
+            <element name="Script" type="string">
+                <annotation>
+                    <documentation>The script to evaluate to construct the attribute.</documentation>
+                </annotation>
+            </element>
+            <element name="ScriptFile" type="string">
+                <annotation>
+                    <documentation>
+                        Path of a local resource containing the script to evaluate to construct the attribute.
+                    </documentation>
+                </annotation>
+            </element>
+        </choice>
+        <attribute name="language" type="string">
+            <annotation>
+                <documentation>
+                    The JSR-233 name for the scripting language that will be used.
+                    By default "javascript" is assumed.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="customObjectRef" type="string">
+            <annotation>
+                <documentation>
+                    The name of a bean defined somewhere else which will be injected into the script as an
+                    object called "custom". If not supplied, nothing is injected.
+                </documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
 </schema>

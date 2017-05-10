@@ -19,6 +19,7 @@ package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import net.shibboleth.idp.attribute.resolver.spring.BaseAttributeDefinitionParserTest;
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML2StringAttributeEncoderParser;
+import net.shibboleth.idp.profile.logic.ScriptedPredicate;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringAttributeEncoder;
 
 import org.opensaml.saml.saml2.core.Attribute;
@@ -77,6 +78,17 @@ public class SAML2StringAttributeEncoderParserTest extends BaseAttributeDefiniti
                 getAttributeEncoder("saml2StringConditional.xml", SAML2StringAttributeEncoder.class, context);
 
         Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysFalse());
+        Assert.assertFalse(encoder.getActivationCondition().apply(null));
+    }
+
+    @Test public void conditionalScript() {
+        final GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
+        
+        final SAML2StringAttributeEncoder encoder =
+                getAttributeEncoder("resolver/saml2String.xml", SAML2StringAttributeEncoder.class, context);
+
+        Assert.assertTrue(encoder.getActivationCondition() instanceof ScriptedPredicate);
         Assert.assertFalse(encoder.getActivationCondition().apply(null));
     }
 

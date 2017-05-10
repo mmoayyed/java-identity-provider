@@ -22,9 +22,12 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.enc.impl.AttributeEncoderNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.profile.logic.ScriptedPredicate;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +38,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Base class for Spring bean definition parser for Shibboleth attribute encoders.
+ * Base class for Spring bean definition parser for attribute encoders.
  */
 public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefinitionParser {
 
@@ -68,8 +71,8 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
     }
 
     /** {@inheritDoc} */
-    @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
-            @Nonnull final BeanDefinitionBuilder builder) {
+    @Override protected void doParse(final Element config, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
 
         super.doParse(config, parserContext, builder);
         
@@ -98,6 +101,13 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
         if (config.hasAttributeNS(null, "activationConditionRef")) {
             builder.addPropertyReference("activationCondition",
                     StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
+        } else {
+            final Element child = ElementSupport.getFirstChildElement(config);
+            if (child != null && ElementSupport.isElementNamed(child,
+                    AttributeResolverNamespaceHandler.NAMESPACE, "ActivationConditionScript")) {
+                builder.addPropertyValue("activationCondition",
+                        ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, child).getBeanDefinition());
+            }
         }
 
         if (config.hasAttributeNS(null, "encodeType")) {

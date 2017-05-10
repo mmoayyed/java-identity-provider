@@ -5,4 +5,9 @@
 	name="Saml2String_ATTRIBUTE_NAME" 
 	nameFormat="Saml2String_ATTRIBUTE_NAME_FORMAT"
 	friendlyName="Saml2String_ATTRIBUTE_FRIENDLY_NAME" 
-	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd" />
+	xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd">
+
+    <ActivationConditionScript>
+        <Script>false</Script>
+    </ActivationConditionScript>	
+</AttributeEncoder>
