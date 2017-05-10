@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
@@ -36,7 +37,7 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
     @Nullable private String maxValidityIntervalDuration;
     
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(RequiredValidUntilFactoryBean.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(RequiredValidUntilFactoryBean.class);
 
     /**
      * Setter for {@link #maxValidityIntervalDuration}.

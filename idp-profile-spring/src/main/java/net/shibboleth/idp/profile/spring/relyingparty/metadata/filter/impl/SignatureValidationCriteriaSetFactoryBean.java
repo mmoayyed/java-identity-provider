@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -55,7 +56,7 @@ import org.springframework.beans.factory.FactoryBean;
 public class SignatureValidationCriteriaSetFactoryBean implements FactoryBean<CriteriaSet> {
     
     /** Logger. */
-    private Logger log = LoggerFactory.getLogger(SignatureValidationCriteriaSetFactoryBean.class);
+    @Nonnull private Logger log = LoggerFactory.getLogger(SignatureValidationCriteriaSetFactoryBean.class);
     
     /** Ordered collection of {@link SignatureValidationConfiguration}. */
     @Nullable private List<SignatureValidationConfiguration> signatureValidationConfigs;

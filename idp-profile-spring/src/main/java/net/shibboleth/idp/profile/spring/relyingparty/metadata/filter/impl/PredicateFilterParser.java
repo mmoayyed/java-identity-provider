@@ -51,7 +51,8 @@ import com.google.common.base.Predicates;
 public class PredicateFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "Predicate");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "Predicate");
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(PredicateFilterParser.class);

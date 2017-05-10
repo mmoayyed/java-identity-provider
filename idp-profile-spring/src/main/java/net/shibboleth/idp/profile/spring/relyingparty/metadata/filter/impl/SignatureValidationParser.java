@@ -20,6 +20,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
@@ -53,22 +54,22 @@ import org.w3c.dom.Element;
 public class SignatureValidationParser extends AbstractSingleBeanDefinitionParser {
 
     /** Schema type name. */
-    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
-            "SignatureValidation");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "SignatureValidation");
 
     /** Element for embedded public keys. */
-    public static final QName PUBLIC_KEY = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "PublicKey");
+    @Nonnull public static final QName PUBLIC_KEY =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "PublicKey");
 
-    /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(SignatureValidationParser.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SignatureValidationParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class getBeanClass(final Element element) {
         return SignatureValidationFilter.class;
     }
 
-    // Checkstyle: CyclomaticComplexity OFF
-    // Checkstyle: MethodLength OFF
+// Checkstyle: CyclomaticComplexity|MethodLength OFF
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext, 
             final BeanDefinitionBuilder builder) {
@@ -87,7 +88,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
                 throw new BeanCreationException("trustEngineRef and certificateFile are mutually exclusive");
             }
             if (trustEngines != null && !trustEngines.isEmpty()) {
-                log.error("{}: trustEngineRef and Embedded <TrustEngine>  are mutually exclusive", parserContext
+                log.error("{}: trustEngineRef and Embedded <TrustEngine> are mutually exclusive", parserContext
                         .getReaderContext().getResource().getDescription());
                 throw new BeanCreationException("trustEngineRef and Embedded <TrustEngine> are mutually exclusive");
             }
@@ -105,7 +106,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
                 throw new BeanCreationException("certificateFile and embedded public keys are mutually exclusive");
             }
             if (trustEngines != null && !trustEngines.isEmpty()) {
-                log.error("{}: certificateFile and Embedded <TrustEngine>  are mutually exclusive", parserContext
+                log.error("{}: certificateFile and Embedded <TrustEngine> are mutually exclusive", parserContext
                         .getReaderContext().getResource().getDescription());
                 throw new BeanCreationException("Embedded <TrustEngine> and certificateFile are mutually exclusive");
             }
@@ -126,8 +127,8 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         if (element.hasAttributeNS(null, "requireSignedRoot")) {
             builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedRoot"));
         } else if (element.hasAttributeNS(null, "requireSignedMetadata")) {
-            log.warn("{} Use of the attribute 'requireSignedMetadata' is deprecated, " 
-                    + "use 'requireSignedRoot' instead", 
+            log.warn("{} The 'requireSignedMetadata' attribute is DEPRECATED "
+                    + "and will be removed from the next major version, use 'requireSignedRoot' instead",
                     parserContext.getReaderContext().getResource().getDescription());
             builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedMetadata"));
         }
@@ -150,9 +151,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         }
 
     }
-
-    // Checkstyle: CyclomaticComplexity ON
-    // Checkstyle: MethodLength ON
+// Checkstyle: CyclomaticComplexity|MethodLength ON
 
     /**
      * Build a trust engine and populate it with the supplied credential (definition).

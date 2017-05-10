@@ -17,6 +17,7 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
@@ -35,11 +36,11 @@ import org.w3c.dom.Element;
 public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
-            "RequiredValidUntil");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "RequiredValidUntil");
     
-    /** log */
-    private Logger log = LoggerFactory.getLogger(RequiredValidUntilParser.class);
+    /** Class logger. */
+    @Nonnull private Logger log = LoggerFactory.getLogger(RequiredValidUntilParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(final Element element) {
@@ -62,4 +63,5 @@ public class RequiredValidUntilParser extends AbstractSingleBeanDefinitionParser
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+    
 }

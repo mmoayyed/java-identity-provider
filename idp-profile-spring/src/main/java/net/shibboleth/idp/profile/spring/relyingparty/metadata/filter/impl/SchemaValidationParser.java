@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
@@ -40,15 +41,15 @@ import org.w3c.dom.Element;
 public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
-            "SchemaValidation");
+    @Nonnull public static final QName TYPE_NAME =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "SchemaValidation");
 
     /** Element name for the extension Schema. */
-    public static final QName EXTENSION_SCHEMA_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
-            "ExtensionSchema");
+    @Nonnull public static final QName EXTENSION_SCHEMA_NAME =
+            new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "ExtensionSchema");
 
-    /** logger. */
-    private final Logger log = LoggerFactory.getLogger(SchemaValidationParser.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(SchemaValidationParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(final Element element) {
@@ -68,8 +69,7 @@ public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
         }
         if (null != schemaNameElements && !schemaNameElements.isEmpty()) {
 
-            log.warn("Use of <ExtensionSchema> elements is deprecated."
-                    + "  Inject a customer SAMLSchemaBuilder identified as 'shibboleth.SchemaBuilder'");
+            log.warn("The <ExtensionSchema> element is DEPRECATED and will be removed in the next major version.");
             builder.addConstructorArgValue(SpringSupport.getElementTextContentAsManagedList(schemaNameElements));
         }
     }
@@ -78,4 +78,5 @@ public class SchemaValidationParser extends AbstractSingleBeanDefinitionParser {
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+    
 }

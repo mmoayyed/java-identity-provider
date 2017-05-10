@@ -30,7 +30,7 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 public class PredicateFilterDirectionFactoryBean extends AbstractFactoryBean<PredicateFilter.Direction> {
 
     /** What we want to set the value from this should be "exclude" or "include".*/
-    private final String value;
+    @Nullable private final String value;
     
     /**
      * Constructor.

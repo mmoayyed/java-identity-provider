@@ -50,7 +50,7 @@ import org.w3c.dom.Element;
 public class EntityAttributesFilterParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+    @Nonnull public static final QName TYPE_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "EntityAttributes");
 
     /** Class logger. */

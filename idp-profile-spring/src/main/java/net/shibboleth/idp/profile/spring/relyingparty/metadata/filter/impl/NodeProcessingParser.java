@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
@@ -38,7 +39,7 @@ import org.w3c.dom.Element;
 public class NodeProcessingParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME =
+    @Nonnull public static final QName TYPE_NAME =
             new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "NodeProcessing");
 
     /** {@inheritDoc} */
