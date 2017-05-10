@@ -219,7 +219,7 @@ public class RemoteUserAuthServlet extends HttpServlet {
                     ExternalAuthentication.finishExternalAuthentication(key, httpRequest, httpResponse);
                     return;
                 } else {
-                    log.info("Java Subject not found in attribute {}, subjectAttribute");
+                    log.info("Java Subject not found in attribute {}", subjectAttribute);
                 }
             }
             
