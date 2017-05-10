@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.util.SpringSupport;
@@ -26,6 +27,8 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataP
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -34,11 +37,15 @@ import org.w3c.dom.Element;
 /**
  * Parser for a &lt;ChainingFilter&gt; filter.
  */
+@Deprecated
 public class ChainingParser extends AbstractSingleBeanDefinitionParser {
 
     /** Element name. */
-    public static final QName TYPE_NAME =
+    @Nonnull public static final QName TYPE_NAME =
             new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE, "ChainingFilter");
+
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ChainingParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<?> getBeanClass(final Element element) {
@@ -48,6 +55,9 @@ public class ChainingParser extends AbstractSingleBeanDefinitionParser {
     /** {@inheritDoc} */
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
+        
+        log.warn("Chaining MetadataFilter type is DEPRECATED and will be removed in the next major version");
+        
         final List<Element> children =
                 ElementSupport.getChildElements(element, AbstractMetadataProviderParser.METADATA_FILTER_ELEMENT_NAME);
 
@@ -60,4 +70,5 @@ public class ChainingParser extends AbstractSingleBeanDefinitionParser {
     @Override protected boolean shouldGenerateId() {
         return true;
     }
+    
 }
