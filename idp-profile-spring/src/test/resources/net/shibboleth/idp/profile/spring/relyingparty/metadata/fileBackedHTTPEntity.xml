@@ -8,6 +8,7 @@
 	backingFile="%{DIR}/spoolFileEntity.xml"
     initializeFromBackupFile="false"
     backupFileInitNextRefreshDelay="PT10S"
+    expirationWarningThreshold="PT12H"
 	metadataURL="%{metadataURL}">
 
 </metadata:MetadataProvider>

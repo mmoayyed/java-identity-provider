@@ -55,6 +55,7 @@ public class HTTPMetadataProviderParserTest extends AbstractMetadataParserTest {
         Assert.assertFalse(entities.hasNext());
 
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.75, 0.001);
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), 1000*60*60*12);
         Assert.assertSame(resolver.getParserPool(), parserPool);
         
         Assert.assertNull(resolver.resolveSingle(criteriaFor(SP_ID)));

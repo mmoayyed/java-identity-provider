@@ -840,6 +840,13 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="expirationWarningThreshold" type="string">
+                    <annotation>
+                        <documentation>
+                            Impending expiration warning threshold for metadata refresh.
+                        </documentation>
+                    </annotation>
+                </attribute>
             </extension>
         </complexContent>
     </complexType>

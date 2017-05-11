@@ -75,6 +75,11 @@ public abstract class AbstractReloadingMetadataProviderParser extends AbstractMe
                     StringSupport.trimOrNull(element.getAttributeNS(null, "minRefreshDelay")));
         }
 
+        if (element.hasAttributeNS(null, "expirationWarningThreshold")) {
+            builder.addPropertyValue("expirationWarningThreshold",
+                    StringSupport.trimOrNull(element.getAttributeNS(null, "expirationWarningThreshold")));
+        }
+
         builder.addPropertyReference("parserPool", getParserPoolRef(element));
         
     }

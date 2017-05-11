@@ -4,7 +4,7 @@
 	xsi:schemaLocation="urn:mace:shibboleth:2.0:metadata http://shibboleth.net/schema/idp/shibboleth-metadata.xsd
                        urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"
 
-    parserPoolRef="myParserPool" refreshDelayFactor="0.5" maxRefreshDelay="PT55M" minRefreshDelay="PT15M"
+    parserPoolRef="myParserPool" refreshDelayFactor="0.5" maxRefreshDelay="PT55M" minRefreshDelay="PT15M" expirationWarningThreshold="PT12H"
 	id="fileEntities" xsi:type="metadata:FilesystemMetadataProvider" metadataFile="%{DIR}/entities.xml">
 
 </metadata:MetadataProvider>

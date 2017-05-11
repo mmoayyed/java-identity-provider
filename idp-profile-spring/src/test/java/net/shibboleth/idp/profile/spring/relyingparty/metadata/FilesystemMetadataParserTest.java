@@ -57,6 +57,7 @@ public class FilesystemMetadataParserTest extends AbstractMetadataParserTest {
         Assert.assertEquals(resolver.getMaxRefreshDelay(), 1000*60*55);
         Assert.assertEquals(resolver.getMinRefreshDelay(), 1000*60*15);
         Assert.assertEquals(resolver.getRefreshDelayFactor(), 0.5, 0.001);
+        Assert.assertEquals(resolver.getExpirationWarningThreshold(), 1000*60*60*12);
         Assert.assertNotSame(resolver.getParserPool(), parserPool);
    
         final Iterator<EntityDescriptor> entities = resolver.resolve(criteriaFor(IDP_ID)).iterator();
