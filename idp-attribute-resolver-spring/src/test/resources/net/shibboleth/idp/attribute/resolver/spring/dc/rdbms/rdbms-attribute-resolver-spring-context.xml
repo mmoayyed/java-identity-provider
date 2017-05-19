@@ -15,7 +15,7 @@
         <constructor-arg value="expireAfterAccess=10s,maximumSize=25" />
     </bean>
     <bean id="cache" class="com.google.common.cache.Cache" factory-bean="cacheBuilder" factory-method="build" />
-    <bean class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.FormatExecutableStatementBuilder"
+    <bean id="query" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.FormatExecutableStatementBuilder"
         p:query="SELECT * FROM people WHERE userid='%s'" />
 
     <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy"

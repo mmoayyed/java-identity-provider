@@ -84,7 +84,15 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
             builder.addPropertyValue("DataSource", v2Parser.createManagedDataSource());
         }
 
-        builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplateBuilder());
+        final String searchBuilderID = v2Parser.getBeanSearchBuilderID();
+        if (searchBuilderID != null) {
+            builder.addPropertyReference("executableSearchBuilder", searchBuilderID);
+        } else {
+            final BeanDefinition def = v2Parser.createTemplateBuilder();
+            if (def != null) {
+                builder.addPropertyValue("executableSearchBuilder", def);
+            }
+        }
 
         final String connectionReadOnly = v2Parser.getConnectionReadOnly();
         if (connectionReadOnly != null) {
@@ -181,6 +189,15 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
          }
 
         /**
+         * Get the bean ID of an externally defined search builder.
+         * 
+         * @return search builder bean ID
+         */
+        @Nullable public String getBeanSearchBuilderID() {
+            return AttributeSupport.getAttributeValue(configElement, null, "executableSearchBuilderRef");
+        }
+        
+        /**
          * Create the definition of the template driven search builder.
          * 
          * @return the bean definition for the template search builder.
@@ -239,7 +256,7 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         @Nullable public String getBeanMappingStrategyID() {
             return AttributeSupport.getAttributeValue(configElement, null, "mappingStrategyRef");
         }
-        
+
         /**
          * Create the result mapping strategy. See {@link net.shibboleth.idp.attribute.resolver.dc.MappingStrategy}.
          * 

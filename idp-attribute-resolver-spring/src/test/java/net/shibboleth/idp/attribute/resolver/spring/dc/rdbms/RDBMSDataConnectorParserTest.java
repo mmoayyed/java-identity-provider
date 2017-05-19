@@ -125,6 +125,18 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
     }
 
+    @Test public void flatHybridConfig() throws Exception {
+        final RDBMSDataConnector dataConnector =
+                getRdbmsDataConnector(
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-flat-hybrid.xml",
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-spring-context.xml");
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+        final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
+        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
+        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
+    }
+
     @Test public void v2PropsConfig() throws Exception {
         final Resource props = new ClassPathResource("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-v2.properties");
         final RDBMSDataConnector dataConnector =

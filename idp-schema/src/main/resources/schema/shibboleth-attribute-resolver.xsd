@@ -198,7 +198,10 @@
                 </attribute>
                 <attribute name="factoryPostProcessorsRef" type="string">
                     <annotation>
-                        <documentation>Bean Name of locations of bean factory post processors resource configurations.  Defaults to shibboleth.PropertySourcesPlaceholderConfigurer.</documentation>
+                        <documentation>
+                            Bean Name of locations of bean factory post processors resource configurations.
+                            Defaults to shibboleth.PropertySourcesPlaceholderConfigurer.
+                        </documentation>
                     </annotation>
                 </attribute>
                 <attribute name="postProcessorsRef" type="string">
@@ -231,14 +234,16 @@
     <element name="PrincipalConnector" type="resolver:BasePrincipalConnectorType">
         <annotation>
             <documentation>
-    Principal connectors convert a subject's NameID into an internal principal
-    name for use within attribute definitions and data connectors.
+                DEPRECATED:
+                Principal connectors convert a subject's NameID into an internal principal
+                name for use within attribute definitions and data connectors.
             </documentation>
         </annotation>
     </element>
     <complexType name="BasePrincipalConnectorType">
         <annotation>
             <documentation>
+                DEPRECATED:
                 Principal connectors convert a subject's NameID into an internal principal
                 name for use within attribute definitions and data connectors.
             </documentation>
@@ -1212,6 +1217,13 @@
                     <annotation>
                         <documentation>
                             Name of the template engine defined within the application.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="executableSearchBuilderRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the ExecutableSearchBuilder implementation to use.
                         </documentation>
                     </annotation>
                 </attribute>
