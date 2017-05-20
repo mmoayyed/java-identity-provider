@@ -42,7 +42,6 @@ import net.shibboleth.utilities.java.support.component.UnmodifiableComponentExce
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 
 import org.hsqldb.jdbc.JDBCDataSource;
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -50,7 +49,7 @@ import org.testng.annotations.Test;
 /**
  * Tests for {@link RDBMSDataConnector}
  */
-public class RDBMSDataConnectorTest extends OpenSAMLInitBaseTestCase {
+public class RDBMSDataConnectorTest {
 
     /** The connector name. */
     private static final String TEST_CONNECTOR_NAME = "rdbmsAttributeConnector";

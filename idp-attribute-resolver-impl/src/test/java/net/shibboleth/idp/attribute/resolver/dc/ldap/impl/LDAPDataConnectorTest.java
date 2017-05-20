@@ -43,7 +43,6 @@ import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchExecutor;
-import org.opensaml.core.OpenSAMLInitBaseTestCase;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -57,7 +56,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 /**
  * Tests for {@link LDAPDataConnector}
  */
-public class LDAPDataConnectorTest extends OpenSAMLInitBaseTestCase {
+public class LDAPDataConnectorTest {
 
     /** The connector name. */
     private static final String TEST_CONNECTOR_NAME = "ldapAttributeConnector";
