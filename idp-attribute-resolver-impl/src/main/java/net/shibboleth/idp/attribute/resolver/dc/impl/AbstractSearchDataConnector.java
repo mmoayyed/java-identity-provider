@@ -33,6 +33,7 @@ import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.idp.attribute.resolver.dc.MappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.Validator;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullAfterInit;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -46,31 +47,33 @@ import com.google.common.cache.Cache;
  * A {@link net.shibboleth.idp.attribute.resolver.DataConnector} containing functionality common to data connectors that
  * retrieve attribute data by searching a data source.
  * 
- * @param <T> type of executable search
+ * @param <T1> type of executable search
+ * @param <T2> type of mapping strategy
  */
-public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> extends AbstractDataConnector {
+public abstract class AbstractSearchDataConnector<T1 extends ExecutableSearch,T2 extends MappingStrategy>
+    extends AbstractDataConnector {
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(AbstractSearchDataConnector.class);
 
     /** Builder used to create executable searches. */
-    private ExecutableSearchBuilder<T> searchBuilder;
+    @NonnullAfterInit private ExecutableSearchBuilder<T1> searchBuilder;
 
     /** Validator for validating this data connector. */
-    private Validator connectorValidator;
+    @NonnullAfterInit private Validator connectorValidator;
 
     /** Strategy for mapping search results to a collection of {@link IdPAttribute}s. */
-    private MappingStrategy mappingStrategy;
+    @NonnullAfterInit private T2 mappingStrategy;
 
     /** Query result cache. */
-    private Cache<String, Map<String, IdPAttribute>> resultsCache;
+    @Nullable private Cache<String,Map<String,IdPAttribute>> resultsCache;
 
     /**
      * Gets the builder used to create executable searches.
      * 
      * @return builder used to create the executable searches
      */
-    public ExecutableSearchBuilder<T> getExecutableSearchBuilder() {
+    @NonnullAfterInit public ExecutableSearchBuilder<T1> getExecutableSearchBuilder() {
         return searchBuilder;
     }
 
@@ -79,11 +82,11 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @param builder builder used to create the executable searches
      */
-    public void setExecutableSearchBuilder(@Nonnull final ExecutableSearchBuilder<T> builder) {
+    public void setExecutableSearchBuilder(@Nonnull final ExecutableSearchBuilder<T1> builder) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        searchBuilder = Constraint.isNotNull(builder, "Executable search builder can not be null");
+        searchBuilder = Constraint.isNotNull(builder, "Executable search builder cannot be null");
     }
 
     /**
@@ -91,7 +94,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @return validator used to validate this connector
      */
-    public Validator getValidator() {
+    @NonnullAfterInit public Validator getValidator() {
         return connectorValidator;
     }
 
@@ -104,7 +107,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        connectorValidator = Constraint.isNotNull(validator, "Validator can not be null");
+        connectorValidator = Constraint.isNotNull(validator, "Validator cannot be null");
     }
 
     /**
@@ -112,7 +115,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @return strategy for mapping from search results to a collection of {@link IdPAttribute}s
      */
-    public MappingStrategy getMappingStrategy() {
+    @NonnullAfterInit public T2 getMappingStrategy() {
         return mappingStrategy;
     }
 
@@ -121,11 +124,11 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @param strategy strategy for mapping from search results to a collection of {@link IdPAttribute}s
      */
-    public void setMappingStrategy(@Nonnull final MappingStrategy strategy) {
+    public void setMappingStrategy(@Nonnull final T2 strategy) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
-        mappingStrategy = Constraint.isNotNull(strategy, "Mapping strategy can not be null");
+        mappingStrategy = Constraint.isNotNull(strategy, "Mapping strategy cannot be null");
     }
 
     /**
@@ -133,7 +136,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @return cache used to cache search results
      */
-    @Nonnull public Cache<String, Map<String, IdPAttribute>> getResultsCache() {
+    @Nullable public Cache<String,Map<String,IdPAttribute>> getResultsCache() {
         return resultsCache;
     }
 
@@ -142,7 +145,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @param cache cache used to cache search results
      */
-    public void setResultsCache(@Nullable final Cache<String, Map<String, IdPAttribute>> cache) {
+    public void setResultsCache(@Nullable final Cache<String,Map<String,IdPAttribute>> cache) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
         ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
 
@@ -161,7 +164,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
      * 
      * @throws ResolutionException thrown if there is a problem retrieving data from the data source
      */
-    @Nullable protected abstract Map<String, IdPAttribute> retrieveAttributes(@Nonnull final T executable)
+    @Nullable protected abstract Map<String,IdPAttribute> retrieveAttributes(@Nonnull final T1 executable)
             throws ResolutionException;
 
     /** {@inheritDoc} */
@@ -172,7 +175,7 @@ public abstract class AbstractSearchDataConnector<T extends ExecutableSearch> ex
 
         final Map<String, List<IdPAttributeValue<?>>> dependsAttributes =
                 PluginDependencySupport.getAllAttributeValues(workContext, getDependencies());
-        final T executable = searchBuilder.build(resolutionContext, dependsAttributes);
+        final T1 executable = searchBuilder.build(resolutionContext, dependsAttributes);
         Map<String, IdPAttribute> resolvedAttributes = null;
         if (resultsCache != null && resolutionContext.getAllowCachedResults()) {
             final String cacheKey = executable.getResultCacheKey();
