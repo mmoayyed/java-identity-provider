@@ -1,10 +1,9 @@
-var EntityHelper = Java.type("org.apache.http.util.EntityUtils");
-var body = EntityHelper.toString(response.getEntity(), "UTF-8");
-var result = JSON.parse(body.toString("UTF-8"));
+importClass(Packages.java.util.HashSet);
+importClass(Packages.org.apache.http.util.EntityUtils);
+importPackage(Packages.net.shibboleth.idp.attribute);
 
-var IdPAttribute = Java.type("net.shibboleth.idp.attribute.IdPAttribute");
-var StringValue = Java.type("net.shibboleth.idp.attribute.StringAttributeValue");
-var HashSet = Java.type("java.util.HashSet");
+var body = EntityUtils.toString(response.getEntity(), "UTF-8");
+var result = JSON.parse(body);
 
 for (var i=0; i<result.length; i++) {
 
@@ -12,7 +11,7 @@ for (var i=0; i<result.length; i++) {
     var values = new HashSet();
     
     for (var j=0; j<result[i].values.length; j++) {
-        values.add(new StringValue(result[i].values[j]));
+        values.add(new StringAttributeValue(result[i].values[j]));
     }
     
     attr.setValues(values);

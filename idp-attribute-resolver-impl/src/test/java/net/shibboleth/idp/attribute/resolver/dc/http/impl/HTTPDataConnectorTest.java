@@ -54,8 +54,15 @@ public class HTTPDataConnectorTest {
                     "idp-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json");
 
     private static final String SCRIPT_PATH = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.js";
+    
+    private static final String SCRIPT_PATH_V8 = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/v8/test.js";
 
     private HTTPDataConnector connector;
+    
+    private boolean isV8() {
+        final String ver = System.getProperty("java.version");
+        return ver.startsWith("1.8");
+    }
     
     @BeforeMethod public void setUp() throws IOException, ScriptException {
         connector = new HTTPDataConnector();
@@ -66,7 +73,8 @@ public class HTTPDataConnectorTest {
                     .build());
         
         final ScriptedResponseMappingStrategy mapping =
-                ScriptedResponseMappingStrategy.resourceScript(ResourceHelper.of(new ClassPathResource(SCRIPT_PATH)));
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource(isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH)));
         mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
         connector.setMappingStrategy(mapping);
     }
