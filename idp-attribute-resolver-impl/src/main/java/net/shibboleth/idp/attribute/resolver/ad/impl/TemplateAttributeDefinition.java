@@ -210,7 +210,7 @@ public class TemplateAttributeDefinition extends AbstractAttributeDefinition {
         final List<IdPAttributeValue<?>> valueList = new ArrayList<>(valueCount);
 
         for (int i = 0; i < valueCount; i++) {
-            log.debug("{} Determing value {}", getLogPrefix(), i + 1);
+            log.debug("{} Determining value {}", getLogPrefix(), i + 1);
             final VelocityContext velocityContext = new VelocityContext();
 
             // Build velocity context.

@@ -7,7 +7,7 @@ requestContext.getLocalEntityMetadata();
 requestContext.getLocalEntityRole();
 requestContext.getLocalEntityRoleMetadata();
 requestContext.getMetadataResolver();
-requestContext.getOuboundSAMLMessageSigningCredential();
+requestContext.getOutboundSAMLMessageSigningCredential();
 requestContext.getOutboundMessageArtifactType();
 requestContext.getOutboundSAMLMessage();
 requestContext.getOutboundSAMLMessageId();

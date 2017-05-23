@@ -190,8 +190,8 @@ public class V2SAMLProfileRequestContext {
      * 
      * @return null
      */
-    public Object getOuboundSAMLMessageSigningCredential() {
-        unsupportedMethod("getOuboundSAMLMessageSigningCredential");
+    public Object getOutboundSAMLMessageSigningCredential() {
+        unsupportedMethod("getOutboundSAMLMessageSigningCredential");
         return null;
     }
 

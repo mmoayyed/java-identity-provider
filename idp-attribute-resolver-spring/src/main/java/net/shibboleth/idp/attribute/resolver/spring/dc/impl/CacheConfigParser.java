@@ -122,7 +122,7 @@ public class CacheConfigParser {
         final BeanDefinitionBuilder cache;
         if (expireAfterWrite != null) {
             if (null != expireAfterAccess || null != elementTimeToLive) {
-                log.warn("ResultCache: Attribute 'expireAfterAccess' is mututally exclusive with 'expireAfterWrite'."
+                log.warn("ResultCache: Attribute 'expireAfterAccess' is mutually exclusive with 'expireAfterWrite'."
                         + " Used 'expireAfterWrite'.");
             }
             cache = BeanDefinitionBuilder.rootBeanDefinition(CacheConfigParser.class, "buildCacheWrite");            

@@ -167,7 +167,7 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
      * Ask the specific parser of it needs attributeSourceID. We used to use this to log several misconfiguration possibilities,
      * These days the attribute is irrelevant if you avoid <Dependency> so this is here purely for backwards API compatibility.
      * 
-     * @return Whether the attribute definition for this parser meeds attributeSourceID.
+     * @return Whether the attribute definition for this parser needs attributeSourceID.
      */
     protected boolean needsAttributeSourceID() {
         return false;

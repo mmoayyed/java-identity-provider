@@ -73,7 +73,7 @@ import org.slf4j.LoggerFactory;
     @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedAttributeDefinition>
             getResolvedIdPAttributeDefinitions() {
         log.error("'{}' Use of workContext.getResolvedIdPAttributeDefinitions()"
-                + " is deprecated and will cause instabilty", logPrefix);
+                + " is deprecated and will cause instability", logPrefix);
         return delegate.getResolvedIdPAttributeDefinitions();
     }
 
@@ -87,7 +87,7 @@ import org.slf4j.LoggerFactory;
     public void recordAttributeDefinitionResolution(@Nonnull final AttributeDefinition definition,
             @Nullable final IdPAttribute attribute) throws ResolutionException {
         log.error("'{}' Use of workContext.getResolvedIdPAttributeDefinitions()"
-                + " is deprecated and will cause instabilty", logPrefix);
+                + " is deprecated and will cause instability", logPrefix);
         delegate.recordAttributeDefinitionResolution(definition, attribute);
     }
 
@@ -97,7 +97,7 @@ import org.slf4j.LoggerFactory;
      * @return what the delegate does.
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedDataConnector> getResolvedDataConnectors() {
-        log.error("'{}' Use of workContext.getResolvedDataConnectors() is deprecated and will cause instabilty",
+        log.error("'{}' Use of workContext.getResolvedDataConnectors() is deprecated and will cause instability",
                 logPrefix);
         return delegate.getResolvedDataConnectors();
     }
@@ -112,7 +112,7 @@ import org.slf4j.LoggerFactory;
     public void recordDataConnectorResolution(@Nonnull final DataConnector connector,
             @Nullable final Map<String, IdPAttribute> attributes) throws ResolutionException {
         log.error(
-                "'{}' Use of workContext.recordDataConnectorResolution() is deprecated and will cause instabilty",
+                "'{}' Use of workContext.recordDataConnectorResolution() is deprecated and will cause instability",
                 logPrefix);
         delegate.recordDataConnectorResolution(connector, attributes);
     }
@@ -126,7 +126,7 @@ import org.slf4j.LoggerFactory;
      */
     public void recordFailoverResolution(@Nonnull final DataConnector failedConnector,
             @Nonnull final DataConnector failoverConnector) throws ResolutionException {
-        log.error("'{}' Use of workContext.recordFailoverResolution() is deprecated and will cause instabilty",
+        log.error("'{}' Use of workContext.recordFailoverResolution() is deprecated and will cause instability",
                 logPrefix);
         delegate.recordFailoverResolution(failedConnector, failoverConnector);
 

@@ -41,7 +41,7 @@ public class PrincipalNameAttributeDefinition extends AbstractAttributeDefinitio
 
         final String principalName = StringSupport.trimOrNull(resolutionContext.getPrincipal());
         if (null == principalName) {
-            throw new ResolutionException(getLogPrefix() + " provided prinicipal name was empty");
+            throw new ResolutionException(getLogPrefix() + " provided principal name was empty");
         }
 
         final IdPAttribute attribute = new IdPAttribute(getId());

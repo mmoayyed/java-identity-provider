@@ -424,7 +424,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
                 resolveDataConnector(pluginId, resolutionContext);
             } else {
                 // This will not happen for as long as we test this in initialization
-                throw new ResolutionException("Plugin '" + plugin.getId() + "' contains a depedency on plugin '"
+                throw new ResolutionException("Plugin '" + plugin.getId() + "' contains a dependency on plugin '"
                         + pluginId + "' which does not exist.");
             }
         }
@@ -545,7 +545,7 @@ public class AttributeResolverImpl extends AbstractServiceableComponent<Attribut
             if (circularCheckPluginId.equals(dependency.getDependencyPluginId())) {
                 throw new ComponentInitializationException(logPrefix + " Plugin '" + circularCheckPluginId
                         + "' and plugin '" + dependency.getDependencyPluginId()
-                        + "' have a circular dependecy on each other.");
+                        + "' have a circular dependency on each other.");
             }
             final String dependencyType;
             if (dependency instanceof ResolverAttributeDefinitionDependency) {

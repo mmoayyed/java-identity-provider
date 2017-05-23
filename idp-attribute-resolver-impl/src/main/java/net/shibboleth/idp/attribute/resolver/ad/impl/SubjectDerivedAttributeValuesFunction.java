@@ -104,7 +104,7 @@ public class SubjectDerivedAttributeValuesFunction extends AbstractIdentifiableI
             }
         }
         if (results.isEmpty()) {
-            log.info("{} generated no values, attrribute no resolved.", getLogPrefix());
+            log.info("{} generated no values, attribute no resolved.", getLogPrefix());
             return null;
         }
         log.debug("{} Generated {} values.", getLogPrefix(), results.size());

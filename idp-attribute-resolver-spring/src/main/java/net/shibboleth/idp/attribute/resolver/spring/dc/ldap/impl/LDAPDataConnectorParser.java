@@ -377,7 +377,8 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             return result.getBeanDefinition();
         }
         
-        /** Get the textual content of the &lt;FilterTemplate&gt;.
+        /**
+         * Get the textual content of the &lt;FilterTemplate&gt;.
          * 
          * We have to look in two places and warn appropriately.
          * @return the filter or null.
@@ -391,7 +392,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             final String filter;
             if (!filterElements.isEmpty()) {
                 if (filterElements.size() > 1) {
-                    log.warn("{} only one <FilterTemlate> can be specifed; only the first has been consulted",
+                    log.warn("{} only one <FilterTemplate> can be specified; only the first has been consulted",
                             getLogPrefix());
                 }
                 filter = StringSupport.trimOrNull(filterElements.get(0).getTextContent().trim());
@@ -474,7 +475,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
             
             if (!returnAttrsElements.isEmpty()) {
                 if (returnAttrsElements.size() > 1) {
-                    log.warn("{} Only one <ReturnAttibutes> element can be specified; "+
+                    log.warn("{} Only one <ReturnAttributes> element can be specified; "+
                             "only the first has been consulted.", getLogPrefix());
                 }
                 final Element returnAttrsElement = returnAttrsElements.get(0);
@@ -509,7 +510,7 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 return null;
             }
             if (poolConfigElements.size() > 1) {
-                log.warn("{} Only one <ConnectionPool> should be specied; only the first has been consulted.",
+                log.warn("{} Only one <ConnectionPool> should be specified; only the first has been consulted.",
                         getLogPrefix());
             }
 
