@@ -30,6 +30,7 @@
             p:serviceConfigurations-ref="#{'%{idp.service.attribute.filter.resources:shibboleth.AttributeFilterResources}'.trim()}"
             p:failFast="%{idp.service.attribute.filter.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.attribute.filter.checkInterval:PT0S}"
+            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
             p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
         <constructor-arg name="claz" value="net.shibboleth.idp.attribute.filter.AttributeFilter" />
         <constructor-arg name="strategy">
@@ -43,6 +44,7 @@
             p:serviceConfigurations-ref="#{'%{idp.service.attribute.resolver.resources:shibboleth.AttributeResolverResources}'.trim()}"
             p:failFast="%{idp.service.attribute.resolver.failFast:%{idp.service.failFast:false}}"
             p:reloadCheckDelay="%{idp.service.attribute.resolver.checkInterval:PT0S}"
+            p:beanPostProcessors-ref="shibboleth.IdentifiableBeanPostProcessor"
             p:beanFactoryPostProcessors-ref="shibboleth.PropertySourcesPlaceholderConfigurer">
         <constructor-arg name="claz" value="net.shibboleth.idp.attribute.resolver.AttributeResolver" />
         <constructor-arg name="strategy">
@@ -83,8 +85,11 @@
             <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataResolverServiceStrategy" />
         </constructor-arg>
         <property name="beanPostProcessors">
-            <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
-                c:service-ref="shibboleth.AttributeResolverService" />
+            <list>
+                <ref bean="shibboleth.IdentifiableBeanPostProcessor" />
+                <bean class="net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.NodeProcessingAttachingBeanPostProcessor"
+                    c:service-ref="shibboleth.AttributeResolverService" />
+            </list>
         </property>
     </bean>
 
