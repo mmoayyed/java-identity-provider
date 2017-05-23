@@ -2,7 +2,7 @@ importClass(Packages.java.util.HashSet);
 importClass(Packages.net.shibboleth.utilities.java.support.httpclient.HttpClientSupport);
 importPackage(Packages.net.shibboleth.idp.attribute);
 
-var body = HttpClientSupport.toString(response.getEntity(), "UTF-8", 1024);
+var body = HttpClientSupport.toString(response.getEntity(), "UTF-8", 10);
 var result = JSON.parse(body);
 
 for (var i=0; i<result.length; i++) {

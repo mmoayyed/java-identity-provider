@@ -53,9 +53,9 @@ public class HTTPDataConnectorTest {
             RepositorySupport.buildHTTPSResourceURL("java-identity-provider",
                     "idp-attribute-resolver-impl/src/test/resources/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.json");
 
-    private static final String SCRIPT_PATH = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/test.js";
+    private static final String SCRIPT_PATH = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/";
     
-    private static final String SCRIPT_PATH_V8 = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/v8/test.js";
+    private static final String SCRIPT_PATH_V8 = "/net/shibboleth/idp/attribute/resolver/impl/dc/http/v8/";
 
     private HTTPDataConnector connector;
     
@@ -64,22 +64,16 @@ public class HTTPDataConnectorTest {
         return ver.startsWith("1.8");
     }
     
-    @BeforeMethod public void setUp() throws IOException, ScriptException {
+    @BeforeMethod public void setUp() {
         connector = new HTTPDataConnector();
         connector.setId(TEST_CONNECTOR_NAME);
         connector.setHttpClient(
                 HttpClientBuilder.create()
                     .setSSLSocketFactory(SecurityEnhancedHttpClientSupport.buildTLSSocketFactory(false, false))
                     .build());
-        
-        final ScriptedResponseMappingStrategy mapping =
-                ScriptedResponseMappingStrategy.resourceScript(
-                        ResourceHelper.of(new ClassPathResource(isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH)));
-        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
-        connector.setMappingStrategy(mapping);
     }
     
-    @Test public void test() throws ComponentInitializationException, ResolutionException {
+    @Test public void test() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
         final HttpClientSecurityParameters params = new HttpClientSecurityParameters();
         params.setTLSProtocols(Collections.singleton("TLSv1"));
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
@@ -87,10 +81,15 @@ public class HTTPDataConnectorTest {
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.setHttpClientSecurityParameters(params);
         builder.initialize();
-        
         connector.setExecutableSearchBuilder(builder);
-        ((ScriptedResponseMappingStrategy) connector.getMappingStrategy()).setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
-        ((ScriptedResponseMappingStrategy) connector.getMappingStrategy()).setAcceptTypes(Collections.singleton("application/json"));
+        
+        final ScriptedResponseMappingStrategy mapping =
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
+        mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
+        mapping.setAcceptTypes(Collections.singleton("application/json"));
+        connector.setMappingStrategy(mapping);
         connector.initialize();
         
         final AttributeResolutionContext context =
@@ -110,16 +109,49 @@ public class HTTPDataConnectorTest {
     }
 
     @Test(expectedExceptions=ResolutionException.class) public void testBadProtocol()
-            throws ComponentInitializationException, ResolutionException {
+            throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
         final HttpClientSecurityParameters params = new HttpClientSecurityParameters();
         params.setTLSProtocols(Collections.singleton("SSLv3"));
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
         builder.setTemplateText(TEST_URL);
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.setHttpClientSecurityParameters(params);
-        builder.initialize();
-        
+        builder.initialize();        
         connector.setExecutableSearchBuilder(builder);
+        
+        final ScriptedResponseMappingStrategy mapping =
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
+        mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
+        mapping.setAcceptTypes(Collections.singleton("application/json"));
+        connector.setMappingStrategy(mapping);
+        
+        connector.initialize();
+        
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        
+        connector.resolve(context);
+    }
+    
+    @Test(expectedExceptions=ResolutionException.class) public void testSize()
+            throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
+        final TemplatedURLBuilder builder = new TemplatedURLBuilder();
+        builder.setTemplateText("https://shibboleth.net/test.json");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        connector.setExecutableSearchBuilder(builder);
+        
+        final ScriptedResponseMappingStrategy mapping =
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "testsize.js")));
+        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
+        mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
+        mapping.setAcceptTypes(Collections.singleton("application/json"));
+        connector.setMappingStrategy(mapping);
+
         connector.initialize();
         
         final AttributeResolutionContext context =
@@ -130,13 +162,21 @@ public class HTTPDataConnectorTest {
     }
 
     @Test(expectedExceptions=ResolutionException.class) public void testMissing()
-            throws ComponentInitializationException, ResolutionException {
+            throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
         builder.setTemplateText("https://shibboleth.net/test.json");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
-        
         connector.setExecutableSearchBuilder(builder);
+        
+        final ScriptedResponseMappingStrategy mapping =
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
+        mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
+        mapping.setAcceptTypes(Collections.singleton("application/json"));
+        connector.setMappingStrategy(mapping);
+
         connector.initialize();
         
         final AttributeResolutionContext context =
@@ -145,7 +185,7 @@ public class HTTPDataConnectorTest {
         
         connector.resolve(context);
     }
-
+    
     @Test public void testMissingOk() throws ComponentInitializationException, ResolutionException, ScriptException {
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
         builder.setTemplateText("https://shibboleth.net/test.json");
@@ -170,16 +210,24 @@ public class HTTPDataConnectorTest {
         Assert.assertTrue(attrs == null || attrs.isEmpty());
     }
     
-    @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException {
+    @Test public void resolveWithCache() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
         builder.setTemplateText(TEST_URL);
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
-        
         connector.setExecutableSearchBuilder(builder);
+        
+        final ScriptedResponseMappingStrategy mapping =
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
+        mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
+        mapping.setAcceptTypes(Collections.singleton("application/json"));
+        connector.setMappingStrategy(mapping);
         
         final TestCache cache = new TestCache();
         connector.setResultsCache(cache);
+
         connector.initialize();
 
         final AttributeResolutionContext context =

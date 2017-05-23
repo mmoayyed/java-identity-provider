@@ -1,5 +1,5 @@
 var HttpClientSupport = Java.type("net.shibboleth.utilities.java.support.httpclient.HttpClientSupport");
-var body = HttpClientSupport.toString(response.getEntity(), "UTF-8", 1024);
+var body = HttpClientSupport.toString(response.getEntity(), "UTF-8", 10);
 var result = JSON.parse(body);
 
 var IdPAttribute = Java.type("net.shibboleth.idp.attribute.IdPAttribute");
