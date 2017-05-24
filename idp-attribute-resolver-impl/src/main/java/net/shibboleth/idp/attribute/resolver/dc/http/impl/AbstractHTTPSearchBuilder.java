@@ -125,7 +125,11 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
             @Nonnull final Map<String,List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
         
         // Default just wraps a computed URL into a GET.
-        return new HttpGet(getURL(resolutionContext, dependencyAttributes));
+        try {
+            return new HttpGet(getURL(resolutionContext, dependencyAttributes));
+        } catch (final IllegalArgumentException e) {
+            throw new ResolutionException(e);
+        }
     }
     
     /**
