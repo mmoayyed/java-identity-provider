@@ -386,7 +386,7 @@
             <isset property="idp.src.dir" />
         </condition>
     		
-        <condition property="idp.entityid.present">
+        <condition property="idp.entityID.present">
             <!-- capture now before it is overwritten -->
             <isset property="idp.entityID" />
         </condition>
