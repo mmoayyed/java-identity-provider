@@ -243,20 +243,22 @@ public class ValidateUsernamePasswordAgainstJAAS extends AbstractUsernamePasswor
                 log.debug("{} Attempting to authenticate user '{}' via '{}'", getLogPrefix(),
                         getUsernamePasswordContext().getUsername(), currentLoginConfigName);
                 authenticate(currentLoginConfigName);
-                log.info("{} Login by '{}' succeeded", getLogPrefix(), getUsernamePasswordContext().getUsername());
+                log.info("{} Login by '{}' via '{}' succeeded", getLogPrefix(),
+                        getUsernamePasswordContext().getUsername(), currentLoginConfigName);
                 recordSuccess(profileRequestContext);
                 derivedSubject = loginConfig.getSecond();
                 buildAuthenticationResult(profileRequestContext, authenticationContext);
                 ActionSupport.buildProceedEvent(profileRequestContext);
                 return;
             } catch (final LoginException e){ 
-                log.info("{} Login by '{}' failed", getLogPrefix(), getUsernamePasswordContext().getUsername(), e);
+                log.info("{} Login by '{}' via '{}' failed", getLogPrefix(), getUsernamePasswordContext().getUsername(),
+                        currentLoginConfigName, e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.INVALID_CREDENTIALS);
                 recordFailure(profileRequestContext, true);
                 eventSignaled = true;
             } catch (final Exception e) {
-                log.warn("{} Login by '{}' produced exception", getLogPrefix(),
-                        getUsernamePasswordContext().getUsername(), e);
+                log.warn("{} Login by '{}' via '{}' produced exception", getLogPrefix(),
+                        getUsernamePasswordContext().getUsername(), currentLoginConfigName, e);
                 handleError(profileRequestContext, authenticationContext, e, AuthnEventIds.AUTHN_EXCEPTION);
                 recordFailure(profileRequestContext, false);
                 eventSignaled = true;
