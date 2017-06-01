@@ -486,14 +486,6 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
                 searchExecutor.addPropertyValue("returnAttributes", returnAttrs.getBeanDefinition());
             }
 
-            final String filterText = getFilterText(); 
-            if (filterText != null) {
-                final BeanDefinitionBuilder searchFilter =
-                        BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
-                searchFilter.addConstructorArgValue(filterText);
-                searchExecutor.addPropertyValue("searchFilter", searchFilter.getBeanDefinition());
-            }
-
             return searchExecutor.getBeanDefinition();
         }
 

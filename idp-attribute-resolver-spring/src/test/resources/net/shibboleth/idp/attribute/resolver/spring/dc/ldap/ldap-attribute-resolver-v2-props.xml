@@ -21,7 +21,7 @@
         responseTimeout="%{connectionConfig.responseTimeout}">
         <dc:FilterTemplate>
             <![CDATA[
-                (uid=${resolutionContext.principal})
+                %{search.filter}
             ]]>
         </dc:FilterTemplate>
         <dc:ReturnAttributes>%{search.returnAttributes}</dc:ReturnAttributes>

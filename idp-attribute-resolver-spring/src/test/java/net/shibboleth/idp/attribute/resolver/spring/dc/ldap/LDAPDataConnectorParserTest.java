@@ -198,7 +198,7 @@ public class LDAPDataConnectorParserTest {
         final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         AssertJUnit.assertNotNull(searchExecutor);
         AssertJUnit.assertEquals("", searchExecutor.getBaseDn());
-        AssertJUnit.assertNotNull(searchExecutor.getSearchFilter().getFilter());
+        AssertJUnit.assertNull(searchExecutor.getSearchFilter());
         AssertJUnit.assertEquals(3000, searchExecutor.getTimeLimit());
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
@@ -273,7 +273,7 @@ public class LDAPDataConnectorParserTest {
         final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         AssertJUnit.assertNotNull(searchExecutor);
         AssertJUnit.assertEquals("", searchExecutor.getBaseDn());
-        AssertJUnit.assertNotNull(searchExecutor.getSearchFilter().getFilter());
+        AssertJUnit.assertNull(searchExecutor.getSearchFilter());
         AssertJUnit.assertEquals(3000, searchExecutor.getTimeLimit());
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
@@ -505,7 +505,7 @@ public class LDAPDataConnectorParserTest {
         final SearchExecutor searchExecutor = dataConnector.getSearchExecutor();
         AssertJUnit.assertNotNull(searchExecutor);
         AssertJUnit.assertEquals("ou=people,dc=shibboleth,dc=net", searchExecutor.getBaseDn());
-        AssertJUnit.assertNotNull(searchExecutor.getSearchFilter().getFilter());
+        AssertJUnit.assertNull(searchExecutor.getSearchFilter());
         AssertJUnit.assertEquals(7000, searchExecutor.getTimeLimit());
 
         final ConnectionFactoryValidator validator = (ConnectionFactoryValidator) dataConnector.getValidator();
