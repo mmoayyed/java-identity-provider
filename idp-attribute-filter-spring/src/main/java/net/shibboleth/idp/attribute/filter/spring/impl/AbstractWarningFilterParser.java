@@ -23,10 +23,10 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.basic.impl.AttributeFilterBasicNamespaceHandler;
 import net.shibboleth.idp.attribute.filter.spring.saml.impl.AttributeFilterSAMLNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -38,39 +38,14 @@ import org.w3c.dom.Element;
  */
 public abstract class AbstractWarningFilterParser extends BaseFilterParser {
 
-    /**
-     * Whether we have ever warned because of saml: content.
-     */
-    private static boolean warnedSAML;
-
-    /**
-     * Whether we have ever warned because of basic: content.
-     */
-    private static boolean warnedBasic;
-
-    /** Class logger. */
-    private final Logger log = LoggerFactory.getLogger(AbstractWarningFilterParser.class);
-
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
 
         final QName suppliedQname = DOMTypeSupport.getXSIType(element);
-        if (AttributeFilterSAMLNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
-            if (!warnedSAML) {
-                warnedSAML = true;
-                log.warn("Configuration contains at least one element in the deprecated '{}' namespace.",
-                        AttributeFilterSAMLNamespaceHandler.NAMESPACE);
-            }
-            log.debug("saml: Namespace element {} in {}, consider using {}", suppliedQname.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(), getAFPName().toString());
-        } else if (AttributeFilterBasicNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
-            if (!warnedBasic) {
-                warnedBasic = true;
-                log.warn("Configuration contains at least one element in the deprecated '{}' namespace.",
-                        AttributeFilterBasicNamespaceHandler.NAMESPACE);
-            }
-            log.debug("basic: Namespace element {} in {}, consider using {}", suppliedQname.toString(),
+        if (AttributeFilterSAMLNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())
+                || AttributeFilterBasicNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
+            DeprecationSupport.warnOnce(ObjectType.XSITYPE, suppliedQname.toString(),
                     parserContext.getReaderContext().getResource().getDescription(), getAFPName().toString());
         }
 
@@ -83,4 +58,5 @@ public abstract class AbstractWarningFilterParser extends BaseFilterParser {
      * @return the "new" type.
      */
     protected abstract QName getAFPName();
+
 }
