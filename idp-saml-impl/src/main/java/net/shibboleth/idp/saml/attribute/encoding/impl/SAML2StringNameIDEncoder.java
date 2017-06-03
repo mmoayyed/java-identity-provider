@@ -42,6 +42,8 @@ import com.google.common.base.Objects;
 /**
  * {@link net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder} that encodes the first String value of an
  * {@link net.shibboleth.idp.attribute.IdPAttribute} to a SAML 2 {@link NameID}.
+ * 
+ * @deprecated
  */
 public class SAML2StringNameIDEncoder extends AbstractSAML2NameIDEncoder {
 

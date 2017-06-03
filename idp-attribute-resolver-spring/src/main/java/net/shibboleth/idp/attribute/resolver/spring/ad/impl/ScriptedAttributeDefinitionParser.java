@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ScriptedAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -40,7 +39,7 @@ import org.w3c.dom.Element;
 /**
  * Spring bean definition parser for scripted attribute configuration elements.
  */
-public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class ScriptedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
     /** Schema type name - ad: (legacy). */
     @Nonnull public static final QName TYPE_NAME_AD =
@@ -122,6 +121,12 @@ public class ScriptedAttributeDefinitionParser extends BaseAttributeDefinitionPa
     /** {@inheritDoc}. No input. */
     @Override protected boolean needsAttributeSourceID() {
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
     }
 
 }

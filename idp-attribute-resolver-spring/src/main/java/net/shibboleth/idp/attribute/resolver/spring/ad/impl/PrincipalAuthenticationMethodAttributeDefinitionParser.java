@@ -21,13 +21,12 @@ import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalAuthenticationMethodAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 
 import org.w3c.dom.Element;
 
 /** Spring Bean Definition Parser for PrincipalAuthenticationMethod. */
-public class PrincipalAuthenticationMethodAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class PrincipalAuthenticationMethodAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
     /** Schema type name ad: (legacy). */
     @Nonnull public static final QName TYPE_NAME_AD =
@@ -47,4 +46,10 @@ public class PrincipalAuthenticationMethodAttributeDefinitionParser extends Base
         return false;
     }
     
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
+    }
+
 }

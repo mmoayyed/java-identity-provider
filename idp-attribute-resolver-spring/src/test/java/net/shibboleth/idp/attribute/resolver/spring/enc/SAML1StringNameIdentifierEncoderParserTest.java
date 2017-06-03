@@ -22,12 +22,16 @@ import net.shibboleth.idp.attribute.resolver.spring.enc.impl.SAML1StringNameIden
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1StringNameIdentifierEncoder;
 
 import org.opensaml.saml.saml1.core.NameIdentifier;
+import org.springframework.context.support.GenericApplicationContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicates;
 
 /**
  * Test for {@link SAML1StringNameIdentifierEncoderParser}.
  */
+@SuppressWarnings("deprecation")
 public class SAML1StringNameIdentifierEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void legacy() {
@@ -54,4 +58,16 @@ public class SAML1StringNameIdentifierEncoderParserTest extends BaseAttributeDef
         Assert.assertNull(encoder.getNameQualifier());;
     }
     
+    @Test public void conditional() {
+        final GenericApplicationContext context = new GenericApplicationContext();
+        setTestContext(context);
+
+        loadFile(ENCODER_FILE_PATH + "predicates.xml", context);
+        
+        final SAML1StringNameIdentifierEncoder encoder =
+                getAttributeEncoder("saml1StringNameIdentifierConditional.xml", SAML1StringNameIdentifierEncoder.class, context);
+
+        Assert.assertSame(encoder.getActivationCondition(), Predicates.alwaysFalse());
+        Assert.assertFalse(encoder.getActivationCondition().apply(null));
+    }
 }

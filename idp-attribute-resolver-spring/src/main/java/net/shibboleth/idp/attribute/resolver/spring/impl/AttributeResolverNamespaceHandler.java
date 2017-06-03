@@ -60,6 +60,7 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
 
 /** Namespace handler for the attribute resolver. */
+@SuppressWarnings("deprecation")
 public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */
@@ -117,7 +118,7 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
                 new ComputedIDDataConnectorParser());
         registerBeanDefinitionParser(RDBMSDataConnectorParser.TYPE_NAME_RESOLVER, new RDBMSDataConnectorParser());
         registerBeanDefinitionParser(LDAPDataConnectorParser.TYPE_NAME_RESOLVER, new LDAPDataConnectorParser());
-        registerBeanDefinitionParser(ScriptDataConnectorParser.TYPE_NAME_RESVOLVER, new ScriptDataConnectorParser());
+        registerBeanDefinitionParser(ScriptDataConnectorParser.TYPE_NAME_RESOLVER, new ScriptDataConnectorParser());
         registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME_RESOLVER, new StaticDataConnectorParser());
         registerBeanDefinitionParser(StoredIDDataConnectorParser.TYPE_NAME_RESOLVER, new StoredIDDataConnectorParser());
 

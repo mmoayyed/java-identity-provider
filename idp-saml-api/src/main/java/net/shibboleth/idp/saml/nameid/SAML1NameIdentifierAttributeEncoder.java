@@ -22,6 +22,8 @@ import org.opensaml.saml.saml1.core.NameIdentifier;
 /**
  * Marker interface for {@link net.shibboleth.idp.attribute.AttributeEncoder}
  * that produces SAML 1.x {@link NameIdentifier}s instead of attributes.
+ * 
+ * @deprecated
  */
 public interface SAML1NameIdentifierAttributeEncoder extends NameIdentifierAttributeEncoder<NameIdentifier> {
 

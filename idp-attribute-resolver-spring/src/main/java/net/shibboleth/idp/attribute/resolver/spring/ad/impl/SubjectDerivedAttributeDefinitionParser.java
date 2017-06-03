@@ -23,7 +23,6 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.resolver.ad.impl.ContextDerivedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.ad.impl.IdPAttributePrincipalValuesFunction;
 import net.shibboleth.idp.attribute.resolver.ad.impl.SubjectDerivedAttributeValuesFunction;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
@@ -35,7 +34,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Spring Bean Definition Parser for attribute definitions derived from the Principal. */
-public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class SubjectDerivedAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
     /** Schema type name ad: (legacy). */
     @Nonnull public static final QName TYPE_NAME_AD =
@@ -100,4 +99,11 @@ public class SubjectDerivedAttributeDefinitionParser extends BaseAttributeDefini
     @Override protected boolean failOnDependencies() {
         return true;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
+    }
+
 }

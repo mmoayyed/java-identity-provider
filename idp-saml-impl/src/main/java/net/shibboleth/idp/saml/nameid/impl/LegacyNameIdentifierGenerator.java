@@ -56,6 +56,8 @@ import com.google.common.base.Predicates;
  * which attribute encoders use, in the manner the V2 IdP does.</p>
  * 
  * @param <NameIdType> type of identifier object
+ * 
+ * @deprecated
  */
 public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
         extends AbstractIdentifiableInitializableComponent implements NameIdentifierGenerator<NameIdType> {

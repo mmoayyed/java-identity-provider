@@ -18,15 +18,12 @@
 package net.shibboleth.idp.attribute.resolver.spring.enc;
 
 import javax.annotation.Nonnull;
-import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.spring.enc.impl.AttributeEncoderNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.profile.logic.ScriptedPredicate;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -44,11 +41,6 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
 
     /** Local name of name attribute. */
     @Nonnull @NotEmpty public static final String NAME_ATTRIBUTE_NAME = "name";
-
-    /**
-     * Whether we have ever warned because of enc: content.
-     */
-    private static boolean warned;
 
     /** Log4j logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseAttributeEncoderParser.class);
@@ -75,23 +67,6 @@ public abstract class BaseAttributeEncoderParser extends AbstractSingleBeanDefin
             final BeanDefinitionBuilder builder) {
 
         super.doParse(config, parserContext, builder);
-        
-        final QName suppliedQname = DOMTypeSupport.getXSIType(config);
-        if (!AttributeResolverNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
-            if (!warned) {
-                warned = true;
-                log.warn("Configuration contains at least one element in the deprecated '{}' namespace.",
-                        AttributeEncoderNamespaceHandler.NAMESPACE);
-            }
-            if (log.isDebugEnabled()) {
-                final QName otherQname =
-                        new QName(AttributeEncoderNamespaceHandler.NAMESPACE,suppliedQname.getLocalPart(), "dc:");
-            log.debug("Deprecated Namespace element '{}' in {}, consider using '{}'", suppliedQname.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(), otherQname.toString());
-            }
-        } 
-
-
         
         final String attributeName = StringSupport.trimOrNull(config.getAttributeNS(null, NAME_ATTRIBUTE_NAME));
         if (nameRequired && attributeName == null) {

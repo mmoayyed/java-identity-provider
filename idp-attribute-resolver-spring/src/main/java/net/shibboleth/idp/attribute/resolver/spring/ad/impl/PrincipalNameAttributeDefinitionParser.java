@@ -24,11 +24,10 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.PrincipalNameAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 
 /** Spring Bean Definition Parser for PrincipalName attribute definitions. */
-public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class PrincipalNameAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
     /** Schema type name ad: (legacy). */
     @Nonnull public static final QName TYPE_NAME_AD =
@@ -46,6 +45,12 @@ public class PrincipalNameAttributeDefinitionParser extends BaseAttributeDefinit
     /** {@inheritDoc}. No input. */
     @Override protected boolean needsAttributeSourceID() {
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
     }
 
 }

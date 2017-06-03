@@ -29,13 +29,12 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.RegexSplitAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.PatternFactoryBean;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /** Spring Bean Definition Parser for Regexp split attribute definitions. */
-public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class RegexSplitAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
     /** Schema type name : ad: (Legacy). */
     @Nonnull public static final QName TYPE_NAME_AD =
@@ -80,6 +79,12 @@ public class RegexSplitAttributeDefinitionParser extends BaseAttributeDefinition
     /** {@inheritDoc} */
     @Override protected boolean needsAttributeSourceID() {
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
     }
 
 }

@@ -25,7 +25,10 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionPa
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition;
 import net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +40,7 @@ import org.w3c.dom.Element;
  * Spring bean definition parser for {@link TransientIdAttributeDefinition} using a
  * {@link CryptoTransientIdGenerationStrategy}.
  */
+@SuppressWarnings("deprecation")
 public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDefinitionParser {
 
     /** Schema type name - ad: (legacy). */
@@ -76,7 +80,9 @@ public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDef
 
         builder.addPropertyValue("transientIdGenerationStrategy", strategyBuilder.getBeanDefinition());
 
-        log.warn("{} This feature is DEPRECATED in favor of a TransientSAML2NameIDGenerator", getLogPrefix());
+        DeprecationSupport.warnOnce(ObjectType.XSITYPE, DOMTypeSupport.getXSIType(config).toString(),
+                parserContext.getReaderContext().getResource().getDescription(),
+                "via NameID Generation Service configuration");
     }
 
     /** {@inheritDoc}. So source Attribute for this. */

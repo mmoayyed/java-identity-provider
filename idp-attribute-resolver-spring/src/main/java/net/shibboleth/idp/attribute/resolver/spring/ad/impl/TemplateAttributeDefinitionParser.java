@@ -31,7 +31,6 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -39,7 +38,7 @@ import net.shibboleth.utilities.java.support.xml.ElementSupport;
 /**
  * Spring bean definition parser for templated attribute definition elements.
  */
-public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
     /** Schema type name - ad: (legacy). */
     @Nonnull public static final QName TYPE_NAME_AD =
@@ -110,6 +109,12 @@ public class TemplateAttributeDefinitionParser extends BaseAttributeDefinitionPa
     /** {@inheritDoc}. No input. */
     @Override protected boolean needsAttributeSourceID() {
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
     }
 
 }

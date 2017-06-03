@@ -29,6 +29,7 @@ import org.testng.annotations.Test;
 /**
  * test for {@link CryptoTransientIdAttributeDefinitionParser}
  */
+@SuppressWarnings("deprecation")
 public class CryptoTransientIdAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     private TransientIdAttributeDefinition getDefinition(String fileName) {

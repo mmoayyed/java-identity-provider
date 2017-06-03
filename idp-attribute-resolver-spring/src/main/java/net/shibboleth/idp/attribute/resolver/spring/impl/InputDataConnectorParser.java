@@ -58,14 +58,16 @@ public class InputDataConnectorParser extends ResolverPluginDependencyParser {
         if (attributes != null) {
             if (allAttributes != null) {
                 log.error("attributeNames and allAttributes are mutually exclusive");
-                throw new BeanCreationException(ELEMENT_NAME.getLocalPart() + ": attributeNames and allAttributes are mutually exclusive");
+                throw new BeanCreationException(ELEMENT_NAME.getLocalPart()
+                        + ": attributeNames and allAttributes are mutually exclusive");
             }
             builder.addPropertyValue("attributeNames", attributes);
         } else if (allAttributes != null) {
             builder.addPropertyValue("allAttributes", allAttributes);
         } else {
             log.error("One of attributeNames or allAttributes must be specified");
-            throw new BeanCreationException(ELEMENT_NAME.getLocalPart() + ": One of attributeNames or allAttributes must be specified");
+            throw new BeanCreationException(ELEMENT_NAME.getLocalPart()
+                    + ": One of attributeNames or allAttributes must be specified");
         }
     }
     

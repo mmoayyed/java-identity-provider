@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.attribute.resolver.dc.impl.StaticDataConnector;
-import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -39,7 +38,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Bean definition Parser for a {@link StaticDataConnector}. */
-public class StaticDataConnectorParser extends AbstractDataConnectorParser {
+public class StaticDataConnectorParser extends AbstractWarningDataConnectorParser {
 
     /** Schema type name - dc: (legacy). */
     @Nonnull public static final QName TYPE_NAME_DC = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Static");
@@ -103,4 +102,11 @@ public class StaticDataConnectorParser extends AbstractDataConnectorParser {
     @Override protected boolean warnOnDependencies() {
         return true;
     }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
+    }
+    
 }

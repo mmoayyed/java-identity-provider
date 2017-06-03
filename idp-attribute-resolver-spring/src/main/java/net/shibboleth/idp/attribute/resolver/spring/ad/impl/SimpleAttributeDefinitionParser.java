@@ -26,11 +26,10 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import net.shibboleth.idp.attribute.resolver.ad.impl.SimpleAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 
 /** Bean definition parser for a {@link SimpleAttributeDefinition}. */
-public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionParser {
+public class SimpleAttributeDefinitionParser extends AbstractWarningAttributeDefinitionParser {
 
     /** Schema type names - ad: (legacy). */
     @Nonnull public static final QName TYPE_NAME_AD =
@@ -54,6 +53,12 @@ public class SimpleAttributeDefinitionParser extends BaseAttributeDefinitionPars
     /** {@inheritDoc} */
     @Override protected boolean needsAttributeSourceID() {
         return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
     }
 
 }

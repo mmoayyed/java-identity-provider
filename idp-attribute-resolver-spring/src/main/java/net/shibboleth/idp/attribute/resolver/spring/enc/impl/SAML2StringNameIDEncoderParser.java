@@ -22,9 +22,15 @@ import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.profile.logic.ScriptedPredicate;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -33,6 +39,8 @@ import org.w3c.dom.Element;
 
 /**
  * Spring bean definition parser for {@link SAML2StringNameIDEncoder}.
+ * 
+ * @deprecated
  */
 public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinitionParser {
 
@@ -60,6 +68,22 @@ public class SAML2StringNameIDEncoderParser extends AbstractSingleBeanDefinition
             @Nonnull final BeanDefinitionBuilder builder) {
         super.doParse(config, parserContext, builder);
 
+        DeprecationSupport.warnOnce(ObjectType.XSITYPE, DOMTypeSupport.getXSIType(config).toString(),
+                parserContext.getReaderContext().getResource().getDescription(),
+                "via NameID Generation Service configuration");
+        
+        if (config.hasAttributeNS(null, "activationConditionRef")) {
+            builder.addPropertyReference("activationCondition",
+                    StringSupport.trimOrNull(config.getAttributeNS(null, "activationConditionRef")));
+        } else {
+            final Element child = ElementSupport.getFirstChildElement(config);
+            if (child != null && ElementSupport.isElementNamed(child,
+                    AttributeResolverNamespaceHandler.NAMESPACE, "ActivationConditionScript")) {
+                builder.addPropertyValue("activationCondition",
+                        ScriptTypeBeanParser.parseScriptType(ScriptedPredicate.class, child).getBeanDefinition());
+            }
+        }
+        
         if (config.hasAttributeNS(null, FORMAT_ATTRIBUTE_NAME)) {
             final String namespace = StringSupport.trimOrNull(config.getAttributeNS(null, FORMAT_ATTRIBUTE_NAME));
             builder.addPropertyValue("nameFormat", namespace);

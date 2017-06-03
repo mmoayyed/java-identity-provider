@@ -25,7 +25,6 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.factory.EvaluableScriptFactoryBean;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ScriptedDataConnector;
 import net.shibboleth.idp.attribute.resolver.spring.ad.impl.ScriptedAttributeDefinitionParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -38,13 +37,13 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Bean definition Parser for a {@link ScriptedDataConnector}. */
-public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
+public class ScriptDataConnectorParser extends AbstractWarningDataConnectorParser {
 
     /** Schema type name - dc: (legacy). */
     @Nonnull public static final QName TYPE_NAME_DC = new QName(DataConnectorNamespaceHandler.NAMESPACE, "Script");
 
     /** Schema type name - resolver: . */
-    @Nonnull public static final QName TYPE_NAME_RESVOLVER =
+    @Nonnull public static final QName TYPE_NAME_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ScriptedDataConnector");
 
     /** Script file element name - dc:. */
@@ -124,5 +123,11 @@ public class ScriptDataConnectorParser extends AbstractDataConnectorParser {
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
     // Checkstyle: CyclomaticComplexity ON
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
+    }
 
 }

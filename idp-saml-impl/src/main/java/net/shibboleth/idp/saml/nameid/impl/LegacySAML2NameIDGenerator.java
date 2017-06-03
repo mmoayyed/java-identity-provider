@@ -27,6 +27,8 @@ import org.opensaml.saml.saml2.profile.SAML2NameIDGenerator;
  * {@link SAML2NameIDAttributeEncoder}s attached.
  * 
  * <p>See the base class for additional detail.</p>
+ * 
+ * @deprecated
  */
 public class LegacySAML2NameIDGenerator extends LegacyNameIdentifierGenerator<NameID>
         implements SAML2NameIDGenerator {

@@ -27,7 +27,7 @@ import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.TemplatedExecutableStatementBuilder;
-import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractWarningDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ManagedConnectionParser;
@@ -48,7 +48,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Bean definition Parser for a {@link RDBMSDataConnector}. */
-public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
+public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser {
 
     /** Schema type name - dc: (Legacy). */
     @Nonnull public static final QName TYPE_NAME_DC =
@@ -66,6 +66,12 @@ public class RDBMSDataConnectorParser extends AbstractDataConnectorParser {
         return RDBMSDataConnector.class;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
+    }
+    
     /** {@inheritDoc} */
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {

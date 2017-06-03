@@ -170,8 +170,8 @@ public abstract class AbstractSAMLAttributeEncoder<AttributeType extends SAMLObj
             }
 
             if (!canEncodeValue(attribute, o)) {
-                log.warn("Skipping value of attribute '{}'; Type {} cannot be encoded by this encoder ({}).", attributeId,
-                        o.getClass().getName(), this.getClass().getName());
+                log.warn("Skipping value of attribute '{}'; Type {} cannot be encoded by this encoder ({}).",
+                        attributeId, o.getClass().getName(), this.getClass().getName());
                 continue;
             }
 

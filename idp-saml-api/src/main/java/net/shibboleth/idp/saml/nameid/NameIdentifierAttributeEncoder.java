@@ -31,6 +31,8 @@ import com.google.common.base.Predicate;
  * support, or not, for a particular name identifier format.</p> 
  * 
  * @param <NameIdType>  type of object produced
+ * 
+ * @deprecated
  */
 public interface NameIdentifierAttributeEncoder<NameIdType extends SAMLObject>
     extends AttributeEncoder<NameIdType>, Predicate<String> {

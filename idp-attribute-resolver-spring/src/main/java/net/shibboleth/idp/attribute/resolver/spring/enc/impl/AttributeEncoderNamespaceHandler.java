@@ -23,6 +23,7 @@ import net.shibboleth.ext.spring.util.BaseSpringNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 
 /** Namespace handler for the attribute resolver. */
+@SuppressWarnings("deprecation")
 public class AttributeEncoderNamespaceHandler extends BaseSpringNamespaceHandler {
 
     /** Namespace for this handler. */

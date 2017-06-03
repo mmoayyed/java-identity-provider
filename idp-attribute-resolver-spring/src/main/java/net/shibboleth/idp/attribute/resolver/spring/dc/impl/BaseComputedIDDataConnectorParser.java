@@ -27,7 +27,9 @@ import net.shibboleth.idp.attribute.resolver.spring.BaseResolverPluginParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -44,11 +46,6 @@ import org.w3c.dom.Element;
  * {@link net.shibboleth.idp.saml.nameid.impl.StoredIDDataConnector}.
  */
 public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPluginParser {
-
-    /**
-     * Whether we have ever warned because of dc: content.
-     */
-    private static boolean warned;
 
     /** Class logger. */
     @Nonnull private final Logger log = LoggerFactory.getLogger(BaseComputedIDDataConnectorParser.class);
@@ -67,22 +64,11 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         super.doParse(config, parserContext, builder);
         
         final QName suppliedQname = DOMTypeSupport.getXSIType(config);
-        
         if (!AttributeResolverNamespaceHandler.NAMESPACE.equals(suppliedQname.getNamespaceURI())) {
-            if (!warned) {
-                warned = true;
-                log.warn("{} Configuration contains at least one element in the deprecated '{}' namespace.",
-                         getLogPrefix(), DataConnectorNamespaceHandler.NAMESPACE);
-            }
-            if (log.isDebugEnabled()) {
-                final QName otherQname =
-                        new QName(DataConnectorNamespaceHandler.NAMESPACE,suppliedQname.getLocalPart(), "dc:");
-            log.debug("{} Deprecated Namespace element '{}' in {}, consider using' {}'",
-                    getLogPrefix(), suppliedQname.toString(),
-                    parserContext.getReaderContext().getResource().getDescription(), otherQname.toString());
-            }
-        }
-
+            DeprecationSupport.warnOnce(ObjectType.XSITYPE, suppliedQname.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(), getPreferredName().toString());
+        } 
+        
         final String generatedAttribute;
         if (config.hasAttributeNS(null, "generatedAttributeID")) {
             generatedAttribute = StringSupport.trimOrNull(config.getAttributeNS(null, "generatedAttributeID"));
@@ -135,5 +121,12 @@ public abstract class BaseComputedIDDataConnectorParser extends BaseResolverPlug
         final StringBuilder builder = new StringBuilder("Data Connector '").append(getDefinitionId()).append("':");
         return builder.toString();
     }
+    
+    /**
+     * Helper function to assist rewrite from old to new QName.
+     * 
+     * @return the "new" type
+     */
+    protected abstract QName getPreferredName();
     
 }

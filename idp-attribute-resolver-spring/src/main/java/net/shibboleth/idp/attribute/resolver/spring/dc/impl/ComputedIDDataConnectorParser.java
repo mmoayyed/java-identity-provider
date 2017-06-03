@@ -50,4 +50,10 @@ public class ComputedIDDataConnectorParser extends BaseComputedIDDataConnectorPa
         super.doParse(config, parserContext, builder, "computedId");
     }
     
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
+    }
+
 }

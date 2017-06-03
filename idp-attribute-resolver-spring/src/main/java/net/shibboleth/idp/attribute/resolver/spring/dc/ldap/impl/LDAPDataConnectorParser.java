@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValid
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
 import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder;
-import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractWarningDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
@@ -75,7 +75,7 @@ import org.w3c.dom.Element;
  * Bean definition Parser for a {@link LDAPDataConnector}. <em>Note</em> That parsing the V2 configuration will set some
  * beans with hard wired defaults. See {@link #doParseV2(Element, ParserContext, BeanDefinitionBuilder)}.
  */
-public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
+public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser {
 
     /** Schema type name - dc: (Legacy). */
     @Nonnull public static final QName
@@ -91,6 +91,12 @@ public class LDAPDataConnectorParser extends AbstractDataConnectorParser {
     /** {@inheritDoc} */
     @Override protected Class<LDAPDataConnector> getNativeBeanClass() {
         return LDAPDataConnector.class;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
     }
 
     // CheckStyle: MethodLength|CyclomaticComplexity OFF

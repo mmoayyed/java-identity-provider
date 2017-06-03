@@ -46,6 +46,8 @@ import com.google.common.base.Strings;
  * The generation in devolved to the supplied {@link TransientIdGenerationStrategy}, which will be a
  * {@link net.shibboleth.idp.saml.nameid.impl.StoredTransientIdGenerationStrategy} for the Transient and
  * {@link net.shibboleth.idp.saml.nameid.impl.CryptoTransientIdGenerationStrategy} for a CryptoTransient.
+ * 
+ * @deprecated
  */
 public class TransientIdAttributeDefinition extends AbstractAttributeDefinition {
 

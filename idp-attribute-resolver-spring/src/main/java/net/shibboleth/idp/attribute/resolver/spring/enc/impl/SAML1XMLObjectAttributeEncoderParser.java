@@ -21,7 +21,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML1XMLObjectAttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
@@ -32,7 +31,7 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /** Spring Bean Definition Parser for {@link SAML1XMLObjectAttributeEncoder}. */
-public class SAML1XMLObjectAttributeEncoderParser extends BaseAttributeEncoderParser {
+public class SAML1XMLObjectAttributeEncoderParser extends AbstractWarningAttributeEncoderParser {
 
     /** Schema type name- enc: (legacy). */
     @Nonnull public static final QName TYPE_NAME_ENC =
@@ -64,6 +63,12 @@ public class SAML1XMLObjectAttributeEncoderParser extends BaseAttributeEncoderPa
             final String namespace = StringSupport.trimOrNull(config.getAttributeNS(null, NAMESPACE_ATTRIBUTE_NAME));
             builder.addPropertyValue("namespace", namespace);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @Nonnull protected QName getPreferredName() {
+        return TYPE_NAME_RESOLVER;
     }
 
 }

@@ -30,7 +30,11 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-/** Base class for {@link SAML1NameIdentifierAttributeEncoder}s. */
+/**
+ * Base class for {@link SAML1NameIdentifierAttributeEncoder}s.
+ * 
+ * @deprecated
+ */
 public abstract class AbstractSAML1NameIdentifierEncoder extends AbstractInitializableComponent
         implements SAML1NameIdentifierAttributeEncoder {
 

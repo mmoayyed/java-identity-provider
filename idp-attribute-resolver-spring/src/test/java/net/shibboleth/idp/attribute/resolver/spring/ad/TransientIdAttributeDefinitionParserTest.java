@@ -30,6 +30,7 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 /**
  * test for {@link TransientIdAttributeDefinitionParser}
  */
+@SuppressWarnings("deprecation")
 public class TransientIdAttributeDefinitionParserTest extends BaseAttributeDefinitionParserTest {
 
     private TransientIdAttributeDefinition getDefinition(String fileName) {

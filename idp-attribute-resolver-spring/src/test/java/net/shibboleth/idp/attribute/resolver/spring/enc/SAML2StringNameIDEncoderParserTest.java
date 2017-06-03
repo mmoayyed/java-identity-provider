@@ -28,6 +28,7 @@ import org.testng.annotations.Test;
 /**
  * Test for {@link SAML2StringNameIDEncoderParser}.
  */
+@SuppressWarnings("deprecation")
 public class SAML2StringNameIDEncoderParserTest extends BaseAttributeDefinitionParserTest {
 
     @Test public void legacy() {
