@@ -21,8 +21,11 @@ import javax.annotation.Nonnull;
 
 import net.shibboleth.idp.saml.nameid.SAML1NameIdentifierAttributeEncoder;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -67,6 +70,14 @@ public abstract class AbstractSAML1NameIdentifierEncoder extends AbstractInitial
     @Override
     @Nonnull public final String getProtocol() {
         return SAMLConstants.SAML11P_NS;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null, "via NameID Generation configuration");
     }
     
 }

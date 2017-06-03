@@ -32,6 +32,8 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
@@ -63,6 +65,8 @@ public class TransientIdAttributeDefinition extends AbstractAttributeDefinition 
         if (null == idGenerator) {
             throw new ComponentInitializationException("Id generator must be non null");
         }
+        
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null, "via NameID Generation configuration");
     }
 
     /** Set the id generator being used.  
