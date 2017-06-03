@@ -75,9 +75,9 @@
         class="net.shibboleth.idp.saml.nameid.impl.JDBCPersistentIdStoreEx" />
     
     <!-- These two beans handle legacy support for NameID generation in the Attribute Resolver. -->
-    <bean id="shibboleth.LegacySAML1NameIdentifierGenerator"
+    <bean id="shibboleth.LegacySAML1NameIdentifierGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.LegacySAML1NameIdentifierGenerator" />
-    <bean id="shibboleth.LegacySAML2NameIDGenerator"
+    <bean id="shibboleth.LegacySAML2NameIDGenerator" lazy-init="true"
         class="net.shibboleth.idp.saml.nameid.impl.LegacySAML2NameIDGenerator" />
     
     <!--

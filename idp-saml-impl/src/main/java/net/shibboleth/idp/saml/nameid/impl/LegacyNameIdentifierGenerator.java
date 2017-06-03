@@ -28,8 +28,11 @@ import net.shibboleth.idp.profile.context.RelyingPartyContext;
 import net.shibboleth.idp.saml.nameid.NameIdentifierAttributeEncoder;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.AbstractIdentifiableInitializableComponent;
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -112,7 +115,15 @@ public class LegacyNameIdentifierGenerator<NameIdType extends SAMLObject>
                 "AttributeContext lookup strategy cannot be null");
     }
     
-// Checkstyle: CyclomaticComplexity OFF
+    /** {@inheritDoc} */
+    @Override
+    protected void doInitialize() throws ComponentInitializationException {
+        super.doInitialize();
+        
+        DeprecationSupport.warn(ObjectType.CLASS, getClass().getName(), null, null);
+    }
+
+    // Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override
     @Nullable public NameIdType generate(@Nonnull final ProfileRequestContext profileRequestContext,
