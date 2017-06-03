@@ -54,6 +54,18 @@
         depends-on="shibboleth.LoggingService,shibboleth.ParserPool,shibboleth.metrics.MetricRegistry"
         p:parserPool-ref="shibboleth.ParserPool"
         p:metricRegistry-ref="shibboleth.metrics.MetricRegistry" />
+        
+    <bean class="net.shibboleth.idp.spring.DeprecatedPropertyBean">
+        <property name="deprecatedProperties">
+            <map>
+                <entry key="idp.httpclient.useTrustEngineTLSSocketFactory" value="idp.httpclient.useSecurityEnhancedTLSSocketFactory" />
+            </map>
+        </property>
+        <property name="deadProperties">
+            <list>
+            </list>
+        </property>
+    </bean>
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean"
             depends-on="shibboleth.LoggingService">
