@@ -39,6 +39,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link LegacySAML1NameIdentifierGenerator}. */
+@SuppressWarnings("deprecation")
 public class LegacySAML1NameIdentifierGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */

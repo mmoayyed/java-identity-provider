@@ -40,6 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** Unit test for {@link LegacySAML2NameIDGenerator}. */
+@SuppressWarnings("deprecation")
 public class LegacySAML2NameIDGeneratorTest extends OpenSAMLInitBaseTestCase {
 
     /** The name we give the test attribute. */

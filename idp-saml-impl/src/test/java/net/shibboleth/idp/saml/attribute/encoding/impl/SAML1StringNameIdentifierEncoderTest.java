@@ -34,6 +34,7 @@ import org.testng.annotations.Test;
 /**
  * Tests for {@link SAML1StringNameIdentifierEncoder}.
  */
+@SuppressWarnings("deprecation")
 public class SAML1StringNameIdentifierEncoderTest extends OpenSAMLInitBaseTestCase {
 
     @Test public void settersGetters() {

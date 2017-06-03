@@ -40,6 +40,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /** test for {@link net.shibboleth.idp.saml.attribute.resolver.impl.TransientIdAttributeDefinition}. */
+@SuppressWarnings("deprecation")
 public class TransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase {
 
     /** The name. */

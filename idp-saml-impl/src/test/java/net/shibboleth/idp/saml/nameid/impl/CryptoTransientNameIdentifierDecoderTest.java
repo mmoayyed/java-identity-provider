@@ -54,6 +54,7 @@ import org.testng.annotations.Test;
 /**
  * test for {@link CryptoTransientNameIdentifierDecoder}.
  */
+@SuppressWarnings("deprecation")
 public class CryptoTransientNameIdentifierDecoderTest extends OpenSAMLInitBaseTestCase {
 
     private final static long TIMEOUT = 5000;

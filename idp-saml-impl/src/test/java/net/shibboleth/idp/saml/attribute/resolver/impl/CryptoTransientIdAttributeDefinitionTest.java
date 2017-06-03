@@ -46,7 +46,7 @@ import org.testng.annotations.Test;
  * 
  * @link {@link TransientIdAttributeDefinition} with an injected {@link CryptoTransientIdGenerationStrategy}
  */
-
+@SuppressWarnings("deprecation")
 public class CryptoTransientIdAttributeDefinitionTest extends OpenSAMLInitBaseTestCase {
 
     private static final String ID = "CryptoTransientIdAttributeDefn";
