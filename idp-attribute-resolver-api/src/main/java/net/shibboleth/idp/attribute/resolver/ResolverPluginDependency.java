@@ -32,16 +32,16 @@ import com.google.common.base.Objects;
 /**
  * Represents the dependency of one {@link ResolverPlugin} upon another plugin. Note that this serves for
  * dependencies both on data connectors (in which case the {@link #dependencyAttributeId} member will be null) or
- * attributes. The dependency analysis stages is aware of this difference and relies on it.
+ * attributes. The dependency analysis stage is aware of this difference and relies on it.
  */
 @ThreadSafe
 public class ResolverPluginDependency {
 
     /** ID of the plugin that will produce the attribute. */
-    private final String dependencyPluginId;
+    @Nonnull @NotEmpty private final String dependencyPluginId;
 
     /** ID of the attribute, produced by the identified plugin, whose values will be used by the dependent plugin. */
-    private String dependencyAttributeId;
+    @Nullable private String dependencyAttributeId;
 
     /**
      * Constructor.

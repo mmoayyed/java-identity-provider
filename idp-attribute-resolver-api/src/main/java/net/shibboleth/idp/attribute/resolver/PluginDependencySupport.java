@@ -74,6 +74,7 @@ public final class PluginDependencySupport {
         return getMergedAttributeValues(workContext, dependencies, "<unknown>");
     }
 
+// Checkstyle: MethodLength|CyclomaticComplexity OFF
     /**
      * Gets the values, as a single list, from all dependencies. This method only supports dependencies which contain an
      * attribute specifier (i.e. {@link ResolverPluginDependency#getDependencyAttributeId()} does not equal null). It is
@@ -111,14 +112,16 @@ public final class PluginDependencySupport {
                 mergeAttributeValues(resolvedAttribute, values);
             } else if (dependency instanceof ResolverDataConnectorDependency) {
                 // Merge all specified attribute values.
-                final ResolverDataConnectorDependency dataConnectorDependency = (ResolverDataConnectorDependency) dependency;
+                final ResolverDataConnectorDependency dataConnectorDependency =
+                        (ResolverDataConnectorDependency) dependency;
                 final ResolvedDataConnector dataConnector =
                         workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
                 if (dataConnector != null) { 
                     final Map<String, IdPAttribute> resolvedAttrs = dataConnector.getResolvedAttributes();
                     if (null != resolvedAttrs) {
                         for (final Entry<String, IdPAttribute> entry : resolvedAttrs.entrySet()) {
-                            if (dataConnectorDependency.isAllAttributes() || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
+                            if (dataConnectorDependency.isAllAttributes()
+                                    || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
                                 mergeAttributeValues(entry.getValue(), values);
                             }
                         }
@@ -130,11 +133,11 @@ public final class PluginDependencySupport {
                 final String dependencyAttributeId = dependency.getDependencyAttributeId();
                 if (attributeDefinition != null) {
                     if (null == dependencyAttributeId) {
-                        LOG.warn("Plugin '{}' was defined without a sourceAttributeID,  but attribute '{}', specified "
-                                + "" + "as a <Dependency> will be used.", attributeDefinitionId, pluginId);
+                        LOG.warn("Plugin '{}' was defined without a sourceAttributeID,  but attribute '{}', specified" +
+                                " as a <Dependency> will be used.", attributeDefinitionId, pluginId);
                     } else if (!dependencyAttributeId.equals(pluginId)) {
-                        LOG.warn("Plugin '{}' was defined with a sourceAttributeID '{}',"
-                                + " but the attribute definition '{}', specified as a <Dependency> will be used as well.",
+                        LOG.warn("Plugin '{}' was defined with a sourceAttributeID '{}', " +
+                                "but the attribute definition '{}', specified as a <Dependency> will be used as well.",
                                 attributeDefinitionId, dependencyAttributeId, pluginId);
                     }
     
@@ -165,7 +168,9 @@ public final class PluginDependencySupport {
 
         return values;
     }
+// Checkstyle: MethodLength|CyclomaticComplexity ON
 
+// Checkstyle: MethodLength|CyclomaticComplexity OFF
     /**
      * Gets the values from all dependencies. Attributes, with the same identifier but from different resolver plugins,
      * will have their values merged into a single list within this method's returned map. This method is the equivalent
@@ -200,14 +205,16 @@ public final class PluginDependencySupport {
                 }
             } else if (dependency instanceof ResolverDataConnectorDependency) {
                 // Just add those attributes specified
-                final ResolverDataConnectorDependency dataConnectorDependency = (ResolverDataConnectorDependency) dependency;
+                final ResolverDataConnectorDependency dataConnectorDependency =
+                        (ResolverDataConnectorDependency) dependency;
                 final ResolvedDataConnector dataConnector =
                         workContext.getResolvedDataConnectors().get(dependency.getDependencyPluginId());
                 if (dataConnector != null) { 
                     final Map<String, IdPAttribute> resolvedAttrs = dataConnector.getResolvedAttributes();
                     if (null != resolvedAttrs) {
                         for (final Entry<String, IdPAttribute> entry : resolvedAttrs.entrySet()) {
-                            if (dataConnectorDependency.isAllAttributes() || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
+                            if (dataConnectorDependency.isAllAttributes()
+                                    || dataConnectorDependency.getAttributeNames().contains(entry.getKey())) {
                                 addAttribute(entry.getValue(), result);
                             }
                         }
@@ -234,6 +241,7 @@ public final class PluginDependencySupport {
 
         return result;
     }
+// Checkstyle: MethodLength|CyclomaticComplexity ON
 
     /**
      * Adds the values of the attributes to the target collection of attribute values indexes by attribute ID.

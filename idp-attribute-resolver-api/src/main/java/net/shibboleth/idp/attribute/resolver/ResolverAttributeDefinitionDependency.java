@@ -25,11 +25,10 @@ public final class ResolverAttributeDefinitionDependency extends ResolverPluginD
     /**
      * Constructor.
      *
-     * @param pluginId
+     * @param pluginId ID of dependency
      */
     public ResolverAttributeDefinitionDependency(final String pluginId) {
         super(pluginId);
-        // TODO Auto-generated constructor stub
     }
 
 }

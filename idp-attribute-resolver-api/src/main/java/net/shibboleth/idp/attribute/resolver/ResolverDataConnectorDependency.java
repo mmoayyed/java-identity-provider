@@ -22,52 +22,70 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+
 /**
- *
+ * A Dependency that references to an Data Connector.
  */
 public final class ResolverDataConnectorDependency extends ResolverPluginDependency {
 
-    private boolean allAttributes = false;
+    /** Whether to depend on all the connector's attributes. */
+    private boolean allAttributes;
     
-    private Set<String> attributeNames = Collections.EMPTY_SET;
+    /** Names of attributes to import via dependency. */
+    @Nonnull @NotEmpty private Set<String> attributeNames;
     
     /**
      * Constructor.
      *
-     * @param pluginId
+     * @param pluginId ID of dependency
      */
     public ResolverDataConnectorDependency(final String pluginId) {
         super(pluginId);
+        
+        allAttributes = false;
+        attributeNames = Collections.emptySet();
     }
 
     /**
-     * @return Returns the allAttributes.
+     * Get whether all the connector's attributes are part of the dependency.
+     * 
+     * @return whether all the connector's attributes are part of the dependency
      */
     public boolean isAllAttributes() {
         return allAttributes;
     }
 
     /**
-     * @param all The allAttributes to set.
+     * Set whether all the connector's attributes are part of the dependency.
+     * 
+     * @param all flag to set
      */
     public void setAllAttributes(final boolean all) {
         allAttributes = all;
     }
 
     /**
-     * @return Returns the attributeNames.
+     * Get the names of the connector's attributes that make up the dependency.
+     * 
+     * @return attribute names
      */
-    public Collection<String> getAttributeNames() {
+    @Nonnull @NonnullElements public Collection<String> getAttributeNames() {
         return attributeNames;
     }
 
     /**
-     * @param names The attributeNames to set.
+     * Set the names of the connector's attributes that make up the dependency.
+     * 
+     * @param names attribute names
      */
-    public void setAttributeNames(final Collection<String> names) {
-        attributeNames = new HashSet(names);
+    public void setAttributeNames(@Nonnull @NotEmpty final Collection<String> names) {
+        attributeNames = new HashSet<>(StringSupport.normalizeStringCollection(names));
     }
    
     /**
@@ -77,6 +95,5 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
     @Override @Deprecated public void setDependencyAttributeId(@Nullable final String attributeId) {
         super.setDependencyAttributeId(attributeId);
     }
-
 
 }
