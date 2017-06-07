@@ -58,6 +58,8 @@
         <module>../idp-distribution</module>
 
         <module>../idp-ui</module>
+        
+        <module>../idp-bom</module>
     </modules>
 
     <properties>
