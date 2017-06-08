@@ -319,7 +319,18 @@
     <complexType name="Requester">
         <annotation>
             <documentation>
-                A match function that matches the attribute request against the specified value.
+                A match function that matches the attribute requester against the specified value.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:StringMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Issuer">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute issuer against the specified value.
             </documentation>
         </annotation>
         <complexContent>
@@ -409,6 +420,17 @@
         <annotation>
             <documentation>
                 A match function that matches the attribute requester against the specified regular expression.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="afp:RegexMatchType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="IssuerRegex">
+        <annotation>
+            <documentation>
+                A match function that matches the attribute issuer against the specified regular expression.
             </documentation>
         </annotation>
         <complexContent>

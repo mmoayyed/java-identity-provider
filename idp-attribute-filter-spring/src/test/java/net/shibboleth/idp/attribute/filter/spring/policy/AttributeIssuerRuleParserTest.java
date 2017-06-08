@@ -17,6 +17,10 @@
 
 package net.shibboleth.idp.attribute.filter.spring.policy;
 
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule;
+import net.shibboleth.idp.attribute.filter.PolicyRequirementRule.Tristate;
+import net.shibboleth.idp.attribute.filter.context.AttributeFilterContext;
+import net.shibboleth.idp.attribute.filter.matcher.impl.DataSources;
 import net.shibboleth.idp.attribute.filter.policyrule.filtercontext.impl.AttributeIssuerPolicyRule;
 import net.shibboleth.idp.attribute.filter.spring.BaseAttributeFilterParserTest;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
@@ -25,12 +29,24 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class AttributeIssuerRuleParserTest extends BaseAttributeFilterParserTest {
-
+ 
     @Test public void policy() throws ComponentInitializationException {
+        policy("attributeIssuer.xml", true);
+        policy("attributeIssuer.xml", false);
+    }
 
-        final AttributeIssuerPolicyRule arRule = (AttributeIssuerPolicyRule) getPolicyRule("attributeIssuer.xml", false);
+    public void policy(String path, boolean isAfp) throws ComponentInitializationException {
+        final PolicyRequirementRule rule = getPolicyRule(path, isAfp);
+
+        AttributeFilterContext filterContext =
+                DataSources.populatedFilterContext("principal", "urn:example:org:idp:foo", "http://example.org");
+        Assert.assertEquals(rule.matches(filterContext), Tristate.TRUE);
+        filterContext = DataSources.populatedFilterContext("principal", "issuer", "http://example.org");
+        Assert.assertEquals(rule.matches(filterContext), Tristate.FALSE);
+
+        final AttributeIssuerPolicyRule arRule = (AttributeIssuerPolicyRule) rule;
         Assert.assertEquals(arRule.getMatchString(), "urn:example:org:idp:foo");
         Assert.assertTrue(arRule.isIgnoreCase());
-}
- 
+    }
+
 }
