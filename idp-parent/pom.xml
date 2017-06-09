@@ -200,9 +200,9 @@
     </dependencyManagement>
 
     <scm>
-        <connection>${scm.connection}java-identity-provider</connection>
-        <developerConnection>${scm.developerConnection}java-identity-provider</developerConnection>
-        <url>${scm.url}java-identity-provider.git</url>
+        <connection>${shibboleth.scm.connection}java-identity-provider</connection>
+        <developerConnection>${shibboleth.scm.developerConnection}java-identity-provider</developerConnection>
+        <url>${shibboleth.scm.url}java-identity-provider.git</url>
     </scm>
 
     <distributionManagement>
