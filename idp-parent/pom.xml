@@ -63,7 +63,6 @@
     </modules>
 
     <properties>
-        <svn.relative.location>java-identity-provider/trunk</svn.relative.location>
         <duoweb.version>1.1</duoweb.version>
         <u2flib.version>0.16.0</u2flib.version>
         <idwsfconsumer.version>1.0.0</idwsfconsumer.version>
