@@ -174,7 +174,15 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
         provider.addPropertyValue("providerConfig", providerConfig.getBeanDefinition());
         connectionFactory.addPropertyValue("provider", provider.getBeanDefinition());
 
-        builder.addPropertyValue("executableSearchBuilder", v2Parser.createTemplatedExecutableSearchFilterBuilder());
+        final String searchBuilderID = v2Parser.getBeanSearchBuilderID();
+        if (searchBuilderID != null) {
+            builder.addPropertyReference("executableSearchBuilder", searchBuilderID);
+        } else {
+            final BeanDefinition def = v2Parser.createTemplateBuilder();
+            if (def != null) {
+                builder.addPropertyValue("executableSearchBuilder", def);
+            }
+        }
 
         final BeanDefinition connectionPool = v2Parser.createConnectionPool(connectionFactory.getBeanDefinition());
         BeanDefinitionBuilder pooledConnectionFactory = null;
@@ -409,11 +417,20 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
         }
 
         /**
+         * Get the bean ID of an externally defined search builder.
+         * 
+         * @return search builder bean ID
+         */
+        @Nullable public String getBeanSearchBuilderID() {
+            return AttributeSupport.getAttributeValue(configElement, null, "executableSearchBuilderRef");
+        }
+        
+        /**
          * Construct the definition of the template driven search builder.
          * 
          * @return the bean definition for the template search builder.
          */
-        @Nonnull public BeanDefinition createTemplatedExecutableSearchFilterBuilder() {
+        @Nonnull public BeanDefinition createTemplateBuilder() {
             final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedExecutableSearchFilterBuilder.class);
             templateBuilder.setInitMethodName("initialize");

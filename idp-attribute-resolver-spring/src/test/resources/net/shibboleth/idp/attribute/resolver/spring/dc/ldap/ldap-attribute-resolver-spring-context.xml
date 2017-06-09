@@ -64,7 +64,7 @@
     </bean>
     <bean class="org.ldaptive.SearchExecutor" p:baseDn="ou=people,dc=shibboleth,dc=net" p:returnAttributes="uid,homephone,mail" p:timeLimit="7000" />
     <bean id="cache" class="com.google.common.cache.Cache" factory-bean="cacheBuilderExternal" factory-method="build" />
-    <bean class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder"
+    <bean id="filter" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder"
         p:templateText="(uid=${resolutionContext.principal})" p:velocityEngine-ref="shibboleth.VelocityEngine"
         init-method="initialize" />
     <bean id="mappings" class="net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy"
