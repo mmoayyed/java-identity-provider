@@ -19,7 +19,6 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata;
 
 
 import javax.annotation.Nonnull;
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -29,15 +28,12 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
 /**
- * Parser for elements derived from ScriptType in the <code>urn:mace:shibboleth:2.0:metadata</code> namespace.
+ * Parser for elements derived from ScriptType in the various namespaces.
  * 
  * <p>The actual bean type is a runtime class so that different objects adhering to the general factory
  * contracts used with scripted beans will work.</p>
  */
 public final class ScriptTypeBeanParser {
-
-    /** Namespace for Metadata. */
-    @Nonnull @NotEmpty public static final String METADATA_NAMESPACE = "urn:mace:shibboleth:2.0:metadata";
 
     /** Logger. */
     @Nonnull private static final Logger LOG = LoggerFactory.getLogger(ScriptTypeBeanParser.class);
@@ -70,11 +66,9 @@ public final class ScriptTypeBeanParser {
         }
         final Element scriptChild = ElementSupport.getFirstChildElement(element);
         builder.addConstructorArgValue(ElementSupport.getElementContentAsString(scriptChild));
-        if (ElementSupport.isElementNamed(scriptChild, AbstractMetadataProviderParser.METADATA_NAMESPACE,
-                "Script")) {
+        if (ElementSupport.isElementNamed(scriptChild, element.getNamespaceURI(), "Script")) {
             builder.setFactoryMethod("inlineScript");
-        } else if (ElementSupport.isElementNamed(scriptChild, AbstractMetadataProviderParser.METADATA_NAMESPACE,
-                "ScriptFile")) {
+        } else if (ElementSupport.isElementNamed(scriptChild, element.getNamespaceURI(), "ScriptFile")) {
             builder.setFactoryMethod("resourceScript");
         }
         
