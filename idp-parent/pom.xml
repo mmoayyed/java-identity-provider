@@ -199,6 +199,12 @@
         </dependencies>
     </dependencyManagement>
 
+    <scm>
+        <connection>${scm.connection}java-identity-provider</connection>
+        <developerConnection>${scm.developerConnection}java-identity-provider</developerConnection>
+        <url>${scm.url}java-identity-provider.git</url>
+    </scm>
+
     <distributionManagement>
         <site>
             <id>site</id>
