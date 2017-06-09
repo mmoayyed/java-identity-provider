@@ -25,6 +25,8 @@ import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.resolver.impl.StoredIDDataConnector;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 
@@ -67,8 +69,8 @@ public class StoredIDDataConnectorParser extends BaseComputedIDDataConnectorPars
         final String springResources = AttributeSupport.getAttributeValue(config, new QName("springResources"));
         final String beanDataSource = ManagedConnectionParser.getBeanDataSourceID(config);
         if (springResources != null) {
-            log.warn("{} springResources is deprecated for the StoredIDDataConnector"
-                    + ", consider using BeanManagedConnection", getLogPrefix());
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "springResources in StoredIDDataConnector",
+                    parserContext.getReaderContext().getResource().getDescription(), "<BeanManagedConnection> element");
             builder.addPropertyValue("dataSource", getDataSource(springResources.split(";")));
         } else if (beanDataSource != null) {
             builder.addPropertyReference("dataSource", beanDataSource);

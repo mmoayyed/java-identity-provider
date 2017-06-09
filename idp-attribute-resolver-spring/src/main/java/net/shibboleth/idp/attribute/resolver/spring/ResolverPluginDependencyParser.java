@@ -25,7 +25,9 @@ import net.shibboleth.idp.attribute.resolver.ResolverPluginDependency;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,14 +48,18 @@ public class ResolverPluginDependencyParser extends AbstractSingleBeanDefinition
 
     /** {@inheritDoc} */
     @Override protected Class<? extends ResolverPluginDependency> getBeanClass(@Nullable final Element element) {
-        log.warn("<Dependency> is deprecated, replace with " + InputDataConnectorParser.ELEMENT_NAME.getLocalPart() 
-                + " or " + InputAttributeDefinitionParser.ELEMENT_NAME.getLocalPart());
         return ResolverPluginDependency.class;
     }
 
     /** {@inheritDoc} */
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
+
+        DeprecationSupport.warnOnce(ObjectType.ELEMENT, ELEMENT_NAME.toString(),
+                parserContext.getReaderContext().getResource().getDescription(),
+                InputDataConnectorParser.ELEMENT_NAME.toString()  + " or "
+                        + InputAttributeDefinitionParser.ELEMENT_NAME.toString());
+        
         final String pluginId = StringSupport.trimOrNull(config.getAttributeNS(null, "ref"));
         log.info("Parsing configuration for {} with pluginId: {}", config.getLocalName(), pluginId);
         builder.addConstructorArgValue(pluginId);

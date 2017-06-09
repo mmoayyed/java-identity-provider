@@ -58,24 +58,27 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
     /** Logger. */
     private final Logger log = LoggerFactory.getLogger(AbstractDynamicHTTPMetadataProviderParser.class);
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    // Checkstyle: CyclomaticComplexity OFF -- more readable not split up
     @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         final String tlsTrustEngineRef = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
-        final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);
-        final String httpClientSecurityParametersRef = StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
+        final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element,
+                HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);
+        final String httpClientSecurityParametersRef =
+                StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
         BeanDefinition httpClientSecurityParameters = null;
 
         if (httpClientSecurityParametersRef != null) {
             if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
-                log.warn("httpClientSecurityParametersRef overrides setting of tlsTrustEngineRef or of <TrustEngine> subelement");
+                log.warn("httpClientSecurityParametersRef overrides tlsTrustEngineRef or <TrustEngine> subelement");
             }
             builder.addPropertyReference("httpClientSecurityParameters", httpClientSecurityParametersRef);
         } else if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
-            httpClientSecurityParameters = HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngineRef, tlsTrustEngine, parserContext);
+            httpClientSecurityParameters = HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(
+                    tlsTrustEngineRef, tlsTrustEngine, parserContext);
             builder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityParameters);
         }
 
@@ -103,7 +106,8 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
 
         if (element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_USER) ||
            element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_PASSWORD)) {
-            builder.addPropertyValue("basicCredentials", HTTPMetadataProvidersParserSupport.buildBasicCredentials(element));
+            builder.addPropertyValue("basicCredentials",
+                    HTTPMetadataProvidersParserSupport.buildBasicCredentials(element, parserContext));
         }
 
         if (element.hasAttributeNS(null, "supportedContentTypes")) {
@@ -115,8 +119,7 @@ public abstract class AbstractDynamicHTTPMetadataProviderParser extends Abstract
         }
 
     }
-
-    // Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Build the definition of the HTTPClientBuilder which contains all our configuration.

@@ -28,6 +28,8 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataP
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.impl.MetadataNamespaceHandler;
 import net.shibboleth.idp.profile.spring.relyingparty.security.impl.SecurityNamespaceHandler;
 import net.shibboleth.idp.relyingparty.impl.DefaultRelyingPartyConfigurationResolver;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.opensaml.security.x509.tls.impl.BasicClientTLSValidationConfiguration;
@@ -68,7 +70,10 @@ public class RelyingPartyGroupParser extends AbstractSingleBeanDefinitionParser 
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
         
-        log.warn("<{}> is deprecated and will be removed in a future version.", AbstractMetadataProviderParser.RELYING_PARTY_GROUP_ELEMENT_NAME.getLocalPart());
+        DeprecationSupport.warn(ObjectType.ELEMENT,
+                AbstractMetadataProviderParser.RELYING_PARTY_GROUP_ELEMENT_NAME.toString(),
+                parserContext.getReaderContext().getResource().getDescription(),
+                "via updated RelyingParty configuration");
 
         builder.addPropertyValue("id", "RelyingPartyGroup["
                 + parserContext.getReaderContext().getResource().getFilename() + "]");

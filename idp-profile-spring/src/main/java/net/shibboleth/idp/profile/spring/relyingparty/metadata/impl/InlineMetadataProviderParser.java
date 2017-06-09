@@ -19,6 +19,7 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
@@ -34,7 +35,7 @@ import org.w3c.dom.Element;
 public class InlineMetadataProviderParser extends AbstractMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+    @Nonnull public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "InlineMetadataProvider");
 
     /** {@inheritDoc} */
@@ -55,4 +56,5 @@ public class InlineMetadataProviderParser extends AbstractMetadataProviderParser
         }
         builder.addConstructorArgValue(metadataContent.get(0));
     }
+    
 }

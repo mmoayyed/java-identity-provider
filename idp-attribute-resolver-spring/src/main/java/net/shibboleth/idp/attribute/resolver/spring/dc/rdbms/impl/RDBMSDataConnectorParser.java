@@ -131,7 +131,7 @@ public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser
         if (null != resultCacheBeanID) {
            builder.addPropertyReference("resultsCache", resultCacheBeanID);
         } else {
-            builder.addPropertyValue("resultsCache", v2Parser.createCache());
+            builder.addPropertyValue("resultsCache", v2Parser.createCache(parserContext));
         }
 
         builder.setInitMethodName("initialize");
@@ -341,11 +341,13 @@ public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser
         /**
          * Create the results cache. See {@link CacheConfigParser}.
          * 
+         * @param parserContext bean parser context
+         * 
          * @return results cache
          */
-        @Nullable public BeanDefinition createCache() {
+        @Nullable public BeanDefinition createCache(@Nonnull final ParserContext parserContext) {
             final CacheConfigParser parser = new CacheConfigParser(configElement);
-            return parser.createCache();
+            return parser.createCache(parserContext);
         }
         
         /** The parent parser's log prefix.

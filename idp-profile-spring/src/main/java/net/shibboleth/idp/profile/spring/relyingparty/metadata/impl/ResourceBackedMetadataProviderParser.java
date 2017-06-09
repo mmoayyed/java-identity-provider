@@ -29,6 +29,8 @@ import net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactory
 import net.shibboleth.idp.profile.spring.resource.impl.ClasspathResourceParser;
 import net.shibboleth.idp.profile.spring.resource.impl.ResourceNamespaceHandler;
 import net.shibboleth.idp.profile.spring.resource.impl.SVNResourceParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
@@ -50,26 +52,27 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for a &lt;ResourceBackedMetadataProvider;gt;. <br/>
- * This is the most complicated of the parsers. We reach into the resource and find out what sort it is and them summon
- * up an appropriate provider.
+ * Parser for a ResourceBackedMetadataProvider.
+ * 
+ * <p>This is the most complicated of the parsers. We reach into the resource and find out what sort it is
+ * and them summon up an appropriate provider.</p>
  */
 public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+    @Nonnull public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "ResourceBackedMetadataProvider");
 
     /** Element name for the resource elements. */
-    public static final QName RESOURCES_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+    @Nonnull public static final QName RESOURCES_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "MetadataResource");
     
-    /** For direct injection of a Spring bean **/
-    public static final QName RESOURCE_REF = new QName("resourceRef");
+    /** For direct injection of a Spring bean. **/
+    @Nonnull public static final QName RESOURCE_REF = new QName("resourceRef");
 
 
     /** Log. */
-    private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(ResourceBackedMetadataProviderParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<? extends AbstractBatchMetadataResolver> getNativeBeanClass(final Element element) {
@@ -88,7 +91,7 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
             throw new BeanCreationException(
                     "No type specified for a <Resource> within a ResourceBackedMetadataProvider");
         }
-        log.debug("comparing type '{}' against known Resources", qName.getLocalPart());
+        log.debug("Comparing type '{}' against known Resources", qName.getLocalPart());
 
         if (ClasspathResourceParser.ELEMENT_NAME.equals(qName)) {
             return ResourceBackedMetadataResolver.class;
@@ -113,15 +116,16 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
         super.doNativeParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "maxCacheDuration")) {
-            log.error("{}: maxCacheDuration is not supported", parserContext.getReaderContext().getResource()
-                    .getDescription());
+            log.error("{}: maxCacheDuration is not supported",
+                    parserContext.getReaderContext().getResource().getDescription());
             throw new BeanDefinitionParsingException(new Problem("maxCacheDuration is not supported", new Location(
                     parserContext.getReaderContext().getResource())));
         }
 
         final List<Element> resources = ElementSupport.getChildElements(element, RESOURCES_NAME);
         if (resources.isEmpty()) {
-            parseResource(StringSupport.trimOrNull(AttributeSupport.getAttributeValue(element, RESOURCE_REF)), parserContext, builder);
+            parseResource(StringSupport.trimOrNull(AttributeSupport.getAttributeValue(element, RESOURCE_REF)),
+                    parserContext, builder);
             return;
         }
         
@@ -148,23 +152,23 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
 
         } else if (ResourceNamespaceHandler.HTTP_ELEMENT_NAME.equals(qName)) {
 
-            log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
-                    .getDescription(), ResourceNamespaceHandler.HTTP_ELEMENT_NAME.getLocalPart(),
-                    HTTPMetadataProviderParser.ELEMENT_NAME.getLocalPart());
+            DeprecationSupport.warn(ObjectType.ELEMENT, ResourceNamespaceHandler.HTTP_ELEMENT_NAME.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    HTTPMetadataProviderParser.ELEMENT_NAME.toString());
             parseHTTPResource(resources.get(0), parserContext, builder);
 
         } else if (ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.equals(qName)) {
 
-            log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
-                    .getDescription(), ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.getLocalPart(),
-                    FileBackedHTTPMetadataProviderParser.ELEMENT_NAME.getLocalPart());
+            DeprecationSupport.warn(ObjectType.ELEMENT, ResourceNamespaceHandler.FILE_HTTP_ELEMENT_NAME.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    FileBackedHTTPMetadataProviderParser.ELEMENT_NAME.toString());
             parseFileBackedHTTPResource(resources.get(0), parserContext, builder);
 
         } else if (ResourceNamespaceHandler.FILESYSTEM_ELEMENT_NAME.equals(qName)) {
 
-            log.warn("{}: {} is deprecated. consider using {}", parserContext.getReaderContext().getResource()
-                    .getDescription(), ResourceNamespaceHandler.FILESYSTEM_ELEMENT_NAME.getLocalPart(),
-                    FilesystemMetadataProviderParser.ELEMENT_NAME.getLocalPart());
+            DeprecationSupport.warn(ObjectType.ELEMENT, ResourceNamespaceHandler.FILESYSTEM_ELEMENT_NAME.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    FilesystemMetadataProviderParser.ELEMENT_NAME.toString());
             parseFilesystemResource(resources.get(0), parserContext, builder);
         }
     }
@@ -176,7 +180,8 @@ public class ResourceBackedMetadataProviderParser extends AbstractReloadingMetad
      * @param parserContext the parser context
      * @param builder the builder for the {@link ResourceBackedMetadataResolver}.
      */
-    private void parseResource(@Nullable final String beanReference, final ParserContext parserContext, @Nonnull final BeanDefinitionBuilder builder) {
+    private void parseResource(@Nullable final String beanReference, final ParserContext parserContext,
+            @Nonnull final BeanDefinitionBuilder builder) {
 
         if (null == beanReference) {
             log.error("{} must not be empty", RESOURCE_REF.getLocalPart());

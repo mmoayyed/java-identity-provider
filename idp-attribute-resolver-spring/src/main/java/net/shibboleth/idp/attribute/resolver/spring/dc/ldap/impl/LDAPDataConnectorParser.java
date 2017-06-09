@@ -215,7 +215,7 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
         if (null != resultCacheBeanID) {
             builder.addPropertyReference("resultsCache", resultCacheBeanID);
         } else {
-            builder.addPropertyValue("resultsCache", v2Parser.createCache());
+            builder.addPropertyValue("resultsCache", v2Parser.createCache(parserContext));
         }
 
         builder.setInitMethodName("initialize");
@@ -705,11 +705,13 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
         /**
          * Create a results cache bean definition. See {@link CacheConfigParser}.
          * 
+         * @param parserContext bean parser context
+         * 
          * @return results cache bean definition
          */
-        @Nullable public BeanDefinition createCache() {
+        @Nullable public BeanDefinition createCache(@Nonnull final ParserContext parserContext) {
             final CacheConfigParser parser = new CacheConfigParser(configElement);
-            return parser.createCache();
+            return parser.createCache(parserContext);
         }
         
         /** The parent's log prefix.

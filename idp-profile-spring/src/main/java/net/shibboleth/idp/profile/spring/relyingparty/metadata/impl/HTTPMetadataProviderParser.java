@@ -17,10 +17,12 @@
 
 package net.shibboleth.idp.profile.spring.relyingparty.metadata.impl;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -36,34 +38,34 @@ import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 /**
- * Parser for a &lt;FilesystemMetadataProvider&gt;.
+ * Parser for a FilesystemMetadataProvider.
  */
 public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProviderParser {
 
     /** Element name. */
-    public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
+    @Nonnull public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.METADATA_NAMESPACE,
             "HTTPMetadataProvider");
 
     /** Default caching type. */
-    private static final String DEFAULT_CACHING = "none";
+    @Nonnull @NotEmpty private static final String DEFAULT_CACHING = "none";
 
     /** Logger. */
-    private final Logger log = LoggerFactory.getLogger(HTTPMetadataProviderParser.class);
+    @Nonnull private final Logger log = LoggerFactory.getLogger(HTTPMetadataProviderParser.class);
 
     /** {@inheritDoc} */
     @Override protected Class<? extends HTTPMetadataResolver> getNativeBeanClass(final Element element) {
         return HTTPMetadataResolver.class;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
-    // Checkstyle: CyclomaticComplexity OFF
     @Override protected void doNativeParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
         super.doNativeParse(element, parserContext, builder);
 
         if (element.hasAttributeNS(null, "cacheDuration")) {
-            log.error("{}: cacheDuration is not supported", parserContext.getReaderContext().getResource()
-                    .getDescription());
+            log.error("{}: cacheDuration is not supported",
+                    parserContext.getReaderContext().getResource().getDescription());
             throw new BeanDefinitionParsingException(new Problem("cacheDuration is not supported", new Location(
                     parserContext.getReaderContext().getResource())));
         }
@@ -76,17 +78,20 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
         }
 
         final String tlsTrustEngineRef = StringSupport.trimOrNull(element.getAttributeNS(null, "tlsTrustEngineRef"));
-        final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element, HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);
-        final String httpClientSecurityParametersRef = StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
+        final Element tlsTrustEngine = ElementSupport.getFirstChildElement(element,
+                HTTPMetadataProvidersParserSupport.TLS_TRUST_ENGINE_ELEMENT_NAME);
+        final String httpClientSecurityParametersRef =
+                StringSupport.trimOrNull(element.getAttributeNS(null, "httpClientSecurityParametersRef"));
         BeanDefinition httpClientSecurityParameters = null;
 
         if (httpClientSecurityParametersRef != null) {
             if (tlsTrustEngine != null || tlsTrustEngineRef != null) {
-                log.warn("httpClientSecurityParametersRef overrides setting of tlsTrustEngineRef or of <TrustEngine> subelement");
+                log.warn("httpClientSecurityParametersRef overrides tlsTrustEngineRef or <TrustEngine> subelement");
             }
             builder.addPropertyReference("httpClientSecurityParameters", httpClientSecurityParametersRef);
         } else if (tlsTrustEngine != null || tlsTrustEngineRef != null)  {
-            httpClientSecurityParameters =  HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngineRef, tlsTrustEngine,                             parserContext);
+            httpClientSecurityParameters = HTTPMetadataProvidersParserSupport.parseTLSTrustEngine(tlsTrustEngineRef,
+                    tlsTrustEngine, parserContext);
             builder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityParameters);
         }
 
@@ -106,18 +111,19 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
             }
         } else {
             builder.addConstructorArgValue(buildHttpClient(element, parserContext,
-            	    httpClientSecurityParametersRef, httpClientSecurityParameters));
+                    httpClientSecurityParametersRef, httpClientSecurityParameters));
         }
-        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null, HTTPMetadataProvidersParserSupport.METADATA_URL)));
+        builder.addConstructorArgValue(StringSupport.trimOrNull(element.getAttributeNS(null,
+                HTTPMetadataProvidersParserSupport.METADATA_URL)));
 
-        if (element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_USER) || element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_PASSWORD)) {
+        if (element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_USER)
+                || element.hasAttributeNS(null, HTTPMetadataProvidersParserSupport.BASIC_AUTH_PASSWORD)) {
             builder.addPropertyValue("basicCredentials",
-                    HTTPMetadataProvidersParserSupport.buildBasicCredentials(element));
+                    HTTPMetadataProvidersParserSupport.buildBasicCredentials(element, parserContext));
         }
 
     }
-
-    // Checkstyle: CyclomaticComplexity ON
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Build the definition of the HTTPClientBuilder which contains all our configuration.
@@ -138,4 +144,5 @@ public class HTTPMetadataProviderParser extends AbstractReloadingMetadataProvide
                 HTTPMetadataProviderParser.DEFAULT_CACHING, httpClientSecurityParametersRef,
                 httpClientSecurityParameters).getBeanDefinition();
     }
+    
 }

@@ -31,26 +31,32 @@ import net.shibboleth.idp.attribute.resolver.ResolvedDataConnector;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** A delegate for {@link AttributeResolverWorkContext}.
- * This is only here because in a moment of madness we pushed the work context into
+/**
+ * A delegate for {@link AttributeResolverWorkContext}.
+ * 
+ * <p>This is only here because in a moment of madness we pushed the work context into
  * the scripted definitions. This preserves the function while making it obvious that
- * we don't want people to use it.  
- * @deprecated(Deprecated function)*/
+ * we don't want people to use it.</p>
+ *   
+ * @deprecated
+ */
 @Deprecated public class DelegatedWorkContext extends BaseContext {
 
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(DelegatedWorkContext.class);
+    /** Class logger. */
+    @Nonnull private final Logger log = LoggerFactory.getLogger(DelegatedWorkContext.class);
 
     /** The delegate. */
-    private final AttributeResolverWorkContext delegate;
+    @Nonnull private final AttributeResolverWorkContext delegate;
 
     /** The log prefix. */
-    private final String logPrefix;
+    @Nullable private final String logPrefix;
 
     /**
      * Constructor.
@@ -58,7 +64,7 @@ import org.slf4j.LoggerFactory;
      * @param parent the value to be delegated.
      * @param prefix the log prefix of the calling scripted definition.
      */
-    public DelegatedWorkContext(final AttributeResolverWorkContext parent, final String prefix) {
+    public DelegatedWorkContext(@Nonnull final AttributeResolverWorkContext parent, @Nullable final String prefix) {
         delegate = parent;
         setParent(delegate.getParent());
         setAutoCreateSubcontexts(parent.isAutoCreateSubcontexts());
@@ -72,6 +78,7 @@ import org.slf4j.LoggerFactory;
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedAttributeDefinition>
             getResolvedIdPAttributeDefinitions() {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
         log.error("'{}' Use of workContext.getResolvedIdPAttributeDefinitions()"
                 + " is deprecated and will cause instability", logPrefix);
         return delegate.getResolvedIdPAttributeDefinitions();
@@ -86,6 +93,7 @@ import org.slf4j.LoggerFactory;
      */
     public void recordAttributeDefinitionResolution(@Nonnull final AttributeDefinition definition,
             @Nullable final IdPAttribute attribute) throws ResolutionException {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
         log.error("'{}' Use of workContext.getResolvedIdPAttributeDefinitions()"
                 + " is deprecated and will cause instability", logPrefix);
         delegate.recordAttributeDefinitionResolution(definition, attribute);
@@ -97,6 +105,7 @@ import org.slf4j.LoggerFactory;
      * @return what the delegate does.
      */
     @Nonnull @NonnullElements @Unmodifiable public Map<String, ResolvedDataConnector> getResolvedDataConnectors() {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
         log.error("'{}' Use of workContext.getResolvedDataConnectors() is deprecated and will cause instability",
                 logPrefix);
         return delegate.getResolvedDataConnectors();
@@ -111,6 +120,7 @@ import org.slf4j.LoggerFactory;
      */
     public void recordDataConnectorResolution(@Nonnull final DataConnector connector,
             @Nullable final Map<String, IdPAttribute> attributes) throws ResolutionException {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
         log.error(
                 "'{}' Use of workContext.recordDataConnectorResolution() is deprecated and will cause instability",
                 logPrefix);
@@ -126,9 +136,11 @@ import org.slf4j.LoggerFactory;
      */
     public void recordFailoverResolution(@Nonnull final DataConnector failedConnector,
             @Nonnull final DataConnector failoverConnector) throws ResolutionException {
+        DeprecationSupport.warnOnce(ObjectType.CLASS, AttributeResolverWorkContext.class.getName(), null, null);
         log.error("'{}' Use of workContext.recordFailoverResolution() is deprecated and will cause instability",
                 logPrefix);
         delegate.recordFailoverResolution(failedConnector, failoverConnector);
 
     }
+    
 }

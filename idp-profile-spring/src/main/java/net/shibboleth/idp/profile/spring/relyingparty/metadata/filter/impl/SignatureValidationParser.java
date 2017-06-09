@@ -27,6 +27,8 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.profile.spring.factory.BasicInlineCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -115,7 +117,7 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
             if (trustEngines.size() > 1) {
                 log.error("{}: Too many <TrustEngine>s", parserContext.getReaderContext().getResource()
                         .getDescription());
-                throw new BeanCreationException("{}: Too many <TrustEngine>s");
+                throw new BeanCreationException("Too many <TrustEngine>s");
             }
             final ManagedList<BeanDefinition> engines = SpringSupport.parseCustomElements(trustEngines, parserContext);
 
@@ -127,9 +129,8 @@ public class SignatureValidationParser extends AbstractSingleBeanDefinitionParse
         if (element.hasAttributeNS(null, "requireSignedRoot")) {
             builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedRoot"));
         } else if (element.hasAttributeNS(null, "requireSignedMetadata")) {
-            log.warn("{} The 'requireSignedMetadata' attribute is DEPRECATED "
-                    + "and will be removed from the next major version, use 'requireSignedRoot' instead",
-                    parserContext.getReaderContext().getResource().getDescription());
+            DeprecationSupport.warn(ObjectType.ATTRIBUTE, "requireSignedMetadata",
+                    parserContext.getReaderContext().getResource().getDescription(), "requireSignedRoot");
             builder.addPropertyValue("requireSignedRoot", element.getAttributeNS(null, "requireSignedMetadata"));
         }
 

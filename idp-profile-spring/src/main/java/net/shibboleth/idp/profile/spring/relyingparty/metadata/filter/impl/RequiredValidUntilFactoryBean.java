@@ -20,6 +20,8 @@ package net.shibboleth.idp.profile.spring.relyingparty.metadata.filter.impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
 import org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter;
@@ -66,13 +68,12 @@ public class RequiredValidUntilFactoryBean extends AbstractFactoryBean<RequiredV
                 throw new IllegalArgumentException("Negative durations are not supported");
             } else {
                 // Treat as a Long and seconds.
-                final long durationInMs = 1000 * Long.valueOf(maxValidityIntervalDuration);
-                log.warn("Numerical duration form is deprecated. The property 'maxValidityInterval'"
-                        + " on RequiredValidUntil metadata filter should use the duration notation: {}",
-                        DOMTypeSupport.longToDuration(durationInMs));
-                value.setMaxValidityInterval(durationInMs);
+                value.setMaxValidityInterval(1000 * Long.valueOf(maxValidityIntervalDuration));
+                DeprecationSupport.warn(ObjectType.ATTRIBUTE, "maxValidityIntervalDuration (when numeric)",
+                        "RequiredValidUntil MetadataFilter", "duration notation");
             }
         }
         return value;
     }
+    
 }

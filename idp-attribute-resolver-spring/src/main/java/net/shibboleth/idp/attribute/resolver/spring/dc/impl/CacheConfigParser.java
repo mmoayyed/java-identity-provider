@@ -28,6 +28,8 @@ import javax.xml.namespace.QName;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
@@ -37,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
 import com.google.common.cache.Cache;
@@ -85,16 +88,21 @@ public class CacheConfigParser {
         configElement = config;
     }
 
+// Checkstyle: CyclomaticComplexity OFF
     /**
      * Creates a new cache bean definition from a v2 XML configuration.
      * 
+     * @param parserContext bean parser context
+     * 
      * @return cache bean definition
      */
-    @Nonnull public BeanDefinition createCache() {
+    @Nonnull public BeanDefinition createCache(@Nonnull final ParserContext parserContext) {
 
         final String defaultCache = AttributeSupport.getAttributeValue(configElement, new QName("cacheResults"));
         if (defaultCache != null) {
-            log.warn("The cacheResults attribute is no longer supported, please create a ResultCache element");
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "cacheResults",
+                    parserContext != null ? parserContext.getReaderContext().getResource().getDescription() : null,
+                            RESULT_CACHE_RESOLVER.toString());
             return null;
         }
         
@@ -112,7 +120,9 @@ public class CacheConfigParser {
         final String elementTimeToLive =
                 AttributeSupport.getAttributeValue(cacheElement, new QName("elementTimeToLive"));
         if (null != elementTimeToLive) {
-            log.warn("ResultCache: Attribute 'elementTimeToLive' is deprecated, consider using 'expireAfterAccess'");
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "elementTimeToLive",
+                    parserContext != null ? parserContext.getReaderContext().getResource().getDescription() : null,
+                            "expireAfterAccess");
         }
         final String expireAfterWrite =
                 AttributeSupport.getAttributeValue(cacheElement, new QName("expireAfterWrite"));
@@ -138,6 +148,7 @@ public class CacheConfigParser {
                 AttributeSupport.getAttributeValue(cacheElement, new QName("maximumCachedElements")));
         return cache.getBeanDefinition();
     }
+// Checkstyle: CyclomaticComplexity ON
     
     /** Helper function to return size provided with a suitable default.
      * 
@@ -235,5 +246,4 @@ public class CacheConfigParser {
         return StringSupport.trimOrNull(ElementSupport.getElementContentAsString(beanResultCache.get(0)));
     }
 
-    
 }

@@ -48,7 +48,7 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         
         final GenericApplicationContext context = new GenericApplicationContext();
         
-        context.registerBeanDefinition("ElementTTL", ccp.createCache());
+        context.registerBeanDefinition("ElementTTL", ccp.createCache(null));
         context.refresh();
         context.getBean("ElementTTL", Cache.class);
         
@@ -63,7 +63,7 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         
         final GenericApplicationContext context = new GenericApplicationContext();
         
-        context.registerBeanDefinition("Access", ccp.createCache());
+        context.registerBeanDefinition("Access", ccp.createCache(null));
         context.refresh();
         context.getBean("Access", Cache.class);
         
@@ -78,7 +78,7 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         
         final GenericApplicationContext context = new GenericApplicationContext();
         
-        context.registerBeanDefinition("Write", ccp.createCache());
+        context.registerBeanDefinition("Write", ccp.createCache(null));
         context.refresh();
         context.getBean("Write", Cache.class);
         
@@ -93,7 +93,7 @@ public class CacheConfigParserTest extends OpenSAMLInitBaseTestCase {
         
         final GenericApplicationContext context = new GenericApplicationContext();
         
-        context.registerBeanDefinition("Write", ccp.createCache());
+        context.registerBeanDefinition("Write", ccp.createCache(null));
         context.refresh();
         context.getBean("Write", Cache.class);
         
