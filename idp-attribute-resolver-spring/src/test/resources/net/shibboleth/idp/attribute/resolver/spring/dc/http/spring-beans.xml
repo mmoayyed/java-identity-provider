@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
+    default-init-method="initialize"
+    default-destroy-method="destroy">
+
+    <bean id="NoTrustEngineHttpClient"
+        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean" />
+
+    <bean id="BadProtocolParameters"
+        class="org.opensaml.security.httpclient.HttpClientSecurityParameters"
+        p:TLSProtocols="SSLv3" />
+
+    <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+        <property name="velocityProperties">
+            <props>
+                <prop key="resource.loader">classpath, string</prop>
+                <prop key="classpath.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+                </prop>
+                <prop key="string.resource.loader.class">
+                    org.apache.velocity.runtime.resource.loader.StringResourceLoader
+                </prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="shibboleth.PropertySourcesPlaceholderConfigurer"
+        class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"
+        p:placeholderPrefix="%{" p:placeholderSuffix="}" />
+
+</beans>

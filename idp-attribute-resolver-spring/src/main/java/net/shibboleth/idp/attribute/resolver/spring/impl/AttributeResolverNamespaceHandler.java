@@ -38,6 +38,7 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.TransientIdAttribute
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.MappedAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.SourceValueParser;
 import net.shibboleth.idp.attribute.resolver.spring.ad.mapped.impl.ValueMapParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.http.impl.HTTPDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ComputedIDDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.ScriptDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.StaticDataConnectorParser;
@@ -118,6 +119,7 @@ public class AttributeResolverNamespaceHandler extends BaseSpringNamespaceHandle
                 new ComputedIDDataConnectorParser());
         registerBeanDefinitionParser(RDBMSDataConnectorParser.TYPE_NAME_RESOLVER, new RDBMSDataConnectorParser());
         registerBeanDefinitionParser(LDAPDataConnectorParser.TYPE_NAME_RESOLVER, new LDAPDataConnectorParser());
+        registerBeanDefinitionParser(HTTPDataConnectorParser.TYPE_NAME, new HTTPDataConnectorParser());
         registerBeanDefinitionParser(ScriptDataConnectorParser.TYPE_NAME_RESOLVER, new ScriptDataConnectorParser());
         registerBeanDefinitionParser(StaticDataConnectorParser.TYPE_NAME_RESOLVER, new StaticDataConnectorParser());
         registerBeanDefinitionParser(StoredIDDataConnectorParser.TYPE_NAME_RESOLVER, new StoredIDDataConnectorParser());

@@ -1252,6 +1252,108 @@
         </complexContent>
     </complexType>
     
+    <complexType name="HTTP">
+        <annotation>
+            <documentation>
+                A data connector definition that issues requests and parses responses using HTTP, typically
+                via a form of web service. REST and scripted handling of responses, typically in JSON,
+                is the primary use case.
+            </documentation>
+        </annotation>
+        <complexContent>
+            <extension base="resolver:FlattenedBaseDataConnectorType">
+                <choice maxOccurs="unbounded">
+                    <element ref="resolver:Dependency" />
+                    <element ref="resolver:InputAttributeDefinition" />
+                    <element ref="resolver:InputDataConnector"  />                                        
+                    <element ref="resolver:FailoverDataConnector" />
+                    <element name="URLTemplate" type="string">
+                        <annotation>
+                            <documentation>
+                                A template that will be used to create the absolute URL to request.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element name="ResponseMapping" type="resolver:ScriptType">
+                        <annotation>
+                            <documentation>Maps the response into attributes by means of scripting.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="ResultCache" type="resolver:CacheConfigType"/>
+                    <element name="ResultCacheBean" type="string"/>
+                </choice>
+                <attribute name="httpClientRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the HttpClient to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="httpClientSecurityParametersRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the HttpClientSecurityParameters to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="templateEngine" type="string">
+                    <annotation>
+                        <documentation>
+                            Name of the template engine defined within the application.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="maxLength" type="string">
+                    <annotation>
+                        <documentation>
+                            Maximum size of response body to accept.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="acceptStatuses" >
+                    <annotation>
+                        <documentation>
+                            A space-delimited list of HTTP status codes that should be treated as successful.
+                        </documentation>
+                    </annotation>
+                    <simpleType>
+                        <list itemType="string"/>
+                    </simpleType>
+                </attribute>
+                <attribute name="acceptTypes" >
+                    <annotation>
+                        <documentation>
+                            A space-delimited list of MIME content types that should be accepted. 
+                        </documentation>
+                    </annotation>
+                    <simpleType>
+                        <list itemType="string"/>
+                    </simpleType>
+                </attribute>
+                <attribute name="executableSearchBuilderRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the ExecutableSearchBuilder implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="mappingStrategyRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the MappingStrategy implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="validatorRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing the Validator implementation to use.
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </complexContent>
+    </complexType>
 
     <complexType name="ScriptedDataConnector">
         <annotation>
