@@ -10,6 +10,8 @@
 <%@ page import="org.opensaml.saml.metadata.resolver.ChainingMetadataResolver" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.MetadataResolver" %>
 <%@ page import="org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver" %>
+<%@ page import="org.opensaml.saml.metadata.resolver.ExtendedBatchMetadataResolver" %>
+<%@ page import="org.opensaml.saml.metadata.resolver.ExtendedRefreshableMetadataResolver" %>
 <%@ page import="net.shibboleth.idp.Version" %>
 <%@ page import="net.shibboleth.idp.saml.metadata.RelyingPartyMetadataProvider" %>
 <%@ page import="net.shibboleth.idp.attribute.resolver.AttributeResolver" %>
@@ -83,13 +85,28 @@ for (final ReloadableService service : (Collection<ReloadableService>) request.g
                 for (final RefreshableMetadataResolver resolver : resolvers) {
                     final DateTime lastRefresh = resolver.getLastRefresh();
                     final DateTime lastUpdate = resolver.getLastUpdate();
+
+                    DateTime lastSuccessfulRefresh = null;
+                    if (resolver instanceof ExtendedRefreshableMetadataResolver) {
+                        lastSuccessfulRefresh = ((ExtendedRefreshableMetadataResolver)resolver).getLastSuccessfulRefresh();
+                    }
+                    DateTime rootValidUntil = null;
+                    if (resolver instanceof ExtendedBatchMetadataResolver) {
+                        rootValidUntil = ((ExtendedBatchMetadataResolver)resolver).getRootValidUntil();
+                    }
     
                     out.println("\tmetadata source: " + resolver.getId());
                     if (lastRefresh != null) {
                         out.println("\tlast refresh attempt: " + lastRefresh.toString(dateTimeFormatter));
                     }
+                    if (lastSuccessfulRefresh != null) {
+                        out.println("\tlast successful refresh: " + lastSuccessfulRefresh.toString(dateTimeFormatter));
+                    }
                     if (lastUpdate != null) {
                         out.println("\tlast update: " + lastUpdate.toString(dateTimeFormatter));
+                    }
+                    if (rootValidUntil != null) {
+                        out.println("\troot validUntil: " + rootValidUntil.toString(dateTimeFormatter));
                     }
                     out.println();
                 }
