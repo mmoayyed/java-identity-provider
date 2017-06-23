@@ -16,6 +16,18 @@
  */
 package net.shibboleth.idp.saml.metadata.impl;
 
+import java.util.Collections;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+
+import org.joda.time.DateTime;
+import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
+import org.opensaml.saml.metadata.resolver.impl.AbstractReloadingMetadataResolver;
+
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
@@ -31,16 +43,6 @@ import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.service.ServiceableComponent;
 
-import java.util.Collections;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.joda.time.DateTime;
-import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
-import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
-
 /**
  * Additional gauges for metadata resolvers.
  */
@@ -51,6 +53,7 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
      * 
      * @param metricName name to include in metric names produced by this set
      */
+    // Checkstyle: MethodLength OFF
     public MetadataResolverServiceGaugeSet(
             @Nonnull @NotEmpty @ParameterName(name="metricName") final String metricName) {
         super(metricName);
@@ -98,7 +101,55 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         return mapBuilder.build();
                     }
                 });
+        
+        //TODO v4.0.0 - Switch to use RefreshableMetadataResolver when new methods promoted to interface
+        getMetricMap().put(
+                MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "successfulRefresh"),
+                new Gauge<Map<String,DateTime>>() {
+                    public Map<String,DateTime> getValue() {
+                        final Builder mapBuilder = ImmutableMap.<String,DateTime>builder();
+                        final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
+                        if (component != null) {
+                            try {                                
+                                for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
+                                    if (resolver instanceof AbstractReloadingMetadataResolver) {
+                                        mapBuilder.put(resolver.getId(),
+                                                ((AbstractReloadingMetadataResolver) resolver)
+                                                    .getLastSuccessfulRefresh());
+                                    }
+                                }
+                            } finally {
+                                component.unpinComponent();
+                            }
+                        }
+                        return mapBuilder.build();
+                    }
+                });
+        
+        //TODO v4.0.0 - Switch to use BatchMetadataResolver when new methods promoted to interface
+        getMetricMap().put(
+                MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "rootValidUntil"),
+                new Gauge<Map<String,DateTime>>() {
+                    public Map<String,DateTime> getValue() {
+                        final Builder mapBuilder = ImmutableMap.<String,DateTime>builder();
+                        final ServiceableComponent<MetadataResolver> component = getService().getServiceableComponent();
+                        if (component != null) {
+                            try {                                
+                                for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
+                                    if (resolver instanceof AbstractBatchMetadataResolver) {
+                                        mapBuilder.put(resolver.getId(),
+                                                ((AbstractBatchMetadataResolver) resolver).getRootValidUntil());
+                                    }
+                                }
+                            } finally {
+                                component.unpinComponent();
+                            }
+                        }
+                        return mapBuilder.build();
+                    }
+                });
     }
+    // Checkstyle: MethodLength ON
     
     /** {@inheritDoc} */
     @Override
