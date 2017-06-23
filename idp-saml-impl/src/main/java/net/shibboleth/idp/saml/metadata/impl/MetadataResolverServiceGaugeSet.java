@@ -67,7 +67,8 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         if (component != null) {
                             try {                                
                                 for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof RefreshableMetadataResolver) {
+                                    if (resolver instanceof RefreshableMetadataResolver 
+                                            && ((RefreshableMetadataResolver) resolver).getLastUpdate() != null) {
                                         mapBuilder.put(resolver.getId(),
                                                 ((RefreshableMetadataResolver) resolver).getLastUpdate());
                                     }
@@ -89,7 +90,8 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         if (component != null) {
                             try {                                
                                 for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof RefreshableMetadataResolver) {
+                                    if (resolver instanceof RefreshableMetadataResolver 
+                                            && ((RefreshableMetadataResolver) resolver).getLastRefresh() != null) {
                                         mapBuilder.put(resolver.getId(),
                                                 ((RefreshableMetadataResolver) resolver).getLastRefresh());
                                     }
@@ -103,6 +105,7 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                 });
         
         //TODO v4.0.0 - Switch to use RefreshableMetadataResolver when new methods promoted up
+        // Checkstyle: AnonInnerLength OFF
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "successfulRefresh"),
                 new Gauge<Map<String,DateTime>>() {
@@ -112,7 +115,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         if (component != null) {
                             try {                                
                                 for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof ExtendedRefreshableMetadataResolver) {
+                                    if (resolver instanceof ExtendedRefreshableMetadataResolver 
+                                            && ((ExtendedRefreshableMetadataResolver) resolver)
+                                                .getLastSuccessfulRefresh()  != null) {
                                         mapBuilder.put(resolver.getId(),
                                                 ((ExtendedRefreshableMetadataResolver) resolver)
                                                     .getLastSuccessfulRefresh());
@@ -125,6 +130,7 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         return mapBuilder.build();
                     }
                 });
+        // Checkstyle: AnonInnerLength ON
         
         //TODO v4.0.0 - Switch to use BatchMetadataResolver when new methods promoted up
         getMetricMap().put(
@@ -136,7 +142,8 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         if (component != null) {
                             try {                                
                                 for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof ExtendedBatchMetadataResolver) {
+                                    if (resolver instanceof ExtendedBatchMetadataResolver 
+                                            && ((ExtendedBatchMetadataResolver) resolver).getRootValidUntil() != null) {
                                         mapBuilder.put(resolver.getId(),
                                                 ((ExtendedBatchMetadataResolver) resolver).getRootValidUntil());
                                     }
