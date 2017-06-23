@@ -23,10 +23,10 @@ import javax.annotation.Nonnull;
 
 import org.joda.time.DateTime;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.ExtendedBatchMetadataResolver;
+import org.opensaml.saml.metadata.resolver.ExtendedRefreshableMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RefreshableMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.AbstractReloadingMetadataResolver;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricFilter;
@@ -102,7 +102,7 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                     }
                 });
         
-        //TODO v4.0.0 - Switch to use RefreshableMetadataResolver when new methods promoted to interface
+        //TODO v4.0.0 - Switch to use RefreshableMetadataResolver when new methods promoted up
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "successfulRefresh"),
                 new Gauge<Map<String,DateTime>>() {
@@ -112,9 +112,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         if (component != null) {
                             try {                                
                                 for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof AbstractReloadingMetadataResolver) {
+                                    if (resolver instanceof ExtendedRefreshableMetadataResolver) {
                                         mapBuilder.put(resolver.getId(),
-                                                ((AbstractReloadingMetadataResolver) resolver)
+                                                ((ExtendedRefreshableMetadataResolver) resolver)
                                                     .getLastSuccessfulRefresh());
                                     }
                                 }
@@ -126,7 +126,7 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                     }
                 });
         
-        //TODO v4.0.0 - Switch to use BatchMetadataResolver when new methods promoted to interface
+        //TODO v4.0.0 - Switch to use BatchMetadataResolver when new methods promoted up
         getMetricMap().put(
                 MetricRegistry.name(DEFAULT_METRIC_NAME, metricName, "rootValidUntil"),
                 new Gauge<Map<String,DateTime>>() {
@@ -136,9 +136,9 @@ public class MetadataResolverServiceGaugeSet extends ReloadableServiceGaugeSet i
                         if (component != null) {
                             try {                                
                                 for (final MetadataResolver resolver : getMetadataResolvers(component.getComponent())) {
-                                    if (resolver instanceof AbstractBatchMetadataResolver) {
+                                    if (resolver instanceof ExtendedBatchMetadataResolver) {
                                         mapBuilder.put(resolver.getId(),
-                                                ((AbstractBatchMetadataResolver) resolver).getRootValidUntil());
+                                                ((ExtendedBatchMetadataResolver) resolver).getRootValidUntil());
                                     }
                                 }
                             } finally {
