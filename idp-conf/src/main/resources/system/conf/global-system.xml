@@ -357,6 +357,11 @@
         class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
         factory-method="buildTLSSocketFactoryWithClientTLS" />
     
+    <bean id="shibboleth.SecurityEnhancedTLSSocketFactoryWithClientTLSOnly"
+        lazy-init="true"
+        class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
+        factory-method="buildTLSSocketFactoryWithClientTLSOnly" />
+        
     <bean id="shibboleth.StaticExplicitTrustEngine" abstract="true"
         class="net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean" />
     
