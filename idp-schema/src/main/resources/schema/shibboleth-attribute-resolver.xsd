@@ -2,7 +2,7 @@
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:resolver="urn:mace:shibboleth:2.0:resolver" xmlns:sec="urn:mace:shibboleth:2.0:security"
     targetNamespace="urn:mace:shibboleth:2.0:resolver" elementFormDefault="qualified" version="3.0">
 
-    <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd" />
+    <import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
     <import namespace="urn:mace:shibboleth:2.0:security" schemaLocation="http://shibboleth.net/schema/idp/shibboleth-security.xsd"/>
 
     <annotation>
@@ -18,9 +18,9 @@
     </element>
     <complexType name="AttributeResolverType">
         <choice minOccurs="0" maxOccurs="unbounded">
-            <element ref="resolver:AttributeDefinition" />
-            <element ref="resolver:DataConnector" />
-            <element ref="resolver:PrincipalConnector" />
+            <element ref="resolver:AttributeDefinition"/>
+            <element ref="resolver:DataConnector"/>
+            <element ref="resolver:PrincipalConnector"/>
         </choice>
         <attribute name="id" type="string">
             <annotation>
@@ -74,7 +74,7 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <sequence>
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded"/>
                     <element name="DisplayName" type="resolver:LocalizedStringType"
                         minOccurs="0" maxOccurs="unbounded">
                         <annotation>
@@ -102,7 +102,7 @@
                         </annotation>
                     </element>
                     <element ref="resolver:AttributeEncoder" minOccurs="0"
-                        maxOccurs="unbounded" />
+                        maxOccurs="unbounded"/>
                 </sequence>
                 <attribute name="sourceAttributeID" type="string">
                     <annotation>
@@ -144,7 +144,7 @@
 	            </annotation>
             </element>
         </sequence>
-        <attribute name="name" type="string" />
+        <attribute name="name" type="string"/>
         <attribute name="encodeType" type="string">
             <annotation>
                 <documentation>
@@ -224,8 +224,8 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <sequence>
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded"/>
+                    <element ref="resolver:FailoverDataConnector" minOccurs="0"/>
                 </sequence>
             </extension>
         </complexContent>
@@ -308,7 +308,7 @@
         <complexContent>
         <extension base="resolver:FlattenedBaseResolutionPlugInType">
             <sequence>
-                <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
+                <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
         </extension>
         </complexContent>
@@ -354,13 +354,13 @@
         <annotation>
             <documentation>A type that represents a reference to another plugin</documentation>
         </annotation>
-        <attribute name="ref" type="string" use="required" />
+        <attribute name="ref" type="string" use="required"/>
     </complexType>
 
     <complexType name="LocalizedStringType">
         <simpleContent>
             <extension base="string">
-                <attribute ref="xml:lang" />
+                <attribute ref="xml:lang"/>
             </extension>
         </simpleContent>
     </complexType>
@@ -415,9 +415,9 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
                 <attribute name="attributeValuesFunctionRef" type="string" use="required">
                     <annotation>
@@ -435,9 +435,9 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
                 <attribute name="dataSealerRef" type="string" use="required">
                     <annotation>
@@ -465,13 +465,13 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DefaultValue" minOccurs="0">
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
+                    <element name="DefaultValue">
                         <annotation>
                             <documentation>
                                 A source value is mapped to the DefaultValue if none of the ValueMaps result in a match.
@@ -510,12 +510,12 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
                 <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="scopeDelimiter" type="string">
@@ -534,9 +534,9 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
             </extension>
         </complexContent>
@@ -549,9 +549,9 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
             </extension>
         </complexContent>
@@ -564,12 +564,12 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
                 <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="regex" type="string" use="required">
@@ -595,12 +595,12 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
                 <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="nameIdFormat" type="string">
@@ -624,12 +624,12 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
                 <attribute name="sourceAttributeID" type="string"/>
                 <attribute name="nameIdFormat" type="string">
@@ -691,12 +691,12 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                     <element name="Script" type="string">
                         <annotation>
                             <documentation>The script to evaluate to construct the attribute.</documentation>
@@ -737,12 +737,12 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
                 <attribute name="sourceAttributeID" type="string"/>
             </extension>
@@ -756,17 +756,17 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
-                <attribute name="attributeValuesFunctionRef" type="string" >
+                <attribute name="attributeValuesFunctionRef" type="string">
                     <annotation>
                         <documentation>Provides a plug in point to allow general extraction of values from Principals.  Incompatible with idpAttributeName</documentation>
                     </annotation>
                 </attribute>
 
-                <attribute name="principalAttributeName" type="string" >
+                <attribute name="principalAttributeName" type="string">
                     <annotation>
                         <documentation>The id of the IdPAttribute contained within a IdPAttributePrincipal to look for.  Incompatible with attributeValueEngineRef.</documentation>
                     </annotation>
@@ -787,13 +787,13 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="Template" type="string" minOccurs="0">
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
+                    <element name="Template" type="string">
                         <annotation>
                             <documentation>
                                 Template specified in the Velocity Template Language used to construct attribute values.
@@ -828,9 +828,9 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseAttributeDefinitionType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element name="DisplayName" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded" />
-                    <element name="DisplayDescription" type="resolver:LocalizedStringType" minOccurs="0" maxOccurs="unbounded"/>
-                    <element ref="resolver:AttributeEncoder" minOccurs="0" maxOccurs="unbounded" />
+                    <element name="DisplayName" type="resolver:LocalizedStringType"/>
+                    <element name="DisplayDescription" type="resolver:LocalizedStringType"/>
+                    <element ref="resolver:AttributeEncoder"/>
                 </choice>
                 <attribute name="storageServiceRef" type="string" default="shibboleth.StorageService">
                     <annotation>
@@ -857,10 +857,10 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element ref="resolver:FailoverDataConnector"/>
                 </choice>
                 <attribute name="generatedAttributeID" type="string">
                     <annotation>
@@ -896,11 +896,11 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
-                    <element name="FilterTemplate" type="string" minOccurs="0">
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element ref="resolver:FailoverDataConnector"/>
+                    <element name="FilterTemplate" type="string">
                         <annotation>
                             <documentation>
                                 A template used to construct the LDAP filter used to query the directory.
@@ -914,29 +914,29 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="LDAPProperty" type="resolver:PropertyType" minOccurs="0" maxOccurs="unbounded">
+                    <element name="LDAPProperty" type="resolver:PropertyType">
                         <annotation>
                             <documentation>
                                 LDAP connection properties relevant to the underlying provider being used.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="StartTLSTrustCredential" type="sec:X509Credential" minOccurs="0">
+                    <element name="StartTLSTrustCredential" type="sec:X509Credential">
                         <annotation>
                             <documentation>
                                 The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="StartTLSAuthenticationCredential" type="sec:X509Credential" minOccurs="0">
+                    <element name="StartTLSAuthenticationCredential" type="sec:X509Credential">
                         <annotation>
                             <documentation>
                                 The X.509 client authentication information to use when connecting to the directory over LDAPS or startTLS.
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="ConnectionPool" type="resolver:LdapPoolConfigType" minOccurs="0"/>
-                    <element name="Column" type="resolver:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
+                    <element name="ConnectionPool" type="resolver:LdapPoolConfigType"/>
+                    <element name="Column" type="resolver:ColumnType"/>
                     <element name="ResultCache" type="resolver:CacheConfigType"/>
                     <element name="ResultCacheBean" type="string"/>
                 </choice>
@@ -1110,10 +1110,10 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <choice maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element ref="resolver:FailoverDataConnector"/>
                     <element ref="resolver:ContainerManagedConnection">
                         <annotation>
                             <documentation>
@@ -1144,7 +1144,7 @@
                             </documentation>
                         </annotation>
                     </element>
-                    <element name="Column" type="resolver:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
+                    <element name="Column" type="resolver:ColumnType"/>
                     <element name="ResultCache" type="resolver:CacheConfigType"/>
                     <element name="ResultCacheBean" type="string"/>
                 </choice>
@@ -1227,10 +1227,10 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <choice maxOccurs="unbounded">
-                    <element ref="resolver:Dependency" />
-                    <element ref="resolver:InputAttributeDefinition" />
-                    <element ref="resolver:InputDataConnector"  />                                        
-                    <element ref="resolver:FailoverDataConnector" />
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>                                        
+                    <element ref="resolver:FailoverDataConnector"/>
                     <element name="URLTemplate" type="string">
                         <annotation>
                             <documentation>
@@ -1329,16 +1329,16 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
-                    <element name="Script" type="string" minOccurs="0">
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element ref="resolver:FailoverDataConnector"/>
+                    <element name="Script" type="string">
                         <annotation>
                             <documentation>The script to evaluate to construct the attribute.</documentation>
                         </annotation>
                     </element>
-                    <element name="ScriptFile" type="string" minOccurs="0">
+                    <element name="ScriptFile" type="string">
                         <annotation>
                             <documentation>
                                 The filesystem path to the script to evaluate to construct the attribute.
@@ -1376,11 +1376,11 @@
         <complexContent>
             <extension base="resolver:FlattenedBaseDataConnectorType">
                 <choice  maxOccurs="unbounded" minOccurs="0">
-                    <element ref="resolver:Dependency" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputAttributeDefinition" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:InputDataConnector" minOccurs="0" maxOccurs="unbounded" />
-                    <element ref="resolver:FailoverDataConnector" minOccurs="0" />
-                    <element name="Attribute" minOccurs="0" maxOccurs="unbounded">
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element ref="resolver:FailoverDataConnector"/>
+                    <element name="Attribute">
                         <annotation>
                             <documentation>
                                 Specifies an attribute, and its values, to be exposed by this connector.
@@ -1463,7 +1463,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="retryableErrors" >
+                <attribute name="retryableErrors">
                     <annotation>
                         <documentation>
                             A space-delimited list of SQLState codes to treat as retryable (indicating
@@ -1488,7 +1488,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="salt" type="string" >
+                <attribute name="salt" type="string">
                     <annotation>
                         <documentation>
                             A salt, of at least 16 bytes, used in the computed ID.
