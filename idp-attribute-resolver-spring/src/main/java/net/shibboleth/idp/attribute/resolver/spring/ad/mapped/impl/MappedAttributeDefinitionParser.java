@@ -23,14 +23,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.ParserContext;
-import org.w3c.dom.Element;
-
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.ad.mapped.impl.MappedAttributeDefinition;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
@@ -38,6 +30,14 @@ import net.shibboleth.idp.attribute.resolver.spring.ad.impl.AttributeDefinitionN
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.ParserContext;
+import org.w3c.dom.Element;
 
 /** Bean definition parser for a {@link MappedAttributeDefinition}. */
 public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionParser {
@@ -79,7 +79,7 @@ public class MappedAttributeDefinitionParser extends BaseAttributeDefinitionPars
 
         if (null != defaultValueElements && defaultValueElements.size() > 0) {
             if (defaultValueElements.size() > 1) {
-                log.warn("{} More than one <DefaultValue> specified");
+                log.warn("{} More than one <DefaultValue> specified, taking the first");
             }
             final Element defaultValueElement = defaultValueElements.get(0);
             defaultValue = StringSupport.trimOrNull(defaultValueElement.getTextContent());

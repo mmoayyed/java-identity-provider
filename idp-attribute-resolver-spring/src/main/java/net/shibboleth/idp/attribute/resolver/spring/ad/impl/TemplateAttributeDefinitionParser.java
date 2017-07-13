@@ -23,17 +23,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
+import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
-
-import net.shibboleth.idp.attribute.resolver.ad.impl.TemplateAttributeDefinition;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Spring bean definition parser for templated attribute definition elements.
@@ -80,6 +80,10 @@ public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeD
         final List<Element> templateElements = ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_AD);
         templateElements.addAll(ElementSupport.getChildElements(config, TEMPLATE_ELEMENT_NAME_RESOLVER));
         if (null != templateElements && templateElements.size() >= 1) {
+            if (templateElements.size() > 1) {
+                log.warn("{} Too many <Template> elements, taking the first");
+            }
+            
             final String templateText = StringSupport.trimOrNull(templateElements.get(0).getTextContent());
             log.debug("{} Template is '{}'", getLogPrefix(), templateText);
 

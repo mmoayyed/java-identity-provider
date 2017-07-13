@@ -93,15 +93,20 @@ public class ScriptedAttributeDefinitionParser extends AbstractWarningAttributeD
         scriptFileElem.addAll(ElementSupport.getChildElements(config, SCRIPT_FILE_ELEMENT_NAME_RESOLVER));
         if (scriptElem != null && scriptElem.size() > 0) {
             if (scriptFileElem != null && scriptFileElem.size() > 0) {
-                log.warn(
-                        "{} Attribute definition {}: definition contains both <Script> "
-                                + "and <ScriptFile> elements, taking the <Script> element",
+                log.warn("{} definition contains both <Script> and <ScriptFile> elements, taking the "
+                        + "first <Script> element",
                         getLogPrefix(), getDefinitionId());
             }
             final String script = scriptElem.get(0).getTextContent();
             log.debug("{} Script: {}", getLogPrefix(), script);
             scriptBuilder.addPropertyValue("script", script);
         } else if (scriptFileElem != null && scriptFileElem.size() > 0) {
+            if (scriptFileElem.size() > 1) {
+                log.warn("{} Attribute definition {}: definition contains multiple " 
+                        + "<ScriptFile> elements, taking the first only.",
+                        getLogPrefix(), getDefinitionId());                
+            }
+            
             final String scriptFile = scriptFileElem.get(0).getTextContent();
             log.debug("{} Script file: {}", getLogPrefix(), scriptFile);
             scriptBuilder.addPropertyValue("resource", scriptFile);

@@ -109,7 +109,7 @@ public abstract class AbstractDataConnectorParser extends BaseResolverPluginPars
 
         if (failoverConnector != null && !failoverConnector.isEmpty()) {
             if (failoverConnector.size() > 1) {
-                log.warn("{} More than one failover data connector specified, taking the first", 
+                 log.warn("{} More than one failover data connector specified, taking the first", 
                         getLogPrefix());                
             }
             final String connectorId = StringSupport.trimOrNull(failoverConnector.get(0).getAttributeNS(null, "ref"));
