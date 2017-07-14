@@ -103,7 +103,8 @@ public class ManagedConnectionParser {
         
         if ((containerManagedElements.size() + applicationManagedElements.size()) > 1) {
             LoggerFactory.getLogger(ManagedConnectionParser.class).warn("Only one <ApplicationManagedConnection> or "+
-                                    "<ContainerManagedConnection> is allows per DataConnector");
+                                    "<ContainerManagedConnection> is allows per DataConnector,"+
+                    " <ContainerManagedConnection> used.");
         }
         
         if (!containerManagedElements.isEmpty()) {
