@@ -165,6 +165,15 @@ public class LDAPDataConnectorParserTest {
         Assert.assertNotNull(attrs);
         Assert.assertNotNull(attrs.get("entryDN"));
     }
+    
+    @Test public void v2ResolverOtherDups() throws Exception {
+        final LDAPDataConnector dataConnector =
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-multi.xml",
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/ldap/ldap-attribute-resolver-spring-context.xml"});
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+    }
+
 
 
     @Test public void v2MinimalConfig() throws Exception {
