@@ -15,4 +15,7 @@
         jdbcDriver="org.hsqldb.jdbc.JDBCDriver"
         jdbcURL="jdbc:hsqldb:mem:RDBMSDataConnectorStore" />
         
+        <FailoverDataConnector ref="sddsadas"/>
+        <FailoverDataConnector ref="sddsadas"/>
+        
 </DataConnector>

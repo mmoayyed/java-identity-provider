@@ -1416,8 +1416,12 @@
             </documentation>
         </annotation>
         <complexContent>
-            <extension base="resolver:BaseDataConnectorType">
-                <choice minOccurs="0">
+            <extension base="resolver:FlattenedBaseDataConnectorType">
+                <choice  maxOccurs="unbounded" minOccurs="0">
+                    <element ref="resolver:Dependency"/>
+                    <element ref="resolver:InputAttributeDefinition"/>
+                    <element ref="resolver:InputDataConnector"/>
+                    <element ref="resolver:FailoverDataConnector"/>
                     <element ref="resolver:ContainerManagedConnection">
                         <annotation>
                             <documentation>
