@@ -27,6 +27,8 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.AttributeRule;
 import net.shibboleth.idp.attribute.filter.Matcher;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -53,11 +55,11 @@ public class AttributeRuleParser extends BaseFilterParser {
     public static final QName TYPE_NAME = new QName(BaseFilterParser.NAMESPACE, "AttributeRuleType");
 
     /** PermitValueRuleReference. */
-    public static final QName PERMIT_VALUE_REF = new QName(BaseFilterParser.NAMESPACE,
+    @Deprecated public static final QName PERMIT_VALUE_REF = new QName(BaseFilterParser.NAMESPACE,
             "PermitValueRuleReference");
 
     /** DenyValueRuleReference. */
-    public static final QName DENY_VALUE_REF = new QName(BaseFilterParser.NAMESPACE,
+    @Deprecated public static final QName DENY_VALUE_REF = new QName(BaseFilterParser.NAMESPACE,
             "DenyValueRuleReference");
 
     /** permitAny Attribute. */
@@ -99,6 +101,8 @@ public class AttributeRuleParser extends BaseFilterParser {
             builder.addPropertyValue("isDenyRule", false);
 
         } else if (permitValueReference != null && !permitValueReference.isEmpty()) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, PERMIT_VALUE_REF.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),  null);
 
             final String referenceText = getReferenceText(permitValueReference.get(0));
             if (null == referenceText) {
@@ -112,6 +116,8 @@ public class AttributeRuleParser extends BaseFilterParser {
             builder.addPropertyValue("isDenyRule", false);
 
         } else if (denyValueRule != null && !denyValueRule.isEmpty()) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, DENY_VALUE_REF.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),  null);
 
             final ManagedList<BeanDefinition> denyValueRules =
                     SpringSupport.parseCustomElements(denyValueRule, parserContext);

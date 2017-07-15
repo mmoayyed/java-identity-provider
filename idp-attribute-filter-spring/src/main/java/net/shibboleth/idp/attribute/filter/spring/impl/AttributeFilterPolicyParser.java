@@ -25,6 +25,8 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.filter.AttributeFilterPolicy;
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -51,14 +53,14 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
             "AttributeFilterPolicyType");
 
     /** The PolicyRequirementRuleReference QName. */
-    public static final QName POLICY_REQUIREMENT_RULE_REF = new QName(BaseFilterParser.NAMESPACE,
+    @Deprecated public static final QName POLICY_REQUIREMENT_RULE_REF = new QName(BaseFilterParser.NAMESPACE,
             "PolicyRequirementRuleReference");
 
     /** The AttributeRule QName. */
     private static final QName ATTRIBUTE_RULE = new QName(BaseFilterParser.NAMESPACE, "AttributeRule");
 
     /** The AttributeRuleReference QName. */
-    private static final QName ATTRIBUTE_RULE_REF = new QName(BaseFilterParser.NAMESPACE,
+    @Deprecated private static final QName ATTRIBUTE_RULE_REF = new QName(BaseFilterParser.NAMESPACE,
             "AttributeRuleReference");
 
     /** Class logger. */
@@ -95,6 +97,8 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
             final List<Element> policyRequirementsRef =
                     ElementSupport.getChildElements(config, POLICY_REQUIREMENT_RULE_REF);
             if (policyRequirementsRef != null && policyRequirementsRef.size() > 0) {
+                    DeprecationSupport.warnOnce(ObjectType.ELEMENT, POLICY_REQUIREMENT_RULE.toString(),
+                        parserContext.getReaderContext().getResource().getDescription(),  null);
 
                 final String referenceText = getReferenceText(policyRequirementsRef.get(0));
                 if (null == referenceText) {
@@ -120,6 +124,9 @@ public class AttributeFilterPolicyParser extends BaseFilterParser {
 
         final List<Element> rulesRef = ElementSupport.getChildElements(config, ATTRIBUTE_RULE_REF);
         if (rulesRef != null && rulesRef.size() > 0) {
+            DeprecationSupport.warnOnce(ObjectType.ELEMENT, ATTRIBUTE_RULE_REF.toString(),
+                    parserContext.getReaderContext().getResource().getDescription(),  null);
+            
             for (final Element ruleRef : rulesRef) {
                 final String reference = getAbsoluteReference(config, "AttributeRule", getReferenceText(ruleRef));
                 attributeRules.add(new RuntimeBeanReference(reference));
