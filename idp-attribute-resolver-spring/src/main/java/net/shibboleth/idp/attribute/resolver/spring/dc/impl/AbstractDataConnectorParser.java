@@ -17,6 +17,9 @@
 
 package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+
 /**
  * Place holder to cover up the fact that we went a release 
  * with {@link net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser} in the impl package.
@@ -25,4 +28,12 @@ package net.shibboleth.idp.attribute.resolver.spring.dc.impl;
 @Deprecated
 public abstract class AbstractDataConnectorParser 
        extends net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser {
+    
+    /**
+     * Constructor.  Added purely to generate the deprecation warning.
+     */
+    public AbstractDataConnectorParser() {
+        super();
+        DeprecationSupport.warn(ObjectType.CLASS, this.getClass().getName(), null, super.getClass().getName());
+    }
 }

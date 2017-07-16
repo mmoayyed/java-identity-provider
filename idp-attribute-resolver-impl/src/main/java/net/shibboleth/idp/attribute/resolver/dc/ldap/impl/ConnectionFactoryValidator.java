@@ -25,6 +25,8 @@ import net.shibboleth.utilities.java.support.component.AbstractInitializableComp
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -54,6 +56,7 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
      * @deprecated - use the property setters
      */
     @Deprecated public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory) {
+        DeprecationSupport.warn(ObjectType.METHOD, "ConnectionFactoryValidator(ConnectionFactory)", null, null);
         LoggerFactory.getLogger(ConnectionFactoryValidator.class).warn("Using Deprecated Constructor");
         setConnectionFactory(factory);
         setThrowValidateError(true);
@@ -73,7 +76,8 @@ public class ConnectionFactoryValidator extends AbstractInitializableComponent i
      */
     @Deprecated public ConnectionFactoryValidator(@Nonnull final ConnectionFactory factory, 
             final boolean throwOnError) {
-        LoggerFactory.getLogger(ConnectionFactoryValidator.class).warn("Using Deprecated Constructor");
+        DeprecationSupport.warn(ObjectType.METHOD, "ConnectionFactoryValidator(ConnectionFactory, boolean)",
+                null, null);
         setConnectionFactory(factory);
         setThrowValidateError(throwOnError);
         try {

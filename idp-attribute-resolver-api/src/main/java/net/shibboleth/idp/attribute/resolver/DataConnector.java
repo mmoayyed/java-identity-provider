@@ -29,7 +29,7 @@ import net.shibboleth.idp.attribute.IdPAttribute;
  * 
  * This interface should be considered as deprecated, and {@link DataConnectorEx} should be used instead.
  */
-@ThreadSafe
+@ThreadSafe @Deprecated
 public interface DataConnector extends ResolverPlugin<Map<String, IdPAttribute>> {
 
     /**

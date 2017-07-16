@@ -30,9 +30,10 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.ldaptive.SearchFilter;
-import org.slf4j.LoggerFactory;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder} that generates the search filter to
@@ -51,7 +52,8 @@ public class ParameterizedExecutableSearchFilterBuilder extends AbstractExecutab
      * @deprecated - use the property setters
      */
     @Deprecated public ParameterizedExecutableSearchFilterBuilder(@Nonnull final String filter) {
-        LoggerFactory.getLogger(ParameterizedExecutableSearchFilterBuilder.class).warn("Using Deprecated Constructor");
+        DeprecationSupport.warn(ObjectType.METHOD, "ParameterizedExecutableSearchFilterBuilder(String)",
+                null, null);
         setSearchFilter(filter);
         try {
             initialize();

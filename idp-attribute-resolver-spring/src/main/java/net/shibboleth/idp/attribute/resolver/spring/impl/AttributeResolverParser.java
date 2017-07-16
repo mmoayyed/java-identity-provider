@@ -27,6 +27,8 @@ import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.spring.ad.BaseAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.enc.BaseAttributeEncoderParser;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 import org.slf4j.Logger;
@@ -75,9 +77,9 @@ public class AttributeResolverParser implements BeanDefinitionParser {
 
         children = configChildren.get(new QName(AttributeResolverNamespaceHandler.NAMESPACE, "PrincipalConnector"));
         if (null != children && !children.isEmpty()) {
-            log.warn("{} contains deprecated PrincipalConnector elements.  "+
-                    "See https://wiki.shibboleth.net/confluence/display/IDP30/NameIDConsumptionConfiguration",
-                    context.getReaderContext().getResource().getDescription());
+            DeprecationSupport.warn(ObjectType.ELEMENT, "<PrincipalConnector>", 
+                    context.getReaderContext().getResource().getDescription(), 
+                    "(https://wiki.shibboleth.net/confluence/display/IDP30/NameIDConsumptionConfiguration)");
         }
         SpringSupport.parseCustomElements(children, context);
         return null;

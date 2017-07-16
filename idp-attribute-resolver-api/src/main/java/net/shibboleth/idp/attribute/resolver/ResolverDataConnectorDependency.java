@@ -27,6 +27,8 @@ import javax.annotation.Nullable;
 
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
@@ -93,6 +95,9 @@ public final class ResolverDataConnectorDependency extends ResolverPluginDepende
      * @deprecated("Used SetAttributeNames instead")
      */
     @Override @Deprecated public void setDependencyAttributeId(@Nullable final String attributeId) {
+        DeprecationSupport.warn(ObjectType.METHOD,
+                "ResolverDataConnectorDependency#setDependencyAttributeId(String)",
+                null, null);
         super.setDependencyAttributeId(attributeId);
     }
 

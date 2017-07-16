@@ -36,6 +36,8 @@ import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamesp
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -260,9 +262,9 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
             Constraint.isNotNull(config, "LDAPDirectory element cannot be null");
             configElement = config;
             logPrefix = prefix; 
-            // warn about deprecated schema
+            // warn about deprecated (rmeoved?) attribute
             if (AttributeSupport.hasAttribute(config, new QName("mergeResults"))) {
-                log.warn("{} mergeResults property no longer supported and should be removed", getLogPrefix());
+                DeprecationSupport.warn(ObjectType.ATTRIBUTE,  "mergeResults", prefix, null);
             }
         }
 

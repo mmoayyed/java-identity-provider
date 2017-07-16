@@ -33,6 +33,8 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolverWorkContext;
 import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +72,11 @@ public final class PluginDependencySupport {
             @Nonnull @NonnullElements final Collection<ResolverPluginDependency> dependencies) {
         Constraint.isNotNull(workContext, "Attribute resolution context cannot be null");
         Constraint.isNotNull(dependencies, "Resolver dependency collection cannot be null");
+        
+        DeprecationSupport.warn(ObjectType.METHOD, 
+                "PluginDependencySupport#getMergedAttributeValues(AttributeResolverWorkContext, Collection)", 
+                null, 
+                "PluginDependencySupport#getMergedAttributeValues(AttributeResolverWorkContext, Collection, String)");
         
         return getMergedAttributeValues(workContext, dependencies, "<unknown>");
     }

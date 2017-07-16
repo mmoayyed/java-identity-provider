@@ -31,6 +31,8 @@ import net.shibboleth.utilities.java.support.component.ComponentInitializationEx
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
 import net.shibboleth.utilities.java.support.logic.ConstraintViolationException;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +59,7 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
      * @deprecated - use the property setters
      */
     @Deprecated public DataSourceValidator(final DataSource source) {
-        LoggerFactory.getLogger(DataSourceValidator.class).warn("Using Deprecated Constructor");
+        DeprecationSupport.warn(ObjectType.METHOD, "DataSourceValidator(DataSource)", null, null);
         dataSource = source;
         try {
             initialize();
@@ -74,7 +76,7 @@ public class DataSourceValidator extends AbstractInitializableComponent implemen
      * @deprecated - use the property setters
      */
     @Deprecated public DataSourceValidator(final DataSource source, final boolean throwOnError) {
-        LoggerFactory.getLogger(DataSourceValidator.class).warn("Using Deprecated Constructor");
+        DeprecationSupport.warn(ObjectType.METHOD, "DataSourceValidator(DataSource, boolean)", null, null);
         dataSource = source;
         throwOnValidateError = throwOnError;
         try {

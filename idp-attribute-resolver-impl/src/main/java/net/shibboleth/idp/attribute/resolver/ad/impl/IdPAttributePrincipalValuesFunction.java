@@ -29,8 +29,8 @@ import net.shibboleth.idp.authn.principal.IdPAttributePrincipal;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
-
-import org.slf4j.LoggerFactory;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import com.google.common.base.Function;
 
@@ -49,7 +49,8 @@ public class IdPAttributePrincipalValuesFunction extends AbstractInitializableCo
      */
     @Deprecated public IdPAttributePrincipalValuesFunction(@Nonnull final String attrName) {
         attributeName = Constraint.isNotNull(attrName, "Attribute Name should be non-null");
-        LoggerFactory.getLogger(IdPAttributePrincipalValuesFunction.class).warn("Deprecated Constructor called");
+        DeprecationSupport.warn(ObjectType.METHOD, 
+                "IdPAttributePrincipalValuesFunction(String)", null, null);
     }
 
     /**  Constructor.  */

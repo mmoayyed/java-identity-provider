@@ -27,9 +27,10 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.LoggerFactory;
 
 /**
  * An {@link net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder}. It generates the SQL statement to
@@ -48,7 +49,7 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
      * @deprecated - use the property setters
      */
     @Deprecated public FormatExecutableStatementBuilder(@Nonnull final String query) {
-        LoggerFactory.getLogger(FormatExecutableStatementBuilder.class).warn("Using Deprecated Constructor");
+        DeprecationSupport.warn(ObjectType.METHOD, "FormatExecutableStatementBuilder(String)", null, null);
         sqlQuery = Constraint.isNotNull(query, "SQL query can not be null");
     }
 
@@ -60,7 +61,7 @@ public class FormatExecutableStatementBuilder extends AbstractExecutableStatemen
      * @deprecated - use the property setters
      */
     @Deprecated public FormatExecutableStatementBuilder(@Nonnull final String query, @Nonnull final int timeout) {
-        LoggerFactory.getLogger(FormatExecutableStatementBuilder.class).warn("Using Deprecated Constructor");
+        DeprecationSupport.warn(ObjectType.METHOD, "FormatExecutableStatementBuilder(String, int)", null, null);
         sqlQuery = Constraint.isNotNull(query, "SQL query can not be null");
         setQueryTimeout((int) Constraint.isGreaterThanOrEqual(0, timeout, "Query timeout must be greater than zero"));
     }

@@ -24,6 +24,8 @@ import javax.xml.namespace.QName;
 
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
 import net.shibboleth.idp.saml.attribute.principalconnector.impl.PrincipalConnector;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
@@ -58,7 +60,9 @@ public abstract class AbstractPrincipalConnectorParser extends AbstractSingleBea
     @Override protected void doParse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
         
-        log.warn("PrincipalConnector feature is DEPRECATED in favor of subject c14n flows");
+        DeprecationSupport.warn(ObjectType.ELEMENT, "<PrincipalConnector>", 
+                parserContext.getReaderContext().getResource().getDescription(), 
+                "c14n");
         
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");

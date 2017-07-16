@@ -35,6 +35,8 @@ import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamesp
 import net.shibboleth.utilities.java.support.annotation.Duration;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -163,14 +165,12 @@ public class RDBMSDataConnectorParser extends AbstractWarningDataConnectorParser
             Constraint.isNotNull(config, "RelationalDatabase element cannot be null");
             configElement = config;
             logPrefix = prefix;
-            // warn about deprecated schema
+            // warn about deprecated (removed?) attributes
             if (AttributeSupport.hasAttribute(config, new QName("queryUsesStoredProcedure"))) {
-                log.warn("{} queryUsesStoredProcedure property no longer supported and should be removed",
-                        getLogPrefix());
+                DeprecationSupport.warn(ObjectType.ATTRIBUTE,  "queryUsesStoredProcedure", prefix, null);
             }
             if (AttributeSupport.hasAttribute(config, new QName("cacheResults"))) {
-                log.warn("{} cacheResults property no longer supported.  Use the ResultCache element instead",
-                        getLogPrefix());
+                DeprecationSupport.warn(ObjectType.ATTRIBUTE,  "cacheResults", prefix, "<ResultCache>");
             }
 
         }
