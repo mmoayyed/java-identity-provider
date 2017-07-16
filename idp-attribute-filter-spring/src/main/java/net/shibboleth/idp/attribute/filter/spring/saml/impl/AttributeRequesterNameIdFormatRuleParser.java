@@ -24,10 +24,7 @@ import net.shibboleth.idp.attribute.filter.policyrule.saml.impl.AttributeRequest
 import net.shibboleth.idp.attribute.filter.spring.BaseFilterParser;
 import net.shibboleth.idp.attribute.filter.spring.policyrule.BasePolicyRuleParser;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.DOMTypeSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -49,9 +46,6 @@ public class AttributeRequesterNameIdFormatRuleParser extends BasePolicyRulePars
     public static final QName SCHEMA_TYPE_V2 = new QName(AttributeFilterSAMLNamespaceHandler.NAMESPACE,
             "AttributeRequesterNameIDFormatExactMatch");
 
-    /** log. */
-    private final Logger log = LoggerFactory.getLogger(AttributeRequesterNameIdFormatRuleParser.class);
-
     /** {@inheritDoc} */
     @Override @Nonnull protected Class<AttributeRequesterNameIDFormatExactPolicyRule> getNativeBeanClass() {
         return AttributeRequesterNameIDFormatExactPolicyRule.class;
@@ -65,11 +59,6 @@ public class AttributeRequesterNameIdFormatRuleParser extends BasePolicyRulePars
     /** {@inheritDoc} */
     @Override protected void doNativeParse(@Nonnull final Element element, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
-
-        if (SCHEMA_TYPE_V2.equals(DOMTypeSupport.getXSIType(element))) {
-            log.info("Filter type '{}' has been deprecated, please use '{}'.", SCHEMA_TYPE_V2.getLocalPart(),
-                    SCHEMA_TYPE.getLocalPart());
-        }
 
         builder.addPropertyValue("nameIdFormat", 
                 StringSupport.trimOrNull(element.getAttributeNS(null, "nameIdFormat")));
