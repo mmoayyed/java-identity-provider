@@ -1,4 +1,4 @@
-@Echo off
+rem @Echo off
 REM Generate msm
 setlocal
 
@@ -97,7 +97,7 @@ if not exist "%2".asc (
 
 gpg --verify %2.asc %2
 if ERRORLEVEL 1 (
-   echo Error: Signature check failed on %1%
+   echo Error: Signature check failed on %2%
    goto done
 )
 
@@ -118,8 +118,10 @@ if ERRORLEVEL 1 (
 cd ..
 
 REM Extract Jetty
+REM IDP-1193 - and kill off demo-base
 
 for /D %%X in (jetty-extract/*) do set jex=%%X
+rd /s /q jetty-extract\%jex%\demo-base
 echo %jex% 1> jetty-extract/%jex%/JETTY_VERSION.TXT
 "%WIX%/BIN/HEAT"  dir jetty-extract\%Jex% -platform -gg -dr JETTYROOT -var var.JettySrc -cg JettyGroup -out jetty_contents.wxs -nologo -srd
 if ERRORLEVEL 1 goto done
