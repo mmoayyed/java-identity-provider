@@ -556,7 +556,7 @@
         <!-- build a jar, not war, since it is already fully populated -->
         <delete file="${idp.target.dir}/war/idp.war" failonerror="true" />
         <jar destfile="${idp.target.dir}/war/idp.war" basedir="${idp.target.dir}/webapp" />
-    	<delete dir="${idp.target.dir}/webapp" failonerror="true" />
+        <delete dir="${idp.target.dir}/webapp" failonerror="true" />
         <echo>...done</echo>
     </target>
 
@@ -606,9 +606,9 @@
             <fileset dir="${idp.src.dir}/bin"  excludes="**/ant-jetty.xml **/install.*"/>
         </copy>
 
-    	<!-- Create dist folder and copy in the unmodified user configuration. -->
-    	<mkdir dir="${idp.target.dir}/dist" />
-    	<copy todir="${idp.target.dir}/dist/conf">
+        <!-- Create dist folder and copy in the unmodified user configuration. -->
+        <mkdir dir="${idp.target.dir}/dist" />
+        <copy todir="${idp.target.dir}/dist/conf">
             <fileset dir="${idp.src.dir}/conf" />
         </copy>
         <copy todir="${idp.target.dir}/dist/flows">
@@ -632,7 +632,7 @@
             <fileset dir="${idp.src.dir}/system" />
         </copy>
 
-    	<!-- Create user-modifiable folders. -->
+        <!-- Create user-modifiable folders. -->
         <mkdir dir="${idp.target.dir}/conf" />
         <mkdir dir="${idp.target.dir}/credentials" />
         <mkdir dir="${idp.target.dir}/flows" />
