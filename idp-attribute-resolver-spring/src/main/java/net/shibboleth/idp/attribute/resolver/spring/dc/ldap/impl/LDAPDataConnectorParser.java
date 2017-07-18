@@ -262,7 +262,7 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
             Constraint.isNotNull(config, "LDAPDirectory element cannot be null");
             configElement = config;
             logPrefix = prefix; 
-            // warn about deprecated (rmeoved?) attribute
+            // warn about deprecated (removed?) attribute
             if (AttributeSupport.hasAttribute(config, new QName("mergeResults"))) {
                 DeprecationSupport.warn(ObjectType.ATTRIBUTE,  "mergeResults", prefix, null);
             }
