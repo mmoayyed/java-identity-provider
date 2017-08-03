@@ -6,6 +6,15 @@ Example metadata for mock SPs with entityIDs of form 'https://sp[123].example.or
                     xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
                     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
                     xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute">
+                    
+<EntityDescriptor entityID="https://affiliation.example.org">
+    <AffiliationDescriptor affiliationOwnerID="https://affiliation.example.org">
+        <AffiliateMember>https://sp1.example.org</AffiliateMember>
+        <AffiliateMember>https://sp2.example.org</AffiliateMember>
+        <AffiliateMember>https://sp3.example.org</AffiliateMember>
+    </AffiliationDescriptor>
+</EntityDescriptor>
+
 <EntityDescriptor entityID="https://sp1.example.org">
     <Extensions>
 	    <mdattr:EntityAttributes xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">

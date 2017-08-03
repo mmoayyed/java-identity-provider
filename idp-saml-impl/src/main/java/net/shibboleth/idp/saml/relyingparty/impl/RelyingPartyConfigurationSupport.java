@@ -20,12 +20,14 @@ package net.shibboleth.idp.saml.relyingparty.impl;
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.messaging.context.navigate.EntityDescriptorLookupFunction;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate.Candidate;
 import org.opensaml.saml.common.profile.logic.EntityGroupNamePredicate;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import com.google.common.base.Functions;
@@ -77,14 +79,17 @@ public final class RelyingPartyConfigurationSupport {
 
     /**
      * A shorthand method for constructing a {@link RelyingPartyConfiguration} with an activation condition based on
-     * one or more {@link org.opensaml.saml.saml2.metadata.EntitiesDescriptor} groups.
+     * one or more {@link org.opensaml.saml.saml2.metadata.EntitiesDescriptor} groups, and optionally via
+     * {@link org.opensaml.saml.saml2.metadata.AffiliationDescriptor} lookup.
      * 
      * @param groupNames the group names
+     * @param resolver optional metadata source for affiliation lookup
      * 
      * @return  a default-constructed configuration with the appropriate condition set
      */
     @Nonnull public static RelyingPartyConfiguration byGroup(
-            @Nonnull @NonnullElements final Collection<String> groupNames) {
+            @Nonnull @NonnullElements final Collection<String> groupNames,
+            @Nullable final MetadataResolver resolver) {
         Constraint.isNotNull(groupNames, "Group name list cannot be null");
         
         // We adapt an OpenSAML Predicate applying to an EntityDescriptor by indirecting the lookup of the
@@ -93,7 +98,7 @@ public final class RelyingPartyConfigurationSupport {
         final StrategyIndirectedPredicate<ProfileRequestContext,EntityDescriptor> indirectPredicate =
                 new StrategyIndirectedPredicate<>(
                         Functions.compose(new EntityDescriptorLookupFunction(),new SAMLMetadataContextLookupFunction()),
-                        new EntityGroupNamePredicate(groupNames));
+                        new EntityGroupNamePredicate(groupNames, resolver));
         
         final RelyingPartyConfiguration config = new RelyingPartyConfiguration();
         config.setActivationCondition(indirectPredicate);

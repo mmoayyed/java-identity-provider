@@ -43,7 +43,8 @@
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byName" />
 
     <bean id="RelyingPartyByGroup.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup" />
+        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
+        c:resolver-ref="shibboleth.MetadataResolver" />
 
     <bean id="RelyingPartyByTag.MDDriven" parent="RelyingParty.MDDriven" abstract="true"
         class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byTag"

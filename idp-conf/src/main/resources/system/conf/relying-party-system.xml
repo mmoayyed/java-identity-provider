@@ -36,7 +36,8 @@
 
     <!-- Parent bean for RelyingParty overrides based on activation by group. -->
     <bean id="RelyingPartyByGroup" abstract="true" parent="RelyingParty"
-        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup" />
+        class="net.shibboleth.idp.saml.relyingparty.impl.RelyingPartyConfigurationSupport" factory-method="byGroup"
+        c:resolver-ref="shibboleth.MetadataResolver" />
 
     <!-- Parent bean for RelyingParty overrides based on activation by tag. -->
     <bean id="RelyingPartyByTag" abstract="true" parent="RelyingParty"
