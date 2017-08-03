@@ -45,6 +45,7 @@ import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.profile.context.navigate.InboundMessageContextLookup;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +69,9 @@ public class FilterAttributes extends AbstractProfileAction {
     /** Service used to get the engine used to filter attributes. */
     @Nonnull private final ReloadableService<AttributeFilter> attributeFilterService;
 
+    /** Optional supplemental metadata source. */
+    @Nullable private MetadataResolver metadataResolver;
+    
     /** Strategy used to locate the identity of the issuer associated with the attribute filtering. */
     @Nullable private Function<ProfileRequestContext,String> issuerLookupStrategy;
 
@@ -148,6 +152,19 @@ public class FilterAttributes extends AbstractProfileAction {
                 new ChildContextLookup<ProfileRequestContext,RelyingPartyContext>(RelyingPartyContext.class));
         
         maskFailures = true;
+    }
+    
+    /**
+     * Set a metadata source to use during filtering.
+     * 
+     * @param resolver metadata resolver
+     * 
+     * @since 3.4.0
+     */
+    public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        metadataResolver = resolver;
     }
     
     /**
@@ -346,6 +363,8 @@ public class FilterAttributes extends AbstractProfileAction {
      */
     private void populateFilterContext(@Nonnull final ProfileRequestContext profileRequestContext,
             @Nonnull final AttributeFilterContext filterContext) {
+        
+        filterContext.setMetadataResolver(metadataResolver);
         
         filterContext.setPrincipal(principalNameLookupStrategy.apply(profileRequestContext));
 

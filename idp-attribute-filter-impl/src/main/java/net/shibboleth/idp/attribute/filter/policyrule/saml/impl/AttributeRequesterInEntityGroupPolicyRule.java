@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Predicate;
 
 /**
- * A matcher that evaluates to true if attribute requester matches the provided entity group name.
+ * A matcher that evaluates to true if attribute requester matches the provided entity group name,
+ * or (as of 3.4.0) a valid metadata-sourced affiliation of entities.
  */
 public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRule {
 
@@ -101,7 +102,8 @@ public class AttributeRequesterInEntityGroupPolicyRule extends AbstractPolicyRul
             return Tristate.FALSE;
         }
 
-        final Predicate<EntityDescriptor> predicate = new EntityGroupNamePredicate(Collections.singleton(entityGroup));
+        final Predicate<EntityDescriptor> predicate =
+                new EntityGroupNamePredicate(Collections.singleton(entityGroup), input.getMetadataResolver());
         
         final EntityDescriptor entity = getEntityMetadata(input);
         return predicate.apply(entity) ? Tristate.TRUE : Tristate.FALSE;

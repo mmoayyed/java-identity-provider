@@ -230,7 +230,8 @@
 
     <bean id="FilterAttributes" class="net.shibboleth.idp.profile.impl.FilterAttributes" scope="prototype"
         c:filterService-ref="shibboleth.AttributeFilterService"
-        p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}" />
+        p:maskFailures="%{idp.service.attribute.filter.maskFailures:true}"
+        p:metadataResolver-ref="shibboleth.MetadataResolver" />
 
     <bean id="FilterByQueriedAttributeDesignators"
         class="net.shibboleth.idp.saml.saml1.profile.impl.FilterByQueriedAttributeDesignators" scope="prototype"

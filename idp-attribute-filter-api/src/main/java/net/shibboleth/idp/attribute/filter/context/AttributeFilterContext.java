@@ -35,6 +35,7 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 
 import org.opensaml.messaging.context.BaseContext;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
@@ -44,13 +45,16 @@ import com.google.common.base.Predicates;
 public final class AttributeFilterContext extends BaseContext {
 
     /** Attributes which are to be filtered. */
-    private Map<String, IdPAttribute> prefilteredAttributes;
+    @Nonnull private Map<String, IdPAttribute> prefilteredAttributes;
 
     /** Attributes which have been filtered. */
-    private Map<String, IdPAttribute> filteredAttributes;
+    @Nonnull private Map<String, IdPAttribute> filteredAttributes;
 
+    /** Optional, supplemental metadata resolver. */
+    @Nullable private MetadataResolver metadataResolver;
+        
     /** The principal associated with the filtering. */
-    private String principal;
+    @Nullable private String principal;
 
     /** The attribute source identity. */
     @Nullable private String attributeIssuerID;
@@ -123,13 +127,35 @@ public final class AttributeFilterContext extends BaseContext {
             filteredAttributes.put(attribute.getId(), attribute);
         }
     }
+    
+    /**
+     * Get supplemental source of metadata for filtering rules.
+     * 
+     * @return metadata resolver
+     * 
+     * @since 3.4.0
+     */
+    @Nullable public MetadataResolver getMetadataResolver() {
+        return metadataResolver;
+    }
+    
+    /**
+     * Set supplemental source of metadata for filtering rules.
+     * 
+     * @param resolver metadata resolver
+     * 
+     * @since 3.4.0
+     */
+    public void setMetadataResolver(@Nullable final MetadataResolver resolver) {
+        metadataResolver = resolver;
+    }
 
     /**
      * Sets the principal associated with the filtering.
      * 
      * @return Returns the principal.
      */
-    public String getPrincipal() {
+    @Nullable public String getPrincipal() {
         return principal;
     }
 
@@ -138,7 +164,7 @@ public final class AttributeFilterContext extends BaseContext {
      * 
      * @param who The principal to set.
      */
-    public void setPrincipal(final String who) {
+    public void setPrincipal(@Nullable final String who) {
         principal = who;
     }
 
