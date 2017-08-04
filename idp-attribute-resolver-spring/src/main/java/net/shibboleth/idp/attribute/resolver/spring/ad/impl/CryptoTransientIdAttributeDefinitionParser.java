@@ -85,9 +85,4 @@ public class CryptoTransientIdAttributeDefinitionParser extends BaseAttributeDef
                 "via NameID Generation Service configuration");
     }
 
-    /** {@inheritDoc}. So source Attribute for this. */
-    @Override protected boolean needsAttributeSourceID() {
-        return false;
-    }
-
 }

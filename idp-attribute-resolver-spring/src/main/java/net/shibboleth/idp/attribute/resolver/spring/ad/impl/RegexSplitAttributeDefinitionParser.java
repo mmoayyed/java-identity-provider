@@ -77,11 +77,6 @@ public class RegexSplitAttributeDefinitionParser extends AbstractWarningAttribut
     }
 
     /** {@inheritDoc} */
-    @Override protected boolean needsAttributeSourceID() {
-        return true;
-    }
-
-    /** {@inheritDoc} */
     @Override
     @Nonnull protected QName getPreferredName() {
         return TYPE_NAME_RESOLVER;

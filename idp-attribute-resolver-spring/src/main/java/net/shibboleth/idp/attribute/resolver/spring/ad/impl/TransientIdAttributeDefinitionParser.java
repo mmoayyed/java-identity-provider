@@ -90,9 +90,4 @@ public class TransientIdAttributeDefinitionParser extends BaseAttributeDefinitio
                 "via NameID Generation Service configuration");
     }
 
-    /** {@inheritDoc}. No input. */
-    @Override protected boolean needsAttributeSourceID() {
-        return false;
-    }
-
 }

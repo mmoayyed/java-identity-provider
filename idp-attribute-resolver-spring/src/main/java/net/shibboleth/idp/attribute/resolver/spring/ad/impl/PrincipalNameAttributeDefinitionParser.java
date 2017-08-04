@@ -42,11 +42,6 @@ public class PrincipalNameAttributeDefinitionParser extends AbstractWarningAttri
         return PrincipalNameAttributeDefinition.class;
     }
 
-    /** {@inheritDoc}. No input. */
-    @Override protected boolean needsAttributeSourceID() {
-        return false;
-    }
-
     /** {@inheritDoc} */
     @Override
     @Nonnull protected QName getPreferredName() {

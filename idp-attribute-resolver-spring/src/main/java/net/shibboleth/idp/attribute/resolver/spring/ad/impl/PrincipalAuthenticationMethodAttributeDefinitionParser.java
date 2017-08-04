@@ -40,11 +40,6 @@ public class PrincipalAuthenticationMethodAttributeDefinitionParser extends Abst
     @Override protected Class<PrincipalAuthenticationMethodAttributeDefinition> getBeanClass(final Element element) {
         return PrincipalAuthenticationMethodAttributeDefinition.class;
     }
-
-    /** {@inheritDoc}. No input. */
-    @Override protected boolean needsAttributeSourceID() {
-        return false;
-    }
     
     /** {@inheritDoc} */
     @Override

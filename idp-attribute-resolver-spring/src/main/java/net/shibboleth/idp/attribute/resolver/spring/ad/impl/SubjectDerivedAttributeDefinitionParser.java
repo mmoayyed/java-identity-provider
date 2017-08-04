@@ -90,11 +90,6 @@ public class SubjectDerivedAttributeDefinitionParser extends AbstractWarningAttr
         builder.addPropertyValue("attributeValuesFunction", contextFunctionBuilder.getBeanDefinition());
     }
 
-    /** {@inheritDoc}. No input. */
-    @Override protected boolean needsAttributeSourceID() {
-        return false;
-    }
-
     /** {@inheritDoc} */
     @Override protected boolean failOnDependencies() {
         return true;

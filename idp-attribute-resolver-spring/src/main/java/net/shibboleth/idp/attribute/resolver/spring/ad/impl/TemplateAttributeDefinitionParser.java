@@ -110,11 +110,6 @@ public class TemplateAttributeDefinitionParser extends AbstractWarningAttributeD
         builder.addPropertyReference("velocityEngine", velocityEngineRef);
     }
 
-    /** {@inheritDoc}. No input. */
-    @Override protected boolean needsAttributeSourceID() {
-        return false;
-    }
-
     /** {@inheritDoc} */
     @Override
     @Nonnull protected QName getPreferredName() {

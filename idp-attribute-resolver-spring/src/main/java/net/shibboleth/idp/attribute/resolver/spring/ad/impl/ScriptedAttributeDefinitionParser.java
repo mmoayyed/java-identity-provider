@@ -123,11 +123,6 @@ public class ScriptedAttributeDefinitionParser extends AbstractWarningAttributeD
         builder.addPropertyValue("script", scriptBuilder.getBeanDefinition());
     }
 
-    /** {@inheritDoc}. No input. */
-    @Override protected boolean needsAttributeSourceID() {
-        return false;
-    }
-
     /** {@inheritDoc} */
     @Override
     @Nonnull protected QName getPreferredName() {

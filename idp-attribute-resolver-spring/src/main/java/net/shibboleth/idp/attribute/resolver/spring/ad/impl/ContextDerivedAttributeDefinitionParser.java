@@ -58,11 +58,6 @@ public class ContextDerivedAttributeDefinitionParser extends AbstractWarningAttr
         }
     }
 
-    /** {@inheritDoc}. No input. */
-    @Override protected boolean needsAttributeSourceID() {
-        return false;
-    }
-
     /** {@inheritDoc} */
     @Override protected boolean failOnDependencies() {
         return true;

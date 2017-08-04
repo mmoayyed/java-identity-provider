@@ -61,11 +61,6 @@ public class PrescopedAttributeDefinitionParser extends AbstractWarningAttribute
             builder.addPropertyValue("scopeDelimiter", scopeDelimiter);
         }
     }
-
-    /** {@inheritDoc} */
-    @Override protected boolean needsAttributeSourceID() {
-        return true;
-    }
     
     /** {@inheritDoc} */
     @Override
