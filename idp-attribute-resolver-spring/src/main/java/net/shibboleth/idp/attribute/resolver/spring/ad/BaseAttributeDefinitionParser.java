@@ -30,6 +30,8 @@ import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamesp
 import net.shibboleth.idp.attribute.resolver.spring.impl.InputAttributeDefinitionParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.InputDataConnectorParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
@@ -94,9 +96,10 @@ public abstract class BaseAttributeDefinitionParser extends BaseResolverPluginPa
             final String sourceAttributeId = config.getAttributeNodeNS(null, "sourceAttributeID").getValue();
             log.debug("{} Setting sourceAttributeID {}", getLogPrefix(), sourceAttributeId);
             builder.addPropertyValue("sourceAttributeId", sourceAttributeId);
-            log.warn("{} sourceAttributeID was specified.  It is no longer required.  Use "+
-                    InputAttributeDefinitionParser.ELEMENT_NAME.getLocalPart() +" or " + 
-                    InputDataConnectorParser.ELEMENT_NAME.getLocalPart() + ">");
+            DeprecationSupport.warnOnce(ObjectType.ATTRIBUTE, "sourceAttributeID",
+                    parserContext.getReaderContext().getResource().getDescription(),
+                    InputAttributeDefinitionParser.ELEMENT_NAME.getLocalPart() + " or "
+                            + InputDataConnectorParser.ELEMENT_NAME.getLocalPart());
         }
 
         final List<Element> attributeEncoders =
