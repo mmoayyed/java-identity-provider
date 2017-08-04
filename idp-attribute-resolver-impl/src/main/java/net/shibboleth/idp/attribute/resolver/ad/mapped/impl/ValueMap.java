@@ -123,12 +123,12 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
             String newValue = null;
 
             if (sourceValue.isPartialMatch()) {
-                log.debug("Performing partial match comparison.");
+                log.debug("Performing partial match comparison");
                 if (sourceValue.getValue() == null) {
                     log.debug("Source value was null, no partial match");
                 } else if (attributeValue.contains(sourceValue.getValue())) {
                     newValue = returnValue;
-                    log.debug("Attribute value '{}' matches source value '{}' it will be mapped to '{}'", new Object[] {
+                    log.debug("Attribute value '{}' contains source value '{}', will be mapped to '{}'", new Object[] {
                             attributeValue, sourceValue.getValue(), newValue,});
                 }
             } else {
@@ -137,11 +137,11 @@ public class ValueMap implements Function<String, Set<StringAttributeValue>> {
                     final Matcher m = sourceValue.getPattern().matcher(attributeValue);
                     if (m.matches()) {
                         newValue = returnValue != null ? m.replaceAll(returnValue) : null;
-                        log.debug("Attribute value '{}' matches regular expression it will be mapped to '{}'",
+                        log.debug("Attribute value '{}' matches regular expression, will be mapped to '{}'",
                                 attributeValue, newValue);
                     }
                 } catch (final PatternSyntaxException e) {
-                    log.debug("Error matching value {}.  Skipping this value.", attributeValue);
+                    log.debug("Error matching value '{}', skipping it", attributeValue);
                 }
             }
 
