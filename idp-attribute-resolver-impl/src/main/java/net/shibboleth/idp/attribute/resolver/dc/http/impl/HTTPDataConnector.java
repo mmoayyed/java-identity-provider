@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.shibboleth.idp.attribute.IdPAttribute;
@@ -49,6 +50,9 @@ public class HTTPDataConnector extends AbstractSearchDataConnector<HTTPSearch,HT
     /** The {@link HttpClient} to use. */
     @NonnullAfterInit private HttpClient httpClient;
     
+    /** HTTP client security parameters. */
+    @Nullable private HttpClientSecurityParameters httpClientSecurityParameters;
+    
     /** Constructor. */
     public HTTPDataConnector() {
         setValidator(new Validator() {
@@ -68,7 +72,19 @@ public class HTTPDataConnector extends AbstractSearchDataConnector<HTTPSearch,HT
 
         httpClient = Constraint.isNotNull(client, "HttpClient cannot be null");
     }
-        
+
+    /**
+     * Set the optional client security parameters.
+     * 
+     * @param params the new client security parameters
+     */
+    public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+
+        httpClientSecurityParameters = params;
+    }
+    
     /** {@inheritDoc} */
     public void doInitialize() throws ComponentInitializationException {
         super.doInitialize();
@@ -84,7 +100,8 @@ public class HTTPDataConnector extends AbstractSearchDataConnector<HTTPSearch,HT
             throws ResolutionException {
 
         try {
-            return getMappingStrategy().map(executable.execute(httpClient, getMappingStrategy()));
+            return getMappingStrategy().map(
+                    executable.execute(httpClient, httpClientSecurityParameters, getMappingStrategy()));
         } catch (final IOException e) {
             throw new ResolutionException(getLogPrefix() + " HTTP request failed", e);
         }

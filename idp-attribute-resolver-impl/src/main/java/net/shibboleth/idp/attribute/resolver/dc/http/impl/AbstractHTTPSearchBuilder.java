@@ -59,10 +59,28 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
     /** HTTP client security parameters. */
     @Nullable private HttpClientSecurityParameters httpClientSecurityParameters;
     
+    
+    /**
+     * Get the optional client security parameters.
+     * 
+     * <p>This is informational to accommodate a scenario in which the parameters should influence
+     * the construction of the request, but the actual parameters to use will be supplied to the
+     * {@link HTTPSearch#execute(HttpClient, HttpClientSecurityParameters, HTTPResponseMappingStrategy)} method.</p>
+     * 
+     * @return client security parameters
+     */
+    @Nullable public HttpClientSecurityParameters getHttpClientSecurityParameters() {
+        return httpClientSecurityParameters;
+    }
+    
     /**
      * Set the optional client security parameters.
      * 
-     * @param params the new client security parameters
+     * <p>This is informational to accommodate a scenario in which the parameters should influence
+     * the construction of the request, but the actual parameters to use will be supplied to the
+     * {@link HTTPSearch#execute(HttpClient, HttpClientSecurityParameters, HTTPResponseMappingStrategy)} method.</p>
+     * 
+     * @param params client security parameters
      */
     public void setHttpClientSecurityParameters(@Nullable final HttpClientSecurityParameters params) {
         ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
@@ -76,9 +94,10 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
             @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
         
         final HttpUriRequest request = getHttpRequest(resolutionContext, dependencyAttributes);
-        final HttpClientContext context = buildHttpContext(request);
 
+// Checkstyle: AnonInnerLength OFF
         return new HTTPSearch() {
+            
             /** {@inheritDoc} */
             @Nonnull public String getResultCacheKey() {
                 Constraint.isTrue(request instanceof HttpGet, "Only GET requests are cacheable");
@@ -92,12 +111,19 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
             
             /** {@inheritDoc} */
             @Nonnull public Map<String,IdPAttribute> execute(@Nonnull final HttpClient client,
+                    @Nullable final HttpClientSecurityParameters securityParameters,
                     @Nonnull final HTTPResponseMappingStrategy mappingStrategy) throws IOException {
-                final Map<String,IdPAttribute> results = client.execute(request, mappingStrategy, context);
-                HttpClientSecuritySupport.checkTLSCredentialEvaluated(context, request.getURI().getScheme());
+                
+                final HttpClientContext clientContext = HttpClientContext.create();
+                HttpClientSecuritySupport.marshalSecurityParameters(clientContext, httpClientSecurityParameters, true);
+                HttpClientSecuritySupport.addDefaultTLSTrustEngineCriteria(clientContext, request);
+                final Map<String,IdPAttribute> results = client.execute(request, mappingStrategy, clientContext);
+                HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
                 return results;
             }
+            
         };
+// Checkstyle: AnonInnerLength ON
     }
 
     /**
@@ -131,18 +157,5 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
             throw new ResolutionException(e);
         }
     }
-    
-    /**
-     * Build the {@link HttpClientContext} instance to be used.
-     * 
-     * @param request the HTTP client request
-     * @return the client context instance
-     */
-    @Nonnull private HttpClientContext buildHttpContext(@Nonnull final HttpUriRequest request) {
-        final HttpClientContext clientContext = HttpClientContext.create();
-        HttpClientSecuritySupport.marshalSecurityParameters(clientContext, httpClientSecurityParameters, false);
-        HttpClientSecuritySupport.addDefaultTLSTrustEngineCriteria(clientContext, request);
-        return clientContext;
-    }
-    
+        
 }

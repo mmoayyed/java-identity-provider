@@ -71,6 +71,12 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         if (httpClientID != null) {
             builder.addPropertyReference("httpClient", httpClientID);
         }
+        
+        final String securityParams =
+                StringSupport.trimOrNull(config.getAttributeNS(null, "httpClientSecurityParametersRef"));
+        if (securityParams != null) {
+            builder.addPropertyReference("httpClientSecurityParameters", securityParams);
+        }
 
         final String searchBuilderID = v2Parser.getBeanSearchBuilderID();
         if (searchBuilderID != null) {
@@ -171,6 +177,7 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
             }
             templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
 
+            // This is duplication but allows the built-in builder to access the parameters if desired.
             final String securityParams =
                     StringSupport.trimOrNull(configElement.getAttributeNS(null, "httpClientSecurityParametersRef"));
             if (securityParams != null) {

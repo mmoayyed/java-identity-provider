@@ -167,6 +167,7 @@ public class TemplatedURLBuilder extends AbstractHTTPSearchBuilder {
         log.trace("Creating request URL using attribute resolution context {}", resolutionContext);
         context.put("resolutionContext", resolutionContext);
 
+        context.put("httpClientSecurityParameters", getHttpClientSecurityParameters());
         context.put("paramEscaper", paramEscaper);
         context.put("fragmentEscaper", fragmentEscaper);
         context.put("pathEscaper", pathEscaper);

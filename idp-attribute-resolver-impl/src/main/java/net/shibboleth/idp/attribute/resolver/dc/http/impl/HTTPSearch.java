@@ -21,8 +21,10 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.apache.http.client.HttpClient;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearch;
@@ -34,12 +36,14 @@ public interface HTTPSearch extends ExecutableSearch {
      * The abstraction that will contact the service and obtain results.
      * 
      * @param client the HTTP client
+     * @param securityParameters client security settings
      * @param mappingStrategy response mapping strategy
      * 
      * @return attribute results
      * @throws IOException if an error occurs
      */
     @Nonnull Map<String,IdPAttribute> execute(@Nonnull final HttpClient client,
+            @Nullable final HttpClientSecurityParameters securityParameters,
             @Nonnull final HTTPResponseMappingStrategy mappingStrategy) throws IOException;
     
 }
