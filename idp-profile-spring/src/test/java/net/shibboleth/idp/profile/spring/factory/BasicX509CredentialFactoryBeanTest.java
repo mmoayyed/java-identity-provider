@@ -17,13 +17,13 @@
 
 package net.shibboleth.idp.profile.spring.factory;
 
-import junit.framework.Assert;
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-
 import org.opensaml.security.x509.BasicX509Credential;
 import org.springframework.context.support.GenericApplicationContext;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
 
 /**
  *
