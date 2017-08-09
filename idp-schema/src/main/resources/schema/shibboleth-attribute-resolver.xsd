@@ -127,6 +127,7 @@
             <documentation>Defines an encoder for an attribute.</documentation>
         </annotation>
     </element>
+
     <complexType name="BaseAttributeEncoderType">
         <annotation>
             <documentation>
@@ -240,6 +241,7 @@
             </documentation>
         </annotation>
     </element>
+
     <complexType name="BasePrincipalConnectorType">
         <annotation>
             <documentation>
@@ -1125,6 +1127,13 @@
                     <element ref="resolver:ApplicationManagedConnection">
                         <annotation>
                             <documentation>
+                                DEPRECATED A connection, or pool of connections, to the database managed by the data connector.
+                            </documentation>
+                        </annotation>
+                    </element>
+                    <element ref="resolver:SimpleManagedConnection">
+                        <annotation>
+                            <documentation>
                                 A connection, or pool of connections, to the database managed by the data connector.
                             </documentation>
                         </annotation>
@@ -1739,7 +1748,6 @@
         </attribute>
     </complexType>
 
-
     <element name="ContainerManagedConnection" type="resolver:ContainerManagedConnectionType">
         <annotation>
             <documentation>
@@ -1747,6 +1755,7 @@
             </documentation>
         </annotation>
     </element>
+
     <complexType name="ContainerManagedConnectionType">
         <sequence>
             <element name="JNDIConnectionProperty" type="resolver:PropertyType" minOccurs="0" maxOccurs="unbounded">
@@ -1765,7 +1774,7 @@
         </attribute>
     </complexType>
 
-   <complexType name="PropertyType">
+    <complexType name="PropertyType">
         <attribute name="name" type="string" use="required">
             <annotation>
                 <documentation>The name of the property.</documentation>
@@ -1777,11 +1786,48 @@
             </annotation>
         </attribute>
     </complexType>
+    
+    <element name="SimpleManagedConnection" type="resolver:SimpleManagedConnectionType">
+        <annotation>
+            <documentation>
+                Describes a simple database connection source that is managed by the attribute resolver data connector.
+                Included to "get people going" only
+            </documentation>
+        </annotation>
+    </element>
 
+    <complexType name="SimpleManagedConnectionType">
+        <attribute name="jdbcDriver" type="string" use="required">
+            <annotation>
+                <documentation>
+                    This is the full qualified class name of the JDBC driver used to connect to the database.
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcURL" type="string" use="required">
+            <annotation>
+                <documentation>
+                    The JDBC URL for the database. These are usually of the form
+                    jdbc:databaseProduceName:databaseSpecificInformation. For example, jdbc:hsql:mem:MyDatabase
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcUserName" type="string">
+            <annotation>
+                <documentation>The user name to use while connecting to the database.</documentation>
+            </annotation>
+        </attribute>
+        <attribute name="jdbcPassword" type="string">
+            <annotation>
+                <documentation>The password to use while connecting to the database.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
 
     <element name="ApplicationManagedConnection" type="resolver:ApplicationManagedConnectionType">
         <annotation>
             <documentation>
+                DEPRECATED
                 Describes a database connection source that is managed by the attribute resolver data connector.
             </documentation>
         </annotation>

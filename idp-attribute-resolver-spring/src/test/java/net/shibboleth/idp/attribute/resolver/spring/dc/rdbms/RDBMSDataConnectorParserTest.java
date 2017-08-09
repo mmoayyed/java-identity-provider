@@ -25,20 +25,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.config.StringToResourceConverter;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
-import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConnectorParser;
-import net.shibboleth.idp.testing.DatabaseTestingSupport;
-
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -55,6 +41,20 @@ import org.testng.annotations.Test;
 
 import com.google.common.cache.Cache;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.config.StringToResourceConverter;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.DataSourceValidator;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.ExecutableStatement;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.RDBMSDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.rdbms.impl.StringResultMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.spring.dc.rdbms.impl.RDBMSDataConnectorParser;
+import net.shibboleth.idp.testing.DatabaseTestingSupport;
 
 /** Test for {@link RDBMSDataConnectorParser}. */
 public class RDBMSDataConnectorParserTest {
@@ -101,6 +101,17 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
     }
+    
+    @Test(enabled=false) public void simpleConnector() throws Exception {
+        final RDBMSDataConnector dataConnector =
+                getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-simple.xml");
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+        final StringResultMappingStrategy mappingStrategy = (StringResultMappingStrategy) dataConnector.getMappingStrategy();
+        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
+        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
+    }
+
     
     @Test public void resolver() throws Exception {
         final RDBMSDataConnector dataConnector =
