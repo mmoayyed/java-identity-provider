@@ -76,6 +76,8 @@ public class HTTPDataConnectorTest {
     @Test public void test() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
         final HttpClientSecurityParameters params = new HttpClientSecurityParameters();
         params.setTLSProtocols(Collections.singleton("TLSv1"));
+        connector.setHttpClientSecurityParameters(params);
+        
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
         builder.setTemplateText(TEST_URL);
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
@@ -112,6 +114,8 @@ public class HTTPDataConnectorTest {
             throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
         final HttpClientSecurityParameters params = new HttpClientSecurityParameters();
         params.setTLSProtocols(Collections.singleton("SSLv3"));
+        connector.setHttpClientSecurityParameters(params);
+        
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
         builder.setTemplateText(TEST_URL);
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());

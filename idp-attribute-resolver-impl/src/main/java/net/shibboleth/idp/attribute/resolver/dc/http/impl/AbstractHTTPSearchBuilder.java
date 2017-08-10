@@ -115,7 +115,7 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
                     @Nonnull final HTTPResponseMappingStrategy mappingStrategy) throws IOException {
                 
                 final HttpClientContext clientContext = HttpClientContext.create();
-                HttpClientSecuritySupport.marshalSecurityParameters(clientContext, httpClientSecurityParameters, true);
+                HttpClientSecuritySupport.marshalSecurityParameters(clientContext, securityParameters, true);
                 HttpClientSecuritySupport.addDefaultTLSTrustEngineCriteria(clientContext, request);
                 final Map<String,IdPAttribute> results = client.execute(request, mappingStrategy, clientContext);
                 HttpClientSecuritySupport.checkTLSCredentialEvaluated(clientContext, request.getURI().getScheme());
