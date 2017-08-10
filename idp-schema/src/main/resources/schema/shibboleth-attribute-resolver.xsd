@@ -1260,6 +1260,20 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="certificate" type="string">
+                    <annotation>
+                        <documentation>
+                            Location of certificate to authenticate HTTP server
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="certificateAuthority" type="string">
+                    <annotation>
+                        <documentation>
+                            Location of CA to indirectly authenticate HTTP server
+                        </documentation>
+                    </annotation>
+                </attribute>
                 <attribute name="templateEngine" type="string">
                     <annotation>
                         <documentation>

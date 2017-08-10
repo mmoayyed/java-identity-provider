@@ -30,6 +30,8 @@ import net.shibboleth.idp.attribute.resolver.dc.http.impl.TemplatedURLBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean;
+import net.shibboleth.idp.profile.spring.factory.StaticPKIXFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
 import net.shibboleth.utilities.java.support.logic.Constraint;
@@ -37,6 +39,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 import net.shibboleth.utilities.java.support.xml.AttributeSupport;
 import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -59,6 +62,7 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         return HTTPDataConnector.class;
     }
     
+// Checkstyle: CyclomaticComplexity OFF
     /** {@inheritDoc} */
     @Override protected void doV2Parse(@Nonnull final Element config, @Nonnull final ParserContext parserContext,
             @Nonnull final BeanDefinitionBuilder builder) {
@@ -74,7 +78,14 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         
         final String securityParams =
                 StringSupport.trimOrNull(config.getAttributeNS(null, "httpClientSecurityParametersRef"));
-        if (securityParams != null) {
+        final BeanDefinition httpClientSecurityBean =
+                v2Parser.buildHttpClientSecurityParams(config.getAttributeNS(null, "id"));
+        if (httpClientSecurityBean != null) {
+            if (securityParams != null) {
+                log.warn("Ignoring httpClientSecurityParametersRef setting in favor of manual settings");
+            }
+            builder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityBean);
+        } else if (securityParams != null) {
             builder.addPropertyReference("httpClientSecurityParameters", securityParams);
         }
 
@@ -82,7 +93,7 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         if (searchBuilderID != null) {
             builder.addPropertyReference("executableSearchBuilder", searchBuilderID);
         } else {
-            final BeanDefinition def = v2Parser.createTemplateBuilder();
+            final BeanDefinition def = v2Parser.createTemplateBuilder(httpClientSecurityBean);
             if (def != null) {
                 builder.addPropertyValue("executableSearchBuilder", def);
             }
@@ -114,6 +125,7 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         builder.setInitMethodName("initialize");
         builder.setDestroyMethodName("destroy");
     }
+// Checkstyle: CyclomaticComplexity ON
 
     /**
      * Utility class for parsing v2 schema configuration.
@@ -163,9 +175,10 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         /**
          * Create the definition of the template driven search builder.
          * 
+         * @param httpClientSecurityParams instance of {@link HttpClientSecurityParameters} to inject
          * @return the bean definition for the template search builder.
          */
-        @Nonnull public BeanDefinition createTemplateBuilder() {
+        @Nonnull public BeanDefinition createTemplateBuilder(@Nullable final BeanDefinition httpClientSecurityParams) {
             final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedURLBuilder.class);
             templateBuilder.setInitMethodName("initialize");
@@ -178,10 +191,14 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
             templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
 
             // This is duplication but allows the built-in builder to access the parameters if desired.
-            final String securityParams =
-                    StringSupport.trimOrNull(configElement.getAttributeNS(null, "httpClientSecurityParametersRef"));
-            if (securityParams != null) {
-                templateBuilder.addPropertyReference("httpClientSecurityParameters", securityParams);
+            if (httpClientSecurityParams != null) {
+                templateBuilder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityParams);
+            } else {
+                final String securityParamsRef =
+                        StringSupport.trimOrNull(configElement.getAttributeNS(null, "httpClientSecurityParametersRef"));
+                if (securityParamsRef != null) {
+                    templateBuilder.addPropertyReference("httpClientSecurityParameters", securityParamsRef);
+                }
             }
             
             final List<Element> urlTemplates = ElementSupport.getChildElements(configElement, 
@@ -274,6 +291,45 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         @Nullable public BeanDefinition createCache(@Nonnull final ParserContext parserContext) {
             final CacheConfigParser parser = new CacheConfigParser(configElement);
             return parser.createCache(parserContext);
+        }
+        
+        /**
+         * Check for manually supplied settings and build {@link HttpClientSecurityParameters} instance.
+         * 
+         * @param id connector ID
+         * 
+         * @return a bean definition if applicable
+         */
+        @Nullable public BeanDefinition buildHttpClientSecurityParams(@Nullable final String id) {
+            BeanDefinitionBuilder builder = null;
+            final String certificate = StringSupport.trimOrNull(configElement.getAttributeNS(null, "certificate"));
+            if (certificate != null) {
+                log.debug("Auto-configuring connector {} with a server certificate to authenticate", id);
+                builder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientSecurityParameters.class);
+                final BeanDefinitionBuilder explicitTrust =
+                        BeanDefinitionBuilder.genericBeanDefinition(StaticExplicitKeyFactoryBean.class);
+                explicitTrust.addPropertyValue("certificates", certificate);
+                builder.addPropertyValue("tLSTrustEngine", explicitTrust.getBeanDefinition());
+            }
+            
+            final String certificateAuthority =
+                    StringSupport.trimOrNull(configElement.getAttributeNS(null, "certificateAuthority"));
+            if (certificateAuthority != null) {
+                if (builder != null) {
+                    log.warn("Ignoring certificateAuthority set on connector {}, superseded by certificate", id);
+                } else {
+                    log.debug("Auto-configuring connector {} with a certificate authority to authenticate", id);
+                    builder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientSecurityParameters.class);
+                    final BeanDefinitionBuilder pkixTrust =
+                            BeanDefinitionBuilder.genericBeanDefinition(StaticPKIXFactoryBean.class);
+                    // Relies on underlying enhanced TLSSocketFactory hostname verifier to kick in.
+                    pkixTrust.addPropertyValue("checkNames", false);
+                    pkixTrust.addPropertyValue("certificates", certificateAuthority);
+                    builder.addPropertyValue("tLSTrustEngine", pkixTrust.getBeanDefinition());
+                }
+            }
+            
+            return builder != null ? builder.getBeanDefinition() : null;
         }
         
         /** The parent parser's log prefix.

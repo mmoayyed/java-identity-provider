@@ -8,6 +8,14 @@
     <bean id="NoTrustEngineHttpClient"
         class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean" />
 
+    <bean id="SecurityEnhancedTLSSocketFactory" 
+        class="org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport"
+        factory-method="buildTLSSocketFactory" />
+
+    <bean id="TrustEngineHttpClient"
+        class="net.shibboleth.idp.profile.spring.relyingparty.metadata.HttpClientFactoryBean"
+        p:TLSSocketFactory-ref="SecurityEnhancedTLSSocketFactory" />
+
     <bean id="BadProtocolParameters"
         class="org.opensaml.security.httpclient.HttpClientSecurityParameters"
         p:TLSProtocols="SSLv3" />
