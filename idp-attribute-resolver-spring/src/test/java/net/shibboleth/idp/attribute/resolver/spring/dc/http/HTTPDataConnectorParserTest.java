@@ -22,17 +22,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.config.StringToResourceConverter;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.dc.http.impl.HTTPDataConnector;
-import net.shibboleth.idp.saml.impl.TestSources;
-import net.shibboleth.utilities.java.support.repository.RepositorySupport;
-
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -41,6 +30,18 @@ import org.springframework.mock.env.MockPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
+
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.config.StringToResourceConverter;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.dc.http.impl.HTTPDataConnector;
+import net.shibboleth.idp.attribute.resolver.spring.dc.http.impl.HTTPDataConnectorParser;
+import net.shibboleth.idp.saml.impl.TestSources;
+import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 
 /** Test for {@link HTTPDataConnectorParser}. */
 public class HTTPDataConnectorParserTest {
@@ -149,7 +150,7 @@ public class HTTPDataConnectorParserTest {
     
     @Test public void v2MissingOk() throws Exception {
         
-        final MockPropertySource propSource = singletonPropertySource("serviceURL", "http://shibboleth.net/test.json");
+        final MockPropertySource propSource = singletonPropertySource("serviceURL", "http://build.shibboleth.net/test.json");
         propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         
         final HTTPDataConnector connector =
