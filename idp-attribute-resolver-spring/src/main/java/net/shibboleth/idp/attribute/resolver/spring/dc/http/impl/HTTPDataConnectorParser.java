@@ -302,7 +302,8 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
          */
         @Nullable public BeanDefinition buildHttpClientSecurityParams(@Nullable final String id) {
             BeanDefinitionBuilder builder = null;
-            final String certificate = StringSupport.trimOrNull(configElement.getAttributeNS(null, "certificate"));
+            final String certificate =
+                    StringSupport.trimOrNull(configElement.getAttributeNS(null, "serverCertificate"));
             if (certificate != null) {
                 log.debug("Auto-configuring connector {} with a server certificate to authenticate", id);
                 builder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientSecurityParameters.class);
@@ -316,7 +317,7 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
                     StringSupport.trimOrNull(configElement.getAttributeNS(null, "certificateAuthority"));
             if (certificateAuthority != null) {
                 if (builder != null) {
-                    log.warn("Ignoring certificateAuthority set on connector {}, superseded by certificate", id);
+                    log.warn("Ignoring certificateAuthority on connector {}, superseded by serverCertificate", id);
                 } else {
                     log.debug("Auto-configuring connector {} with a certificate authority to authenticate", id);
                     builder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientSecurityParameters.class);

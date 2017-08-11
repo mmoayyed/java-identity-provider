@@ -1269,7 +1269,7 @@
                         </documentation>
                     </annotation>
                 </attribute>
-                <attribute name="certificate" type="string">
+                <attribute name="serverCertificate" type="string">
                     <annotation>
                         <documentation>
                             Location of certificate to authenticate HTTP server
@@ -1280,6 +1280,20 @@
                     <annotation>
                         <documentation>
                             Location of CA to indirectly authenticate HTTP server
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="clientPrivateKey" type="string">
+                    <annotation>
+                        <documentation>
+                            Location of private key to authenticate with via TLS
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="clientCertificate" type="string">
+                    <annotation>
+                        <documentation>
+                            Location of client certificate to authenticate with via TLS
                         </documentation>
                     </annotation>
                 </attribute>

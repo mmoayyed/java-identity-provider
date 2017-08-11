@@ -5,7 +5,7 @@
 
     <DataConnector id="myHTTP" xsi:type="HTTP"
             httpClientRef="TrustEngineHttpClient"
-            certificate="%{certificate}">
+            serverCertificate="%{certificate}">
             
         <URLTemplate>%{serviceURL}</URLTemplate>
         
