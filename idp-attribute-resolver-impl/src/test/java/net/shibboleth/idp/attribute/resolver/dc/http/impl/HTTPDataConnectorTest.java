@@ -23,6 +23,15 @@ import java.util.Map;
 
 import javax.script.ScriptException;
 
+import org.apache.http.HttpStatus;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.opensaml.security.httpclient.HttpClientSecurityParameters;
+import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
+import org.springframework.core.io.ClassPathResource;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -32,15 +41,6 @@ import net.shibboleth.idp.saml.impl.TestSources;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.repository.RepositorySupport;
 import net.shibboleth.utilities.java.support.velocity.VelocityEngine;
-
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.opensaml.security.httpclient.HttpClientSecurityParameters;
-import org.opensaml.security.httpclient.impl.SecurityEnhancedHttpClientSupport;
-import org.springframework.core.io.ClassPathResource;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /**
  * Tests for {@link HTTPDataConnector}
@@ -192,7 +192,7 @@ public class HTTPDataConnectorTest {
     
     @Test public void testMissingOk() throws ComponentInitializationException, ResolutionException, ScriptException {
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
-        builder.setTemplateText("https://shibboleth.net/test.json");
+        builder.setTemplateText("https://build.shibboleth.net/test.json");
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
                 
