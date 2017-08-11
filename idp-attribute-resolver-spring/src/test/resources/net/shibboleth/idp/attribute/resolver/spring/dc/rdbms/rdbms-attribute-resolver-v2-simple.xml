@@ -13,16 +13,9 @@
         jdbcURL="jdbc:hsqldb:mem:RDBMSDataConnectorStore"
         jdbcUserName="SA"
         jdbcPassword=""/>
-        <dc:QueryTemplate>
-            <![CDATA[
-                SELECT * FROM people WHERE userid='%s'
-            ]]>
-        </dc:QueryTemplate>
-        
-        <dc:Column columnName="homephone" attributeID="phonenumber" />
-        
-        <dc:ResultCache
-            elementTimeToLive="PT10S"/>
-    </resolver:DataConnector>
+        <QueryTemplate><![CDATA[SELECT * FROM people WHERE userid='%s']]></QueryTemplate>
+        <Column columnName="homephone" attributeID="phonenumber" />
+        <ResultCache elementTimeToLive="PT10S"/>
+    </DataConnector>
     
-</resolver:AttributeResolver>
+</AttributeResolver>

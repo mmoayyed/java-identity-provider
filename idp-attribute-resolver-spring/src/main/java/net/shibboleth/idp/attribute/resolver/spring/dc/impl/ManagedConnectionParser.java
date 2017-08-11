@@ -28,20 +28,24 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.w3c.dom.Element;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /** Utility class for parsing v2 managed connection configuration. */
 public class ManagedConnectionParser {
@@ -62,13 +66,20 @@ public class ManagedConnectionParser {
     @Nonnull public static final QName APPLICATION_MANAGED_CONNECTION_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "ApplicationManagedConnection");
 
-    /** dc:ContainerManagedConnection (legacy).*/
+    /** dc:BeanManagedConnection (legacy).*/
     @Nonnull public static final QName BEAN_MANAGED_CONNECTION_DC =
             new QName(DataConnectorNamespaceHandler.NAMESPACE, "BeanManagedConnection");
     
-    /** resolver:ContainerManagedConnection.*/
+    /** resolver:BeanManagedConnection.*/
     @Nonnull public static final QName BEAN_MANAGED_CONNECTION_RESOLVER =
             new QName(AttributeResolverNamespaceHandler.NAMESPACE, "BeanManagedConnection");
+
+    /** resolver:SimpleManagedConnection.*/
+    @Nonnull public static final QName SIMPLE_MANAGED_CONNECTION_RESOLVER =
+            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "SimpleManagedConnection");
+
+    /** Logger. */
+    @Nonnull private static final Logger LOG = LoggerFactory.getLogger(ManagedConnectionParser.class);
     
 
     /** Data source XML element. */
@@ -94,19 +105,24 @@ public class ManagedConnectionParser {
                 ElementSupport.getChildElements(configElement, CONTAINER_MANAGED_CONNECTION_DC);
         containerManagedElements.addAll(
                 ElementSupport.getChildElements(configElement, CONTAINER_MANAGED_CONNECTION_RESOLVER));
-        
-        
+
         final List<Element> applicationManagedElements =
                 ElementSupport.getChildElements(configElement, APPLICATION_MANAGED_CONNECTION_DC);
         applicationManagedElements.addAll(
                 ElementSupport.getChildElements(configElement, APPLICATION_MANAGED_CONNECTION_RESOLVER));
-        
-        if ((containerManagedElements.size() + applicationManagedElements.size()) > 1) {
-            LoggerFactory.getLogger(ManagedConnectionParser.class).warn("Only one <ApplicationManagedConnection> or "+
-                                    "<ContainerManagedConnection> is allowed per DataConnector,"+
-                    " <ContainerManagedConnection> used.");
+
+        final List<Element> simpleManagedElements =
+                ElementSupport.getChildElements(configElement, SIMPLE_MANAGED_CONNECTION_RESOLVER);
+
+        if ((simpleManagedElements.size() + containerManagedElements.size() + applicationManagedElements.size()) > 1) {
+            LOG.warn("Only one <ApplicationManagedConnection>, <SimpleManagedConnection> or"
+                     +" <ContainerManagedConnection> is allowed per DataConnector");
         }
         
+        if (!simpleManagedElements.isEmpty()) {
+            return createSimpleManagedDataSource(simpleManagedElements.get(0));
+        }
+
         if (!containerManagedElements.isEmpty()) {
             return createContainerManagedDataSource(containerManagedElements.get(0));
         }
@@ -149,6 +165,53 @@ public class ManagedConnectionParser {
     }
 
     /**
+     * Creates an simple managed data source bean definition based on dbcp2.
+     *
+     * @param simpleManagedElement to parse
+     *
+     * @return data source bean definition
+     */
+
+    @Nonnull protected BeanDefinition createSimpleManagedDataSource(
+            @Nonnull final Element simpleManagedElement) {
+        Constraint.isNotNull(simpleManagedElement, "SimpleManagedConnection element cannot be null");
+        final BeanDefinitionBuilder dataSource =
+                BeanDefinitionBuilder.genericBeanDefinition(BasicDataSource.class);
+
+        final String driverName = StringSupport.trimOrNull(AttributeSupport.getAttributeValue(simpleManagedElement,
+                null, "jdbcDriver"));
+        if (driverName == null) {
+            LOG.warn("<SimpleManagedConnection> jdbcDriver attribute should be present and non empty");
+            throw new BeanCreationException("<SimpleManagedConnection> jdbcDriver attribute should be"+
+                                            " present and non empty");
+        }
+        dataSource.addPropertyValue("driverClassName", driverName);
+
+        final String url = StringSupport.trimOrNull(AttributeSupport.getAttributeValue(simpleManagedElement,
+                null, "jdbcURL"));
+        if (url == null) {
+            LOG.warn("<SimpleManagedConnection> jdbcURL attribute should be present and non empty");
+            throw new BeanCreationException("<SimpleManagedConnection> jdbcURL attribute should be present"
+                                            + " and non empty");
+        }
+        dataSource.addPropertyValue("url", url);
+
+        final String user = AttributeSupport.getAttributeValue(simpleManagedElement, null, "jdbcUserName");
+        if (user != null && !"".equals(user)) {
+            dataSource.addPropertyValue("username", user);
+        }
+
+        final String password = AttributeSupport.getAttributeValue(simpleManagedElement, null, "jdbcPassword");
+        if (password != null && !"".equals(password)) {
+            dataSource.addPropertyValue("password", password);
+        }
+        dataSource.addPropertyValue("maxTotal", "20");
+        dataSource.addPropertyValue("maxIdle", "5");
+        dataSource.addPropertyValue("maxWaitMillis", "5000");
+        return dataSource.getBeanDefinition();
+    }
+
+    /**
      * Creates an application managed data source bean definition.
      * 
      * @param applicationManagedElement to parse
@@ -156,8 +219,15 @@ public class ManagedConnectionParser {
      * @return data source bean definition
      */
     // Checkstyle: CyclomaticComplexity|MethodLength OFF
-    @Nonnull protected BeanDefinition createApplicationManagedDataSource(
+    @Deprecated @Nonnull protected BeanDefinition createApplicationManagedDataSource(
             @Nonnull final Element applicationManagedElement) {
+
+        DeprecationSupport.warn(ObjectType.ELEMENT,
+                APPLICATION_MANAGED_CONNECTION_RESOLVER.getLocalPart(),
+                null,
+                BEAN_MANAGED_CONNECTION_RESOLVER.getLocalPart() + " or " +
+                SIMPLE_MANAGED_CONNECTION_RESOLVER.getLocalPart());
+
         Constraint.isNotNull(applicationManagedElement, "ApplicationManagedConnection element cannot be null");
         final BeanDefinitionBuilder dataSource =
                 BeanDefinitionBuilder.genericBeanDefinition(ComboPooledDataSource.class);
@@ -258,8 +328,7 @@ public class ManagedConnectionParser {
             final DataSource dataSource = (DataSource) initCtx.lookup(resourceName);
             return dataSource;
         } catch (final NamingException e) {
-            final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
-            log.error("Managed data source '{}' could not be found", resourceName, e);
+            LOG.error("Managed data source '{}' could not be found", resourceName, e);
             return null;
         }
     }
@@ -271,14 +340,13 @@ public class ManagedConnectionParser {
      *
      * @return the jdbc driver supplied to the method
      */
-    public static String loadJdbcDriver(final String jdbcDriver) {
+    @Deprecated public static String loadJdbcDriver(final String jdbcDriver) {
         // JDBC driver must be loaded in order to register itself
         final ClassLoader classLoader = ManagedConnectionParser.class.getClassLoader();
         try {
             classLoader.loadClass(jdbcDriver);
         } catch (final ClassNotFoundException e) {
-            final Logger log = LoggerFactory.getLogger(ManagedConnectionParser.class);
-            log.error("JDBC driver '{}' could not be found", jdbcDriver, e);
+            LOG.error("JDBC driver '{}' could not be found", jdbcDriver, e);
         }
         return jdbcDriver;
     }
@@ -299,19 +367,19 @@ public class ManagedConnectionParser {
         }
         
         if (beanManagedElements.size() > 1) {
-            LoggerFactory.getLogger(ManagedConnectionParser.class).
-            warn("Only one <BeanManagedConnection> should be specified; the first one has been consulted");
+            LOG.warn("Only one <BeanManagedConnection> should be specified; the first one has been consulted");
         }
 
         final List<Element> managedElements = ElementSupport.getChildElements(config, CONTAINER_MANAGED_CONNECTION_DC);
         managedElements.addAll(ElementSupport.getChildElements(config, CONTAINER_MANAGED_CONNECTION_RESOLVER));
         managedElements.addAll(ElementSupport.getChildElements(config, APPLICATION_MANAGED_CONNECTION_DC));
         managedElements.addAll(ElementSupport.getChildElements(config, APPLICATION_MANAGED_CONNECTION_RESOLVER));
+        managedElements.addAll(ElementSupport.getChildElements(config, SIMPLE_MANAGED_CONNECTION_RESOLVER));
         
         if (managedElements.size() > 0) {
-            LoggerFactory.getLogger(ManagedConnectionParser.class).
-            warn("<BeanManagedConnection> is incompatible with <ContainerManagedConnection> "+
-                 "or <ApplicationManagedConnection>. The <BeanManagedConnection> has been used");
+            LOG.warn("<BeanManagedConnection> is incompatible with <ContainerManagedConnection>"
+                    + ", <SimpleManagedConnection> or <ApplicationManagedConnection>. The "
+                    + "<BeanManagedConnection> has been used");
         }
         
         return StringSupport.trimOrNull(ElementSupport.getElementContentAsString(beanManagedElements.get(0)));

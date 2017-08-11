@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.ConversionServiceFactoryBean;
 import org.springframework.context.support.GenericApplicationContext;
@@ -102,7 +103,7 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
     }
     
-    @Test(enabled=false) public void simpleConnector() throws Exception {
+    @Test public void simpleConnector() throws Exception {
         final RDBMSDataConnector dataConnector =
                 getRdbmsDataConnector("net/shibboleth/idp/attribute/resolver/spring/dc/rdbms/rdbms-attribute-resolver-v2-simple.xml");
         Assert.assertNotNull(dataConnector);
@@ -217,18 +218,28 @@ public class RDBMSDataConnectorParserTest {
         Assert.assertEquals("myDatabase", id);
         Assert.assertEquals(300000, dataConnector.getNoRetryDelay());
 
-        final ComboPooledDataSource dataSource = (ComboPooledDataSource) dataConnector.getDataSource();
-        Assert.assertNotNull(dataSource);
-        Assert.assertEquals("jdbc:hsqldb:mem:RDBMSDataConnectorStore", dataSource.getJdbcUrl());
-        Assert.assertEquals("SA", dataSource.getUser());
-        Assert.assertEquals(3, dataSource.getAcquireIncrement());
-        Assert.assertEquals(24, dataSource.getAcquireRetryAttempts());
-        Assert.assertEquals(5000, dataSource.getAcquireRetryDelay());
-        Assert.assertEquals(true, dataSource.isBreakAfterAcquireFailure());
-        Assert.assertEquals(1, dataSource.getMinPoolSize());
-        Assert.assertEquals(5, dataSource.getMaxPoolSize());
-        Assert.assertEquals(300, dataSource.getMaxIdleTime());
-        Assert.assertEquals(360, dataSource.getIdleConnectionTestPeriod());
+        if ( dataConnector.getDataSource() instanceof ComboPooledDataSource) {
+            final ComboPooledDataSource dataSource = (ComboPooledDataSource) dataConnector.getDataSource();
+            Assert.assertNotNull(dataSource);
+            Assert.assertEquals("jdbc:hsqldb:mem:RDBMSDataConnectorStore", dataSource.getJdbcUrl());
+            Assert.assertEquals("SA", dataSource.getUser());
+            Assert.assertEquals(3, dataSource.getAcquireIncrement());
+            Assert.assertEquals(24, dataSource.getAcquireRetryAttempts());
+            Assert.assertEquals(5000, dataSource.getAcquireRetryDelay());
+            Assert.assertEquals(true, dataSource.isBreakAfterAcquireFailure());
+            Assert.assertEquals(1, dataSource.getMinPoolSize());
+            Assert.assertEquals(5, dataSource.getMaxPoolSize());
+            Assert.assertEquals(300, dataSource.getMaxIdleTime());
+            Assert.assertEquals(360, dataSource.getIdleConnectionTestPeriod());
+        } else {
+            final BasicDataSource dataSource = (BasicDataSource) dataConnector.getDataSource();
+            Assert.assertNotNull(dataSource);
+            Assert.assertEquals(dataSource.getUrl(), "jdbc:hsqldb:mem:RDBMSDataConnectorStore");
+            Assert.assertEquals(dataSource.getUsername(), "SA");
+            Assert.assertEquals(dataSource.getMaxTotal(), 20);
+            Assert.assertEquals(dataSource.getMaxIdle(), 5);
+            Assert.assertEquals(dataSource.getMaxWaitMillis(), 5000);
+        }
 
         Assert.assertFalse(dataConnector.isConnectionReadOnly());
         final DataSourceValidator validator = (DataSourceValidator) dataConnector.getValidator();
