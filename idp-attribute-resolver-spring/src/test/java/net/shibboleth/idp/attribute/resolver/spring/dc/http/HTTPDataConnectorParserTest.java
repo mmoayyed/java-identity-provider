@@ -261,6 +261,38 @@ public class HTTPDataConnectorParserTest {
         connector.resolve(context);
     }
     
+    @Test public void v2ClientCertificate() throws Exception {
+        
+        // Could use a better test for this end to end.
+        
+        final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
+        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        propSource.setProperty("key", "net/shibboleth/idp/attribute/resolver/spring/dc/http/client.key");
+        propSource.setProperty("certificate", "net/shibboleth/idp/attribute/resolver/spring/dc/http/client.crt");
+        
+        final HTTPDataConnector connector =
+                getDataConnector(propSource,
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-clientcert.xml");
+        Assert.assertNotNull(connector);
+        
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        
+        connector.resolve(context);
+        
+        final Map<String,IdPAttribute> attrs = connector.resolve(context);
+        
+        Assert.assertEquals(attrs.size(), 2);
+        
+        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
+        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        
+        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
+        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+    }
+    
     @Test public void hybridConfig() throws Exception {
         final MockPropertySource propSource = singletonPropertySource("serviceURL", TEST_URL);
         propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");

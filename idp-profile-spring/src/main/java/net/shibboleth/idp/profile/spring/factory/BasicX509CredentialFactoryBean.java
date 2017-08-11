@@ -172,6 +172,11 @@ public class BasicX509CredentialFactoryBean extends AbstractX509CredentialFactor
 
     /** {@inheritDoc} */
     @Override @Nonnull protected List<X509Certificate> getCertificates() {
+        
+        if (certificateResources == null) {
+            return Collections.emptyList();
+        }
+        
         final List<X509Certificate> certificates = new LazyList<>();
         for (final Resource r : certificateResources) {
             try(InputStream is = r.getInputStream()) {

@@ -30,6 +30,7 @@ import net.shibboleth.idp.attribute.resolver.dc.http.impl.TemplatedURLBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
 import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.StaticExplicitKeyFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.StaticPKIXFactoryBean;
 import net.shibboleth.idp.profile.spring.relyingparty.metadata.ScriptTypeBeanParser;
@@ -302,14 +303,14 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
          */
         @Nullable public BeanDefinition buildHttpClientSecurityParams(@Nullable final String id) {
             BeanDefinitionBuilder builder = null;
-            final String certificate =
+            final String serverCertificate =
                     StringSupport.trimOrNull(configElement.getAttributeNS(null, "serverCertificate"));
-            if (certificate != null) {
+            if (serverCertificate != null) {
                 log.debug("Auto-configuring connector {} with a server certificate to authenticate", id);
                 builder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientSecurityParameters.class);
                 final BeanDefinitionBuilder explicitTrust =
                         BeanDefinitionBuilder.genericBeanDefinition(StaticExplicitKeyFactoryBean.class);
-                explicitTrust.addPropertyValue("certificates", certificate);
+                explicitTrust.addPropertyValue("certificates", serverCertificate);
                 builder.addPropertyValue("tLSTrustEngine", explicitTrust.getBeanDefinition());
             }
             
@@ -328,6 +329,22 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
                     pkixTrust.addPropertyValue("certificates", certificateAuthority);
                     builder.addPropertyValue("tLSTrustEngine", pkixTrust.getBeanDefinition());
                 }
+            }
+            
+            final String clientPrivateKey =
+                    StringSupport.trimOrNull(configElement.getAttributeNS(null, "clientPrivateKey"));
+            final String clientCertificate =
+                    StringSupport.trimOrNull(configElement.getAttributeNS(null, "clientCertificate"));
+            if (clientPrivateKey != null && clientCertificate != null) {
+                log.debug("Auto-configuring connector {} with client TLS credential", id);
+                if (builder == null) {
+                    builder = BeanDefinitionBuilder.genericBeanDefinition(HttpClientSecurityParameters.class);
+                }
+                final BeanDefinitionBuilder credentialBuilder =
+                        BeanDefinitionBuilder.genericBeanDefinition(BasicX509CredentialFactoryBean.class);
+                credentialBuilder.addPropertyValue("privateKey", clientPrivateKey);
+                credentialBuilder.addPropertyValue("certificates", clientCertificate);
+                builder.addPropertyValue("clientTLSCredential", credentialBuilder.getBeanDefinition());
             }
             
             return builder != null ? builder.getBeanDefinition() : null;
