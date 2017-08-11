@@ -133,7 +133,7 @@ public class HTTPDataConnectorParserTest {
 
     @Test(expectedExceptions=ResolutionException.class) public void v2Missing() throws Exception {
         
-        final MockPropertySource propSource = singletonPropertySource("serviceURL", "http://shibboleth.net/test.json");
+        final MockPropertySource propSource = singletonPropertySource("serviceURL", "https://build.shibboleth.net/test.json");
         propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
         
         final HTTPDataConnector connector =
