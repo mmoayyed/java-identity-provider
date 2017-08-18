@@ -143,7 +143,7 @@ public class HTTPDataConnectorTest {
     @Test(expectedExceptions=ResolutionException.class) public void testSize()
             throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
         final TemplatedURLBuilder builder = new TemplatedURLBuilder();
-        builder.setTemplateText("https://shibboleth.net/test.json");
+        builder.setTemplateText(TEST_URL);
         builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
         builder.initialize();
         connector.setExecutableSearchBuilder(builder);
