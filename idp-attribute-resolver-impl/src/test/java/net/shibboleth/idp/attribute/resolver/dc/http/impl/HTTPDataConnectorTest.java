@@ -244,4 +244,102 @@ public class HTTPDataConnectorTest {
         Assert.assertEquals(cache.iterator().next(), optional);
     }
     
+    @Test(enabled=false) public void testPOST() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
+        final TemplatedBodyBuilder builder = new TemplatedBodyBuilder();
+        builder.setURLTemplateText("https://shibboleth.net/cgi-bin/_frobnitz.cgi");
+        builder.setBodyTemplateText("[{\"name\" : \"foo\",\"values\" : [ \"foo1\" ]},{\"name\" : \"bar\",\"values\" : [ \"bar1\", \"bar2\" ]}]");
+        builder.setMIMEType("application/json");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        connector.setExecutableSearchBuilder(builder);
+        
+        final ScriptedResponseMappingStrategy mapping =
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
+        mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
+        mapping.setAcceptTypes(Collections.singleton("application/json"));
+        connector.setMappingStrategy(mapping);
+        connector.initialize();
+        
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        
+        final Map<String,IdPAttribute> attrs = connector.resolve(context);
+
+        Assert.assertEquals(attrs.size(), 2);
+        
+        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
+        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        
+        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
+        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+    }
+
+    @Test(enabled=false) public void testCacheable() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
+        final TemplatedBodyBuilder builder = new TemplatedBodyBuilder();
+        builder.setURLTemplateText("https://shibboleth.net/cgi-bin/_frobnitz.cgi");
+        builder.setBodyTemplateText("[{\"name\" : \"foo\",\"values\" : [ \"foo1\" ]},{\"name\" : \"bar\",\"values\" : [ \"bar1\", \"bar2\" ]}]");
+        builder.setCacheKeyTemplateText("foo");
+        builder.setMIMEType("application/json");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        connector.setExecutableSearchBuilder(builder);
+        
+        final ScriptedResponseMappingStrategy mapping =
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
+        mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
+        mapping.setAcceptTypes(Collections.singleton("application/json"));
+        connector.setMappingStrategy(mapping);
+        
+        final TestCache cache = new TestCache();
+        connector.setResultsCache(cache);
+        
+        connector.initialize();
+        
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        
+        Assert.assertTrue(cache.size() == 0);
+        final Map<String,IdPAttribute> optional = connector.resolve(context);
+        Assert.assertTrue(cache.size() == 1);
+        Assert.assertEquals(cache.iterator().next(), optional);
+    }
+    
+    @Test(enabled=false) public void testUncacheable() throws ComponentInitializationException, ResolutionException, ScriptException, IOException {
+        final TemplatedBodyBuilder builder = new TemplatedBodyBuilder();
+        builder.setURLTemplateText("https://shibboleth.net/cgi-bin/_frobnitz.cgi");
+        builder.setBodyTemplateText("[{\"name\" : \"foo\",\"values\" : [ \"foo1\" ]},{\"name\" : \"bar\",\"values\" : [ \"bar1\", \"bar2\" ]}]");
+        builder.setMIMEType("application/json");
+        builder.setVelocityEngine(VelocityEngine.newVelocityEngine());
+        builder.initialize();
+        connector.setExecutableSearchBuilder(builder);
+        
+        final ScriptedResponseMappingStrategy mapping =
+                ScriptedResponseMappingStrategy.resourceScript(
+                        ResourceHelper.of(new ClassPathResource((isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js")));
+        mapping.setLogPrefix(TEST_CONNECTOR_NAME + ":");
+        mapping.setAcceptStatuses(Collections.singleton(HttpStatus.SC_OK));
+        mapping.setAcceptTypes(Collections.singleton("application/json"));
+        connector.setMappingStrategy(mapping);
+        
+        final TestCache cache = new TestCache();
+        connector.setResultsCache(cache);
+        
+        connector.initialize();
+        
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        
+        Assert.assertTrue(cache.size() == 0);
+        connector.resolve(context);
+        Assert.assertTrue(cache.size() == 0);
+    }
+    
 }

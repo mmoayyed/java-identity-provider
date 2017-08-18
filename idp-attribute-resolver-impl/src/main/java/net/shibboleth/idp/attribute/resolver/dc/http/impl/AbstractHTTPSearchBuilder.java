@@ -18,6 +18,8 @@
 package net.shibboleth.idp.attribute.resolver.dc.http.impl;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,15 +34,21 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.opensaml.security.httpclient.HttpClientSecurityParameters;
 import org.opensaml.security.httpclient.HttpClientSecuritySupport;
 
+import com.google.common.collect.ImmutableMap;
+
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
 import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
 import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
+import net.shibboleth.utilities.java.support.annotation.constraint.NonnullElements;
 import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import net.shibboleth.utilities.java.support.annotation.constraint.NotLive;
+import net.shibboleth.utilities.java.support.annotation.constraint.Unmodifiable;
 import net.shibboleth.utilities.java.support.component.AbstractInitializableComponent;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * Basis of request builder. Derived classes just have to provide the per request URI but may override
@@ -56,9 +64,48 @@ import net.shibboleth.utilities.java.support.logic.Constraint;
 public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableComponent implements
         ExecutableSearchBuilder<HTTPSearch> {
     
+    /** Map of headers to set. */
+    @Nonnull @NonnullElements private Map<String,String> headerMap;
+    
     /** HTTP client security parameters. */
     @Nullable private HttpClientSecurityParameters httpClientSecurityParameters;
     
+    /** Constructor. */
+    public AbstractHTTPSearchBuilder() {
+        headerMap = Collections.emptyMap();
+    }
+    
+    /**
+     * Get map of headers that will be set on request.
+     * 
+     * @return map of headers
+     */
+    @Nonnull @NonnullElements @NotLive @Unmodifiable public Map<String,String> getHeaders() {
+        return ImmutableMap.copyOf(headerMap);
+    }
+    
+    /**
+     * Set map of headers that will be set on request.
+     * 
+     * <p>These will be *set*, so replacing any existing headers and not allowing multiple.</p>
+     * 
+     * @param headers map of headers
+     */
+    public void setHeaders(@Nonnull @NonnullElements final Map<String,String> headers) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        ComponentSupport.ifDestroyedThrowDestroyedComponentException(this);
+                
+        Constraint.isNotNull(headers, "Map of headers cannot be null");
+        headerMap = new HashMap<>(headers.size());
+        
+        for (final Map.Entry<String,String> entry : headers.entrySet()) {
+            final String key = StringSupport.trimOrNull(entry.getKey());
+            final String value = StringSupport.trimOrNull(entry.getValue());
+            if (key != null && value != null) {
+                headerMap.put(key, value);
+            }
+        }
+    }
     
     /**
      * Get the optional client security parameters.
@@ -94,14 +141,19 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
             @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
         
         final HttpUriRequest request = getHttpRequest(resolutionContext, dependencyAttributes);
+        
+        for (final Map.Entry<String,String> entry : headerMap.entrySet()) {
+            request.setHeader(entry.getKey(), entry.getValue());
+        }
 
 // Checkstyle: AnonInnerLength OFF
         return new HTTPSearch() {
             
             /** {@inheritDoc} */
-            @Nonnull public String getResultCacheKey() {
-                Constraint.isTrue(request instanceof HttpGet, "Only GET requests are cacheable");
-                return ((HttpGet) request).getURI().toString();
+            @Nullable public String getResultCacheKey() {
+                // Delegate to the outer class to allow override.
+                return AbstractHTTPSearchBuilder.this.getResultCacheKey(request, resolutionContext,
+                        dependencyAttributes);
             }
 
             /** {@inheritDoc} */
@@ -129,14 +181,18 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
     /**
      * Method to return the URL to access via GET.
      * 
+     * <p>Subclasses may override this method to support simple GET requests.</p>
+     * 
      * @param resolutionContext the context of the resolution
      * @param dependencyAttributes made available to the request
      * 
      * @return the URL to GET
      * @throws ResolutionException if an error occurs
      */
-    @Nonnull @NotEmpty protected abstract String getURL(@Nonnull final AttributeResolutionContext resolutionContext,
-            @Nonnull final Map<String,List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException;
+    @Nonnull @NotEmpty protected String getURL(@Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final Map<String,List<IdPAttributeValue<?>>> dependencyAttributes) throws ResolutionException {
+        throw new UnsupportedOperationException("getURL method not overridden by subclass");
+    }
     
     /**
      * Default implementation just supports GET and builds a request around a URL.
@@ -157,5 +213,24 @@ public abstract class AbstractHTTPSearchBuilder extends AbstractInitializableCom
             throw new ResolutionException(e);
         }
     }
-        
+
+    /**
+     * Default implementation just allows caching of GET requests and returns the URI itself.
+     * 
+     * @param request the HTTP request about to be executed
+     * @param resolutionContext the attribute resolution context
+     * @param dependencyAttributes dependencies
+     * 
+     * @return the cache key
+     */
+    @Nullable protected String getResultCacheKey(@Nonnull final HttpUriRequest request,
+            @Nonnull final AttributeResolutionContext resolutionContext,
+            @Nonnull final Map<String, List<IdPAttributeValue<?>>> dependencyAttributes) {
+        if (request instanceof HttpGet) {
+            return ((HttpGet) request).getURI().toString();
+        } else {
+            return null;
+        }
+    }
+
 }
