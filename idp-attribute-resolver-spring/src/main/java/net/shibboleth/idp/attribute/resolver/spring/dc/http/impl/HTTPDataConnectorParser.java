@@ -26,6 +26,7 @@ import javax.xml.namespace.QName;
 import net.shibboleth.ext.spring.util.SpringSupport;
 import net.shibboleth.idp.attribute.resolver.dc.http.impl.HTTPDataConnector;
 import net.shibboleth.idp.attribute.resolver.dc.http.impl.ScriptedResponseMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.http.impl.TemplatedBodyBuilder;
 import net.shibboleth.idp.attribute.resolver.dc.http.impl.TemplatedURLBuilder;
 import net.shibboleth.idp.attribute.resolver.spring.dc.AbstractDataConnectorParser;
 import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
@@ -94,9 +95,14 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         if (searchBuilderID != null) {
             builder.addPropertyReference("executableSearchBuilder", searchBuilderID);
         } else {
-            final BeanDefinition def = v2Parser.createTemplateBuilder(httpClientSecurityBean);
+            BeanDefinition def = v2Parser.createBodyTemplateBuilder(httpClientSecurityBean);
             if (def != null) {
                 builder.addPropertyValue("executableSearchBuilder", def);
+            } else {
+                def = v2Parser.createURLTemplateBuilder(httpClientSecurityBean);
+                if (def != null) {
+                    builder.addPropertyValue("executableSearchBuilder", def);
+                }
             }
         }
 
@@ -174,12 +180,21 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
         }
         
         /**
-         * Create the definition of the template driven search builder.
+         * Create the definition of the GET search builder.
          * 
          * @param httpClientSecurityParams instance of {@link HttpClientSecurityParameters} to inject
-         * @return the bean definition for the template search builder.
+         * 
+         * @return the bean definition for the search builder
          */
-        @Nonnull public BeanDefinition createTemplateBuilder(@Nullable final BeanDefinition httpClientSecurityParams) {
+        @Nullable public BeanDefinition createURLTemplateBuilder(
+                @Nullable final BeanDefinition httpClientSecurityParams) {
+            
+            final List<Element> urlTemplates = ElementSupport.getChildElements(configElement, 
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "URLTemplate"));
+            if (urlTemplates.size() == 0) {
+                return null;
+            }
+            
             final BeanDefinitionBuilder templateBuilder =
                     BeanDefinitionBuilder.genericBeanDefinition(TemplatedURLBuilder.class);
             templateBuilder.setInitMethodName("initialize");
@@ -202,9 +217,6 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
                 }
             }
             
-            final List<Element> urlTemplates = ElementSupport.getChildElements(configElement, 
-                            new QName(AttributeResolverNamespaceHandler.NAMESPACE, "URLTemplate"));
-            
             if (urlTemplates.size() > 1) {
                 log.warn("{} A maximum of 1 <URLTemplate> should be specified; the first one has been used",
                         getLogPrefix());
@@ -215,11 +227,90 @@ public class HTTPDataConnectorParser extends AbstractDataConnectorParser {
                 url = urlTemplates.get(0).getTextContent();
             }
             templateBuilder.addPropertyValue("templateText", url);
+            
+            final String headerMapRef = StringSupport.trimOrNull(configElement.getAttributeNS(null, "headerMapRef"));
+            if (headerMapRef != null) {
+                templateBuilder.addPropertyReference("headers", headerMapRef);
+            }
 
-            templateBuilder.setInitMethodName("initialize");
-            templateBuilder.setDestroyMethodName("destroy");
             return templateBuilder.getBeanDefinition();
         }
+
+// Checkstyle: CyclomaticComplexity OFF
+        /**
+         * Create the definition of the POST search builder.
+         * 
+         * @param httpClientSecurityParams instance of {@link HttpClientSecurityParameters} to inject
+         * 
+         * @return the bean definition for the search builder, or null
+         */
+        @Nullable public BeanDefinition createBodyTemplateBuilder(
+                @Nullable final BeanDefinition httpClientSecurityParams) {
+            
+            final List<Element> urlTemplates = ElementSupport.getChildElements(configElement, 
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "URLTemplate"));
+            final List<Element> bodyTemplates = ElementSupport.getChildElements(configElement, 
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "BodyTemplate"));
+            if (urlTemplates.size() == 0 || bodyTemplates.size() == 0) {
+                return null;
+            }
+            final List<Element> cacheKeyTemplates = ElementSupport.getChildElements(configElement, 
+                    new QName(AttributeResolverNamespaceHandler.NAMESPACE, "CacheKeyTemplate"));
+            
+            final BeanDefinitionBuilder templateBuilder =
+                    BeanDefinitionBuilder.genericBeanDefinition(TemplatedBodyBuilder.class);
+            templateBuilder.setInitMethodName("initialize");
+            templateBuilder.setDestroyMethodName("destroy");
+
+            String velocityEngineRef = StringSupport.trimOrNull(configElement.getAttributeNS(null, "templateEngine"));
+            if (null == velocityEngineRef) {
+                velocityEngineRef = "shibboleth.VelocityEngine";
+            }
+            templateBuilder.addPropertyReference("velocityEngine", velocityEngineRef);
+
+            // This is duplication but allows the built-in builder to access the parameters if desired.
+            if (httpClientSecurityParams != null) {
+                templateBuilder.addPropertyValue("httpClientSecurityParameters", httpClientSecurityParams);
+            } else {
+                final String securityParamsRef =
+                        StringSupport.trimOrNull(configElement.getAttributeNS(null, "httpClientSecurityParametersRef"));
+                if (securityParamsRef != null) {
+                    templateBuilder.addPropertyReference("httpClientSecurityParameters", securityParamsRef);
+                }
+            }
+            
+            if (urlTemplates.size() > 1) {
+                log.warn("{} A maximum of 1 <URLTemplate> should be specified; the first one has been used",
+                        getLogPrefix());
+            } else if (bodyTemplates.size() > 1) {
+                log.warn("{} A maximum of 1 <BodyTemplate> should be specified; the first one has been used",
+                        getLogPrefix());
+            } else if (cacheKeyTemplates.size() > 1) {
+                log.warn("{} A maximum of 1 <CacheKeyTemplate> should be specified; the first one has been used",
+                        getLogPrefix());
+            }
+            
+            templateBuilder.addPropertyValue("uRLTemplateText", urlTemplates.get(0).getTextContent());
+            final Element bodyTemplate = bodyTemplates.get(0);
+            templateBuilder.addPropertyValue("bodyTemplateText", bodyTemplate.getTextContent());
+            if (bodyTemplate.hasAttributeNS(null, "MIMEType")) {
+                templateBuilder.addPropertyValue("mIMEType", bodyTemplate.getAttributeNS(null, "MIMEType"));
+            }
+            if (bodyTemplate.hasAttributeNS(null, "charset")) {
+                templateBuilder.addPropertyValue("characterSet", bodyTemplate.getAttributeNS(null, "charset"));
+            }
+            if (cacheKeyTemplates.size() > 0) {
+                templateBuilder.addPropertyValue("cacheKeyTemplateText", cacheKeyTemplates.get(0).getTextContent());
+            }
+            
+            final String headerMapRef = StringSupport.trimOrNull(configElement.getAttributeNS(null, "headerMapRef"));
+            if (headerMapRef != null) {
+                templateBuilder.addPropertyReference("headers", headerMapRef);
+            }
+
+            return templateBuilder.getBeanDefinition();
+        }
+// Checkstyle: CyclomaticComplexity OFF
         
         /**
          * Get the bean ID of an externally defined mapping strategy.

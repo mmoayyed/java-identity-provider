@@ -321,6 +321,34 @@ public class HTTPDataConnectorParserTest {
         Assert.assertTrue(connector.getResultsCache().size() == 1);    
     }
 
+    @Test(enabled=false) public void v2ConfigPOST() throws Exception {
+        
+        final MockPropertySource propSource = singletonPropertySource("serviceURL", "https://shibboleth.net/cgi-bin/_frobnitz.cgi");
+        propSource.setProperty("serviceBody",
+                "[{\"name\" : \"foo\",\"values\" : [ \"foo1\" ]},{\"name\" : \"bar\",\"values\" : [ \"bar1\", \"bar2\" ]}]");
+        propSource.setProperty("scriptPath", (isV8() ? SCRIPT_PATH_V8 : SCRIPT_PATH) + "test.js");
+        
+        final HTTPDataConnector connector =
+                getDataConnector(propSource,
+                        "net/shibboleth/idp/attribute/resolver/spring/dc/http/http-attribute-resolver-v2-body.xml");
+        Assert.assertNotNull(connector);
+        
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        
+        final Map<String,IdPAttribute> attrs = connector.resolve(context);
+
+        Assert.assertEquals(attrs.size(), 2);
+        
+        Assert.assertEquals(attrs.get("foo").getValues().size(), 1);
+        Assert.assertEquals(attrs.get("foo").getValues().get(0).getValue(), "foo1");
+        
+        Assert.assertEquals(attrs.get("bar").getValues().size(), 2);
+        Assert.assertEquals(attrs.get("bar").getValues().get(0).getValue(), "bar1");
+        Assert.assertEquals(attrs.get("bar").getValues().get(1).getValue(), "bar2");
+    }
+    
     private HTTPDataConnector getDataConnector(final PropertySource propSource, final String... beanDefinitions)
             throws IOException {
         final GenericApplicationContext context = new GenericApplicationContext();

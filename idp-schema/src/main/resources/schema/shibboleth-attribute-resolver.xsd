@@ -1247,6 +1247,28 @@
                             </documentation>
                         </annotation>
                     </element>
+                    <element name="BodyTemplate">
+                        <annotation>
+                            <documentation>
+                                A template that will be used to create a body to POST.
+                            </documentation>
+                        </annotation>
+                        <complexType>
+                            <simpleContent>
+                                <extension base="string">
+                                    <attribute name="MIMEType" type="string" />
+                                    <attribute name="charset" type="string" />
+                                </extension>
+                            </simpleContent>
+                        </complexType>
+                    </element>
+                    <element name="CacheKeyTemplate" type="string">
+                        <annotation>
+                            <documentation>
+                                A template that will be used to create a key to the caching of the results.
+                            </documentation>
+                        </annotation>
+                    </element>
                     <element name="ResponseMapping" type="resolver:ScriptType">
                         <annotation>
                             <documentation>Maps the response into attributes by means of scripting.</documentation>
@@ -1330,6 +1352,13 @@
                     <simpleType>
                         <list itemType="string"/>
                     </simpleType>
+                </attribute>
+                <attribute name="headerMapRef" type="string">
+                    <annotation>
+                        <documentation>
+                            Reference to a Spring bean providing a Map&lt;String,String&gt; of request headers to set.
+                        </documentation>
+                    </annotation>
                 </attribute>
                 <attribute name="executableSearchBuilderRef" type="string">
                     <annotation>
