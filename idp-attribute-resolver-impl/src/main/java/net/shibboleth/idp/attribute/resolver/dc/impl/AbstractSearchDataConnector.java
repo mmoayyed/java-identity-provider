@@ -179,14 +179,20 @@ public abstract class AbstractSearchDataConnector<T1 extends ExecutableSearch,T2
         Map<String, IdPAttribute> resolvedAttributes = null;
         if (resultsCache != null && resolutionContext.getAllowCachedResults()) {
             final String cacheKey = executable.getResultCacheKey();
-            resolvedAttributes = resultsCache.getIfPresent(cacheKey);
-            log.trace("{} Cache found, resolved attributes {} using cache {}", new Object[] {getLogPrefix(),
-                    resolvedAttributes, resultsCache,});
-            if (resolvedAttributes == null) {
+            if (cacheKey != null) {
+                resolvedAttributes = resultsCache.getIfPresent(cacheKey);
+                log.trace("{} Cache found, resolved attributes {} using cache {}", new Object[] {getLogPrefix(),
+                        resolvedAttributes, resultsCache,});
+                if (resolvedAttributes == null) {
+                    resolvedAttributes = retrieveAttributes(executable);
+                    log.trace("{} Resolved attributes {}", getLogPrefix(), resolvedAttributes);
+                    resultsCache.put(cacheKey, resolvedAttributes != null ? resolvedAttributes
+                            : Collections.<String,IdPAttribute>emptyMap());
+                }
+            } else {
+                log.trace("No cache key returned, will not check for cached results");
                 resolvedAttributes = retrieveAttributes(executable);
-                log.trace("{} Resolved attributes {}", getLogPrefix(), resolvedAttributes);
-                resultsCache.put(cacheKey, resolvedAttributes != null ? resolvedAttributes
-                        : Collections.<String,IdPAttribute>emptyMap());
+                log.trace("{} Resolved attributes: {}", getLogPrefix(), resolvedAttributes);
             }
         } else {
             resolvedAttributes = retrieveAttributes(executable);

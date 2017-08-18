@@ -18,6 +18,7 @@
 package net.shibboleth.idp.attribute.resolver.dc.ldap.impl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -51,7 +52,7 @@ public abstract class AbstractExecutableSearchFilterBuilder extends AbstractInit
         return new ExecutableSearchFilter() {
 
             /** {@inheritDoc} */
-            @Nonnull public String getResultCacheKey() {
+            @Nullable public String getResultCacheKey() {
                 return searchFilter.format();
             }
 

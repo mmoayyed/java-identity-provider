@@ -17,9 +17,7 @@
 
 package net.shibboleth.idp.attribute.resolver.dc.impl;
 
-import javax.annotation.Nonnull;
-
-import net.shibboleth.utilities.java.support.annotation.constraint.NotEmpty;
+import javax.annotation.Nullable;
 
 /** Should be implemented by objects used to search for attributes, that uniquely identify those search results. */
 public interface ExecutableSearch {
@@ -27,7 +25,9 @@ public interface ExecutableSearch {
     /**
      * Gets a key that uniquely identifies this object and may be used as a key in a result cache.
      * 
+     * <p>If a null is returned, no caching will be done.</p>
+     * 
      * @return the result cache key
      */
-    @Nonnull @NotEmpty public String getResultCacheKey();
+    @Nullable public String getResultCacheKey();
 }

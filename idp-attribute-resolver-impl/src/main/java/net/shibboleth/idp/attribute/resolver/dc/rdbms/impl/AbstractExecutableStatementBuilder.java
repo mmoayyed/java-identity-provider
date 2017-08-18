@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.resolver.ResolutionException;
@@ -81,19 +82,19 @@ public abstract class AbstractExecutableStatementBuilder extends AbstractInitial
         return new ExecutableStatement() {
 
             /** {@inheritDoc} */
-            @Override @Nonnull public String getResultCacheKey() {
+            @Nullable public String getResultCacheKey() {
                 return query;
             }
 
             /** {@inheritDoc} */
-            @Override @Nonnull public ResultSet execute(@Nonnull final Connection connection) throws SQLException {
+            @Nonnull public ResultSet execute(@Nonnull final Connection connection) throws SQLException {
                 final Statement stmt = connection.createStatement();
                 stmt.setQueryTimeout(queryTimeout);
                 return stmt.executeQuery(query);
             }
 
             /** {@inheritDoc} */
-            @Override public String toString() {
+            public String toString() {
                 return query;
             }
         };
