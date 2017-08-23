@@ -17,7 +17,6 @@
 
 package net.shibboleth.idp.spring;
 
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,8 +40,7 @@ import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 
 /**
- * A simple bean that may be used with Spring to initialize the OpenSAML library
- * with injected instances of some critical objects.
+ * A bean that emits deprecation warnings if a configurable set of properties are set.
  */
 public class DeprecatedPropertyBean extends AbstractInitializableComponent implements ApplicationContextAware {
 
