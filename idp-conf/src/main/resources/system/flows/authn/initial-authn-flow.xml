@@ -11,6 +11,9 @@
     -->
     
     <action-state id="AuthenticationSetup">
+        <on-entry>
+            <evaluate expression="T(net.shibboleth.utilities.java.support.primitive.DeprecationSupport).warnOnce(T(net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType).WEBFLOW, 'authn-initial', null, 'the MFA login flow')" />
+        </on-entry>
         <evaluate expression="PopulateSessionContext" />
         <evaluate expression="SetRPUIInformation" />
          <evaluate expression="'proceed'" />
