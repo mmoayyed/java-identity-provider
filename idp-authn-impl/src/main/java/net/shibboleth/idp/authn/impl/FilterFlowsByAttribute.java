@@ -36,6 +36,8 @@ import net.shibboleth.idp.authn.AuthenticationResult;
 import net.shibboleth.idp.authn.context.AuthenticationContext;
 import net.shibboleth.utilities.java.support.component.ComponentSupport;
 import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 import org.opensaml.messaging.context.navigate.ChildContextLookup;
@@ -129,6 +131,8 @@ public class FilterFlowsByAttribute extends AbstractAuthenticationAction {
         if (!super.doPreExecute(profileRequestContext, authenticationContext) || attributeId == null) {
             return false;
         }
+        
+        DeprecationSupport.warnOnce(ObjectType.ACTION, getClass().getSimpleName(), null, "the MFA login flow");
 
         final AttributeContext attributeCtx = attributeContextLookupStrategy.apply(profileRequestContext);
         if (attributeCtx == null) {
