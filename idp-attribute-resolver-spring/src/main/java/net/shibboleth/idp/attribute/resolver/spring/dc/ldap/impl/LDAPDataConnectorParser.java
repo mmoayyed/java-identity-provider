@@ -373,6 +373,9 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
                 }
                 result.addPropertyValue("trustCredential",
                         SpringSupport.parseCustomElements(trustElements, parserContext).get(0));
+            } else {
+                DeprecationSupport.warn(ObjectType.CONFIGURATION, "Use of default JVM trust store", logPrefix,
+                        "trustFile attribute");
             }
 
             final List<Element> authElements =
