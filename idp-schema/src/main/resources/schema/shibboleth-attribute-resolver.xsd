@@ -927,6 +927,7 @@
                         <annotation>
                             <documentation>
                                 The X.509 trust information to use when connecting to the directory over LDAPS or startTLS.
+                                DEPRECATED in 3.4 Use trustFile=
                             </documentation>
                         </annotation>
                     </element>
@@ -934,6 +935,7 @@
                         <annotation>
                             <documentation>
                                 The X.509 client authentication information to use when connecting to the directory over LDAPS or startTLS.
+                                DEPRECATED in 3.4 Use authCert= and authKey
                             </documentation>
                         </annotation>
                     </element>
@@ -1098,6 +1100,28 @@
                         </documentation>
                     </annotation>
                 </attribute>
+                <attribute name="authCert" type="string">
+                    <annotation>
+                        <documentation>
+                            Path to a file with the X.509 trust client authentication certificate to use when connecting to the directory over LDAPS or startTLS
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="authKey" type="string">
+                    <annotation>
+                        <documentation>
+                            Path to a file with the X.509 trust client authentication key to use when connecting to the directory over LDAPS or startTLS
+                        </documentation>
+                    </annotation>
+                </attribute>
+                <attribute name="authKeyPassword" type="string">
+                    <annotation>
+                        <documentation>
+                            Password for the supplied authKey
+                        </documentation>
+                    </annotation>
+                </attribute>
+
             </extension>
         </complexContent>
     </complexType>

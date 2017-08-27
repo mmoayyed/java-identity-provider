@@ -24,21 +24,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import net.shibboleth.ext.spring.config.DurationToLongConverter;
-import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
-import net.shibboleth.ext.spring.config.StringToResourceConverter;
-import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
-import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.resolver.ResolutionException;
-import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
-import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
-import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl.LDAPDataConnectorParser;
-import net.shibboleth.idp.saml.impl.TestSources;
-
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
@@ -75,6 +60,21 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.util.ssl.KeyStoreKeyManager;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
+
+import net.shibboleth.ext.spring.config.DurationToLongConverter;
+import net.shibboleth.ext.spring.config.StringToIPRangeConverter;
+import net.shibboleth.ext.spring.config.StringToResourceConverter;
+import net.shibboleth.ext.spring.context.FilesystemGenericApplicationContext;
+import net.shibboleth.ext.spring.util.SchemaTypeAwareXMLBeanDefinitionReader;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.resolver.ResolutionException;
+import net.shibboleth.idp.attribute.resolver.context.AttributeResolutionContext;
+import net.shibboleth.idp.attribute.resolver.dc.impl.ExecutableSearchBuilder;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.spring.dc.ldap.impl.LDAPDataConnectorParser;
+import net.shibboleth.idp.saml.impl.TestSources;
 
 /** Test for {@link LDAPDataConnectorParser}. */
 public class LDAPDataConnectorParserTest {
@@ -165,7 +165,27 @@ public class LDAPDataConnectorParserTest {
         Assert.assertNotNull(attrs);
         Assert.assertNotNull(attrs.get("entryDN"));
     }
+
     
+    @Test public void v2NoSec() throws Exception {
+        final LDAPDataConnector dataConnector =
+                getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-nosec.xml"});
+        Assert.assertNotNull(dataConnector);
+        doTest(dataConnector);
+        final StringAttributeValueMappingStrategy mappingStrategy =
+                (StringAttributeValueMappingStrategy) dataConnector.getMappingStrategy();
+        Assert.assertEquals(mappingStrategy.getResultRenamingMap().size(), 1);
+        Assert.assertEquals(mappingStrategy.getResultRenamingMap().get("homephone"), "phonenumber");
+
+        dataConnector.initialize();
+        final AttributeResolutionContext context =
+                TestSources.createResolutionContext(TestSources.PRINCIPAL_ID, TestSources.IDP_ENTITY_ID,
+                        TestSources.SP_ENTITY_ID);
+        final Map<String, IdPAttribute> attrs = dataConnector.resolve(context);
+        Assert.assertNotNull(attrs);
+        Assert.assertNotNull(attrs.get("entryDN"));
+    }
+
     @Test public void v2ResolverOtherDups() throws Exception {
         final LDAPDataConnector dataConnector =
                 getLdapDataConnector(new String[] {"net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap-attribute-resolver-v2-multi.xml",

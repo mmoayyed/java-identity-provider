@@ -24,25 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
-import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractWarningDataConnectorParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
-import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
-import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
-import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
-import net.shibboleth.utilities.java.support.annotation.Duration;
-import net.shibboleth.utilities.java.support.logic.Constraint;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
-import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.AttributeSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-import net.shibboleth.utilities.java.support.xml.XMLConstants;
-
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.Credential;
@@ -72,6 +53,25 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.ManagedMap;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.ConnectionFactoryValidator;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.LDAPDataConnector;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.StringAttributeValueMappingStrategy;
+import net.shibboleth.idp.attribute.resolver.dc.ldap.impl.TemplatedExecutableSearchFilterBuilder;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.AbstractWarningDataConnectorParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.CacheConfigParser;
+import net.shibboleth.idp.attribute.resolver.spring.dc.impl.DataConnectorNamespaceHandler;
+import net.shibboleth.idp.attribute.resolver.spring.impl.AttributeResolverNamespaceHandler;
+import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
+import net.shibboleth.utilities.java.support.annotation.Duration;
+import net.shibboleth.utilities.java.support.logic.Constraint;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.AttributeSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
+import net.shibboleth.utilities.java.support.xml.XMLConstants;
 
 /**
  * Bean definition Parser for a {@link LDAPDataConnector}. <em>Note</em> That parsing the V2 configuration will set some
@@ -383,7 +383,29 @@ public class LDAPDataConnectorParser extends AbstractWarningDataConnectorParser 
                             new QName(DataConnectorNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential"));
             authElements.addAll(ElementSupport.getChildElements(configElement,
                     new QName(AttributeResolverNamespaceHandler.NAMESPACE, "StartTLSAuthenticationCredential")));
-            if (!authElements.isEmpty()) {
+            final String authKey =
+                    StringSupport.trimOrNull(AttributeSupport.getAttributeValue(configElement, null, "authKey"));
+            final String authCert =
+                    StringSupport.trimOrNull(AttributeSupport.getAttributeValue(configElement, null, "authCert"));
+
+            if (authKey != null|| authCert != null) {
+
+                if (!authElements.isEmpty()) {
+                    log.warn("{} StartTLSAuthenticationCredential and"
+                            + " authKey/authCert= are incompatible.  authCert/authKey used.",
+                            getLogPrefix());
+                }
+                final BeanDefinitionBuilder authCred =
+                        BeanDefinitionBuilder.genericBeanDefinition(BasicX509CredentialFactoryBean.class);
+                authCred.addPropertyValue("certificateResource", authCert);
+                authCred.addPropertyValue("privateKeyResource", authKey);
+                authCred.addPropertyValue("privateKeyPassword",
+                                           AttributeSupport.getAttributeValue(configElement, null, "authKeyPassword"));
+
+
+                result.addPropertyValue("authCredential", authCred.getBeanDefinition());
+
+            } else if (!authElements.isEmpty()) {
                 if (authElements.size() > 1) {
                     log.warn("{} Too many StartTLSAuthenticationCredential elements in {};"
                             + " only the first has been consulted", getLogPrefix(), 

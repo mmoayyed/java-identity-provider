@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AttributeResolver xmlns="urn:mace:shibboleth:2.0:resolver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sec="urn:mace:shibboleth:2.0:security"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:resolver http://shibboleth.net/schema/idp/shibboleth-attribute-resolver.xsd
+                            urn:mace:shibboleth:2.0:security http://shibboleth.net/schema/idp/shibboleth-security.xsd">
+
+    <DataConnector id="myLDAP" xsi:type="LDAPDirectory"
+        ldapURL="ldap://localhost:10389" 
+        baseDN="ou=people,dc=shibboleth,dc=net" 
+        principal="cn=Directory Manager"
+        principalCredential="password"
+        useStartTLS="true"
+        searchTimeLimit="PT7S"
+        noResultIsError="true"
+        multipleResultsIsError="true"
+        noRetryDelay="PT5M"
+        trustFile="net/shibboleth/idp/attribute/resolver/spring/dc/ldap/resolver/ldap.crt"
+        authKey="src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.key"
+        authCert="src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.crt"
+        connectTimeout="PT2S"
+        responseTimeout="PT4S">
+        
+        <FailoverDataConnector ref="2123"/>
+        
+        <ResultCache elementTimeToLive="PT10S" maximumCachedElements="25"/>
+
+        <Column columnName="homephone" attributeID="phonenumber" />
+
+        <Dependency ref="321"/>
+
+        <ConnectionPool
+            minPoolSize="5"
+            maxPoolSize="10"
+            blockWaitTime="PT5S"
+            expirationTime="PT10M"
+            validatePeriodically="true"
+            validateTimerPeriod="PT15M"
+            validateDN="dc=shibboleth,dc=net"
+            validateFilter="(ou=people)"
+            failFastInitialize="false" />
+
+
+        <StartTLSAuthenticationCredential xsi:type="sec:X509ResourceBacked" id="IdPtoLDAPCredential">
+            <sec:PrivateKey>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.key</sec:PrivateKey>
+            <sec:Certificate>src/test/resources/net/shibboleth/idp/attribute/resolver/spring/dc/ldap/client.crt</sec:Certificate>
+        </StartTLSAuthenticationCredential>
+        <Dependency ref="321"/>
+
+        <LDAPProperty name="name2" value="value2"/>
+                
+        <ReturnAttributes>a b g t</ReturnAttributes>
+        
+        <LDAPProperty name="name1" value="value1"/>
+        
+        <ReturnAttributes>a b g t</ReturnAttributes>
+        
+        <FilterTemplate>
+            <![CDATA[
+                (uid=${resolutionContext.principal})
+            ]]>
+        </FilterTemplate>
+        
+        <ResultCache maximumCachedElements="20"/>
+        
+        <FilterTemplate>
+            <![CDATA[
+                (uid=${resolutionContext.principal})
+            ]]>
+        </FilterTemplate>
+        
+                <ConnectionPool
+            minPoolSize="5"
+            maxPoolSize="10"
+            blockWaitTime="PT5S"
+            expirationTime="PT10M"
+            validatePeriodically="true"
+            validateTimerPeriod="PT15M"
+            validateDN="dc=shibboleth,dc=net"
+            validateFilter="(ou=people)"
+            failFastInitialize="false" />
+        
+    </DataConnector>
+    
+</AttributeResolver>
