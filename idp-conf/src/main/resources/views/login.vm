@@ -20,7 +20,6 @@
 ## custom - arbitrary object injected by deployer
 ##
 #set ($rpContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.profile.context.RelyingPartyContext'))
-#set ($sessionContext = $profileRequestContext.getSubcontext('net.shibboleth.idp.session.context.SessionContext'))
 #set ($username = $authenticationContext.getSubcontext('net.shibboleth.idp.authn.context.UsernamePasswordContext', true).getUsername())
 #set ($passwordEnabled = false)
 #if (!$passwordPrincipals or $passwordPrincipals.isEmpty() or $authenticationContext.isAcceptable($passwordPrincipals))
@@ -67,12 +66,14 @@
                 <input class="form-element form-field" id="password" name="j_password" type="password" value="">
               </div>
 
-              #if (!$sessionContext || !$sessionContext.getIdPSession())
+              ## You may need to modify this to taste, such as changing the flow name its checking for to authn/MFA.
+              #if (!$authenticationContext.getActiveResults().containsKey('authn/Password'))
               <div class="form-element-wrapper">
                 <input type="checkbox" name="donotcache" value="1" id="donotcache">
                 <label for="donotcache">#springMessageText("idp.login.donotcache", "Don't Remember Login")</label>
                </div>
               #end
+              
             #end
 
               <div class="form-element-wrapper">
