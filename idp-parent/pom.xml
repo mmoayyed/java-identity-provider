@@ -7,14 +7,14 @@
 
     <parent>
         <groupId>net.shibboleth</groupId>
-        <artifactId>parent-v3</artifactId>
-        <version>TRUNK-SNAPSHOT</version>
+        <artifactId>parent</artifactId>
+        <version>7.11.0-SNAPSHOT</version>
     </parent>
 
     <name>Shibboleth Identity Provider</name>
     <description>
         A SAML 1.1 and 2.0 identity provider implementation.
-    
+
         For more information, including how to install and configure the IdP, see https://wiki.shibboleth.net/confluence/display/IDP30/Home
     </description>
 
@@ -58,7 +58,7 @@
         <module>../idp-distribution</module>
 
         <module>../idp-ui</module>
-        
+
         <module>../idp-bom</module>
     </modules>
 
@@ -155,8 +155,8 @@
 
     </dependencies>
 
-    <!-- Dependencies which are not required by every project module but for which every module should use the same version 
-        of the dependency should go here. That is to say, placing a dependency here allows one to "peg" the version of the artifact 
+    <!-- Dependencies which are not required by every project module but for which every module should use the same version
+        of the dependency should go here. That is to say, placing a dependency here allows one to "peg" the version of the artifact
         used by all project modules. -->
     <dependencyManagement>
         <dependencies>
