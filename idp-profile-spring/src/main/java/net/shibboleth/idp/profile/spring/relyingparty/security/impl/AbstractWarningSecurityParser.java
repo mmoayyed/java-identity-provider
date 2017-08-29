@@ -15,30 +15,36 @@
  * limitations under the License.
  */
 
-package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl;
+package net.shibboleth.idp.profile.spring.relyingparty.security.impl;
 
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-import net.shibboleth.idp.profile.spring.relyingparty.security.impl.AbstractWarningSecurityParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport;
+import net.shibboleth.utilities.java.support.primitive.DeprecationSupport.ObjectType;
 
 /**
- * Basis of all parsers for &lt;security:TrustEngine&gt;.
+ * Base class to issue a deprecation warning on activation.
+ * @deprecated remove all super classes in V4. 
  */
-public abstract class AbstractTrustEngineParser extends AbstractWarningSecurityParser {
+@Deprecated
+public class AbstractWarningSecurityParser extends AbstractSingleBeanDefinitionParser {
 
     /** {@inheritDoc} */
-    @Override protected String resolveId(final Element element, final AbstractBeanDefinition definition,
-            final ParserContext parserContext) {
-        return StringSupport.trimOrNull(element.getAttributeNS(null, "id"));
+    @Override
+    protected void doParse(final Element element, final BeanDefinitionBuilder builder) {
+        DeprecationSupport.warnOnce(ObjectType.ELEMENT, element.getPrefix() +":" + element.getLocalName(), null, null);
+        super.doParse(element, builder);
     }
-
-    @Override protected void doParse(final Element element, final ParserContext parserContext,
+    
+    /** {@inheritDoc} */
+    @Override
+    protected void doParse(final Element element, final ParserContext parserContext, 
             final BeanDefinitionBuilder builder) {
+        DeprecationSupport.warnOnce(ObjectType.ELEMENT, element.getPrefix() +":" + element.getLocalName(), 
+                parserContext.getReaderContext().getResource().getDescription(), null);
         super.doParse(element, parserContext, builder);
-        builder.setLazyInit(true);
     }
 }

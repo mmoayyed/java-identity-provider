@@ -19,19 +19,19 @@ package net.shibboleth.idp.profile.spring.relyingparty.security.trustengine.impl
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-
 import org.opensaml.security.x509.PKIXValidationOptions;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.impl.AbstractWarningSecurityParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
 
 /**
  * A Parser for the &lt; ValidationOptions &gt; within a StaticPKIXSignature.
  */
-public class PKIXValidationOptionsParser extends AbstractSingleBeanDefinitionParser {
+public class PKIXValidationOptionsParser extends AbstractWarningSecurityParser {
 
     /** Validation Options. */
     public static final QName ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,

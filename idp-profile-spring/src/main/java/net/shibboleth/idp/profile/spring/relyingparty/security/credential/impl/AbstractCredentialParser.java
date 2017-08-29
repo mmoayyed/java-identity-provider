@@ -21,21 +21,21 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import net.shibboleth.ext.spring.util.SpringSupport;
-import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
-import net.shibboleth.utilities.java.support.primitive.StringSupport;
-import net.shibboleth.utilities.java.support.xml.ElementSupport;
-
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
+
+import net.shibboleth.ext.spring.util.SpringSupport;
+import net.shibboleth.idp.profile.spring.relyingparty.metadata.AbstractMetadataProviderParser;
+import net.shibboleth.idp.profile.spring.relyingparty.security.impl.AbstractWarningSecurityParser;
+import net.shibboleth.utilities.java.support.primitive.StringSupport;
+import net.shibboleth.utilities.java.support.xml.ElementSupport;
 
 /**
  * Base parser for all &lt;Credential&gt; elements.
  */
-public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinitionParser {
+public abstract class AbstractCredentialParser extends AbstractWarningSecurityParser {
 
     /** &lt;Credential&gt;. */
     public static final QName CREDENTIAL_ELEMENT_NAME = new QName(AbstractMetadataProviderParser.SECURITY_NAMESPACE,
@@ -55,7 +55,7 @@ public abstract class AbstractCredentialParser extends AbstractSingleBeanDefinit
     @Override protected void doParse(final Element element, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
         super.doParse(element, parserContext, builder);
-
+        
         builder.setLazyInit(true);
 
         parseAttributes(element, builder);
