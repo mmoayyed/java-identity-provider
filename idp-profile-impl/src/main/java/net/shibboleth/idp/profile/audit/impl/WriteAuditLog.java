@@ -73,6 +73,12 @@ public class WriteAuditLog extends AbstractProfileAction {
     /** Map of log category to formatting tokens and literals to output. */
     @Nonnull @NotEmpty private Map<String,List<String>> formattingMap;
 
+    /** Formatting string for {@link DateTime} fields. */
+    @Nullable private String dateTimeFormat;
+    
+    /** Convert {@link DateTime} fields to default time zone. */
+    private boolean useDefaultTimeZone;
+
     /** The Spring RequestContext to operate on. */
     @Nullable private RequestContext requestContext;
 
@@ -164,6 +170,27 @@ public class WriteAuditLog extends AbstractProfileAction {
     }
 // Checkstyle: CyclomaticComplexity ON
 
+    /**
+     * Set the {@link DateTime} formatting string to apply when extracting {@link DateTime}-valued fields.
+     * 
+     * @param format formatting string
+     */
+    public void setDateTimeFormat(@Nullable @NotEmpty final String format) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        dateTimeFormat = StringSupport.trimOrNull(format);
+    }
+    
+    /**
+     * Convert {@link DateTime}-valued fields to default time zone.
+     * 
+     * @param flag flag to set
+     */
+    public void setUseDefaultTimeZone(final boolean flag) {
+        ComponentSupport.ifInitializedThrowUnmodifiabledComponentException(this);
+        
+        useDefaultTimeZone = flag;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -205,7 +232,14 @@ public class WriteAuditLog extends AbstractProfileAction {
                         final String field = token.substring(1);
                         
                         if (IdPAuditFields.EVENT_TIME.equals(field)) {
-                            record.append(new DateTime().toString(v2Formatter.withZone(DateTimeZone.UTC)));
+                            if (dateTimeFormat != null) {
+                                record.append(new DateTime(
+                                        useDefaultTimeZone ? DateTimeZone.getDefault() : DateTimeZone.UTC).toString(
+                                                dateTimeFormat));
+                            } else {
+                                record.append(new DateTime().toString(v2Formatter.withZone(
+                                        useDefaultTimeZone ? DateTimeZone.getDefault() : DateTimeZone.UTC)));
+                            }
                         } else if (IdPAuditFields.EVENT_TYPE.equals(field)) {
                             final Event event = requestContext.getCurrentEvent();
                             if (event != null && !event.getId().equals(EventIds.PROCEED_EVENT_ID)) {
